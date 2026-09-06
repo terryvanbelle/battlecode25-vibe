@@ -2633,8 +2633,12 @@ invention did.
 ## RESUME STATE (2026-09-06 ~23:0x UTC) — read this first if you are a fresh session
 
 **Accepted lineage**: iter0, 1, 2, 3, 5, 7 (4, 6 and 6b rejected; numbering keeps the gaps
-deliberately). `HEAD`'s `src/carol` = **iteration 8 candidate**, which is *not yet accepted* —
-see below before assuming HEAD is the accepted build.
+deliberately). **`HEAD`'s `src/carol` is the ACCEPTED iteration 7** — verified, not assumed
+(`git show HEAD:.../src/carol/RobotPlayer.java | grep -c PAINT_FLOOR_TOWERS` = 0). The
+iteration-8 candidate lives **only in the working tree, uncommitted**, which is the deliberate
+discipline: HEAD is what the twice-daily tournament plays, so it carries the last accepted
+build and never an unevaluated candidate. (An earlier draft of this block claimed the opposite;
+corrected after checking rather than trusting the note.)
 
 **In flight**: `gauntlet/20260906-223146` — iteration 8 (paint-tower floor,
 `PAINT_FLOOR_TOWERS = 3`) vs `carol_iter7` + `carol_rush`, 20 pinned maps, 80 games. Launched
