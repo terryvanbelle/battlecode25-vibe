@@ -737,3 +737,37 @@ baseline sat at 12-13. Pre-registered mechanism gate **met**.
    while chips still pin at the reserve band. That is the two-ceiling model flipping back,
    and it says the dose is not yet at its optimum — 1-in-2 money towers is the pre-registered
    next arm, and this is a *reason* rather than a fishing expedition.
+
+## Trace of iteration 5's swept loss on MoneyTower — the fixed mix overshoots
+
+| team | towers | chips at r2000 |
+|---|---|---|
+| carol (1-in-3 money) | 4 | **79,840 idle** |
+| carol_iter3 (all paint) | 7 | 1,400 (pinned at the reserve) |
+
+The mix is self-defeating on this map. Robot paint is drawn from the *building tower's own
+stash*, so with few paint towers there is no paint to spawn soldiers with; with no soldiers
+nothing paints a ruin pattern; with no completions the tower count stalls at 4 — and the
+money towers we did build pour 79,840 unspendable chips into the treasury. The identical
+disease as iteration 1 (213k idle chips), reached from the opposite direction.
+
+So a *fixed* mix ratio trades one map class against another — precisely the situation where
+this project's doctrine says stop searching over constants and derive the threshold from
+in-game observation. **Registered as iteration 7: a self-calibrating tower mix.** A soldier
+about to mark a ruin picks the type from which resource is currently scarce (team chips vs.
+the paint in the towers it can see) instead of from a coordinate key. The consistency
+requirement that forced a pure function of the ruin is met a better way: if the ruin already
+carries marks, read the type back off them by comparing the 5x5 marks against
+`rc.getTowerPattern(PAINT)` and `getTowerPattern(MONEY)`, and follow whatever the first
+soldier chose. That keeps two soldiers from painting conflicting patterns without freezing
+the decision at map-generation time.
+
+Also note 79,840 idle chips is 399 SRPs' worth. The SRP iteration's value is much larger on
+this map class than the six-tower arithmetic suggested.
+
+**Standing bytecode check (iteration 5, Leaf)**: robots peak at 3,264 / 17,500 (18.7%),
+towers 616 / 20,000 (3.1%), **0 overruns, 0 near-misses**. The idle-cause instrumentation
+took the robot peak from ~500 to ~3,264 — a 6x jump for one extra `senseNearbyMapInfos(9)`
+on idle turns — which is affordable now but is worth remembering as the price of sensing:
+this bot is nowhere near the limit, and per the algorithm that headroom is exactly what
+should be spent on better decisions.
