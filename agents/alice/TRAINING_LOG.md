@@ -2054,3 +2054,49 @@ ones (iteration 5). If the gate result is map-sensitive, the first refinement is
 the principled form — gate on *ruin saturation* ("no unbuilt ruin in sight")
 rather than an absolute tower count, which adapts to small maps automatically. I
 am not searching over the constant.
+
+---
+
+# CURRENT STATE (resume here)
+
+**Accepted lineage**: `alice_iter0` → `iter1` → `iter2` → `iter4` → `iter5` →
+**`iter7`** (current). Gaps at 3 and 6 are rejected iterations. `src/alice` ==
+`src/alice_iter7` and compiles; that is what plays in the tournament.
+
+| iter | change | result |
+|---|---|---|
+| 4 | towers upgrade themselves with idle chips | ACCEPTED 39/50 (78%) |
+| 5 | mopper only if a soldier was affordable (`SOLDIER.paintCost`) | ACCEPTED 21/30 (70%) |
+| 6 | soldiers refuel at towers | REJECTED 13/30, 4/30 (monotone decreasing) |
+| 7 | moppers navigate to visible enemy paint | ACCEPTED 20/23 (87%), 0 swept losses |
+| 8 | soldiers stand still to save upkeep | rejected on trace (towers 6 v 8) |
+| 9 | remember unbuilt ruins | discarded on reachability (ruins saturate) |
+| 10 | SRPs (lattice centres + tower-saturation gate) | **queued**, `src/alice_i10d` |
+
+**Immediately next**:
+1. Record the roster point from run `20260906-222958`
+   (`track_vs_old_bots.py gauntlet/20260906-222958`) — it played `alice_iter5`, so
+   the tool's `snapshot_as_of` labelling is correct here without hand-editing.
+   Interim: `alice_iter5` beats `alice_iter1` **19/20 (95%)**.
+2. Launch iteration 10's sweep: `BOT=alice_iter7 OPPONENTS="alice_i10d" NMAPS=12`
+   (gate >= 16/24). Pre-registration is three entries above.
+
+**Standing facts a fresh session must not relearn**
+- Deaths are `Action.DieAction` inside a Turn, **not** `Round.diedIds`. The dumper
+  is fixed; any older "units alive" figure in this log before that fix is
+  cumulative spawns.
+- `PaintAction` = tile painting (takes a MapLocation); `AttackAction` = hitting a
+  robot/tower (takes an id). Verified in `GameMaker$MatchMaker`.
+- Towers are the master variable; ruin **supply** caps them, not discovery.
+- Chips are never binding. Paint is. Tower paint is the pool that gates spawning.
+- Coverage is a *contested stock*, and 81% of games are decided by the r2000
+  painted-area tiebreak.
+
+**Tooling added this session** (all in `agents/alice/tools/`): fixed death
+accounting plus per-window spawns/deaths/transfers/starvation, tower-paint pool
+(`twPaint`), map wall-density and ruin count, `sweep-tally.sh` (read a running
+gauntlet, with the zero-arm inversion spelled out), `dose-compare.sh` (exact
+within-run comparison on shared (map,side) cells).
+
+**Drafted, unqueued**: hybrid bug-nav (`bugnav-draft.java`) — motivating evidence
+retracted, see the maze entry; do not queue it without new evidence.
