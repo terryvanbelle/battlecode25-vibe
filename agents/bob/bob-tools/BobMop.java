@@ -38,6 +38,12 @@ public class BobMop {
     static final int[] deathRounds = new int[8];
     static final int[] deathCount = new int[8];
     static int exceptionDeaths = 0;
+    // Paint accounting. Income is derived from live tower levels (paintPerTurn 5/10/15
+    // for L1/L2/L3 paint towers, 0 for every other type -- engine-probed). Spend on
+    // painting is 5 paint per soldier PaintAction and 50 per SplashAction. Whatever
+    // income does not appear as either is passive drain: territory penalties and
+    // adjacency, i.e. paint converted into nothing.
+    static long income = 0, paintActs = 0, splashActs = 0, spawnPaint = 0;
     static final List<int[]> pendingDeaths = new ArrayList<>();  // [id, dieType]
 
     public static void main(String[] args) throws Exception {
@@ -121,7 +127,13 @@ public class BobMop {
                                 int team = sa.team() - 1; byte rt = sa.robotType();
                                 if (team < 0 || team > 1 || rt < 0 || rt > 6) continue;
                                 idTeam.put(sa.id(), team); idType.put(sa.id(), (int) rt);
+                                if (team == us) {
+                                    if (rt == RobotType.SOLDIER) spawnPaint += 200;
+                                    else if (rt == RobotType.SPLASHER) spawnPaint += 300;
+                                    else if (rt == RobotType.MOPPER) spawnPaint += 100;
+                                }
                             } else if (at == Action.PaintAction && tm != null) {
+                                if (tm == us) paintActs++;
                                 turn.actions(cur, a); pa.__assign(cur.pos(), cur.buf());
                                 set(pa.loc(), tm.byteValue());
                             } else if (at == Action.UnpaintAction) {
@@ -131,10 +143,19 @@ public class BobMop {
                                 turn.actions(cur, a); da.__assign(cur.pos(), cur.buf());
                                 pendingDeaths.add(new int[]{da.id(), da.dieType()});
                             } else if (at == Action.SplashAction && tm != null) {
+                                if (tm == us) splashActs++;
                                 turn.actions(cur, a); sp.__assign(cur.pos(), cur.buf());
                                 splash(sp.loc(), tm.byteValue());
                             }
                         } catch (RuntimeException e) { /* diagnostics only */ }
+                    }
+                }
+                for (int j = 0; j < r.turnsLength(); j++) {
+                    r.turns(turn, j);
+                    Integer tm2 = idTeam.get(turn.robotId());
+                    Integer ty2 = idType.get(turn.robotId());
+                    if (tm2 != null && tm2 == us && ty2 != null) {
+                        if (ty2 == RobotType.PAINT_TOWER) income += 5;   // level unknown; L1 floor
                     }
                 }
                 for (int j = 0; j < r.diedIdsLength(); j++)
@@ -184,6 +205,18 @@ public class BobMop {
         tn[RobotType.SOLDIER] = "SOLDIER";
         tn[RobotType.SPLASHER] = "SPLASHER";
         tn[RobotType.MOPPER] = "MOPPER";
+        long spent = paintActs * 5 + splashActs * 50;
+        System.out.println("# PAINT ACCOUNTING (income is a LOWER BOUND: assumes every");
+        System.out.println("#   paint tower is level one, 5/turn; L2 is 10 and L3 is 15)");
+        System.out.println("#   tower income (>=)     " + income);
+        System.out.println("#   paid out as spawns    " + spawnPaint
+            + "   (" + (income > 0 ? 100 * spawnPaint / income : 0) + "% of income)");
+        System.out.println("#   soldier paint actions " + paintActs + " x5 = " + paintActs * 5);
+        System.out.println("#   splash actions        " + splashActs + " x50 = " + splashActs * 50);
+        System.out.println("#   total onto the map    " + spent
+            + "   (" + (income > 0 ? 100 * spent / income : 0) + "% of income)");
+        System.out.println("#   => passive drain      " + (income - spent)
+            + "   (" + (income > 0 ? 100 * (income - spent) / income : 0) + "% of income)");
         System.out.println("# exceptionDeaths=" + exceptionDeaths);
         System.out.println("# DEATHS of our units, bucketed by paint held on the last turn");
         System.out.println("# type,deaths,paint<=10(starved),paint 11-50,paint>50(killed)");

@@ -1534,3 +1534,72 @@ Order stays: iteration 8 (demand side) alone first, then this (supply side) alon
 so each is interpretable. If they interact, the interaction is measurable as the
 difference between their individual and combined effects — which is only possible
 if they are run separately first.
+
+
+---
+
+## Paint accounting (2026-09-06) — 59% of the paint we hand our units evaporates as drain
+
+Engine probe first, because the whole picture turns on two numbers I had never
+actually looked up:
+
+```
+LEVEL_ONE_PAINT_TOWER   paintPerTurn=5    LEVEL_TWO=10   LEVEL_THREE=15   cap 1000
+SOLDIER paintCost=200   SPLASHER paintCost=300   MOPPER paintCost=100
+every money tower and defense tower: paintPerTurn = 0
+```
+
+**A level-one paint tower makes 5 paint per turn. A soldier costs 200 paint — forty
+turns of a tower's entire output.** With the 2-3 paint towers the Castle trace shows,
+team paint income is on the order of 20-30/turn, and that is the budget for
+everything.
+
+### Where it goes (Castle, our side, whole game)
+
+```
+paid out as spawns                      58,000 paint
+soldier paint actions   2,686 x 5   =   13,430
+splash actions            207 x 50  =   10,350
+                                      ---------
+total that ever reached the map         23,780
+```
+
+Units were handed **58,000** paint at spawn and put **23,780** of it onto the map.
+78% of them died holding ≤10, so the missing **~34,220 — 59% of everything the
+economy produced — went to passive drain**: the −1/turn on neutral, −2 on enemy
+(moppers double), and +1 per adjacent allied robot. Not to painting. Not to combat.
+To standing in the wrong place while walking around.
+
+(The tower-income counter in the tool is a lower bound — it assumes every paint
+tower is level one, and the starting one is level two — so I derive the drain from
+the spawn/spend gap instead, which needs no such assumption. Refills that did fire
+would only make the drain estimate larger.)
+
+### Correction to my own earlier claim
+
+The starvation entry above priced Castle's losses as "~39,800 paint spent on units
+that then died with an empty stash", implying the paint died with them. That is
+wrong and I am correcting it rather than leaving it to stand. A starved unit **had
+already spent** its stash; the question is on what. This accounting answers it: a
+bit over 40% on painting, and nearly 60% on drain. The waste is not the death, it
+is the wandering that precedes it. Same root cause, but the mechanism is now exact
+instead of rhetorical, and the earlier phrasing overstated the case.
+
+### What this changes
+
+1. **Iteration 8's rationale survives and sharpens.** A unit that walks home and
+   refills converts tower paint into more painting instead of more bodies. But the
+   lever is not "stop units dying" — it is "stop units paying rent on tiles they are
+   not painting".
+2. **A new risk for iteration 8, from the adjacency term.** The penalty includes
+   +1 per adjacent allied robot, doubled in enemy territory. Units queueing around a
+   tower to refill will be adjacent to each other and to the tower's other
+   customers, so a refill queue is itself a drain source. If iteration 8 comes back
+   flat, this is the second thing to check after the tower-stash question.
+3. **A new candidate lever, unqueued and cheaper than either:** reduce drain
+   directly. `Nav.navTo` already prefers not to step on *enemy* paint; it is
+   indifferent to *neutral*, which costs 1/turn. Preferring ally paint when moving —
+   free, no new sensing, a comparison the loop already has in hand — attacks 59% of
+   the budget rather than the margin. Recorded here as evidence, not yet a
+   hypothesis; it needs its own reachability check (how often is an ally-paint step
+   available and not taken?), which is answerable from a replay for no games.
