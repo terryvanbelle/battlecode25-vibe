@@ -187,3 +187,15 @@ every early mark a money tower under 2b's threshold.
 band; (2) mechanism — towers built in a DefaultLarge trace materially above 3;
 (3) the big-map recoveries from 2b (Huge/Money/Oasis) are retained.
 Run: 20260906-185051.
+
+### Standing bytecode check (2b build, DefaultLarge full 2000-round game)
+Rounds 1000-1999: **0 overruns, 0 near-misses** (indicator counters OVR=/near=
+never appear). Peak observed: soldiers 1638 / 17500 (9%), towers 534 / 20000
+(3%). **Implication**: bytecode is nowhere near binding — expensive logic
+(BFS/bug-nav, symmetry inference, per-tile pattern computation, wider sensing
+loops) is affordable and should not be avoided on cost grounds.
+
+### Engine trap found (RULES.md updated)
+`transferPaint(loc, -N)` credits the withdrawer through `addPaint`, which clamps
+at capacity, while the tower is debited the FULL N. Over-asking silently burns
+tower paint. Any refill code must request `min(myCapacity - myPaint, towerPaint)`.
