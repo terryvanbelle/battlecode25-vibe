@@ -123,3 +123,48 @@ Swept-win/swept-loss counts, and the *fall* in split-by-side (10 → 3 at iterat
   cannot disturb a gauntlet that is running.
 - Keep `HEAD`'s `src/bob` at the best *verified* bot at all times — it is what
   plays in the twice-daily tournament. Uncommitted candidates stay uncommitted.
+
+---
+
+## 7. Lessons from the iteration 5-7 block (2026-09-06)
+
+**A rate is a claim about a denominator.** I reported that our splashers and moppers
+ran at "~1% of action capacity". The denominator was cumulative *spawn* counts,
+because that is what the dumper's unit columns actually are. Read against live
+population (from `Turn` records: 2 moppers alive where 52 had been built), the real
+figure is ~37%. The finding reversed completely. Before publishing any per-unit
+rate, confirm the denominator is the population you mean, not a total the engine
+happens to expose.
+
+**Simulate against the real distribution, not an idealised model of it.** I
+validated the tower-mix hash offline against synthetic ruin lattices at spacings
+5-8 and concluded the old parity rule "returns 100% one type on every even
+spacing". True of a perfect lattice. Measured against all 75 actual map files, the
+old rule degenerates on **4 maps out of 75**, and the hash's mean deviation from a
+50/50 mix is very slightly *worse* (9.9 vs 9.3 points) because it scatters moderate
+skew across maps the old rule had at exactly 50/50. Offline pre-checks are still
+right and still cheap — but run them against the real population when the real
+population is sitting on disk. It was, and I did not look until after the run.
+
+**When an h2h lands near 50%, count byte-identical games before calling it
+marginal.** Determinism makes a re-run worthless, so the useful question is whether
+the two arms were ever different. Iteration 5's 15/30 turned out to be 13 of 15
+maps byte-identical, i.e. a no-op measured as a coin flip. `results.csv` alone
+answers this: identical round counts and the same winning *side* from both sides.
+
+**Check that the map sample can even see the change.** Iteration 7's 20-map sample
+contained none of the 4 maps where its mechanism is live. A random sample is the
+right default against overfitting, but for a change whose effect is concentrated in
+a known subset, the sample size that matters is the number of *affected* maps drawn,
+which can easily be zero. Compute the affected subset from the mechanism before the
+run, and check the drawn sample against it.
+
+**Selecting maps by mechanism is legitimate; selecting them by outcome is not.**
+Re-running on the maps where a change is live is a valid instrument as long as the
+subset is defined by the mechanism *before* results are seen, and as long as the
+broad random sample is still reported as the no-regression check. Both halves get
+stated, or it is cherry-picking.
+
+**Deaths are in `DieAction`, not `Round.diedIds`.** `diedIds` is empty for the whole
+game in this engine. Anything counting deaths off it silently counts zero — which
+is what my first death-forensics pass did, and it looked like a clean result.
