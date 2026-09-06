@@ -2568,3 +2568,62 @@ Pre-checks still owed before it is written: *trigger frequency* (how often does 
 `refillIfPossible` was accepted on its own evidence and this narrows it, so the change must
 supersede that reasoning rather than silently undo it). Not writing code until both are done —
 which is precisely the discipline iteration 8 skipped.
+
+### Trigger-frequency pre-check for the paint reserve — PASSES decisively, and it is general
+
+Two measurements, both off existing replays:
+
+**1. The *absorbing* state is Dominoes-only.** Longest run with every carol tower simultaneously
+at 0 paint, excluding Dominoes: across 21 carol-side games the maximum is **1 round** (median
+0). So the unrecoverable no-paint-tower state really is confined to the one map, which confirms
+iteration 8's re-scoping was right but says nothing about a paint reserve.
+
+**2. The *starvation* it comes from is everywhere.** The sharper question is how often carol
+simply cannot build a soldier for want of tower paint. Counting rounds in the **first 100**
+where **no** tower holds the 200 paint a soldier costs:
+
+```
+n = 27 games
+median = 28 of the first 100 rounds with no tower able to afford a soldier
+9 of 27 games spend MORE THAN HALF the opening unable to build one
+worst: defensetower 99/100, Dominoes 97-98/100, boxofchocolates 70/100, DefaultSmall 59/69
+```
+
+**Carol spends roughly a quarter to a half of every opening unable to produce a unit anywhere on
+the board — while chips sit at 1,200-1,500.** That is not a Dominoes quirk; it is the shape of
+carol's opening on most maps, and it is the same two-ceiling story as iteration 5, one resource
+over: chips were the binding cap on unit *rate*, and paint is the binding cap on unit
+*existence* in the opening.
+
+This also reframes the Dominoes loss. Dominoes is not a different failure — it is the ordinary
+opening starvation plus an opponent that arrives at r30 to punish it. The other 26 games survive
+their starvation because nothing shows up to exploit it.
+
+**Trigger-frequency pre-check: PASS**, with a much larger opportunity than the degeneracy that
+motivated it. Remaining owed pre-check is *history*, below.
+
+### History pre-check for the paint reserve — clean, and the provenance is itself the finding
+
+`refillIfPossible` traces to **iteration 0**, the deliberately-minimal baseline bot: *"Soldiers:
+refill at adjacent towers when <50%"*. It was scaffolding, chosen to make the bot function at
+all, and **no iteration since has ever examined it**. So narrowing it supersedes no accepted
+reasoning and reverts no evidenced decision — the history check passes trivially.
+
+But the provenance is the more interesting half. **An arbitrary iteration-0 constant has
+survived seven iterations unexamined and now measurably costs carol a quarter to a half of every
+opening.** Iterations 1-7 tuned painting policy, exploration, tower mix, and the chip reserve —
+each with traces and gates — while the rule governing *the resource all of it depends on*
+was never once questioned, because it was never anybody's hypothesis.
+
+That is the ablation track's whole argument, arriving unprompted: the algorithm says carried
+features should be gated off and measured, and notes that a 2026 audit found the headline
+accepted features were worth ~0 while incidental ones carried the value. Here the unexamined
+scaffolding is plausibly worth more than several accepted iterations.
+
+**Both pre-checks now pass**, so the paint reserve is cleared to be written — after iteration 8
+reports, and not bundled with it.
+
+**Also queued from the same observation, as a proper ablation rather than an invention**: gate
+`refillIfPossible` off entirely and measure it. It has never been measured at all, and per the
+algorithm one cheap run per carried feature has historically found more real corrections than
+invention did.
