@@ -1484,3 +1484,36 @@ IDENTICAL
 whenever the arms differ in instrumentation. Better still, keep the tag constant across a dose
 pair — `carol_i6a` and the candidate should have shared one tag and differed only in the
 constant, and then the raw hash would have worked.
+
+### The one h2h outlier, checked — and a moderation of the previous claim
+
+`rain botB` was the single head-to-head replay showing a long frozen treasury (233 rounds), so
+I traced it rather than leaving it as an unexplained outlier.
+
+| round | (chips, towers) per team |
+|---|---|
+| 200 | (1400, 5) (1400, 6) |
+| 600 | (1400, 5) (1400, 7) |
+| 900 | (400, 5) (1150, 7) |
+| 1300 | (1400, 6) (1400, 7) |
+| 2000 | (500, 3) (1400, 6) |
+
+The freeze here is **transient, not terminal**: chips move again by r900 and the team recovers.
+And note where it rests — **exactly 1400 chips**, repeatedly. The soldier gate is
+`1200 + 250 = 1450` and the mopper gate `1500`, so **1400 sits inside the dead band**; the
+treasury is idling one build short of the threshold, with 5-7 towers standing, on a map where
+nobody is killing towers.
+
+Two consequences, one of which moderates what I wrote earlier:
+
+1. **The h2h is not completely blind after all.** I claimed it "physically cannot see" the
+   fix. That is right for the *terminal* form (which needs the last money tower to die) but
+   too strong for the *transient* form, which does occur in ordinary play. The gate will see a
+   little of the effect. The restructured mechanism-primary gate stands — 1 of 22 replays is
+   still far too thin to gate on — but the claim as written overstated it, and I would rather
+   correct it here than have it quoted back at me later as established.
+2. **The trigger stays rare enough to be safe.** 21 of 22 h2h loss replays show 0-4 frozen
+   rounds and three won games show 0, so `STAGNANT_ROUNDS = 10` still fires almost only in the
+   terminal case. Had transient freezes been common, disarming the reserve during them would
+   risk spending the very chips that protect a ruin completion — that was the live risk, and
+   this measurement retires it.
