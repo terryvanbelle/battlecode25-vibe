@@ -41,6 +41,28 @@ Engine-verified facts marked [E].
 - Low-paint cooldown: if stash < 50% full, cooldowns increased by (100 − 2·X)% where X = %full
   [E: applied via round() in addActionCooldownTurns/addMovementCooldownTurns, robots only].
 
+## HARD LOSS CONDITION: no paint tower = unrecoverable [E, verified by disassembly]
+
+**A team holding no paint tower, whose robots hold no paint, has already lost.** There is no
+recovery path in the rules. The chain, each link read out of the engine rather than inferred:
+
+1. `InternalRobot.processBeginningOfRound` gates paint income on the tower's OWN type:
+   `if (type.paintPerTurn != 0) addPaint(type.paintPerTurn + 3*numSRPs)`.
+2. A money tower has `paintPerTurn == 0`, so it gains paint from **nothing** — not mining, and
+   **not from SRPs either**, because the SRP bonus sits inside that same guard.
+3. A robot's build cost in paint is drawn from the **building tower's stash**, so a team whose
+   towers are all dry cannot `buildRobot` at all, at any chip total.
+4. No robot means no ruin can be painted, so no new tower — paint or money — can ever be built.
+
+Observed: on Dominoes carol's starting paint tower died ~r200; she then held one dry money
+tower for 1,800 rounds while chips climbed to **60,000 unspendable**, taking 29 soldier actions
+in the whole game. It costs the accepted baseline 2 of 40 games vs `carol_rush`.
+
+Consequences for design: the paint-tower count is a survival variable, not an economic one;
+`NUMBER_INITIAL_PAINT_TOWERS = 1` means every game starts one death away from this state; and
+chips are worthless the instant it happens, so any "spend the surplus" logic must not be what
+you rely on to escape.
+
 ## Robots (all: vision r²=20, move cooldown +10, cooldowns −10/turn, act when cooldown <10)
 
 | | Soldier | Splasher | Mopper |
