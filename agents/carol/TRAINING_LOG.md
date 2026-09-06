@@ -1953,3 +1953,43 @@ Also note what this says about `carol_iter5` as an instrument for *this* class o
 cannot pose the threat, so it cannot regression-test it. That is the self-referential blind
 spot with a number attached — 0 firings in 39 games — and it is the concrete justification for
 `carol_decap` existing at all.
+
+### The owed play-symmetry audit, settled for free by iteration 7's h2h block
+
+`TRAINING_LOG` has carried "a dedicated pinned-map mirror run is still owed" since iteration
+3, and `src/carol_mirror` is currently **stale by 197 lines** — it is a copy of a much older
+`src/carol`, i.e. it has silently stopped being a mirror, exactly the staleness failure
+`tools/sync-mirror.sh` exists to prevent. (Left stale deliberately for now: the script's
+discipline is to resync immediately before a mirror match, and syncing it to an unaccepted
+candidate would be worse than leaving it obviously wrong. The script refuses to *claim* mirror
+status when it differs, so it cannot mislead silently.)
+
+But the audit no longer needs its own run, because **iteration 7's h2h block already is one.**
+The mechanism provably never fires against `carol_iter5` (`stag` = 0, `rsv` never dropped, 39
+games), so the two builds are behaviourally identical and the block is a mirror match over 20
+maps x both sides. Per-map results:
+
+```
+side A won the map:  Castle DefaultLarge DefaultSmall Gears Mirage PlumberGame
+                     boxofchocolates defensetower rain                        =  9
+side B won the map:  Bunny DefaultMedium Dominoes Fossil HungerGames Money
+                     Parking_lot gridworld quack sayhi                        = 10
+```
+
+**Every map splits by side, and the winning side is 9-10 across maps.** That is precisely the
+healthy signature: the outcome on any given map is decided by spawn geometry, and *which* spawn
+is favoured is a coin flip across maps. A play-symmetry bug — a compass-ordered `Direction[]`
+scan, a hardcoded fallback, anything correlated with team identity — would show up as one side
+winning most maps. Nine versus ten is as clean as this instrument gets.
+
+**Audit result: PASS, no systematic side bias.** Caveat recorded honestly: this is a
+behavioural mirror (identical decisions), not a byte-identical one, and the maps are this run's
+sample rather than a pinned repeat. Both are fine for the question asked — every map is played
+from both sides *within* the run, which is the only property the audit needs. A dedicated
+byte-identical mirror run stays on the list, but at much lower priority now that the answer is
+known.
+
+Worth noting the general move: the mirror audit was owed for four iterations because it looked
+like it needed its own 40-game run. It did not — it needed someone to notice that a run already
+in flight had produced the data. Check what the current run already answers before queueing a
+new one.
