@@ -81,3 +81,34 @@ Only two things convert enemy territory:
 So the coverage race is won by conversion capacity, not by painting speed on virgin
 ground, and a bot with no splashers has almost none. Elevates splashers from "a nice
 throughput gain" to the central missing capability.
+
+## Measurement (addendum, 2026-09-06)
+
+- **Never score a gauntlet from a prefix.** Iteration 2's accept note was written from a
+  partially-written `results.txt` and concluded "carol_rush is running near even against
+  carol", which became the leading structural target. Over the completed 32 games rush was
+  at 84.4%. The h2h that gated the accept happened to be complete (the runner iterates
+  opponents in order), so the decision survived, but the strategic conclusion filed with it
+  was wrong for hours. Wait for `GAUNTLET-COMPLETE`.
+- **Map sampling changed on 2026-09-06**: `tools/gauntlet.sh` now draws a fresh RANDOM
+  25-map sample per run instead of using a hand-picked list, because a standing map list is
+  an overfitting surface. Consequences for reading this log: (a) win rates from runs BEFORE
+  and AFTER that change are not measured on the same instrument and must not be compared as
+  raw deltas — iterations 0-3 ran on a fixed 16-map list; (b) within a run the sample is
+  shared by every opponent, so the accept gate (a within-run head-to-head) is unaffected;
+  (c) pin `MAPS="$(cat gauntlet/<run-id>/maps.txt)"` whenever run-to-run comparability is
+  the point — regression checks against an older snapshot, ablations, re-running a single
+  map to trace it, and especially the mirror-match play-symmetry audit, which cannot tell a
+  real side bias from a resampling artifact unless the maps are pinned.
+
+## Fixed constants rot into dead bands
+
+A flat threshold on a resource creates a band the resource can get stuck in. `CHIP_RESERVE`
+= 1200 meant a tower spawned only at `chips >= 1200 + unitCost`; on a map where no further
+ruin was ever completed the treasury settled at ~1350 — above the reserve, below the gate —
+and unit production stopped **completely and permanently** at round 25, with a full paint
+stash and 1350 chips unspent, ending in annihilation at round 69. The reserve had been
+accepted on good evidence (it fixed a tower collapse) and was still right in the regime it
+was measured in; it was armed in a regime that was never measured. Two rules that follow:
+arm a reserve only once the thing it protects is demonstrably happening, and instrument the
+gate value itself (`rsv=` in the indicator string), not just the resource it gates.

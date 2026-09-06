@@ -1,0 +1,5 @@
+# Process changes -- how carol EVALUATES, not individual accepts.
+# <commit>|<label>
+f94ca2c|mirror-sync instrument (verified byte-identical copy for symmetry audits)
+553ddef|score only after GAUNTLET-COMPLETE (iter2 was scored from a prefix)
+c9c6a9d|gauntlet draws a fresh random 25-map sample each run

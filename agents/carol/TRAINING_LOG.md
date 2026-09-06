@@ -410,3 +410,213 @@ above hands me a traced, catastrophic, absolute degeneracy in the exact resource
 splasher candidate says it needs (chips), so fixing the dead band first is both higher
 value and makes the splasher evaluation interpretable. Recorded here rather than by
 editing the earlier entry, so the ordering change is visible.
+
+---
+
+## Iteration 4 (2026-09-06) — econ: arm the chip reserve only after a completion
+
+**Area**: econ. **Target selected** from iteration 3's traced absolute degeneracy (above),
+not from a losing-game sample: production halting permanently needs no opponent to be wrong.
+
+**Change (one mechanism, 3 lines)**: `runTower` computes
+`reserve = (getNumberTowers() > startTowers) ? CHIP_RESERVE : 0`, where `startTowers` is
+the tower count this tower saw on its own first turn (0 for towers built later, whose very
+existence proves completions happen). Iteration 2's reserve is preserved *in the regime it
+was measured in* — a team that is completing ruins — and disarmed in the regime that was
+never measured: a team that has completed none, where the hoard protects nothing.
+`rsv=` added to the tower indicator string so the gate value itself is instrumented, not
+just the resource it gates.
+
+**Reachability / history pre-checks**: iteration 2 deliberately established this reserve,
+so this must supersede rather than silently revert it — it does, on new evidence (the dead
+band), and it leaves the reserve armed wherever iteration 2's evidence applies.
+
+**Mechanistic verification (step 4)** — re-ran the motivating game, `carol` vs `carol_rush`
+on DefaultSmall (`matches/carol-vs-carol_rush-on-DefaultSmall.bc25`):
+
+| round | chips | tw | tower paint | rsv |
+|---|---|---|---|---|
+| 1 | 1980 | 2 | 300 | 0 |
+| 6 | 1080 | 2 | 0 | 0 |
+| 14 | 1320 | 2 | 0 | 0 |
+| 24 | 1020 | 2 | 0 | 0 |
+| 30 | 720 | 1 | 0 | 0 |
+
+Classification: **case 2 — still lost, mechanism demonstrably engaged.** `rsv=0`
+throughout, and the treasury is now actively spent (repeated 250-chip drops) instead of
+freezing at 1350; the loss moves from round 69 to round 122. The specific reason this game
+still cannot flip is visible in the same trace and is a *different* constraint: **`tp=0`
+from round 6 onward** — the towers are paint-dry, and `buildRobot` draws the unit's paint
+from that tower's own stash, so a lone lv2 paint tower at 10 paint/turn can emit one
+200-paint soldier per 20 rounds no matter how many chips are free. On small maps the early
+binding resource is tower paint, not chips. Registered as the next target.
+
+**Pre-registered gate** (25 randomly sampled maps x both sides x 2 opponents = 100 games;
+first run under the new random-sampling gauntlet):
+- PRIMARY: h2h vs `carol_iter3` > 50% (accept), 45-50% near miss, < 45% reject.
+- REGRESSION, stated as a win-*type* so it is comparable across different map samples:
+  **zero annihilation losses to `carol_rush`** (iteration 3 had two).
+- 0 thrown exceptions; no one-directional regression concentrated on one map or side.
+- If the h2h lands in the near-miss band, the pre-registered refinement is the *dose*:
+  arm the reserve on `getNumberTowers() > startTowers` OR `roundNum > R` for R in
+  {100, 200}, measured with a zero arm — not a new mechanism.
+
+## Trace while iteration 4 ran — chip income, not the reserve, is the real cap
+
+Traced iteration 3's two *swept*-loss maps (`gauntlet/20260906-201624/losses/`,
+carol_iter2 on galaxy and Castle, side A). Both show the same frozen signature at every
+400-round sample: chips 1300-1400, tower count 6, average tower paint 240-400. Round-by-
+round on galaxy (r600-r640):
+
+```
+r=600 chips=1300 tw=6 tp=501     r=605 chips=1200 (a unit was built)
+r=601 chips=1330 tw=6 tp=506     ... +30/round ...
+r=604 chips=1420 tw=6 tp=521     r=614 chips=1220 (another)
+```
+
+Chip income is **exactly 30/turn** — the single starting lv2 money tower — because
+iterations 2 and 3 build a *paint* tower at every ruin. So with six towers the team can
+build **one soldier per 8.3 rounds, forever**, while tower paint climbs +5/turn net
+(501 -> 701 over 40 rounds) and is never spent. Unit count is capped by chip income, not by
+the reserve: the reserve shifts the steady state by a one-off 1200 chips, the income caps
+the *rate*.
+
+**This reprioritises the queue.** The `towerTypeFor` money-tower mix that had been bundled
+into the splasher candidate is now independently motivated by a trace — it is not a
+splasher-affordability hack, it is a fix for the rate cap on all unit production. Splitting
+the pair:
+- **Iteration 5 = money-tower mix alone** (~1 ruin in 3 becomes a money tower). Reachability
+  is not an issue for the money mix in isolation, so the iteration-2 style "indivisible
+  pair" argument does not apply to it, and testing it alone makes both halves attributable.
+- **Iteration 6 = splashers** (spawn mix + the rewritten splash targeting), on top of it.
+- The SRP work drafted from the API sweep moves behind both; it is a chip *sink*, and a sink
+  is worth little until the chip *source* is fixed.
+
+## Closed direction (closed by arithmetic, before spending a run) — tower upgrades
+
+The API sweep listed `upgradeTower` as an unused mechanic, so I priced it against a
+2000-round game before queuing it:
+
+| upgrade | chips | gain | payback |
+|---|---|---|---|
+| money lv1 -> lv2 | 2500 | +10 chips/turn | 250 rounds |
+| money lv2 -> lv3 | 5000 | +10 chips/turn | 500 rounds |
+| paint lv1 -> lv2 | 2500 | +5 paint/turn | 500 rounds |
+| paint lv2 -> lv3 | 5000 | +5 paint/turn | 1000 rounds |
+| **new money tower at a ruin** | **1000 (already being spent)** | **+20 chips/turn** | **50 rounds** |
+| **one SRP** | **200** | **+3/turn per paint tower AND per money tower (~+18 at 6 towers)** | **~11 rounds** |
+
+Upgrades are the worst chip-per-income purchase in the game by an order of magnitude, and
+the +500 HP is worth little in a year where no unit damages robot HP. **Closed**: not worth
+an iteration unless a future trace shows chips idle *after* both the money mix and SRPs are
+in (the FourCorners 16850-idle-chips regime is the only place it could ever apply).
+Reopening requires that specific evidence, not "we never tried it".
+
+Note the top row: switching a ruin's build type costs nothing extra — the 1000 chips are
+being spent either way — which is the algorithm's "capability preserved at zero marginal
+cost" shape and is why the money mix goes first.
+
+## Standing play-symmetry audit — side splits (2026-09-06)
+
+Bot win rate by the side carol played, over the three completed runs:
+
+| run | side A | side B |
+|---|---|---|
+| 20260906-184023 (iter2, 96g) | 44/48 = 92% | 43/48 = 90% |
+| 20260906-201624 (iter3, 64g) | 25/32 = 78% | 29/32 = 91% |
+
+No systematic side bias; the iter3 gap is 4 games, ~1.4 sd at n=32, so it does not clear
+the noise floor. The iteration-2/3 symmetry work (ID-parity tie-break in `stepToward`,
+mirror-invariant keys) is holding. A dedicated pinned-map mirror run is still owed —
+per the coordinator's note it MUST pin `MAPS` now that samples are random, or a resampling
+artifact is indistinguishable from a real side bias.
+
+### Iteration 4 RESULT — REJECTED
+
+Run `gauntlet/20260906-202908` (first run under random map sampling; 25 sampled maps x both
+sides x 2 opponents).
+
+| instrument | result | gate | verdict |
+|---|---|---|---|
+| h2h vs `carol_iter3` | **20/50 = 40.0%** | > 50% accept, 45-50% near miss | **REJECT** (below the near-miss band) |
+| vs `carol_rush` | ~91% | zero annihilations | (representativeness check only) |
+
+Diff shape: 11 of 18 decided maps split by side (WL/LW), 4 swept losses, 1 swept win —
+scattered, mixed-direction churn with a consistent negative tilt. Side split was even
+(A 39%, B 41%), so this is not a symmetry artifact.
+
+**Why it lost, traced.** The gauntlet plays candidate vs `carol_iter3` in one game, so both
+arms are in the *same replay* and are separable by the `rsv=` field only the candidate
+emits. On `starburst` side A:
+
+| round | candidate (rsv armed late) | | | carol_iter3 (reserve always armed) | | |
+|---|---|---|---|---|---|---|
+| | chips | tw | avg tp | chips | tw | avg tp |
+| 300 | 1350 | **5** | 486 | 1400 | **6** | 736 |
+| 600 | 1350 | 5 | 629 | 1400 | 5 | 642 |
+| 1200 | 600 | 4 | 426 | 1400 | 5 | 504 |
+
+The candidate is **one tower behind by round 300 and never catches up**, with materially
+less banked tower paint. So iteration 2's early reserve was load-bearing after all: the
+1980 starting chips it hoards are exactly the first ruin completion, and spending them on
+~7 early soldiers instead costs a tower for the whole game. The dead band is real, but the
+cure was worse than the disease, and the belief "the early reserve is idle capital" is now
+firmly disproved rather than weakly held. Both arms sat in the same chip band from round
+600 on, so the change only ever touched the early game.
+
+**DECISION: REJECT, full revert** (`src/carol` back to the iteration-3 code, which is what
+HEAD already carries — the tournament is unaffected). `carol_iter3` remains the baseline;
+no `carol_iter4` snapshot is created, so the next accepted iteration takes that number.
+
+**What this buys.** The dead band still exists, but it is now correctly diagnosed as a
+*symptom*: it becomes terminal only when chip income reaches zero, and income reaches zero
+only because iterations 2-3 build a paint tower at every ruin so there is exactly one money
+tower on the board. Fix the income and the reserve stops being a trap without touching it.
+That is iteration 5. The hysteresis variant of the reserve (arm above 2x, release below
+1x + unitCost, which provably has no dead band while keeping the early hoard) is logged as
+available but deprioritised behind the income fix, not closed.
+
+Functional-area tally: econ now has 1 consecutive reject (`MaxConsecutiveRejects` = 3).
+
+---
+
+## Iteration 5 (2026-09-06) — econ: money-tower mix (plus idle-cause instrumentation)
+
+**Area**: econ. **Target** from the galaxy/Castle trace above, not from a loss sample:
+chip income is a flat 30/turn, so unit production is pinned at one soldier per 8.3 rounds
+for the whole game while tower paint accumulates unspent. Absolute degeneracy, no opponent
+required.
+
+**Change**: `towerTypeFor(ruin)` returns `LEVEL_ONE_MONEY_TOWER` when
+`min(x, W-1-x) + min(y, H-1-y)` is divisible by 3, else a paint tower — roughly one ruin in
+three. Pure function of the ruin (two soldiers must never mark different patterns on the
+same ruin) and invariant under both map symmetries (reflection and 180-degree rotation both
+preserve those two terms), so neither team gets a different build mix.
+
+*Dose*: the mix ratio is the dose. 1-in-3 is the first arm; 1-in-2 and the zero arm
+(iteration 3, all paint) bracket it, and the zero arm is already measured within the same
+run because `carol_iter3` is the h2h opponent.
+
+**Also in this candidate — instrumentation only, changes no decision**: the `NOTGT` idle
+state is split into `IDLE-ALLY` / `IDLE-ENEMY` with the ally/enemy tile counts in the r2=9
+radius. Motivation: on galaxy **74.4% of all soldier turns painted nothing** (66,334 soldier
+turns; only 7.2% were paint-starved), which is carol's largest single degeneracy, and the
+two possible causes demand opposite fixes — everything in reach already ours (navigation:
+the soldier is not at the frontier) versus enemy paint in reach (capability: a soldier
+physically cannot overwrite enemy paint, only a splasher can). Costs ~40 bytecode on an idle
+turn against a measured peak of ~500/17500, and touches no branch condition.
+
+**Pre-registered gate** (25 randomly sampled maps x both sides, opponents `carol_iter3` and
+`carol_rush`, 100 games):
+- PRIMARY: h2h vs `carol_iter3` > 50% accept, 45-50% near miss, < 45% reject.
+- MECHANISM: tower indicator `chips=` must show income above 30/turn (multiple money
+  towers alive), and tower `tp=` must stop climbing monotonically unspent.
+- READOUT (not a gate): the IDLE-ALLY / IDLE-ENEMY split, which selects iteration 6 —
+  IDLE-ENEMY dominant selects splashers, IDLE-ALLY dominant selects frontier-seeking
+  exploration.
+- 0 thrown exceptions; no one-directional regression concentrated on one map or side.
+- Near-miss refinement is the dose (1-in-2, 1-in-4), not a new mechanism.
+
+Compile-checked (`COMPILE-OK`). Waiting on the iteration-4 run's `carol_rush` block to
+finish before launching — two gauntlets from one workspace share `build/classes` and would
+poison each other.
