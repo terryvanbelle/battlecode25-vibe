@@ -292,3 +292,36 @@ wall-clock that a query against an existing replay costs seconds. Before queuein
 ask which pending question the *current* run's replays already contain the answer to. Several
 of this session's findings — the frozen-treasury trigger frequency, the arm-to-arm identity
 check, this audit — came out of runs launched for a different purpose entirely.
+
+## Carol's tower mass is a defence nobody has beaten
+
+Built `carol_decap` specifically to kill carol's money towers, and it went **39/40 = 97.5%**
+against her while **never taking a single tower**: across three traced games carol's tower
+count only ever rose (2->11, 2->15, flat at 4) and never once fell.
+
+The arithmetic says it cannot work. A soldier does 50 damage to a tower, so a lv1 tower at
+1,000 HP needs **20 uninterrupted attacks** — while every carol tower in range returns 20
+single-target *plus* 10 AoE per turn, **for free**, because tower attacks bypass the action
+cooldown entirely (engine note: `assertCanAttackTower` checks only the per-turn flags). Any
+soldier that closes on a defended tower dies well before its twentieth swing. `carol_rush`
+scores its occasional win only by swarming *small* maps in the opening, before carol's second
+and third towers exist.
+
+Three consequences worth carrying:
+- **Tower count is defensive depth, not just economy.** Every accepted econ iteration that
+  raised tower count also bought survivability, and none of them were credited for it.
+- **It explains why the frozen-treasury degeneracy is rare** on the accepted baseline: that bug
+  needs the last money tower to die, and killing *any* tower is already hard.
+- **Adding an economy to an aggressive archetype made it worse at aggression.** carol_decap's
+  ruin-building slowed it to the frontier, so it arrived later and in smaller numbers. An
+  archetype exists to pose one threat cleanly; making it a better *bot* made it a worse
+  *instrument*.
+
+## Judge an instrument by whether it poses the threat, not by its win rate
+
+`carol_decap`'s 97.5% would have supported the summary "it is too weak, tune it up". The trace
+said something entirely different and far more useful: it never kills a tower, so no amount of
+tuning its *targeting* would help — the defect is arrival timing, not target selection. A win
+rate can only tell you an opponent lost; it cannot tell you whether it ever performed the
+behaviour you built it to perform. For any purpose-built archetype, verify the behaviour
+directly in a replay before drawing a single conclusion from its record.
