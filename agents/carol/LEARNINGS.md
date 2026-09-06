@@ -325,3 +325,30 @@ tuning its *targeting* would help — the defect is arrival timing, not target s
 rate can only tell you an opponent lost; it cannot tell you whether it ever performed the
 behaviour you built it to perform. For any purpose-built archetype, verify the behaviour
 directly in a replay before drawing a single conclusion from its record.
+
+## Losing the last paint tower is an instant, silent, unrecoverable loss
+
+Read out of the disassembly, not inferred from the symptom.
+`InternalRobot.processBeginningOfRound` gates paint income on the tower's own type —
+`if (type.paintPerTurn != 0) addPaint(paintPerTurn + 3*numSRPs)` — and a money tower's
+`paintPerTurn` is 0, so it gains paint from **nothing**, SRPs included, because the SRP bonus
+sits inside that same guard. A robot's paint cost is drawn from the *building tower's* stash,
+so once every surviving tower is dry, `buildRobot` fails at any chip total; with no robot no
+ruin can be painted; with no ruin no tower can ever be rebuilt.
+
+Observed on Dominoes: the starting paint tower died around round 200 and carol then held one
+dry money tower for **1,800 rounds while chips climbed to 60,000**, taking 29 soldier actions
+in the whole game. It costs the accepted baseline **2 of 40** games against `carol_rush`, and
+the control arm proved it belongs to the baseline rather than to any candidate.
+
+Three things follow:
+- **Paint-tower count is a survival variable, not an economic one.** Every tower-mix decision
+  is also a bet on not reaching zero paint towers.
+- `NUMBER_INITIAL_PAINT_TOWERS = 1`, so **every game begins one death away from this state**,
+  and a tower-type rule that never asks what the team already holds is gambling every game.
+- **Chips are worthless the instant it happens**, so no "spend the surplus" mechanism — SRPs,
+  upgrades, a disarmed reserve — can be the escape route. Only prevention works.
+
+The general lesson underneath: look for states the rules make *absorbing*. A disadvantage you
+can trade out of is a tuning problem; a state with no legal path out is a correctness problem,
+and it deserves a guard rather than a better heuristic.
