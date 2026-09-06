@@ -1,0 +1,51 @@
+diff --git a/agents/bob/src/bob/Tower.java b/agents/bob/src/bob/Tower.java
+index 78c5dfb..2e21e64 100644
+--- a/agents/bob/src/bob/Tower.java
++++ b/agents/bob/src/bob/Tower.java
+@@ -9,6 +9,15 @@ public class Tower {
+     /** Chips kept in hand after a self-upgrade (expansion is 1000/tower). */
+     static final int UPGRADE_RESERVE = 4000;
+ 
++    /**
++     * Rounds our tower count may stay flat before we stop reserving chips for
++     * expansion. See the dead-band trace in TRAINING_LOG.md, iteration 4.
++     */
++    static final int EXPANSION_IDLE = 200;
++
++    static int lastTowerCount = -1;
++    static int lastGrowthRound = 0;
++
+     static void run() throws GameActionException {
+         RobotController rc = G.rc;
+ 
+@@ -50,8 +59,28 @@ public class Tower {
+         }
+ 
+         // 3. Spawning. Early game: pump units. Later: keep a reserve so soldiers can
+-        //    complete new towers (1000 chips) the moment a pattern is done.
+-        int reserve = rc.getRoundNum() <= 30 ? 0 : 1200;
++        //    complete new towers (1000 chips) the moment a pattern is done -- but
++        //    ONLY while we are still expanding.
++        //
++        //    Traced dead band (iteration 4, starburst and Snowglobe, both swept
++        //    losses): team chips sat pinned at 1200-1350 for the ENTIRE game. That is
++        //    the reserve itself. A soldier costs 250, so spawning needed 1450 and
++        //    never once happened; coverage decayed 428 -> 280 per-mil while the
++        //    opponent climbed to 700 and won by MAJORITY_PAINTED. A fixed reserve
++        //    turns any income shortfall into permanently zero unit production, and it
++        //    was reserving for an expansion that had already finished -- on a
++        //    ruin-poor map the last ruin is captured early and the 1,200 chips then
++        //    protect nothing at all while blocking everything.
++        //
++        //    Self-calibrating replacement (TRAINING_ALGORITHM.md: prefer thresholds
++        //    derived from in-game observation over fixed constants): hold the reserve
++        //    only while the team's tower count is actually still growing. getNumberTowers
++        //    is team-global, so every tower agrees without needing comms.
++        int round = rc.getRoundNum();
++        int towers = rc.getNumberTowers();
++        if (towers != lastTowerCount) { lastTowerCount = towers; lastGrowthRound = round; }
++        boolean expanding = round - lastGrowthRound <= EXPANSION_IDLE;
++        int reserve = (round <= 30 || !expanding) ? 0 : 1200;
+         UnitType want = (spawned % 5 == 4) ? UnitType.MOPPER
+                        : (spawned % 5 == 2 && rc.getRoundNum() > 60) ? UnitType.SPLASHER
+                        : UnitType.SOLDIER;

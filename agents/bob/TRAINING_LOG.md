@@ -911,3 +911,125 @@ Queue order revised on this evidence:
 2. iteration 8 — denial-unit utilisation (this)
 3. iteration 9 — SRPs (written and compile-verified, still the largest paint lever)
 4. then the iteration 3 ablation and the re-opened paint/money ratio sweep
+
+
+---
+
+## Iteration 5 RESULT (2026-09-06) — self-calibrating expansion reserve — REJECTED (no-op)
+
+Session note: the driver session running this evaluation was killed by an SSH
+hangup at ~21:07 UTC. The **run itself finished on battlecode-dev** (only the
+poll loop died) and was recovered with `tools/gauntlet-collect.sh` into
+`gauntlet/20260906-204201/` — 120 games, GAUNTLET-COMPLETE. Not re-run.
+
+### Result against the pre-registered criteria
+
+| pre-registered | required | measured | verdict |
+|---|---|---|---|
+| 1. h2h vs `bob_iter3` | > 50% (≥16/30) | **15/30 = 50.0%** | FAIL |
+| 2. swept-win ≥ swept-loss | — | 0 vs 0 (all 15 maps split by side) | vacuous |
+| 3. chips no longer pinned at 1200-1350 | — | see below | not the reason |
+
+Roster, same shared 15-map sample: `bob_iter0` 26/30 (87%), `bob_iter1` 24/30
+(80%), `examplefuncsplayer` 30/30. Recorded in `progress/vs_old_bots_history.csv`
+labelled as `bob_iter3`, which is the build that actually played — see the
+identity check below.
+
+### The arm-to-arm identity check settles it (measurement doctrine #3)
+
+Not "50%, marginal, re-run it" — determinism means a re-run is worthless, so I
+checked *identity* instead. Per-map round counts, candidate vs `bob_iter3`:
+
+```
+map          A-side rounds   B-side rounds   winner side
+AlarmClock       1188            1188             B
+Bunny            1120            1120             A
+Castle           2000            2000             B
+...              (13 of 15 maps identical to the round)
+UnderTheSea       798             817             A   <- differs
+rain             1861            1939             B   <- differs
+```
+
+On **13 of 15 maps the two arms are byte-identical**: the same map produces the
+same round count and the same winning *side* no matter which team my candidate
+plays. That is not a close match, it is the same bot playing itself. The 15/30 is
+therefore pure side advantage, not a 50/50 skill split, and the two maps that do
+differ (UnderTheSea, rain) changed round count without changing the winner.
+
+So the change **executed on 2 of 15 maps and altered 0 outcomes**. This is exactly
+the reachability caveat pre-registered in the iteration 5 entry before the run:
+under `bob_iter3`'s economy chips run to hundreds of thousands and the 1200-1350
+dead band is essentially never occupied. The band was real and traced — under
+*iteration 4's* economy, which was rejected.
+
+### Decision and disposition
+
+**REJECTED** — fails the accept gate, and honestly it is not even a near miss to
+refine, because there is nothing to refine: no dose of `EXPANSION_IDLE` can matter
+in games that never enter the band. Tuning it would be searching a parameter that
+feeds a check that never runs — the exact failure mode measurement doctrine #2
+warns about.
+
+`src/bob/Tower.java` reverted to the accepted build. The diff is **shelved, not
+discarded**, at `bob-tools/shelved/iter5-expansion-reserve.patch`, because the
+mechanism is correct and only its upstream state is missing.
+
+**Pre-registered re-open condition, so this is a test and not a hunch:** re-apply
+it when an accepted iteration lowers chip income enough that the treasury visibly
+occupies 1200-1350 for a sustained stretch — read `moneyA`/`moneyB` from the
+dumper, not from intuition. Iteration 7 is a candidate trigger: it converts maps
+that were 100% money towers into a ~50/50 mix, which roughly halves chip income on
+exactly those maps. If iteration 7 is accepted, re-check the band before anything
+else, and re-run this patch as its own iteration — never bundled with 7, since a
+bundled result is uninterpretable.
+
+### What this cost and what it bought
+
+One gauntlet. It converted "the reserve dead band is a live bug in the current
+bot" from a belief into a measured falsehood: it is a live bug in an *economy* the
+current bot does not have. That distinction is worth the run, and it is the reason
+the patch is shelved with a trigger rather than deleted or silently carried.
+
+**Method note for LEARNINGS.md:** when an h2h lands near exactly 50%, count
+byte-identical games *before* reaching for "marginal, needs a wider sample". A
+perfect side-split across every map is the signature of a no-op, and it is free to
+detect from `results.csv` alone.
+
+---
+
+## Iteration 7 (2026-09-06) — lattice-independent tower mix — RUNNING
+
+Target: the root cause recorded above — `towerTypeFor` used `((x + y) & 1)`, and
+parity is invariant along any lattice with an even step, so on every even ruin
+spacing the map came out 100% one tower type. Measured degeneracies: gridworld
+0 paint / 9 money, starburst 4/0, Snowglobe 4/0, Thirds 1/0.
+
+Change (isolated, `src/bob/Soldier.java`, ~10 bytecodes, nothing else touched):
+replace the parity with the low bit of an avalanche hash of the ruin's
+coordinates. Still a pure function of the ruin, which the marking protocol
+requires — a type that varies with time deadlocks `workOnRuin`'s "already marked?"
+probe (iteration 4's finding, preserved).
+
+Validated offline before spending any VM time (full table in the pre-check entry
+above): worst deviation from an even mix across grid and staggered lattices at
+spacings 5-8 falls from **50 points to 11**, and 4-ruin maps that come out all one
+type fall from **33% to 15%**.
+
+Evaluation run: `NMAPS=20`, 5 opponents on one shared sample, 200 games —
+`bob_iter3` (accept gate), the frozen roster `bob_iter0` / `bob_iter1` /
+`examplefuncsplayer`, and `bob_denier`, the paint-denial pole, which is in a
+gauntlet for the first time.
+
+Pre-registered accept criteria:
+1. **h2h vs `bob_iter3` > 50%** (≥21/40) — accept gate.
+2. **Mechanistic gate, and this one is the point of the iteration:** from the
+   dumper, `ptowA` and `mtowA` must BOTH be non-zero on the great majority of
+   maps sampled. If the mix is still degenerate the hash did not do its job and
+   the win rate is irrelevant either way.
+3. No one-directional regression concentrated on a single map or side.
+
+Pre-registered *interpretation* of a 50%-ish result, written before the numbers
+arrive: if the identity check shows a large fraction of byte-identical games, that
+means the sampled maps had mostly odd ruin spacing and the instrument could not
+see the change — a sample problem, not a verdict, to be answered by resampling
+onto maps with even spacing rather than by refining the hash.
