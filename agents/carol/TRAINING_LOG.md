@@ -132,3 +132,33 @@ copy of `src/carol` (package line only) and *verifies* the identity, refusing to
 the copy has drifted. Mirror matches on every map from both sides give a per-map
 side-split; a persistently lopsided map is a real bug, and in a mirror any inter-team stat
 difference is positional rather than policy.
+
+**Iteration 2 RESULT — ACCEPTED.** Head-to-head vs carol_iter1: **28/32 = 87.5%**
+(binomial floor for n=32 is ~2.8 games; this is +12 over even, ~4.2 sd). The 4 losses were
+scattered across different maps and both sides (FourCorners B, Money B, Rose A, +1) — no
+one-directional regression. Snapshot `src/carol_iter2`.
+Interpretation: this was not a clever idea, it was a resource stream nobody was spending.
+The largest single accept so far came from reading one instrumented trace.
+
+**New peer discovered**: `carol_rush` is running near even against carol (not pinned) —
+so it is a true peer, and it says carol is roughly a coin-flip against an opponent that
+simply walks soldiers into its towers. carol has no defensive behaviour whatsoever:
+nothing repaints a disrupted ruin pattern, nothing responds to a tower under attack, and
+soldiers only hit enemy towers they happen to bump into. This is exactly the
+"self-referential blind spot" the algorithm predicts: carol's own lineage never rushes,
+so no amount of self-play would have surfaced it. Logged as the leading structural target.
+
+### Registered structural target (for a later iteration): defense
+Mechanics that make this tractable, from RULES.md:
+- A soldier trades well against towers: 250 HP, takes ~30/turn from one tower (20 single
+  + 10 AoE), deals 50/turn. So ~4 soldiers kill a 1500 HP lv2 tower, and carol currently
+  does nothing about it.
+- **Defense towers out-range attackers**: attack r2=16 (4.0) vs a soldier's tower-attack
+  r2=9 (3.0). A soldier must enter the defense tower's envelope for three tiles of
+  approach before it can strike back. Each live defense tower also adds +5/+7/+9
+  single-target damage to *every* allied tower, and has 2000-3000 HP.
+- Pattern denial is cheap and symmetric: one enemy attack inside a 5x5 blocks a ruin, and
+  mopping the tile to EMPTY does not fix it — it must be repainted primary.
+Candidate mechanisms, cheapest first: (a) repaint disrupted own-ruin patterns;
+(b) build a defense tower at the ruin nearest our towers once under threat;
+(c) station moppers near towers to steal attacker paint (attackers at 0 paint freeze).
