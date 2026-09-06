@@ -1436,3 +1436,29 @@ post-hoc excuse.
 
 Either way iteration 7 is unaffected: it is built on `alice_iter5` and touches a
 different unit.
+
+### Risk noted in iteration 7 before evaluating it — the bot has no pathfinding at all
+
+`tryMove` is a three-way greedy step: try the direction, else its two rotations,
+else give up. There is **no bug-nav, no BFS, nothing** — and until now it barely
+mattered, because units that failed to move were *wandering* anyway and picked a
+fresh random direction next turn.
+
+Iterations 7 and 8 change that. A unit that commits to a distant target and is
+blocked by a wall will re-target the same tile every turn and can stall against
+concave terrain, where the old random wander would have escaped. In the starburst
+verification the moppers were plainly productive (187-381 unpaints per 500 rounds),
+so it is not catastrophic there, but starburst is open terrain. **Maze-like maps
+are the place this would show**, and the gauntlet's random sample includes them.
+
+Pre-registered as the diagnostic if iteration 7 underperforms: check whether its
+losses concentrate on maps with high wall density, and whether moppers show
+repeated failed moves. That is a specific, falsifiable prediction rather than a
+general worry.
+
+**Standing structural gap, logged for the ledger**: hybrid bug-navigation is one of
+the perennial mechanics the cross-year research names, and this lineage has none.
+It is a candidate in its own right, and it becomes a *prerequisite* rather than an
+option the moment any target-seeking iteration is accepted. Note the bytecode
+budget is not an obstacle — measured 1638/17500 (9%) peak for soldiers, so BFS is
+affordable.
