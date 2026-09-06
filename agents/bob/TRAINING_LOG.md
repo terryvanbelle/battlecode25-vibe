@@ -725,3 +725,36 @@ Peak bytecode measured from the replay is **9148 / 17500 (52%)** for our team,
 higher than the ~8.3k the in-bot monitor reported at iteration 0. Still safe, but
 half the budget is gone and the SRP work in iteration 6 adds two 25-tile scans.
 Worth re-checking on every evaluation, as the algorithm requires.
+
+
+### Iteration 7 pre-check: the hash validated offline against ruin lattices
+
+Simulated both rules over regular and staggered ruin lattices at spacings 5-8
+(Java 32-bit semantics emulated), before spending any VM time:
+
+```
+lattice                       old money%  new money%
+grid sp=5 off=2                      50%         56%
+grid sp=6 off=2                     100%         56%
+grid sp=6 off=3                     100%         44%
+grid sp=6 off=5                     100%         61%
+grid sp=7 off=3                      50%         44%
+grid sp=8 off=2                     100%         42%
+grid sp=8 off=3                     100%         42%
+staggered sp=5                       50%         56%
+
+worst deviation from a 50/50 mix:  old rule 50 pts   new hash 11 pts
+4-ruin maps that come out ALL ONE TYPE: old 33%   new 15%
+```
+
+This pins the mechanism exactly rather than leaving it as a story: the old rule
+returns **100% one type on every EVEN ruin spacing** and 50% on odd spacings,
+because `(x + y) & 1` is invariant along a lattice whose steps are even. The
+observed splits are exactly this — gridworld and the other all-one-type maps have
+even ruin spacing. The hash holds every lattice tested within 11 points of an even
+mix, and cuts the small-map degenerate case from 33% to 15%.
+
+Worth recording as method, not just result: this was a free pre-check. Nothing
+about it needed the engine, the VM or a game — the hypothesis was about a pure
+integer function and could be tested as one in a few seconds. Reachability and
+effect-size questions of that shape should always be answered offline first.
