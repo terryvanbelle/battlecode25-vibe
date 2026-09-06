@@ -827,3 +827,56 @@ archived: `replays/iter05_carol_iter3_Castle_A.bc25` (a decisive round-1172 win)
    idle chips) — iteration 6 is the self-calibrating mix, patch drafted and dry-applied.
 2. 97% of idle soldier turns on open maps are IDLE-ALLY — iteration 7 is frontier-seeking
    exploration off the symmetry contract, patch drafted and dry-applied.
+
+---
+
+## Iteration 6 (2026-09-06) — econ: self-calibrating tower mix
+
+**Area**: econ (2nd consecutive attempt in this area after one accept and one reject;
+`MaxConsecutiveRejects` is not implicated because iteration 5 was an accept).
+
+**Target** from iteration 5's own traced swept loss: on MoneyTower the fixed 1-in-3 ratio
+produced 4 towers and 79,840 idle chips against carol_iter3's 7 towers — too few paint
+towers means no paint in tower stashes, no soldiers, no ruin completions, and the money
+towers we did build pour unspendable chips into the treasury. A fixed ratio must trade one
+map class against another; this project's doctrine (and both predecessor projects') says
+that is the moment to stop searching over constants.
+
+**Change**: `towerTypeFor(ruin)` now decides from observation.
+1. If the ruin is already marked, read the choice back off the marks and follow it. The
+   PAINT and MONEY 5x5 patterns differ at 16 of the 24 markable tiles; offset (-2,-1) is
+   secondary in MONEY and primary in PAINT, so one `senseMapInfo` recovers the type. This
+   is what preserves the consistency the old coordinate key was there to give — two
+   soldiers can never paint conflicting patterns — without freezing the decision at
+   map-generation time.
+2. Otherwise build whichever resource is scarce: MONEY if the ally towers this soldier can
+   sense average >= `PAINT_PLENTIFUL` (500) paint, else PAINT. Robot paint is drawn from
+   the *building tower's* stash, so nearby tower stashes are the right measurement, not the
+   soldier's own.
+3. If no tower is in sense range, fall back to iteration 5's symmetry-invariant key.
+
+**Pre-checks.** *Reachability*: soldiers working a ruin are near their own towers on every
+trace so far, so branch 2 is live rather than falling through to 3. *History*: this
+supersedes iteration 5's key rather than reverting it — the key survives as the no-tower
+fallback, and iteration 5's evidence (chip income was the binding rate cap) is unchanged;
+what changes is that the ratio is no longer fixed. *Play-symmetry*: the new inputs are tower
+paint and marks, neither correlated with team identity, and the fallback is the same
+mirror-invariant key.
+
+**Pre-registered gate** (roster + h2h, same shape as iteration 5):
+- PRIMARY: h2h vs `carol_iter5` > 50% accept, 45-50% near miss, < 45% reject.
+- MECHANISM: the money/paint split must actually *differ by map* — MoneyTower should show
+  more paint towers than 1-in-3 and the idle-chip pile should shrink; a map where the mix
+  comes out identical to 1-in-3 everywhere means branch 2 is not firing and the result is
+  uninterpretable.
+- REGRESSION: no swept-loss map where iteration 5 swept a win; 0 exceptions.
+- Near-miss refinement is `PAINT_PLENTIFUL` as the dose (250 / 500 / 750), with the zero
+  arm being iteration 5's fixed key.
+
+Blocked from evaluating until `gauntlet/20260906-203937` finishes: its remaining games load
+classes from the shared `build/classes` on battlecode-dev, so compiling or launching
+anything from this workspace now would poison them. Implemented and dry-applied meanwhile.
+
+**Iteration 5 h2h final**: the 24th game (CastleDefense side A) landed as a loss, giving
+**16/24 = 66.7%** vs `carol_iter3` — the worst case computed at accept time, and still
++4.5 games over even (~2.3 sd of the n=24 binomial floor). The accept stands unchanged.

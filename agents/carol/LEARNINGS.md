@@ -135,3 +135,31 @@ one resource pinned at zero while the other accumulates unspent:
 
 Read both numbers in every economic trace, not one. A trace that shows only the resource
 you suspected will confirm whatever you already believed.
+
+## Reading a running gauntlet is free information
+
+Two of this session's most useful findings were read out of replays pulled from a gauntlet
+that was still running, hours before its summary existed: the iteration-5 mechanism check
+(chip income 30 -> 150/round, towers 12 -> 25) and the IDLE-ALLY/IDLE-ENEMY split that chose
+the next two iterations. Three things make this work and are worth reusing:
+
+- **Both teams are in one replay.** A candidate-vs-snapshot game contains both arms, so a
+  single replay is an exact A/B on identical map and seed. Separate them by a field only one
+  build emits (`rsv=`, `IDLE-*` vs `NOTGT`) — which is a reason to always give a new
+  instrument a *new name* rather than changing an existing one's format.
+- **`scp` one finished replay off the VM mid-run.** Read-only, no contention, no waiting.
+- **But never rebuild mid-run.** Games load classes from the shared `build/classes`, so
+  `vm-compile.sh`, `vm-match.sh` or a second gauntlet launched from the same workspace would
+  poison every game that has not yet started. Reading is safe; building is not.
+
+Corollary for instrumentation design: stamp something team-identifying into every indicator
+string. Both of carol's builds emit `pnt`/`slf` identically, so idle *counts* were separable
+but idle *rates* were not — a per-team denominator was unavailable for want of one character.
+
+## Accepting on an incomplete run is sometimes correct — state why
+
+"Never score from a prefix" is about conclusions the remaining games could reverse. When the
+outstanding games *cannot* change the verdict — 23 of 24 head-to-head games played, gate at
+>50%, worst case 16/24 — waiting buys nothing and costs the tournament an iteration. The
+discipline is not "always wait", it is "compute what the missing games could do first, and
+write that computation down".
