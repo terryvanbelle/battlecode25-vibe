@@ -214,9 +214,12 @@ precedent set at iteration 1 (DefaultSmall), a concentrated regression inside a
 `replay-dump` on `alice_iter1__maze__botA` (60x60, coverage 159‰ vs 168‰ at
 r2000 — both teams are barely painting anything):
 - T1 (2c) ends with **19 soldiers and 183 moppers**; T2 (iter1) 20 / 179.
-- **`MopAction` count is 0 in every sample window of the entire game.** The
-  moppers never mop. They never paint either (moppers have no paint action).
-  They are ~90% of the army and contribute literally nothing.
+- **`MopAction` count is 0 in every sample window of the entire game.**
+  *(CORRECTION, made the same day — see the engine check below: `MopAction` is
+  emitted only by `mopSwing`, which my bot never calls. A mopper's ordinary mop
+  emits `UnpaintAction`. The zero is therefore uninformative; the real
+  utilisation figure is in the correction and is ~0.3%, not 0%.)*
+  Moppers never paint either (moppers have no paint action).
 The same shape, larger, on the DefaultLarge mechanism replay: **677 moppers vs
 52 soldiers at r2000, with $120,840 unspent chips**, and coverage that *peaks*
 at 604‰ (r1000) and then **declines to 562‰**.
@@ -261,6 +264,34 @@ tower paint into the coverage engine and raises final painted area.
    Large/Huge, Paintball, Money, Gears, Circuit, Oasis).
 4. maze does not get worse (it is already a swept-loss; if it recovers, the
    adjacency-tax half of the hypothesis gains support).
+
+**CORRECTION — engine check of the replay-action semantics** (done while the
+run was in flight, before reading its result; `InternalRobot.java` +
+`GameMaker.java` from the official engine source):
+- `Action.MopAction` is emitted **only** by `mopSwing` (the 6-tile cardinal
+  swing), twice per swing. My bot never calls `mopSwing`, so `MopAction == 0`
+  was guaranteed a priori and measures nothing. **My "zero mop actions" claim
+  above was wrong as stated.**
+- A mopper's ordinary `attack(loc)` emits `Action.UnpaintAction` (and
+  additionally `AttackAction` when an enemy robot stands on the tile).
+- `addUnpaintAction` has exactly one call site in the whole engine
+  (`InternalRobot:417`, inside `mopperAttack`), so the dump's `u` counter is
+  precisely "tiles mopped by this team", and nothing else.
+
+**Restating the evidence correctly.** DefaultLarge, per 250-round window,
+(moppers alive → tiles mopped): 33→48, 104→131, 187→79, 282→78, 381→90,
+479→57, 577→34, 677→18. Mop cooldown is 30, so a fully-employed mopper mops
+~8 times per 250-round window and 677 of them could mop ~5400 tiles; they
+managed **18**. **Utilisation ≈ 0.3%, and the absolute output falls as the
+mopper population grows.** A mopped tile also does not become mine — it becomes
+EMPTY — so 18 tiles per 250 rounds on a ~2500-tile map is worth essentially
+nothing on the painted-area tiebreak either way.
+
+So the hypothesis survives the correction, with a weaker verb: moppers are
+~0.3% utilised rather than literally idle. Logged rather than quietly patched,
+because "count X was zero" from a replay dump is only evidence once the
+emitting call site is confirmed — that check should precede any future claim
+built on a replay counter.
 
 **Representativeness pre-check (doctrine #4)**: moppers are the bot's only
 answer to enemy paint, so cutting them is a defensive ablation. Does the
@@ -308,3 +339,118 @@ iteration is run, confirm with actual SPLASH action counts in the replay.
 `transferPaint(loc, -N)` credits the withdrawer through `addPaint`, which clamps
 at capacity, while the tower is debited the FULL N. Over-asking silently burns
 tower paint. Any refill code must request `min(myCapacity - myPaint, towerPaint)`.
+
+### Non-blocking work while iteration 3 runs
+
+**Tournament 20260906-1755 read (sanctioned channel)**: *every one of the 12
+games was won by side B*, all on the painted-more tiebreak. Discount heavily
+for replication — that run predates the protocol commit (18:05) and all three
+bots were still the seeded example copy, so the 12 rows are really 2 distinct
+games (DefaultSmall, DefaultMedium) replicated across 6 pairings. Evidence
+value: **2/2 mirror games won by side B**, not 12/12.
+
+But it lines up with signals in my own runs:
+- 2c gauntlet, FourCorners: **side B won all 4 games** (I win as B at r584/r397,
+  I lose as A at r1353/r1587 — two different opponents).
+- sierpinski: within each pairing the same side won both games.
+- iteration 1: 5 of 7 losses were as side A.
+
+**Mechanism hypothesis for a B-side advantage (fixed-absolute-order bug class,
+Phase 0 item 7)**: `senseNearbyMapInfos` returns tiles in x-ascending then
+y-ascending order (RULES.md). Three of my selection loops break ties by
+first-found with a *strict* comparison, so among equidistant candidates they
+always take the most south-west one:
+- `runSoldier` ruin choice — `if (d < bestD)`
+- `runSoldier` idle-paint target — `if (d < paintD && ...)` (added in iteration 1)
+- `runSplasher` target — `if (score > bestScore)`
+(`runMopper` is the opposite: no `break`, so it takes the *last* = most
+north-east tile.)
+A south-west preference is not team-symmetric on a map where the two spawns sit
+at opposite corners/edges: the bottom-left team paints back toward its own
+already-owned corner and off the map edge, the top-right team paints toward the
+unclaimed centre. Under all three guaranteed symmetry classes the SW-preferring
+team that starts in the SW wastes its bias and the other team's bias points at
+open ground — i.e. a systematic edge for whichever team starts further from the
+origin. Timing cuts the other way (team A's robots have lower IDs and by
+`(roundsAlive, ID)` act first every round), so if B still wins, the tie-break
+bias is beating the first-mover edge.
+
+**Instrument being built for this (iteration 4)**: `src/alice_mirror/` — a
+byte-identical copy of `alice_iter2` under a different package, so
+`alice` vs `alice_mirror` is a true mirror match. In a mirror, any map where
+the *same side wins both games* is positional, and any inter-team stat
+difference is positional rather than policy (TRAINING_ALGORITHM Phase 0 #7).
+Measurement plan:
+- **M0 (baseline asymmetry)**: `alice_iter2` vs `alice_mirror`, EVAL12, both
+  sides. Pre-registered statistic: *number of maps out of 12 won by the same
+  side twice*. Under a symmetric policy the null is Binomial(12, 1/2) ⇒ mean 6;
+  ≥10 of 12 would be significant at ~2%.
+- **M1**: same run after the tie-break fix; the statistic must fall.
+Two candidate fixes, to be run as a dose pair rather than assumed:
+  (a) randomize the equidistant tie-break (pure fairness);
+  (b) prefer, among equidistant candidates, the one *farthest from my own
+      nearest tower* — team-relative, therefore symmetric, and it adds real
+      frontier expansion instead of noise.
+Carrying the algorithm's caution explicitly: a consistent arbitrary preference
+can be supplying formation cohesion that randomization destroys, so (a) may
+regress even if it removes the asymmetry. Measure both; the mirror statistic
+and the H2H win rate are separate questions.
+
+### Soldier life-cycle trace (iter2 build, DefaultLarge, soldier id12472)
+Full per-turn track from spawn to death, `replay-dump --robot 12472`:
+- r2 spawn at 194 paint; paint falls ~5-6/round (5 = one paint action, +1 =
+  neutral-tile upkeep); the r6 step is -30 (`markTowerPattern` costs 25).
+- r6-r28 it oscillates between (3,16)/(4,15)/(2,15) filling the tower pattern,
+  and completes a MONEY_TOWER at (3,15) on r28. Productive.
+- **r17 onward its cooldowns start rising** (mCD/aCD 11 → 26): the low-paint
+  cooldown penalty (below 50% stash, cooldowns scale by (100 - 2·paint%)).
+  From ~r24 it acts roughly every other round instead of every round.
+- r30-r43 it wanders to the map edge (0,6) and paint hits 0 at r44.
+- r44+ it takes -20 HP/round and dies. **Total life 41 rounds for one tower
+  pattern and ~35 painted tiles.**
+
+Durable consequences (these constrain every future economic iteration):
+1. **A soldier's whole output is bounded by the paint it was born with** — 200
+   paint ⇒ at most 40 tile-paints at 5 each, minus upkeep, minus the 25 for a
+   pattern mark. There is no refill anywhere in the bot. Cumulative team
+   coverage is therefore bounded by cumulative *paint production*, not by chips
+   or by unit count.
+2. **The last third of every soldier's life is spent at penalty cooldowns**,
+   i.e. paint is not just a budget, it is a throughput multiplier. Keeping a
+   soldier above 50% stash is worth roughly double its action rate.
+3. **Chips are not the binding resource and haven't been since iteration 2c**
+   ($120,840 idle at r2000 on DefaultLarge; $57,440 on maze). Any chips→paint
+   conversion is nearly free money.
+
+### Chips→paint conversions available (ranked, for the next iterations)
+Verified against the engine source, not inferred:
+- **Tower self-upgrade — free action.** `assertCanUpgradeTower` calls
+  `assertCanActLocation(loc, 2)`, which checks *only* range and on-map: it does
+  NOT check action readiness, and `upgradeTower` adds no cooldown. A tower
+  upgrading itself (distance 0) therefore costs chips and nothing else, every
+  turn it can afford it. Paint income 5→10→15/turn; cost 2500 then 5000.
+  `UnitType.getNextLevel()` returns null at L3, so the guard is trivial.
+  Drafted (scratchpad `upgrade-draft.java`) as iteration 4.
+- **SRP** — 200 chips for +3/turn to *every* producing tower, both kinds. At 16
+  towers that is +24 paint/turn and +24 chips/turn for 200 chips, an order of
+  magnitude better per chip than an upgrade, but it needs a 5x5 pattern held
+  undisturbed for 50 rounds. Draft exists (scratchpad `srp-draft.java`) and
+  needs porting to the current `rc`-as-parameter code shape.
+- **New towers** — 1000 chips for +500 instant paint (established iteration 2);
+  already implemented, capped by ruins and the 25-tower limit.
+
+### Functional-area map (refreshed after iteration 2)
+| area | status | last touched |
+|---|---|---|
+| ruin completion / tower building | money+paint by ruin parity; chip reserve funds completions | iter2 (accepted) |
+| paint spread | soldier own-tile + nearest-empty idle paint | iter1 (accepted) |
+| economy (chips curve, upgrades) | **chips pile up unspent ($120k)**; no upgrades, no SRPs | never |
+| soldier paint sustain | none — 41-round life, no refill, penalty cooldowns for the last third | never |
+| mopper usage | 25% of spawns, ~0.3% utilised; iteration 3 tests removing them | iter3 (running) |
+| splasher usage | code exists, never built; only unit that can convert enemy paint | never |
+| micro vs towers/units | none (zero combat deaths observed in 2000-round games) | never |
+| SRPs | none | never |
+| comms | none | never |
+| navigation | wander + slide; soldiers walk into map corners and die there | iter0 |
+| map symmetry inference | none | never |
+| play-symmetry hygiene | 3 fixed-absolute-order tie-breaks identified, unfixed; mirror instrument built | iter4 planned |
