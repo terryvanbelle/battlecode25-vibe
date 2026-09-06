@@ -132,6 +132,42 @@ The fix (iteration 5) is one line and carries no tuned constant: build a mopper
 only if the tower could have afforded a soldier instead —
 `rc.getPaint() < UnitType.SOLDIER.paintCost`.
 
+## 3d. Towers are the master variable, and ruin SUPPLY caps them
+
+Across every trace, the tower column decides the game (16 v 2 on Mirage;
+8 v 6 twice). Towers produce the binding resource, so everything else is
+downstream. Both accepted iterations work by protecting or raising tower count,
+and the two rejects lost by suppressing it.
+
+But tower count is capped by the **map's ruins, not by finding them**: healthy
+bots build out to saturation (Mirage 22 ruins → 10 + 11 towers; Racetrack 14 →
+8 + 6). So an entire family of ideas — remembering ruins, sharing ruin locations
+over comms, exploration heuristics — is dead, and iteration 9 proved it for the
+cost of one match. **Tower-count *differences* come from failing to build on
+available ruins**, i.e. from the absorbing state (§3c) or from immobile soldiers,
+never from failing to find them.
+
+Corollary for ranking any economic idea: **a tower is worth 5-15 paint/turn plus a
+spawn point plus 500 starting paint. An SRP is +3/turn per tower.** Anything that
+trades tower-building time for something else needs to clear that bar, and
+iteration 10 only worked once it was gated behind tower saturation.
+
+## 3e. Movement is not waste — it is the exploration that buys towers
+
+Measured: a soldier converts only ~8 of its 200 paint into painted tiles (~1.6
+paint actions per lifetime); ~192 goes to upkeep. Upkeep looks self-inflicted,
+because the engine charges **0 on an ally tile** and −1/−2 otherwise, so a soldier
+standing on its own paint could live indefinitely.
+
+Iteration 8 acted on that and lost by 145‰ while cutting deaths 52% and starvation
+deaths 70%. The cause was one column: **towers 6 v 8**. A soldier that stands still
+never finds a ruin. So the −1/turn is the *price of exploration*, and exploration
+buys tower income, which is worth more than the tiles the paint would have bought.
+
+This is the algorithm's "survival bought with inactivity" written in this year's
+units, and I walked into it having read the warning. **Halving a death rate is not
+evidence of anything until the tower/economy column is checked.**
+
 ## 4. Methodology lessons paid for in this project
 
 **A replay counter means nothing until you have found its call site.** I built a
@@ -174,6 +210,19 @@ refill and the tower's spawn draw on the same tower paint. Printing `twPaint`
 showed refilling *substitutes* for spawning rather than adding to it (pool drained
 to 40% of baseline, 17% fewer soldiers) — which inverted my dose prediction before
 the sweep rather than after it.
+
+**Reject on a trace when the mechanism is unambiguous — it costs a match, not a
+run.** Three candidates died this way (mopper reserve dose 200, iteration 8's
+standstill, iteration 9's ruin memory) and one was *refined* three times the same
+way (iteration 10a→b→c, thrash → displacement → win). Each step was chosen from a
+specific trace column, never from a parameter search. The rule that makes it safe:
+only reject on a trace when the mechanism demonstrably engaged and the outcome is
+clearly negative — otherwise run the sweep.
+
+**Run your own pre-registered reachability check before writing the code, not
+after.** I pre-registered "count how often a soldier has no ruin in vision but a
+remembered one — if rare, this is dead code", then built iteration 9 first. The
+answer (21 of 22 ruins already built) was sitting in replays I already had.
 
 **Rejections are the cheapest evidence available.** Iteration 3 cost one run and
 overturned two beliefs, opened a functional area, and explained why the current
