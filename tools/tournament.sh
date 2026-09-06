@@ -101,14 +101,26 @@ CP=\$(./gradlew --no-daemon -q printClasspath | tail -1)
 # across all of them, not just within this script.
 SLOTDIR=\$HOME/.bc25-slots; mkdir -p "\$SLOTDIR"
 acquire_slot () {   # sets SFD; held until the game's subshell exits
+  # Stand in ONE line, so that the HARD_CAP check below and the slot-taking
+  # that follows it cannot be interleaved by another runner. GLOBAL_CAP is
+  # enforced by the slot flocks and was never the leak; HARD_CAP is a `pgrep`
+  # count, so under the old code two runners could both read "6 < 7" before
+  # either started a game and the machine ended up at 8. That is not
+  # hypothetical -- 8 concurrent games against a cap of 7 were observed on
+  # battlecode-dev on 2026-09-06, and the shape reproduces in a harness
+  # (tools/semaphore-test.sh) that returns peak 8 ungated and 7 gated.
+  # The kernel drops the gate on fd close, so a runner that dies holding it
+  # cannot wedge the box, and a gate holder only ever waits for something no
+  # other runner could have proceeded past anyway.
+  exec {GFD}>"\$SLOTDIR/gate"
+  flock \$GFD
+  # Politeness toward the BC26 project, which runs its own games outside this
+  # semaphore: never push the machine-wide game count past HARD_CAP.
+  while [ "\$(pgrep -fc battlecode.server.Main || true)" -ge $HARD_CAP ]; do sleep 10; done
   while true; do
-    # Politeness toward the BC26 project, which runs its own games outside this
-    # semaphore: never push the machine-wide game count past HARD_CAP. Checked
-    # BEFORE taking a slot, so we never idle while holding one.
-    while [ "\$(pgrep -fc battlecode.server.Main || true)" -ge $HARD_CAP ]; do sleep 10; done
     for i in \$(seq 1 $GLOBAL_CAP); do
       exec {SFD}>"\$SLOTDIR/slot.\$i"
-      flock -n \$SFD && return 0
+      flock -n \$SFD && { exec {GFD}>&-; return 0; }   # hold slot, leave the line
       exec {SFD}>&-
     done
     sleep 5
