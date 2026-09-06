@@ -1,4 +1,4 @@
-package carol;
+package carol_iter2;
 
 import battlecode.common.*;
 
@@ -23,12 +23,6 @@ public class RobotPlayer {
 
     /** Chips held back from robot production so a ruin can always be completed (1000). */
     static final int CHIP_RESERVE = 1200;
-
-    // Persistent exploration state (iteration 3).
-    static MapLocation explore = null;
-    static MapLocation lastLoc = null;
-    static int stuckTurns = 0;
-    static int exploreAge = 0;
 
     static final Direction[] DIRS = {
         Direction.NORTH, Direction.NORTHEAST, Direction.EAST, Direction.SOUTHEAST,
@@ -275,66 +269,26 @@ public class RobotPlayer {
         }
     }
 
-    /** Pick a fresh far-away exploration target, uniformly over the map. */
-    static void newExploreTarget() {
-        MapLocation me = rc.getLocation();
-        int w = rc.getMapWidth(), h = rc.getMapHeight();
-        MapLocation best = null;
-        int bestD = -1;
-        for (int i = 0; i < 4; i++) {   // sample a few, keep the farthest
-            MapLocation c = new MapLocation(rng.nextInt(w), rng.nextInt(h));
-            int d = me.distanceSquaredTo(c);
-            if (d > bestD) { bestD = d; best = c; }
-        }
-        explore = best;
-        exploreAge = 0;
-    }
-
-    /**
-     * Move toward `target` if one is given; otherwise walk toward a persistent far
-     * exploration target. The old local random walk left soldiers idle ("NOTGT": no
-     * empty tile within action radius) for ~57% of their turns once the ground around
-     * home was painted — a random walk cannot find the frontier on a 40x40+ map.
-     */
+    /** Random-ish walk preferring unpainted passable destinations (or toward target). */
     static void moveExploring(MapLocation target) throws GameActionException {
-        MapLocation me = rc.getLocation();
-        if (me.equals(lastLoc)) stuckTurns++; else stuckTurns = 0;
-        lastLoc = me;
-
         if (!rc.isMovementReady()) return;
-
-        if (target != null && stepToward(target)) return;
-
-        if (explore == null || me.distanceSquaredTo(explore) <= 8
-                || stuckTurns >= 6 || ++exploreAge > 120) {
-            newExploreTarget();
-            stuckTurns = 0;
-        }
-        if (stepToward(explore)) return;
-        for (int i = 0; i < 4; i++) {   // fully blocked: any legal move beats standing still
-            Direction d = DIRS[rng.nextInt(8)];
+        if (target != null) {
+            Direction d = rc.getLocation().directionTo(target);
             if (rc.canMove(d)) { rc.move(d); return; }
+            Direction dl = d.rotateLeft(), dr = d.rotateRight();
+            if (rc.canMove(dl)) { rc.move(dl); return; }
+            if (rc.canMove(dr)) { rc.move(dr); return; }
         }
-    }
-
-    /** Greedy step toward `to`, trying the direct direction then widening rotations. */
-    static boolean stepToward(MapLocation to) throws GameActionException {
-        Direction d = rc.getLocation().directionTo(to);
-        if (d == Direction.CENTER) return false;
-        if (rc.canMove(d)) { rc.move(d); return true; }
-        Direction l = d.rotateLeft(), r = d.rotateRight();
-        // Break the left/right tie on robot ID rather than a fixed compass preference,
-        // so obstacle-skirting is not correlated with team identity (play-symmetry).
-        if ((rc.getID() & 1) == 0) {
-            if (rc.canMove(l)) { rc.move(l); return true; }
-            if (rc.canMove(r)) { rc.move(r); return true; }
-        } else {
-            if (rc.canMove(r)) { rc.move(r); return true; }
-            if (rc.canMove(l)) { rc.move(l); return true; }
+        // Sample a few random directions; take the first that leads to unpainted ground,
+        // else the first movable one.
+        Direction fallback = null;
+        for (int i = 0; i < 4; i++) {
+            Direction d = DIRS[rng.nextInt(8)];
+            if (!rc.canMove(d)) continue;
+            if (fallback == null) fallback = d;
+            MapInfo dest = rc.senseMapInfo(rc.getLocation().add(d));
+            if (dest.getPaint() == PaintType.EMPTY) { rc.move(d); return; }
         }
-        Direction l2 = l.rotateLeft(), r2 = r.rotateRight();
-        if (rc.canMove(l2)) { rc.move(l2); return true; }
-        if (rc.canMove(r2)) { rc.move(r2); return true; }
-        return false;
+        if (fallback != null) rc.move(fallback);
     }
 }

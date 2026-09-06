@@ -170,3 +170,42 @@ generate no paint, so a money tower can spawn ~2 robots from its 500 starting st
 then goes dry until a mopper refills it. Chips accumulate uselessly unless spent on towers
 /upgrades/SRPs. Each active SRP adds +3/turn to EVERY paint tower and EVERY money tower,
 so SRP value scales with tower count.
+
+## Pattern completion is exact [E: GameWorld.checkPattern]
+
+Every one of the 24 non-centre tiles of a tower pattern (25 for an SRP, which has no
+exempt centre) must hold exactly the right paint: **secondary where the bit is 1,
+PRIMARY where it is 0**. Empty is not acceptable for a 0 bit. Consequences:
+
+- Building a tower costs ~24 x 5 = 120 paint of soldier attacks plus 1000 chips.
+- A single enemy-painted tile inside the 5x5 denies the ruin. Mopping it back to EMPTY
+  does **not** restore the pattern — the tile must be repainted primary. So cheap
+  pattern-denial is a real offensive option (one soldier attack blocks a whole tower),
+  and defending our own ruins means repainting, not just mopping.
+- SRPs must additionally stay exact for 50 consecutive rounds before paying out.
+
+## Coverage economics (derived; drives unit mix)
+
+Win condition is painted area, so the right unit metric is **tiles painted per turn** and
+**paint per tile**.
+
+| | tiles per attack | paint per attack | paint/tile | cooldown | tiles/turn (sustained) |
+|---|---|---|---|---|---|
+| Soldier | 1 | 5 | 5.0 | 10 (1 turn) | 1.00 |
+| Splasher | up to 13 (r2<=4 disc) | 50 | 3.85 | 50 (5 turns) | up to 2.60 |
+
+The r2<=4 disc is 13 tiles: (0,0), 4 orthogonal, 4 diagonal, 4 at distance 2.
+So on virgin ground a splasher paints **2.6x faster per unit and 23% cheaper per tile**
+than a soldier, and it is the ONLY unit that converts enemy paint in bulk (within r2<=2
+of its centre). Its costs are 300 paint / 400 chips vs the soldier's 200 / 250.
+
+Caveats: a splasher wastes paint on already-painted tiles inside the disc, so it is worth
+much more on the frontier than inside owned territory, and it cannot paint tower/SRP
+patterns precisely (it cannot choose per-tile colours). Soldiers remain necessary for
+patterns and for chipping towers (50 dmg).
+
+**Resource binding order observed in carol's own traces**: with all-money towers, paint
+binds (10/turn team-wide, 213k idle chips). With all-paint towers plus a chip reserve,
+chips bind (treasury pins at the reserve; ~30 chips/turn from the one starting lv2 money
+tower funds roughly one soldier per 8 rounds). A mixed build is therefore likely optimal
+once coverage throughput, not income, stops being the bottleneck.

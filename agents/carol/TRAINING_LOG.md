@@ -110,3 +110,25 @@ pre-check says a 1200-chip gate never fires against a treasury that never drops 
 - `carol_turtle` — synthetic archetype, pure economy/turtle: claims ruins, alternates
   paint/money towers, upgrades, lays SRPs, never seeks combat.
 - `examplefuncsplayer` — BENCHMARK, 24/24 (100%) at iter0. Pinned; no resolving power.
+
+## Play-symmetry audit (standing item, per TRAINING_ALGORITHM.md Phase 0 #7)
+Fixed absolute-order decisions present in carol as of iter2, ranked by risk:
+1. **`moveExploring` tries `d`, then `d.rotateLeft()`, then `d.rotateRight()`** — a fixed
+   left-before-right preference. Highest risk: under map reflection this systematically
+   favours one team's pathing around obstacles. *Fix staged in iteration 3* (tie-break on
+   robot ID parity). NOTE the algorithm's caution: a consistent arbitrary preference can
+   be supplying real formation cohesion, so this must be *measured*, not assumed good.
+2. **Nearest-ruin and nearest-empty-tile selection use strict `<`**, so ties resolve to
+   whichever element the engine's fixed sensing scan order returns first. Lower risk
+   (ties are uncommon) but real. Not yet addressed.
+3. `workOnRuin` probes `ruin.add(NORTH)` to decide whether it has already marked. This is
+   a state probe, not a decision between alternatives, and ruins are guaranteed wall-free
+   in their 5x5, so it does not steer play. Accepted as safe.
+4. Tower spawn direction and the exploration fallback both draw from `rng` seeded on
+   robot ID — not team-correlated. Safe.
+
+**Instrument**: `tools/sync-mirror.sh` regenerates `src/carol_mirror` as a byte-identical
+copy of `src/carol` (package line only) and *verifies* the identity, refusing to run if
+the copy has drifted. Mirror matches on every map from both sides give a per-map
+side-split; a persistently lopsided map is a real bug, and in a mirror any inter-team stat
+difference is positional rather than policy.
