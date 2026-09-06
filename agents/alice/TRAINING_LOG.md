@@ -1809,3 +1809,57 @@ the dumper prints map geometry: check iteration 7's losses against **wall densit
 *and* **map area**, since maze (60x60, 19.8% walls) is its one known loss while
 yearofthesnake (45x45, 18.4%) is a win — so area, not just terrain, is live as an
 explanation.
+
+---
+
+## Strategic synthesis — tower count is the master variable, and ruin discovery is what limits it
+
+Pulling four iterations' traces together, one column keeps deciding games:
+
+| trace | winner towers | loser towers | winner cov | loser cov |
+|---|---|---|---|---|
+| Mirage (iter4 loss) | 16 | **2** | 664‰ | 15‰ |
+| Racetrack (iter5 win) | 8 | 6 | 555‰ | 283‰ |
+| Racetrack (iter8 loss) | 8 | **6** | 560‰ | 415‰ |
+| starburst (iter7 win) | 6 | 6 | 654‰ | 319‰ |
+
+Every accepted iteration so far has worked by protecting or raising tower count
+(iteration 4 upgraded them, iteration 5 kept them fundable), and iteration 8 lost
+purely by suppressing it. **Towers produce the binding resource; everything else
+is downstream.**
+
+**So what limits tower count?** A tower needs a ruin, and a soldier that paints its
+5×5 pattern: 25 tiles at 5 paint = 125, plus 25 to mark = **~150 of a soldier's 200
+paint**. Chips (1000 at completion) are not the constraint — they never are. The
+constraint is **a soldier arriving at an unbuilt ruin with a full tank.**
+
+And here is the defect: **`senseNearbyRuins` only sees within vision (r²=20).** The
+bot's soldiers find ruins *by stumbling into them*. There is no memory: a soldier
+that walks past a ruin it cannot yet afford, or that finishes one tower and turns
+away, forgets every other ruin it has ever seen and reverts to random wander. On
+Mirage there were **22 ruins** and the losing side held 2 towers all game.
+
+This also explains iteration 8 exactly: standing still is only bad because
+wandering is the *only* ruin-discovery mechanism the bot has.
+
+### Iteration 9 candidate — remember ruins (ranked above SRPs and comms)
+
+Keep a small per-robot list of unbuilt ruin locations seen, and when there is no
+ruin in vision, head for the nearest remembered one instead of wandering. No
+comms needed, no pathfinding needed beyond what iteration 7 already uses, and it
+attacks the master variable directly.
+
+Ranked **above** the two other unused mechanics for a specific reason: an SRP adds
++3/turn per tower and comms is merely enabling, whereas a single extra tower adds
+**5-15 paint/turn plus a spawn point plus 500 starting paint**. The measured spread
+between winners and losers is 2-16 towers, not a few points of income.
+
+Pre-registered when it runs:
+1. Gate: H2H vs the then-accepted snapshot, >= 16/24 at NMAPS=12.
+2. Mechanism: **tower count at r2000 must rise** — the master variable itself, not
+   a proxy.
+3. Reachability check FIRST: count how often a soldier has no ruin in vision but a
+   remembered unbuilt one. If that is rare the feature is dead code — and note the
+   *guard* it nests inside is the existing `ruin != null` branch, which already
+   excludes exactly the case it targets, so the check is mandatory rather than
+   optional.
