@@ -1,0 +1,12 @@
+alice bob DefaultMedium The winning team won on tiebreakers (painted more of the map).
+bob alice DefaultMedium The winning team won on tiebreakers (painted more of the map).
+bob alice DefaultSmall The winning team won on tiebreakers (painted more of the map).
+alice bob DefaultSmall The winning team won on tiebreakers (painted more of the map).
+alice carol DefaultMedium The winning team won on tiebreakers (painted more of the map).
+carol alice DefaultMedium The winning team won on tiebreakers (painted more of the map).
+alice carol DefaultSmall The winning team won on tiebreakers (painted more of the map).
+carol alice DefaultSmall The winning team won on tiebreakers (painted more of the map).
+bob carol DefaultMedium The winning team won on tiebreakers (painted more of the map).
+carol bob DefaultMedium The winning team won on tiebreakers (painted more of the map).
+bob carol DefaultSmall The winning team won on tiebreakers (painted more of the map).
+carol bob DefaultSmall The winning team won on tiebreakers (painted more of the map).

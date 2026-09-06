@@ -1,0 +1,13 @@
+team_a,team_b,map,winner_side,winner_bot,rounds
+alice,bob,DefaultMedium,B,bob,2000
+bob,alice,DefaultMedium,B,alice,2000
+bob,alice,DefaultSmall,B,alice,2000
+alice,bob,DefaultSmall,B,bob,2000
+alice,carol,DefaultMedium,B,carol,2000
+carol,alice,DefaultMedium,B,alice,2000
+alice,carol,DefaultSmall,B,carol,2000
+carol,alice,DefaultSmall,B,alice,2000
+bob,carol,DefaultMedium,B,carol,2000
+carol,bob,DefaultMedium,B,bob,2000
+bob,carol,DefaultSmall,B,carol,2000
+carol,bob,DefaultSmall,B,bob,2000

@@ -1,0 +1,26 @@
+RESULT alice bob DefaultMedium B 2000
+REASON alice bob DefaultMedium The winning team won on tiebreakers (painted more of the map).
+RESULT bob alice DefaultMedium B 2000
+REASON bob alice DefaultMedium The winning team won on tiebreakers (painted more of the map).
+RESULT bob alice DefaultSmall B 2000
+REASON bob alice DefaultSmall The winning team won on tiebreakers (painted more of the map).
+RESULT alice bob DefaultSmall B 2000
+REASON alice bob DefaultSmall The winning team won on tiebreakers (painted more of the map).
+RESULT alice carol DefaultMedium B 2000
+REASON alice carol DefaultMedium The winning team won on tiebreakers (painted more of the map).
+RESULT carol alice DefaultMedium B 2000
+REASON carol alice DefaultMedium The winning team won on tiebreakers (painted more of the map).
+RESULT alice carol DefaultSmall B 2000
+REASON alice carol DefaultSmall The winning team won on tiebreakers (painted more of the map).
+RESULT carol alice DefaultSmall B 2000
+REASON carol alice DefaultSmall The winning team won on tiebreakers (painted more of the map).
+RESULT bob carol DefaultMedium B 2000
+REASON bob carol DefaultMedium The winning team won on tiebreakers (painted more of the map).
+RESULT carol bob DefaultMedium B 2000
+REASON carol bob DefaultMedium The winning team won on tiebreakers (painted more of the map).
+RESULT bob carol DefaultSmall B 2000
+REASON bob carol DefaultSmall The winning team won on tiebreakers (painted more of the map).
+RESULT carol bob DefaultSmall B 2000
+REASON carol bob DefaultSmall The winning team won on tiebreakers (painted more of the map).
+TOURNAMENT-COMPLETE
+

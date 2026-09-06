@@ -59,7 +59,7 @@ NMAPS=$(echo "$MAPS" | wc -w)
 echo "tournament $RUN_ID  bots=[$BOTS]  maps=$NMAPS  pairs=[$PAIRS]"
 
 ensure_vm
-gssh "mkdir -p ~/$REMOTE_REPO/arena/src ~/$REMOTE_REPO/arena/tournaments" >/dev/null
+gssh "mkdir -p ~/$REMOTE_REPO/arena/src ~/$REMOTE_REPO/arena/tournaments ~/$REMOTE_REPO/arena/stage-$RUN_ID" >/dev/null
 gscp -r "$STAGE/." "$USER_NAME@$IP:$REMOTE_REPO/arena/stage-$RUN_ID/" >/dev/null
 
 RTAG="tournament-$RUN_ID"
