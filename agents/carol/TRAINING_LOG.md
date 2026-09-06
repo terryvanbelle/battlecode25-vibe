@@ -2075,3 +2075,43 @@ Holding the accept/reject decision until that lands. On present evidence I expec
 small real effect on one or two games and no win-rate move — in which case iteration 7 is a
 correct robustness fix whose value is currently near zero, which is a legitimate and useful
 thing to establish rather than a failure to explain away.
+
+### `carol_decap` v1 — NEGATIVE RESULT as an instrument
+
+Pre-registered: "if it lands in 30-90% it becomes the peer that regression-tests every future
+economy change; outside that band is a negative result about the instrument and gets logged as
+one." It is outside the band, and more importantly it **does not pose the threat it was built
+to pose.**
+
+Traced three of its games rather than judging on win rate alone — the win rate would only have
+said "it loses", not "it fails at its one job":
+
+| map | carol's tower count over the game | carol's max `stag` |
+|---|---|---|
+| Fossil | 2 -> 5 -> 7 -> 8 -> **11**, never drops | 0 |
+| gridworld | 2 -> 4 -> 7 -> 8 -> 11 -> **15**, never drops | 1 |
+| Parking_lot | 2 -> 4, flat to r2000 | 0 |
+
+**carol never loses a single tower in any of them.** The whole design — money towers first,
+focus fire by lowest ID — is irrelevant if no tower ever dies.
+
+**Why, mechanically**: a soldier does 50 damage to a tower, so a lv1 tower at 1,000 HP needs
+**20 uninterrupted attacks**, while carol's towers return 20 single-target *plus* 10 AoE per
+tower per turn **for free** (tower attacks cost no action cooldown — RULES.md engine note 1).
+A soldier that walks up to a defended tower dies long before it lands 20 hits. `carol_rush`
+succeeds occasionally only because it swarms on *small* maps in the opening, before carol has
+built its second and third tower. My "keep an economy" improvement made `carol_decap` slower to
+the frontier and therefore strictly worse at the one thing it exists for.
+
+**Two things this buys, so the run is not wasted:**
+1. **Carol's tower mass is a real, unrecognised defensive strength.** Nothing in the pool can
+   take a tower off her once there are more than two. That also explains why the
+   frozen-treasury degeneracy is rare on the accepted baseline: it requires losing the last
+   money tower, and losing *any* tower is already hard.
+2. **It sharpens what a useful archetype must do.** Not "prefer money towers" but "arrive with
+   enough simultaneous soldiers to out-damage free tower fire". That is a swarm-timing problem,
+   not a targeting problem — v1 got the target selection right and the arrival wrong.
+
+`carol_decap` v2 is registered but **deprioritised**: it is instrument-building, and the
+instrument is only worth rebuilding if a change actually needs it. Iteration 7 is the only
+queued change that does, and its own value now looks small.
