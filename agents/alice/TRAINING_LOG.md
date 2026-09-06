@@ -621,3 +621,38 @@ affected: the authoritative record is `gauntlet/<run>/results.txt`, pulled from
 my own workspace-scoped remote path, which the collision cannot touch.
 **Standing fix: never redirect run output into the shared /tmp tree — use
 `agents/alice/logs/`, and poll `gauntlet/<run>/results.txt` for progress.**
+
+### Iteration 5 prepared while iteration 4 runs — anti-clumping spread step
+
+**Engine check first** (`InternalRobot.processEndOfTurn`, lines 622-639), because
+the whole idea rests on how the adjacency tax is applied and I had been quoting
+`RULES.md` rather than the code:
+```
+allyRobotCount = ally robots within r^2 <= 2 (the 8 neighbours), excluding self
+neutral tile : -1*mopperMult  -1*allyRobotCount
+enemy tile   : -2*mopperMult  -2*allyRobotCount
+ALLY tile    :  0             -1*allyRobotCount
+```
+**The clumping tax is not waived by standing on your own paint** — the `else`
+branch still charges `-allyRobotCount`. So a fully-surrounded robot pays up to
+-8 paint/turn *anywhere on the map*, against a 200-paint soldier stash (100 for
+a mopper). Nothing in the bot is aware of this, and iteration 3 showed it is the
+binding failure once density rises.
+
+**Change** (isolated, one dose parameter): a soldier with no ruin to work and
+`>= SPREAD_AT` ally *robots* within r²≤2 steps away from their centroid instead
+of wandering. Towers are excluded from the count — being next to a tower is not
+the problem, and a soldier fleeing its own spawn tower would be a regression.
+Draft in scratchpad `iter5-antclump-draft.java`.
+
+**Dose plan** (doctrine #2, with the mandatory zero arm): SPREAD_AT off (= the
+accepted build), 2, 3, 5 — run pinned to one map sample so the arms are
+comparable.
+
+### Play-symmetry instrument now exists
+`src/alice_mirror/` created: byte-identical to `src/alice_iter2/` apart from the
+package line (verified with a body diff). `BOT=alice_iter2
+OPPONENTS=alice_mirror` is therefore a true mirror. **Not yet run** — the VM is
+congested with three agents and an accept-gate run outranks an audit; queued as
+the next non-candidate run. Pre-registered statistic stands: number of maps
+where the same side wins both games, null Binomial(n, 1/2).
