@@ -855,3 +855,59 @@ this one is scheduled to be re-forked. It joins the peer pool, not the roster.
 
 Compile-verified in isolation (`~/bob-tools/dencheck`), so it cannot break the
 tournament build when committed.
+
+
+---
+
+## Backlog find (2026-09-06) — our splashers and moppers do almost nothing
+
+Free analysis on a replay already on disk, using the new `unpaint` column
+(Unpaint + Splash + Mop actions per interval). gridworld, our side, per 200 rounds:
+
+```
+round  splashers  moppers  denial actions/round   per denial unit
+ 400       4         5            0.12                0.014
+ 800      10        11            0.06                0.003
+1400      19        20            0.17                0.004
+2000      27        28            0.20                0.004
+```
+
+A mopper's action cooldown is 30 and a splasher's is 50, so their ceilings are
+0.33 and 0.20 actions per round *each*. Measured throughput is ~0.004 per unit per
+round — **on the order of 1% of capacity**. (Those unit counts are cumulative
+spawns rather than live population, so the true per-unit rate is somewhat higher;
+even assuming only a fifth are alive it is under 5% of capacity.) We are spending
+2 of every 5 units built on the only two unit types that can remove enemy paint,
+and they are essentially idle.
+
+That matters more than the spawn *ratio* I had queued as iteration 7 — tuning the
+ratio of units that do nothing would have been a textbook case of the algorithm's
+"metrics that improve without converting to wins". **The ratio question is
+demoted; utilisation comes first.**
+
+Candidate mechanism, and it is specific and checkable: `Nav.navTo` tries a first
+pass that refuses to step onto enemy paint, and only falls back to "take anything"
+if no other move exists. That is correct for a soldier — standing on enemy
+territory costs 2 paint/turn — but splashers and moppers are *paid* to be in enemy
+territory, and enemy paint is exactly the terrain they must enter. A splasher
+navigating toward a large enemy region will slide along its border rather than
+penetrate it, and `Splasher.run` only fires when a cluster scores ≥5, which on a
+saturated map requires enemy tiles within r²≤2 — i.e. requires having gone *in*.
+The navigation policy and the firing condition are fighting each other.
+
+Second candidate, additive rather than alternative: the splasher's 50-paint
+attack cost against a starved paint economy. `Splasher.run` requires
+`paint >= 60`, and a unit that cannot refill sits at the floor.
+
+Pre-registered instrument for whichever iteration takes this on: denial actions
+per living denial unit per round, from the dumper — normalised per round and per
+unit, because raw counts scale with game length and with army size and would read
+as "better" for reasons unrelated to the change. Note also the caution from
+measurement doctrine #4: this must NOT be evaluated only in mirror matches, where
+both sides paint at the same rate; `bob_denier` exists partly to pose this threat.
+
+Queue order revised on this evidence:
+1. iteration 7 — lattice-independent tower mix (root cause, already validated)
+2. iteration 8 — denial-unit utilisation (this)
+3. iteration 9 — SRPs (written and compile-verified, still the largest paint lever)
+4. then the iteration 3 ablation and the re-opened paint/money ratio sweep
