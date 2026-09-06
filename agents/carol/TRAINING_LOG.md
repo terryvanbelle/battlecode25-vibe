@@ -1621,3 +1621,40 @@ motivating game), trigger frequency (fires 3/3 losses, 0/3 wins, 1/22 h2h replay
 (three different maps, two different opponents), history (supersedes nothing — iteration 2's
 reserve stays armed whenever income is positive), play-symmetry (inputs are team chips and a
 turn counter, neither team-correlated).
+
+### New instrument: `tools/frozen-treasury.py` (iteration 7's mechanism gate, automated)
+
+The iteration-7 gate is "zero games with the treasury exactly unchanged for >=50 consecutive
+rounds while towers stand". That has to be measurable by command, not by hand-reading replays,
+or it will quietly stop being checked — which is precisely how this bug survived four
+iterations after being diagnosed. Infrastructure before strategy (Phase 0.4).
+
+```
+tools/frozen-treasury.py --gate 50 <replays...>     # prints per-replay, exits 1 on failure
+```
+
+Validated against the known answers before trusting it:
+
+| replays | tool output | expected |
+|---|---|---|
+| 3 `carol_rush` losses | 1887, 44, 1881 -> **FAIL** | the hand-measured values |
+| 3 `carol_rush` wins | 0, 0, 0 -> **PASS** | 0 |
+
+**Two real bugs found while building it**, both of the kind that would have silently reported
+"no problem":
+1. It first returned **0 for all three known-bad games**. The continuity clustering assumed
+   two teams emit tower rows, but `carol_rush` prints `RUSH -> ..` and emits none, so every
+   round was discarded as unresolvable.
+2. Then it still returned 0, because within *one* team several towers report in the same round
+   and their `chips=` readings differ whenever one of them builds mid-round — so the clusterer
+   read one team's two towers as two teams. Fixed by grouping on the **BUILD tag** (exact from
+   iteration 7 on: carol is tagged, a frozen snapshot is not) and collapsing each
+   (team, round) to its minimum.
+
+Worth recording that a gate tool that silently reports success is worse than no tool, and the
+only defence is validating it against a case whose answer is already known. Both bugs made it
+*pass* the baseline it was written to fail.
+
+**Known limitation until iteration 7's tag is in a replay**: with neither team tagged, both
+collapse into one series (the rain h2h reads 246 rather than the 233 measured for a single
+team). Directionally fine, exact from the next run onward.
