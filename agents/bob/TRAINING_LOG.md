@@ -2018,3 +2018,51 @@ gauntlet's hour, and I would have spent three iterations without them.
 What survives the same test is starvation: 78% of deaths at ≤10 paint, with a
 mechanism (`tryRefill` cannot see past vision) whose fix is a few lines and whose
 dose is the entire 456-death population. That is why iteration 8 is the one running.
+
+
+---
+
+## Iteration 8 — a second failure mode identified BEFORE the run lands
+
+Found by re-reading `Refill.seek` while the gauntlet was in flight. Recording it now
+so that if the result is a near miss, the refinement is pre-registered rather than
+invented to explain the number.
+
+**The case.** `observe()` sets `home` only from towers with `paintPerTurn > 0`, i.e.
+paint towers, and `anyTower` from any tower. A unit built by a **money** tower —
+and the tower mix is money-heavy, so that is many units — leaves `home` null. Step 2
+then falls back to `anyTower`, walks the unit to that money tower, finds it below
+100 paint (a money tower has `paintPerTurn == 0`, and one built mid-game starts at
+`paintAmount == 0`, both engine-verified), and hits the "already adjacent, wait for
+regen" branch.
+
+**A money tower never regenerates.** So the unit parks next to it forever. That is
+not merely inactivity, it is permanent inactivity, and it would also pile units
+adjacent to each other at the tower — the adjacency drain term.
+
+**Why I am not fixing it mid-run.** The evaluation is already staged and running on
+the current source. Editing now would mean the code I measure is not the code I
+keep, which makes the result uninterpretable. The run finishes as launched.
+
+**Pre-registered refinement #2** (refinement #1, the ruin-work interruption, is
+recorded above; the algorithm allows up to 3): if `home` is null — no paint tower
+has ever been seen — do not park. Walk toward `anyTower` while it may still hold
+its initial 500 paint, but return false when already adjacent and it has nothing,
+so the unit resumes its normal routine instead of waiting for regeneration that
+cannot come.
+
+**How to tell which refinement, if any, is needed** — measurable from the run's own
+replays, no new games:
+- *Parking at sterile towers*: our units stationary for many consecutive rounds
+  within r²≤2 of a MONEY tower. `BobMop` already has positions and types.
+- *Ruin-work interruption*: tower-completion count down versus `bob_iter7` on the
+  same maps, from the dumper's `ptow`/`mtow` columns.
+- If starvation falls sharply and neither signature appears, the change worked and
+  a flat h2h means something else entirely is binding.
+
+A side note on the gate that was supposed to save bytecode: `if (home != null &&
+paint >= below * 2) return false;` cannot short-circuit for a unit whose `home` is
+null, so exactly the units affected by the bug above also sense every single turn.
+Baseline peak is 9126 of 17500 and a sense is a few hundred bytecodes, so this is
+not dangerous — but it is worth checking `maxbc` in the result rather than assuming,
+which criterion 3 already requires.
