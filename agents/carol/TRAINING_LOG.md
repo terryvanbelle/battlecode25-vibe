@@ -2995,3 +2995,48 @@ is the way this iteration most plausibly fails.
 being iteration 4's untested value. Starting at 15%, deliberately below iteration 4, because the
 paint cost argues for caution and a concave curve is more informative than a single aggressive
 point.
+
+### Reviewing the dead splasher code before enabling it — one real bug, one missed capability
+
+`runSplasher()` has been compiled and unreachable since iteration 4. Read it against
+`RULES.md`'s engine-verified entry before betting an iteration on it:
+
+> **Splasher attack [E]**: pick centre within r²=4; every tile within r²=4 *of the centre*:
+> enemy towers take **100 dmg**; empty/ally tiles painted; **enemy paint overwritten only within
+> r²=2 of centre.**
+
+**Bug — the scoring overvalues enemy paint.** The dead code scores every candidate centre with
+```java
+for (MapInfo t : rc.senseNearbyMapInfos(c, 4)) {
+    if (p == EMPTY && t.isPassable()) score += 2;
+    else if (p.isEnemy())             score += 3;      // <-- anywhere in r2=4
+}
+```
+Enemy paint is only converted within **r²=2** of the centre, so every enemy tile in the r²=2..4
+annulus contributes +3 to a centre that will not actually convert it. The function therefore
+systematically prefers centres ringed by enemy paint it cannot touch, over centres whose enemy
+paint is in range. Enabling splashers on top of this would make a rejection uninterpretable —
+*did splashers fail, or did aiming fail?* — so the radius fix is part of making the mechanism
+testable, not a second hypothesis. Logging it that way explicitly.
+
+**Missed capability — splashers are the only unit that can safely kill towers.** The same entry:
+splashers do **100 damage** to enemy towers, and the reach arithmetic in `RULES.md` says a
+splasher can hit a tower from up to r²≈16 (centre up to r²=4 away, tower up to r²=4 from the
+centre) — which **out-ranges paint and money towers at r²=9**. The scoring function has **no
+tower term at all.**
+
+That connects directly to this session's `carol_decap` finding: soldiers cannot kill towers
+because a lv1 tower needs 20 uninterrupted soldier hits while every tower returns 20+10 damage
+*for free*. A splasher needs **10 hits and can stand outside the tower's range while landing
+them.** Carol's own defensive strength — the tower mass nothing in the pool can break — has a
+counter she has never built.
+
+**Deliberately NOT bundling it.** The next iteration is "build splashers, aim them correctly at
+paint". Tower-targeting is registered as the iteration after, because it is a different
+hypothesis (offence vs coverage) and bundling them is exactly what made iteration 4
+uninterpretable — the mistake that cost this direction four iterations of delay.
+
+**Also adding instrumentation**: `runSplasher()` currently returns the bare string `"P"`, so a
+splasher is invisible in every replay. It will report its splash score, whether it fired, and
+its paint — otherwise the mechanism gate cannot be checked at all, which is the failure mode
+`tools/frozen-treasury.py` was built to prevent.
