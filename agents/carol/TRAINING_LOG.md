@@ -1517,3 +1517,107 @@ Two consequences, one of which moderates what I wrote earlier:
    terminal case. Had transient freezes been common, disarming the reserve during them would
    risk spending the very chips that protect a ruin completion — that was the live risk, and
    this measurement retires it.
+
+### Iteration 6b RESULT — 47.5%, and the paired diff closes the whole tower-mix thread
+
+Run `gauntlet/20260906-214451`, same 20 pinned maps as the 500 arm, so the comparison is
+**paired game-for-game** rather than two independent samples.
+
+| instrument | 500 arm | 250 arm |
+|---|---|---|
+| h2h vs `carol_iter5` | 18/40 = 45.0% | **19/40 = 47.5%** |
+| side split | A 8 / B 10 | A 8 / B 11 |
+| swept-win / swept-loss | 3 / 5 | 4 / 5 |
+
+**Paired diff — only 3 of 40 games changed outcome at all:**
+```
+unchanged           37
+LOSS -> win (250)    2   Portal B, Snowglobe A
+win -> LOSS (250)    1   galaxy A
+```
+Net +1 game against a binomial noise floor of ~3.2 games (1 sd at n=40). **That is noise**, and
+the flips are scattered and mixed-direction, which doctrine #7 classifies as churn.
+
+**Then the arm-to-arm identity check explains why, and it is the real finding.** Compared
+indicator trajectories on five maps whose outcomes were unchanged:
+
+| map | trajectories | dose |
+|---|---|---|
+| Mirage | differ, 31,274 lines | **engaged hugely** |
+| Leaf | differ, 59,798 lines | **engaged hugely** |
+| Fossil | identical | did not engage |
+| UnderTheSea | identical | did not engage |
+| windmill | identical | did not engage |
+
+So the dose is not dead — on Mirage and Leaf it rewrites essentially the entire game — but
+**where it engages most, the outcome does not move at all.** Tens of thousands of differing
+robot-turns, same winner. On the other three maps tower paint never crosses between 250 and
+500, so the arms are literally the same bot.
+
+That is this project's recurring pattern in its purest form, and LEARNINGS.md already names it:
+*"metrics that improve without converting to wins"*. Here it is a whole mechanism engaging
+without converting.
+
+**DECISION: REJECT iteration 6/6b.** Reverting `src/carol` to iteration 5's fixed
+symmetry-invariant key. Two doses (500, 45.0%; 250, 47.5%) both sit below the fixed key they
+replace, the trend toward it cannot continue — threshold 0 means *always MONEY*, which
+iteration 5's MoneyTower trace already showed is disastrous — and the paired diff says the
+lever does not reach the scoreboard. Refinements #2 and #3 are available under the near-miss
+rule and I am **declining them**: a third constant on a lever measured not to convert would be
+searching over constants, which is exactly what the doctrine says to stop doing.
+
+**Closed-directions ledger entry.** *Tower mix by observed tower-paint scarcity (paint-only,
+self-calibrating)* — CLOSED. Killed by: paired 40-game diff at two doses on identical maps,
+37/40 outcomes unchanged, net +1 game; trajectory diff proving the mechanism engages on the
+maps where it matters and converts nothing. Re-opening requires a reason the *decision rule*
+changed, not a new constant — and there is one already registered (iteration 9's two-sided
+rule, which reads chips as well as paint), which is a different rule, not a different dose.
+
+`carol_i6a` stays in the tree as a permanent ablation arm rather than being deleted: it is the
+zero-cost way to re-test this if the two-sided rule revives the idea.
+
+## Iteration 7 (2026-09-06) — robustness: the self-cancelling chip reserve
+
+**Area**: robustness (leaves econ after three consecutive tower-mix attempts, one rejected
+outright and two near-missed).
+
+**Base**: `src/carol` reverted to the accepted iteration-5 build; iteration 6/6b's
+`towerTypeFor` is gone. Compile-checked (COMPILE-OK).
+
+**Change** (runTower, plus instrumentation):
+```java
+int chips = rc.getChips();
+stagnantTurns = (lastChips == chips) ? stagnantTurns + 1 : 0;
+lastChips = chips;
+int reserve = (stagnantTurns >= STAGNANT_ROUNDS) ? 0 : CHIP_RESERVE;
+```
+plus `rsv=` and `stag=` in the tower indicator — the gate value itself, which LEARNINGS.md
+asked for the *first* time this bug appeared and which was never actually added.
+
+**Run design**: `OPPONENTS="carol_iter5 carol_rush carol_decap"`, 20 maps x both sides = 120
+games. `carol_turtle` is retired (unbeaten in 64 games) and its ~40 games are spent on
+`carol_decap` instead. **Three maps pinned** — DefaultSmall, DefaultMedium, Fossil, the three
+where the frozen treasury was actually measured — with the other 17 drawn fresh at random.
+Same justification as MoneyTower in iteration 6: the mechanism gate is unmeasurable if the
+sample can miss every map the bug occurs on, and 17/20 stays a fresh draw.
+
+**Pre-registered gate** (restructured by the doctrine-#4 finding above — the h2h cannot carry
+this one):
+- **PRIMARY (mechanism)**: zero games in which the treasury sits *exactly* unchanged for >=50
+  consecutive rounds while towers stand. Baseline: 3 of 40 `carol_rush` games, and
+  1,887 / 1,881 / 44 rounds in the three losses.
+- **CONFIRMATION**: `carol_rush` >= 37/40, ideally 40/40 (all three of its wins are this bug).
+  Stated honestly as corroboration — a 3-game move at n=40 is at the binomial noise floor.
+- **REGRESSION (not an accept signal)**: h2h vs `carol_iter5` must not fall below the 45%
+  near-miss floor. It is expected to be ~50%: the threat is largely absent from that
+  instrument, so a flat result here is the *prediction*, not a rejection.
+- **INSTRUMENT**: `carol_decap`'s first measurement. If it lands in 30-90% it becomes the peer
+  that regression-tests every future economy change; outside that band is a negative result
+  about the instrument and gets logged as one.
+- Dose = `STAGNANT_ROUNDS` (5 / 10 / 20), zero arm = the always-armed reserve (iteration 5).
+
+**Pre-checks all done and recorded above**: reachability (43+ consecutive rounds in the
+motivating game), trigger frequency (fires 3/3 losses, 0/3 wins, 1/22 h2h replays), generality
+(three different maps, two different opponents), history (supersedes nothing — iteration 2's
+reserve stays armed whenever income is positive), play-symmetry (inputs are team chips and a
+turn counter, neither team-correlated).
