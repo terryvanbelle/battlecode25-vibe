@@ -1015,3 +1015,76 @@ That makes it a change to who draws on a shared capped resource, which triggers 
 **the treasury itself must be instrumented in the very first run** (chips, active SRP count,
 and chip income per round in the tower indicator), or the result will be uninterpretable in
 the same way three prior iterations were. Pre-registering that now.
+
+### Iteration 6 RESULT — NEAR MISS (45.0%), one refinement taken
+
+Run `gauntlet/20260906-212704` (20 maps x both sides x 3 opponents = 120 games). Map sample
+is 19 fresh random draws **plus MoneyTower pinned in deliberately**: MoneyTower is the map
+the hypothesis was traced on, and the pre-registered mechanism gate is unmeasurable without
+it. Noting the deviation from "leave MAPS unset" explicitly — 19/20 of the sample is still a
+fresh draw, so the anti-overfitting property is essentially intact.
+
+| instrument | result | pre-registered gate | verdict |
+|---|---|---|---|
+| h2h vs `carol_iter5` | **18/40 = 45.0%** | >50% accept / 45-50% near miss / <45% reject | **NEAR MISS** (at the exact bottom edge) |
+| mechanism: mix differs by map | **yes — verified in two replays** | must differ, else uninterpretable | **PASS** |
+| mechanism: MoneyTower tower count | **4-5 -> 8** | more paint towers than 1-in-3 | PASS |
+| mechanism: MoneyTower idle chips | 100,190 -> **158,950 (grew)** | should shrink | **FAIL** |
+| side split | A 8/20, B 10/20 | even | PASS (no symmetry artifact) |
+
+Diff shape vs `carol_iter5`: swept-win 3 (CastleDefense, DefaultMedium, windmill),
+swept-loss 5 (Fossil, Mirage, Money, Portal, UnderTheSea), **split-by-side 12 of 20** — and
+the splits run in both directions (7 are A-loss/B-win, 5 are A-win/B-loss). Per measurement
+doctrine #7 that mixed-direction scatter is churn; the real signal is the 5-vs-3 swept tilt.
+
+**Mechanism check passed, and this is what settles the refinement direction.** Pulled two
+replays mid-run rather than waiting:
+
+- *MoneyTower* (the motivating map): tower paint sits at **0-150 all game on every tower**,
+  so `avg >= PAINT_PLENTIFUL(500)` is never true and every ruin becomes a PAINT tower.
+  Towers went 4-5 -> 8. The fix worked in the intended direction here.
+- *Mirage* (a swept loss): tower paint spans **0-1000**, with 1-5 towers above 500 at any
+  time, so the gate genuinely fires and flips. Not dead code.
+
+So the mix really is self-calibrating — but the threshold is set **too high**. Mid-game on a
+normal map the tower-paint average sits around 400 (Mirage r1000: `[0,90,225,230,318,440,
+560,865,1000]`), i.e. just *below* 500, so carol builds PAINT at nearly every ruin. That
+quietly reverts iteration 5's central finding — 1-in-3 money took chip income 30 -> 150/round
+and towers 12 -> 25 — which is exactly why it loses 45-55 to iteration 5 while still fixing
+MoneyTower.
+
+**Refinement (near-miss #1 of 3): `PAINT_PLENTIFUL` 500 -> 250.** This is the pre-registered
+dose and it is verified live in both regimes before spending the run, which is what
+measurement doctrine #2 demands:
+- Mirage r1000 average 414: `>=500` false -> PAINT, `>=250` true -> MONEY. **Flips.**
+- MoneyTower average ~20: false under both -> PAINT either way. **The motivating-map fix is
+  preserved.**
+
+That is the whole design goal — money towers on maps that can feed them, paint towers on
+maps that cannot — and 500 was simply above the operating band on ordinary maps.
+
+### Correction to the API sweep's ranking: I ranked chip-sinks by chip ROI, and chips are the worthless resource
+
+The MoneyTower trace forces a revision of the ranking I logged an hour ago. I dismissed tower
+upgrades on a "250-round payback" computed **in chips**. But that trace shows both teams
+ending with **100,190 and 158,950 idle chips** while *every tower sits at tp<=150* — chips
+are free and worthless there, and **paint generation is the hard cap**. A lv1 paint tower
+mines 5/turn; a soldier costs 200 paint, so one tower funds a soldier every 40 rounds no
+matter how many chips are banked.
+
+Repriced in the binding resource:
+- **lv2 paint tower**: 2500 (free) chips **doubles** that tower's paint rate 5 -> 10/turn.
+- **SRP**: 200 (free) chips adds +3/turn to *every* paint tower. 158,950 idle chips is
+  **794 SRPs**.
+
+Both convert the most abundant wasted resource directly into the binding one. SRP still wins
+on scaling (it multiplies across all towers), so iteration 7 is unchanged — but **tower
+upgrades are promoted from "much weaker than they look" to a genuine candidate**, and the
+lesson generalises: *price a sink in the resource that is actually binding, not in the one
+it is denominated in.* Adding that to LEARNINGS.md.
+
+**Instrumentation debt now blocking analysis.** Separating the two teams in these replays took
+inference from tower counts, because carol and its snapshot emit byte-identical indicator
+formats. The iteration-5 log already flagged this; it has now cost real time twice. The
+refinement run will stamp a build tag into every indicator string. This is play-neutral —
+indicator strings cannot affect the game — so it is instrumentation, not a bundled mechanism.

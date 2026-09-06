@@ -163,3 +163,46 @@ outstanding games *cannot* change the verdict — 23 of 24 head-to-head games pl
 >50%, worst case 16/24 — waiting buys nothing and costs the tournament an iteration. The
 discipline is not "always wait", it is "compute what the missing games could do first, and
 write that computation down".
+
+## Price a sink in the resource that actually binds, not the one it is denominated in
+
+Ranking the three unused mechanics (SRPs, tower upgrades, comms) I dismissed tower upgrades
+on arithmetic that was correct and irrelevant: 2500 chips for +10 chips/turn is a 250-round
+payback, versus 1000 chips for +20/turn from a new tower. Both numbers are in **chips**.
+
+The MoneyTower trace then showed both teams finishing with 100,190 and 158,950 idle chips
+while every tower sat at `tp<=150`. Chips there are not scarce, they are *garbage*; paint
+generation is the hard cap, and a lv1 paint tower mining 5/turn funds one 200-paint soldier
+every 40 rounds regardless of the treasury. Repriced in paint, a lv2 upgrade **doubles** a
+tower's output for chips that were being thrown away, and 158,950 idle chips is 794 SRPs.
+
+The general form: an option's cost and its benefit are often denominated in different
+resources, and the ROI you compute by dividing them is meaningless unless both are scarce.
+Ask which resource is binding *first*, price everything in that, and treat an abundant
+resource's cost as zero. The winner's profile this project keeps rediscovering — "capability
+preserved at zero marginal cost" — is mostly this observation wearing a different hat.
+
+## A rules digest is not an instrument; only a call-site diff is
+
+`RULES.md` documented special resource patterns, tower upgrades and communications in
+engine-verified detail, and even concluded in as many words that "chips accumulate uselessly
+unless spent on towers/upgrades/SRPs". The bot implemented **none of the three**. Six
+iterations of reading my own notes never surfaced it; one `javap RobotController` diffed
+against `grep -o 'rc\.[a-zA-Z]*'` surfaced all three in a minute.
+
+Knowing a mechanic exists and *calling* it are independent facts, and only the second is
+checkable mechanically. The sweep is now a standing per-evaluation item next to the bytecode
+check — cheap, and it is the only thing that can catch a whole mechanic sitting idle.
+
+## Verify a threshold against the operating band before, not after, the run
+
+Iteration 6's `PAINT_PLENTIFUL = 500` was not dead code — the gate genuinely flipped on
+Mirage, where tower paint spans 0-1000. It was worse than dead: it sat just *above* the
+mid-game band (Mirage r1000 average 414), so it fired early and then effectively never again,
+silently reverting the previous iteration's accepted result while looking like it worked.
+
+A gate above the operating band is obvious in a trace and invisible in a win rate. Before
+committing a threshold, read the actual distribution of the quantity it tests out of a replay
+and check the threshold falls *inside* it — and for a map-adaptive threshold, check it
+separates the map classes you meant it to separate. That check costs one replay and would
+have set this constant correctly the first time.
