@@ -823,3 +823,35 @@ with a real tower mix — ablating it now would just re-measure the defect):
   value is materially lower than its accept implied and I will say so in this log
   and on the chart, keeping the feature only if it is at least neutral. An accept
   that was right for the wrong reason still needs the correction recorded.
+
+
+---
+
+## Synthetic archetype added (2026-09-06) — `src/bob_denier`, the paint-denial pole
+
+The opponent pool has been 100% self-lineage since iteration 0 (plus
+examplefuncsplayer). TRAINING_ALGORITHM.md calls synthetic archetypes core
+infrastructure — "build the simple poles early; they exist to answer 'does our bot
+handle an opponent that does X' for X our own lineage never does" — and I had
+none. Fixed.
+
+Pole chosen from evidence rather than taste. The measured fact that makes it the
+right one: long games end with the map fully painted (966 of 1000 per-mil claimed
+by someone), and **soldiers cannot overwrite enemy paint at all** — only splashers
+(within r²≤2 of the splash centre) and moppers can. Every bot in my lineage spawns
+a fixed 3 soldiers : 1 splasher : 1 mopper, so my whole evolutionary history has
+never produced an opponent that attacks my territory. `bob_denier` inverts the
+ratio: 60 rounds of soldiers to capture ruins, then splashers and moppers only.
+
+It is a POLE, not a peer, and the log should never read a win rate against it as a
+strength claim. The staleness trap is recorded in `src/bob_denier/README`: it is
+forked from bob_iter3 and drifts further from the live bot with every accept, so
+it must be re-forked when it stops being a challenge, with the re-fork recorded
+here so no win rate is compared across it.
+
+Not added to `progress/roster_extra.txt` yet, and deliberately so: the roster is
+the *absolute-strength* instrument and requires opponents that never change, but
+this one is scheduled to be re-forked. It joins the peer pool, not the roster.
+
+Compile-verified in isolation (`~/bob-tools/dencheck`), so it cannot break the
+tournament build when committed.

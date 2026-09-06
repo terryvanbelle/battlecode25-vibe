@@ -1,0 +1,17 @@
+bob_denier -- synthetic archetype, NOT part of the accepted lineage.
+
+Strategic pole: paint denial. After a 60-round economy phase it builds only
+splashers and moppers, the only two unit types that can remove enemy paint
+(soldiers provably cannot -- engine fact). Every bot in my own lineage is a
+painting race with a fixed 3:1:1 soldier/splasher/mopper ratio, so no opponent
+my evolution produces ever attacks my territory this way. That is exactly the
+self-referential blind spot TRAINING_ALGORITHM.md warns the whole instrument
+suite shares.
+
+STALENESS WARNING (the algorithm's explicit trap: a forked archetype going stale
+once masked a 62.5% as 95.0%). This is forked from bob_iter3 and diverges from
+the live bot every time the lineage improves. It is a POLE, not a peer: read it
+as "can I handle this behaviour", never as "am I stronger than this". Re-fork it
+from the current accepted snapshot whenever it stops being a challenge, and
+record the re-fork in TRAINING_LOG.md so a win rate before and after is never
+compared across the re-fork.
