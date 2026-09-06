@@ -347,3 +347,180 @@ Pre-registered accept criteria (first run under the NEW resampled 25-map default
    551k baseline (i.e. the change actually removed money income), AND r2000
    coverage is not lower. If chips collapse toward 0 *and* coverage drops, the
    dose is too aggressive — refine rather than reject.
+
+**Implementation correction made before running** (worth recording, it was nearly
+a self-inflicted bug). The first draft keyed the choice on `roundNum <= 100`.
+That is unsafe: `workOnRuin` marks the ruin's 5x5 with one type's pattern and then
+refuses to re-mark (its probe is "is any tile marked?"), so a ruin whose type
+changed between marking and completion can never be completed — a soldier would
+sit on it forever. **The tower type must be a pure function of the ruin, never of
+time.** Shipped instead as a stable mask on the ruin coordinates,
+`((ruin.x + ruin.y) & MONEY_SHARE) == 0`, with MONEY_SHARE as the dose parameter:
+1 = one ruin in two is money (iterations 0-3, the zero arm), 3 = one in four
+(this arm), larger = fewer still.
+
+Mechanism verification (single match, gridworld, bob vs bob_iter3, side A):
+**WON AT ROUND 804 BY MAJORITY_PAINTED — 70.2% coverage.** This is the lineage's
+first ever win by the actual win condition; every prior game in every prior run
+ended at the r2000 area tiebreak around 45-55%. Per-round trace:
+
+```
+round  covA  covB   moneyA   moneyB   turns
+  250   532   432     5760     5950      64
+  500   564   394     6010    24770      74
+  750   698   268     6220   100290      83
+  804   702   264     7620   114210      85
+```
+
+All three pre-registered mechanistic predictions hit at once: our chips stop
+piling up (7.6k vs the baseline's 114k on the same round, i.e. income is now
+fully consumed by iteration 3's upgrades instead of dying in the treasury),
+coverage rises monotonically with no r150 plateau, and the robot count reaches 85
+against the ~48 that every earlier trace showed. Class 1 (won) — proceed to the
+full run.
+
+---
+
+## Standing audit items (not yet measured)
+
+- **`Nav.navTo` has a fixed handedness.** Its candidate list is
+  `{d, d.rotateLeft(), d.rotateRight(), d.rotateLeft().rotateLeft(), …}` — left is
+  always tried before right. This is exactly the fixed absolute-order tie-break
+  TRAINING_ALGORITHM.md §7 names as the largest bug class in both prior projects:
+  it interacts with map geometry to favour one side. It is a plausible contributor
+  to the persistent split-by-side result, and it is untested. Mirror-match (bot vs
+  byte-identical copy, both sides, all maps) is the instrument. Note the caution
+  recorded there: a consistent arbitrary preference can be supplying real formation
+  cohesion, so randomising it can be a net regression — measure, don't assume.
+- **Comms are entirely unused.** An API sweep against `src/bob/` (algorithm phase
+  0.2) shows `sendMessage`, `broadcastMessage`, `readMessages`, `canSendMessage`
+  and `canBroadcastMessage` are never called, along with the whole marker API and,
+  until iteration 5, the whole SRP API. Symmetry inference and target
+  deconfliction both live here.
+- **Our own splashers can break our own SRPs.** `Splasher.run` scores EMPTY tiles
+  and splashes an r²≤4 AoE that repaints in primary; a finished SRP's 25 tiles must
+  keep their exact primary/secondary colours or the engine resets the pattern to
+  neutral and restarts its 50-round activation clock. Watch `srpA` in the replay
+  dump: if SRPs are built but the count keeps falling back, this is the cause.
+
+
+
+### Iteration 4 trace — THE RESERVE DEAD BAND (the real find of this run)
+
+Run 20260906-203014 (first under the resampled 25-map default) went badly on maps
+this lineage had never seen: hovering around 47-50% against bob_iter3, with swept
+losses on starburst, Racetrack and Snowglobe. Dumped both swept losses.
+
+`starburst` bot=A (us), per 100 rounds:
+```
+round covA covB moneyA moneyB
+  100  321  414   1250    500
+  300  382  602   1350   2350
+  500  320  646   1300   1900
+  526  280  700    780   2800   <- B wins by MAJORITY_PAINTED
+```
+`Snowglobe` bot=A (us), per 75 rounds:
+```
+   75  191  240    750   1360
+  225  273  489   1200   1760
+  375  302  667   1350   6450
+  453  267  700   1290   5040   <- B wins by MAJORITY_PAINTED
+```
+
+**Our chips sat pinned between 1200 and 1350 for the entire game, on both maps.**
+That number is `Tower.reserve` itself (1200). A soldier costs 250, so spawning
+required 1450 chips and simply never happened — for hundreds of consecutive
+rounds, on every tower we owned. Coverage decayed (428 → 280, 302 → 267) because
+nothing replaced the units that died, while the opponent walked to 70%.
+
+This is the "resource pinned in a dead band" signal TRAINING_ALGORITHM.md §1 names
+as preferable to any opponent-relative comparison, and it needed no opponent to be
+obviously wrong. Two things about it are worth recording:
+
+1. **The reserve was protecting an expansion that had already finished.** Its
+   purpose is to keep 1,000 chips free so a soldier can complete a tower pattern
+   the instant it is ready. On a ruin-poor map the last ruin is captured early;
+   after that the 1,200 chips protect nothing whatsoever while blocking all unit
+   production. A fixed constant converted a modest income shortfall into
+   *permanently zero* output.
+2. **This bug is in bob_iter3 as well** — it is not something iteration 4
+   introduced. Iteration 4's paint-tower bias lowered chip income enough to push
+   many more maps into the band, which is how it became visible. It had been
+   invisible for four iterations because every map tested until today was
+   ruin-rich enough that chips ran away to six figures.
+
+Refinement (iteration 4b), self-calibrating per the algorithm's stated preference
+over fixed constants: hold the expansion reserve only while the team's tower count
+is still growing. `rc.getNumberTowers()` is team-global and engine-verified to
+return our own team's count, so every tower agrees without needing comms; if the
+count has not moved for `EXPANSION_IDLE` = 200 rounds, there is nothing to reserve
+for and the reserve drops to 0. A tower being destroyed also re-arms it, which is
+right — a destroyed tower frees its ruin for rebuilding.
+
+Next run is designed to separate the two effects on ONE shared map sample:
+`bob` (paint bias 1-in-4 + reserve fix) against `bob_i4a` (the paint bias alone,
+frozen byte-identical to what ran here — so this is an exact isolation of the
+reserve fix in the regime where it is actually reachable), `bob_iter3` (the accept
+gate, neither change), and the frozen roster `bob_iter0` + `bob_iter1` for the
+absolute-strength chart. Reachability note for honesty: the reserve fix is nearly
+dead code under iter3's own economy, where chips run to 551k and the band is never
+occupied — it is reachable *because of* the paint bias, so the two are a genuine
+interaction and any accept here is for the pair, not for either alone.
+
+---
+
+## Iteration 5 (2026-09-06) — Special Resource Patterns — prepared, gated on iteration 4
+
+Target: the third and largest untouched paint-income multiplier found in the
+iteration-3 engine probe. Whole game mechanic, never used by this bot (confirmed
+by the API sweep: `getResourcePattern`, `canMarkResourcePattern`,
+`markResourcePattern`, `canCompleteResourcePattern`, `completeResourcePattern`
+are all uncalled), and `srpA`/`srpB` are 0 in every replay ever dumped, on both
+sides.
+
+Engine ground truth (`InternalRobot.processBeginningOfRound`):
+```
+if (type.paintPerTurn != 0) addPaint(type.paintPerTurn + gameWorld.extraResourcesFromPatterns(team));
+if (type.moneyPerTurn != 0) teamInfo.addMoney(team, type.moneyPerTurn + gameWorld.extraResourcesFromPatterns(team));
+```
+with `extraResourcesFromPatterns(team) = 3 * numResourcePatterns(team)`. So an SRP
+is **+3 paint/turn on every allied PAINT tower**, not merely +3 chips on money
+towers — the spec's phrase "mining towers" hides that. With P paint towers and N
+SRPs the paint income is P·(base + 3N).
+
+Chip efficiency vs the accepted iteration 3 mechanism: an SRP costs 200 chips for
++3 paint/turn × P towers; a tower upgrade costs 2500 chips for +5 paint/turn × 1
+tower. At P ≈ 8 the SRP is ~30× better per chip, which is why `SRP_MIN_CHIPS` is
+set at 500 — below iteration 3's upgrade threshold, so SRPs win the race for chips.
+This matters now in a way it would not have before iteration 4: chips stopped being
+free (7.6k at r804 vs 114k for iter3), so the two mechanisms genuinely compete.
+
+Implementation (in `Soldier`, isolated; already written and compile-verified on
+the VM in an isolated directory that does not touch the workspace build):
+an idle soldier — one with no ruin to capture — marks a resource pattern on its
+own square, paints the 25 tiles to match the marks it just wrote, and completes it.
+Standing on the centre puts all 25 tiles inside the soldier's own r²≤9 action
+radius, so it never has to move while building.
+`canMarkResourcePattern` is left to enforce the geometry (centre ≥2 from every
+edge, all 25 tiles paintable) rather than re-deriving it. `srpSiteSafe` adds the
+three checks the engine does not: no enemy paint (a soldier cannot overwrite it,
+so the site could never be completed), no overlap with a finished SRP, and no tile
+already marked (which is what prevents two adjacent soldiers from marking
+contradictory overlapping patterns and deadlocking each other).
+
+Pre-checks: **Reachability** — soldiers go idle as soon as the nearby ruins are
+all captured, which the traces show happens by ~r170; chips exceed 500 from ~r150.
+**Trigger frequency** — bounded by idle soldiers and by the no-marked-tile rule.
+**Generality** — this is a whole-mechanic gap, not a fix aimed at one game.
+**Known interaction to watch** — our own splashers repaint in primary over an r²≤4
+AoE and would reset any SRP they clip (the engine re-checks pattern integrity every
+round and restarts the 50-round activation clock on any mismatch). Instrument: the
+`srpA` column of the replay dump. SRPs built but repeatedly falling back to 0
+active means the splasher is eating them, and the fix is a splasher exclusion, not
+abandoning the mechanic.
+
+Pre-registered accept criteria:
+1. **h2h vs the iteration-4 snapshot > 50%** — accept gate.
+2. swept-win > swept-loss.
+3. Mechanistic (checked first, on one match): `srpA` reaches ≥3 and stays there,
+   and the win round drops versus the same map/side baseline.

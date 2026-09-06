@@ -1,0 +1,4 @@
+# Process changes -- how evaluation works, not individual accepts.
+# format: <commit>|<label>
+737f518|One gauntlet per workspace (concurrent runs share build/classes and poison results)
+2352730|Replay counter dumps read for absolute degeneracy, not opponent-relative deficit
