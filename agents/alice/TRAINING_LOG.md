@@ -1154,3 +1154,33 @@ game, which independently re-confirms LEARNINGS §1 (paint, not chips, binds).
 add a gate — the winning dose must not reduce soldier spawns by more than it
 reduces starvation deaths. `twPaint` at r2000 is now a reported variable for every
 arm, not a watch.
+
+### Structural observation — every unit navigates blind, and it is the same bug three times
+
+Noticed while drafting iteration 7. The algorithm says to hunt for radius
+asymmetries; this bot contains one in every unit, and it is self-inflicted rather
+than an engine quirk:
+
+| unit | vision r² | radius it picks targets in | navigates by |
+|---|---|---|---|
+| soldier (no ruin in sight) | 20 | 9 (action radius) | **random wander** |
+| mopper | 20 | **2** (mop radius) | **random wander** |
+| splasher | 20 | 4 | **random wander** |
+
+Every unit can *see* roughly twice as far as it can *act*, and none of them uses
+the difference. They act on whatever happens to fall inside the small circle and
+otherwise walk in a random direction for 5-12 steps. The mopper is the worst case
+by an order of magnitude — it selects targets from the 8 adjacent tiles while
+seeing ~60.
+
+So "purposeful moppers" (iteration 7) is really the first instance of a general
+fix: **navigate toward the nearest thing you could act on**. The soldier version —
+walk toward visible unpainted ground instead of wandering — is the same change and
+becomes the iteration 8 candidate. Keeping them as separate iterations is
+deliberate: they touch different units and must not be bundled, and the mopper
+version has a specific map (starburst) that predicts its effect.
+
+Ordering rationale: iteration 6 (refuel) is already verified and queued;
+iteration 7 (moppers) has a named failing map; iteration 8 (soldiers) is the
+largest population but has no specific failing map yet, so it is the weakest
+pre-registration of the three and goes last.
