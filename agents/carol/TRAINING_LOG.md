@@ -1331,3 +1331,49 @@ Deliberately *not* folding this into 6b or iteration 7: 6b is already running as
 single-constant dose, and iteration 7 is a separate mechanism with its own pre-checks done.
 Bundling either would make all three uninterpretable. Order stands: 6b -> 7 (self-cancelling
 reserve) -> 8 (SRPs) -> 9 (two-sided mix), each measured alone.
+
+### STOP — iteration 7's accept gate would have been blind to it (doctrine #4 caught this)
+
+Before building the reserve fix I measured how often the frozen treasury appears in the games
+the **accept gate** actually plays: all 22 head-to-head loss replays vs `carol_iter5`, using a
+two-team chip-series splitter (cluster each round's two `chips=` values by continuity, skip
+rounds that don't resolve).
+
+| instrument | replays | longest frozen-treasury run |
+|---|---|---|
+| h2h vs `carol_iter5` (the accept gate) | 22 losses | **21 of 22 are 0-4 rounds**; one outlier (rain botB, 233) |
+| vs `carol_rush` | 3 losses | **1887 / 1881 / 44** |
+| vs `carol_rush` | 3 wins | 0 / 0 / 0 |
+
+**The degeneracy is essentially absent from the accept gate and concentrated entirely against
+the rusher** — and the reason is mechanical: the treasury only freezes when the last money
+tower dies, and killing towers is something `carol_rush` does and my own lineage does not.
+
+This is measurement doctrine #4 verbatim: *"an even instrument cannot measure a defense
+against a behavior its opponents never perform — a mirror proved a defensive feature
+'worthless' that was in fact worth several games against rushers, because the lineage never
+rushes. For any defensive feature, first check whether the evaluating opponents pose the
+threat at all."* I was one step from spending a run whose primary gate physically could not
+see the effect, then reading the inevitable ~50% as a rejection and closing a direction that
+is worth three games.
+
+**Revised iteration 7 evaluation design, pre-registered:**
+- **PRIMARY = the mechanism**, not the h2h: zero games in which the treasury sits unchanged
+  for >=50 consecutive rounds while towers stand. This is an *absolute* degeneracy — no
+  opponent is needed for it to be wrong — which is the class the algorithm ranks above
+  opponent-relative signals in the first place.
+- **CONFIRMATION = `carol_rush`**, the only instrument in the pool that poses the threat.
+  37/40 -> 40/40 is the ceiling. Noting honestly that a 3-game move on n=40 is at the
+  binomial noise floor and is corroboration, not proof.
+- **h2h vs the accepted snapshot: expected to be flat, and pre-committed as NOT a rejection
+  signal.** It gates only against regression — a h2h *below* the near-miss band would mean the
+  disarm hurt normal play, which is the one real risk.
+- The `carol_turtle` retirement pays for this directly: those ~40 freed games become a wider
+  `carol_rush` block, which is where the resolution has to come from.
+
+**Pool consequence.** The lineage cannot generate this threat, so it cannot regression-test
+against it — the self-referential blind spot in its exact textbook form. `carol_rush` is
+currently the only mitigation and it is nearly spent as an instrument (92.5%). The right
+answer is a *second* tower-killing archetype tuned to be even rather than lopsided, and the
+tournament (Alice and Bob are independent lineages that may well pressure towers) is the other
+sanctioned source. Registering the archetype as real work, not a nice-to-have.
