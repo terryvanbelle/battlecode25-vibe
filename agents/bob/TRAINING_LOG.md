@@ -1339,3 +1339,37 @@ Note for the ledger: the standings from that tournament (every pair splitting ev
 map by side, 4/8 each) carry almost no information — 2 maps, 8 games. The *replays*
 carried a great deal. Standings and replays are very different instruments and the
 run being uninformative on one does not make it uninformative on the other.
+
+### Iteration 7 affected-subset run — PRE-REGISTERED before it is launched
+
+Subset defined by the mechanism, from `bob-tools/ruins-mix.csv`, before any game on
+these maps is played. A map qualifies if the two rules' deviation from a 50/50 mix
+differs by **≥17 points in either direction** — so the subset deliberately contains
+the maps the hash makes WORSE as well as the ones it fixes. That is what stops it
+being a cherry-pick, and it turns the run into a two-sided dose-response test
+rather than a search for good news.
+
+```
+helped (9): Snowman CastleDefense gridworld Filter yearofthesnake
+            lighthouse windmill DefaultMedium boxofchocolates
+hurt   (6): Paintball Castle Rose SandyBeach sierpinski sunrise
+```
+
+15 maps x 2 sides vs `bob_iter3` = 30 games.
+
+Pre-registered readouts:
+1. **Win rate on the 9 helped maps vs the 6 hurt maps.** The prediction the
+   mechanism makes is a *split*: above 50% on helped, at or below 50% on hurt. A
+   uniform result in either direction across both groups is evidence the tower mix
+   is not what is driving the games at all, and would make the whole iteration a
+   wash regardless of the headline.
+2. The 4 formerly all-one-type maps (CastleDefense, Filter, Snowman, gridworld)
+   read out separately — that is where the convexity argument lives.
+3. Combined with the broad 20-map run as the no-regression half. **Both halves are
+   reported whichever way they land.**
+
+Decision rule, fixed now: accept only if the broad run shows no regression AND the
+helped group beats the hurt group. If the helped group does not beat the hurt
+group, the mechanism is not converting into wins, and iteration 7 is a REJECT that
+closes the tower-mix thread for good — which, given the arithmetic above showing no
+pure function can do better, would be a genuinely useful thing to have established.
