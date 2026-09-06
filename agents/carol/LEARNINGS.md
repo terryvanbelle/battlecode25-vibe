@@ -277,3 +277,18 @@ The practical tell: if a change rewrites tens of thousands of robot-turns and th
 not move, the quantity it controls is not on the path to winning. Do not spend a refinement on
 a better value of it — the lever is the wrong lever, not the wrong setting. Two near-miss
 refinements were available under the rules here and taking them would have been a mistake.
+
+## Ask what the run already in flight answers before queueing another
+
+The play-symmetry mirror audit sat "owed" for four iterations because it looked like it needed
+its own 40-game run against a byte-identical copy. It did not. Iteration 7's head-to-head block
+was already a mirror match — the new mechanism provably never fired against the baseline, so
+the two builds made identical decisions over 20 maps and both sides — and it answered the
+question outright (every map split by side; the favoured side was 9 maps to 10, so no
+team-identity bias).
+
+Shared VM time is the scarcest resource in this project, and a queued run costs hours of
+wall-clock that a query against an existing replay costs seconds. Before queueing anything,
+ask which pending question the *current* run's replays already contain the answer to. Several
+of this session's findings — the frozen-treasury trigger frequency, the arm-to-arm identity
+check, this audit — came out of runs launched for a different purpose entirely.
