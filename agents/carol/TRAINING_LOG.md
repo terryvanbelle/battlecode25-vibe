@@ -886,3 +886,52 @@ fire automatically the moment `GAUNTLET-COMPLETE` appears), so no VM time is los
 serialisation the shared `build/classes` forces. Opponents `carol_iter5` (the gate),
 `carol_rush` and `carol_turtle` (fixed-roster points), `NMAPS=20` -> 120 games, which puts
 the gate back at n=40 after iteration 5's n=24.
+
+### Session recovery (2026-09-06 ~21:20) — what the SSH hangup did and did not cost
+
+The previous session died to a SIGHUP on claude-driver at ~21:07, not to anything on the
+VM. Reconciled on resume:
+
+- `gauntlet/20260906-203937` **finished** (144 games, `GAUNTLET-COMPLETE`, no `!! INCOMPLETE`
+  banner) and was recovered by the coordinator with the new `tools/gauntlet-collect.sh`.
+  Only the driver-side poll loop was lost. Iteration 5's accept therefore stands on complete
+  data, and the h2h final is confirmed at **16/24 = 66.7%** vs `carol_iter3` — exactly the
+  worst case computed at accept time.
+- The chained iteration-6 launch **did not fire**: the watcher lived on the driver.
+  `gauntlet-collect.sh --list` confirms six finished runs on the VM and nothing in flight.
+  The serialisation constraint that forced the chaining (shared `build/classes`) is gone
+  with that run, so iteration 6 was launched directly instead.
+- `src/carol/RobotPlayer.java` still holds iteration 6's patch, intact and uncommitted.
+  Re-verified it before launching rather than trusting the note (see below).
+
+**Re-verification of the mark-readback before spending a run.** The patch's correctness
+rests on one claim: offset (-2,-1) distinguishes the two tower patterns. Checked against the
+decoded constants in `RULES.md` rather than re-asserted. With rows printed y-up, dy=-1 is
+`.X.X.` for PAINT and `XX.XX` for MONEY; at dx=-2 that is `.` (primary) and `X` (secondary)
+respectively — so `ALLY_SECONDARY -> MONEY`, `ALLY_PRIMARY -> PAINT` is right.
+
+Also traced the failure mode of a *wrong* read, which turns out to be benign: `kind` is used
+only by `markTowerPattern` and `canCompleteTowerPattern`. The painting loop reads
+`tile.getMark()`, not `kind`, so a soldier that mis-decides paints nothing conflicting — it
+simply fails `canCompleteTowerPattern` and another soldier finishes the ruin. The
+"conflicting patterns deadlock" I was guarding against cannot occur through this path. Worth
+recording because it downgrades the risk of the whole mechanism.
+
+### Instrument correction — two mislabelled rows in `vs_old_bots_history.csv`
+
+Running `track_vs_old_bots.py` on the recovered run exposed that the tool derives
+`current_snapshot` from the snapshots existing at collation time, not from the build that
+actually played — the exact failure TRAINING_ALGORITHM.md §6 names ("label rows with the
+build that actually played"). Two corrections, both to my only absolute-strength instrument:
+
+| row | was | now | why |
+|---|---|---|---|
+| 20:29:08 vs carol_rush (47/50) | `carol_iter3`, `roster-run` | `carol_iter4rej`, `backfill` | that run was played by the **iteration-4 candidate, which was REJECTED**. `source` is load-bearing: it draws the marker solid, i.e. as if it were accepted lineage. Hollow is the honest marker. |
+| 20:39:37 x5 (the recovered run) | `carol_iter3` | `carol_iter5` | played by the iteration-5 candidate, since accepted and snapshotted as `carol_iter5`. |
+
+The x-axis is date, so neither mislabel moved a point; what was wrong was a rejected
+candidate being drawn as accepted lineage. Noting the re-clobber hazard: re-processing
+either run with `track_vs_old_bots.py` will overwrite these rows with the derived labels
+again, because rows are keyed by (date, opponent). Do not re-process those two run ids.
+
+Charts redrawn: 5 accepted iterations (carol_iter0..carol_iter5), 10 history rows.
