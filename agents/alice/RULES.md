@@ -38,8 +38,13 @@ line refs below are to `engine/src/main/battlecode/world/*.java`.
   identical except for pattern matching.
 - End-of-turn paint penalties (InternalRobot.processEndOfTurn):
   - on neutral tile: -1 (mopper -2); on enemy tile: -2 (mopper -4); ally tile: 0.
-  - PLUS -1 per adjacent (8-dir, r^2<=2) ally robot; **doubled (-2/adj) on enemy tile**.
+  - PLUS -1 per adjacent (8-dir, r^2<=2) ally ROBOT; **doubled (-2/adj) on enemy tile**.
     Clumping is taxed! (mopper multiplier does NOT apply to the adjacency part).
+    **The adjacency tax is charged on ALLY tiles too** — the ally-tile branch of
+    `processEndOfTurn` is `addPaint(-allyRobotCount)`, so standing on your own
+    paint waives only the *terrain* penalty, never the crowding one. A fully
+    surrounded robot pays -8/turn anywhere on the map (200-paint soldier stash,
+    100-paint mopper). Only robots count; adjacent towers are free.
 - 0 paint at end of turn → -20 HP/turn, and cannot move/act (except disintegrate) until refilled.
 - Low paint cooldown scaling: below 50% stash, cooldowns multiplied by
   (100 - 2*X)% extra where X = paint %. (INCREASED_COOLDOWN_* in GameConstants).
@@ -70,6 +75,11 @@ line refs below are to `engine/src/main/battlecode/world/*.java`.
   request exactly `min(myCapacity - myPaint, towerPaint)`.
 
 ## Towers
+- **A tower can upgrade ITSELF for free.** `assertCanUpgradeTower` only calls
+  `assertCanActLocation(loc, BUILD_TOWER_RADIUS_SQUARED=2)`, which checks range
+  and on-map and nothing else — **no action-readiness check** — and
+  `upgradeTower` adds **no cooldown**. Distance to self is 0, so the only cost
+  is chips. `UnitType.getNextLevel()` returns null at level 3.
 | type | build/upg cost (chips) | actRadius^2 | single dmg | AoE dmg | prod | HP |
 |---|---|---|---|---|---|---|
 | Money L1/2/3 | 1000/2500/5000 | 9 | 20 | 10 | 20/30/40 chips | 1000/1500/2000 |
@@ -103,6 +113,16 @@ line refs below are to `engine/src/main/battlecode/world/*.java`.
 - Markers: ally-visible map annotations (primary/secondary/empty), placed r^2<=2, cost 1
   paint (pattern-mark 25). No gameplay effect other than pattern guide; a durable
   ally-only shared-memory channel on the ground.
+
+## Replay-action schema (needed to read replay dumps correctly)
+- `PaintAction` — a tile painted (soldier/splasher/tower pattern work).
+- `UnpaintAction` — **the only call site in the engine is `mopperAttack`**
+  (`InternalRobot:417`), so this counter is exactly "tiles mopped by this team".
+- `MopAction` — emitted **only** by `mopSwing` (twice per swing), never by an
+  ordinary mop. A bot that never swings has `MopAction == 0` a priori; that zero
+  says nothing about mopper activity. (This misread cost me a hypothesis.)
+- `AttackAction` — soldier/splasher damage to a tower, tower attacks, and a
+  mopper mopping a tile with an enemy robot on it.
 
 ## Bytecode & determinism
 - 17500/turn robots, 20000/turn towers. Exceeding pauses mid-instruction silently,
