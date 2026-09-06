@@ -196,3 +196,43 @@ Corollary, learned the same day: a denominator is part of the claim. "1% of acti
 capacity" (cumulative spawns) became ~37% (live population), and "32% of unit-turns
 waste a free step" became 10% once towers stopped being counted as units. Both
 reversed the resulting decision.
+
+## 9. A waste can be the efficient behaviour (2026-09-06)
+
+The single most instructive result so far. I measured that **78% of our unit deaths
+happen at ≤10 paint** — starvation, not combat — across four games, three maps,
+three opponents, both sides. Independently confirmed from a tournament replay, where
+an unrelated lineage lost 6x fewer moppers than mine on the same map. A real,
+general, large, correctly-measured fact.
+
+I read it as the bot's largest leak. It is closer to the bot's most efficient
+behaviour.
+
+**Why.** Spawning converts 200 paint into *200 paint plus a body*. Refilling
+converts 200 paint into *200 paint*. Bodies were the scarce resource (~15 alive
+against ~290 built) and chips were abundant (55,630 unspent in the losing game,
+327,000 in an earlier trace), so chips never bound. While paint is the binding
+constraint and chips are free, spawning strictly dominates refilling, and a unit
+that paints until it starves has already converted its whole stash into tiles and
+then freed the economy to build a replacement that arrives with a fresh body.
+
+Fixing the "leak" cut deaths 283 → 31 and lost the head-to-head 16/40, because the
+paint went to keeping units alive instead of to building them: 29 soldiers against
+the opponent's 45, coverage 267 against 703, dead by round 889.
+
+**The transferable rules:**
+
+1. **Before calling an observed loss "waste", price its alternative.** A resource
+   that ends at zero has been *spent*, not lost. The question is never "how much did
+   we lose" but "what would the same resource have bought instead".
+2. **Identify the binding constraint first, and re-check it after every economy
+   change.** Every conclusion about paint here is conditional on chips being free.
+   That condition is measurable in one column of the replay dump and I did not look
+   at it until after the run.
+3. **A dying unit is not a failed unit.** Attrition is the price of doing the thing
+   that wins; TRAINING_ALGORITHM.md says exactly this and I still had to pay for it.
+4. **Turn a rejection into a test.** The rejection produced a *quantitative*
+   condition for its own reversal — "re-open when team chips stop accumulating
+   below ~5,000" — which is now a pre-registered readout on the next run rather
+   than a note that might get revisited. A closed direction with a numeric trigger
+   is worth far more than one closed with a paragraph.
