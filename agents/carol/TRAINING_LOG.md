@@ -1877,3 +1877,28 @@ ruin. Fix the income and the reserve stops being a trap without touching it. Tha
 69 in iteration 6's run, because `carol_rush` **kills the money towers**. Income reaching zero
 does not require building no money towers; it only requires losing them. That is a specific,
 evidenced reason the recorded cause no longer applies.
+
+### New instrument: `tools/eval-run.sh` — the standing checklist as one command
+
+Every item the algorithm says to check on *every* evaluation was being done by hand and
+therefore inconsistently: completeness, per-opponent rate, the **binomial noise floor** for
+that sample size (doctrine #6 asks for it explicitly and I had been eyeballing it), swept-map
+shape, side split, exceptions, the bytecode check, and now the frozen-treasury gate.
+
+```
+tools/eval-run.sh <run-id> [gate-opponent]
+```
+
+Run against 6b as a self-test, it reproduces every number I derived by hand today and adds
+two I had not computed: the noise floor is **3.2 games = 7.9 points at n=40** (so 6b's
+"+2.5 points over the 500 arm" was always inside it), and the 6b run contains a **255-round
+frozen treasury**, i.e. the baseline still has the degeneracy — which is the control iteration
+7 needs.
+
+It also confirms the build tag earning its keep on its first automated use: the gate line
+reads `untagged=0  i6b=0`, splitting the two teams exactly rather than by continuity guessing.
+
+The reason to build this rather than keep hand-scoring is the one this session keeps
+relearning: the dead band survived four iterations *after* being diagnosed because checking
+for it was a thing someone had to remember to do. A checklist that is one command is a
+checklist that still runs when the session is tired.
