@@ -935,3 +935,83 @@ either run with `track_vs_old_bots.py` will overwrite these rows with the derive
 again, because rows are keyed by (date, opponent). Do not re-process those two run ids.
 
 Charts redrawn: 5 accepted iterations (carol_iter0..carol_iter5), 10 history rows.
+
+## RobotController API sweep (2026-09-06, run while iteration 6 evaluates)
+
+TRAINING_ALGORITHM.md Phase 0.2 mandates periodically sweeping the full API for methods the
+bot never calls ("a whole game mechanic sat unused for 81 iterations once"). Did it: carol
+calls **33** `rc.*` methods. Diffed against `javap battlecode.common.RobotController` on the
+3.1.0 jar. **Three entire mechanics are unused:**
+
+| unused mechanic | API | status |
+|---|---|---|
+| **Special Resource Patterns** | `canMarkResourcePattern` / `markResourcePattern` / `canCompleteResourcePattern` / `completeResourcePattern` / `getResourcePattern` | never called |
+| **Tower upgrades** | `canUpgradeTower` / `upgradeTower` | never called |
+| **Communications** | `sendMessage` / `broadcastMessage` / `readMessages` | never called — carol has no comms of any kind |
+
+The embarrassing part is that `RULES.md` *already documents all three*, including the line
+"Chips accumulate uselessly unless spent on towers/upgrades/SRPs... SRP value scales with
+tower count." The digest reached the conclusion; the bot never acted on it. Recording this
+as the shape of the failure, not just the instance: **a rules digest is not an instrument.
+Only a call-site diff is.** Adding the sweep to the standing per-evaluation checklist
+alongside the bytecode check.
+
+**Fresh engine probe** (`javap -constants GameConstants`, not inferred from behaviour):
+
+```
+COMPLETE_RESOURCE_PATTERN_COST = 200      RESOURCE_PATTERN_ACTIVE_DELAY = 50
+EXTRA_RESOURCES_FROM_PATTERN  = 3         RESOURCE_PATTERN_RADIUS_SQUARED = 8
+MAX_NUMBER_OF_TOWERS          = 25        MARK_PATTERN_PAINT_COST = 25
+```
+`markResourcePattern(MapLocation)` takes a free location — SRP centres are **chosen**, not
+pre-placed map features (`MapInfo.isResourcePatternCenter()` reports a completed one). There
+is **no constant capping the number of active SRPs.**
+
+### Ranking the three by measured evidence, not appeal
+
+- **Tower upgrades: much weaker than they look.** lv1->lv2 costs 2500 chips for +10
+  chips/turn (money) or +5 paint/turn (paint) — a **250-round payback**, and the paint half
+  is worthless on maps where iteration 5 already measured towers pinned at the `tp=1000`
+  cap. A *new* tower is 1000 chips for +20/turn (50-round payback) and is strictly better
+  until the 25-cap binds.
+- **SRP: an order of magnitude better.** 200 chips for +3/turn to *every* paint tower and
+  +3/turn to *every* money tower. At iteration 5's measured 25 towers (~8 money / ~17 paint)
+  that is **+24 chips/turn and +51 paint/turn for 200 chips — an ~8-round payback**, and it
+  scales with a tower count that iteration 5 proved now saturates the engine cap. Uncapped
+  in count.
+- **Comms**: largest scope, no *measured* waste behind it. Deferred.
+
+### The convergence that promotes SRP over frontier exploration
+
+Iteration 7 was registered as frontier-seeking exploration, on the finding that 97% of idle
+soldier turns on open maps are `IDLE-ALLY` (34,821 turns on Leaf) — a soldier standing on
+ground that is already ours with nothing to paint. Frontier exploration walks those soldiers
+to the enemy half.
+
+But an SRP needs exactly one thing: **an idle soldier standing on friendly paint.** The
+IDLE-ALLY finding is not only the motivation for exploration, it is the *supply* for SRPs,
+and this is the algorithm's named winner's profile verbatim — "capability preserved at zero
+marginal cost: spending idle resources". Exploration's payoff is speculative coverage; the
+SRP's is arithmetic with an engine constant behind it.
+
+Cheaper than it looks, too: an SRP is 13 secondary + 12 primary tiles, and IDLE-ALLY means
+the patch is *already ally paint*, so only the ~13 secondary tiles need repainting (~65
+paint) on top of the 200 chips. carol also already owns the machinery — `workOnRuin`'s
+mark-then-paint-the-marks loop transfers directly.
+
+**Decision: iteration 7 = SRP. Frontier-seeking exploration demotes to iteration 8** (it is
+not withdrawn — the IDLE-ALLY trace still supports it, it is just second in line).
+
+### The one pre-check that is not yet satisfied — logged so it is not skipped
+
+*Reachability of the completion branch.* `completeResourcePattern` needs 200 chips, and
+`runTower` spends everything above `CHIP_RESERVE`(1200) on robots, so the treasury oscillates
+just above 1200. A naive gate of `CHIP_RESERVE + 200` would sit above the equilibrium band
+and **never fire** — precisely the dead-branch failure the algorithm says burned three
+iterations in a day. So iteration 7's SRP spend must deliberately *compete* with robot
+spawning rather than wait for a surplus that the spawn logic guarantees never appears.
+
+That makes it a change to who draws on a shared capped resource, which triggers §4's caveat:
+**the treasury itself must be instrumented in the very first run** (chips, active SRP count,
+and chip income per round in the tower indicator), or the result will be uninterpretable in
+the same way three prior iterations were. Pre-registering that now.
