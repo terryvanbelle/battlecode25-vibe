@@ -5,3 +5,6 @@ date,current_snapshot,opponent,wins,total,win_pct,source
 2026-09-06T20:42:01+00:00,bob_iter3,bob_iter0,26,30,86.7,roster-run
 2026-09-06T20:42:01+00:00,bob_iter3,bob_iter1,24,30,80.0,roster-run
 2026-09-06T20:42:01+00:00,bob_iter3,examplefuncsplayer,30,30,100.0,roster-run
+2026-09-06T21:27:34+00:00,bob_iter3,bob_iter0,36,40,90.0,roster-run
+2026-09-06T21:27:34+00:00,bob_iter3,bob_iter1,34,40,85.0,roster-run
+2026-09-06T21:27:34+00:00,bob_iter3,examplefuncsplayer,40,40,100.0,roster-run

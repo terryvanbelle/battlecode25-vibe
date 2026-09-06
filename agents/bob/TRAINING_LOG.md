@@ -1779,3 +1779,134 @@ the ledger fills with fastest.
 `bob_denier` is NOT retired despite 80%: it is the only opponent besides the accept
 gate that beat me from both sides of any map, and the algorithm says never retire an
 opponent we lose to.
+
+
+---
+
+## Iteration 7 DECISION (2026-09-06) — ACCEPTED, on a robustness argument
+
+### The two runs
+
+```
+broad random 20-map sample (200 games)   vs bob_iter3  21/40 (52.5%)  swept 3-2
+affected subset, 15 maps (30 games)      vs bob_iter3  19/30 (63.3%)  swept 5-1
+```
+
+Combined h2h grouped by each map's exactly-known dose (64 games):
+
+```
+maps whose mix the change IMPROVED   21/30  (70%)
+maps it left alone                    3/6   (50%)
+maps whose mix it made WORSE         16/34  (47%)
+better-minus-worse: +23 points, se 13  ->  1.83 sd, one-tailed p ~ 0.033
+```
+
+Monotone, in the direction registered before either run. **The mechanism is real:
+the tower mix causally affects who wins, and moving it toward 50/50 helps.**
+
+### The awkward fact I went looking for, and found
+
+Across all 75 maps the hash **helps 18, leaves 20 unchanged, and HURTS 37** — mean
+gain −0.59 points. It applies a confirmed mechanism in the wrong net direction. Feed
+the measured per-group win rates through that pool composition and the predicted
+overall effect is (18x0.70 + 20x0.50 + 37x0.47)/75 = **53.3%**, which is almost
+exactly the 52.5% the broad run measured. The model and the data agree, and they
+agree on "barely positive".
+
+### So I searched offline for a rule that dominates — and the search argued against itself
+
+Free, over all 75 maps, no games. `parity ^ (((x>>3)+(y>>3))&1)` looked like a clean
+win: 0 all-one-type maps, mean deviation **8.50** — better than parity's 9.28 *and*
+the hash's 9.87 — and only 1 map over 30 points. It keeps the local checkerboard
+alternation that makes parity beat a fair coin while flipping the pattern every 8
+tiles to break the global invariance.
+
+Then I swept the parameter, which is the check that matters:
+
+```
+parity ^ ((x>>1)+(y>>1))   allOne 3   mean  8.90
+parity ^ ((x>>2)+(y>>2))   allOne 3   mean 11.36   <- WORSE than baseline
+parity ^ ((x>>3)+(y>>3))   allOne 0   mean  8.50   <- the "winner"
+parity ^ ((x>>4)+(y>>4))   allOne 1   mean  8.64
+parity ^ ((x>>5)+(y>>5))   allOne 4   mean 10.74
+same rule, origin shifted by 1 tile:  allOne 1   mean  9.16
+same rule, origin shifted by 2 tiles: allOne 1   mean 10.60
+```
+
+**The optimum is a spike, not a plateau.** One tile of phase shift or one bit of
+block size destroys it. That is the signature of a rule fitted to the particular
+lattices in these 75 files, not of a structural property — and there is no
+principled reason for 8 tiles. Ruin spacings here run 5-8, so a block of 8 happens
+to de-phase these maps and would be worth nothing on maps spaced differently.
+
+**CLOSED: "tune a structured pure function (parity XOR a low-frequency term)."**
+Killed by its own parameter sweep. Adopting it would have been overfitting to the
+map pool, and my gauntlet resamples from that same pool, so *no instrument I own
+would ever have caught it* — which is precisely why AGENT.md calls a fixed map list
+an overfitting surface.
+
+### Correction to my own earlier closure
+
+Earlier I wrote that the hash "is at the fair-coin floor, so no pure function can do
+better". That was overstated and I am fixing it rather than leaving it. Parity gets
+9.28 against a fair-coin expectation of 10.1 — a pure function *can* beat the floor,
+by correlating with map structure. The floor bounds *structure-blind* functions
+only. The sweep above is what that correction buys: structure-exploiting rules exist,
+and they are exactly the ones that overfit.
+
+### Why accept
+
+Not because 52.5% is impressive — it is 0.3 sd. The case is:
+
+1. **The pre-registered gate is met on both halves**, and it was fixed before any of
+   this analysis existed: broad run shows no regression (roster `bob_iter0` 87→90%,
+   `bob_iter1` 80→85%, swept 3-2), and the helped group beats the hurt group (70% vs
+   47%).
+2. **The mechanism is confirmed at 1.83 sd** on a dose-response that was predicted
+   in advance.
+3. **The real argument is robustness, not average performance.** Parity's 9.28 and
+   the tuned rule's 8.50 are *contingent* on this pool's lattices; parity degenerates
+   to 100% one type whenever ruin spacing is even, and that failure is unbounded. The
+   hash's ~9.9 is a mathematical guarantee that holds on any map set, seen or unseen,
+   with a bounded tail. Iteration 7 trades a fraction of a point of average-case mix
+   quality for the elimination of an unbounded worst case. On a convex loss — a
+   100%-money map has no paint income at all — that trade is right.
+
+**Known cost, carried forward honestly:** it doubles the play-symmetry gap (11 → 24
+points, section above). That is a real debt, not a rounding error, and the only thing
+that repays it is the adaptive rule (deriving a ruin's type from its existing marks),
+which remains the single live descendant of this thread.
+
+**ACCEPTED.** Snapshotted as `bob_iter7`.
+
+### Mechanistic gate (criterion 2) — confirmed in game, on the worst case
+
+Single match `bob` (A) vs `bob_iter3` (B) on **gridworld**, the map where the old
+rule was most degenerate (21 ruins, all 21 assigned money). Towers actually built:
+
+```
+round   covA  covB   ptowA mtowA   ptowB mtowB   maxbcA
+ 200     454   494     2     6       0     9      9116
+ 600     495   460     2     6       0     9      9116
+1000     689   277     4     7       0     9      9126
+FOOTER winner=A  MAJORITY_PAINTED  round 1005
+```
+
+Team B built **zero paint towers and nine money towers** — the degeneracy, exactly
+as `BobRuins` predicted from the map file alone. Team A built **4 paint and 7
+money**. A won by paint majority at round 1005, 709 to 256 per mil.
+
+Criterion 2 (both tower types non-zero) passes, and it passes on the single map
+most likely to falsify it. Prediction from the map file → mechanism in game →
+outcome, end to end.
+
+**Criterion 3 (bytecode): `maxbcA` = 9126 against a 9042-9928 baseline** — the hash
+costs nothing measurable. Replay archived as
+`replays/iter07_bob_iter3_gridworld_A.bc25`.
+
+**Note on the roster chart labels.** `track_vs_old_bots.py` labels rows with the
+accepted snapshot *as of the run date*, so runs 20260906-2042 and -2127 are both
+recorded `bob_iter3`. For -2127 the build that actually played was the iteration 7
+candidate, now `bob_iter7`. The win% values are correct; only the label lags. Not
+hand-editing, because the tool is shared and would rewrite it — recorded here
+instead so the chart is not misread.
