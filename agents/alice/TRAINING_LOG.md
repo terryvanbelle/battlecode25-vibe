@@ -99,6 +99,11 @@ build; iter0 never got its own efp gauntlet. Not needed — iter0 is superseded.
 **Noise floors** (binomial, one-sided vs p=0.5): 24-game H2H — 16/24 ≈ 92%
 confidence, 17/24 ≈ 97%. Treat 13-15/24 as within noise of 50% (near-miss zone).
 
+**Fixed-roster plan (per coordinator update 2026-09-06)**: run the fixed old-bot
+roster every ~5 accepted iterations; roster = every 5th accepted snapshot
+(iter1, iter5, iter10, ...), additive (never replace entries). First roster run
+due at accepted iteration ~5; roster currently = {alice_iter1}.
+
 ---
 
 ## Iteration 2 — build PAINT towers, not money towers (running)
@@ -144,4 +149,41 @@ refinement (2b).
 tower, else PAINT tower. Completion tries both types (mark decided the pattern).
 **Pre-registered**: H2H vs iter1 > 50%; large-map swept-losses (DefaultMedium/
 Large/Huge, Money) at least half recovered; DefaultSmall stays won.
-Run: gauntlet launched ~19:10 UTC (OPPONENTS = alice_iter1 alice_iter0).
+Run: 20260906-184031 (OPPONENTS = alice_iter1 alice_iter0).
+
+**Mid-run trace (DefaultLarge botA, LOSS)**: candidate built ONE tower after the
+start (r23, paint) and then none for the rest of the game (3 towers vs iter1's
+11). Money pinned $50-250 all game: unit spawns (250/chip each, greedy) consume
+every chip, so the 1000-chip completeTowerPattern can never fund. iter1's chip
+mountain was an accident that FUNDED its tower expansion. 2b's type threshold
+(<1200 → money) is nearly always true under chip starvation, but type was never
+the binding problem — completion funding was.
+
+**Result 2b: NEAR MISS (not accepted)** — 13/24 (54%) vs alice_iter1,
+17/24 (71%) vs alice_iter0. 13/24 sits inside my own noise band (13-15/24 ≈ 50%),
+so this does not clear the primary accept test on the evidence, per doctrine
+("~50% is a near miss, not an accept, absent a separate mechanistic argument").
+
+Diff vs 2a (tools/diff-runs.py, 48 common games, 18 flips: +13/-5) has a clean
+one-directional shape on exactly the pre-registered maps: DefaultHuge +4,
+Money +3, Oasis +3, DefaultMedium +2, DefaultLarge +1 (all the big-map
+swept-losses 2a created), paid for with DefaultSmall -2, Paintball -2,
+sierpinski -1. The refinement did what it was designed to do; it just traded
+small maps for big ones rather than fixing the underlying constraint.
+
+**Why it is still not the right fix**: the DefaultLarge trace shows the binding
+constraint is not tower TYPE at all — it is that unit spawning consumes every
+chip so 1000-chip completions never fund. 2b only shifted which type gets built
+in a chip-starved regime. Refine once more at the actual mechanism (2c).
+
+## Iteration 2c — chip reserve for tower completion (running)
+
+**Change** (chip-budget discipline): towers only spawn units when money >= 1450
+(reserving ~1200 ≈ one tower build). Tower type switched from a money threshold
+to ruin-position parity ((x+y)&1) — a ~50/50 money/paint mix decided by map
+geometry, identical for both teams, immune to the timing artifact that made
+every early mark a money tower under 2b's threshold.
+**Pre-registered**: (1) H2H vs alice_iter1 > 50% AND >= 16/24 to clear the noise
+band; (2) mechanism — towers built in a DefaultLarge trace materially above 3;
+(3) the big-map recoveries from 2b (Huge/Money/Oasis) are retained.
+Run: 20260906-185051.
