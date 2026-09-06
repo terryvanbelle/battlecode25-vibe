@@ -1682,3 +1682,37 @@ interpretable regardless of the win rate.
 game (`carol` vs `carol_rush` on DefaultSmall, side A) and check the round-69 annihilation
 against the three outcomes — won / still lost but mechanism demonstrably engaged / no evidence
 of engagement. Only the third would stop the iteration before spending 120 games.
+
+### 6b's DOSE gate — the decisive result, and it fails
+
+The run's second block is the candidate (250) played directly against `carol_i6a` (500) on the
+same 20 pinned maps. Those two builds differ in exactly two lines — the constant and its build
+tag — so this is as clean a zero-vs-dose comparison as this project can construct.
+
+**Pre-registered gate: "h2h vs `carol_i6a` must be > 50%."**
+
+```
+candidate(250) vs carol_i6a(500):  19/39 = 48.7%
+   worst case 19/40 = 47.5%   best case 20/40 = 50.0%
+   side split: A 9/19, B 10/20 -- even
+   swept-win 3 (Fossil, Snowglobe, windmill), swept-loss 3 (Mirage, Portal, galaxy), split 13
+```
+
+Scoring on 39 of 40 is sound here for the same reason it was at iteration 5, and for the
+reason it was *not* at iteration 2: no outcome of the missing game can change the verdict.
+The best case is **exactly 50.0%, which is not > 50%**, so the gate fails either way.
+
+**DOSE GATE: FAIL.** Lowering the threshold does not beat leaving it high, head-to-head, on
+identical maps. Combined with the primary gate (47.5% < 50%) and the paired diff (37 of 40
+outcomes unchanged), three independent instruments agree, and the story I found so persuasive
+three hours ago — "500 sits above the operating band, 250 restores money towers" — is simply
+not true at the scoreboard. The mechanism moves; the game does not.
+
+That is worth separating carefully, because the mechanistic argument was *correct*: 250 really
+does build more money towers on ordinary maps, and the trajectory diff proves it rewrites
+whole games. It just does not matter. A verified mechanism plus a plausible story is still not
+evidence of value — only the head-to-head is, which is exactly what measurement doctrine #5
+says and why the accept gate is what it is.
+
+**Iteration 6/6b REJECTED, definitively.** Ledger entry above stands, now with the dose gate
+recorded against it. `src/carol` is already reverted to the accepted iteration-5 build.
