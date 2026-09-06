@@ -2824,3 +2824,40 @@ That is a real narrowing bought with one run, and it is precisely what iteration
 — but `carol_rush` is the opponent that punishes a weak opening specifically, so if the extra
 opening paint is worth anything anywhere, it is worth it there. If the rush block also shows
 nothing, iteration 8 is a clean reject.
+
+### Iteration 8 RESULT — REJECTED
+
+Run `20260906-223146` complete, 80 games, 20 pinned maps.
+
+| instrument | iteration 8 | iteration 7 (same 20 pinned maps) | verdict |
+|---|---|---|---|
+| h2h vs `carol_iter7` | **20/40 = 50.0%** | — | near miss, not an accept |
+| vs `carol_rush` | **36/40 = 90.0%** | **37/40 = 92.5%** | **no improvement** (-1 game, inside the 3.2-game floor) |
+| side split | A 10/20, B 10/20 | — | even, no symmetry artifact |
+| exceptions | 0 | — | PASS |
+| mechanism (opening paint) | **improved 3 of 4 paired games** | — | worked |
+
+The `carol_rush` comparison is a real one for once — **same opponent, same 20 pinned maps**,
+which is exactly the cross-run comparability I got wrong earlier today and pinned the maps to
+fix. Iteration 8 is one game worse. So the extra opening paint bought nothing even against the
+one opponent whose whole strategy is to punish a weak opening.
+
+**DECISION: REJECT.** Reverting `src/carol` to accepted iteration 7. No `carol_iter8` snapshot;
+the numbering gap joins 4 and 6.
+
+**What it bought, which is not nothing.** Two hypotheses were entangled when this run started;
+one is now dead:
+- ~~*Carol's opening is weak because she has too little paint income.*~~ **Falsified.** Income
+  was demonstrably raised (DefaultSmall 50 -> 33 blocked rounds, Gears 28 -> 18) and it won
+  nothing, against either instrument.
+- *Carol's opening is weak because the paint she has leaks out through greedy refills.*
+  **Untouched, and now the only surviving explanation** of the same measurements.
+
+That is a genuine narrowing, and it makes iteration 10 a sharper test than it was an hour ago:
+it is no longer "more paint helps" (just falsified) but specifically "the paint is already there
+and is being spent on the wrong thing".
+
+**Closed-directions ledger**: *tower-type floor to raise opening paint income* — CLOSED. Killed
+by 80 games at a verified-working mechanism: h2h 50.0% dead even (6 swept wins, 6 swept losses),
+and 36/40 vs 37/40 against `carol_rush` on identical maps. Re-opening requires a reason more
+opening paint income should convert when this run says it does not.
