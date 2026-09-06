@@ -1033,3 +1033,123 @@ arrive: if the identity check shows a large fraction of byte-identical games, th
 means the sampled maps had mostly odd ruin spacing and the instrument could not
 see the change — a sample problem, not a verdict, to be answered by resampling
 onto maps with even spacing rather than by refining the hash.
+
+
+---
+
+## Structural trace (2026-09-06) — WE STARVE OUR OWN ARMY: 78% of our deaths are paint zero
+
+Done with the VM busy on iteration 7, on replays already sitting on disk. Cost: no
+games. It refuted the hypothesis I had queued as iteration 8 *and* replaced it with
+a much larger one, which is the whole argument for tracing before building.
+
+### New instrument: `bob-tools/BobMop.java` + `mop-trace.sh`
+
+The existing dumper reports engine team totals; it cannot say where our units were
+or what they could see. `BobMop` reconstructs the **per-tile paint owner** round by
+round from the replay's Paint/Unpaint/Splash actions, reads `Turn.x/y` for every
+robot, and reads the map header's size, `symmetry()` and ruin list. Per sampled
+round it prints, for our moppers and splashers: how many have an enemy tile inside
+action range (r²≤2) and inside vision (r²≤20), the median distance to the nearest
+enemy tile, live population by type, and average/minimum stash. Then it does death
+forensics: every one of our units that dies is bucketed by the paint it held on its
+last recorded turn.
+
+Two engine details it had to get right, both found by `javap`: deaths are reported
+as `DieAction` inside a turn, **not** in `Round.diedIds` (which is empty all game),
+and `DieAction` carries a `dieType` that distinguishes an EXCEPTION death.
+
+### Finding 1 — the queued iteration 8 hypothesis is dead
+
+I had queued "denial units can't reach enemy paint because `Nav.navTo` refuses to
+step on it". Measured on Castle (2000 rounds, our side A), per 200 rounds:
+
+```
+round  liveMop  mopInAct(r2<=2)  mopInVis  medDistToEnemyPaint
+ 400      2            1             2            3
+ 800      2            1             1           16
+1200      3            0             0           11
+1400      4            1             2            8
+1600      3            1             2            3
+1800      1            1             1            1
+```
+
+Roughly **half our live moppers are already standing within action range of enemy
+paint**, and nearly all of them can see some. They are in contact. Navigation is
+not the binding constraint, and I would have spent an iteration proving that the
+expensive way.
+
+### Finding 2 — my own "1% of action capacity" number was wrong, and I made the error
+
+The backlog entry above divided denial actions by **cumulative spawn counts**. I
+even flagged the caveat and then guessed the live fraction at "a fifth". The truth
+from `Turn` records: by round 2000 on Castle we had spawned 52 moppers and had
+**2 alive**. Recomputed against live population, denial throughput is ~0.1 actions
+per live unit per round against a ~0.27 mixed ceiling — about **37% of capacity**,
+not 1%. The lesson is not subtle and belongs in LEARNINGS.md: *a rate is a claim
+about a denominator; if the denominator is a guess, so is the finding.* Never
+publish a per-unit rate over a count the engine does not actually mean as
+population.
+
+### Finding 3 — the real degeneracy, and it is enormous
+
+Cumulative spawns by round 2000 on Castle: 183 soldiers, 54 splashers, 52 moppers.
+Live population at any moment: **6-13 soldiers, 1-4 splashers, 1-4 moppers.** We
+build roughly 290 units across a game and hold a standing army of about 15.
+
+Death forensics say why. Every one of our dead units, bucketed by the paint it held
+on its final turn:
+
+```
+game (map, opponent, side)        SOLDIER deaths / starved(<=10)   SPLASHER      MOPPER
+Castle       vs bob_iter3  A          177 / 147  (83%)             54 / 21      52 / 41
+lighthouse   vs bob_iter0  A           58 /  54  (93%)             17 / 15      18 / 15
+UnderTheSea  vs bob_iter1  B           81 /  63  (78%)             20 / 13      22 / 17
+Thirds       vs bob_iter0  A           52 /  51  (98%)             16 /  7      16 / 12
+------------------------------------------------------------------------------------
+totals                                 368 / 315 (86%)            107 / 56     108 / 85
+```
+
+**456 of 583 unit deaths (78%) happen at ≤10 paint.** Zero exception deaths, on all
+four games, which at least rules out silent crashes. Combat kills are the minority
+everywhere; on Thirds our soldiers were killed by an enemy exactly **zero** times
+out of 52 deaths.
+
+This satisfies the generality pre-check on its own: three maps, three different
+opponents, both sides, sizes 27x27 to 51x51. It is not a Castle artifact.
+
+Priced in paint, Castle alone: 147 soldiers x 200 + 21 splashers x 300 + 41 moppers
+x 100 = **~39,800 paint** spent on units that then died with an empty stash. Paint
+is the resource the win condition is denominated in.
+
+### Finding 4 — the mechanism, and it is a two-line hole
+
+`Soldier.run` step 0 is `if (rc.getPaint() < REFILL_BELOW && tryRefill()) return;`
+and `tryRefill` scans `senseNearbyRobots(-1, us)` for a tower with ≥100 paint.
+Vision is r²=20, about 4.5 tiles. **If no tower is in vision, `tryRefill` returns
+false and the soldier carries on wandering** — it has no idea where any tower is,
+so a unit that runs low away from home simply keeps walking until it hits zero,
+takes `NO_PAINT_DAMAGE` 20 HP/turn, and dies. The refill has no memory.
+
+`Mopper.run` and `Splasher.run` have **no refill logic at all**. Not a weak one —
+none. Neither type ever calls `tryRefill`.
+
+That is a capability we already paid for and then discarded, which is exactly the
+recurring winner's profile TRAINING_ALGORITHM.md names: *capability preserved at
+zero marginal cost*. Mopping in particular costs **0 paint** (engine table), so a
+mopper that stays alive on ally paint is free denial forever.
+
+### Closed direction (recorded now, with its measurement)
+
+- **"Denial units are idle because `Nav.navTo` avoids enemy paint."** CLOSED by the
+  contact measurement above: ~half of live moppers are already inside action range
+  of enemy paint. Re-open only if a future trace shows contact collapsing.
+
+### Queue revised on this evidence
+
+1. iteration 7 — lattice-independent tower mix (running)
+2. **iteration 8 — refill memory: units remember an allied tower and walk to it
+   when low, and moppers/splashers gain refill at all** (this; by far the largest
+   measured waste in the bot)
+3. iteration 9 — SRPs (written and compile-verified)
+4. then the iteration 3 ablation and the re-opened paint/money ratio sweep
