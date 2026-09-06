@@ -1608,3 +1608,35 @@ soldier alive must rise". **Do not evaluate iteration 8 until the emitter of
 PaintAction vs AttackAction is confirmed by reading the engine** — the same
 one-minute check that settled the clumping-tax question. Logged as a blocking
 prerequisite rather than a note.
+
+### Iteration 7 — the predicted terrain failure is real (maze, 19.8% walls)
+
+I recorded the pathfinding-stall risk before testing it, pre-registered the
+diagnostic ("do its losses concentrate on high-wall-density maps"), then went
+looking for the most obstructed map available rather than waiting for the random
+sample to find it. Result:
+
+| map | walls | ruins | outcome |
+|---|---|---|---|
+| **maze** | **712/3600 (19.8%)** | 32 | **alice_i7 LOSES** to alice_iter5 |
+| starburst / Racetrack / Mirage / DefaultLarge | 1.6-10.1% | 12-24 | i7 sweeps all four, both sides |
+
+19.8% is essentially the spec ceiling (walls ≤ 20% of a map). So the picture is
+clean and it is the one I predicted: **iteration 7 is strong in open terrain and
+fails where terrain is genuinely obstructive**, because a mopper that commits to a
+distant target and is blocked re-targets the same tile every turn, where the old
+random wander would have escaped.
+
+This is the value of writing the risk down *before* the evidence: 8/8 on
+self-chosen open maps would otherwise have read as an unqualified success, and
+doctrine #4's representativeness rule applied to my own favourable evidence is
+what sent me to look for the counter-case.
+
+**Pre-registered refinement for iteration 7** (declared now, before its sweep):
+if it clears the gate overall but its losses concentrate on high-wall maps, the
+single refinement is a **stall guard, not a rewrite** — if the greedy step toward
+the target fails to move the unit, fall back to `wander` for that turn instead of
+re-targeting. That restores the escape behaviour the old code had for free, stays
+inside the same mechanism, and does not bundle bug-nav in. Full hybrid bug-nav
+(drafted, `bugnav-draft.java`) stays a separate iteration, and the maze result is
+now its motivating evidence rather than a hypothetical.
