@@ -32,6 +32,13 @@ line refs below are to `engine/src/main/battlecode/world/*.java`.
   and moneyPerTurn towers — i.e., each active SRP gives every paint tower +3 paint
   AND every money tower +3 chips per turn). SRPs can be destroyed by disrupting paint.
   Pattern is fixed (GameConstants.RESOURCE_PATTERN = 28873275).
+  **SRPs are fragile (engine-verified)**: `GameWorld.updateResourcePatterns`
+  re-checks the whole 5x5 EVERY round; if one tile stops matching, the centre is
+  dropped and its lifetime **resets to 0**, so it must survive another full 50
+  rounds after any disruption. One enemy mop inside an SRP costs 50 rounds of
+  its income. Build them in our own interior, never at the frontier.
+  Constants: COMPLETE_RESOURCE_PATTERN_COST 200, RESOURCE_PATTERN_RADIUS_SQUARED 8,
+  RESOURCE_PATTERN_ACTIVE_DELAY 50. `MapInfo.isResourcePatternCenter()` detects one.
 
 ## Paint mechanics
 - Tiles: EMPTY / ALLY_PRIMARY / ALLY_SECONDARY / ENEMY_* . Primary vs secondary
