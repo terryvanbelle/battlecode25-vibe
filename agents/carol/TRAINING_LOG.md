@@ -2479,3 +2479,48 @@ using**, which is the winner's profile the algorithm names.
 **Known limitation, already recorded before the run**: soldiers do not navigate to SRP sites,
 so a soldier at a lattice-cell corner reports `SRP-nosite`. Deliberately unfixed — bundling a
 navigation change would make a rejection uninterpretable.
+
+### ITERATION 8 REACHABILITY FAILURE — its primary gate is unachievable, found before the results
+
+Ran the pre-check on iteration 8's motivating game that I should have run before launching.
+On Dominoes (control replay, the accepted baseline):
+
+```
+tower count: 2 at r1 -> 1 at ROUND 50 -> 1 for the remaining 1,950 rounds
+did it ever rise above its starting value?  NO
+```
+
+**Carol completes zero ruins in that game.** Her paint tower dies at **round 50**, not round
+200 as I wrote from the coarser sample earlier. `towerTypeFor` is therefore never called
+productively, and **iteration 8's paint floor cannot possibly change that game.** Its
+pre-registered primary gate — "zero games ending with towers but no paint tower", baseline 2/40
+— is unachievable by this mechanism on the only two games in the baseline that exhibit it.
+
+**This is the exact pre-check the algorithm spells out** and I performed only half of it: I
+verified the floor *fires* (`getNumberTowers() <= 3` is true in the opening) but not that
+firing *reaches the targeted case*. The guidance is explicit — *"read the guard you are nesting
+inside: a new clause added under an outer condition that already excludes the targeted case can
+never fire."* The outer condition here is "a ruin is completed", and on Dominoes none ever is.
+
+**Why the real cause is different.** Carol holds a healthy paint tower with 300-410 paint from
+r1 to r50 and still completes nothing, then loses it to an early rush. The Dominoes failure is
+therefore **not** a tower-type-selection problem at all; it is that the opening paint tower dies
+to a rush before carol converts it into anything. The fix has to be survival or opening tempo,
+not which type the next ruin becomes.
+
+**What I am doing about it**, given the run is already in flight and the shared-VM rules forbid
+killing it:
+1. **Letting it finish.** It still answers a real question — does a paint-heavy opening help or
+   hurt *generally*? — via the h2h against `carol_iter7`, which is a legitimate regression
+   instrument regardless of the motivating case.
+2. **Retracting the primary gate now, in advance.** Iteration 8 will be judged on the h2h alone.
+   I will not be able to claim the degeneracy gate, and I am recording that before seeing a
+   single game so it cannot be quietly reinterpreted afterwards.
+3. **Re-targeting the degeneracy.** "Prevent the no-paint-tower state" stays open, re-scoped
+   from *tower-type selection* to *early paint-tower survival*, and it needs its own trace of
+   what kills that tower at r50 before any code is written.
+
+The honest summary: I diagnosed the absorbing state correctly, verified it from the engine
+correctly, built the right instrument for it — and then aimed the fix at the wrong link in the
+chain, because I checked that my new branch would execute without checking that executing it
+could reach the failure.
