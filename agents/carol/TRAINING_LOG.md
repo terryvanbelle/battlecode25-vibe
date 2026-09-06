@@ -1289,3 +1289,45 @@ what keep income positive, so **6b should show strictly fewer frozen-treasury ro
 same-map comparison. If 6b wins the h2h *and* reduces frozen rounds, the two independent
 instruments agree and the accept is much better founded than a bare 50-something percent —
 which is what measurement doctrine #10 asks for.
+
+### The deeper root cause behind DefaultMedium: iteration 6's rule is one-sided
+
+Pushed the DefaultMedium trace further, because the reserve disarm only *partly* rescues it
+and I wanted to know what the rest of the gap is. carol sat at 290 chips with **3 towers**
+standing for 1,887 rounds. The engine starts each team with exactly one paint tower and one
+money tower (`NUMBER_INITIAL_PAINT_TOWERS = 1`, `NUMBER_INITIAL_MONEY_TOWERS = 1`), so income
+zero with three towers alive means the starting money tower died and **every ruin carol
+completed afterwards became a paint tower**.
+
+Disarming the reserve buys one soldier there (290 chips, soldier 250) and no more — carol can
+never build another tower, because `completeTowerPattern` needs 1000 chips it will never earn
+again. So the reserve fix converts an inert loss into a fighting loss on that map, which is
+worth having but is not the cure.
+
+The cure is upstream, and looking for it exposed a real gap in iteration 6 itself:
+
+```java
+return (paint / towers >= PAINT_PLENTIFUL) ? MONEY : PAINT;   // chips are never read
+```
+
+The rule is described in my own log as "build whichever resource is currently scarce", but it
+**only ever measures paint**. `rc.getChips()` is sitting right there, is team-wide and exact,
+and is never consulted. So the rule cannot distinguish "paint is scarce" from "paint is scarce
+*and we also have no income at all*", and in the second case it does the one thing that
+guarantees the game is unrecoverable: it builds another paint tower.
+
+That is a one-sided implementation of a two-sided idea, and it is very likely a large part of
+why iteration 6 measured 45% — it can walk a team into permanent zero income and has no term
+that objects.
+
+**Registered as iteration 9 (candidate): a genuinely two-sided mix.** Compare the two
+scarcities instead of testing one — e.g. build MONEY when chips are the binding side
+(`getChips()` low relative to what a tower completion costs) and PAINT when nearby tower
+stashes are, with the existing mark-readback and symmetry-invariant fallback untouched. It
+also subsumes the "never let the last money tower go unreplaced" case without needing to count
+tower types.
+
+Deliberately *not* folding this into 6b or iteration 7: 6b is already running as a clean
+single-constant dose, and iteration 7 is a separate mechanism with its own pre-checks done.
+Bundling either would make all three uninterpretable. Order stands: 6b -> 7 (self-cancelling
+reserve) -> 8 (SRPs) -> 9 (two-sided mix), each measured alone.
