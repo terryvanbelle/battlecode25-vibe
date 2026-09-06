@@ -1120,3 +1120,37 @@ Making the 3-8 moppers I have seek enemy paint within vision (r²=20) attacks th
 without giving back the soldier share that iteration 5 just bought.
 
 Registered as the iteration 7 candidate: **purposeful moppers**, ahead of SRPs.
+
+### Shared-pool instrumentation for iteration 6 — refills are drawn from the spawn budget
+
+The algorithm requires instrumenting a contested pool in the *first* run of any
+change that alters who draws on it. Iteration 6's refill and the tower's spawn
+both draw on the same thing — **tower paint** — so I added `twPaint` (total paint
+held across a team's towers) to the dumper before evaluating, and re-read the
+verification game. Per 500 rounds:
+
+| round | i6 twPaint | i6 +soldiers | i6 xfer | r100 twPaint | r100 +soldiers | r100 xfer |
+|---|---|---|---|---|---|---|
+| 500 | 553 | +54 | 30 | 745 | +55 | 0 |
+| 1000 | 340 | +75 | 41 | 750 | +85 | 0 |
+| 1500 | 221 | +83 | 35 | 650 | +98 | 0 |
+| 2000 | **216** | +81 | 30 | **550** | +98 | 0 |
+
+**Refilling is not additive — it substitutes for spawning.** i6 drains its tower
+pool to ~40% of the baseline's and consequently spawns ~17% fewer soldiers
+(+81 vs +98 per 500 rounds). It still wins (coverage 502 vs 473‰, starvation
+deaths 68 vs 83), so the substitution is favourable at this dose — a refilled
+veteran is worth more than the marginal recruit it displaces, which is exactly the
+economic claim iteration 6 was built on, now measured rather than argued.
+
+**This changes iteration 6's dose prediction.** I had pre-registered that a
+monotone rise through 60→100→140 would mean "the trigger fires too late". That
+reading is now wrong: a higher `LOW_PAINT` refills more often, drains the pool
+harder, and suppresses spawning further. Both teams sit near **216-550 paint
+across seven towers whose capacity is 7,000** — the pool is nearly dry in every
+game, which independently re-confirms LEARNINGS §1 (paint, not chips, binds).
+
+**Revised pre-registration for the dose sweep**: expect an interior optimum, and
+add a gate — the winning dose must not reduce soldier spawns by more than it
+reduces starvation deaths. `twPaint` at r2000 is now a reported variable for every
+arm, not a watch.

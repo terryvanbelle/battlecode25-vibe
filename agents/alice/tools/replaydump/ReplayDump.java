@@ -122,7 +122,7 @@ public class ReplayDump {
                           .append(" cov").append(r.teamCoverageAmounts(k))
                           .append("m srp").append(r.teamResourcePatternAmounts(k))
                           .append(" sold").append(alive[0]).append(" spl").append(alive[1])
-                          .append(" mop").append(alive[2]).append(" tw").append(alive[3])
+                          .append(" mop").append(alive[2]).append(" tw").append(alive[3]).append(" twPaint").append(towerPaint(tid))
                           .append(" acts[p").append(paints[tid]).append(" u").append(unpaints[tid])
                           .append(" a").append(attacks[tid]).append(" s").append(splashes[tid])
                           .append(" m").append(mops[tid]).append("]")
@@ -171,6 +171,23 @@ public class ReplayDump {
             else c[3]++;
         }
         return c;
+    }
+
+    /** Total paint held across a team's towers -- the SHARED POOL that funds both
+     *  spawning (200/soldier, 100/mopper) and, from iteration 6, soldier refills.
+     *  The algorithm requires instrumenting a contested pool in the first run of any
+     *  change that alters who draws on it; three iterations once failed identically
+     *  because a global cap was never printed. */
+    static int towerPaint(int tid) {
+        int sum = 0;
+        for (Map.Entry<Integer, Integer> e : teamOf.entrySet()) {
+            if (e.getValue() != tid) continue;
+            byte ty = typeOf.get(e.getKey());
+            if (ty == RobotType.SOLDIER || ty == RobotType.SPLASHER || ty == RobotType.MOPPER) continue;
+            Integer p = lastPaint.get(e.getKey());
+            if (p != null) sum += p;
+        }
+        return sum;
     }
 
     static String loc(int l) {
