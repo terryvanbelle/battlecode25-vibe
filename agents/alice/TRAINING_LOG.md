@@ -1911,3 +1911,49 @@ decouple ruin discovery from wandering, and that premise is now falsified.
 |---|---|---|
 | Remember/share unbuilt ruin locations | iteration 9: towers 10 vs 11, and 21 of Mirage's 22 ruins already built; nothing left to discover | a map class exists where ruins are *not* saturated by mid-game — check the ruin count against final tower totals before believing it |
 | Comms for ruin sharing (iteration 8's proposed unlock) | same measurement | same condition |
+
+---
+
+## Iteration 10 — SRPs, and a three-step refinement each diagnosed from the trace
+
+**Area**: economy (the last big unused mechanic). An active SRP adds **+3/turn to
+every producing tower** for a one-off 200 chips — and chips are the resource this
+bot provably cannot spend, especially once iteration 4's upgrade sink closes at
+all-L3 and the treasury climbs past $150k.
+
+All three arms measured on Mirage vs `alice_iter5`, one match each:
+
+| arm | change | paint acts /500r | towers | coverage | result |
+|---|---|---|---|---|---|
+| **10a** | mark an SRP wherever a soldier stands | **1599** | 10 v 12 | **403 v 581‰** | lose badly |
+| **10b** | + centres on a fixed lattice of period 5 | 151 | 9 v 11 | 476 v 507‰ | close loss |
+| **10c** | + only once `getNumberTowers() >= 10` | 192 | 10 v 11 | **512 v 472‰** | **WIN** |
+
+**10a's failure was diagnosable from one column.** Paint actions ran **8x** the
+baseline while coverage *fell* — the signature of repainting the same tiles, not
+covering new ground. Cause: every soldier marked a pattern centred on itself, so
+neighbouring patterns overlapped and demanded conflicting primary/secondary colours
+for shared tiles, and the soldiers repainted each other's work forever.
+
+**10b fixed the thrash** (paint actions back to normal, coverage recovered 403 →
+476‰) and exposed the *next* constraint underneath: 9 towers against 11. SRP work
+was displacing tower building.
+
+**10c applies the session's master-variable finding as a gate**: a tower is worth
+5-15 paint/turn plus a spawn point plus 500 starting paint; an SRP is +3/turn per
+tower. So towers come first and SRPs get the leftovers. Uses `getNumberTowers()`,
+one of the API-sweep methods the bot had never called.
+
+This is the near-miss refinement path working as designed — each step was chosen
+from a specific trace column, not from a parameter search, and the sequence cost
+three single matches rather than three gauntlets.
+
+**Not accepted.** This is one map, and Mirage is ruin-rich (22), which flatters a
+tower-saturation gate. Generality checks running; the gate remains a full sweep
+against the then-accepted snapshot, queued behind iteration 7's run.
+
+**Open question for the dose**: `SRP_MIN_TOWERS = 10` is a fixed constant, and this
+session already established (iteration 5) that a self-calibrating threshold beats a
+searched one. The principled form is "when no unbuilt ruin remains" — i.e. gate on
+tower saturation rather than a magic 10 — and that is the first refinement to try
+if the constant proves map-sensitive.
