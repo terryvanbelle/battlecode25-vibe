@@ -1377,3 +1377,36 @@ currently the only mitigation and it is nearly spent as an instrument (92.5%). T
 answer is a *second* tower-killing archetype tuned to be even rather than lopsided, and the
 tournament (Alice and Bob are independent lineages that may well pressure towers) is the other
 sanctioned source. Registering the archetype as real work, not a nice-to-have.
+
+### New synthetic archetype: `carol_decap` (economic decapitation)
+
+Built during the 6b wait, to close the blind spot the doctrine-#4 catch exposed. Derived from
+carol's own trace, not from theory: the fatal event is the **last money tower dying**, after
+which income is zero and the treasury freezes forever. `carol_rush` triggers that only
+incidentally — it hunts whichever tower is nearest and weakest — and wins 7.5% of its games,
+which is far too lopsided to resolve a 3-game effect.
+
+`carol_decap` does the same thing deliberately:
+1. **Money towers outrank every other target** at any visible range.
+2. **Focus fire by lowest ID**, so every soldier picks the same tower. Spreading damage is
+   worthless against towers specifically: a money tower at 1 HP still generates full income,
+   so partial damage buys exactly nothing.
+3. **It keeps an economy**, which `carol_rush` does not — soldiers claim ruins as paint towers
+   and its towers hold 1000 chips back. carol_rush's all-in soldier spend is precisely why it
+   starves on large maps and never gets to apply the pressure this instrument exists for.
+
+Written from scratch rather than forked from carol's strategy code, per the pool rules —
+a forked archetype goes silently stale and inflates win rates (the project's own recorded
+62.5%-read-as-95.0% failure). API names verified against `javap RobotInfo` / `UnitType`
+rather than recalled, and the whole `src/` tree compile-checked on the VM (COMPILE-OK) using
+`tools/vm-compile.sh`, which builds to `/tmp` and so cannot disturb the gauntlet running off
+the shared `build/classes`.
+
+**Its value as an instrument is evenness, not strength**, and that is an empirical question:
+if it lands in the 30-90% band it is a peer and becomes the regression test for every
+economy change from here. If it comes out as lopsided as `carol_rush`, that is a negative
+result about the instrument and gets logged as one rather than quietly reused. Measured on
+its first appearance in a gauntlet, after iteration 7.
+
+Same compile check also confirms the **6b candidate compiles**, so the run cannot fail on a
+build error.
