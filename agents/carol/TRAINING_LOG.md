@@ -2193,3 +2193,59 @@ What the run *did* establish, independent of the control:
 - Zero exceptions, no bytecode pressure, no regression anywhere.
 - And it surfaced a **worse and unrelated degeneracy** (the paint-tower loss condition above),
   which is the run's most valuable output by a distance.
+
+## Iteration 8 (2026-09-06) — robustness: a paint-tower floor
+
+**Area**: robustness (2nd consecutive; leaves the econ tower-mix thread closed by 6b).
+
+**Target**: the absolute degeneracy traced above — losing the last paint tower is
+unrecoverable by the rules, and it cost 2 of 40 games against `carol_rush`.
+
+### Operational definition (the coordinator's question: what does "the team has no paint tower" mean?)
+
+This needs care, because the obvious reading is not measurable in-game:
+
+- **`rc.getNumberTowers()` is team-wide and exact, but type-blind.** It cannot answer "how many
+  paint towers do we hold".
+- **Counting `senseNearbyRobots(-1, myTeam)` by type is type-aware but local.** A soldier sees
+  the towers near it, not the team's. Seeing no paint tower does not mean the team has none, so
+  a rule keyed on it would fire constantly on any soldier that has walked away from home —
+  precisely the dead-reasoning-on-a-partial-view error the reachability pre-check exists for.
+- Comms could make the count exact and team-wide, but that is a whole unused mechanic and
+  bundling it here would make the result uninterpretable.
+
+So I am **not** implementing "the team has no paint tower". I am implementing the narrower
+claim the trace actually supports, which is measurable exactly:
+
+> **While the team holds few towers at all, every ruin becomes a PAINT tower.**
+
+```java
+if (rc.getNumberTowers() <= PAINT_FLOOR_TOWERS) return UnitType.LEVEL_ONE_PAINT_TOWER;
+// otherwise iteration 5's symmetry-invariant key, unchanged
+```
+
+Why this is the right narrowing rather than a dodge: the traced failure is specifically an
+*early* one. Carol starts with exactly one paint tower (`NUMBER_INITIAL_PAINT_TOWERS = 1`) and
+the Dominoes loss killed it at round ~150-200, while carol held one or two towers. Forcing the
+first one or two completions to be PAINT converts a single point of failure into two or three,
+using a team-wide exact API and no new mechanic. It does nothing late, which is correct — by
+then carol has many towers and the trace shows she loses none.
+
+### Pre-registered gate
+
+- **PRIMARY (mechanism, absolute)**: zero games ending with carol holding towers but **no paint
+  tower** — detectable as tower paint pinned at exactly 0 across every surviving tower for
+  >= 200 rounds while chips rise. Baseline: **2 of 40** `carol_rush` games (Dominoes A and B).
+  This one *is* comparative, unlike iteration 7's: the control arm now running gives me the
+  baseline rate on the identical 20 maps.
+- **REGRESSION (the real risk)**: h2h vs the accepted snapshot must clear 45%. Iteration 5
+  proved chip income is the binding rate cap and this **delays the first money tower**, so a
+  drop here is the expected way for it to fail, and I want it to be able to fail that way.
+- **DOSE**: `PAINT_FLOOR_TOWERS` in {2, 3, 5}, zero arm = iteration 5's key untouched.
+  Starting at **3** (forces roughly the first two completions).
+- **PARTIAL ENGAGEMENT IS EXPECTED**: the key already yields PAINT for ~2 ruins in 3, so on many
+  maps the first completions were paint anyway and those games will be byte-identical. The
+  arm-to-arm identity check must therefore show *some* identical games — all-identical means the
+  floor never bound and the run is void.
+
+**Not bundled with SRPs** (`src/carol_i8` stays on the shelf) and not with the two-sided mix.
