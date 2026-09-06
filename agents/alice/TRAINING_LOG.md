@@ -1640,3 +1640,32 @@ re-targeting. That restores the escape behaviour the old code had for free, stay
 inside the same mechanism, and does not bundle bug-nav in. Full hybrid bug-nav
 (drafted, `bugnav-draft.java`) stays a separate iteration, and the maze result is
 now its motivating evidence rather than a hypothetical.
+
+### Correction to the entry above — wall density alone does not explain the maze loss
+
+Second wall-heavy map came back and it does not fit the story I just wrote:
+
+| map | size | walls | ruins | outcome |
+|---|---|---|---|---|
+| maze | **60x60** (3600) | 19.8% | 32 | **i7 loses** |
+| yearofthesnake | 45x45 (2025) | **18.4%** | 20 | **i7 wins** |
+
+At 18.4% walls — barely below maze's 19.8% — iteration 7 wins. So "iteration 7
+fails where terrain is obstructive" was an over-read of a single game, and I am
+striking it. Current standing is **9/10 across both sides, with one loss, on maze**.
+
+What actually distinguishes maze is that it is also the **largest map in the pool**
+(3600 tiles vs 2025). Longer distances mean a unit commits to a more distant target
+and spends more turns travelling before re-evaluating, which is a *distance*
+failure as much as a *terrain* one — and it would also predict trouble on
+DefaultHuge. That is a hypothesis with one supporting game, not a finding.
+
+**The refinement pre-registered above is unchanged and is robust to either
+explanation**: falling back to `wander` when the greedy step fails to move costs
+nothing and helps whether the unit is trapped by walls or merely committed too far.
+The diagnostic for the sweep is now two-dimensional — check losses against both
+wall density *and* map area, which the dumper now prints for free.
+
+Noting the process point: I wrote a clean causal story off one game and the very
+next game contradicted it. The map-property instrument is what caught it, minutes
+after I built it.
