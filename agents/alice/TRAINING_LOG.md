@@ -1184,3 +1184,47 @@ Ordering rationale: iteration 6 (refuel) is already verified and queued;
 iteration 7 (moppers) has a named failing map; iteration 8 (soldiers) is the
 largest population but has no specific failing map yet, so it is the weakest
 pre-registration of the three and goes last.
+
+### Non-blocking trace during the sweep — Mirage, and the death spiral iteration 5 actually fixes
+
+Traced iteration 4's most distinctive loss from run `20260906-203042`: Mirage was
+the only loss that ended **early** (r1569, `MAJORITY_PAINTED`) rather than on the
+round-2000 paint tiebreak, so it was the one game where the bot was not merely
+out-scored but destroyed. With the new `twPaint` instrument the cause is
+unmistakable, and it is an *absolute* degeneracy — "the bot stalls at round N",
+no opponent comparison needed:
+
+| round | iter4 twPaint | iter4 towers | iter4 soldiers | iter4 +sold/+mop | iter4 coverage |
+|---|---|---|---|---|---|
+| 200 | **0** | 2 | 0 | +1 / +19 | 132‰ |
+| 400 | 100 | 2 | 0 | +0 / +19 | 89‰ |
+| 800 | **0** | 2 | 0 | +0 / +20 | 24‰ |
+| 1400 | 100 | 2 | 1 | +1 / +18 | **19‰** |
+
+**The bot is dead at round 200 and the game runs another 1,369 rounds.** Tower
+paint hits zero, so the only unit it can ever afford again is the 100-paint
+mopper; moppers cannot paint; so it never completes another tower pattern; so its
+paint income never grows; so tower paint stays at zero. It spawned **1 soldier and
+19 moppers** in the first 200 rounds and essentially no soldiers ever again, sat
+at its 2 starting towers for the whole game, and watched coverage collapse
+132 → 15‰ while the opponent went to 16 towers and 664‰.
+
+This is the mopper price asymmetry at its most extreme: not a skewed mix, an
+**absorbing state**.
+
+**Iteration 5 breaks it.** Re-ran the same map, same side, with dose 50:
+
+| | iter4 (lost, r1569) | alice_r50 (WON, r2000) |
+|---|---|---|
+| tower paint | 0-100 all game | **1915 → 1215**, never collapses |
+| towers | 2 | 11-12 |
+| coverage | 132 → **15‰** | 493 → **541‰** |
+| result | loses MAJORITY_PAINTED | **wins** AREA_PAINTED |
+
+And the spiral is now inflicted on the *baseline*: `alice_iter2` sits at twPaint
+90-325 with **zero soldiers alive** from r800 and coverage falling 432 → 280‰.
+
+This is the strongest causal evidence in the iteration: the reserve keeps tower
+paint off zero → soldiers stay fundable → tower patterns keep completing → paint
+income keeps growing. It also retro-explains iteration 4's loss list, where the
+recurring shape was games that stalled rather than games that were out-fought.
