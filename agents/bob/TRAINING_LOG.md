@@ -1153,3 +1153,66 @@ mopper that stays alive on ally paint is free denial forever.
    measured waste in the bot)
 3. iteration 9 — SRPs (written and compile-verified)
 4. then the iteration 3 ablation and the re-opened paint/money ratio sweep
+
+
+---
+
+## Iteration 8 (2026-09-06) — remembered-tower refill — WRITTEN, queued behind 7
+
+Written and compile-verified while iteration 7 occupies the evaluator; held in
+`bob-tools/shelved/iter8-candidate/` so it survives a session death.
+
+**Target** (from the starvation trace above, not from a single losing game — the
+algorithm prefers absolute degeneracy signals over opponent-relative ones, and
+"78% of our units die with an empty stash" needs no opponent to be wrong).
+
+**Hypothesis.** Units die of paint starvation because the refill path can only see
+towers inside vision (r²=20). A unit that runs low anywhere else has no idea where
+a tower is, keeps executing its normal routine, and starves. Every robot spawns
+within `BUILD_ROBOT_RADIUS_SQUARED=4` of the tower that built it, so the location
+of a tower is already in its very first sense call and we discard it. Remembering
+it, and walking back when low, should convert a large share of those deaths into
+living units at no resource cost.
+
+**Change** (one mechanism, one new file `src/bob/Refill.java`, called by all three
+unit types): remember the nearest allied PAINT tower ever seen (`paintPerTurn > 0`
+— money towers are engine-verified sterile), plus any tower as a fallback for the
+two starting towers. When below threshold: withdraw from a tower in range, else
+navigate to the remembered one, else wait adjacent for it to regenerate rather than
+sliding around it. `Soldier.tryRefill` is superseded and deleted, so this replaces
+a path rather than adding a second one.
+
+Thresholds, each derived from the engine table rather than picked:
+- SOLDIER 50 of 200 — **unchanged from the existing constant**, deliberately, so
+  the measured effect is the *memory*, not a retuned threshold.
+- MOPPER 35 of 100 — moppers pay `MOPPER_PAINT_PENALTY_MULTIPLIER=2`, so 4/turn on
+  enemy paint: 35 is roughly nine turns of walking home from enemy ground.
+- SPLASHER 110 of 300 — an attack costs 50 and `Splasher.run`'s own gate is
+  `paint >= 60`, so below 110 a splasher has at most one shot left in it.
+
+**Bytecode, stated as a risk up front:** peak is already 9148/17500 (52%) and the
+limiter truncates a turn silently with no exception. So the sense call is gated: a
+unit that already knows a tower and is above `2 x threshold` does no extra sensing
+at all. It scans only on its first turn (at the tower that built it) or when
+approaching the threshold.
+
+**Pre-registered accept criteria:**
+1. **h2h vs the then-current accepted snapshot > 50%** — accept gate.
+2. **Mechanistic, from `BobMop` death forensics on a sampled game: the starved
+   fraction (deaths at ≤10 paint) must fall well below the measured 78% baseline,
+   and live standing-army population must rise.** If starvation does not fall, the
+   mechanism did not engage and the win rate is not evidence about this idea.
+3. **Peak bytecode from the dumper's `maxbc` must stay under ~14000** (80%).
+4. No one-directional regression concentrated on one map or side.
+
+**Pre-registered failure shape, written before the run:** the algorithm's own
+ledger warns that *survival bought with inactivity* is a recurring trap — "halving
+the death rate cost 18 peer games; units die doing the thing that wins". This
+change makes units walk home instead of painting, so it can absolutely buy
+longevity with lost tempo. That is why criterion 1 is a win rate and criterion 2 is
+only a mechanism check: a big drop in starvation with a losing h2h is a REJECT, and
+it would be a well-earned one that closes the direction properly.
+
+**Confound to keep separate:** iteration 7, if accepted, creates paint towers on
+maps that previously had none, which would make refill more valuable. That is why 7
+is being measured first and alone.
