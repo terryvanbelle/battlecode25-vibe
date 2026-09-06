@@ -1445,3 +1445,42 @@ three econ tower-mix attempts closed and the mix thread is done — the next att
 must leave econ entirely, and the candidates are nav (frontier-seeking exploration, already
 traced at 97% of idle turns on open maps) and combat/micro, which this lineage has never
 touched at all.
+
+### 6b arm-to-arm identity check — the positive control passes exactly
+
+Doctrine #3 says count how many `(opponent, map, side)` games are byte-identical between two
+arms before interpreting anything. Ran it on MoneyTower, which I had pre-registered as the
+**positive control**: average tower paint there is ~20, below *both* 500 and 250, so the two
+arms must make identical decisions and the game must be identical.
+
+First attempt failed for an avoidable reason: the raw replay hashes differ
+(`f632ac35…` vs `b70331…`, 7,555,148 vs 7,705,908 bytes). That is not a behavioural
+difference — it is the `[i6b]` build tag I added to every indicator string. ~25,000 indicator
+strings x 6 bytes accounts for the entire 150,760-byte gap.
+
+**The tag is play-neutral but it is not measurement-neutral**, and I should have seen that
+before adding it in the same build: it defeats the one check that proves two arms are the same
+bot. Logging it as a real cost of the instrumentation, not a footnote.
+
+The check still works one level up, on behaviour rather than bytes — extract the tower
+indicator trajectory (`T r=… chips=… tw=… tp=… e=…`) from both replays and diff:
+
+```
+24,350 lines from the 500 arm
+24,350 lines from the 250 arm
+IDENTICAL
+```
+
+**Exactly identical, every round, both teams.** So:
+1. The pre-registered mechanism prediction is confirmed — the dose changes nothing on
+   MoneyTower, as it must, which means the motivating-map fix from iteration 6 is preserved
+   intact rather than traded away.
+2. The engine is confirmed deterministic on this build pair, so any difference on the other
+   19 maps is caused by the dose and nothing else.
+3. The arms are demonstrably *not* the same bot measured twice on those other maps (games are
+   already flipping), so the run is interpretable.
+
+**Method fix carried forward**: compare arms on the indicator trajectory, not the replay hash,
+whenever the arms differ in instrumentation. Better still, keep the tag constant across a dose
+pair — `carol_i6a` and the candidate should have shared one tag and differed only in the
+constant, and then the raw hash would have worked.
