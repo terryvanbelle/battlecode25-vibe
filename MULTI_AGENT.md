@@ -46,8 +46,14 @@ produced.
 
 ## The tournament
 
-- **Schedule**: 06:00 and 18:00 UTC daily, via cron on claude-driver
-  (`tools/cron-tournament.sh`, log at `~/bc25-tournament-cron.log`).
+- **Schedule**: 06:00 and 18:00 **America/Los_Angeles** daily, via a systemd
+  timer on claude-driver (`tools/systemd/bc25-tournament.timer` ->
+  `tools/cron-tournament.sh`, log at `~/bc25-tournament.log`). Pacific, not
+  UTC: Debian's cron has no `CRON_TZ`, so a crontab entry could only name a
+  fixed UTC hour and would slip an hour at every DST changeover. The VM clock
+  is still UTC, so run IDs and log timestamps stay UTC —
+  `systemctl list-timers bc25-tournament.timer` is the authority on when the
+  next one fires.
 - **Format**: every pair (alice-bob, alice-carol, bob-carol) x every map in
   `tools/bc25-maps.txt` x both sides -- 450 games. Maps are played in random
   order, so a run that hits its time limit yields an unbiased random subset

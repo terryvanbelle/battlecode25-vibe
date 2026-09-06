@@ -1,0 +1,14 @@
+[Unit]
+Description=Battlecode 2025 tournament at 06:00 and 18:00 Pacific
+
+[Timer]
+# Pacific, not UTC. Debian's cron (3.0pl1) has no CRON_TZ, so a crontab entry
+# can only name a fixed UTC hour and would silently drift by an hour at every
+# DST changeover; systemd resolves the zone itself on each firing.
+OnCalendar=*-*-* 06,18:00:00 America/Los_Angeles
+Persistent=true
+AccuracySec=1min
+Unit=bc25-tournament.service
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,19 @@
+[Unit]
+Description=Battlecode 2025 round-robin tournament (alice vs bob vs carol)
+Documentation=file:///home/terryvanbelle/projects/vibe/2025/MULTI_AGENT.md
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=terryvanbelle
+Group=terryvanbelle
+WorkingDirectory=/home/terryvanbelle/projects/vibe/2025
+Environment=HOME=/home/terryvanbelle
+Environment=PATH=/usr/local/bin:/usr/bin:/bin
+# 450 games on a shared VM: the runner has its own internal deadline, so let it
+# own the timing rather than having systemd shoot it partway through a run.
+TimeoutStartSec=infinity
+ExecStart=/home/terryvanbelle/projects/vibe/2025/tools/cron-tournament.sh
+StandardOutput=append:/home/terryvanbelle/bc25-tournament.log
+StandardError=append:/home/terryvanbelle/bc25-tournament.log

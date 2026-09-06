@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
-# Cron entry point: sync the repo, run the round-robin tournament, commit+push
-# the results. Installed at 06:00 and 18:00 UTC on claude-driver.
+# Scheduler entry point: sync the repo, run the round-robin tournament,
+# commit+push the results. Fired at 06:00 and 18:00 America/Los_Angeles on
+# claude-driver by bc25-tournament.timer (see tools/systemd/README.md). Named
+# for the cron entry it replaced; still safe to run by hand.
 #
 # NEVER use `git pull --rebase --autostash` here. All three agents work in THIS
 # checkout, and at cron time they are usually mid-iteration with uncommitted
