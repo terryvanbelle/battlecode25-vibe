@@ -771,3 +771,59 @@ took the robot peak from ~500 to ~3,264 — a 6x jump for one extra `senseNearby
 on idle turns — which is affordable now but is worth remembering as the price of sensing:
 this bot is nowhere near the limit, and per the algorithm that headroom is exactly what
 should be spent on better decisions.
+
+## A better progress metric than win rate: how often the game is actually *won*
+
+Win rate against a moving pool cannot say whether the bot got stronger in absolute terms.
+The fraction of games that end by the **70%-paint rule** instead of the round-2000 coverage
+tiebreak can, because the threshold is fixed by the rules and does not move with the
+opponent. Measured on the head-to-head block of each iteration's own run (like-for-like:
+each is the candidate against the snapshot it replaces):
+
+| h2h block | decisive games |
+|---|---|
+| iteration 2 vs carol_iter1 | 1/32 = **3%** |
+| iteration 3 vs carol_iter2 | 5/32 = **16%** |
+| iteration 5 vs carol_iter3 | 9/23 = **39%** |
+
+Iteration 1's log entry recorded 30 of 32 games going to the tiebreak and concluded
+"coverage rate — not combat — is the game". Three accepted iterations later a third of games
+end before the clock. Adding this column to `history.csv` from here on.
+
+### Iteration 5 RESULT — ACCEPTED
+
+Run `gauntlet/20260906-203937` (12 sampled maps x both sides x 6 opponents = 144 games;
+combined accept gate + fixed-roster run).
+
+| instrument | result | pre-registered gate | verdict |
+|---|---|---|---|
+| h2h vs `carol_iter3` | **16/23 = 69.6%** (24th game still running; 16/24 = 66.7% worst case) | > 50% | **PASS** |
+| mechanism: chip income | 30/round -> **150/round**; towers 12 -> **25 (the engine cap)** | income > 30/turn | PASS |
+| mechanism: tower paint | six towers pinned at the 1000 cap, i.e. paint now overflowing | stop climbing unspent | PASS (overshot) |
+| exceptions | 0 | 0 | PASS |
+| annihilation losses | 0 | — | PASS |
+| decisive games (70% rule) | **9/23 = 39%** of the h2h block, vs 16% at iteration 3 and 3% at iteration 2 | — | absolute progress |
+
+Diff shape vs carol_iter3: swept-win 7 of 12 maps, swept-loss 2 (MoneyTower, SandyBeach),
+split 3. Side split even (A 15/19, B 15/20), so no symmetry artifact.
+
+**Why accepting on 23 of 24 h2h games is not the prefix error I logged this morning.** That
+error was drawing a *strategic conclusion* (carol_rush is near even) from 3 of 32 games,
+where the remaining 29 could and did reverse it. Here the outstanding game is one of 24 and
+the gate is >50%: the result is 16/24 = 66.7% or 17/24 = 70.8%, and both clear it, so no
+outcome of the missing game can change the decision. The final number is recorded below when
+it lands; the roster blocks of the same run keep running and feed only the progress chart,
+not the gate.
+
+**DECISION: ACCEPT.** Snapshot `src/carol_iter5` — deliberately skipping `carol_iter4`,
+which was rejected and never snapshotted, so snapshot numbers keep matching iteration
+numbers and the gap is self-documenting (it also makes this snapshot the first
+multiple-of-5 member of the fixed roster, which is when the chart wants one). `src/carol`
+committed alongside it so the twice-daily tournament plays the accepted build. Replay
+archived: `replays/iter05_carol_iter3_Castle_A.bc25` (a decisive round-1172 win).
+
+**Carried forward as the next targets, both already traced rather than guessed:**
+1. The fixed 1-in-3 ratio overshoots on money-tower-rich maps (MoneyTower: 4 towers, 79,840
+   idle chips) — iteration 6 is the self-calibrating mix, patch drafted and dry-applied.
+2. 97% of idle soldier turns on open maps are IDLE-ALLY — iteration 7 is frontier-seeking
+   exploration off the symmetry contract, patch drafted and dry-applied.
