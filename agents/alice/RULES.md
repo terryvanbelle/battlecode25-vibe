@@ -64,6 +64,18 @@ line refs below are to `engine/src/main/battlecode/world/*.java`.
 | Mopper | 50 | 100 | 100/300 | 0 | 30 (mop), 10 (transfer), 20 (swing) | **2** | -10 paint from enemy robot (+5 to self) |
 
 - All robots+towers: **vision^2 = 20** (sqrt20 ≈ 4.47).
+- **Vision vastly exceeds action range for every unit** — the exploitable gap:
+
+  | unit | vision r² | action r² | tiles seen vs actionable |
+  |---|---|---|---|
+  | soldier | 20 | 9 | ~60 vs ~28 |
+  | splasher | 20 | 4 (centre) | ~60 vs ~12 |
+  | **mopper** | 20 | **2** | **~60 vs 8** |
+
+  A unit that only *acts* on what falls inside the small circle, and moves at
+  random otherwise, throws away most of its own sensing. Navigating toward the
+  nearest actionable target in vision is the cheap general fix (iteration 7, for
+  moppers: unpaints per mopper alive roughly tripled).
 - Movement cooldown 10; all cooldowns -10/turn; act when cooldown < 10.
 - **Soldier attack** (InternalRobot.soldierAttack): if target holds enemy TOWER → 50 dmg
   (never damages robots); else paints tile if empty or already-ally. Cannot overwrite enemy paint.
