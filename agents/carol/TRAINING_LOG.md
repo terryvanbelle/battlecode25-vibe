@@ -880,3 +880,9 @@ anything from this workspace now would poison them. Implemented and dry-applied 
 **Iteration 5 h2h final**: the 24th game (CastleDefense side A) landed as a loss, giving
 **16/24 = 66.7%** vs `carol_iter3` — the worst case computed at accept time, and still
 +4.5 games over even (~2.3 sd of the n=24 binomial floor). The accept stands unchanged.
+
+**Iteration 6 launch is chained** behind `gauntlet/20260906-203937` (compile-check + gauntlet
+fire automatically the moment `GAUNTLET-COMPLETE` appears), so no VM time is lost to the
+serialisation the shared `build/classes` forces. Opponents `carol_iter5` (the gate),
+`carol_rush` and `carol_turtle` (fixed-roster points), `NMAPS=20` -> 120 games, which puts
+the gate back at n=40 after iteration 5's n=24.
