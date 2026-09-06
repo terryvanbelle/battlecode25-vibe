@@ -2027,3 +2027,30 @@ accepted build winning the exact map its predecessor lost from both sides.
 - soldier targeting/immobility — iteration 8 rejected on trace, closed
 - ruin discovery — iteration 9 discarded on reachability, closed
 - navigation (bug-nav) — drafted, unqueued, motivating evidence retracted
+
+## Iteration 10 (SRPs) — rebuilt on iteration 7, pre-registered, queued
+
+`src/alice_i10d` = accepted `alice_iter7` + the three-step SRP mechanism (lattice
+centres, tower-saturation gate). Beats `alice_iter7` on Mirage; wider generality
+checks running.
+
+**Pre-registered before its sweep:**
+1. **Gate** — H2H vs `alice_iter7` > 50%, **>= 16/24** at NMAPS=12.
+2. **Mechanism** — `srp` (active resource patterns) must be materially > 0 for the
+   candidate and 0 for the baseline, *and* paint actions per 500 rounds must stay in
+   the normal band (~150-250). The second half is the important one: iteration 10a
+   built SRPs successfully while running 1599 paint actions and losing by 178‰, so
+   "SRPs exist" alone is not evidence the mechanism is working. **A count without a
+   cost is not a measurement.**
+3. **Shared pool / displacement** — tower count must not fall relative to the
+   baseline. This is what killed 10b, and it is the master variable.
+4. **Watch** — end-of-game chips. The whole premise is that SRPs reopen the chip
+   sink that closes when towers max out at L3; if the treasury still climbs past
+   $150k the mechanism is not doing the job it was justified by.
+
+**Known weakness, declared now**: `SRP_MIN_TOWERS = 10` is a magic constant, and
+this session already established that self-calibrating thresholds beat searched
+ones (iteration 5). If the gate result is map-sensitive, the first refinement is
+the principled form — gate on *ruin saturation* ("no unbuilt ruin in sight")
+rather than an absolute tower count, which adapts to small maps automatically. I
+am not searching over the constant.
