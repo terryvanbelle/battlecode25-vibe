@@ -1716,3 +1716,42 @@ says and why the accept gate is what it is.
 
 **Iteration 6/6b REJECTED, definitively.** Ledger entry above stands, now with the dose gate
 recorded against it. `src/carol` is already reverted to the accepted iteration-5 build.
+
+### Iteration 7 mechanistic verification — the motivating game, re-run
+
+`carol` vs `carol_rush` on DefaultSmall, the exact game that annihilated at round 69.
+
+**Result: still lost, but at round 155 instead of 69** — survival extended 2.2x. §4 class 2
+("still lost, mechanism demonstrably engaged, with an evidenced account of why this game
+could not flip anyway"), which the algorithm names as a valid basis to proceed.
+
+The new `rsv=` / `stag=` instrumentation shows the mechanism firing, step by step:
+
+| round | chips | towers | rsv | stag | what happened |
+|---|---|---|---|---|---|
+| 25 | 1350 | 2 | 1200 | 0 | |
+| 31 | 1350 | **1** | 1200 | 6 | money tower dead, treasury freezes, counter arming |
+| **37** | 1350 | 1 | **0** | **12** | **reserve disarmed** |
+| 43 | **1100** | 1 | 1200 | 5 | **a soldier was built** (-250); counter reset by the spend |
+| 49 | 1100 | 1 | **0** | 11 | disarmed again |
+| 55 | **800** | 1 | 1200 | 5 | second soldier |
+| 61 | **500** | 1 | 1200 | 0 | third soldier |
+
+Under iteration 5 this treasury sat at 1350 from round 26 until death without building
+anything. It now spends 1350 -> 1100 -> 800 -> 500.
+
+**Both pre-run predictions confirmed, and they were written down first:**
+1. *"~4 build windows, so ~3-4 soldiers instead of 0"* — **exactly 3 soldiers**.
+2. *"at most one unit per `STAGNANT_ROUNDS`, not a single-turn dump"* — confirmed; every build
+   resets every tower's counter, giving a ~6-10 round cadence.
+
+`tools/frozen-treasury.py` scores the game **i7=12, PASS at gate 50** (was 44). The tag-based
+team split worked on its first real use.
+
+**Why this game still could not flip**, specifically rather than as an excuse: DefaultSmall is
+a small map against an all-in rusher, carol has lost its money tower by round 26, and 1350
+chips is a hard ceiling of five soldiers with no income to extend it. Three soldiers arriving
+piecemeal cannot beat an opponent spending its entire economy on continuous soldier
+production. The fix converts an inert death into a fighting death — which is exactly what it
+was designed to do, and it is the maps with 1,880-round freezes (Fossil, DefaultMedium), where
+~188 build windows are available instead of 4, that the full run has to answer.
