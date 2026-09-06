@@ -1,0 +1,13 @@
+Special Resource Patterns: a complete Soldier.java carrying the SRP mechanic,
+recovered from ~/bob-tools/srpcheck on battlecode-dev after the session that wrote
+it was killed. It was written and compile-verified there and never stored in the
+workspace, so it existed in exactly one place on one machine.
+
+Base: the iteration 3 / iteration 4-era Soldier (its comments say "iteration 4").
+It is NOT a drop-in for the current src/bob/Soldier.java -- rebase the SRP parts
+(SRP_MIN_CHIPS, SRP_PATIENCE, srp/srpTurns fields, the step-1b call, workOnSrp,
+srpSiteSafe) onto whatever Soldier is current when iteration 9 comes up, rather
+than copying the file over and silently reverting later accepts.
+
+Rationale, engine numbers and pre-registered gates: TRAINING_LOG.md, "Iteration 6
+ -- Special Resource Patterns".
