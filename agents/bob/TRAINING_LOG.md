@@ -1714,3 +1714,68 @@ and it costs 30 games against this run's 200. It is launched.
   README already records that it is forked from `bob_iter3` and must be re-forked
   when it stops being a challenge; one more evaluation at ≥80% triggers that, and
   the re-fork gets logged so no win rate is compared across it.
+
+
+---
+
+## The archetype earned its keep (2026-09-06) — one enemy splasher beat thirteen of my soldiers
+
+`bob_denier` scored 80% against, i.e. I beat it comfortably overall — but it took
+two maps from both sides, and the *way* it won is the most useful thing this run
+produced. This is exactly the return TRAINING_ALGORITHM.md promises from synthetic
+archetypes: an opponent that does something my lineage never does.
+
+**Paintball, our side A, lost at round 223 by MAJORITY_PAINTED.** Cumulative spawns
+and coverage (per mil):
+
+```
+round   ourCov  theirCov   ourSold ourSpl ourMop   theirSold theirSpl theirMop
+  50      421      463         8      0      0          1        0        0
+ 150      381      528        11      1      1          1        1        0
+ 223      240      703        13      1      1          1        1        0
+```
+
+The denier built **two units in the whole game** — one soldier and one splasher —
+and its coverage went 463 → 703 while ours *fell* 421 → 240. We had thirteen
+soldiers. We lost anyway, and we lost fast.
+
+**The mechanism, and it is a rule of this game rather than a bug in my code:
+soldiers cannot overwrite enemy paint.** Only splashers (within r²≤2 of the splash
+centre) and moppers can. So every tile that enemy splasher converted was permanently
+gone as far as my thirteen soldiers were concerned — they physically could not take
+it back. One splasher firing every fifth round for 150 rounds is ~30 attacks x 5
+overwritable tiles ≈ 150 tiles, which is almost exactly the 181 per-mil we lost.
+
+Our answer to that threat was one splasher and one mopper, and the trace above says
+2-4 of each are alive at any moment because they starve. **A soldier-heavy army has
+no reply to paint denial at all**, and my entire lineage is soldier-heavy, so no
+instrument descended from it could ever have shown me this. That is the
+self-referential blind spot, closed by a bot I built specifically to close it.
+
+### What follows, and what does not
+
+**Reinforces iteration 8 with a competitive story, not just an efficiency one.**
+Keeping denial units alive is not about tidy resource accounting; it is the only
+mechanism by which lost territory can ever be recovered. The refill change is the
+cheapest available route to having more than two of them alive.
+
+**A separate, arithmetic-only observation that I am explicitly NOT yet claiming as
+a result.** A splasher attack costs 50 paint and paints up to 13 empty/ally tiles
+(r²≤4 disc) = 3.85 paint per tile; a soldier pays 5 paint for one tile. Per action
+the gap is 13x, and cooldowns (50 vs 10) only reduce that to ~2.6x per unit per
+round. My own Castle numbers agree: 207 splash actions delivered a comparable tile
+count to 2,686 soldier actions, for 10,350 paint against 13,430. So splashers may
+dominate soldiers for *coverage* on both paint and action efficiency.
+
+But the Paintball game does **not** demonstrate that — the denier won there by
+removal, not by out-painting — and the arithmetic degrades as the map fills and
+fewer of the 13 tiles are empty. Soldiers also remain the only unit that can build
+tower patterns. So this is a hypothesis with a promising dose, filed for a proper
+reachability and efficiency-decay check, not a conclusion. Recording the
+distinction because "metrics that improve without converting to wins" is the trap
+the ledger fills with fastest.
+
+### Pool note
+`bob_denier` is NOT retired despite 80%: it is the only opponent besides the accept
+gate that beat me from both sides of any map, and the algorithm says never retire an
+opponent we lose to.
