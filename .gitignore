@@ -1,0 +1,13 @@
+# build & run artifacts, in every workspace (agents/*, arena, scaffold)
+**/build/
+**/.gradle/
+**/matches/
+**/logs/
+**/gauntlet/
+**/client/
+**/bin/
+**/.idea/
+*.class
+
+# tournament replays live on battlecode-dev; only results/summary are committed
+tournaments/**/replays/
