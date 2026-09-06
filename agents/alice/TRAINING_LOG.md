@@ -1090,3 +1090,33 @@ sweep is **60 / 100 / 140** with the zero arm being iteration 5's accepted build
 4. **Watch (not a gate)** — paint actions per 250 rounds. If refuelling merely
    trades painting turns for walking turns, coverage will not move and the real
    answer is to refuel *without* leaving the work site.
+
+### Trace of iteration 5's one swept loss — starburst (accept condition 3)
+
+Dose 100 lost starburst from **both** sides, the only swept loss in the run, so
+per the diff-shape rule it is a real causal effect rather than churn and had to be
+traced before accepting. Re-ran it (r100 as A, lost) and dumped. Per 250 rounds:
+
+| | dose 100 | dose 0 (iter4) |
+|---|---|---|
+| paint actions | **110-151** | 62-84 |
+| **unpaint actions** | 59-84 | **124-143** |
+| moppers alive | 3-8 | 9-15 |
+| coverage 1000→2000 | 463 → **443‰** (falling) | 508 → **539‰** (rising) |
+
+**Dose 100 paints roughly twice as much and still loses the map**, because dose 0
+erases roughly twice as much. This is not a new failure mode — it is precisely the
+trade I flagged in the mechanism check, in its purest form: fewer moppers means
+less contest, and on a map where erasure dominates, more painting cannot make up
+for it. Coverage is a *contested stock* (LEARNINGS §2), and starburst is the map
+that punishes forgetting it.
+
+**Resolved, not ignored**: the regression has a specific mechanism, it is confined
+to 1 of 15 maps, and the run-wide margin is far outside noise. It does not gate
+the accept, and it names the next target precisely — **not more moppers (dose 0
+already tested that and loses overall), but better ones.** Today a mopper wanders
+and mops whatever enemy paint it randomly ends up adjacent to (sense radius r²≤2).
+Making the 3-8 moppers I have seek enemy paint within vision (r²=20) attacks this
+without giving back the soldier share that iteration 5 just bought.
+
+Registered as the iteration 7 candidate: **purposeful moppers**, ahead of SRPs.
