@@ -16,15 +16,6 @@ public class RobotPlayer {
     static Random rng;
     static int turnCount = 0;
 
-    /**
-     * Build tag stamped into every indicator string. carol and its own snapshots emit
-     * byte-identical indicators, so separating the two teams inside one replay previously
-     * required inferring from tower counts -- which cost real analysis time twice. Bump this
-     * every iteration; a snapshot then freezes its own tag and the pair is always separable.
-     * Play-neutral: indicator strings cannot affect the game.
-     */
-    static final String BUILD = "i6b";
-
     // Bytecode monitoring
     static int bcOverruns = 0;      // confirmed: our logic crossed a round boundary
     static int bcNearMisses = 0;    // used > 80% of limit
@@ -88,7 +79,7 @@ public class RobotPlayer {
         if (endRound != startRound) bcOverruns++;
         else if (used * 5 > limit * 4) bcNearMisses++;
         if (used > bcMaxUsed) bcMaxUsed = used;
-        rc.setIndicatorString("[" + BUILD + "] bc=" + used + "/" + limit + " max=" + bcMaxUsed
+        rc.setIndicatorString("bc=" + used + "/" + limit + " max=" + bcMaxUsed
             + " ov=" + bcOverruns + " nm=" + bcNearMisses + " | " + state);
         Clock.yield();
     }
@@ -234,48 +225,11 @@ public class RobotPlayer {
      * it over-corrected, and this supersedes it on the new trace rather than reverting it —
      * two ruins in three are still paint towers.
      */
-    /**
-     * Tower paint level at which paint stops being the scarce resource (stashes cap at 1000).
-     *
-     * Refinement after iteration 6 measured 45.0% h2h at 500. The mechanism was verified live
-     * -- Mirage tower paint spans 0-1000 so the gate really flips, MoneyTower pins at 0-150 so
-     * it never fires -- but 500 sat just ABOVE the mid-game operating band on ordinary maps
-     * (Mirage r1000 average 414), so nearly every ruin became a PAINT tower and iteration 5's
-     * central result (1-in-3 money took chip income 30 -> 150/round, towers 12 -> 25) was
-     * quietly reverted. 250 sits below that band and above MoneyTower's, which is exactly the
-     * separation the self-calibrating mix is for: money towers where they can be fed, paint
-     * towers where they cannot.
-     */
-    static final int PAINT_PLENTIFUL = 250;
-
-    static UnitType towerTypeFor(MapLocation ruin) throws GameActionException {
-        // If the ruin is already marked, follow whoever marked it -- never re-decide, or two
-        // soldiers paint conflicting patterns and the ruin deadlocks. (-2,-1) is secondary in
-        // the MONEY pattern and primary in the PAINT pattern; ruins are guaranteed a wall-free
-        // 5x5 fully on the map, so the tile always exists.
-        MapLocation probe = ruin.translate(-2, -1);
-        if (rc.canSenseLocation(probe)) {
-            PaintType m = rc.senseMapInfo(probe).getMark();
-            if (m == PaintType.ALLY_SECONDARY) return UnitType.LEVEL_ONE_MONEY_TOWER;
-            if (m == PaintType.ALLY_PRIMARY)   return UnitType.LEVEL_ONE_PAINT_TOWER;
-        }
-        // Fresh ruin: build whichever resource is currently scarce. Robot paint is drawn from
-        // the building tower's own stash, so "paint" means paint sitting in nearby towers, not
-        // this soldier's stash; chips are team-wide and directly readable.
-        int towers = 0, paint = 0;
-        for (RobotInfo a : rc.senseNearbyRobots(-1, rc.getTeam())) {
-            if (a.type.isTowerType()) { towers++; paint += a.paintAmount; }
-        }
-        if (towers == 0) {
-            // No tower in sight: fall back to iteration 5's fixed key, which is invariant
-            // under both map symmetries so neither team gets a different mix.
-            int k = Math.min(ruin.x, rc.getMapWidth() - 1 - ruin.x)
-                  + Math.min(ruin.y, rc.getMapHeight() - 1 - ruin.y);
-            return (k % 3 == 0) ? UnitType.LEVEL_ONE_MONEY_TOWER
-                                : UnitType.LEVEL_ONE_PAINT_TOWER;
-        }
-        return (paint / towers >= PAINT_PLENTIFUL) ? UnitType.LEVEL_ONE_MONEY_TOWER
-                                                   : UnitType.LEVEL_ONE_PAINT_TOWER;
+    static UnitType towerTypeFor(MapLocation ruin) {
+        int k = Math.min(ruin.x, rc.getMapWidth() - 1 - ruin.x)
+              + Math.min(ruin.y, rc.getMapHeight() - 1 - ruin.y);
+        return (k % 3 == 0) ? UnitType.LEVEL_ONE_MONEY_TOWER
+                            : UnitType.LEVEL_ONE_PAINT_TOWER;
     }
 
     static void workOnRuin(MapLocation ruin) throws GameActionException {
