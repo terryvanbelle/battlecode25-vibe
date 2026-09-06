@@ -1796,3 +1796,26 @@ and no owner, so nothing would have errored; the ruins would just have quietly s
 completing.
 
 Compile-checked (COMPILE-OK). Not evaluated — iteration 7 owns the VM.
+
+### The cross-agent channel is not live yet — checked, not assumed
+
+Pulled the only tournament's replays (`20260906-1755`) to see whether the sibling lineages
+pose the tower-killing threat my own pool cannot, since that would make the tournament the
+even instrument iteration 7 wants.
+
+They do not, and the reason is that the tournament predates all three agents' actual work:
+every replay contains **412 identical `Hello world!` indicator strings and nothing else** —
+all three bots were still the untouched scaffold starter at 17:55, and my own first accepted
+iteration landed after 18:40. That also explains the summary's suspiciously tidy standings
+(every pair 4/8, every map split by side): those games were decided by spawn position between
+three byte-identical bots.
+
+So the sanctioned cross-agent channel currently carries **zero** information, and the first
+informative tournament is the next scheduled run. Until then my instruments are exactly what
+they were: my own frozen snapshots, `carol_rush`, `carol_turtle` (retired), and the new
+`carol_decap`. That is the self-referential blind spot with no external mitigation at all,
+which raises rather than lowers the value of `carol_decap` being a genuinely different
+opponent.
+
+Recording this because "the tournament will tell us" is the kind of assumption that quietly
+substitutes for measurement — it would not have told us anything.
