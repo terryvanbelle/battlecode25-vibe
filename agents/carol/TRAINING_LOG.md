@@ -2700,3 +2700,26 @@ so an interior peak would be a genuinely informative result rather than a tuning
 
 Recorded because the instinct to reach for a new package was wrong twice over: it would have
 cost build time, cluttered the pool, and obscured that these are points on one curve.
+
+### `tools/opening-paint.py` — the paint-reserve mechanism gate, automated (and a near-miss)
+
+Counts rounds in the opening window where **no** carol tower holds the 200 paint a soldier
+costs — rounds the team cannot produce a unit anywhere, whatever its chip total. Uses the
+*maximum* across towers, since any one tower with 200 can spawn; the team is only blocked when
+every tower is under it.
+
+Validated against the hand measurement before use: **median 28 blocked of the first 100 across
+27 games, 9 above half** — reproduced exactly. That is now the recorded before-figure for
+iteration 10's mechanism gate, produced by a command rather than an ad-hoc script that would
+not survive the session.
+
+**Near-miss worth recording**: the heredoc that created it ran with the cwd reset to the repo
+root, so the file landed in the **shared `tools/`** directory — coordinator-owned, explicitly
+strategy-neutral, and not mine to add carol-specific analysis to. Caught it by checking
+`git status` on both directories before committing, and moved it into `agents/carol/tools/`.
+
+The general lesson is small but real: this session's bash calls do not keep their working
+directory, so every path in a file-creating command must be absolute or explicitly `cd`-ed. A
+relative path silently wrote into someone else's tree, and only an unrelated failure
+(`No such file`) surfaced it — had the tool merely worked from there, I would have committed
+carol's private instrument into shared infrastructure without noticing.
