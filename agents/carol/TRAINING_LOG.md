@@ -2958,3 +2958,40 @@ including `pnt`, the very action I was trying to count. It reported `pnt` as **z
 have supported a much more dramatic and completely false claim. Caught it only because zero was
 implausible. A character class in a hand-written extraction is exactly the kind of thing that
 fails silently and in the direction of whatever you were expecting.
+
+### Splasher reachability pre-check — PASSES, and it confirms why re-opening was legitimate
+
+Run **before** writing the iteration, because this is precisely where iteration 8 failed: I
+verified its branch fired without verifying that firing could reach anything.
+
+A splasher costs **400 chips**, so `runTower`'s gate is `chips >= CHIP_RESERVE + 400 = 1600`.
+Chip distribution across 41,328 tower-turns on the accepted build:
+
+```
+median chips = 2,260     p90 = 16,330     max = 60,000
+chips >= 1,450 (soldier gate) : 68.9% of tower-turns
+chips >= 1,600 (SPLASHER gate): 61.6% of tower-turns
+```
+
+**The splasher gate is satisfied on 61.6% of tower-turns** — comfortably inside the operating
+band, not above it. Reachability: **PASS**.
+
+This also converts my re-opening argument from plausible to demonstrated. Iteration 4 bundled
+splashers with the money-tower ratio and justified the bundle exactly here: *"a splasher costs
+400 chips and the trace shows the treasury pinned at the 1200-1400 reserve all game, so without
+(2) the splasher roll would simply fail `getChips() >= CHIP_RESERVE + 400` nearly every time."*
+That was true then. Iteration 5 took chip income from 30 to 150/round and was accepted, and the
+median treasury is now **2,260**. The condition that forced the bundle is gone, measured rather
+than assumed — which is the specific, evidenced reason the closed-directions ledger requires.
+
+**Remaining pre-check before writing it**: the *paint* cost. A splasher costs **300 paint**
+against a soldier's 200, and paint is the resource this session has repeatedly found binding
+(median 28 of the first 100 rounds with no tower able to afford even a 200-paint soldier). So
+the splasher's real price is not the 400 chips — chips are abundant — but that each one
+displaces one and a half soldiers' worth of the scarce resource. That trade is the dose, and it
+is the way this iteration most plausibly fails.
+
+**Dose registered**: splasher share of the spawn roll = **0 (zero arm) / 15% / 30%**, with 30%
+being iteration 4's untested value. Starting at 15%, deliberately below iteration 4, because the
+paint cost argues for caution and a concave curve is more informative than a single aggressive
+point.
