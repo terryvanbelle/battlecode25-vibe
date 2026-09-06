@@ -2249,3 +2249,32 @@ then carol has many towers and the trace shows she loses none.
   floor never bound and the run is void.
 
 **Not bundled with SRPs** (`src/carol_i8` stays on the shelf) and not with the two-sided mix.
+
+### Iteration 7 decision rule, pre-committed BEFORE the control arm reports
+
+The control (`20260906-222533`, `carol_iter5` vs `carol_rush`, same 20 pinned maps) is at 20/40
+as I write this. Writing the decision rule down now so the verdict is derived, not fitted —
+this run has already caught me reasoning from a stale baseline once today.
+
+Candidate side, final: **37/40** vs `carol_rush`; losses DefaultSmall A (r155, the degeneracy,
+disarm fired, 3 soldiers built), Dominoes A and B (the *paint*-tower degeneracy, unrelated).
+
+| control result | verdict | reasoning |
+|---|---|---|
+| control **< 37/40**, and its DefaultSmall A is a loss at ~r69 | **ACCEPT** | the fix converted or materially extended games the baseline lost; value demonstrated on identical maps |
+| control **= 37/40** with the *same three* losses | **ACCEPT, value ~0** | the mechanism provably engages and provably never fires in normal play (`stag`=0 in all 40 h2h games), so it is a zero-cost failure-mode preventer. The algorithm's own audit found the most valuable features were exactly this shape. Logged explicitly as "accepted on zero measured win value" so no future reader mistakes it for a demonstrated gain |
+| control **> 37/40** | **REJECT** | the fix cost games; revert |
+
+The middle row is the one I expect and the one that needs justifying in advance rather than
+afterwards. Two facts make it an accept rather than a coin flip: the change **cannot** fire
+while income is positive (measured, not argued — `stag` never left 0 across 40 h2h games and
+19 of 19 mirror-equivalent maps), so its downside is *identically* zero; and when it does fire
+it demonstrably works (DefaultSmall r69 -> r155 with three soldiers built where the baseline
+built none). A zero-downside fix for a catastrophic-when-it-happens failure is worth carrying
+even at zero measured win rate — but only if that is stated plainly, which is why it is stated
+here first.
+
+What would make me **reject** the middle row instead: if the control's DefaultSmall A also
+survived to ~r155, which would mean my `vm-match` verification game differed from the gauntlet
+game and the mechanism was not the cause of the extension. That is checkable and I will check
+it rather than assume.
