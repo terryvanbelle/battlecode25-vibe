@@ -1723,3 +1723,52 @@ Pre-registered when it runs:
    thicken a small painted blob. If coverage stalls, the standstill rule needs a
    "move on when your neighbourhood is finished" clause, which is exactly the
    `bd > 9` fallback the draft already contains.
+
+## Iteration 8 — REJECTED ON THE TRACE, and it is the textbook "survival bought with inactivity"
+
+Racetrack, alice_i8 (A) vs alice_iter5. **Lost**, 415‰ vs 560‰. Per 500 rounds at
+r2000:
+
+| | alice_i8 (stand still) | alice_iter5 |
+|---|---|---|
+| deaths | **83** | 173 |
+| starvation deaths | **30** | 101 |
+| paint actions per soldier lifetime | **0.48** | 0.31 |
+| soldiers alive | 15 | **29** |
+| **towers** | **6** | **8** |
+| coverage @r2000 | **415‰** | **560‰** |
+
+**Every mechanistic prediction came true.** Standing on ally paint does eliminate
+the upkeep drain: deaths fell by 52%, starvation deaths by 70%, and paint per
+soldier lifetime rose 55%. The units lived much longer and converted more of their
+tank into tiles, exactly as designed — **and the bot lost by 145‰.**
+
+TRAINING_ALGORITHM.md names this failure by name in "When the loop stalls":
+*"survival bought with inactivity (halving the death rate cost 18 peer games —
+units die doing the thing that wins)"*. I halved the death rate and it cost the
+game. I did not recognise the shape while designing it, only on reading the trace.
+
+### Why it loses — movement is not waste, it is the economy
+
+The causal chain is visible in one column: **towers 6 vs 8**. A soldier standing
+on its own paint never explores, so it never finds a fresh ruin, so no new tower
+pattern is completed, so paint income never grows, so fewer soldiers can be
+spawned (15 vs 29). Coverage follows the tower count, not the survival rate.
+
+So the −1/turn upkeep I identified as "self-inflicted waste" is not waste at all:
+**it is the price of exploration, and exploration is what buys tower income.** The
+~4% conversion of soldier paint into painted tiles is real, but the other 96% is
+not being thrown away — it is being spent on finding ruins, which is worth more
+than the tiles it would have painted. This inverts the framing of the previous
+entry, which I had already written before the trace existed.
+
+**Rejected on the trace without spending a gauntlet**, the same way dose 200 was:
+the mechanism engaged unambiguously, the outcome is clearly negative, and the
+failure mode is a documented pattern rather than an unexplained loss. `src/alice`
+was never touched.
+
+### Closed-directions ledger
+| direction | closed by | can re-open if |
+|---|---|---|
+| Soldiers stand still to avoid upkeep | iteration 8: towers 6 vs 8, coverage 415 vs 560‰ despite deaths −52% and starvation −70% | tower expansion is decoupled from soldier wandering — e.g. ruins are located by **communication** (unused mechanic) rather than by each soldier stumbling on them. Then standing still would cost nothing. **This is the specific reason the comms mechanic is now interesting.** |
+| Soldiers seek unpainted ground (original iteration 8 draft) | withdrawn earlier by the upkeep arithmetic; now doubly so — it would move soldiers toward *tiles* rather than *ruins*, and the trace says ruins are what matter | — |
