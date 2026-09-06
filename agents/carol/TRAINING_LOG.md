@@ -2443,3 +2443,39 @@ swarms small maps early). It does **not** hold against carol's own lineage: 15 o
 games show her towers falling after she passes three. Corrected in LEARNINGS rather than left
 standing — an overclaim in the durable-lessons file is worse than one in the log, because that
 is the file future sessions read first.
+
+## Iteration 9 pre-registration — SRPs (`src/carol_i8`, already written and compile-verified)
+
+Selected by the procedure registered before the measurement, not by preference: Gap A is closed
+as unreachable, so SRPs are next.
+
+**The case, in the binding resource** (payout read out of
+`InternalRobot.processBeginningOfRound`, not inferred): `addPaint(paintPerTurn + 3*numSRPs)` per
+paint tower and `addMoney(moneyPerTurn + 3*numSRPs)` per money tower, applied **per tower**. A
+lv1 paint tower mines 5/turn, so ten SRPs take it to **35 — a 7x multiplier** on paint, which
+the MoneyTower and Dominoes traces both show is the resource that actually binds. Cost is 200
+chips, and chips are the resource carol has been measured throwing away (79,840 idle on
+MoneyTower; 60,000 on Dominoes).
+
+**Hook**: the `IDLE-ALLY` branch only — a soldier with nothing to paint and no enemy paint in
+reach, measured at 34,821 turns on Leaf. It therefore consumes **no action the bot was already
+using**, which is the winner's profile the algorithm names.
+
+**Pre-registered gate**:
+- **PRIMARY**: h2h vs `carol_iter7` > 50% accept, 45-50% near miss, < 45% reject. Unlike
+  iteration 7, this instrument *can* see the change — SRPs fire in ordinary play on both sides,
+  so there is no representativeness problem and the h2h is the right gate.
+- **MECHANISM**: `SRP-DONE` must appear and `srp=` must exceed 0 in replays; team paint income
+  slope must rise after the first completions. **Zero completions means the feature is a no-op,
+  not that the idea is wrong** — and the pre-named first suspect is `SRP-nosite` dominating the
+  idle tags, i.e. the navigation limitation already logged.
+- **POOL (§4 caveat)**: this draws on the shared treasury, so `ch=` is already in the indicator;
+  the treasury must be printed in the same run or the result is uninterpretable, exactly as
+  three prior iterations failed to do.
+- **BYTECODE**: robots currently peak at 14.7% of 17,500. SRP work adds a 5x5 scan on idle
+  turns; the before-figure is on the record so the cost is measured rather than discovered.
+- **REGRESSION**: 0 exceptions; the paint-drought and frozen-treasury gates must not worsen.
+
+**Known limitation, already recorded before the run**: soldiers do not navigate to SRP sites,
+so a soldier at a lattice-cell corner reports `SRP-nosite`. Deliberately unfixed — bundling a
+navigation change would make a rejection uninterpretable.

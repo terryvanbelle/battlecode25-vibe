@@ -69,6 +69,12 @@ if ls "$D"/losses/*.bc25 >/dev/null 2>&1; then
   "$PY" "$WS/tools/frozen-treasury.py" --gate 50 "$D"/losses/*.bc25 | tail -4
 else echo "  (no loss replays -- nothing to check)"; fi
 
+echo
+echo "--- paint-drought gate (no-paint-tower absorbing state, RULES.md hard loss) ---"
+if ls "$D"/losses/*.bc25 >/dev/null 2>&1; then
+  "$PY" "$WS/tools/paint-drought.py" --gate 200 "$D"/losses/*.bc25 | tail -3
+else echo "  (no loss replays -- nothing to check)"; fi
+
 if [ -n "$GATE_OPP" ]; then
   echo
   echo "--- ACCEPT GATE vs $GATE_OPP ---"
