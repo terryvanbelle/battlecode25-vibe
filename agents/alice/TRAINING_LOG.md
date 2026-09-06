@@ -1360,3 +1360,43 @@ each also beats three at 20 for resolution.
 5. **Watch** — paint actions per 250 rounds; if refuelling merely trades painting
    turns for walking turns, coverage will not move and the answer is to refuel
    without leaving the work site.
+
+---
+
+## Iteration 7 — purposeful moppers (built and verified while iteration 6 evaluates)
+
+**Area**: mopper targeting. Named by iteration 5's only swept loss.
+
+**The defect is a self-inflicted radius asymmetry.** A mopper selects targets
+within r²≤2 — the 8 adjacent tiles — while its vision is r²=20, about 60 tiles.
+It has been blind to ~90% of what it can see, and when nothing is adjacent it
+*wanders at random*.
+
+**Change** (one mechanism, `src/alice_i7/`, built on `alice_iter5`): after mopping,
+walk toward the nearest enemy-painted tile anywhere in vision; wander only when
+none is visible; hold position when already in range.
+
+**Targeted verification — starburst, the exact map iteration 5 lost from both
+sides.** `alice_i7` (A) wins by AREA_PAINTED:
+
+| per 500 rounds | alice_i7 | alice_iter5 |
+|---|---|---|
+| unpaint actions | 187-381 | 61-163 |
+| moppers alive | 4-6 | 1-5 |
+| **unpaints per mopper** (r1000) | **~76** | **~23** |
+| coverage 500→2000 | 531 → **654‰** | 451 → **319‰** |
+
+**Criterion 2 (the one that matters) passes**: productivity per mopper roughly
+**triples**. This is deliberately measured per mopper alive rather than as a raw
+count — raw unpaints scale with mopper population, and this change is meant to
+raise productivity, not numbers. The mopper count is unchanged (4-6, same as the
+baseline's 1-5); the same few units simply find work instead of wandering.
+
+**Criterion 4 passes**: soldier count and coverage both *rose* (26 vs 9 soldiers,
+654 vs 319‰), so the erasure capability was bought back without giving up the
+soldier share iteration 5 gained — which was the whole design constraint.
+
+**Caveat, stated before it can flatter me**: starburst was chosen *because* it is
+the map where erasure matters most, so this is the friendliest possible sample.
+Generality checks on Racetrack, Mirage and DefaultLarge are running. The accept
+gate remains a full sweep against the then-accepted snapshot, not these matches.
