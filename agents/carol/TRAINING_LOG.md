@@ -661,3 +661,79 @@ gates failed; rejection is firm.
    to shoot back*. Needs a trace of how often enemies are actually in tower range first.
 4. **Communication** — still entirely unused (API sweep). Tower-to-tower broadcast is
    r2=80 with no paint-path requirement.
+
+## Archetype staleness audit (standing item; the algorithm's "keep them synced" rule)
+
+`carol_rush` is 119 lines against carol's 394 and shares no code path with it: it spawns
+soldiers only, never claims a ruin, holds no chip reserve, and walks at the enemy. So it
+cannot go stale by construction — it is not a fork of carol's strategy code, and that is
+exactly the property the fixed-roster chart needs (it is now in `progress/roster_extra.txt`
+alongside `carol_turtle` and `examplefuncsplayer`).
+
+Worth recording what it *means* that a bot with no economy at all annihilates carol on
+DefaultSmall: on a small map, chips spent immediately on soldiers beat chips banked for
+towers, because the map is small enough to cross before any economy compounds. carol has no
+map-size adaptivity of any kind — the same reserve, the same build mix, and the same
+exploration on a 20x20 and a 60x60. Cross-year post-mortems list rush/turtle map-adaptivity
+as a perennial; noting it here as a structural target with an actual instrument behind it
+(carol_rush's two annihilations) rather than as a slogan.
+
+## IDLE-cause readout (first output of the iteration-5 instrumentation, read mid-run)
+
+Pulled two finished replays out of the running gauntlet rather than waiting for it. Only
+carol emits `IDLE-ALLY`/`IDLE-ENEMY`; `carol_iter3` still emits the old `NOTGT`, so the two
+teams' idle turns are separable inside one replay.
+
+| map | carol IDLE-ALLY | carol IDLE-ENEMY | enemy share of carol's idle | iter3 NOTGT |
+|---|---|---|---|---|
+| Castle (contested) | 7,315 | 5,727 | **43.9%** | 4,833 |
+| Leaf (open) | 34,821 | 958 | **2.7%** | 1,945 |
+
+**The answer is map-dependent, and that settles iteration 6.** On an open map essentially
+all of the idleness is a soldier standing in ground that is *already ours* — a navigation
+problem, and splashers would do nothing about it. On a contested map nearly half is enemy
+paint in reach, which a soldier physically cannot touch and only a splasher converts. So:
+
+- **Iteration 6 = frontier-seeking exploration** (the bigger, more general share).
+  `newExploreTarget()` currently samples four uniformly-random map points and keeps the
+  farthest, which lands inside our own territory most of the time on an open map. The map
+  contract guarantees rotational or reflectional symmetry, so the enemy half is inferable
+  from our own spawn — bias targets toward it. Dose = the fraction of targets drawn that
+  way, with a zero arm (current behaviour).
+- **Splashers move to iteration 7**, now with a measured justification rather than an
+  assumed one: they are worth ~44% of the idle on contested maps and ~3% on open ones, so
+  the expected value is real but map-conditional, which also predicts that a *fixed*
+  splasher spawn ratio will trade one map class against another — the exact situation where
+  this project's own doctrine says to make the threshold self-calibrating (e.g. spawn
+  splashers in proportion to observed enemy paint) rather than to search over constants.
+
+**Caveat recorded so future-me does not misread the table**: these are idle *counts*, not
+rates. carol's totals are 2.7x and 18x iter3's, which is mostly carol having far more
+soldiers (the money mix is doing what it was built to do), not carol being lazier per unit.
+A rate needs a per-team soldier-turn denominator, which the current indicator cannot give
+because both bots emit `pnt`/`slf` identically. Next instrumentation pass should stamp a
+one-character build tag into every indicator string so any replay can be split by team.
+
+## Iteration 5 mechanistic verification (read mid-run from `carol_iter3__Leaf__botA`)
+
+Both teams are in the one replay; they are separable by tower count and chip slope.
+
+| team | towers at r700 | chip income | spend cadence |
+|---|---|---|---|
+| carol_iter3 (all paint towers) | 12 | **+30/round** | one 250-chip unit per ~8 rounds |
+| carol (1-in-3 money) | **25 — the hard cap** | **+150/round** | one unit every ~1.7 rounds |
+
+The mechanism did not just engage, it moved the game state by 5x on the targeted quantity,
+and the second-order effect is larger than the first: more chips bought more soldiers, more
+soldiers claimed more ruins, and carol reached `GameConstants` max of 25 towers while the
+baseline sat at 12-13. Pre-registered mechanism gate **met**.
+
+**Two new facts to carry forward**, both visible in the same trace:
+1. **The 25-tower cap is now live.** `completeTowerPattern` refuses at 25 towers, so from
+   that point every further ruin is worthless and any tower we lose is instantly replaceable.
+   Nothing in carol knows about the cap.
+2. **Paint is now the overflowing resource again**: at r800 six of carol's towers sit at
+   `tp=1000`, the hard tower paint cap, i.e. mined paint is being *discarded* every turn,
+   while chips still pin at the reserve band. That is the two-ceiling model flipping back,
+   and it says the dose is not yet at its optimum — 1-in-2 money towers is the pre-registered
+   next arm, and this is a *reason* rather than a fishing expedition.
