@@ -364,3 +364,9 @@ task zipForSubmit(type: Zip) {
   destinationDirectory = project.projectDir
   from sourceSets.main.allSource
 }
+
+task printClasspath {
+  description 'Prints the full runtime classpath (used by tools/ bare-java runners).'
+  group 'battlecode'
+  doLast { println sourceSets.main.runtimeClasspath.asPath }
+}

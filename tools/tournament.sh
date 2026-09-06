@@ -87,8 +87,7 @@ rm -rf src; mkdir -p src
 cp -r stage-$RUN_ID/examplefuncsplayer src/ 2>/dev/null || true
 for B in \$OK_BOTS; do cp -r stage-$RUN_ID/\$B src/; done
 ./gradlew --no-daemon -q build >/dev/null 2>&1 || { echo "BUILD-FAILED" >> "\$RUNDIR/results.txt"; echo TOURNAMENT-COMPLETE >> "\$RUNDIR/results.txt"; exit 1; }
-BC_JAR=\$(find ~/.gradle -name 'battlecode25-java-*.jar' | sort -V | tail -1)
-CP="build/classes/java/main:build/classes:\$BC_JAR"
+CP=\$(./gradlew --no-daemon -q printClasspath | tail -1)
 
 yield_load () {
   while [ "\$(pgrep -fc battlecode.server.Main || true)" -ge $GLOBAL_CAP ]; do sleep 10; done

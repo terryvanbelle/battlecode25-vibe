@@ -48,8 +48,7 @@ set -uo pipefail
 export JAVA_HOME=\$HOME/jdk21 PATH=\$HOME/jdk21/bin:\$PATH
 cd ~/$REMOTE_REPO/$WS_REL
 ./gradlew --no-daemon -q build >/dev/null 2>&1 || { mkdir -p gauntlet/$RUN_ID; echo "BUILD-FAILED" > gauntlet/$RUN_ID/results.txt; exit 1; }
-BC_JAR=\$(find ~/.gradle -name 'battlecode25-java-*.jar' | sort -V | tail -1)
-CP="build/classes/java/main:build/classes:\$BC_JAR"
+CP=\$(./gradlew --no-daemon -q printClasspath | tail -1)
 mkdir -p gauntlet/$RUN_ID; : > gauntlet/$RUN_ID/results.txt
 
 yield_load () {  # wait while the whole machine is at the game cap (BC26 runs too)
