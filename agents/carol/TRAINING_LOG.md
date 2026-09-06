@@ -2278,3 +2278,35 @@ What would make me **reject** the middle row instead: if the control's DefaultSm
 survived to ~r155, which would mean my `vm-match` verification game differed from the gauntlet
 game and the mechanism was not the cause of the extension. That is checkable and I will check
 it rather than assume.
+
+### Control arm, partial (25/40) — the mechanism's effect is now isolated, and the falsifier is clear
+
+| game (vs `carol_rush`) | control = `carol_iter5` (reserve always armed) | candidate = iteration 7 |
+|---|---|---|
+| **DefaultSmall A** | **LOSS at round 69** | **LOSS at round 155** |
+| Dominoes A | LOSS r2000 | LOSS r2000 |
+| Dominoes B | LOSS r2000 | LOSS r2000 |
+| DefaultMedium A/B, Fossil A/B, + 18 more | win | win |
+
+Same map, same side, same opponent, same 20 pinned maps, one code difference. **The baseline
+dies at round 69; the candidate survives to 155.** That is the mechanism isolated — no
+inference from a different build or a different map sample, which is exactly what went wrong
+with my earlier trigger-frequency estimate.
+
+**The falsifier I named in advance did not fire.** I wrote: "if the control's DefaultSmall A
+also survived to ~r155, the mechanism was not the cause of the extension and it is a reject."
+The control's DefaultSmall A is **r69**. The extension is caused by the disarm.
+
+**Second, unplanned result — iteration 8's baseline is established by the same run.** The
+control loses **Dominoes A and B** exactly as the candidate does, both at r2000. So the
+paint-tower degeneracy is a property of the *accepted baseline*, not of any candidate, and its
+rate on these 20 maps is **2/40**. That is precisely the comparative baseline I pre-registered
+for iteration 8's primary gate, obtained for free from a run launched to answer a different
+question — the third time today that checking what an in-flight run already answers has saved
+a run.
+
+Loss sets are otherwise identical, so on present evidence iteration 7 converts **zero** games
+and materially extends one. Under the decision rule committed above that is the middle row:
+**accept, with value recorded as ~0**. Holding the formal verdict until the remaining 15 games
+land, per the no-scoring-a-prefix rule — though note the DefaultSmall comparison itself is a
+single completed paired game and cannot change.
