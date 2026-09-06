@@ -1863,3 +1863,51 @@ Pre-registered when it runs:
    *guard* it nests inside is the existing `ruin != null` branch, which already
    excludes exactly the case it targets, so the check is mandatory rather than
    optional.
+
+## Iteration 9 — DISCARDED on the reachability check, which I should have run first
+
+Mirage, alice_i9 (A) vs alice_iter5. It *won* (493‰ vs 486‰) — and I am discarding
+it anyway, because the pre-registered mechanism gate failed:
+
+| | alice_i9 | alice_iter5 |
+|---|---|---|
+| **towers @r2000** (the gate) | **10** | **11** |
+| coverage | 493‰ | 486‰ |
+
+**Tower count did not rise. It fell by one.** The 7‰ win is not attributable to the
+mechanism, and per step 4 that is "no evidence of engagement — discard, don't
+evaluate further". Evaluating it would have bought a 72-game answer to a question
+the trace already settled.
+
+**Why it cannot work: ruins are saturated, not undiscovered.** Mirage has **22
+ruins** and the two teams finished with **10 + 11 = 21 of them built**. There is
+essentially never an unbuilt ruin left to remember. Racetrack is the same story —
+14 ruins, 8 + 6 towers. The memory has nothing to find.
+
+**This is exactly the reachability pre-check I pre-registered as mandatory and then
+did not run.** I wrote "count how often a soldier has no ruin in vision but a
+remembered unbuilt one — if that is rare the feature is dead code", and then built
+the feature first. The check costs one dump of an existing replay; the map header
+now prints the ruin count, and the round line prints tower counts, so the answer
+(21 of 22) was already sitting in files I had.
+
+### The synthesis above needs correcting
+
+I wrote that "ruin **discovery** is what limits tower count". That is wrong. Ruin
+**supply** limits it: a healthy bot builds out to the map's ruins and stops.
+Tower-count *differences* between teams therefore come from **failing to build on
+available ruins** — which is the iteration-5 absorbing state (no soldiers
+affordable) or the iteration-8 failure (soldiers that never travel) — not from
+failing to find them.
+
+That is a sharper statement of the same master-variable finding, and it retires an
+entire family of "help soldiers find ruins" ideas (memory, comms-shared ruin
+locations, exploration heuristics) in one measurement. **Comms drops back down the
+ranking**: iteration 8's ledger said comms would be interesting because it could
+decouple ruin discovery from wandering, and that premise is now falsified.
+
+### Closed-directions ledger
+| direction | closed by | can re-open if |
+|---|---|---|
+| Remember/share unbuilt ruin locations | iteration 9: towers 10 vs 11, and 21 of Mirage's 22 ruins already built; nothing left to discover | a map class exists where ruins are *not* saturated by mid-game — check the ruin count against final tower totals before believing it |
+| Comms for ruin sharing (iteration 8's proposed unlock) | same measurement | same condition |
