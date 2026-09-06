@@ -10,3 +10,10 @@ Code that is written and compile-verified but NOT the live bot.
                                   with it.
 
 Nothing here is built by gradle; src/ is the only source root.
+  iter8-on-iter3/                 the SAME refill change rebased onto the iteration 3
+                                  baseline, i.e. without iteration 7's tower-mix hash.
+                                  Both variants exist so that iteration 8 is a single
+                                  isolated change whichever way iteration 7 lands --
+                                  iter8-candidate/ was built on the iteration 7 tree and
+                                  would silently bundle the two if 7 were rejected.
+  iter9-srp/                      see its own README.
