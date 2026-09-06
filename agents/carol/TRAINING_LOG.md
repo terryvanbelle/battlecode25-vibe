@@ -1255,3 +1255,37 @@ stagnation and disarm the reserve exactly when it is doing its job. The conditio
 `chips == lastChips` — strict equality is what means *income is zero AND nothing was built*,
 which is the only state where the reserve is unreachable. The three frozen traces hold exact
 equality for hundreds of rounds, so the strict test loses nothing.
+
+### Opponent-pool classification update (required by the algorithm, overdue)
+
+Reclassifying from results rather than habit:
+
+| opponent | last two evaluations | classification |
+|---|---|---|
+| `carol_turtle` | 24/24 (100%), 40/40 (100%) | **RETIRE from the gauntlet pool.** Beaten >=80% twice consecutively and now literally unbeaten in 64 games — it has zero resolving power and every game spent on it is shared VM time bought back nothing. |
+| `carol_rush` | 24/24 (100%), 37/40 (92.5%) | **Demote to benchmark; stop gating on it.** Above 80% twice, so the retirement rule applies — but the rule also says *never retire an opponent we lose to*, and it took 3 games off us. Those 3 are the whole frozen-treasury bug, so it is currently the only instrument that surfaces the degeneracy. Keep it, play it less often. |
+| `carol_iter5` | 45.0% | **peer**, the accept gate. |
+
+Both stay in `progress/roster_extra.txt` regardless — the fixed-roster chart wants opponents
+that never change, and a line pinned at 100% there correctly reads "this instrument is spent"
+rather than being noise. Retirement is from the *gauntlet pool*, which is a different thing;
+noting the distinction because conflating them would either corrupt the chart or waste games.
+
+`carol_turtle`'s retirement frees ~40 games per run — enough to widen `NMAPS` from 20 to 25
+at no extra cost, which buys real resolution on the accept gate.
+
+### Secondary prediction registered for 6b, before its results land
+
+The frozen-treasury trace says DefaultMedium sat at **290 chips with 3 towers standing** for
+1,887 rounds. Income zero with three towers alive means *all three are paint towers* — which
+is exactly what iteration 6's `PAINT_PLENTIFUL = 500` produces once tower paint drops below
+the threshold, since it then answers PAINT at every ruin. **So iteration 6 plausibly made the
+frozen-treasury degeneracy more common, not less.**
+
+That gives 6b a second, independent prediction to check, registered now rather than
+rationalised later: lowering the threshold to 250 restores money towers, and money towers are
+what keep income positive, so **6b should show strictly fewer frozen-treasury rounds than the
+500 arm on the same maps**. `carol_i6a` is in the run precisely so this is a within-run,
+same-map comparison. If 6b wins the h2h *and* reduces frozen rounds, the two independent
+instruments agree and the accept is much better founded than a bare 50-something percent —
+which is what measurement doctrine #10 asks for.
