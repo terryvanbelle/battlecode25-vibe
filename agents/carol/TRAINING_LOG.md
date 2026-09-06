@@ -1993,3 +1993,47 @@ Worth noting the general move: the mirror audit was owed for four iterations bec
 like it needed its own 40-game run. It did not — it needed someone to notice that a run already
 in flight had produced the data. Check what the current run already answers before queueing a
 new one.
+
+### SELF-CORRECTION: I measured the bug's frequency on a build I then reverted
+
+The trigger-frequency pre-check that justified iteration 7 — "fires in 3/3 `carol_rush` losses
+at 1887 / 1881 / 44 rounds, 0/3 wins" — was measured on the replays of run `20260906-212704`.
+**That run's bot was the iteration-6 candidate**, which I rejected an hour later and reverted.
+Iteration 7 is built on iteration 5. So the pre-check characterised the frequency of the bug
+on a build that no longer exists.
+
+The consequence shows up immediately in this run, on the two maps I was most confident about:
+
+| map (vs `carol_rush`) | iteration 6 build | iteration 7 build |
+|---|---|---|
+| Fossil A | LOSS, **1,881 frozen rounds** | **WIN**, `stag` max **0** — never froze at all |
+| DefaultMedium A | LOSS, **1,887 frozen rounds** | **WIN**, `stag` max **0** — never froze at all |
+| DefaultSmall A | LOSS r69, 44 frozen rounds | LOSS r155, `stag` 12, disarm fired, 3 soldiers built |
+
+**Those two flips are not iteration 7's doing.** The mechanism provably never fired in either
+game, so iteration 7 played them exactly as iteration 5 would. They flipped because iteration 6
+was reverted — which retroactively confirms the prediction I registered earlier that iteration
+6's paint-only bias *caused* money towers to vanish and income to hit zero. The 1,880-round
+freezes were substantially an artifact of the build being tested, not a property of the
+accepted baseline.
+
+**So the honest size of iteration 7's opportunity is much smaller than I sized it.** On a
+six-game sample of the correct baseline: `stag` reaches the threshold in 2 games (Castle A
+415, DefaultSmall A 12), of which only **one** produced any purchase. The other four never
+freeze.
+
+**The poverty floor added this afternoon earned itself already.** Castle A shows `stag=415`
+but a frozen-while-affordable run of only **9**: the treasury sat below 250 chips, so the
+reserve was correctly disarmed and there was simply nothing to buy. Without that floor this
+game would have registered as a 415-round gate failure on a build that behaved perfectly.
+
+**What this does and does not change.** It does not retract the degeneracy — it is real on the
+accepted baseline (DefaultSmall still shows it, and the mechanism still converts r69 into
+r155). It does mean the *confirmation* gate — `carol_rush` 37/40 -> 40/40 — was reasoned from
+inflated numbers, and I should expect a much smaller move. I am recording this before the run
+finishes so the expectation is on the record ahead of the result rather than adjusted to fit
+it.
+
+**The general error, for LEARNINGS**: a pre-check must be run against the *base the change will
+sit on*, not against whatever replays are freshest. Mine were one rejected iteration out of
+date, and the rejection had already been decided when I used them.
