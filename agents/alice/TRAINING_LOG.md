@@ -974,3 +974,40 @@ code): opportunistic refill alone is likely near-dead, because a soldier with no
 ruin to work *wanders* and never approaches a tower deliberately. Vision is only
 r²=20 (~4.5 tiles), so the unit must also remember a tower location. Iteration 6
 is therefore seek-and-withdraw as **one** mechanism, not an opportunistic top-up.
+
+### Iteration 5 mechanism check — dose 100, Racetrack vs alice_iter4 (pre-registered criterion 3)
+
+Run as a single match while the sweep played. `alice_r100` (A) wins by
+AREA_PAINTED. Per 250 rounds at r2000:
+
+| | dose 100 | dose 0 (iter4) |
+|---|---|---|
+| spawns | +48 soldiers, +16 moppers | +11 soldiers, +91 moppers |
+| **realized mopper share** | **25%** | **89%** |
+| soldiers alive | 21-30 | 0-7 |
+| paint actions | 113-210 | 3-47 |
+| unpaint actions | 6-27 | 135-219 |
+| coverage @r2000 | **493‰** | 479‰ |
+
+**Criterion 3 PASS**: the realized mopper share lands at 25% — strictly between
+the extremes (89% at dose 0, 0% at dose 200) and, notably, exactly the 25% the
+spawn line always *claimed* to produce. Dose 100 does not change the policy; it
+makes the written policy actually happen, by removing the price asymmetry.
+
+Two things worth carrying forward:
+
+1. **The erasure race is still lost, and the margin is thin.** Dose 100's coverage
+   *peaks at 553‰ (r1250) and falls to 493‰*, while iter4 climbs 409→479‰ on the
+   back of 135-219 unpaint actions per 250 rounds against dose 100's 6-27. The win
+   is 493 vs 479 — 14‰. More soldiers paint more, but with only 5-8 moppers alive
+   there is almost nothing contesting the opponent's paint. This is §2 again and
+   it is the likely next target after refuelling: **purposeful moppers** (send them
+   at enemy paint) rather than more of them.
+2. **The treadmill is untouched.** Deaths are 62-67 per 250 rounds with 30-52
+   starved, and `xfer0` all game. Iteration 5 changes *what* is spawned, not the
+   fact that everything spawned starves. Iteration 6 (refuel) is unaffected by
+   this iteration's outcome and stays the next target either way.
+
+Watch criterion (4) reads: soldier share rose *and* coverage moved, so the spawn
+mix was a real constraint — but starvation deaths did not fall, so it is not the
+*only* one.
