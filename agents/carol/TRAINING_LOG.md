@@ -2392,3 +2392,54 @@ rather than from a new run: across the `carol_rush` and `carol_decap` blocks of
 Gap B stays queued behind whichever wins. Registering the *decision procedure* rather than the
 decision, because the last three iterations have each turned on a fact I did not have when I
 started them.
+
+## Iteration 9 decided by the pre-registered measurement — and both of my guesses were wrong
+
+Built `tools/paint-drought.py` to measure the absorbing state directly: the longest run of
+rounds where carol holds towers and the **maximum** paint across all of them is 0 (any single
+tower with paint is enough to keep spawning, so the state needs every tower dry at once).
+Validated against known answers before use — Dominoes reads 1951 and 1917 rounds, healthy games
+read 0 and 1.
+
+**Step 1 — tower counts.** I predicted late tower losses would be rare, on the strength of
+`carol_decap` never taking a tower. Measured with proper team separation: **15 of 27** replays
+show carol's own tower count falling after passing 3, several severely (8->4, 9->5, 10->5,
+7->3). **Prediction wrong.** The reason is embarrassing in hindsight: `carol_decap` failed to
+mass soldiers, but `carol_iter5` is a full economy that does, and carol's soldiers already
+attack enemy towers. **Carol's own lineage is the only thing in the pool that reliably kills
+her towers.**
+
+**Step 2 — but tower losses are not the absorbing state, and that is what actually matters.**
+
+| instrument | paint droughts >= 200 rounds |
+|---|---|
+| control (`carol_iter5`, accepted baseline), 40 games | **2** — Dominoes A (1951) and B (1917) |
+| iteration 7 candidate, 120 games | **2** — the same two |
+| all 40 h2h games, *including the 15 with falling tower counts* | **0** (every game reads 0 or 1) |
+
+**So Gap A is unreachable.** Tower counts fall late all the time, and it *never* produces the
+no-paint-tower state, because by then carol holds enough paint towers that losing several does
+not zero them. The only route to the absorbing state in 160 games is the *opening* one —
+exactly where iteration 8's floor is aimed.
+
+**Ledger: "late type-aware paint-tower floor (Gap A)" — CLOSED as unreachable.** Killed by 160
+games in which carol's tower count fell after 3 in 15 of 27 traced replays and produced a paint
+drought in **none** of them. Re-opening needs a game where a *late* tower loss zeroes the paint
+towers, not merely one where towers are lost.
+
+**Therefore iteration 9 = SRPs** (`src/carol_i8`, written and compile-verified this session),
+per the procedure registered before the measurement.
+
+**The methodological point**: my first measurement (tower counts falling) is a *proxy*, and it
+pointed at Gap A. The direct measurement of the state I actually care about pointed the
+opposite way. Had I acted on the proxy I would have spent an iteration — plus, quite possibly,
+a whole comms mechanic to make the count exact — on a branch that never fires.
+
+### Correction to a LEARNINGS claim I made an hour ago
+
+"Carol's tower mass is a defence nobody has beaten" is **too strong and now falsified**. It
+holds against `carol_decap` (which never masses) and mostly against `carol_rush` (which only
+swarms small maps early). It does **not** hold against carol's own lineage: 15 of 27 traced
+games show her towers falling after she passes three. Corrected in LEARNINGS rather than left
+standing — an overclaim in the durable-lessons file is worse than one in the log, because that
+is the file future sessions read first.

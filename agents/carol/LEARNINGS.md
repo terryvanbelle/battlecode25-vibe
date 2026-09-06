@@ -293,7 +293,15 @@ ask which pending question the *current* run's replays already contain the answe
 of this session's findings — the frozen-treasury trigger frequency, the arm-to-arm identity
 check, this audit — came out of runs launched for a different purpose entirely.
 
-## Carol's tower mass is a defence nobody has beaten
+## Carol's tower mass stops every archetype -- but not her own lineage
+
+**Corrected the same session it was written.** The original claim ("a defence nobody has
+beaten") was drawn from `carol_decap` and `carol_rush` alone. Measuring carol's own tower count
+across 27 traced h2h replays shows it **falling after passing three in 15 of them**, sometimes
+8->4 or 10->5. Carol's soldiers already attack enemy towers, and `carol_iter5` is a full
+economy that masses them -- so her own lineage is the only opponent in the pool that reliably
+takes her towers. What follows still holds against the archetypes, and the reason they fail is
+still the arithmetic below; what does not hold is the word "nobody".
 
 Built `carol_decap` specifically to kill carol's money towers, and it went **39/40 = 97.5%**
 against her while **never taking a single tower**: across three traced games carol's tower
