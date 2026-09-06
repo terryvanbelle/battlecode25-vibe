@@ -1669,3 +1669,57 @@ wall density *and* map area, which the dumper now prints for free.
 Noting the process point: I wrote a clean causal story off one game and the very
 next game contradicted it. The map-property instrument is what caught it, minutes
 after I built it.
+
+### Instrument question RESOLVED — `p` is correct, and the arithmetic points somewhere better
+
+Read the emitter rather than guessing. `GameMaker$MatchMaker` exposes:
+
+```
+addPaintAction(MapLocation, boolean)   <- tile painting  (takes a LOCATION)
+addAttackAction(int)                   <- attacking a robot/tower (takes an ID)
+```
+
+So `PaintAction` **is** soldier tile-painting and my `p` counter was right all
+along; `a` counts attacks on units/towers, which is why towers inflate it. The
+blocking prerequisite on iteration 8 is **cleared**. (Cost: one command. This is
+the third time this session that reading the engine settled in a minute what I was
+about to reason about for an hour.)
+
+**But the arithmetic that raised the question is still true, and it is the real
+finding.** On Racetrack, alice_i7 per 500 rounds at r2000: 147 paint actions, 94
+deaths, 26 soldiers alive ⇒ **~1.6 paint actions per soldier over its entire
+life**. Cross-checked against the engine's own coverage figure: 654‰ of 900 tiles
+≈ 585 tiles, against ~590 paint actions across the game. The two agree, so the
+number is real.
+
+**A soldier spends ~8 of its 200 paint on painting. The other ~192 goes to
+upkeep.** That is a ~4% conversion rate of the binding resource into the win
+condition.
+
+**And upkeep is almost entirely self-inflicted**, per the engine's own table:
+neutral tile −1/turn, enemy tile −2, **ally tile 0**, plus −1 per adjacent ally.
+A soldier standing on its own paint with no ally adjacent pays **nothing and could
+live indefinitely**. What drains it is *moving*: the bot's soldiers wander, so
+every turn they step onto unpainted ground and pay −1 for the privilege.
+
+### Iteration 8, rewritten — stand still and paint, don't wander and pay
+
+My drafted iteration 8 ("seek unpainted ground in vision") would have made soldiers
+move **more**, and on this arithmetic that means paying more upkeep to reach tiles
+they could not afford to paint anyway. It is withdrawn before costing a run — the
+same escape the corrected death instrument gave the anti-clumping draft.
+
+The replacement is the opposite change, and it is the algorithm's named winner's
+profile (*capability preserved at zero marginal cost*): **after painting its own
+tile, a soldier should not move at all while an empty paintable tile remains within
+action radius (r²≤9, ~28 tiles).** Painting from a standstill on ally paint costs
+0 upkeep, so the soldier's whole 200 goes into tiles instead of into existing.
+
+Pre-registered when it runs:
+1. Gate: H2H vs the then-accepted snapshot > 50%, >= 18/30 at NMAPS=15.
+2. Mechanism: **paint actions per soldier lifetime** (`p` ÷ deaths) must rise
+   materially from ~1.6 — this is now a trustworthy counter.
+3. Watch: coverage, and whether soldiers stop expanding the frontier and merely
+   thicken a small painted blob. If coverage stalls, the standstill rule needs a
+   "move on when your neighbourhood is finished" clause, which is exactly the
+   `bd > 9` fallback the draft already contains.
