@@ -209,3 +209,30 @@ binds (10/turn team-wide, 213k idle chips). With all-paint towers plus a chip re
 chips bind (treasury pins at the reserve; ~30 chips/turn from the one starting lv2 money
 tower funds roughly one soldier per 8 rounds). A mixed build is therefore likely optimal
 once coverage throughput, not income, stops being the bottleneck.
+
+## Engine probe — `GameWorld.markPattern` (added 2026-09-06, iteration 6)
+
+Decompiled: `markPattern` loops `dx = -2..2`, `dy = -2..2` over **all 25 tiles including the
+centre**, and calls `setMarker(team, centre.translate(dx, dy), getPatternBit(pattern,dx,dy) + 1)`.
+Consequences relied on by carol's self-calibrating tower mix:
+
+- **Every tile of a marked pattern carries a marker, primary as well as secondary** (marker
+  value 1 = primary for a 0 bit, 2 = secondary for a 1 bit). So "is this ruin marked?" can be
+  answered from any tile of the 5x5, not only the secondary ones.
+- **The centre is marked too**, even though it is the unpaintable ruin tile.
+- **No rotation or reflection is applied** — `dx,dy` are used directly, so patterns are
+  axis-aligned and identical for both teams.
+- Therefore the *type* of a marked tower pattern is recoverable from one `senseMapInfo`: the
+  PAINT and MONEY patterns differ at 16 of the 24 non-centre tiles, and offset **(-2,-1)** is
+  secondary in MONEY and primary in PAINT.
+
+```
+PAINT      MONEY      DEFENSE    SRP
+X...X      .XXX.      ..X..      XX.XX
+.X.X.      XX.XX      .XXX.      X...X
+..X..      X...X      XXXXX      ..X..
+.X.X.      XX.XX      .XXX.      X...X
+X...X      .XXX.      ..X..      XX.XX
+```
+(rendered from the constants paint=18157905, money=15583086, defense=4685252, srp=28873275
+with bit = 5*(dx+2) + (dy+2), y increasing upward — matches the spec's diagrams.)
