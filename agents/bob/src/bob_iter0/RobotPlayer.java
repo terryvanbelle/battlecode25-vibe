@@ -1,4 +1,4 @@
-package bob;
+package bob_iter0;
 
 import battlecode.common.*;
 
@@ -42,11 +42,6 @@ public class RobotPlayer {
                 if (rc.getRoundNum() != startRound) overruns++;
                 rc.setIndicatorString("ov=" + overruns + " bc=" + used + "/" + G.myBcLimit
                     + " mx=" + maxBc + " p=" + rc.getPaint());
-                int r = rc.getRoundNum();
-                if (r % 500 == 0 || r == GameConstants.GAME_MAX_NUMBER_OF_ROUNDS) {
-                    System.out.println("BCMON " + rc.getType() + " mx=" + maxBc
-                        + "/" + G.myBcLimit + " ov=" + overruns);
-                }
             } catch (Exception e) { /* never die on instrumentation */ }
 
             Clock.yield();
