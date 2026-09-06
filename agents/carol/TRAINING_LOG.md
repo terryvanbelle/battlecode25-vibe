@@ -1755,3 +1755,14 @@ piecemeal cannot beat an opponent spending its entire economy on continuous sold
 production. The fix converts an inert death into a fighting death — which is exactly what it
 was designed to do, and it is the maps with 1,880-round freezes (Fossil, DefaultMedium), where
 ~188 build windows are available instead of 4, that the full run has to answer.
+
+**Standing bytecode check (iteration 7, DefaultSmall verification game)**: robots peak
+**2,495 / 17,500 (14.3%)**, towers **530 / 20,000 (2.6%)**, **0 overruns, 0 near-misses**
+across 598 sampled robot-turns. Down from iteration 5's 3,264 robot peak because iteration
+6's sensing in `towerTypeFor` is gone with the revert.
+
+**85% of the robot budget is unused.** The algorithm is explicit that this headroom is what
+should be spent on better decisions, and iteration 8 (SRPs) is the first thing queued that
+will actually draw on it — laying and checking a 5x5 pattern costs real sensing. Worth
+recording the number now so the SRP iteration has a before-figure to be judged against rather
+than discovering the cost after the fact.
