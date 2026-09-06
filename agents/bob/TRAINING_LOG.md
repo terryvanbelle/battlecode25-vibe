@@ -602,3 +602,34 @@ Pre-registered accept criteria:
 2. swept-win > swept-loss.
 3. Mechanistic (checked first, on one match): `srpA` reaches ≥3 and stays there,
    and the win round drops versus the same map/side baseline.
+
+
+---
+
+## Backlog / next structural targets (evidence, not speculation)
+
+**The endgame is zero-sum and only two unit types can move the line.** In every
+long game the whole map ends up painted by somebody: gridworld iter3-vs-iter1
+finished 424 + 542 = 966 per-mil, and the iteration-4 gridworld win finished
+702 + 264 = 966. There is no neutral ground left to claim after roughly round 200.
+Engine fact: **soldiers cannot overwrite enemy paint at all.** Only splashers (and
+only within r²≤2 of the splash centre) and moppers can. So once the map is
+saturated, three fifths of our production — the soldiers — can no longer affect
+the score at all, and the entire remaining contest runs through the 1 splasher +
+1 mopper we build per 5 units (`Tower.spawned % 5`).
+
+That ratio has never been measured; it is an iteration-0 default. It is a clean
+dose parameter with an obvious zero arm, and the trigger is universal rather than
+situational. Candidate for iteration 7, after SRPs — and note it interacts with
+SRPs in the right direction, since more paint income makes the more expensive
+splashers (300 paint, 400 chips) affordable.
+
+Watch the confound flagged in TRAINING_ALGORITHM.md's deep regularities before
+spending a run on it: "metrics that improve without converting to wins" and
+"survival bought with inactivity". The metric to pre-register is enemy-paint
+per-mil removed per round, normalised per round, NOT raw tiles mopped.
+
+**Second-order, cheap, unmeasured**: `markResourcePattern` has a public overload
+taking a rotation (0-3) and a reflect flag, so a resource pattern can be laid in 8
+orientations. Verified in the engine but not needed yet — it would matter only if
+site rejection due to contradicting neighbours becomes common in iteration 6.
