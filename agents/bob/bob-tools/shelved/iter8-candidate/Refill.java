@@ -68,17 +68,28 @@ public class Refill {
 
         // 1. A tower in sensing range with paint to spare: take it.
         MapLocation me = rc.getLocation();
-        MapLocation best = null;
+        RobotInfo best = null;
         int bestD = Integer.MAX_VALUE;
         for (RobotInfo a : allies) {
             if (!a.getType().isTowerType() || a.getPaintAmount() < 100) continue;
             int d = me.distanceSquaredTo(a.getLocation());
-            if (d < bestD) { bestD = d; best = a.getLocation(); }
+            if (d < bestD) { bestD = d; best = a; }
         }
         if (best != null) {
-            int want = -Math.min(rc.getType().paintCapacity - paint, 100);
-            if (want < 0 && rc.canTransferPaint(best, want)) { rc.transferPaint(best, want); return true; }
-            Nav.navTo(best);
+            // Ask for what the tower can actually spare, not a flat 100: a request the
+            // tower cannot cover makes canTransferPaint false, and the unit would then
+            // fall through to navigating to a tower it is already standing next to and
+            // slide around it forever. Leave 50 behind so the tower keeps a working
+            // float, as the superseded tryRefill did.
+            int avail = best.getPaintAmount() - 50;
+            int want = -Math.min(rc.getType().paintCapacity - paint, avail);
+            if (want < 0 && rc.canTransferPaint(best.getLocation(), want)) {
+                rc.transferPaint(best.getLocation(), want);
+                return true;
+            }
+            if (!me.isWithinDistanceSquared(best.getLocation(), 2)) {
+                Nav.navTo(best.getLocation());
+            }
             return true;
         }
 
