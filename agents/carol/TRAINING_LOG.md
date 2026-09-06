@@ -2861,3 +2861,52 @@ and is being spent on the wrong thing".
 by 80 games at a verified-working mechanism: h2h 50.0% dead even (6 swept wins, 6 swept losses),
 and 36/40 vs 37/40 against `carol_rush` on identical maps. Re-opening requires a reason more
 opening paint income should convert when this run says it does not.
+
+### `tools/soldier-health.py` — the counter-metric, and it raises a serious doubt about iteration 10
+
+Built the instrument my iteration-10 pre-registration promised ("check soldier lifetime, not
+just the paint metric, before reading a drop as noise"). It counts soldier turns and the
+fraction spent at **exactly 0 paint** — frozen, unable to move or act, bleeding 20 HP/turn.
+
+Baseline, measured on the four iteration-8 h2h replays where both builds are tagged and in the
+same game (so the comparison is exactly paired):
+
+```
+i7 (baseline)   soldier turns = 18,431   dry = 2,477  (13.4%)   low<5 = 18.3%
+i8 (candidate)  soldier turns = 40,474   dry = 5,475  (13.5%)   low<5 = 17.1%
+```
+
+**Two findings, and the second is a problem for the iteration currently running.**
+
+**1. Carol spends 13.4% of all soldier turns completely inert.** More than one turn in eight is
+spent at zero paint, frozen and losing 20 HP — not fighting, not painting, not moving. That is a
+large standing waste nobody has looked at, and it is measured on the *accepted* build.
+
+**2. Iteration 8 fielded 2.2x the soldiers and still went 50/50.** Gears alone: 5,414 soldier
+turns for the baseline against **14,803** for the candidate. Iteration 8 did not merely raise
+paint income — it nearly tripled soldier production on some maps — **and converted none of it.**
+
+That second point cuts directly against iteration 10's rationale, and I would rather say so now
+than after the result:
+
+> Iteration 10 plugs a paint leak so that **more units get built**. Iteration 8 already
+> demonstrated that **building far more units wins nothing**. The two changes differ in
+> mechanism but share the outcome they are betting on.
+
+And iteration 10 has a cost iteration 8 did not: denying refills should *raise* the 13.4% dry
+rate, since soldiers that cannot top up are exactly the ones that freeze.
+
+**Registered prediction, before the run reports**: iteration 10 lands at or below 50%, with the
+opening-paint metric improved and the dry rate worse. If so, the honest conclusion is not "tune
+the reserve" but that **carol's binding constraint is not unit production at all** — three
+iterations (5, 8, and 10) will have raised production by different routes and converted nothing.
+
+**What that would point at instead**, and it is already in my own log: iteration 5's
+instrumentation measured **97% of idle soldier turns on open maps as IDLE-ALLY** — soldiers
+standing on ground that is already ours with nothing to do. Combined with the 13.4% frozen at
+zero paint, the picture is that carol's problem is what her soldiers *do*, not how many of them
+there are. That reopens the two directions this session has kept deferring — frontier-seeking
+exploration and splashers (still never built, per the API sweep) — as the better-founded targets.
+
+I am letting iteration 10 run rather than pre-judging it: the prediction may be wrong, and a
+run already in flight costs nothing more. But the interpretation is fixed in advance either way.
