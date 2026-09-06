@@ -195,6 +195,25 @@ never appear). Peak observed: soldiers 1638 / 17500 (9%), towers 534 / 20000
 (BFS/bug-nav, symmetry inference, per-tile pattern computation, wider sensing
 loops) is affordable and should not be avoided on cost grounds.
 
+### Planned: play-symmetry (mirror) audit — Phase 0 item 7
+Once a candidate is snapshotted, `alice` vs `alice_iterN` is byte-identical, so
+the acceptance H2H *is* a mirror match: any map with a persistent one-sided
+result is a play-symmetry bug, not opponent strategy. Standing signal to watch:
+iter1's losses were 5-of-7 on side A. Known fixed-absolute-order sites in my
+code to audit if a lopsided split appears: `directions[]` compass order in
+tower spawn-ring scan and `wander`, and every "first satisfying result" loop
+over `senseNearbyMapInfos` (engine scan order is x-then-y ascending, an
+absolute order — see RULES.md).
+
+### Structural gap identified (candidate iteration 4)
+Soldiers **cannot overwrite enemy paint** (engine: paints only if tile empty or
+already ally). My coverage engine is entirely soldiers, so the bot is
+structurally unable to convert enemy territory — a hard ceiling on the
+painted-area tiebreak that decides every peer game. Only splashers convert
+enemy paint directly (r^2<=2 of center), and the bot has never built one.
+Coverage economics: soldier 0.20 tiles/paint (empty/ally only); splasher 0.26
+tiles/paint plus up to 5 enemy conversions per attack. Draft prepared.
+
 ### Engine trap found (RULES.md updated)
 `transferPaint(loc, -N)` credits the withdrawer through `addPaint`, which clamps
 at capacity, while the tower is debited the FULL N. Over-asking silently burns
