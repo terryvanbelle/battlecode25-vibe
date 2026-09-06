@@ -1,4 +1,4 @@
-package carol;
+package carol_iter7;
 
 import battlecode.common.*;
 

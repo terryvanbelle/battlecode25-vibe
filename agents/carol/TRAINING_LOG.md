@@ -2310,3 +2310,43 @@ and materially extends one. Under the decision rule committed above that is the 
 **accept, with value recorded as ~0**. Holding the formal verdict until the remaining 15 games
 land, per the no-scoring-a-prefix rule — though note the DefaultSmall comparison itself is a
 single completed paired game and cannot change.
+
+### Iteration 7 RESULT — ACCEPTED (with its value recorded honestly as ~0 games)
+
+Control `20260906-222533` (`carol_iter5` vs `carol_rush`, the same 20 pinned maps) came in at
+**37/40 = 92.5%**, identical to the candidate, with an **identical loss set**:
+
+| | control (`carol_iter5`) | candidate (iteration 7) |
+|---|---|---|
+| vs `carol_rush` | 37/40 | 37/40 |
+| DefaultSmall A | **LOSS r69** | **LOSS r155** |
+| Dominoes A | LOSS r2000 | LOSS r2000 |
+| Dominoes B | LOSS r2000 | LOSS r2000 |
+
+This is exactly the middle row of the decision rule committed **before** the control reported,
+and the named falsifier did not fire (the control's DefaultSmall A is r69, not r155, so the
+extension is caused by the disarm and nothing else).
+
+**DECISION: ACCEPT.** Snapshot `src/carol_iter7` (numbers 4 and 6 stay unused — both rejected,
+so the gap is self-documenting). Recorded plainly so no future reader misreads it:
+
+> **Iteration 7 converts zero games. Its measured win value is 0.**
+
+It is accepted on the grounds set out in advance, not discovered afterwards:
+1. **Its downside is identically zero, measured rather than argued.** `stag` never left 0 in
+   any of the 40 h2h games or the 19 mirror-equivalent maps, so it provably cannot fire while
+   income is positive. It is not "low risk"; it is inert outside the failure state.
+2. **When it fires it demonstrably works**, isolated on identical ground: r69 -> r155, three
+   soldiers built where the baseline built none.
+3. It removes a **permanent, silent, total** production stop — the class of failure the 2026
+   audit found was worth more than every headline feature.
+
+**What I am NOT claiming**: that it made carol stronger. On 160 games of evidence it did not.
+
+**Post-accept routine**: snapshot created and verified identical apart from the package line;
+`replays/iter07_carol_rush_DefaultSmall_A.bc25` archived (the game the mechanism is visible in);
+`progress/vs_old_bots_history.csv` extended with the `carol_rush` 37/40 point, **relabelled to
+`carol_iter7`** because the tool again derived the wrong build name; both charts redrawn.
+
+**Standing checks**: exceptions 0; bytecode robots 14.7% / towers 2.6%, 0 overruns, 0
+near-misses; play-symmetry PASS (9 maps favour A, 10 favour B); frozen-treasury gate PASS.
