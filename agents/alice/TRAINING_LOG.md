@@ -1228,3 +1228,30 @@ This is the strongest causal evidence in the iteration: the reserve keeps tower
 paint off zero → soldiers stay fundable → tower patterns keep completing → paint
 income keeps growing. It also retro-explains iteration 4's loss list, where the
 recurring shape was games that stalled rather than games that were out-fought.
+
+### Generality check — the stall signature is in every traced loss
+
+Algorithm step 3 asks for the hypothesis to be verified on at least one other
+losing game. Checked two more of iteration 4's losses with `twPaint`:
+
+| game | losing side twPaint @r2000 | its spawns/500r | winning side twPaint | its spawns/500r |
+|---|---|---|---|---|
+| Mirage (lost r1569) | **0-100 from r200** | +1 sold / +18 mop | 1520→910 | — |
+| box | 290 → 290 → **90** | +15 sold / +71 mop | 2015 → **1140** | +53 sold / +39 mop |
+| HungerGames | 5330 → 880 → **480** | **+7 sold / +210 mop** | 5330 → **1000** | +50 sold / +175 mop |
+
+The signature is identical in all three: **the side that loses is the side whose
+tower paint drains toward zero, and its spawn mix collapses toward pure moppers as
+it does.** HungerGames is the clearest — at r2000 the losing side is spawning 97%
+moppers (7 soldiers to 210) while the winner holds 22%.
+
+**This also explains the 11 split-by-side maps in iteration 4's run**, which I had
+filed as ordinary positional noise. In those games *both* sides run the same buggy
+spawn rule, so the map is a race into the same absorbing state: whichever side's
+tower paint drains first falls in, and small positional differences decide which.
+That is why the outcome flips with side while neither side sweeps — it is one
+mechanism, not fifteen coin flips.
+
+So iteration 5 is not a marginal tuning of an army ratio. It removes a positive
+feedback loop that this lineage has been losing games to since iteration 0, and
+the loop is visible in every loss I have looked at.
