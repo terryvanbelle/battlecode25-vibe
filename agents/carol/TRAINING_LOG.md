@@ -1766,3 +1766,33 @@ should be spent on better decisions, and iteration 8 (SRPs) is the first thing q
 will actually draw on it — laying and checking a 5x5 pattern costs real sensing. Worth
 recording the number now so the SRP iteration has a before-figure to be judged against rather
 than discovering the cost after the fact.
+
+## Iteration 8 prepared and compile-verified during the iteration-7 run: SRPs
+
+Built as `src/carol_i8/` rather than edited into `src/carol`, for two reasons: iteration 7's
+base is not settled yet, and having the SRP build as its own package makes the eventual
+evaluation an on/off pair on identical maps — the same construction that made 6b's dose gate
+decisive. The SRP change touches only the soldier idle branch and adds three methods, all
+disjoint from iteration 7's tower changes, so it applies to either base.
+
+**Hook**: the `IDLE-ALLY` branch — a soldier with no empty tile to paint and no enemy paint in
+reach, measured at 34,821 turns on Leaf (97% of idle turns on open maps). It consumes no action
+the bot was already using, which is the "capability at zero marginal cost" profile.
+
+**A real bug caught before spending a run.** The first version required only the engine's
+`areaIsPaintable` (no ruin among the SRP's own 25 tiles). That is not enough: SRP marks and
+tower-pattern marks are *the same* `PaintType` marks on the same tiles, and `workOnRuin` paints
+whatever marks it finds within r2=8 of a ruin. With only requirement 1, the nearest legal SRP
+centre is Chebyshev 3 from a ruin, so its tiles reach Chebyshev 1 — squarely inside that ruin's
+tower pattern. The two would overwrite each other's marks and **deadlock the ruin**, which is
+precisely the failure iteration 6's mark-readback existed to prevent, reintroduced from a new
+direction. Fixed by requiring Chebyshev >= 5 between an SRP centre and any ruin, which makes
+the two 5x5s disjoint.
+
+Worth noting how it was found: not by testing, but by asking "what else writes to the tiles
+this writes to?" — the shared-resource question §4 asks about treasuries and comm slots, which
+applies just as well to *map tiles as a shared medium*. Marks are a shared resource with no cap
+and no owner, so nothing would have errored; the ruins would just have quietly stopped
+completing.
+
+Compile-checked (COMPILE-OK). Not evaluated — iteration 7 owns the VM.
