@@ -1322,3 +1322,41 @@ exact map and side where iteration 4 was eliminated at r1569.
 - mopper targeting — iteration 7, named by the starburst trace
 - soldier targeting — iteration 8 (same radius-asymmetry fix as 7)
 - population control / anti-clumping — withdrawn (instrument artifact)
+
+---
+
+## Iteration 6 — soldiers refuel at towers (RUNNING, run `20260906-220906`)
+
+Arms rebuilt from the accepted `alice_iter5` so the only difference is the refuel
+mechanism. `BOT = alice_iter5` is a **true zero arm** — it makes literally zero
+transfers, verified in every trace — so its win rate inverts to each dose's
+head-to-head against the accepted snapshot, the same design that made iteration
+5's sweep exact.
+
+`OPPONENTS = alice_i6_60 alice_i6_120`, NMAPS=15, both sides = 60 games. Two
+nonzero doses plus the zero arm gives the three points doctrine #2 requires; the
+gate opponent (60, the dose the pool instrument predicts) is listed first so a
+deadline truncation costs the other arm rather than the gate.
+
+**Dose set revised from the pre-registered 60/100/140 to 60/120**, for a stated
+reason rather than convenience: the `twPaint` instrument showed refills are drawn
+from the *same pool that funds spawning*, so a higher `LOW_PAINT` refills more
+often, drains harder and suppresses spawning further. My original reading — that a
+monotone rise would mean "the trigger fires too late" — was wrong, and 140 is on
+the side of the curve the instrument now predicts is bad. Two doses at 30 games
+each also beats three at 20 for resolution.
+
+**Pre-registered**:
+1. **Accept gate** — a dose beats `alice_iter5` H2H > 50%, and >= 18/30 (60%).
+2. **Mechanism** — `xfer` per 250 rounds materially > 0 (it is exactly 0 in every
+   prior build), and the starvation share of deaths falls.
+3. **Shared pool** — report `twPaint` at r2000 for the winning arm. A dose that
+   wins while draining the pool to near zero is buying now and paying later, and
+   should be treated as a near miss rather than an accept.
+4. **Net-substitution gate** (new, from the pool finding) — the winning dose must
+   not cut soldier spawns by more than it cuts starvation deaths. Refilling is a
+   *substitute* for spawning, not an addition, so the trade has to be favourable
+   on its own terms and not just on the scoreboard.
+5. **Watch** — paint actions per 250 rounds; if refuelling merely trades painting
+   turns for walking turns, coverage will not move and the answer is to refuel
+   without leaving the work site.
