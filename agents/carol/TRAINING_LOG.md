@@ -2788,3 +2788,39 @@ prefix. But the two landings I care about are already distinguishable: if the h2
 if it does not, case 2 — which would be the *strongest* result for iteration 10, since it would
 isolate "more opening paint income" as insufficient on its own while the refill leak stays
 unplugged, making the reserve the sharper intervention rather than a rival one.
+
+### Iteration 8 h2h RESULT — 20/40 = 50.0%, exactly case 2
+
+| instrument | result |
+|---|---|
+| h2h vs `carol_iter7` | **20/40 = 50.0%** — near miss (gate was >50% accept) |
+| side split | A 10/20, B 10/20 — perfectly even |
+| swept shape | 6 swept-win, 6 swept-LOSS, 8 split — perfectly balanced churn |
+| mechanism (opening paint) | **improved in 3 of 4 paired games**, by 17 and 10 rounds in two |
+
+This is **case 2** as registered before the results: *"blocked count falls and the h2h does not
+clear — the strongest possible result for iteration 10, because it isolates 'more opening paint'
+as insufficient on its own while leaving the leak unplugged."*
+
+**It is also the 6b pattern again**, and I should name that rather than rediscover it: a
+mechanism that demonstrably moves its target metric (DefaultSmall 50 -> 33 blocked rounds) and
+moves the scoreboard not at all. LEARNINGS already carries the rule I derived from 6b — *"if a
+change rewrites the game and the outcome does not move, the lever is the wrong lever, not the
+wrong setting; do not spend a refinement on a better value of it."* The near-miss band permits
+up to three refinements on `PAINT_FLOOR_TOWERS` (2 / 5) and **I am declining them for the same
+reason I declined 6b's**.
+
+**Why this is genuinely informative rather than just another null.** It separates two
+hypotheses that were entangled an hour ago:
+- *"Carol's opening is weak because she has too little paint income."* Iteration 8 raised
+  opening paint income and won nothing. **Weakened.**
+- *"Carol's opening is weak because the paint she has leaks out through greedy refills."*
+  Untouched by this run, and now the only surviving explanation of the same measurements.
+
+That is a real narrowing bought with one run, and it is precisely what iteration 10 tests.
+
+**Holding the formal verdict for the `carol_rush` block** (53/80 as I write). Unlike iteration
+7's situation the h2h *is* a valid instrument here — the mechanism provably fires in those games
+— but `carol_rush` is the opponent that punishes a weak opening specifically, so if the extra
+opening paint is worth anything anywhere, it is worth it there. If the rush block also shows
+nothing, iteration 8 is a clean reject.
