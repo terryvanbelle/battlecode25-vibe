@@ -1902,3 +1902,16 @@ The reason to build this rather than keep hand-scoring is the one this session k
 relearning: the dead band survived four iterations *after* being diagnosed because checking
 for it was a thing someone had to remember to do. A checklist that is one command is a
 checklist that still runs when the session is tired.
+
+**Known limitation of the iteration-8 SRP draft, recorded before its run** so it is not
+discovered as a surprise: soldiers never *navigate* to an SRP site. `srpCenterNear` only
+returns a centre within `RESOURCE_PATTERN_RADIUS_SQUARED` (r2=8, radius 2.83), and with a
+lattice spacing of 5 the disc covers ~25.1 tiles against a 25-tile cell — so almost every
+position is in range of some centre, but the cell corners at (2.5, 2.5) are r2=12.5 and are
+not. An idle soldier standing exactly there reports `SRP-nosite` and relies on `moveExploring`
+to drift it back into range.
+
+Deliberately not fixed in this iteration: adding "step toward the SRP centre" would bundle a
+navigation change with the SRP mechanism and make a rejection uninterpretable. If the run shows
+`SRP-nosite` dominating the idle tags, that is the first refinement to try, and the log will
+already say so rather than inventing the explanation afterwards.
