@@ -758,3 +758,68 @@ Worth recording as method, not just result: this was a free pre-check. Nothing
 about it needed the engine, the VM or a game — the hypothesis was about a pure
 integer function and could be tested as one in a few seconds. Reachability and
 effect-size questions of that shape should always be answered offline first.
+
+
+---
+
+## Ledger correction (2026-09-06) — iteration 4 RE-OPENED
+
+TRAINING_ALGORITHM.md permits re-opening a closed direction only with a specific
+reason the recorded cause no longer applies. That test is met here, so the entry
+is re-opened rather than quietly ignored.
+
+Closed as: *"Bias ruin capture toward paint towers (1 in 4 money instead of 1 in
+2) — chips buy paint income back through iteration 3's upgrades, so starving
+money starves upgrades and nets less paint."*
+
+Why the recorded cause does not apply: **the condition named in it was never
+tested.** "1 in 4 money instead of 1 in 2" describes an experiment that did not
+happen. `towerTypeFor` produced ~100% of a single type per map under both masks
+(measured: gridworld 0 paint/9 money, starburst 4/0, Snowglobe 4/0, Thirds 1/0),
+so the `&1`→`&3` change did not move a mix from 50/50 to 25/75 — it re-rolled
+*which* maps degenerate *which way*. No arm on either side of that comparison ever
+ran a mixed economy, so the arithmetic argument I wrote in the ledger, however
+plausible, was not what the run measured. A rejection has to be attributed to the
+condition actually evaluated.
+
+Status: **re-openable, but not queued yet.** The honest position is that the
+paint/money ratio is an *unmeasured* parameter, not a rejected one. It becomes
+measurable only after iteration 7 makes the mix real, and it should be measured
+then as a proper dose sweep with a zero arm (the hash's natural ~50/50 being the
+zero arm), not as another single point.
+
+---
+
+## Ablation queued (2026-09-06) — is iteration 3 worth what it scored?
+
+Acting on my own caveat rather than leaving it as a hedge in a report.
+
+**The worry, stated precisely.** Iteration 3 (idle-chip tower self-upgrade) was
+accepted at 21/24 = 87.5% against `bob_iter1`. Upgrading a paint tower is +5
+paint/turn per level. But on an all-money map — gridworld, where that h2h ran —
+the team owns exactly ONE paint tower all game (the starting one), so upgrading it
+is close to the only lever on paint income that exists, and the mechanism gets
+credit for rescuing a situation that the `towerTypeFor` defect created. On a map
+with a genuine mix, expansion into more paint towers may dominate, and the upgrade
+may be worth far less than 87.5% suggested. The instrument and the disease shared
+a cause.
+
+This is the shape TRAINING_ALGORITHM.md's ablation section describes: headline
+accepts worth ~0 once measured directly, while incidental failure-mode preventers
+carry the real value.
+
+**Design** (run once iteration 7 has landed, so the ablation is measured on a bot
+with a real tower mix — ablating it now would just re-measure the defect):
+- `src/bob_noupg` = the then-current accepted bot with `UPGRADE_RESERVE` set
+  beyond any reachable treasury, so `canUpgradeTower` is never called. Everything
+  else byte-identical. This is a true zero arm, not a re-implementation.
+- One gauntlet, current bot vs `bob_noupg`, on a resampled draw.
+- Pre-registered readouts: h2h; and from the dumper, `ptow`/`mtow` counts to
+  confirm the mix is genuinely mixed on most maps (otherwise the ablation is
+  invalid for the same reason the original accept was suspect), plus team paint
+  totals.
+- **Pre-committed interpretation, so this cannot be rationalised after the fact:**
+  if the current bot beats `bob_noupg` by less than ~60/40, iteration 3's standing
+  value is materially lower than its accept implied and I will say so in this log
+  and on the chart, keeping the feature only if it is at least neutral. An accept
+  that was right for the wrong reason still needs the correction recorded.
