@@ -633,3 +633,95 @@ per-mil removed per round, normalised per round, NOT raw tiles mopped.
 taking a rotation (0-3) and a reflect flag, so a resource pattern can be laid in 8
 orientations. Verified in the engine but not needed yet — it would matter only if
 site rejection due to contradicting neighbours becomes common in iteration 6.
+
+
+---
+
+## ROOT CAUSE FOUND (2026-09-06) — the tower mix degenerates to all-one-type per map
+
+Found by extending `bob-tools/BobDump.java` to read the replay's per-turn action
+union (the engine declares `Turn.actions` as a union of flatbuffer *structs*, and
+the generated accessor only offers the Table form, so `Cursor` exposes the
+protected buffer position and the struct is re-assigned onto it). The dumper now
+reports, per team: cumulative spawns by unit type, total robot paint, enemy-paint
+removals per interval, and peak bytecode. RobotType indices verified by running
+the enum, not assumed: NONE=0, PAINT_TOWER=1, MONEY_TOWER=2, DEFENSE_TOWER=3,
+SOLDIER=4, SPLASHER=5, MOPPER=6.
+
+Tower types actually built (paint / money), across every replay on disk:
+
+| map | our side | their side |
+|---|---|---|
+| gridworld | **0 paint / 9 money** | **0 paint / 8 money** |
+| starburst | **4 paint / 0 money** | **3 paint / 0 money** |
+| Snowglobe | **4 paint / 0 money** | 2 paint / 1 money |
+| Thirds | **1 paint / 0 money** | 5 paint / 3 money |
+
+`Soldier.towerTypeFor` has been `((ruin.x + ruin.y) & 1) == 0 ? MONEY : PAINT`
+since iteration 0, commented "mix money and paint towers". **It does not mix.**
+Ruin centres are constrained to be ≥5 apart and maps lay them out on regular
+lattices, so on any given map they overwhelmingly share one parity of `x+y` and
+every ruin resolves to the same tower type. The rule is a per-map coin flip that
+usually lands on 100% of one type, and it lands on a *different* type on different
+maps.
+
+This is precisely the bug class TRAINING_ALGORITHM.md §7 puts first — "any fixed
+absolute-order decision ... interacts with map geometry" — and I walked past it
+in the iteration 4 comment while congratulating myself on noticing the *time*
+dependence hazard in the same function.
+
+**It is the common root cause of both degeneracies this session chased.**
+
+- Iteration 3's story (327k → 551k unspent chips, paint starving unit production)
+  is the *all-money* degeneracy. On gridworld our entire paint income for 2000
+  rounds was the single starting paint tower. The upgrade mechanism was accepted
+  at 87.5% because it was the only way to get paint out of a lineage that was
+  building zero paint towers on that map.
+- Iteration 4's story (chips pinned at 1200-1350 in the reserve dead band) is the
+  *all-paint* degeneracy on starburst and Snowglobe, where we built 4 paint towers
+  and zero money towers and had no chip income beyond the one starting tower.
+
+It also explains iteration 4's confusing result honestly. Changing the mask from
+`&1` to `&3` did not shift a 50/50 mix to 25/75; it re-rolled *which* maps
+degenerate *which way*. That shuffles outcomes rather than fixing anything, which
+is exactly the scattered mixed-direction pattern the run produced. **The ledger
+entry for iteration 4 is therefore downgraded**: the arithmetic argument I wrote
+there (chips buy paint income through upgrades, so starving money starves
+upgrades) is plausible but was never actually the condition tested, because no arm
+ever ran a mixed economy. Re-opening the paint-bias question is legitimate once
+the mix is real — the recorded cause genuinely no longer applies.
+
+### Iteration 7 (next, ahead of SRPs): lattice-independent tower mix
+
+Fix must keep the type a pure function of the ruin (the marking deadlock from
+iteration 4 still applies) while breaking the correlation with the ruin lattice.
+An integer hash with avalanche does both:
+
+```java
+int h = ruin.x * 0x27D4EB2D + ruin.y * 0x165667B1;
+h ^= h >>> 15; h *= 0x2545F491; h ^= h >>> 13;
+return (h & 1) == 0 ? MONEY : PAINT;
+```
+
+Stable per ruin, no time dependence, ~10 bytecodes, and the parity of a
+well-avalanched hash is uncorrelated with any lattice. It yields a binomial rather
+than a guaranteed mix (on a 4-ruin map a 4-0 split still has probability 1/8,
+versus near-certainty today), which is a large improvement and a small residual.
+
+The guaranteed-balance version needs an adaptive rule (pick the type our team has
+fewer of), and that needs the deadlock hazard removed first, by deriving a ruin's
+type from its existing marks rather than recomputing it: fetch
+`rc.getTowerPattern()` for both types at runtime, find the first cell where they
+disagree, and read the mark there. Noted as the enabler, not attempted yet.
+
+Pre-registered for iteration 7: h2h vs the then-current snapshot > 50%; and the
+mechanistic check that makes this worth doing at all — **paint-tower and
+money-tower counts must both be non-zero on the great majority of maps in the
+sample**, read straight out of the new dumper columns.
+
+### Instrument note
+
+Peak bytecode measured from the replay is **9148 / 17500 (52%)** for our team,
+higher than the ~8.3k the in-bot monitor reported at iteration 0. Still safe, but
+half the budget is gone and the SRP work in iteration 6 adds two 25-tile scans.
+Worth re-checking on every evaluation, as the algorithm requires.
