@@ -2164,3 +2164,32 @@ a single point of failure the whole game hangs on — into two or three.
 Note this is the same gap iteration 9 (the two-sided mix) was registered for, but sharpened
 from "read chips as well as paint" to something far more specific and far better evidenced:
 **never let the paint-tower count reach one.**
+
+### Iteration 7 FULL RESULT (run `20260906-220604`, 120 games, GAUNTLET-COMPLETE)
+
+| instrument | result | pre-registered gate | verdict |
+|---|---|---|---|
+| h2h vs `carol_iter5` | **20/40 = 50.0%**, and **20 of 20 maps split by side** | regression check only, ~50% predicted | **as predicted, exactly** |
+| `carol_rush` | 37/40 = 92.5% | >= 37/40 | met, but see below |
+| `carol_decap` | **39/40 = 97.5%** | 30-90% to be a peer | **FAIL — benchmark, negative result** |
+| frozen-treasury gate | worst run **12**, PASS at 50 | zero games >= 50 | PASS |
+| exceptions | 0 | 0 | PASS |
+| bytecode | robots 14.7%, towers 2.6%, 0 ov, 0 nm | 0 / 0 | PASS |
+
+**The h2h landed at exactly 50.0% with every single map splitting by side** — the cleanest
+possible confirmation that the candidate and the baseline are the same bot in that matchup, and
+that the pre-registered restructuring of the gate was necessary rather than convenient.
+
+**The `carol_rush` number is a coincidence, not a measurement.** 37/40 here equals the 37/40 the
+iteration-6 build scored — on a *different map sample*. Two 92.5%s on different instruments say
+nothing, which is exactly the trap I logged before seeing the number. Only the control arm
+(`carol_iter5` vs `carol_rush`, same 20 pinned maps, now running) can settle it.
+
+What the run *did* establish, independent of the control:
+- The mechanism engages and does what it was designed to do (DefaultSmall: `stag` 12, reserve
+  disarmed, three soldiers built, r69 -> r155).
+- It provably never fires in normal play — `stag` = 0 across all 40 h2h games — so its downside
+  risk is zero, not merely small.
+- Zero exceptions, no bytecode pressure, no regression anywhere.
+- And it surfaced a **worse and unrelated degeneracy** (the paint-tower loss condition above),
+  which is the run's most valuable output by a distance.
