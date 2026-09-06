@@ -565,7 +565,7 @@ T1 finished with **$204,780 unspent**.
 
 ---
 
-## Iteration 4 — towers upgrade themselves with idle chips (running)
+## Iteration 4 — towers upgrade themselves with idle chips — RESULT: ACCEPTED
 
 **Area**: economy (leaving the mopper area after its reject, per the algorithm's
 functional-area discipline).
@@ -678,3 +678,99 @@ but it changes run design:
 tower's 5→10/turn buys the one that binds. The uniform version was run first
 because it is the isolated single mechanism; "which towers" is a dose on the
 same mechanism, not a new one.
+
+### Iteration 4 — RESULT: ACCEPTED (snapshot `src/alice_iter4/`)
+
+Run `20260906-203042`, 25-map random sample, both sides, 100 games,
+`GAUNTLET-COMPLETE`. **Session note**: my driver session was killed by an SSH
+hangup at ~21:07 while polling this run; the run itself finished on
+battlecode-dev and was recovered with `tools/gauntlet-collect.sh`. Nothing I
+had chained on the driver survived, and nothing of mine was left running on the
+VM (`gauntlet-collect.sh --list` confirms 5 runs, all `complete`).
+
+| pre-registered criterion | result | verdict |
+|---|---|---|
+| (1) H2H vs `alice_iter2` > 50%, and ≥ 30/50 for this sample | **39/50 (78%)** | **PASS**, clear of the noise band |
+| (2) UPGRADE lines after r1 for non-starting towers; unspent chips ≪ $120,840 | **7 self-upgrades**; end-of-game chips **$1,740** | **PASS** |
+| (3) regression vs `alice_iter1` ≥ 60% | **48/50 (96%)** | **PASS** |
+| (4) watch: population blow-up (soldiers > ~150 at r2000 on DefaultLarge) | 175 on DefaultLarge, 63 on Racetrack | see below |
+
+Overall 87/100. Diff shape (accept condition 3): **swept-loss 0 vs both
+opponents**, swept-win 14/25 vs iter2 and 23/25 vs iter1, 11 split-by-side.
+There is no map where iteration 4 loses from both sides — no one-directional
+regression anywhere in the run.
+
+**Arm identity check (doctrine #3)**: `src/alice` vs `src/alice_iter2` differ by
+exactly the upgrade block (the `1450` → `CHIP_RESERVE` rename is a no-op), so
+this is a clean single-mechanism comparison — verified by body diff, not assumed.
+
+### Mechanism trace — Racetrack, alice=A, WIN (`replays/iter04_alice_iter2_Racetrack_A_WIN.bc25`)
+
+7 self-upgrades beyond the engine's round-1 four (six L1→L2, one **L2→L3** on the
+starting paint tower at r1441); `alice_iter2` performs **zero**. The arms are
+cleanly separated in the replay itself.
+
+| round | alice $ | alice cov | alice tw | iter2 $ | iter2 cov | iter2 tw |
+|---|---|---|---|---|---|---|
+| 250 | 2,750 | 495‰ | 7 | 5,700 | 436‰ | 6 |
+| 500 | 3,990 | 488‰ | 7 | 17,800 | 379‰ | 6 |
+| 1000 | 3,090 | 505‰ | 8 | 40,700 | 304‰ | 6 |
+| 1500 | 1,590 | 527‰ | 8 | 64,200 | 313‰ | 6 |
+| 2000 | **1,740** | **555‰** | 8 | **87,100** | **283‰** | 6 |
+
+Win by AREA_PAINTED. **The chip mountain is gone** ($87,100 → $1,740) and the
+hypothesised causal chain is visible end-to-end: chips → tower level → paint
+income → coverage *held flat* (495→555‰) where the baseline decays (436→283‰).
+Iteration 3 established that coverage is a *stock under attack*, not a running
+total; iteration 4 is the first change that funds defending that stock.
+
+**A second, unhypothesised channel**: paint income also gates *spawning* (a spawn
+costs paint from the tower's stash). Upgraded towers spawn more, so alice ends
+Racetrack with 690 units to iter2's 297. I did not predict this and it is doing
+part of the work — see the new closed thread below, because it cuts both ways.
+
+### Engine fact corrected (I had this wrong)
+**Starting towers are already level 2** (`RULES.md` line 22 says so; I had not
+connected it). The four round-1 `UPGRADE` events in every replay are
+engine-emitted for *both* teams' starting towers — they are **not** my code.
+Built towers are always L1, and L1→L2 costs 2,500, so my gate needs
+$2,500 + $1,450 = **$3,950** before it ever fires. Anywhere the bot's treasury
+sits near the spawn floor, the feature is **dead code**.
+
+That is exactly what happened on **DefaultLarge**, where alice held only 9 towers,
+hovered at $1,210–1,460 all game and performed **zero** self-upgrades — so that
+loss is a true mirror decided positionally, not evidence against the mechanism.
+It also explains the shape of the result: **iteration 4 is worth a lot on maps
+where the bot out-expands, and worth exactly nothing where it does not.** The
+11 split-by-side maps are where to look next.
+
+Criterion (4) resolves the same way: the 175 soldiers on DefaultLarge are not
+attributable to this change (it never fired there); on Racetrack, where it fired
+7 times, soldiers were 63 at r2000. No population blow-up caused by iteration 4.
+
+### The real finding of this iteration (bigger than the accept)
+Both teams' **mopper counts run away**: 627 (alice) and 269 (iter2) at r2000 on
+Racetrack, a **25x25 = 625-tile map**. Alice fields 690 units on 625 tiles —
+*more units than the map has squares*. Soldiers are 63 against 627 moppers even
+though the spawn rule is 25% moppers, so soldiers are dying ~30x faster while
+moppers accumulate essentially forever.
+
+Iteration 3 diagnosed the adjacency tax (−1 paint per adjacent ally per turn,
+charged **even on your own paint**) and concluded "unbounded soldier population
+is self-destructive". The correction iteration 4 forces: **the population that is
+actually unbounded is the mopper population, and it is unbounded in the accepted
+build right now.** Paint actions per 250 rounds decay 295 → 99 across the game
+while unit count quadruples. This is the same failure iteration 3 hit, and my
+lineage has been carrying it the whole time on the other unit type.
+
+### Closed-directions ledger (updated)
+| direction | closed by | can re-open if |
+|---|---|---|
+| Remove moppers entirely (spawn 100% soldiers) | iteration 3: 7/24 (29%) vs iter2 | a population cap exists *first*; the failure was density, not the mopper's absence |
+| "Upgrade paint towers only" as iteration 4's refinement | **not needed** — iteration 4 passed outright at 78%, so the pre-registered refinement was never spent | still open as a *dose* on iteration 4 if tower-type mix later matters |
+
+### Functional-area map
+- economy/chip conversion — **iteration 4, ACCEPTED** (first accept since iter2)
+- moppers/unit mix — closed by iteration 3's reject (1 reject)
+- population control / anti-clumping — **open, now the highest-value target**,
+  and re-aimed from soldiers to moppers by this iteration's trace
