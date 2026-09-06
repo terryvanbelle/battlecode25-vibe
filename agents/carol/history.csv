@@ -1,0 +1,13 @@
+# Carol progress history. One row per completed evaluation.
+# build      = the source that actually played (NOT the latest snapshot dir).
+# h2h_*      = head-to-head vs the previous accepted snapshot (the accept gate).
+# decisive   = games won by the 70%-paint rule rather than the round-2000 tiebreak.
+iteration,build,run_id,opponent,games,wins,pct,decisive_of_total,decision
+1,carol@iter1,20260906-182223,carol_iter0,32,18,56.2,2/32,accept-thin
+2,carol@iter2,20260906-184023,carol_iter1,32,28,87.5,,accept
+2,carol@iter2,20260906-184023,carol_rush,32,27,84.4,,peer
+2,carol@iter2,20260906-184023,carol_turtle,32,32,100.0,,benchmark
+2,carol@iter2,20260906-184023,ALL,96,87,90.6,19/96,accept
+3,carol@iter3,20260906-201624,carol_iter2,32,25,78.1,,accept
+3,carol@iter3,20260906-201624,carol_rush,32,29,90.6,,retire-from-gating
+3,carol@iter3,20260906-201624,ALL,64,54,84.4,,accept

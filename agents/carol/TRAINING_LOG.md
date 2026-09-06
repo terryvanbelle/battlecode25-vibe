@@ -162,3 +162,251 @@ Mechanics that make this tractable, from RULES.md:
 Candidate mechanisms, cheapest first: (a) repaint disrupted own-ruin patterns;
 (b) build a defense tower at the ruin nearest our towers once under threat;
 (c) station moppers near towers to steal attacker paint (attackers at 0 paint freeze).
+
+---
+
+## Iteration 2 — final scoring of the completed gauntlet (2026-09-06, resumed session)
+
+The iteration-2 accept above was written at 18:51 from a *partially complete* run
+(`gauntlet/20260906-184023`); the run finished at 18:57 and its summarizer never ran.
+Scored by hand from `results.csv` (96 games, 0 exceptions, 0 unknown results):
+
+| opponent | result |
+|---|---|
+| carol_iter1 (h2h accept gate) | **28/32 = 87.5%** |
+| carol_rush | 27/32 = 84.4% |
+| carol_turtle | 32/32 = 100% |
+| overall | 87/96 = 90.6% |
+
+**The accept stands** — the h2h figure quoted at 18:51 was in fact the complete h2h block
+(the runner iterates opponents in order, so all 32 iter1 games were done), 87.5% >> the
+pre-registered >50% gate, peer `WinPct` 60% cleared.
+
+**But the completed run overturns the note appended with it.** The log recorded
+"carol_rush is running near even against carol ... logged as the leading structural
+target"; that was read off the first few rush games. Over all 32, carol_rush is at
+**84.4%**, i.e. one evaluation above the ≥80% retirement threshold, and carol_turtle is
+pinned at 100% (benchmark). *Correction to the record: carol does not have a demonstrated
+defensive weakness against the rusher archetype.* The defense structural target is
+downgraded from "leading" to "unmotivated by current evidence" — it must be re-motivated
+by a real losing instrument (a sibling bot in the tournament is the obvious candidate)
+before it earns an iteration. Lesson logged: **never score a gauntlet from a prefix.**
+
+Opponent-pool bookkeeping: `carol_turtle` → BENCHMARK (100%, no resolving power).
+`carol_rush` stays a peer for one more evaluation (retirement needs two consecutive ≥80%).
+The remaining even instrument is the self-lineage h2h.
+
+---
+
+## Iteration 3 (2026-09-06) — nav: persistent far exploration + ruin give-up
+
+**Status found on resume**: implemented and snapshotted as `src/carol_iter3`, but **never
+evaluated** — no gauntlet, no log entry. Worse, `HEAD`'s `src/carol` is a *third* variant
+(the exploration half without the ruin give-up), so the bot that has been playing the
+tournament is an untested intermediate. Resolving this before touching the splasher work.
+
+**Area**: nav. **Motivating evidence** (iteration 2's trace, recorded in LEARNINGS.md):
+`NOTGT` — soldier had no empty tile in its action radius — on ~57% of soldier turns, and
+a local random walk cannot find the frontier on a 40x40+ map once home is painted.
+
+**Change** (two coupled parts, the second required to make the first reachable):
+1. Persistent exploration target: a soldier commits to a far map location and walks to it
+   (`explore`, `lastLoc`, `stuckTurns`, `exploreAge`) instead of re-rolling a local
+   random step every turn.
+2. Ruin give-up: abandon a ruin after `RUIN_PATIENCE`=40 turns on it, banned for
+   `RUIN_BAN_ROUNDS`=250. *Reachability argument for coupling*: a ruin tile is impassable,
+   so `stepToward` always succeeds sideways and a soldier orbiting an unfinishable ruin
+   never reaches the exploration branch at all; iter2's trace had a ruin in view on ~79%
+   of soldier turns, so part 1 alone would be largely dead code. Same shape as iteration
+   2's indivisible pair.
+
+**Pre-registered gate** (16 maps x both sides, opponents `carol_iter2` and `carol_rush`):
+- PRIMARY: h2h vs `carol_iter2` > 50% (accept), 45-50% near miss, < 45% reject.
+- REGRESSION: vs `carol_rush` no worse than 22/32 (68.8%) — one binomial sd (2.8 games)
+  below iteration 2's 27/32.
+- No one-directional regression concentrated on a single map or side.
+- 0 thrown exceptions.
+Run: `gauntlet/` run started 2026-09-06 (BOT=carol_iter3, 64 games).
+
+---
+
+## Trace (2026-09-06, resumed session) — the bottleneck flipped again: chips now bind
+
+Read from the three iteration-2 loss replays in `gauntlet/20260906-184023/losses/`, tower
+indicator strings (`T r= chips= tw= tp=`), sampled every 250 rounds. Averages over all of
+carol's towers alive at that round.
+
+| round | Money botB | | | Rose botA | | | FourCorners botB | | |
+|---|---|---|---|---|---|---|---|---|---|
+| | chips | tw | avg tp | chips | tw | avg tp | chips | tw | avg tp |
+| 250 | 1400 | 7 | 754 | 1400 | 3 | 76 | 5750 | 2 | 7 |
+| 750 | 1400 | 10 | 684 | 1250 | 6 | 507 | 10850 | 3 | 27 |
+| 1250 | 1400 | 10 | 615 | 1250 | 7 | 482 | 12950 | 3 | 10 |
+| 2000 | 1400 | 10 | 596 | 1450 | 6 | 393 | 16850 | 3 | 25 |
+
+Two distinct degenerate regimes, both "unspent resource" shaped:
+
+1. **Ruin-rich maps (Money, Rose): chips pin at the `CHIP_RESERVE` band (1250-1450) from
+   round ~250 to the end, while tower paint accumulates at 400-750 of the 1000 cap.**
+   iteration 2 solved the paint famine so thoroughly that paint is now the *idle* resource
+   and chips throttle everything: with the one starting lv2 money tower (30 chips/turn) and
+   a 1200-chip reserve, unit production is capped at roughly one soldier per 8 rounds no
+   matter how much paint is banked. This independently confirms the money-tower-mix half of
+   the iteration-4 candidate before it is evaluated — the mix is not a splasher-affordability
+   hack, it is the fix for the *current* binding constraint.
+2. **Ruin-poor / contested maps (FourCorners): only 2-3 towers ever, ~0 tower paint, and
+   chips climb to 16850 idle.** Here nothing is claiming ruins at all. Different disease,
+   probably the same one iteration 3 targets (soldiers not reaching distant ruins).
+
+**Registered follow-ups (evidence-backed, for later iterations):**
+- **Tower upgrades — never implemented.** 2500 chips for lv2 (money mining 20->30, paint
+  5->10, +500 HP). On FourCorners 16850 chips would buy six upgrades and buy nothing today.
+- **SRPs — never implemented.** 200 chips per pattern, +3/turn to *every* paint tower AND
+  *every* money tower; at 10 towers one SRP is +30/turn for 200 chips, which dominates
+  anything else chips can buy. Requires holding the 25-tile pattern undisturbed for 50
+  rounds.
+- `CHIP_RESERVE` is a fixed constant that pins the treasury; per the algorithm's
+  "self-calibrating thresholds beat fixed constants", it should become a function of
+  observed ruin availability once (1) is relieved.
+
+---
+
+## Iteration 4 (2026-09-06) — econ+paint: splashers, funded by a money-tower mix
+
+**Status found on resume**: implemented in the working tree on top of `carol_iter3`, not
+snapshotted, not evaluated, not logged. Evaluated here *after* iteration 3 is resolved, so
+the two are not bundled.
+
+**Area**: paint (conversion capacity) + econ (the funding change that makes it reachable).
+
+**Motivating evidence**: LEARNINGS.md "Soldiers cannot contest ground" — a soldier's attack
+paints a tile only if it is EMPTY or already ally-painted, so enemy paint is inert to
+soldiers and the `NOTGT` idle rate cannot fall below the enemy-painted fraction of the
+frontier. Splashers are the only unit that bulk-converts enemy paint (r2<=2 of the splash
+centre), and on virgin ground they are also 2.6x faster per unit and 23% cheaper per tile
+(RULES.md throughput table). carol has never built one.
+
+**Change** (coupled, with the reachability argument):
+1. Tower spawn mix soldier 50% / splasher 30% / mopper 20% (was soldier 75% / mopper 25%).
+2. `towerTypeFor(ruin)`: ~1 ruin in 3 becomes a money tower, keyed on
+   `min(x,W-1-x) + min(y,H-1-y) mod 3` — invariant under both map symmetries, so neither
+   team gets a different build mix (play-symmetry requirement), and a pure function of the
+   ruin so two soldiers never paint conflicting patterns on the same ruin.
+3. Splash targeting rewritten: score all 13 legal splash centres from ONE
+   `senseNearbyMapInfos(16)` call into a flat 11x11 byte grid (empty +2 within r2<=4 of
+   centre, enemy +3 within r2<=2), instead of 13 nested sensing calls. `SPLASH_MIN_SCORE`=8.
+   *Reachability for coupling 1+2*: a splasher costs 400 chips and the trace above shows
+   the treasury pinned at the 1200-1400 reserve all game, so without (2) the splasher roll
+   would simply fail `getChips() >= CHIP_RESERVE + 400` nearly every time — (1) alone is
+   largely dead code. Same indivisible-pair shape as iteration 2.
+
+**Pre-registered gate** (16 maps x both sides):
+- PRIMARY: h2h vs the iteration-3 outcome's accepted baseline > 50% (accept), 45-50% near
+  miss, <45% reject.
+- ISOLATION: h2h vs `carol_iter3` reported separately so the splasher effect is attributable
+  even if iteration 3 is itself rejected.
+- MECHANISM (must hold or the result is uninterpretable): splasher indicator strings show
+  `splash<score>` — i.e. splashers are built and do splash — and tower `tp=` no longer sits
+  at 400-750 while `chips=` sits at the reserve.
+- REGRESSION: vs `carol_rush` no worse than 22/32; 0 thrown exceptions; no one-directional
+  regression concentrated on one map or side.
+
+**Pre-identified refinement for iteration 4 (use only if it lands in the near-miss band):**
+`runTower` rolls one unit type and, if `canBuildRobot` fails, builds *nothing* that turn —
+there is no fallback to a cheaper type. A splasher needs 300 paint from that tower's own
+stash and 400 chips; on paint-poor maps (FourCorners trace: avg tower paint ~25) the 30%
+splasher roll therefore converts 30% of tower-turns into no-ops rather than into soldiers.
+The refinement is to try the rolled type, then fall back down the cost ladder
+(splasher -> soldier -> mopper). Registered here *before* seeing the result so it cannot be
+a post-hoc rescue.
+
+## Standing API sweep (TRAINING_ALGORITHM.md Phase 0 #2) — 2026-09-06
+
+`javap` of `battlecode.common.RobotController` minus every `rc.` call in `src/carol`.
+Whole mechanics carol has never touched, ranked by expected value:
+
+1. **Special resource patterns** — `canMarkResourcePattern` / `markResourcePattern` /
+   `completeResourcePattern` / `getResourcePattern`. The only chip sink that also paints
+   map (25 tiles) and compounds with tower count. *Iteration 5 candidate, drafted.*
+2. **Tower upgrades** — `canUpgradeTower` / `upgradeTower`. 2500 chips, money mining
+   20->30, paint 5->10, +500 HP, and defense-tower upgrades buff every allied tower.
+3. **Communication, entirely unused** — `sendMessage` / `broadcastMessage` /
+   `readMessages` / `canSendMessage`. Tower->tower broadcast is r2=80 with no paint-path
+   requirement, so towers can share map knowledge for free. The perennial cross-year
+   lesson is that comms schema pays; carol has none.
+4. **Markers** — `mark` / `removeMark` / `canMark` / `canRemoveMark`. 1 paint, no
+   cooldown, ally-visible per-tile state. The obvious use is ruin/SRP claim tokens so two
+   soldiers stop duplicating work — carol currently has no coordination at all.
+5. **`canPaint`** — carol gates painting on `canAttack`, which (engine probe #2) returns
+   true on ally-painted tiles; `canPaint` actually checks paintability. Cheap correctness.
+6. Minor/no plan: `disintegrate`, `setIndicatorDot/Line`, `setTimelineMarker`,
+   `sensePassability`, `getActionCooldownTurns`.
+
+This is the "a whole game mechanic sat unused for 81 iterations" check. Re-run it every
+few iterations.
+
+### Iteration 3 RESULT — ACCEPTED (with one open, traced regression)
+
+Run `gauntlet/20260906-201624` (BOT=carol_iter3, 64 games, 0 thrown exceptions).
+
+| instrument | result | pre-registered gate | verdict |
+|---|---|---|---|
+| h2h vs `carol_iter2` | **25/32 = 78.1%** | > 50% | PASS (+9 over even, ~3.2 sd of the n=32 floor) |
+| vs `carol_rush` | 29/32 = 90.6% | >= 22/32 | PASS (up from 27/32 at iteration 2) |
+| exceptions | 0 | 0 | PASS |
+| no one-directional regression | **FAIL — see below** | | open |
+
+Diff shape vs carol_iter2: swept-win 11/16 maps, swept-loss 2 (Castle, galaxy),
+split-by-side 3. 5 of the 7 losses were on side A, which is inside noise at n=7.
+
+**The open regression, traced.** Against `carol_rush` on **DefaultSmall**, carol_iter3
+loses from *both* sides by **annihilation** at rounds 69 and 146. carol_iter2 played the
+same two games to round 2000 and won them on tiebreak. A swept loss whose *win type*
+changes from tiebreak to annihilation is the one-directional shape the algorithm says to
+trace before deciding, so I traced it (tower indicator strings,
+`losses/carol_rush__DefaultSmall__botA.bc25`):
+
+| round | chips | towers | tower paint |
+|---|---|---|---|
+| 1 | 1980 | 2 | 300 |
+| 9 | 1470 | 2 | 100 |
+| 17 | 1410 | 2 | 100 |
+| 25 | 1350 | 2 | 0 |
+| 33 | 1350 | **1** | 230 |
+| 65 | 1350 | 1 | 550 |
+
+Root cause is **not** the exploration change: `CHIP_RESERVE` is a fixed 1200, so a tower
+spawns only when `chips >= 1200 + unitCost`. DefaultSmall starts at 1980 chips; two or
+three spawns drop the treasury to ~1350, which is **below 1200+250 for a soldier and stays
+there forever** — chips are pinned in a dead band and unit production stops *completely*
+at round ~25. From then on carol builds nothing while a rusher walks in; the money tower
+dies at round 33 and even chip income ends. Paint accumulates unused (tp climbing 230 ->
+550) because there are no robots to withdraw it. This is precisely the algorithm's
+"resource pinned in a dead band" absolute degeneracy, and it needs no opponent to be wrong.
+
+Iteration 3 did not create the dead band (iteration 2 has the same constant); it removed
+the accident that hid it — iter2's soldiers orbited the nearby ruin long enough to finish
+a third tower, iter3's soldiers give up on it and walk away. So the correct response is to
+fix the dead band, not to revert the exploration.
+
+**DECISION: ACCEPT.** The two gating instruments clear by 3.2 and 2.5 sd respectively, the
+regression is confined to one map against one archetype, and its mechanism is understood
+and is the *next* iteration's target rather than an unexplained flip. Snapshot
+`src/carol_iter3` (already present); `src/carol` set to the accepted iteration-3 code so
+the tournament plays a measured build; replay archived as
+`replays/iter03_carol_iter2_FourCorners_B.bc25` (a decisive round-1136 win).
+
+**Opponent pool update**: `carol_rush` has now been beaten >= 80% in two consecutive
+evaluations (84.4%, 90.6%) → **retired from the accept-gating pool**, kept as a periodic
+check every `BenchmarkEvery`=3 evaluations because we still lose real games to it (and it
+is the only instrument that poses a rush at all — Measurement doctrine #4 on
+representativeness). `carol_turtle` stays a benchmark (100%). `carol_iter3` becomes the
+new h2h baseline; `carol_iter1` remains fixed-roster member #1.
+
+**Renumbering notice**: the splasher candidate pre-registered above as "Iteration 4" is
+**renumbered to Iteration 5** and its pre-registered gate carries over unchanged (baseline
+becomes `carol_iter4`, with the h2h vs `carol_iter3` also reported). Reason: the trace
+above hands me a traced, catastrophic, absolute degeneracy in the exact resource the
+splasher candidate says it needs (chips), so fixing the dead band first is both higher
+value and makes the splasher evaluation interpretable. Recorded here rather than by
+editing the earlier entry, so the ordering change is visible.

@@ -62,3 +62,22 @@ Distilled from `TRAINING_LOG.md`. Organised by theme, not chronology.
 - Commit `src/carol` itself, not only the snapshots — the twice-daily tournament plays
   the last committed `src/carol`, and it silently stayed at iteration 0 for two accepted
   iterations because only the `carol_iterN/` copies were being staged.
+
+## Soldiers cannot contest ground (the coverage endgame)
+
+A soldier's attack paints a tile **only if it is EMPTY or already ally-painted** — enemy
+paint is untouchable to it (engine: `soldierAttack` paints only when
+`getPaint(loc)==0 || sameTeam`). So once the two colours meet along a frontier, soldiers
+on the wrong side of it have literally nothing to do. This is the mechanism behind the
+`NOTGT` idle rate staying near 60% even after exploration was fixed: the soldiers *are*
+reaching new ground, but much of it is enemy-painted and therefore inert to them.
+
+Only two things convert enemy territory:
+- **Splashers**, in bulk, within r2<=2 of the splash centre (and they paint empty/ally
+  tiles out to r2<=4 in the same action);
+- **Moppers**, one tile at a time, and only back to EMPTY — a soldier must then follow up
+  to actually claim it.
+
+So the coverage race is won by conversion capacity, not by painting speed on virgin
+ground, and a bot with no splashers has almost none. Elevates splashers from "a nice
+throughput gain" to the central missing capability.
