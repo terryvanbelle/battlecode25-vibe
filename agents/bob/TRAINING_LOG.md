@@ -128,7 +128,7 @@ the same workspace concurrently; results.csv rows after a rebuild are poisoned.
 
 ---
 
-## Iteration 2 (2026-09-06) — paint-starved mopper fallback at non-regen towers — pending
+## Iteration 2 (2026-09-06) — paint-starved mopper fallback at non-regen towers — REJECTED
 
 Target: traced loss iter1-vs-iter0 Thirds botA (replays/iter01_bobiter0_Thirds_A_LOSS):
 A built 1 tower vs B's 15; A coverage DECLINED 195→137 per-mil; 14k chips unspent.
@@ -229,7 +229,7 @@ iteration queue for 3/4/5, one at a time.
 
 ---
 
-## Iteration 3 (2026-09-06) — idle-chip tower self-upgrade — pending
+## Iteration 3 (2026-09-06) — idle-chip tower self-upgrade — ACCEPTED
 
 Target: structural track / absolute degeneracy #1 above (327k unspent chips,
 coverage plateau from r150). New area — leaves the closed spawn-composition
@@ -306,7 +306,7 @@ sitting in every replay since iteration 0. Do the counter dump before theorising
 
 ---
 
-## Iteration 4 (2026-09-06) — paint-tower bias in ruin capture — pending
+## Iteration 4 (2026-09-06) — paint-tower bias in ruin capture — REJECTED
 
 Target: structural degeneracy #1 again (chips still dead: 551k at r2000 *after*
 iteration 3 upgrades), attacked from the other side — stop manufacturing the dead
@@ -467,9 +467,87 @@ dead code under iter3's own economy, where chips run to 551k and the band is nev
 occupied — it is reachable *because of* the paint bias, so the two are a genuine
 interaction and any accept here is for the pair, not for either alone.
 
+
+### Iteration 4 RESULT — REJECTED
+
+**Run 20260906-203014: 22/50 = 44.0% vs bob_iter3. swept-win 6/25, swept-loss 9,
+split-by-side 10.** Both pre-registered criteria failed: the h2h is below 50%, and
+swept-loss exceeds swept-win. The deficit is 6 points below the gate against a
+~7pt binomial noise floor on 50 games, but the swept-map asymmetry (9 maps lost
+from BOTH sides against 6 won from both) is the sturdier signal and it is
+one-directional. REJECT. Paint bias reverted; `src/bob_i4a` deleted.
+
+**What the rejection bought** (a rejection that converts a weakly-founded belief
+into a firmly-founded one has paid for its run):
+
+The premise was verified and the conclusion was still wrong, which is worth
+stating precisely. Money towers really are permanently sterile spawn points — that
+is engine fact, not inference. What the hypothesis missed is that **iteration 3
+turned chips INTO paint income**: an upgrade buys +5 paint/turn for 2,500 chips.
+Once that conversion exists, money towers are no longer producing a dead resource,
+they are producing the feedstock for paint income, and starving the treasury
+starves the upgrades. Rough arithmetic on the traced games: iter3 runs ~5 paint
+towers upgraded to L3 for 5 x 15 = 75 paint/turn; the 1-in-4 arm runs ~8 paint
+towers that it can never afford to upgrade, for 8 x 5 = 40 paint/turn. **More paint
+towers, less paint.**
+
+This is the algorithm's own warning about supersession, inverted: I did not
+contradict a previous iteration's evidence, I failed to notice that a previous
+iteration had *changed the economics the new hypothesis depended on*. Iteration 3
+was two hours old. Ledger entry added.
+
+Note the gridworld result stands and is not contradicted: the 1-in-4 arm won there
+at r804 by MAJORITY_PAINTED. gridworld is ruin-rich, so it could afford both more
+paint towers and their upgrades. The arm is bad on ruin-poor maps, which the
+resampled 25-map draw contains far more of than DEV12 did — an early vindication
+of the coordinator's map-resampling change, since DEV12 would have hidden this.
+
+Closed-directions ledger, new entry:
+
+| direction | killed by |
+|---|---|
+| Bias ruin capture toward paint towers (1 in 4 money instead of 1 in 2) | iter4: 22/50 (44%) vs bob_iter3, swept-loss 9 > swept-win 6. Chips buy paint income back through iteration 3's upgrades, so starving money starves upgrades and nets less paint. Re-open only with evidence that changes that arithmetic — e.g. if a cheaper paint-income source (SRPs) makes upgrades non-critical |
+
 ---
 
-## Iteration 5 (2026-09-06) — Special Resource Patterns — prepared, gated on iteration 4
+## Iteration 5 (2026-09-06) — self-calibrating expansion reserve — running
+
+Target: the reserve dead band traced above. Carried forward from iteration 4 as an
+independent change, with the rejected paint bias stripped out, so the accept test
+is a single isolated change against bob_iter3.
+
+Hypothesis: `Tower.reserve` is a fixed 1,200 chips held back for tower completion.
+When income is modest the treasury pins at that value and unit production stops
+entirely and permanently — traced on two maps for hundreds of consecutive rounds.
+Holding the reserve only while the team is actually still expanding removes a pure
+waste with no capability cost.
+
+Change (isolated, `src/bob/Tower.java`): track `rc.getNumberTowers()` (team-scoped,
+engine-verified); if it has not changed for `EXPANSION_IDLE` = 200 rounds, set the
+reserve to 0. A destroyed tower re-arms it, which is correct — it frees a ruin.
+
+Reachability caveat, stated up front for honesty: under bob_iter3's own economy
+chips run to 551k and the band is rarely occupied, so this change may be close to
+a no-op on ruin-rich maps. It was clearly reachable under iteration 4's economy.
+The resampled map draw contains many ruin-poor maps, which is where it should
+bite. If it comes back a clean no-op rather than a regression, that is a
+"mechanistically correct but upstream state never produces the situation" result
+and it should be kept in mind for when a later iteration changes the economy again
+— not discarded.
+
+Evaluation run 20260906-2136ish, 15 maps x 2 sides, four opponents on one shared
+sample: `bob_iter3` (accept gate), plus the frozen roster `bob_iter0`, `bob_iter1`
+and `examplefuncsplayer` for the absolute-strength chart.
+
+Pre-registered accept criteria:
+1. **h2h vs bob_iter3 > 50%** (≥16/30) — accept gate.
+2. swept-win ≥ swept-loss.
+3. Mechanistic: on a ruin-poor map from the sample, team chips no longer sit
+   pinned at 1200-1350 for the whole game.
+
+---
+
+## Iteration 6 (2026-09-06) — Special Resource Patterns — prepared, gated on iteration 5
 
 Target: the third and largest untouched paint-income multiplier found in the
 iteration-3 engine probe. Whole game mechanic, never used by this bot (confirmed
@@ -520,7 +598,7 @@ active means the splasher is eating them, and the fix is a splasher exclusion, n
 abandoning the mechanic.
 
 Pre-registered accept criteria:
-1. **h2h vs the iteration-4 snapshot > 50%** — accept gate.
+1. **h2h vs the newest accepted snapshot > 50%** — accept gate.
 2. swept-win > swept-loss.
 3. Mechanistic (checked first, on one match): `srpA` reaches ≥3 and stays there,
    and the win round drops versus the same map/side baseline.
