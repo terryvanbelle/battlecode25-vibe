@@ -1603,3 +1603,47 @@ instead of rhetorical, and the earlier phrasing overstated the case.
    the budget rather than the margin. Recorded here as evidence, not yet a
    hypothesis; it needs its own reachability check (how often is an ally-paint step
    available and not taken?), which is answerable from a replay for no games.
+
+### Where the drain actually comes from — measured, and it is mostly units crowding
+
+Standing census over all 38,616 of our unit-turns on Castle (allied adjacency only;
+the first pass counted both teams and overstated it, corrected here):
+
+```
+on ally paint    24,664  (63%)   penalty  0
+on neutral       10,342  (26%)   penalty -1
+on enemy paint    3,610   (9%)   penalty -2
+allied neighbours 19,006 total = 0.49 per unit-turn, +1 paint each
+off ally paint WITH an ally tile one step away: 12,405 (32% of all unit-turns)
+```
+
+Per unit-turn that is 0.44 from territory and 0.49 from adjacency, ~0.93 total,
+which over 38,616 unit-turns is ~36,000 — closing neatly against the ~34,220 derived
+independently from the spawn/spend gap. Two independent routes to the same number,
+so I believe it.
+
+**Our units spend about 19,000 paint standing next to each other. They put 23,780
+onto the map.** Crowding costs 80% of what painting costs, and nobody chose it.
+
+Two levers fall out, both with the dose already measured:
+
+1. **Anti-crowding (the larger, ~19,000 paint).** Nothing in the bot considers
+   allied adjacency when moving. `Nav` scores candidate steps by direction only.
+   Counting allied neighbours at the destination and preferring fewer is a handful
+   of bytecodes on data the unit has already sensed.
+   *Caveat recorded up front, from TRAINING_ALGORITHM.md's symmetry section: "a
+   consistent arbitrary preference can be supplying real formation cohesion that
+   pure randomization destroys." Spreading units out may cost ruin-capture tempo or
+   splasher massing. This needs the same reachability and trigger-frequency
+   pre-checks as anything else, not a straight line from a big number to a change.*
+
+2. **Prefer ally paint when stepping (~17,000 paint, cheaper to reason about).**
+   `Nav.navTo`'s first pass refuses *enemy* paint but treats neutral and ally alike,
+   and **32% of our unit-turns are spent off ally paint with an ally tile one step
+   away** — a free step that was available and not taken. That 32% is the
+   reachability check already answered: the branch is live on a third of all turns.
+
+Both are the "capability preserved at zero marginal cost" shape: no new sensing, no
+resource spent, pure waste removed. They go in the queue *behind* iteration 8, which
+is already built and pre-registered — but ahead of the tower paint reserve, because
+their doses are measured and the reserve's is not.

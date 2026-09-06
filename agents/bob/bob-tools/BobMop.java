@@ -44,6 +44,11 @@ public class BobMop {
     // income does not appear as either is passive drain: territory penalties and
     // adjacency, i.e. paint converted into nothing.
     static long income = 0, paintActs = 0, splashActs = 0, spawnPaint = 0;
+    // Where our units actually STAND, per unit-turn. This decides whether the drain is
+    // attackable by navigation at all: paint penalty is 0 on ally paint, -1 on neutral,
+    // -2 on enemy. standAdj counts allied robots in the 8 neighbours (+1 each).
+    static long standAlly = 0, standNeutral = 0, standEnemy = 0, standAdj = 0, standTurns = 0;
+    static long couldHaveStoodAlly = 0;
     static final List<int[]> pendingDeaths = new ArrayList<>();  // [id, dieType]
 
     public static void main(String[] args) throws Exception {
@@ -175,6 +180,41 @@ public class BobMop {
                     lastPaint.remove(id); lastHealth.remove(id);
                 }
                 pendingDeaths.clear();
+                // standing census: needs the paint grid AFTER this round's actions
+                {
+                    Set<Long> occupied = new HashSet<>();   // ALLIED units only: the
+                    // engine's penalty term is "+1 per adjacent ALLIED robot", so counting
+                    // both teams would overstate it.
+                    List<int[]> ours = new ArrayList<>();
+                    for (int j = 0; j < r.turnsLength(); j++) {
+                        r.turns(turn, j);
+                        Integer t2 = idTeam.get(turn.robotId());
+                        Integer y2 = idType.get(turn.robotId());
+                        if (t2 == null || y2 == null || y2 > RobotType.MOPPER) continue;
+                        if (t2 == us) {
+                            ours.add(new int[]{turn.x(), turn.y()});
+                            occupied.add(key(turn.x(), turn.y()));
+                        }
+                    }
+                    for (int[] u : ours) {
+                        int loc = u[1] * W + u[0];
+                        if (loc < 0 || loc >= owner.length) continue;
+                        standTurns++;
+                        byte o = owner[loc];
+                        if (o == us) standAlly++;
+                        else if (o == -1) standNeutral++;
+                        else standEnemy++;
+                        boolean allyNear = false;
+                        for (int dx = -1; dx <= 1; dx++) for (int dy = -1; dy <= 1; dy++) {
+                            if (dx == 0 && dy == 0) continue;
+                            int x = u[0] + dx, y = u[1] + dy;
+                            if (x < 0 || y < 0 || x >= W || y >= H) continue;
+                            if (occupied.contains(key(x, y))) standAdj++;
+                            if (owner[y * W + x] == us) allyNear = true;
+                        }
+                        if (o != us && allyNear) couldHaveStoodAlly++;
+                    }
+                }
                 if (r.roundId() % every != 0) continue;
 
                 // --- enemy tile list
@@ -217,6 +257,16 @@ public class BobMop {
             + "   (" + (income > 0 ? 100 * spent / income : 0) + "% of income)");
         System.out.println("#   => passive drain      " + (income - spent)
             + "   (" + (income > 0 ? 100 * (income - spent) / income : 0) + "% of income)");
+        System.out.println("# WHERE OUR UNITS STAND (per unit-turn; penalty 0/-1/-2)");
+        if (standTurns > 0) {
+            System.out.println("#   on ally paint    " + standAlly + " (" + 100*standAlly/standTurns + "%)  penalty 0");
+            System.out.println("#   on neutral       " + standNeutral + " (" + 100*standNeutral/standTurns + "%)  penalty -1");
+            System.out.println("#   on enemy paint   " + standEnemy + " (" + 100*standEnemy/standTurns + "%)  penalty -2");
+            System.out.println("#   adjacency term   " + standAdj + " ally-neighbours total, "
+                + (standAdj * 100 / standTurns) + " per 100 unit-turns (+1 paint each)");
+            System.out.println("#   OFF ally paint but WITH an ally tile adjacent (a free step away): "
+                + couldHaveStoodAlly + " (" + 100*couldHaveStoodAlly/standTurns + "% of all unit-turns)");
+        }
         System.out.println("# exceptionDeaths=" + exceptionDeaths);
         System.out.println("# DEATHS of our units, bucketed by paint held on the last turn");
         System.out.println("# type,deaths,paint<=10(starved),paint 11-50,paint>50(killed)");
@@ -251,6 +301,8 @@ public class BobMop {
         Arrays.sort(dists);
         return new int[]{inAct, inVis, dists[dists.length/2]};
     }
+
+    static long key(int x, int y) { return ((long) x << 20) | y; }
 
     static void set(int loc, byte v) { if (loc >= 0 && loc < owner.length) owner[loc] = v; }
 
