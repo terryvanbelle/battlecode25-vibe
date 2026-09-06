@@ -907,3 +907,43 @@ The accept-gate number for a dose is `1 - (iter4's win rate against it)`.
 4. **Watch (not a gate)** — soldier *deaths* per 250 rounds. If the soldier share
    rises but deaths rise in proportion and coverage does not move, the binding
    constraint is soldier survival, not spawn mix, and that becomes the next area.
+
+---
+
+## RobotController API sweep (mandated periodic check) — three whole mechanics unused
+
+Run while iteration 5's sweep was playing. Method list from `javap` on the engine
+jar, differenced against every `rc.` call in `src/alice/`. Never called:
+
+`transferPaint` `canTransferPaint` · `sendMessage` `readMessages`
+`broadcastMessage` `canSendMessage` `canBroadcastMessage` ·
+`markResourcePattern` `completeResourcePattern` `canCompleteResourcePattern`
+`getResourcePattern` · `mopSwing` `canMopSwing` · `mark` `removeMark`
+`senseRobotAtLocation` `getNumberTowers` `getChips` `sensePassability`
+`onTheMap` `getMapWidth` `getMapHeight` `setIndicatorDot` `setIndicatorLine`
+`setTimelineMarker` `disintegrate` `resign`
+
+Three of these are not conveniences, they are **whole game mechanics my lineage
+has never touched**, and each maps onto a measured problem:
+
+1. **`transferPaint` — paint refill.** Any robot may withdraw from an ally tower
+   (`transferPaint(loc, -N)`, r²≤2, CD 10). My bot has no transfer code at all, so
+   **a unit's entire lifetime output is the paint it was born with**, and at 0
+   paint it takes -20 HP/turn and dies. This is the mechanism behind the treadmill
+   the fixed instrument exposed: ~104 deaths per 250 rounds, ~34 units alive.
+   Today the bot's only way to put fresh paint in the field is to *respawn*, which
+   costs 200 tower paint **plus 250 chips** and throws away a positioned veteran —
+   a refill costs the same paint and **zero chips**. Ranked #1: it attacks a
+   measured degeneracy, and it is the "capability preserved at zero marginal cost"
+   shape the algorithm names as the recurring winner's profile.
+2. **SRPs.** An active SRP gives **+3/turn to every producing tower** for 200 chips
+   — with 7 towers that is +21/turn, comparable to a tower upgrade, priced in the
+   resource I provably cannot spend ($87k-180k unspent). Fragile (one enemy mop
+   inside resets the 50-round timer), so it belongs in the interior. Ranked #2.
+3. **Communication.** Entirely unused; enabling rather than directly scoring.
+
+Also noted from iteration 5's dose-200 trace: **iteration 4's chip sink is finite.**
+Once every tower reaches L3, `getNextLevel()` returns null and chips pile back up
+($180,890 by r2000). SRPs would reopen that sink.
+
+Registered as the iteration 6 candidate (paint refill), ahead of SRPs.
