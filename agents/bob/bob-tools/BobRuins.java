@@ -16,7 +16,8 @@ public class BobRuins {
         Arrays.sort(fs);
         System.out.println("map,size,symmetry,ruins,oldMoney,newMoney,oldAllOne,newAllOne");
         int nOldAll = 0, nNewAll = 0, n = 0;
-        double oldDev = 0, newDev = 0, worstOld = 0, worstNew = 0;
+        double oldDev = 0, newDev = 0, worstOld = 0, worstNew = 0, folDev = 0, worstFol = 0;
+        int nFolAll = 0;
         for (File f : fs) {
             byte[] raw = readAll(f);
             GameMap gm;
@@ -26,16 +27,19 @@ public class BobRuins {
             try { ruins = gm.ruins(); w = gm.size().x(); h = gm.size().y(); }
             catch (Exception e) { continue; }
             if (ruins == null || ruins.xsLength() == 0) continue;
-            int r = ruins.xsLength(), oldM = 0, newM = 0;
+            int r = ruins.xsLength(), oldM = 0, newM = 0, folM = 0;
             for (int i = 0; i < r; i++) {
                 int x = ruins.xs(i), y = ruins.ys(i);
                 if (((x + y) & 1) == 0) oldM++;
                 if ((hash(x, y) & 1) == 0) newM++;
+                if ((fhash(x, y, w, h) & 1) == 0) folM++;
             }
             boolean oa = (oldM == 0 || oldM == r), na = (newM == 0 || newM == r);
             if (oa) nOldAll++;
             if (na) nNewAll++;
             double od = Math.abs(100.0 * oldM / r - 50), nd = Math.abs(100.0 * newM / r - 50);
+            double fd = Math.abs(100.0 * folM / r - 50);
+            folDev += fd; worstFol = Math.max(worstFol, fd); if (folM == 0 || folM == r) nFolAll++;
             oldDev += od; newDev += nd;
             worstOld = Math.max(worstOld, od); worstNew = Math.max(worstNew, nd);
             n++;
@@ -49,6 +53,14 @@ public class BobRuins {
             oldDev / n, newDev / n);
         System.out.printf("worst deviation:                 old %.1f pts  new %.1f pts%n",
             worstOld, worstNew);
+        System.out.printf("FOLDED rule: all-one-type %d (%.0f%%)  mean dev %.1f  worst %.1f%n",
+            nFolAll, 100.0 * nFolAll / n, folDev / n, worstFol);
+    }
+
+    /** Folded coordinates: invariant under rotation AND both reflections at once,
+     *  so mirrored ruins hash identically and the two halves get the same mix. */
+    static int fhash(int x, int y, int W, int H) {
+        return hash(Math.min(x, W - 1 - x), Math.min(y, H - 1 - y));
     }
 
     /** Byte-identical to Soldier.towerTypeFor's hash. */

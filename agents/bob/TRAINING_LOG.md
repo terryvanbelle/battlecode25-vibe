@@ -1414,3 +1414,67 @@ way — no open-ended search.
 
 If instead **starvation does not fall**, the mechanism did not engage, the win rate
 says nothing about this idea, and the answer is a trace, not a refinement.
+
+
+---
+
+## Iteration 7 play-symmetry audit (2026-09-06) — the hash DOUBLES the side asymmetry
+
+TRAINING_ALGORITHM.md Phase 0 item 7 requires auditing new tie-break/default
+decisions as they are written, and I had not applied it to the hash. Doing so now
+found a real cost I had not anticipated.
+
+New tool `bob-tools/BobSym.java`. Maps are guaranteed symmetric and each team
+captures the ruins in its own half, so the two teams' ruins are mirror images. If
+`towerTypeFor` gives a mirrored ruin pair *different* types, the two teams get
+different tower mixes on a symmetric map — an unearned economic asymmetry that has
+nothing to do with either bot's play. The symmetry is inferred per map (whichever of
+rotation / horizontal / vertical maps the ruin set onto itself), not trusted.
+
+```
+                                        old parity rule    new hash
+maps with a mismatched mirrored pair      30 (40%)          73 (97%)
+mean money%-gap between the two halves    11.0 pts          24.0 pts
+```
+
+The parity rule is *partly* symmetry-preserving by accident: under rotation,
+`(x+y)` and `(W-1-x + H-1-y)` have the same parity exactly when `W+H` is even, so
+on those maps every mirrored pair agrees. The hash has no such structure and
+disagrees on about half of all pairs, by design.
+
+### The obvious fix, tested offline, and REJECTED offline
+
+Hash the **folded** coordinates `min(x, W-1-x), min(y, H-1-y)`. That quantity is
+invariant under rotation *and* both reflections simultaneously, so mirrored ruins
+hash identically and the team gap is 0 by construction, with no need to infer which
+symmetry holds. Elegant. Measured over all 75 maps, it is also worse:
+
+```
+rule           all-one-type maps   mean mix deviation   team gap
+old parity          4 (5%)                9.3            11.0
+new hash            0 (0%)                9.9            24.0
+folded hash         6 (8%)               16.0             0.0
+```
+
+Folding halves the number of independent draws — each mirrored pair now contributes
+two ruins of the same type — so the whole-map mix variance doubles (sd x sqrt(2),
+and 10.1 x 1.41 = 14.3, which is what the 16.0 is). It buys perfect side symmetry by
+making the *catastrophic* case more common than the rule I am trying to replace: 6
+all-one-type maps against the old rule's 4.
+
+**CLOSED: "make the tower-type hash symmetry-invariant by folding coordinates."**
+Killed by the table above. Cost: about three minutes and no games. This is the
+second time in this iteration that a question which looked like it needed a
+gauntlet turned out to be a question about the map files.
+
+### Where that leaves iteration 7
+
+No rule dominates. The hash's case rests entirely on the catastrophe dimension — it
+is the only one of the three that never produces a 100%-one-type map — and it pays
+for that with double the side asymmetry and a hair more typical skew. That is a
+genuine trade, not a free win, and it is consistent with the broad run's 21/40:
+structure improved in one place and worsened in another, netting out near zero.
+
+The pre-registered affected-subset run is now the tiebreaker, and its decision rule
+was fixed before any of this was known. I am not going to relax it because I have
+since found an extra argument on either side.
