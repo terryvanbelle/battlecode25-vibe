@@ -1513,3 +1513,64 @@ cannot clear the feature of it. The random 15-map sample in the accept run will
 include wall-heavy maps; if iteration 7 has a terrain problem, that is where it
 appears, and the wall-density figure now lets me check the losses against it
 directly instead of guessing.
+
+---
+
+## Iteration 6 — RESULT: REJECTED, and the prediction held
+
+Run `20260906-220906`. Gate arm complete; second arm still playing at the time of
+writing (numbers below marked interim are updated in the next entry).
+
+| dose | H2H vs `alice_iter5` | gate (>=18/30) |
+|---|---|---|
+| 0 (no refuel) | 50% by definition | — |
+| `LOW_PAINT` 60 | **13/30 (43.3%)** | **FAIL** |
+| `LOW_PAINT` 120 | **0/6 (0%)** *(interim)* | FAIL, decisively |
+
+Diff shape: 4 swept-wins against **5 swept-losses** and 6 splits — not a near
+miss with a regression, just no directional advantage at all, tilted slightly
+negative.
+
+**The dose-response is monotone *decreasing*.** More refuelling is strictly worse,
+and the 120 arm is catastrophic. That is the shape I predicted *after* the
+`twPaint` instrument and *before* the sweep, and it is the opposite of the shape I
+pre-registered before instrumenting the pool — which is exactly why the pool had
+to be instrumented.
+
+### Why it fails — the arithmetic, confirmed
+
+A refill and a respawn cost the **same 200 tower paint**, and tower paint is the
+binding resource. The refill's only genuine saving is **250 chips**, which
+iteration 4 already proved are not binding (the treasury sits on $100k+). Against
+that it pays the walk back plus a transfer turn, and — per `twPaint` — it drains
+the pool that funds spawning (216 vs 550 at r2000, 17% fewer soldiers).
+
+So iteration 6 spends the scarce resource to save the abundant one. A refilled
+veteran is *not* worth more than the recruit it displaces; it is worth slightly
+less, because the recruit arrives already at the front and the veteran spends
+turns walking.
+
+**The near-miss refinement is not triggered** (43.3% is outside `NearMissMargin`
+of the 50% bar, let alone the 60% `WinPct`), so per the pre-registration this is a
+full reject. `src/alice` was never touched — iteration 6 lived only in probe
+packages — so there is nothing to revert.
+
+### What the reject buys
+1. **A general rule, stated as a rule**: *saving a non-binding resource buys
+   nothing.* The mechanism engaged perfectly (first transfers in lineage history,
+   starvation deaths down 20-25%) and still lost. This is the "metrics that improve
+   without converting to wins" pattern the algorithm warns about, caught in the act.
+2. **Starvation is not a problem to be solved by refilling.** 65-100% of deaths
+   are starvation, but the fix is not to top units up — it is that a starved unit
+   has *already delivered its 200 paint*, which is all it was ever going to
+   deliver. Death at 0 paint is the unit finishing its job, not failing at it.
+   This reframes the whole "treadmill" reading: the treadmill is the intended
+   throughput mechanism, not a defect.
+3. It kills the obvious follow-ups too (mopper refills, tower-to-unit pushes) for
+   the same arithmetic, without spending a run on any of them.
+
+### Closed-directions ledger
+| direction | closed by | can re-open if |
+|---|---|---|
+| Refuel units from towers (`transferPaint` withdraw) | iteration 6: 13/30 at dose 60, 0/6 at dose 120, monotone decreasing; `twPaint` shows refills substitute for spawning | **paint becomes non-binding** (large SRP income, or many L3 paint towers), so the refill stops competing with spawning. Not before. |
+| "Reduce starvation deaths" as a goal in itself | same | it is re-framed: a unit at 0 paint has delivered its full payload; dying is not the failure |
