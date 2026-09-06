@@ -110,6 +110,16 @@ line refs below are to `engine/src/main/battlecode/world/*.java`.
 - Engine scan order (senseNearby*, getAllLocationsWithinRadiusSquared): x ascending
   then y ascending — fixed absolute order, audit for play-symmetry bugs.
 
+## 5x5 patterns (decoded; '#' = secondary color, '.' = primary; rows top=+dy)
+```
+SRP        PAINT_TWR   MONEY_TWR   DEFENSE_TWR
+##.##      #...#       .###.       ..#..
+#...#      .#.#.       ##.##       .###.
+..#..      ..#..       #...#       #####
+#...#      .#.#.       ##.##       .###.
+##.##      #...#       .###.       ..#..
+```
+
 ## Misc engine facts
 - addHealth clamps at type max (no overheal).
 - Tower AoE dmg + single dmg can stack on one target (both attacks same turn).

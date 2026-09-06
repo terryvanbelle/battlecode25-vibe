@@ -95,3 +95,53 @@ paint >= 15, paint nearest empty passable tile within r^2 <= 9.
 **Process deviation (logged)**: the examplefuncsplayer "baseline" run 181430
 accidentally measured the candidate (edit raced the copy) and then failed to
 build; iter0 never got its own efp gauntlet. Not needed — iter0 is superseded.
+
+**Noise floors** (binomial, one-sided vs p=0.5): 24-game H2H — 16/24 ≈ 92%
+confidence, 17/24 ≈ 97%. Treat 13-15/24 as within noise of 50% (near-miss zone).
+
+---
+
+## Iteration 2 — build PAINT towers, not money towers (running)
+
+**Trace evidence** (replaydump on iter01 DefaultSmall loss): T1 ended r2000 with
+$113k UNSPENT chips, 21 soldiers, 182 idle moppers, 5 towers (T2: 7). Coverage
+stuck ~32-38% both sides. Zero combat deaths in 2000 rounds. Soldier id13054:
+spawned 200 paint → 0 by r33 → dead of paint starvation r48 (~45-round life).
+Money is worthless; PAINT is the binding resource; money towers have zero paint
+income and go dead as spawners after ~2 units (start 500, no regen).
+
+**Hypothesis**: replacing all soldier tower-builds (mark/complete
+LEVEL_ONE_MONEY_TOWER) with LEVEL_ONE_PAINT_TOWER multiplies sustainable paint
+production (each L1 paint tower +5/turn) and hence unit production + coverage.
+
+**Pre-registered**: (1) H2H vs alice_iter1 > 50% on EVAL12 both sides;
+(2) mechanism check — in the re-run DefaultSmall game, T1 spawns PAINT_TOWERs
+(replay SPAWN lines); (3) vs alice_iter0 stays >= 60%.
+Run: 20260906-182917 (OPPONENTS = alice_iter1 alice_iter0).
+
+**Result: REJECTED as-is — 10/24 (42%) vs iter1, 12/24 (50%) vs iter0.**
+Mechanism engaged (DefaultSmall replay: T1 built PAINT_TOWER r18, chips fully
+spent ~$100-300 all game, 92 soldiers by r2000, coverage 524m vs 204m — flipped
+the motivating swept-loss into a crushing win). Diff shape: swept-LOSSES
+concentrated on the LARGE maps (DefaultMedium/Large/Huge, Money) — with all
+builds as paint towers, the single L2 money tower (30 chips/turn) cannot fund
+1000-chip tower builds + 250-chip soldiers on ruin-rich maps: chips become the
+binding resource. Specific, well-understood failure mode → one targeted
+refinement (2b).
+
+**Economy model (established this iteration)**:
+- Each NEW tower = +500 spawn-paint instantly for 1000 chips: the dominant
+  chips→paint conversion. Tower count compounds through MONEY income.
+- Upgrades do NOT refill tower paint (engine InternalRobot.upgradeTower —
+  health/level only).
+- When ruins run out, only paint towers + SRPs convert anything into paint.
+- Well-fed soldier throughput is the coverage engine (DefaultSmall: 92 soldiers
+  = 52% coverage vs 22 soldiers = 20%).
+
+## Iteration 2b — self-calibrating tower type (running)
+
+**Refinement**: tower type chosen at mark time: money < 1200 chips → MONEY
+tower, else PAINT tower. Completion tries both types (mark decided the pattern).
+**Pre-registered**: H2H vs iter1 > 50%; large-map swept-losses (DefaultMedium/
+Large/Huge, Money) at least half recovered; DefaultSmall stays won.
+Run: gauntlet launched ~19:10 UTC (OPPONENTS = alice_iter1 alice_iter0).
