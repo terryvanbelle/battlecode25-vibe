@@ -2146,3 +2146,56 @@ paint ≥ `SOLDIER.paintCost + SPLASHER.paintCost`.
 4. Reachability check FIRST, before coding: confirm from a trace that enemy paint
    in splash range actually occurs often — if the two armies never contact, the
    unit is dead weight at 300 paint a copy.
+
+### Splasher reachability check — done BEFORE writing the code this time
+
+The pre-registered question: does enemy paint in splash range actually occur often
+enough to justify a 300-paint unit? Answered from traces already on disk, no new
+games needed.
+
+Enemy coverage in every game traced this session runs **280-590‰** — between a
+quarter and three-fifths of the map is enemy-painted at any time, on both sides,
+all game. A splasher's target centre only needs to be within dist²≤4 and it
+overwrites enemy paint within r²≤2 of that centre. With enemy paint covering
+hundreds of tiles, a splasher essentially cannot fail to find a target.
+
+**Reachability: PASS, decisively.** This is the opposite of iteration 9, where the
+same check (run too late) showed 21 of 22 ruins already built and killed the idea.
+Doing it first cost one grep of existing logs.
+
+### Fixed-roster point recorded — `alice_iter5` vs the frozen roster
+
+Run `20260906-222958` was a deliberate roster run, so these are **solid** points:
+
+| current build | opponent | result |
+|---|---|---|
+| `alice_iter5` | `alice_iter0` | **23/24 (95.8%)** |
+| `alice_iter5` | `alice_iter1` | **23/24 (95.8%)** |
+
+This is the lineage's only absolute-strength instrument, and it had been stale
+since iteration 4 (and then only as a hollow, backfilled point). Both frozen
+opponents are now beaten ~96%, which is the answer the moving gauntlet pool cannot
+give: the bot is genuinely stronger, not just measured against softer opposition.
+
+Note both roster opponents are now over the 80% retirement threshold. Per the
+opponent-pool rules they would normally be retired — but roster members are
+explicitly **never retired**, because the value is each line's long-run trend. They
+stay.
+
+### Ops hazard — a shared tool was rewritten underneath a running process
+
+The roster run's 72 games completed and then collation died with
+`tools/gauntlet.sh: line 170: syntax error near unexpected token '}'`. The script
+is **not** broken: `bash -n` passes and `git status` shows no local modification.
+What happened is that bash reads a script incrementally as it executes, so a
+`git pull` that rewrote `tools/gauntlet.sh` while my hours-long invocation was
+still running shifted the file underneath the interpreter.
+
+Consequence and the fix, both already provided for: **only the collation is ever
+lost** — the remote runner is `setsid`-detached, so the games are safe — and
+`tools/gauntlet-collect.sh 20260906-222958` recovered the run in full
+(`results.csv`, `reasons.txt`, `summary.txt`, `losses/`). No games were re-run.
+
+Worth remembering because the symptom points at the wrong thing: a syntax error in
+a shared tool looks like a broken tool, and the instinct is to fix or work around
+it. The tool was fine.

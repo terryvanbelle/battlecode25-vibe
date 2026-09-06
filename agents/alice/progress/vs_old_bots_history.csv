@@ -8,3 +8,5 @@ date,current_snapshot,opponent,wins,total,win_pct,source
 2026-09-06T18:50:51+00:00,alice_iter1,alice_iter1,20,24,83.3,backfill
 2026-09-06T20:18:52+00:00,alice_iter2,alice_iter1,13,24,54.2,backfill
 2026-09-06T20:30:42+00:00,alice_iter4,alice_iter1,48,50,96.0,backfill
+2026-09-06T22:29:58+00:00,alice_iter5,alice_iter0,23,24,95.8,roster-run
+2026-09-06T22:29:58+00:00,alice_iter5,alice_iter1,23,24,95.8,roster-run
