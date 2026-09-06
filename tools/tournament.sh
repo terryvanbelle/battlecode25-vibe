@@ -24,8 +24,13 @@ BOTS="${BOTS:-alice bob carol}"
 MAXJOBS="${MAXJOBS:-4}"
 GLOBAL_CAP="${GLOBAL_CAP:-5}"   # BC25 games in flight across ALL agents+tournament
 HARD_CAP="${HARD_CAP:-7}"       # machine-wide ceiling, counts the BC26 project too
+# A full-list run is 75 maps x 3 pairs x 2 sides = 450 games; under contention
+# with the agents' gauntlets it can hit the poll deadline below. Play the
+# default list in RANDOM order so a truncated run is an unbiased sample of the
+# map pool rather than the alphabetically-first slice. An explicit MAPS= is
+# taken verbatim (reproducible by construction).
 if [ -z "${MAPS:-}" ]; then
-  if [ -f "$REPO_ROOT/tools/bc25-maps.txt" ]; then MAPS="$(tr '\n' ' ' < "$REPO_ROOT/tools/bc25-maps.txt")"
+  if [ -f "$REPO_ROOT/tools/bc25-maps.txt" ]; then MAPS="$(shuf "$REPO_ROOT/tools/bc25-maps.txt" | tr '\n' ' ')"
   else MAPS="DefaultSmall"; fi
 fi
 
@@ -180,9 +185,16 @@ done
   done; } > "$OUT/results.csv"
 grep '^REASON ' "$OUT/results.txt" | sed 's/^REASON //' > "$OUT/reasons.txt" || true
 
+NPAIRS=$(echo "$PAIRS" | wc -w)
+EXPECTED=$(( NPAIRS * NMAPS * 2 ))
+PLAYED=$(grep -c '^RESULT ' "$OUT/results.txt" || true)
 {
   echo "tournament $RUN_ID (UTC)  bots=[$BOTS]  maps=$NMAPS"
   grep '^FORFEIT' "$OUT/results.txt" | sed 's/^/  !! /' || true
+  if [ "$PLAYED" -lt "$EXPECTED" ] && ! grep -q '^FORFEIT' "$OUT/results.txt"; then
+    echo "  !! INCOMPLETE: $PLAYED of $EXPECTED games played (run truncated;"
+    echo "     maps were played in random order, so this is a random subset)."
+  fi
   echo
   echo "standings (total games won):"
   for B in $BOTS; do

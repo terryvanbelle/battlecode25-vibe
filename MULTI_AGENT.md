@@ -49,7 +49,11 @@ produced.
 - **Schedule**: 06:00 and 18:00 UTC daily, via cron on claude-driver
   (`tools/cron-tournament.sh`, log at `~/bc25-tournament-cron.log`).
 - **Format**: every pair (alice-bob, alice-carol, bob-carol) x every map in
-  `tools/bc25-maps.txt` x both sides.
+  `tools/bc25-maps.txt` x both sides -- 450 games. Maps are played in random
+  order, so a run that hits its time limit yields an unbiased random subset
+  rather than the alphabetically-first slice; such a run is labelled
+  `!! INCOMPLETE` at the top of its `summary.txt`. Read that line before
+  drawing conclusions from a run's standings.
 - **Which bot plays**: the agent's **last committed** `src/<name>/` at the
   repo's HEAD when the tournament starts — never the working tree. Commit
   when your bot is in a state you want measured; keep `HEAD` compiling.
