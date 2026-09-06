@@ -2350,3 +2350,45 @@ It is accepted on the grounds set out in advance, not discovered afterwards:
 
 **Standing checks**: exceptions 0; bytecode robots 14.7% / towers 2.6%, 0 overruns, 0
 near-misses; play-symmetry PASS (9 maps favour A, 10 favour B); frozen-treasury gate PASS.
+
+## Iteration 9 pre-registration — the tower-type key question the floor does NOT answer
+
+Iteration 8's floor is deliberately narrow: *while the team holds <= 3 towers, build PAINT*. It
+guards the opening, which is where the trace put the failure. It leaves two gaps open, and I am
+naming them now so the next iteration is chosen on evidence rather than on whichever felt
+unfinished.
+
+**Gap A — the key still never asks what the team holds.** Past three towers, `towerTypeFor`
+reverts to `k % 3 == 0 -> MONEY`, a pure function of the ruin's coordinates. If carol's paint
+towers are picked off later while her money towers survive, the key will keep answering MONEY
+and walk her back into the absorbing state. The floor cannot see this because
+`getNumberTowers()` is type-blind.
+
+**Gap B — the two-sided mix.** Registered after the DefaultMedium trace: the rule is documented
+as "build whichever resource is scarce" but only ever reads paint, never `getChips()`.
+
+### Which of these is actually next — decided by measurement, not preference
+
+The honest position is that **I do not yet know whether Gap A occurs**. Every trace of a
+late-game paint-tower loss so far comes from the *opening* (Dominoes, r200). The
+`carol_decap` result says carol loses no towers at all once she has more than two or three, and
+`carol_rush` only ever kills towers in the opening on small maps. So Gap A may be a branch that
+never fires — the dead-reasoning failure the reachability pre-check exists to catch.
+
+**So iteration 9 is gated on a measurement I can take for free**, from replays I already have
+rather than from a new run: across the `carol_rush` and `carol_decap` blocks of
+`20260906-220604` plus the control `20260906-222533`, count games where carol's tower count
+*falls* after passing 3.
+
+- If **late tower losses do occur**: iteration 9 = Gap A, a type-aware floor. It needs an exact
+  team-wide paint-tower count, which no single API gives, so it would need either comms (a
+  whole unused mechanic — its own iteration) or a conservative local rule. That scope is only
+  justified if the situation is real.
+- If **they do not occur** (my expectation, given carol_decap never took a tower): Gap A is
+  **closed as unreachable** and recorded in the ledger as such, and iteration 9 becomes
+  **SRPs** (`src/carol_i8`, already written and compile-verified), which is the largest unused
+  mechanic and has a 7x arithmetic on the binding resource behind it.
+
+Gap B stays queued behind whichever wins. Registering the *decision procedure* rather than the
+decision, because the last three iterations have each turned on a fact I did not have when I
+started them.
