@@ -52,12 +52,23 @@ def split_teams(path):
     return out
 
 
-def longest_frozen(series):
+SOLDIER_CHIPS = 250   # cheapest unit; below this a frozen treasury is poverty, not the bug
+
+
+def longest_frozen(series, floor=SOLDIER_CHIPS):
+    """Longest run of consecutive rounds with chips EXACTLY unchanged, towers standing, and
+    the treasury actually able to afford something.
+
+    The `floor` matters: a team sitting at 0 chips with no income is frozen in the literal
+    sense but there is nothing for any fix to do, and counting it would make iteration 7's
+    gate fail on games where the fix worked perfectly and then legitimately ran out of money.
+    The bug being measured is specifically a treasury that COULD build and does not.
+    """
     best = run = 0
     last = None
     at = None
     for r, c, tw in series:
-        if last is not None and c == last and tw > 0:
+        if last is not None and c == last and tw > 0 and c >= floor:
             run += 1
             if run > best:
                 best, at = run, (r, c, tw)
