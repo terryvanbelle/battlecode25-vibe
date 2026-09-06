@@ -2678,3 +2678,25 @@ degeneracies.
 completeness, win rates with the noise floor, swept shape, side split, exceptions, bytecode,
 frozen-treasury gate, paint-drought gate. Plus the API sweep (`grep -o 'rc\.[a-zA-Z]*'` diffed
 against `javap RobotController`) — it found three unused mechanics the first time it was run.
+
+### The paint-reserve dose already contains the ablation — no separate build needed
+
+Noticed while about to write a third package: `TOWER_PAINT_RESERVE` spans the whole space,
+because `avail = max(0, ally.paintAmount - RESERVE)`.
+
+| dose | behaviour |
+|---|---|
+| **0** | iteration 0's greedy refill — the **zero arm**, byte-identical to the accepted build |
+| 100 | keep half a soldier back |
+| **200** | keep exactly one soldier's build cost back — the registered candidate |
+| **1000** | tower paint cap, so `avail` is always 0 — **soldiers never refill at all**, i.e. the full **ablation** of `refillIfPossible` |
+
+So the queued ablation ("gate `refillIfPossible` off entirely and measure it — never done in 8
+iterations") is just the top of this dose curve, not separate work. One parameter, one build,
+four arms, and the curve's *shape* is the evidence: the algorithm asks for a zero arm and warns
+that a concave curve with an interior optimum is stronger evidence than any single point. Here
+both ends are meaningful policies rather than arbitrary extremes — greedy refill and no refill —
+so an interior peak would be a genuinely informative result rather than a tuning artefact.
+
+Recorded because the instinct to reach for a new package was wrong twice over: it would have
+cost build time, cluttered the pool, and obscured that these are points on one curve.
