@@ -217,7 +217,11 @@ itself") and **neither was ever implemented**. The identical shape had just appe
 API sweep: `RULES.md` concluded chips are wasted without SRPs/upgrades, and the bot called
 none of them.
 
-Two distinct failure modes, one root: a conclusion recorded in prose has no mechanical
+A third instance turned up the moment I actually ran the audit: the longest entry in this
+file concludes that splashers are "the central missing capability", and the spawn line rolls
+only `MOPPER` or `SOLDIER`. `runSplasher()` is compiled and unreachable.
+
+Three distinct failure modes, one root: a conclusion recorded in prose has no mechanical
 consequence. LEARNINGS.md entries that prescribe a code change now carry an explicit status,
 and an entry that prescribes one without a commit behind it is an open bug, not a lesson.
 The general check is cheap — for each entry, name the line of code it changed; if there
