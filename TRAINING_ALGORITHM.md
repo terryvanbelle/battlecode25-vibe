@@ -158,11 +158,14 @@ The accept/reject machinery lives or dies on these rules. Each one is paid for.
    on raw counts.
 9. **Track a fixed old-bot roster for long-run progress.** Peer retirement
    makes the peer rate a poor absolute yardstick (stable rate = no progress,
-   or progress against a hardening roster). Every ~10 accepted iterations,
-   run against a fixed, never-retired roster of old snapshots and chart it.
-   On thin accept margins, run this *before* accepting, not after — it once
-   caught a bad accept by ten games when the two pre-registered metrics had
-   each moved by one.
+   or progress against a hardening roster). Every ~5 accepted iterations,
+   run against a fixed, never-retired roster composed of every 5th accepted
+   snapshot (iter1, iter5, iter10, ...) and chart it. Add each new
+   multiple-of-5 snapshot to the roster as it appears rather than replacing
+   older entries — the value is in each line's long-run trend. On thin accept
+   margins, run this *before* accepting, not after — it once caught a bad
+   accept by ten games when the two pre-registered metrics had each moved by
+   one.
 10. **Don't let pre-registered metrics decide when a cheap unrun instrument
     could reverse them.** A real effect big enough to accept on usually shows
     up in more than one place.
