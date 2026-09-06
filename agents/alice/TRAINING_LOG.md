@@ -774,3 +774,71 @@ lineage has been carrying it the whole time on the other unit type.
 - moppers/unit mix — closed by iteration 3's reject (1 reject)
 - population control / anti-clumping — **open, now the highest-value target**,
   and re-aimed from soldiers to moppers by this iteration's trace
+
+---
+
+## Instrument bug found and fixed — every "alive unit count" I have ever logged was wrong
+
+Found while forming iteration 5's hypothesis, before spending a run on it.
+
+`tools/replaydump/ReplayDump.java` tracked live robots in a `teamOf` map, removing
+an id only in the `Round.diedIds` handler. **BC25 does not report robot deaths
+there.** Deaths arrive as `Action.DieAction` inside a `Turn`'s action vector, and
+the dumper's `DieAction` case only *printed* exception-deaths — it never removed
+the robot. A 2000-round dump containing hundreds of deaths printed **zero** `DIED`
+lines, which is what gave it away.
+
+So `aliveCounts()` only ever incremented: every "sold N / mop N" figure in this
+log is **cumulative spawns**, not units alive.
+
+**Fixed** (my own tooling, `agents/alice/tools/`): `DieAction` now removes the
+robot and counts a death; the round line additionally reports per-window spawns
+by type (`+soldN +mopN`) and deaths (`diedN`), because a stock alone can't
+distinguish a standing army from a treadmill.
+
+### What the corrected instrument says about the accepted bot (Racetrack, iter4 vs iter2)
+Same replay, before and after the fix:
+
+| figure | broken instrument | corrected |
+|---|---|---|
+| alice soldiers alive @r2000 | 63 | **4** |
+| alice moppers alive @r2000 | 627 | **30** |
+| iter2 soldiers alive @r2000 | 28 | **0** |
+| total alice units on a 625-tile map | 690 (impossible) | 34 |
+
+**Three conclusions reverse:**
+
+1. **There is no population runaway.** Iteration 4's write-up claimed 690 units on
+   a 625-tile map; the real army is ~34. The "anti-clumping / population control"
+   area I had just named the highest-value target was built on this artifact, and
+   **the drafted iteration 5 spread-step is now unmotivated** — I have no evidence
+   the bot is ever dense enough for the adjacency tax to bind.
+2. **Iteration 3's root cause was also an artifact.** Its headline was "unbounded
+   soldier population is self-destructive — 314 soldiers on a 1500-tile map".
+   That 314 was cumulative spawns. Iteration 3's *result* (7/24, decisive) stands;
+   its *explanation* does not.
+3. **The real degeneracy is the opposite one: the army is a treadmill that barely
+   exists.** alice spawns ~102 units and loses ~104 per 250 rounds while holding
+   ~34 alive. iter2 finishes the game with **zero soldiers** — and soldiers are the
+   only unit that can paint.
+
+### The measured defect that replaces the density story
+Realized spawn mix over Racetrack r1750-2000: alice **+9 soldiers, +93 moppers**.
+The spawn line reads `(rnd(4) == 0) ? MOPPER : SOLDIER` — an *intended* 25%
+moppers. The realized share is ~90%.
+
+Cause, from the cost table: a soldier costs **200 tower paint**, a mopper **100**,
+and a tower's paint income is only 5-15/turn. The tower can fund a mopper twice
+as often, so it never accumulates the 200 a soldier needs — and when the RNG picks
+SOLDIER and paint is short, the build loop simply **fails and builds nothing**,
+wasting the turn. The mopper is quietly eating the soldier pipeline's fuel.
+
+**Doctrine #2 applies directly**: the mopper-fraction "dose sweep" I had registered
+as a follow-up (0, 1/8, 1/4, 3/8) would not have been a dose at all — the constant
+it varies does not control the quantity that matters.
+
+### Closed-directions ledger (correction)
+| direction | status change |
+|---|---|
+| Anti-clumping / spread step (drafted iteration 5) | **withdrawn before evaluation** — motivated entirely by the inflated counts; no evidence density ever binds. Re-open only if a corrected trace shows high adjacency. |
+| Remove moppers entirely (iteration 3) | reject **stands**, explanation **retracted**. Cause is not density; see iteration 5's trace for the real one (paint-erasure race). |
