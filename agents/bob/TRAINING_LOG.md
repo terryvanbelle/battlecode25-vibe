@@ -1373,3 +1373,44 @@ helped group beats the hurt group. If the helped group does not beat the hurt
 group, the mechanism is not converting into wins, and iteration 7 is a REJECT that
 closes the tower-mix thread for good — which, given the arithmetic above showing no
 pure function can do better, would be a genuinely useful thing to have established.
+
+
+---
+
+## Iteration 8 evaluation plan, finalised while 7 ran (2026-09-06)
+
+**Bytecode baseline pinned**, so criterion 3 has something to compare against.
+Measured peak `maxbc` from existing replays, both teams: Castle 9388 / 9640,
+UnderTheSea 9928 / 9931 — i.e. **54-57% of the 17500 limit**. The 14000 (80%)
+ceiling pre-registered for iteration 8 leaves real margin, and the gated sense call
+means a healthy unit adds nothing at all.
+
+**Exact-comparison plan for the mechanistic gate.** The gauntlet's map sample is
+redrawn each run, so the candidate may never play the map I have baseline forensics
+for. Rather than hope, after the gauntlet I will run a single `vm-match.sh` with
+`TEAM_A=bob TEAM_B=bob_iter3` on **Castle**, pull the replay, and run `BobMop` on
+side A — the identical map, side and opponent as the baseline below. That makes the
+starvation comparison exact rather than across-sample:
+
+```
+baseline (bob_iter3, Castle, side A):  SOLDIER 177 deaths / 147 starved (83%)
+                                       SPLASHER 54 / 21      MOPPER 52 / 41 (79%)
+```
+
+**Pre-registered failure shape and its refinement, written now so the response is
+not invented after the fact.** `Refill.seek` sits at the top of `Soldier.run`,
+ahead of ruin capture. The old code had the same threshold but `tryRefill` returned
+false when no tower was visible, so a low soldier simply carried on working; the
+new code walks it home. Soldiers will therefore abandon ruin work far more often —
+which is precisely TRAINING_ALGORITHM.md's "survival bought with inactivity" trap
+("units die doing the thing that wins").
+
+So if the result is **starvation down but h2h below 50%**, that is the diagnosed
+shape, not a mystery, and the single pre-registered refinement is: do not interrupt
+a soldier that is actively completing a ruin pattern unless it is critically low
+(below `PAINT_FLOOR`), i.e. move the refill check below the ruin-capture step for
+soldiers that already hold a `workRuin`. One refinement, then a decision either
+way — no open-ended search.
+
+If instead **starvation does not fall**, the mechanism did not engage, the win rate
+says nothing about this idea, and the answer is a trace, not a refinement.
