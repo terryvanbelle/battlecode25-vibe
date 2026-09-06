@@ -1772,3 +1772,40 @@ was never touched.
 |---|---|---|
 | Soldiers stand still to avoid upkeep | iteration 8: towers 6 vs 8, coverage 415 vs 560‰ despite deaths −52% and starvation −70% | tower expansion is decoupled from soldier wandering — e.g. ruins are located by **communication** (unused mechanic) rather than by each soldier stumbling on them. Then standing still would cost nothing. **This is the specific reason the comms mechanic is now interesting.** |
 | Soldiers seek unpainted ground (original iteration 8 draft) | withdrawn earlier by the upkeep arithmetic; now doubly so — it would move soldiers toward *tiles* rather than *ruins*, and the trace says ruins are what matter | — |
+
+### Iteration 6 — final numbers (run `20260906-220906` complete, 60/60)
+
+| dose | H2H vs `alice_iter5` |
+|---|---|
+| 0 (no refuel) | 50% by definition |
+| `LOW_PAINT` 60 | **13/30 (43.3%)** |
+| `LOW_PAINT` 120 | **4/30 (13.3%)** |
+
+Monotone decreasing and steeply so — the interim reading holds and the reject is
+decisive. Refuelling is not neutral, it is actively harmful, and more of it is much
+more harmful. The `twPaint` substitution account explains the slope: every unit of
+paint spent topping up a veteran is a unit not spent on a recruit, and the recruit
+is worth more.
+
+---
+
+## Iteration 7 evaluation LAUNCHED — run `20260906-222958`
+
+`BOT=alice_iter5` (zero arm) vs `OPPONENTS="alice_i7 alice_iter1 alice_iter0"`,
+NMAPS=12, both sides = **72 games**. One run delivers two things that both want
+`alice_iter5` as BOT on a single shared map sample:
+
+1. **Iteration 7's accept gate** — `alice_i7`, listed first so a truncation costs
+   the roster rather than the gate.
+2. **The overdue fixed-roster point** for `alice_iter5` against `alice_iter0` and
+   `alice_iter1` — the lineage's only absolute-strength instrument, last measured
+   at iteration 4 and then only as a hollow backfilled point.
+
+Gate at 24 games per opponent: **>= 16/24** (~92% one-sided), per the noise bands
+in LEARNINGS §5.
+
+Diagnostics to run on the result, both already pre-registered and now cheap because
+the dumper prints map geometry: check iteration 7's losses against **wall density**
+*and* **map area**, since maze (60x60, 19.8% walls) is its one known loss while
+yearofthesnake (45x45, 18.4%) is a win — so area, not just terrain, is live as an
+explanation.
