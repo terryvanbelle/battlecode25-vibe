@@ -842,3 +842,68 @@ it varies does not control the quantity that matters.
 |---|---|
 | Anti-clumping / spread step (drafted iteration 5) | **withdrawn before evaluation** — motivated entirely by the inflated counts; no evidence density ever binds. Re-open only if a corrected trace shows high adjacency. |
 | Remove moppers entirely (iteration 3) | reject **stands**, explanation **retracted**. Cause is not density; see iteration 5's trace for the real one (paint-erasure race). |
+
+---
+
+## Iteration 5 — reserve tower paint so moppers stop starving the soldier pipeline (running)
+
+**Area**: spawn economics (a new area; the anti-clumping area was withdrawn above
+before it cost a run).
+
+**Motivating evidence** — absolute, not opponent-relative, per the algorithm's
+preference for degeneracy signals: the tower's realized army mix is ~90% moppers
+against an intended 25%, because a mopper costs 100 tower paint and a soldier 200
+against an income of 5-15/turn. Moppers cannot paint; painted area is the win
+condition. Both teams in every traced game end with 0-4 soldiers alive.
+
+**Hypothesis**: the mopper is not out-competing the soldier on merit, it is
+out-competing it on *price* against a trickling paint stash. Reserving tower paint
+so a mopper is only built when a soldier would also have been affordable should
+raise the soldier share, the paint-action rate, and coverage.
+
+**Change** (single, isolated, one dose parameter `MOPPER_PAINT_RESERVE`): a tower
+refuses to build a MOPPER unless it would still hold `MOPPER_PAINT_RESERVE` paint
+afterwards. Refusing does **not** substitute a cheaper unit — the build fails and
+the paint accumulates until a soldier is affordable, which is the point.
+`MOPPER_PAINT_RESERVE = 0` reproduces the iteration-4 build exactly, so the zero
+arm is `alice_iter4` itself, already frozen.
+
+**Mechanistic verification done before evaluating** (algorithm step 4), dose 200,
+Racetrack vs alice_iter4 — outcome class 2, *lost but mechanism engaged*:
+
+| | iter5 (dose 200) | iter4 (dose 0) |
+|---|---|---|
+| spawns/250r @r2000 | +38 soldiers, **+0 moppers** | +11 soldiers, +91 moppers |
+| paint actions/250r | 58-160 | 2-18 |
+| unpaint actions/250r | **0** | 64-165 |
+| coverage 500→2000 | 484 → **416‰** (decaying) | 463 → **544‰** (climbing) |
+
+Dose 200 drives moppers to **exactly zero** — i.e. it lands in the policy
+iteration 3 already refuted, by a different route. It painted ~10x more and still
+lost, because it did **zero** mopping while the opponent erased its paint all
+game. This is the cleanest evidence yet for a claim I had only asserted:
+**coverage is a contested stock, and a bot with no paint-removal loses the stock
+regardless of how fast it paints.** So dose 200 is rejected on the trace alone,
+without spending a gauntlet on it.
+
+**Evaluation design** (doctrine #2 — dose-response with a mandatory zero arm):
+run `20260906-213750`, `BOT=alice_iter4` (the zero arm) vs `OPPONENTS="alice_r100
+alice_r50"`, NMAPS=15, both sides = **60 games**. Running the *baseline* as BOT is
+deliberate: one shared map sample then measures both doses against the identical
+zero arm exactly, which three separate candidate-vs-baseline gauntlets would not.
+The accept-gate number for a dose is `1 - (iter4's win rate against it)`.
+
+**Pre-registered**:
+1. **Accept gate** — a dose beats `alice_iter4` head-to-head > 50%; with 30 games
+   per dose the noise band requires the dose to take **>= 18/30 (60%)**, i.e.
+   `alice_iter4` scores <= 12/30 against it.
+2. **Dose-response shape** — with dose 0 at 50% by definition and dose 200 already
+   shown catastrophic, an interior optimum is the predicted shape. A monotone
+   curve rising to 200 would falsify the whole reading and is the outcome that
+   would send me back to the trace.
+3. **Mechanism** — the winning dose's realized mopper spawn share must land
+   strictly between the extremes (0% at dose 200, ~90% at dose 0), verified in a
+   replay, not inferred from the win rate.
+4. **Watch (not a gate)** — soldier *deaths* per 250 rounds. If the soldier share
+   rises but deaths rise in proportion and coverage does not move, the binding
+   constraint is soldier survival, not spawn mix, and that becomes the next area.
