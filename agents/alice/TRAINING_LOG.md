@@ -2100,3 +2100,49 @@ within-run comparison on shared (map,side) cells).
 
 **Drafted, unqueued**: hybrid bug-nav (`bugnav-draft.java`) — motivating evidence
 retracted, see the maze entry; do not queue it without new evidence.
+
+## Iteration 11 candidate — SPLASHERS: an entire unit type, never built, holding two exploits
+
+`runSplasher` has existed since iteration 0 and **no tower has ever spawned one**.
+The spawn line is `(rnd(4) == 0) ? MOPPER : SOLDIER` — a splasher cannot occur.
+Two facts, both already sitting in my own `RULES.md`, make this the strongest
+remaining direction:
+
+1. **Splashers are the only unit that can *take* enemy ground.** A soldier cannot
+   overwrite enemy paint at all (engine: `soldierAttack` paints only empty or
+   already-ally). A mopper only clears enemy paint to *empty*. A splasher
+   **overwrites enemy paint with ours** within r²≤2 of its target centre. Since
+   **81% of games are decided by the round-2000 painted-area tiebreak**, the only
+   unit that converts the opponent's score into ours has never been on the field.
+
+2. **A splasher out-ranges paint and money towers, with zero retaliation.** Its
+   effective reach to a tower is dist²=16 (centre at 4, splash 2 beyond) against
+   those towers' action radius of r²=9. `RULES.md` line 119 records this and
+   nothing in the bot uses it. Towers are the **master variable** of this game
+   (LEARNINGS §3d), and this is a way to remove the opponent's towers for free —
+   which also frees the ruin, since a dead tower leaves its ruin rebuildable by
+   *either* team. Only defense towers (r²=16) can answer it.
+
+So splashers attack both halves of the win condition at once: they raise our
+painted area by lowering theirs, and they break the master variable on the
+opponent's side. This is the "high-risk structural exploration" track the
+algorithm calls first-class, and it is squarely the winner's-profile shape.
+
+**Cost and the obvious risk**: 300 paint + 400 chips, the most expensive unit, and
+paint is the binding resource while chips are not. Iteration 5's lesson applies
+directly and in the *opposite* direction this time — the mopper was too cheap and
+starved the soldier pipeline, so a splasher at 300 tower paint could starve it far
+harder. Any spawn rule must therefore be gated the same way iteration 5's was:
+**only build a splasher when doing so does not deny a soldier**, e.g. require tower
+paint ≥ `SOLDIER.paintCost + SPLASHER.paintCost`.
+
+**Pre-registered before writing it:**
+1. Gate: H2H vs the then-accepted snapshot, >= 16/24 at NMAPS=12.
+2. Mechanism: `spl` (splashers alive) > 0, **and** enemy tower deaths or our
+   coverage-gain-on-contested-tiles must rise. "Splashers exist" is not evidence —
+   the same trap iteration 10a fell into.
+3. Displacement gate (from iteration 5 and 10b): soldier spawn count and tower
+   count must not fall.
+4. Reachability check FIRST, before coding: confirm from a trace that enemy paint
+   in splash range actually occurs often — if the two armies never contact, the
+   unit is dead weight at 300 paint a copy.
