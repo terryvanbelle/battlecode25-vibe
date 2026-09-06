@@ -52,6 +52,11 @@ public class BobMop {
     // Is the crowding already happening AT our towers? This decides whether iteration
     // 8 (which deliberately sends units back to towers) amplifies a cost we already pay.
     static long adjNearTower = 0, adjFarFromTower = 0;
+    static boolean[] wall;
+    // Reachability pre-check for an anti-crowding change: for every unit-turn that
+    // HAS allied neighbours, could a single step to an adjacent passable, unoccupied
+    // tile have reduced that count? If not, the lever does not exist.
+    static long crowdedTurns = 0, couldReduce = 0, reducibleBy = 0;
     static final List<int[]> pendingDeaths = new ArrayList<>();  // [id, dieType]
 
     public static void main(String[] args) throws Exception {
@@ -88,6 +93,9 @@ public class BobMop {
                 W = gm.size().x(); H = gm.size().y();
                 owner = new byte[W*H];
                 Arrays.fill(owner, (byte)-1);
+                wall = new boolean[W*H];
+                for (int k = 0; k < gm.wallsLength() && k < W*H; k++)
+                    wall[k] = gm.wallsVector().get(k);
                 VecTable ruins = gm.ruins();
                 System.out.println("# map=" + gm.name() + " " + W + "x" + H
                     + " symmetry=" + gm.symmetry()
@@ -234,6 +242,23 @@ public class BobMop {
                             if (owner[y * W + x] == us) allyNear = true;
                         }
                         if (o != us && allyNear) couldHaveStoodAlly++;
+                        // anti-crowding reachability
+                        int here = adjCount(occupied, u[0], u[1]);
+                        if (here > 0) {
+                            crowdedTurns++;
+                            int best = here;
+                            for (int dx = -1; dx <= 1; dx++) for (int dy = -1; dy <= 1; dy++) {
+                                if (dx == 0 && dy == 0) continue;
+                                int x = u[0] + dx, y = u[1] + dy;
+                                if (x < 0 || y < 0 || x >= W || y >= H) continue;
+                                int l = y * W + x;
+                                if (wall != null && l < wall.length && wall[l]) continue;
+                                if (occupied.contains(key(x, y))) continue;
+                                int c = adjCount(occupied, x, y);
+                                if (c < best) best = c;
+                            }
+                            if (best < here) { couldReduce++; reducibleBy += (here - best); }
+                        }
                     }
                 }
                 if (r.roundId() % every != 0) continue;
@@ -293,6 +318,15 @@ public class BobMop {
                 + (adjNearTower * 100 / standAdj) + "% are within r2<=8 of one of OUR towers ("
                 + adjNearTower + " near / " + adjFarFromTower + " away)");
         }
+        if (crowdedTurns > 0) {
+            System.out.println("# ANTI-CROWDING REACHABILITY");
+            System.out.println("#   unit-turns WITH an allied neighbour: " + crowdedTurns
+                + " (" + (standTurns > 0 ? crowdedTurns * 100 / standTurns : 0) + "% of unit-turns)");
+            System.out.println("#   of those, a single step could have REDUCED the count: "
+                + couldReduce + " (" + couldReduce * 100 / crowdedTurns + "%)");
+            System.out.println("#   total reducible neighbour-instances: " + reducibleBy
+                + "  (= paint/round recoverable if every unit always took the best step)");
+        }
         System.out.println("# exceptionDeaths=" + exceptionDeaths);
         System.out.println("# DEATHS of our units, bucketed by paint held on the last turn");
         System.out.println("# type,deaths,paint<=10(starved),paint 11-50,paint>50(killed)");
@@ -326,6 +360,16 @@ public class BobMop {
         }
         Arrays.sort(dists);
         return new int[]{inAct, inVis, dists[dists.length/2]};
+    }
+
+    /** allied units adjacent to (x,y), excluding (x,y) itself */
+    static int adjCount(Set<Long> occupied, int x, int y) {
+        int c = 0;
+        for (int dx = -1; dx <= 1; dx++) for (int dy = -1; dy <= 1; dy++) {
+            if (dx == 0 && dy == 0) continue;
+            if (occupied.contains(key(x + dx, y + dy))) c++;
+        }
+        return c;
     }
 
     static long key(int x, int y) { return ((long) x << 20) | y; }

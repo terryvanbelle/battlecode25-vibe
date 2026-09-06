@@ -1971,3 +1971,50 @@ printed a believable 63/26/9 split. Neither was caught by reading the code. Both
 were caught by one number being obviously impossible (nothing printed at all; 0%).
 The habit that works is to put a value in every report whose correct magnitude I can
 predict in advance, and check that one first.
+
+### Anti-crowding: reachability pre-check CLOSES it before it cost an iteration
+
+The corrected census made anti-crowding the largest non-starvation lever at 15,600
+paint. TRAINING_ALGORITHM.md requires a reachability check before building
+anything, so: for every unit-turn that *has* allied neighbours, could a single step
+to an adjacent passable, unoccupied tile have reduced the count? (Walls read from
+the map header's `wallsVector`.)
+
+```
+unit-turns with >=1 allied neighbour            11,022  (37% of unit-turns)
+of those, a single step could REDUCE the count   2,421  (21%)
+total reducible neighbour-instances              2,834
+```
+
+**The achievable dose is 2,834 paint, not 15,600.** Four fifths of the crowding is
+geometrically unavoidable — units are packed in corridors and around the same
+objectives, and every adjacent tile is just as crowded or occupied. And 2,834 is an
+*upper bound* assuming every unit always takes the least-crowded step, which would
+directly fight moving toward its objective. Against the 23,780 that reaches the map,
+the realistic capture is a rounding error.
+
+**CLOSED: "reduce paint drain by having units avoid standing next to each other."**
+Not because the cost is small — it is 15,600 paint, two thirds of all drain — but
+because almost none of it is recoverable. Re-open only if a future change makes
+units substantially more mobile or spreads objectives out.
+
+### The pattern worth naming
+
+That is now **three levers killed by measuring the achievable dose rather than the
+observed cost**, all in one session, all for free:
+
+| lever | observed cost | achievable | verdict |
+|---|---|---|---|
+| denial units idle (navigation) | ~99% of capacity | 0 — they are already in contact | closed |
+| prefer ally paint when stepping | claimed 17,000 paint | ~909 paint | struck |
+| anti-crowding | 15,600 paint | ≤2,834, conflicts with objectives | closed |
+
+**A big cost is not a big opportunity.** Every one of these looked like a headline
+finding, and the number that mattered in each case was not the size of the waste but
+the size of the *slice a change could actually take*. The reachability and
+trigger-frequency pre-checks are the whole difference, they cost minutes against a
+gauntlet's hour, and I would have spent three iterations without them.
+
+What survives the same test is starvation: 78% of deaths at ≤10 paint, with a
+mechanism (`tryRefill` cannot see past vision) whose fix is a few lines and whose
+dose is the entire 456-death population. That is why iteration 8 is the one running.
