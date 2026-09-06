@@ -42,6 +42,12 @@ public class ReplayDump {
     // a dump was cumulative spawns. It made the accepted bot look like it fielded
     // more units than the map has tiles.)
     static long[] deaths = new long[3], spawnSold = new long[3], spawnMop = new long[3];
+    static long[] xfers = new long[3];   // paint transfers/withdrawals per window
+    // Death-cause classification. DieType carries only UNKNOWN/EXCEPTION, so cause is
+    // derived: a robot sitting at 0 paint takes -20 HP/turn and dies of starvation, so
+    // its last observed paint distinguishes that from being killed.
+    static Map<Integer, Integer> lastPaint = new HashMap<>();
+    static long[] starved = new long[3];
 
     public static void main(String[] args) throws Exception {
         for (int i = 1; i < args.length; i++) {
@@ -121,12 +127,15 @@ public class ReplayDump {
                           .append(" a").append(attacks[tid]).append(" s").append(splashes[tid])
                           .append(" m").append(mops[tid]).append("]")
                           .append(" +sold").append(spawnSold[tid]).append(" +mop").append(spawnMop[tid])
-                          .append(" died").append(deaths[tid]);
+                          .append(" died").append(deaths[tid])
+                          .append(" xfer").append(xfers[tid])
+                          .append(" starved").append(starved[tid]);
                     }
                     System.out.println(sb);
                     Arrays.fill(paints, 0); Arrays.fill(unpaints, 0); Arrays.fill(attacks, 0);
                     Arrays.fill(splashes, 0); Arrays.fill(mops, 0);
                     Arrays.fill(deaths, 0); Arrays.fill(spawnSold, 0); Arrays.fill(spawnMop, 0);
+                    Arrays.fill(xfers, 0); Arrays.fill(starved, 0);
                 }
             } else if (t == Event.MatchFooter) {
                 MatchFooter mf = (MatchFooter) ew.e(new MatchFooter());
@@ -178,6 +187,7 @@ public class ReplayDump {
                     + " mCD=" + turn.moveCooldown() + " aCD=" + turn.actionCooldown()
                     + " bc=" + turn.bytecodesUsed());
         }
+        lastPaint.put(id, turn.paint());
         int o = turn.__offset(22); // actions union vector
         if (o == 0) return;
         int len = turn.__vector_len(o);
@@ -241,12 +251,17 @@ public class ReplayDump {
                     if (d.dieType() == DieType.EXCEPTION)
                         System.out.println("round " + round + " DIE-EXCEPTION " + lbl(d.id()));
                     Integer dt = teamOf.get(d.id());
-                    if (dt != null) deaths[dt]++;
+                    if (dt != null) {
+                        deaths[dt]++;
+                        Integer lp = lastPaint.get(d.id());
+                        if (lp != null && lp <= 0) starved[dt]++;
+                    }
                     if (print) System.out.println("round " + round + " DIED " + lbl(d.id()));
                     teamOf.remove(d.id());
                     break;
                 }
                 case Action.TransferAction: {
+                    xfers[tid]++;
                     if (print) {
                         TransferAction tr = new TransferAction(); tr.__init(pos, bb);
                         System.out.println("round " + round + " " + lbl(id) + " TRANSFER " + tr.amount()

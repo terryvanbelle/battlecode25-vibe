@@ -947,3 +947,30 @@ Once every tower reaches L3, `getNextLevel()` returns null and chips pile back u
 ($180,890 by r2000). SRPs would reopen that sink.
 
 Registered as the iteration 6 candidate (paint refill), ahead of SRPs.
+
+### Death-cause probe — starvation, not combat, is what kills this bot
+
+`DieType` carries only UNKNOWN/EXCEPTION, so I derived the cause instead: the
+dumper now records each robot's last observed paint and classifies a death as
+starvation when that paint was 0 (a robot at 0 paint takes -20 HP/turn and cannot
+act until refilled). Measured on the Racetrack iter5-vs-iter4 replay, per 250
+rounds:
+
+| team | deaths | starved | share | transfers |
+|---|---|---|---|---|
+| iter5 (dose 200, soldiers only) | 33-44 | 29-40 | **~90-100%** (100% at r1250) | **0** |
+| iter4 (accepted build) | 69-102 | 46-68 | **~65-70%** | **0** |
+
+**`xfer0` for both teams for the entire game** — the paint-transfer mechanic is
+never invoked once, by either lineage member.
+
+So the treadmill is not attrition from fighting. My units run their 200-paint tank
+dry in ~85 rounds and die of exhaustion, and the bot's only response is to pay 200
+tower paint **and 250 chips** to build a replacement that starts the same clock.
+Iteration 6's premise is now measured rather than argued.
+
+**Reachability note for iteration 6** (algorithm step 3, checked before writing
+code): opportunistic refill alone is likely near-dead, because a soldier with no
+ruin to work *wanders* and never approaches a tower deliberately. Vision is only
+r²=20 (~4.5 tiles), so the unit must also remember a tower location. Iteration 6
+is therefore seek-and-withdraw as **one** mechanism, not an opportunistic top-up.
