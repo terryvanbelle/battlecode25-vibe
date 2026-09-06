@@ -454,3 +454,170 @@ Verified against the engine source, not inferred:
 | navigation | wander + slide; soldiers walk into map corners and die there | iter0 |
 | map symmetry inference | none | never |
 | play-symmetry hygiene | 3 fixed-absolute-order tie-breaks identified, unfixed; mirror instrument built | iter4 planned |
+
+---
+
+## Instrument change (coordinator, 2026-09-06 ~20:30) — EVAL12 retired
+
+`tools/gauntlet.sh` now draws a **fresh random 25-map sample** from the 75-map
+list whenever `MAPS` is unset, and records it to `<run>/maps.txt`. Routine
+evaluation runs must stop passing a hand-picked `MAPS=` list: a standing list is
+an overfitting surface, and my `EVAL12` was exactly that. **EVAL12 is retired**;
+default runs are now 25 maps x both sides x N opponents (100 games for two
+opponents), `NMAPS=40` for close calls.
+
+Consequences for how I read my own numbers:
+1. **Within a run, comparisons stay exact** — the sample is drawn once and every
+   opponent plays the same maps. My accept gate is a within-run head-to-head, so
+   the gate itself is unaffected.
+2. **Across runs the instrument now changes**, so raw win-rate deltas between
+   two runs are no longer like-for-like. Iteration 2's 83% (EVAL12, run
+   20260906-185051) and any later percentage are **not** measured on the same
+   instrument and must not be trended against each other.
+3. When run-to-run comparability is actually required — a regression check
+   against an older snapshot, a feature ablation, a dose sweep, or re-running a
+   single game to trace it — **pin the maps**:
+   `MAPS="$(cat gauntlet/<run-id>/maps.txt)"`.
+4. **Iteration 3 is the last EVAL12 run.** Its comparison to iteration 2 is
+   still valid (both on EVAL12, and iteration 3's own head-to-head is
+   within-run), but the sample is 12 maps and the noise band from iteration 1
+   (13-15/24 ≈ 50%) applies to it, not to the wider 25-map runs that follow.
+   New noise band for a 50-game head-to-head: ≥30/50 (60%) is ~92% one-sided,
+   ≥32/50 (64%) is ~98%; treat 24-29/50 as inside noise of 50%.
+
+---
+
+## Iteration 3 — RESULT: REJECTED, and the hypothesis is refuted, not just unproven
+
+Run 20260906-201852 (EVAL12, both sides, opponents alice_iter2 + alice_iter1).
+
+| pre-registered criterion | result | verdict |
+|---|---|---|
+| (1) H2H vs alice_iter2 > 50% and >= 16/24 | **7/24 (29%)**, 7 swept-losses | FAIL, decisively |
+| (2) moppers < 50, soldiers >> 52, coverage > 562‰ | moppers 0, soldiers **314**, coverage **467‰** | mechanism engaged; outcome inverted |
+| (3) no new swept-loss on maps 2c swept | new swept-losses on DefaultSmall, DefaultLarge, Paintball, Money, Gears, Oasis, FourCorners | FAIL |
+| (4) maze not worse | maze **flipped to 2/2 wins** | PASS (the one thing that worked) |
+
+vs alice_iter1 it scored 13/24 (54%) — but iter1 also builds moppers, so that
+comparison cannot separate the mechanism; the accept gate (vs iter2) is the
+instrument that matters and it is unambiguous.
+
+### Trace of the flip (DefaultLarge, bot=A, win→loss)
+T1 = iteration 3 (no moppers), T2 = alice_iter2:
+
+| round | T1 cov | T1 sold | T1 paint-acts | T2 cov | T2 mop | T2 unpaints |
+|---|---|---|---|---|---|---|
+| 250 | 536‰ | 51 | 743 | 200‰ | 7 | 8 |
+| 500 | **562‰** | 88 | 57 | 398‰ | 15 | 19 |
+| 750 | 519‰ | 127 | 85 | 456‰ | 54 | 148 |
+| 1000 | 497‰ | 164 | 50 | 485‰ | 87 | 81 |
+| 1500 | 478‰ | 238 | 128 | 502‰ | 222 | 136 |
+| 2000 | **467‰** | **314** | 83 | **509‰** | 405 | 87 |
+
+T1 finished with **$204,780 unspent**.
+
+**Two mechanisms, both the opposite of what I predicted:**
+
+1. **Unbounded soldier population is self-destructive.** Removing the mopper
+   branch did not redirect tower paint into *painting* — it redirected it into
+   *bodies*. 314 soldiers on a 50x30 (1500-tile) map is one unit per five tiles,
+   so essentially every soldier is permanently adjacent to several allies, and
+   the adjacency tax is -1 paint per adjacent ally per turn. The whole army sits
+   at ~0 paint: paint actions collapse from 743 per 250 rounds at r250 to ~80
+   for the rest of the game, with **four times as many soldiers doing them**.
+   The mopper branch in iter2 was accidentally acting as a **population
+   regulator** — it burned tower paint on units that then stopped consuming
+   anything, capping the soldier count near the density where the adjacency tax
+   is still survivable. That is why iteration 2c works, and I did not know it.
+
+2. **Moppers are an offensive weapon and my pool does use it.** T2's `u`
+   (UnpaintAction = tiles mopped) runs 81-148 per 250-round window all game.
+   T1's coverage *peaks at r500 and then falls 95‰* — it is being erased faster
+   than 314 starving soldiers can repaint it, and T1 has nothing that can erase
+   T2's paint back (soldiers cannot overwrite enemy paint). My iteration-3
+   representativeness note claimed "no lineage member contests enemy paint";
+   **that was wrong** — moppers contest it, and I measured their utilisation on
+   a game where they were starving in a 677-strong crowd rather than one where
+   there was enemy paint worth mopping.
+
+### What this iteration bought (a reject that paid for its run)
+- **Coverage is not monotone.** It is a *stock* under attack, not a running
+  total. Every previous iteration implicitly treated painting as cumulative.
+- **Unit count has an interior optimum** set by the adjacency tax, and nothing
+  in the bot currently regulates it. New functional area opened:
+  *population control / anti-clumping*.
+- **The paint-erasure race is a real axis of the game** that my bot participates
+  in only by accident.
+
+### Closed-directions ledger
+| direction | closed by | can re-open if |
+|---|---|---|
+| Remove moppers entirely (spawn 100% soldiers) | iteration 3: 7/24 (29%) vs iter2, DefaultLarge trace shows soldier population runs to 314 and coverage decays 562→467‰ | a population cap exists *first*; the failure was density, not the mopper's absence per se. Re-test only after anti-clumping/population control is in. |
+
+### Registered follow-ups from this trace (not started)
+- **Mopper dose sweep** (0 measured, 1/4 = iter2 measured; missing 1/8 and 3/8).
+  Cheap, and the curve would tell whether iter2's 1/4 is near the optimum. Must
+  be run with `MAPS="$(cat gauntlet/20260906-201852/maps.txt)"` to stay
+  comparable to the two doses already measured.
+- **Anti-clumping**: soldiers prefer moves that reduce adjacent-ally count.
+  Directly attacks the tax that iteration 3 exposed.
+- **Purposeful moppers**: send moppers at enemy paint instead of wandering.
+
+---
+
+## Iteration 4 — towers upgrade themselves with idle chips (running)
+
+**Area**: economy (leaving the mopper area after its reject, per the algorithm's
+functional-area discipline).
+
+**Motivating evidence, absolute rather than opponent-relative**: every game of
+every iteration so far ends with a chip mountain the bot cannot spend —
+$113k (iter1), $120,840 (iter2), **$204,780 (iter3)** — while paint bounds
+everything the bot does. Chips are pure waste in a resource-conversion game.
+
+**Hypothesis**: a tower upgrading itself converts idle chips into permanent
+paint income (5→10→15/turn) and chip income (20→30→40/turn) at *zero* action
+cost, raising the cumulative paint production that caps team coverage.
+
+**Engine verification done before writing the code** (not inferred from
+behaviour): `RobotControllerImpl.assertCanUpgradeTower` calls
+`assertCanActLocation(loc, BUILD_TOWER_RADIUS_SQUARED=2)`, which checks *only*
+range and on-map — it does **not** check action readiness — and `upgradeTower`
+adds no cooldown. So a tower upgrading itself (distance 0) spends chips and
+nothing else. `UnitType.getNextLevel()` returns null at level 3, so the guard is
+exact rather than a magic constant.
+
+**Change** (single, isolated), at the top of `runTower`:
+upgrade self when `getNextLevel() != null` and
+`money >= nextLevel.moneyCost + CHIP_RESERVE`. The existing spawn gate's literal
+1450 is lifted into the named `CHIP_RESERVE` constant it already was
+conceptually — no behaviour change there.
+
+**Pre-registered**:
+1. H2H vs `alice_iter2` **> 50%**, and clear of the noise band for this run's
+   sample size (50 games ⇒ **>= 30/50**).
+2. Mechanism: in a DefaultLarge trace, `UPGRADE` lines appear after round 1 for
+   towers other than the four starting ones, and end-of-game unspent chips fall
+   materially below iteration 2's $120,840.
+3. Regression: vs `alice_iter1` stays >= 60%.
+4. Watch (not a gate): whether higher paint income re-creates iteration 3's
+   population blow-up. If soldier count at r2000 exceeds ~150 on DefaultLarge,
+   the adjacency tax will eat the gain and population control becomes the
+   blocking prerequisite for every economic iteration.
+
+**First run on the new instrument**: `MAPS` unset ⇒ fresh random 25-map sample,
+both sides, opponents alice_iter2 + alice_iter1 = 100 games.
+Run: 20260906-2053 (id in `gauntlet/`).
+
+**Ops note (2026-09-06, iteration 4 launch)**: my gauntlet's stdout was
+redirected to a file under the session scratchpad
+(`/tmp/claude-1000/-home-terryvanbelle-projects-vibe-2025/<session>/scratchpad/g4.log`)
+and a sibling agent's gauntlet wrote its own progress into the *same absolute
+path* — NUL padding plus interleaved lines, i.e. two processes with independent
+offsets on one file. My progress output was clobbered and I was passively shown
+another agent's gauntlet lines (an isolation hazard, since gauntlet results are
+not a sanctioned channel — only `tournaments/` is). No measurement was
+affected: the authoritative record is `gauntlet/<run>/results.txt`, pulled from
+my own workspace-scoped remote path, which the collision cannot touch.
+**Standing fix: never redirect run output into the shared /tmp tree — use
+`agents/alice/logs/`, and poll `gauntlet/<run>/results.txt` for progress.**
