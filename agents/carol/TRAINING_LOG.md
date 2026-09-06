@@ -2627,3 +2627,50 @@ reports, and not bundled with it.
 `refillIfPossible` off entirely and measure it. It has never been measured at all, and per the
 algorithm one cheap run per carried feature has historically found more real corrections than
 invention did.
+
+---
+
+## RESUME STATE (2026-09-06 ~23:0x UTC) — read this first if you are a fresh session
+
+**Accepted lineage**: iter0, 1, 2, 3, 5, 7 (4, 6 and 6b rejected; numbering keeps the gaps
+deliberately). `HEAD`'s `src/carol` = **iteration 8 candidate**, which is *not yet accepted* —
+see below before assuming HEAD is the accepted build.
+
+**In flight**: `gauntlet/20260906-223146` — iteration 8 (paint-tower floor,
+`PAINT_FLOOR_TOWERS = 3`) vs `carol_iter7` + `carol_rush`, 20 pinned maps, 80 games. Launched
+22:31 and **still at 0 results**: all five BC25 semaphore slots are held by alice's and bob's
+runs. Runner verified alive. Recover with
+`../../tools/gauntlet-collect.sh 20260906-223146` if the poll loop dies; **do not re-run it**.
+Note it predates the coordinator's `bot.txt` fix, so `track_vs_old_bots.py` will fall back to a
+date guess — check the label, report it, don't hand-edit.
+
+**Iteration 8's primary gate is already retracted** (see the reachability-failure entry). It
+cannot fix its own motivating games: on Dominoes carol completes zero ruins, so `towerTypeFor`
+is never called productively. Judge it on the h2h vs `carol_iter7` **only**.
+
+**Decided and queued, in order:**
+1. **Paint reserve** — `refillIfPossible` should take only the surplus above one soldier's build
+   cost. **Both pre-checks are done and pass** (trigger frequency: median 28 of the first 100
+   rounds with no tower able to afford a soldier, 9 of 27 games above 50; history: the rule is
+   unexamined iteration-0 scaffolding). Cleared to write. Largest measured opportunity on the
+   board.
+2. **Iteration 9 = SRPs** — `src/carol_i8` is written and compile-verified; gate pre-registered.
+   Chosen by a procedure fixed before the deciding measurement.
+3. **Ablation of `refillIfPossible`** — never measured in 8 iterations.
+4. Early paint-tower survival on Dominoes (needs its own trace first).
+
+**Closed this session**: tower mix by observed tower-paint scarcity (6b, three instruments);
+late type-aware paint-tower floor (Gap A, unreachable in 160 games).
+
+**Instruments built this session**: `tools/frozen-treasury.py`, `tools/paint-drought.py`,
+`tools/eval-run.sh` (the standing checklist as one command — run it on every run).
+
+**Pool**: `carol_turtle` retired (unbeaten in 64). `carol_decap` is a **failed** instrument
+(97.5%, never kills a tower) — do not reuse it as a peer without rebuilding it for swarm timing.
+`carol_rush` is a benchmark kept only because it is the sole opponent that exposes early
+degeneracies.
+
+**Standing per-evaluation checklist** (run `tools/eval-run.sh <run-id> <gate-opponent>`):
+completeness, win rates with the noise floor, swept shape, side split, exceptions, bytecode,
+frozen-treasury gate, paint-drought gate. Plus the API sweep (`grep -o 'rc\.[a-zA-Z]*'` diffed
+against `javap RobotController`) — it found three unused mechanics the first time it was run.
