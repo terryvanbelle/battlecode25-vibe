@@ -11,3 +11,5 @@ iteration,build,run_id,opponent,games,wins,pct,decisive_of_total,decision
 3,carol@iter3,20260906-201624,carol_iter2,32,25,78.1,,accept
 3,carol@iter3,20260906-201624,carol_rush,32,29,90.6,,retire-from-gating
 3,carol@iter3,20260906-201624,ALL,64,54,84.4,,accept
+4,carol@iter3+reserve-arming,20260906-202908,carol_iter3,50,20,40.0,,REJECT
+4,carol@iter3+reserve-arming,20260906-202908,carol_rush,50,47,94.0,,reject-run

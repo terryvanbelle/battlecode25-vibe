@@ -620,3 +620,44 @@ turn against a measured peak of ~500/17500, and touches no branch condition.
 Compile-checked (`COMPILE-OK`). Waiting on the iteration-4 run's `carol_rush` block to
 finish before launching — two gauntlets from one workspace share `build/classes` and would
 poison each other.
+
+**Iteration 5 run design (revised to fold in the new reporting duty).** The coordinator
+added a standing fixed-roster chart (`progress/`), so instead of running the accept gate and
+the roster separately I run them together: `OPPONENTS="carol_iter3 <roster>"` with
+`NMAPS=12`, i.e. 6 opponents x 12 maps x 2 sides = 144 games. The h2h gate is measured at
+n=24 rather than n=32-50 (binomial floor ~2.4 games instead of ~2.8-3.5), which is the price
+of getting solid roster points for every frozen opponent in the same run — and within a run
+the map sample is shared by every opponent, so the roster comparison and the gate are
+measured on identical ground.
+
+**Iteration 4 final numbers** (run complete, 100 games, 0 exceptions): h2h vs `carol_iter3`
+20/50 = 40.0%; vs `carol_rush` 47/50 = 94.0%. The pre-registered annihilation gate also
+failed — DefaultSmall vs carol_rush is still lost by annihilation from both sides (r122,
+r132, up from r69/r146), so the reserve change extended the game without changing the
+outcome, exactly as the single-map mechanistic verification predicted. Two independent
+gates failed; rejection is firm.
+
+## Queued targets after iteration 5 (ordered, with the evidence each rests on)
+
+1. **SRPs** (`markResourcePattern`/`completeResourcePattern`, drafted). 200 chips buys
+   +3/turn to every paint tower *and* +3/turn to every money tower, so it is the only
+   purchase that lifts **both** ceilings in the two-ceiling model (LEARNINGS.md), and its
+   25 tiles are 25 painted tiles in a game decided by painted area. Payback ~11 rounds at
+   six towers vs 50 for a new money tower and 250+ for any upgrade. Conditional on
+   iteration 5: a chip *sink* only pays once the chip *source* is fixed.
+2. **Splashers** (drafted: spawn mix + a rewritten 13-centre splash scorer that scores all
+   candidates from one `senseNearbyMapInfos(16)` call into a flat 11x11 byte grid).
+   **Gated on the IDLE-ENEMY readout** shipped in iteration 5: soldiers paint nothing on
+   ~74% of their turns, and splashers are the answer only if that idleness is enemy paint
+   in reach (which a soldier physically cannot touch). If it is IDLE-ALLY instead, the
+   answer is frontier-seeking navigation and splashers would be a wasted iteration. This
+   is Measurement doctrine #4 — check the threat exists before building the defence.
+3. **Defense towers as a chip *source*** — noticed re-reading RULES.md: a defense tower
+   earns 20/30/40 chips *per attack that hits at least one robot*, and a tower makes one
+   single-target and one AoE attack per turn, so a contested defense tower out-earns a
+   money tower (up to 40/turn at lv1) while also being the only structure that damages
+   attackers, out-ranging soldiers (r2=16 vs 9). This re-motivates the defense idea that
+   the corrected iteration-2 scoring had demoted — not as defence, as *income that happens
+   to shoot back*. Needs a trace of how often enemies are actually in tower range first.
+4. **Communication** — still entirely unused (API sweep). Tower-to-tower broadcast is
+   r2=80 with no paint-path requirement.

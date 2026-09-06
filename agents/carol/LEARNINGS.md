@@ -112,3 +112,26 @@ accepted on good evidence (it fixed a tower collapse) and was still right in the
 was measured in; it was armed in a regime that was never measured. Two rules that follow:
 arm a reserve only once the thing it protects is demonstrably happening, and instrument the
 gate value itself (`rsv=` in the indicator string), not just the resource it gates.
+
+## The two ceilings (why the tower mix is the whole economy)
+
+Every painted tile costs 5 paint and **all** team paint originates from paint-tower mining
+(5/10/15 per turn at lv1/2/3, plus 3 per active SRP per paint tower). Every unit costs
+chips, and all chips originate from money-tower mining (20/30/40, plus 3 per SRP per money
+tower). So a game plan is pinned between two hard ceilings:
+
+- **painting rate <= team paint income / 5 tiles per round** — set by paint-tower count;
+- **unit count growth <= team chip income / unit cost** — set by money-tower count.
+
+Both numerators come from the same scarce thing: completed ruins. So *the paint/money build
+mix is not a detail, it is the strategy*, and the failure mode is always the same shape —
+one resource pinned at zero while the other accumulates unspent:
+
+| trace | regime | symptom |
+|---|---|---|
+| iteration 1, DefaultMedium | all money towers | 213k chips idle, tower paint ~0 |
+| iteration 3, galaxy | all paint towers | 30 chips/turn forever, one soldier per 8.3 rounds, tower paint +5/turn unspent |
+| iteration 3-4, DefaultSmall | 1 paint tower, no ruins claimed | tower paint 0 from round 11, chips idle, annihilated |
+
+Read both numbers in every economic trace, not one. A trace that shows only the resource
+you suspected will confirm whatever you already believed.
