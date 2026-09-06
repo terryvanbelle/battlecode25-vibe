@@ -1819,3 +1819,61 @@ opponent.
 
 Recording this because "the tournament will tell us" is the kind of assumption that quietly
 substitutes for measurement — it would not have told us anything.
+
+### LEARNINGS audit — "name the line of code each lesson changed"
+
+Applied the check I proposed after the dead-band discovery, to every LEARNINGS entry that
+prescribes a code change. It found a **third** instance of the same pathology.
+
+**Splashers are still not built.** LEARNINGS.md's longest entry, "Soldiers cannot contest
+ground", concludes that only splashers bulk-convert enemy paint and *"elevates splashers from
+'a nice throughput gain' to the central missing capability"*. The spawn line is:
+
+```java
+UnitType want = (rng.nextInt(4) == 0) ? UnitType.MOPPER : UnitType.SOLDIER;
+```
+
+**No splasher is ever built.** `runSplasher()` and the whole splash-scoring routine are
+present, compiled, and **unreachable** — sunk work from iteration 4 sitting one token away
+from being live.
+
+**And iteration 4 never measured it.** Iteration 4 bundled three changes (splasher spawn mix,
+money-tower ratio, *and* a delayed-arming reserve) and was rejected at 40%. Iteration 5 then
+took the money-tower half alone and it **accepted at 66.7%** — so the bundle's rejection says
+nothing about the splasher arm, which has never been measured on its own. Iteration 4's own
+reachability argument for bundling (a splasher costs 400 chips and the treasury was pinned at
+the reserve) **is now satisfied by the accepted baseline**, since iteration 5 raised chip
+income 30 -> 150/round. The condition that forced the bundle is gone.
+
+**Ledger: re-opening "splasher spawn mix" is legitimate**, on the specific grounds the ledger
+requires — not "it feels under-explored" but "the recorded cause was confounding with two
+other changes, one of which has since been independently accepted and now funds it".
+Registered as **iteration 9**, and it is one line.
+
+### History pre-check for iteration 7 — it does not revert iteration 4, it inverts it
+
+Iteration 4 also changed `CHIP_RESERVE`, and was rejected with a trace: arming the reserve
+*late* let ~7 early soldiers eat the 1,980 starting chips that are exactly the first ruin
+completion, leaving the candidate **one tower behind by round 300 and never catching up**.
+The log records the conclusion firmly: "the early reserve is load-bearing after all... the
+cure was worse than the disease".
+
+Iteration 7 is the **inverse** of that change, and the distinction is the whole point:
+
+| | iteration 4 (rejected) | iteration 7 |
+|---|---|---|
+| when the reserve is off | **early**, while income is healthy and growing | only after chips are *exactly* unchanged for 10 turns, i.e. income is zero |
+| early game | reserve disarmed — the failure | reserve fully armed; `stagnantTurns` cannot leave 0 while income flows |
+
+Confirmed empirically in the verification replay, not just argued: `rsv=1200` at every round
+from 1 to 31, first disarm at **r37**, after the money tower died at r26. Iteration 4's
+load-bearing early hoard is untouched.
+
+**And iteration 4's own prediction is now falsified, which is the new evidence the algorithm
+requires for re-opening.** It concluded: *"the dead band becomes terminal only when chip income
+reaches zero, and income reaches zero only because iterations 2-3 build a paint tower at every
+ruin. Fix the income and the reserve stops being a trap without touching it. That is iteration
+5."* Iteration 5 was accepted — and the dead band still killed carol on DefaultSmall at round
+69 in iteration 6's run, because `carol_rush` **kills the money towers**. Income reaching zero
+does not require building no money towers; it only requires losing them. That is a specific,
+evidenced reason the recorded cause no longer applies.
