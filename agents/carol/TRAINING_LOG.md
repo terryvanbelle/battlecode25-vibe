@@ -2524,3 +2524,47 @@ The honest summary: I diagnosed the absorbing state correctly, verified it from 
 correctly, built the right instrument for it — and then aimed the fix at the wrong link in the
 chain, because I checked that my new branch would execute without checking that executing it
 could reach the failure.
+
+### Re-scoped trace: why carol's paint tower dies at r50 on Dominoes — the opening is paint-starved
+
+Per-tower paint, carol's side, accepted baseline:
+
+| round | tower paints | enemies seen |
+|---|---|---|
+| 1 | [300, 410] | 0 |
+| 4 | [40, 100] | 0 |
+| 11 | [10, 100] | 0 |
+| 25 | **[0, 150]** | 0 |
+| 30 | [0, 100] | **2** — the rush arrives |
+| 49 | [0, 190] | 1 |
+| 50 | **[0]** — a tower is gone | 0 |
+
+Carol emits **205** soldier indicator lines in the whole game; `carol_rush` emits **11,572**.
+
+**The tower is not killed while carol is strong — carol is already empty when it arrives.** One
+tower is pinned at 0 paint from round 25, twenty-five rounds *before* any enemy is in sight and
+five rounds before one is even visible. The rush walks into a base that produced almost nothing.
+
+**Mechanism.** Two draws compete for one stash: spawning costs 200 paint per soldier from the
+building tower, and `refillIfPossible` lets any soldier below half capacity top itself back to
+full from an adjacent tower. A single lv1 paint tower mines 5/turn (lv2: 10). So a couple of
+soldiers cycling home to refill drain the stash faster than it regenerates, and once it hits 0
+**nothing** can spawn — the same shape as the chip dead band, on the other resource, and with no
+reserve protecting it.
+
+Note the exact parallel: `CHIP_RESERVE` exists precisely because unreserved spawning drained
+the treasury and cost towers (iteration 2). **The identical failure exists on paint and has no
+reserve at all.** Soldiers refill greedily to full with no notion of leaving the tower enough to
+build the next unit.
+
+**Registered as the re-scoped degeneracy iteration: a tower paint reserve.** `refillIfPossible`
+takes only the surplus above one soldier's build cost, so refuelling an existing soldier can
+never consume the ability to create a new one. Small, local, and it mirrors an already-accepted
+mechanism rather than inventing one — which also means iteration 2's evidence transfers as the
+argument for why a reserve of this shape works.
+
+Pre-checks still owed before it is written: *trigger frequency* (how often does tower paint hit
+0 while a soldier is refilling, across maps that are not Dominoes), and *history* (iteration 3's
+`refillIfPossible` was accepted on its own evidence and this narrows it, so the change must
+supersede that reasoning rather than silently undo it). Not writing code until both are done —
+which is precisely the discipline iteration 8 skipped.
