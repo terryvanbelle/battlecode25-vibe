@@ -1,4 +1,4 @@
-package alice_i11;
+package alice_i10e;
 
 import battlecode.common.*;
 
@@ -23,6 +23,10 @@ public class RobotPlayer {
     // --- state ---
     static int rngState;           // xorshift PRNG state (seeded from ID)
     static Direction wanderDir = null;
+    /** Iteration 10: the SRP this soldier is currently building, if any. */
+    static MapLocation srpCenter = null;
+    /** Towers required before soldiers divert to SRP building (iteration 10c dose). */
+    static final int SRP_MIN_TOWERS = 10;
     static int wanderSteps = 0;
 
     static int rnd(int n) {        // cheap deterministic per-robot PRNG
@@ -67,8 +71,6 @@ public class RobotPlayer {
     // ------------------------------------------------------------------ tower
     /** Chips held back so a 1000-chip tower completion can always fund (iteration 2). */
     static final int CHIP_RESERVE = 1450;
-    /** Towers required before a tower will spend 300 paint on a splasher (11d). */
-    static final int SPLASH_MIN_TOWERS = 10;
 
 
     static void runTower(RobotController rc) throws GameActionException {
@@ -101,38 +103,6 @@ public class RobotPlayer {
         // money near zero and stalls tower expansion permanently).
         if (rc.getMoney() >= CHIP_RESERVE) {
             UnitType want = (rnd(4) == 0) ? UnitType.MOPPER : UnitType.SOLDIER;
-            // Iteration 11: build SPLASHERS. They are the only unit that can TAKE
-            // enemy ground -- a soldier cannot overwrite enemy paint at all and a
-            // mopper only clears it to empty, while a splasher overwrites it with
-            // ours. 81% of games are decided by the painted-area tiebreak, so the
-            // only unit that converts their score into ours has never been built.
-            // Gated the same way iteration 5 gated moppers, in reverse: at 300 tower
-            // paint a splasher could starve the soldier pipeline far harder than the
-            // mopper did, so only build one when doing so cannot deny a soldier.
-            // 11b: the first gate (SOLDIER+SPLASHER = 500 in ONE tower) was DEAD CODE.
-            // Towers hover near ~100 paint each because they spend it spawning --
-            // measured twPaint 790-1195 across ELEVEN towers. Nothing ever reached
-            // 500, so spl stayed 0 all game. New towers, however, spawn with 500
-            // paint (RULES.md), so gating on the splasher's own cost lets a freshly
-            // built tower produce one before it drains.
-            // 11c: the rnd(8) roll made this dead code too. A tower's paint hovers
-            // near ~77 (measured twPaint 845 across 11 towers), so the 1-in-8 splasher
-            // roll essentially never coincided with holding 300. A NEW tower does
-            // start with 500 paint, but it spends it on soldiers within two spawns.
-            // So the decision is deterministic: whenever a tower can afford a
-            // splasher outright, build one. In practice that fires about once per
-            // freshly-built tower and never on a drained one, which is the rate we
-            // want -- and it needs no reserve logic that could starve soldiers.
-            // 11d: gate splashers behind tower saturation. 11a-c built 13 of them
-            // early (3,900 tower paint ~ 19 soldiers) during the window when tower
-            // patterns should be getting completed: soldiers spawned +45 vs +70,
-            // towers 9 vs 10, coverage 138 per-mille behind by r500 and never
-            // recovered. Same fix iteration 10c proved for SRPs -- towers first,
-            // luxuries from the leftovers.
-            if (rc.getNumberTowers() >= SPLASH_MIN_TOWERS
-                    && rc.getPaint() >= UnitType.SPLASHER.paintCost) {
-                want = UnitType.SPLASHER;
-            }
             // Iteration 5: reserve tower PAINT for soldiers. Measured defect --
             // a mopper costs 100 tower paint, a soldier 200, and a tower's paint
             // income is only 5-15/turn, so the tower can fund a mopper twice as
@@ -207,8 +177,66 @@ public class RobotPlayer {
                 rc.completeTowerPattern(UnitType.LEVEL_ONE_MONEY_TOWER, ruin);
             }
         } else {
-            wander(rc);
+            // Iteration 10: with no ruin to work, build a Special Resource Pattern.
+            // An active SRP adds +3/turn to EVERY producing tower -- with ~10 towers
+            // that is roughly +30 resources/turn for a one-off 200 chips, and chips
+            // are the resource this bot provably cannot spend (treasury sits on
+            // $100k+ once towers max out and the upgrade sink closes).
+            // Fragility is engine-verified: GameWorld.updateResourcePatterns re-checks
+            // the whole 5x5 every round and resets the 50-round timer if one tile
+            // stops matching, so it must be built on ground we already own -- hence
+            // the ally-paint guard on the centre tile.
+            MapLocation here = rc.getLocation();
+            if (srpCenter != null && !rc.canSenseLocation(srpCenter)) srpCenter = null;
+            // Iteration 10b: SRP centres must lie on a FIXED LATTICE spaced 5 apart.
+            // Without this every soldier marks a pattern centred on itself, so
+            // neighbouring patterns overlap and demand conflicting primary/secondary
+            // colours for the same tile -- the soldiers then repaint each other's
+            // tiles forever. Measured in 10a: 1599 paint actions per 500 rounds (8x
+            // the baseline) while coverage FELL to 403 vs 581 per-mille. A lattice of
+            // period 5 tiles the plane exactly, is identical for both teams (so it
+            // adds no side asymmetry), and needs no communication to agree on.
+            // Iteration 10c: don't start an SRP until tower expansion has saturated.
+            // 10b fixed the thrash but still lost 476 vs 507 per-mille with NINE
+            // towers against eleven: SRP work was displacing tower building, and a
+            // tower is worth 5-15 paint/turn plus a spawn point plus 500 starting
+            // paint, against +3/turn per SRP. Towers first, SRPs with the leftovers.
+            // 10e: replace the magic SRP_MIN_TOWERS=10 with a SELF-CALIBRATING gate,
+            // the refinement pre-registered before 10d's sweep (which came in a near
+            // miss at 13/24). Build only where NO ruin is visible at all. That is
+            // simultaneously (a) map-adaptive -- it needs no constant tuned per map
+            // size or ruin density -- and (b) exactly the placement rule the engine
+            // demands: GameWorld.updateResourcePatterns re-checks the 5x5 every round
+            // and resets the 50-round timer if one tile stops matching, so an SRP must
+            // sit in our interior, never at the contested frontier. Ruins ARE the
+            // frontier: they are what both teams fight over.
+            if (srpCenter == null && ruins.length == 0
+                    && (here.x % 5) == 0 && (here.y % 5) == 0
+                    && rc.senseMapInfo(here).getPaint().isAlly()
+                    && rc.canMarkResourcePattern(here)) {
+                rc.markResourcePattern(here);
+                srpCenter = here;
+            }
+            if (srpCenter != null) {
+                for (MapInfo t : rc.senseNearbyMapInfos(srpCenter, 8)) {
+                    PaintType mark = t.getMark();
+                    if (mark != PaintType.EMPTY && mark != t.getPaint()
+                            && rc.canAttack(t.getMapLocation())) {
+                        rc.attack(t.getMapLocation(), mark == PaintType.ALLY_SECONDARY);
+                        break;
+                    }
+                }
+                if (rc.canCompleteResourcePattern(srpCenter)) {
+                    rc.completeResourcePattern(srpCenter);
+                    srpCenter = null;
+                } else if (!here.equals(srpCenter)) {
+                    tryMove(rc, here.directionTo(srpCenter));
+                }
+            } else {
+                wander(rc);
+            }
         }
+
 
         // Paint the tile under us if it isn't ours yet (avoids paint penalty).
         MapLocation cur = rc.getLocation();

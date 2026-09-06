@@ -41,7 +41,7 @@ public class ReplayDump {
     // them. Before this, aliveCounts() never decremented and every "alive" figure in
     // a dump was cumulative spawns. It made the accepted bot look like it fielded
     // more units than the map has tiles.)
-    static long[] deaths = new long[3], spawnSold = new long[3], spawnMop = new long[3];
+    static long[] deaths = new long[3], spawnSold = new long[3], spawnMop = new long[3], spawnSpl = new long[3];
     static long[] xfers = new long[3];   // paint transfers/withdrawals per window
     // Death-cause classification. DieType carries only UNKNOWN/EXCEPTION, so cause is
     // derived: a robot sitting at 0 paint takes -20 HP/turn and dies of starvation, so
@@ -137,7 +137,7 @@ public class ReplayDump {
                           .append(" acts[p").append(paints[tid]).append(" u").append(unpaints[tid])
                           .append(" a").append(attacks[tid]).append(" s").append(splashes[tid])
                           .append(" m").append(mops[tid]).append("]")
-                          .append(" +sold").append(spawnSold[tid]).append(" +mop").append(spawnMop[tid])
+                          .append(" +sold").append(spawnSold[tid]).append(" +mop").append(spawnMop[tid]).append(" +spl").append(spawnSpl[tid])
                           .append(" died").append(deaths[tid])
                           .append(" xfer").append(xfers[tid])
                           .append(" starved").append(starved[tid]);
@@ -145,7 +145,7 @@ public class ReplayDump {
                     System.out.println(sb);
                     Arrays.fill(paints, 0); Arrays.fill(unpaints, 0); Arrays.fill(attacks, 0);
                     Arrays.fill(splashes, 0); Arrays.fill(mops, 0);
-                    Arrays.fill(deaths, 0); Arrays.fill(spawnSold, 0); Arrays.fill(spawnMop, 0);
+                    Arrays.fill(deaths, 0); Arrays.fill(spawnSold, 0); Arrays.fill(spawnMop, 0); Arrays.fill(spawnSpl, 0);
                     Arrays.fill(xfers, 0); Arrays.fill(starved, 0);
                 }
             } else if (t == Event.MatchFooter) {
@@ -235,6 +235,7 @@ public class ReplayDump {
                         int st = sp.team();
                         if (sp.robotType() == RobotType.SOLDIER) spawnSold[st]++;
                         else if (sp.robotType() == RobotType.MOPPER) spawnMop[st]++;
+                        else if (sp.robotType() == RobotType.SPLASHER) spawnSpl[st]++;
                     }
                     if (print || tower)
                         System.out.println("round " + round + " " + lbl(id) + " SPAWN " + label.get(sp.id())

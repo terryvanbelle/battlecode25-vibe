@@ -1,4 +1,4 @@
-package alice_i11;
+package alice_probe;
 
 import battlecode.common.*;
 
@@ -67,8 +67,6 @@ public class RobotPlayer {
     // ------------------------------------------------------------------ tower
     /** Chips held back so a 1000-chip tower completion can always fund (iteration 2). */
     static final int CHIP_RESERVE = 1450;
-    /** Towers required before a tower will spend 300 paint on a splasher (11d). */
-    static final int SPLASH_MIN_TOWERS = 10;
 
 
     static void runTower(RobotController rc) throws GameActionException {
@@ -123,14 +121,7 @@ public class RobotPlayer {
             // splasher outright, build one. In practice that fires about once per
             // freshly-built tower and never on a drained one, which is the rate we
             // want -- and it needs no reserve logic that could starve soldiers.
-            // 11d: gate splashers behind tower saturation. 11a-c built 13 of them
-            // early (3,900 tower paint ~ 19 soldiers) during the window when tower
-            // patterns should be getting completed: soldiers spawned +45 vs +70,
-            // towers 9 vs 10, coverage 138 per-mille behind by r500 and never
-            // recovered. Same fix iteration 10c proved for SRPs -- towers first,
-            // luxuries from the leftovers.
-            if (rc.getNumberTowers() >= SPLASH_MIN_TOWERS
-                    && rc.getPaint() >= UnitType.SPLASHER.paintCost) {
+            if (rc.getPaint() >= UnitType.SPLASHER.paintCost) {
                 want = UnitType.SPLASHER;
             }
             // Iteration 5: reserve tower PAINT for soldiers. Measured defect --
@@ -154,6 +145,16 @@ public class RobotPlayer {
                 want = UnitType.SOLDIER;
             }
             int off = rnd(8);
+            // PROBE: report why a splasher does or does not get built.
+            int okSpl = 0, okSol = 0;
+            for (int i = 0; i < 8; i++) {
+                MapLocation l = rc.getLocation().add(directions[i]);
+                if (rc.canBuildRobot(UnitType.SPLASHER, l)) okSpl++;
+                if (rc.canBuildRobot(UnitType.SOLDIER, l)) okSol++;
+            }
+            rc.setIndicatorString("PROBE paint=" + rc.getPaint() + " money=" + rc.getMoney()
+                    + " want=" + want + " okSpl=" + okSpl + " okSol=" + okSol
+                    + " splCost=" + UnitType.SPLASHER.paintCost + "/" + UnitType.SPLASHER.moneyCost);
             for (int i = 0; i < 8; i++) {
                 MapLocation loc = rc.getLocation().add(directions[(i + off) % 8]);
                 if (rc.canBuildRobot(want, loc)) { rc.buildRobot(want, loc); break; }

@@ -2199,3 +2199,97 @@ lost** — the remote runner is `setsid`-detached, so the games are safe — and
 Worth remembering because the symptom points at the wrong thing: a syntax error in
 a shared tool looks like a broken tool, and the instinct is to fix or work around
 it. The tool was fine.
+
+## Iteration 11 — REJECTED on the trace, and two of my three diagnoses were my own reading error
+
+**First, the correction, because it matters more than the result.** I concluded
+twice that the splasher gate was "dead code" (`spl0`, `+spl0`) and twice changed it
+— 11b lowered the threshold from 500 to 300, 11c made it deterministic. **Both
+diagnoses were wrong.** `+spl` is a *per-window* counter and I only ever printed
+the last two windows (r1500, r2000). Splashers are built **early**, while towers
+still hold their initial 500 paint, so the windows I looked at were legitimately
+zero while the mechanism was firing.
+
+A probe bot settled it: DefaultSmall round 1, `SPAWN id11577(T1,SPLASHER)` and
+`SPAWN id12772(T1,SPLASHER)`, `spl2 +spl2`. The full Mirage window set shows
+**13 splashers built** (2 at r1, 11 by r500, 2 by r1000).
+
+So iteration 11a's original gate was fine, and 11b/11c were changes made to fix a
+problem that did not exist. Cost: two matches and a wrong entry above. **The rule I
+broke is one already in my own LEARNINGS — "a replay counter means nothing until
+you have found its call site" — restated: a *windowed* counter means nothing until
+you have looked at every window.** `tail -2` is not a measurement.
+
+(The probe also revealed a second instrument gap: `run()`'s `finally` block
+overwrites every indicator string with the bytecode report, so `setIndicatorString`
+is unusable for probes as the bot stands. I read the SPAWN lines instead.)
+
+### The actual result: rejected, for the reason I pre-registered
+
+| per window | alice_i11 | alice_iter7 |
+|---|---|---|
+| r500: soldiers spawned | **+45** | **+70** |
+| r500: towers | **9** | **10** |
+| r500: coverage | **368‰** | **506‰** |
+| r2000: coverage | **448‰** | **535‰** |
+
+**The displacement gate fails outright.** I pre-registered "soldier spawn count and
+tower count must not fall", and both fall — hard, and *early*, which is when
+expansion is decided. 13 splashers at 300 tower paint each is **3,900 paint**, or
+roughly 19 soldiers, spent during the exact window when the bot should be racing to
+complete tower patterns. Coverage is already 138‰ behind at r500 and never recovers.
+
+This is iteration 5's lesson running in reverse, precisely as the pre-registration
+predicted: the mopper was too *cheap* and starved soldiers by out-competing them on
+price; the splasher is too *expensive* and starves them by consuming the whole
+stash. Both fail through the same tower-paint bottleneck.
+
+### The idea is not dead — the timing is wrong
+Splashers remain the only unit that can take enemy ground, and that argument is
+untouched by this result. What is refuted is **building them during expansion**.
+The fix is the one iteration 10c already proved for SRPs: **towers first, luxuries
+from the leftovers.** Next attempt (11d) gates splasher spawning behind tower
+saturation, exactly as `SRP_MIN_TOWERS` does.
+
+## Iteration 10 — NEAR MISS (13/24, 54.2%), refinement applied as pre-registered
+
+Run `20260906-225531`, `BOT=alice_iter7` (zero arm), 12-map sample, both sides.
+
+| criterion | result | verdict |
+|---|---|---|
+| gate: H2H vs `alice_iter7` >= 16/24 | **13/24 (54.2%)** | **NEAR MISS** — clears 50%, not the noise band |
+
+Above the bar for "directionally right", below it for "accept". Per the loop this
+earns a refinement of the *same* solution rather than a new target, and the
+refinement was pre-registered before the sweep, so it is not retrofitted:
+
+> "`SRP_MIN_TOWERS = 10` is a magic constant... If the gate result is
+> map-sensitive, the first refinement is the principled form — gate on *ruin
+> saturation* rather than an absolute tower count."
+
+**10e implements exactly that**: build an SRP only where **no ruin is visible at
+all**. It is self-calibrating (no constant to tune per map size or ruin density)
+*and* it is the placement rule the engine demands — `updateResourcePatterns`
+re-checks the whole 5×5 every round and resets the 50-round timer if a single tile
+stops matching, so an SRP must sit in our interior. **Ruins are the frontier**:
+they are precisely what both teams contest. So one gate now serves two purposes,
+which is a better sign than a tuned number.
+
+Beats `alice_iter7` on Mirage. Queued for the next sweep.
+
+## Iteration 11 — REJECTED, confirmed by gauntlet (3/14, 21.4%)
+
+The trace reject above is confirmed on the full instrument: the 11c build scored
+**3/14 (21.4%)** against `alice_iter7` before the run finished the arm. Early
+splashers are not a marginal loss, they are a large one — consistent with 3,900
+tower paint diverted during the expansion window.
+
+**11d (splashers gated behind tower saturation) is a different arm** and is not
+covered by this result: it beats `alice_iter7` on Mirage with soldiers and towers
+no longer suppressed (+62 vs +65 soldiers, 11 towers each, coverage 505 vs 478‰,
+and `+spl5` confined to the post-saturation window). It goes into the next sweep
+alongside 10e.
+
+Both refinements are the same idea arrived at twice independently — **towers
+first, luxuries from the leftovers** — which is now the strongest structural rule
+this lineage has.
