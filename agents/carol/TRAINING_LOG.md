@@ -1658,3 +1658,27 @@ only defence is validating it against a case whose answer is already known. Both
 **Known limitation until iteration 7's tag is in a replay**: with neither team tagged, both
 collapse into one series (the rain h2h reads 246 rather than the 233 measured for a single
 team). Directionally fine, exact from the next run onward.
+
+### Iteration 7 — a self-limiting property worth predicting before the run
+
+Player statics are per-robot in this engine, so every tower tracks `stagnantTurns`
+independently. All towers read the same team treasury, so they agree on when it is frozen —
+but the moment *one* tower disarms and builds, `chips` changes and **every** tower's counter
+resets to zero. So the disarmed state produces at most one unit per `STAGNANT_ROUNDS` rounds,
+not a single-turn dump of the whole treasury.
+
+That is the behaviour I want and it was not designed in — worth writing down before the run so
+it is a prediction rather than a post-hoc rationalisation:
+- DefaultSmall (frozen at r26, dead at r69): ~4 build windows, so ~3-4 soldiers instead of 0.
+  Enough to change the game, not obviously enough to win it.
+- Fossil / DefaultMedium (frozen ~1,880 rounds): ~188 windows, i.e. the treasury is spent down
+  steadily rather than sitting at 1220/290 forever.
+
+If the replays instead show the treasury dumped in one round, or show `stag=` never reaching
+`STAGNANT_ROUNDS`, the mechanism is not doing what this paragraph says and the result is not
+interpretable regardless of the win rate.
+
+**Mechanistic verification planned before the full run**, per §4: re-run the single motivating
+game (`carol` vs `carol_rush` on DefaultSmall, side A) and check the round-69 annihilation
+against the three outcomes — won / still lost but mechanism demonstrably engaged / no evidence
+of engagement. Only the third would stop the iteration before spending 120 games.
