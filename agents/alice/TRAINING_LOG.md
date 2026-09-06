@@ -1255,3 +1255,70 @@ mechanism, not fifteen coin flips.
 So iteration 5 is not a marginal tuning of an army ratio. It removes a positive
 feedback loop that this lineage has been losing games to since iteration 0, and
 the loop is visible in every loss I have looked at.
+
+---
+
+## Iteration 5 — RESULT: ACCEPTED (snapshot `src/alice_iter5/`)
+
+Run `20260906-213750`, 60 games, 15-map random sample, both sides, complete (no
+`!! INCOMPLETE`). `BOT` was the **zero arm** (`alice_iter4`), so its win rate
+inverts to give each dose's head-to-head against the accepted snapshot.
+
+| dose | meaning | H2H vs alice_iter4 | gate (>=18/30) |
+|---|---|---|---|
+| 0 | current build | 50% by definition | — |
+| **50** | mopper only if tower paint >= 150 | **23/30 (76.7%)** | PASS |
+| **100** | mopper only if tower paint >= 200 | **21/30 (70.0%)** | PASS |
+| 200 | mopper only if tower paint >= 300 | refuted on trace (moppers → 0) | — |
+
+**Dose-response shape (criterion 2): PASS.** Concave with an interior optimum,
+exactly as pre-registered — 50% at dose 0, ~70-77% across 50-100, collapsing by
+200. A monotone curve would have falsified the reading; it did not appear.
+
+**Criterion 1 PASS** (both doses clear 18/30). **Criterion 3 PASS** (realized
+mopper share 25%, strictly interior). **Criterion 4** (watch): the soldier share
+rose *and* coverage moved, so spawn mix was a real constraint — but starvation
+deaths did not fall, so it is not the only one, which is what iteration 6 targets.
+
+### Which dose — chosen against the raw score, on purpose
+
+Dose 50 scored two games higher. I took **dose 100** anyway:
+
+- **The difference is under the noise floor.** On the 27 (map,side) cells both
+  arms actually played, they disagree on **3 cells** — a one-cell net difference.
+  Doctrine #6 says distrust any delta under the binomial floor "regardless of how
+  good the story is", and 2/30 is far under it.
+- **Dose 100 is not a constant, it is a game rule.** Skipping a mopper below 200
+  tower paint is exactly *"only build a mopper if a soldier was affordable too"* —
+  `UnitType.SOLDIER.paintCost`. Dose 50's 150 is an arbitrary number that happened
+  to win one extra cell on this particular 15-map sample. The algorithm's stated
+  design preference is that **self-calibrating thresholds beat fixed constants**,
+  and picking the arbitrary constant *because* it won by one cell on the sample it
+  was measured on is the definition of fitting the instrument.
+
+So the accepted code carries no magic number: the gate reads
+`rc.getPaint() < UnitType.SOLDIER.paintCost`. Verified behaviourally identical to
+the measured `alice_r100` arm by re-running Racetrack and reproducing its result.
+
+### Diff shape
+Dose 100 took 1 swept loss (**starburst**, traced above: it paints ~2x as much and
+still loses because it erases half as much). Understood, confined to 1 of 15 maps,
+and it names iteration 7's target. Not an unresolved regression.
+
+### Why this iteration mattered more than its win rate suggests
+The mopper price asymmetry is not a skewed ratio, it is an **absorbing state**:
+tower paint → 0 ⇒ only the 100-paint mopper is affordable ⇒ moppers complete no
+tower patterns ⇒ paint income never recovers. Traced in all three losses examined
+(Mirage: dead at r200, coverage 132→15‰; box; HungerGames at 97% moppers), and it
+re-explains iteration 4's 11 split-by-side maps as a *race into one absorbing
+state* rather than positional noise. Archived replay
+`replays/iter05_alice_iter4_Mirage_B_WIN.bc25` is the accepted build winning the
+exact map and side where iteration 4 was eliminated at r1569.
+
+### Functional-area map
+- economy/chip conversion — iteration 4 ACCEPTED
+- spawn economics — **iteration 5 ACCEPTED**
+- unit sustain (refuel) — iteration 6, built and verified, evaluating next
+- mopper targeting — iteration 7, named by the starburst trace
+- soldier targeting — iteration 8 (same radius-asymmetry fix as 7)
+- population control / anti-clumping — withdrawn (instrument artifact)
