@@ -1400,3 +1400,39 @@ soldier share iteration 5 gained — which was the whole design constraint.
 the map where erasure matters most, so this is the friendliest possible sample.
 Generality checks on Racetrack, Mirage and DefaultLarge are running. The accept
 gate remains a full sweep against the then-accepted snapshot, not these matches.
+
+### Iteration 6 interim read, and the arithmetic I should have done first
+
+At 11/60 the zero arm is holding `alice_i6_60` to ~50%. Rather than wait to be
+told, here is the accounting I should have done *before* building it:
+
+| | respawn | refill |
+|---|---|---|
+| tower paint | 200 | up to 200 |
+| chips | 250 | **0** |
+| unit position | starts at the tower | keeps a positioned veteran |
+| turns lost | none (tower acts anyway) | **the walk back, plus the transfer turn** |
+
+**The paint cost is identical.** Tower paint is the binding resource, and a refill
+consumes exactly as much of it as a fresh soldier does. The refill's only genuine
+savings is **250 chips — which iteration 4 already established are not binding**
+(the treasury sits on $100k+ in most games). So the mechanism trades a real cost
+(turns spent walking back, plus one action spent transferring) against a saving in
+the one resource I provably have too much of, and keeps a veteran's position.
+
+That predicts near-neutrality, which is what the sweep is showing, and it matches
+the `twPaint` finding exactly: refilling *substitutes* for spawning rather than
+adding to it. The substitution is roughly break-even.
+
+**Pre-registered near-miss refinement** (declared now, before the result, so it
+cannot be retrofitted): if iteration 6 lands within `NearMissMargin`, the one
+refinement is **refuel only when the tower is already close** — cap the trip at a
+few tiles and otherwise keep working. That keeps the case where the walk is nearly
+free (the soldier is working a ruin that has become a tower) and drops the case
+where the walk costs more than the recruit it replaces. If it lands clearly below,
+this is a **reject**, and the honest lesson is that saving a non-binding resource
+buys nothing — which is LEARNINGS §1 turned into a prediction rather than a
+post-hoc excuse.
+
+Either way iteration 7 is unaffected: it is built on `alice_iter5` and touches a
+different unit.
