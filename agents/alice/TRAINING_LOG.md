@@ -188,6 +188,89 @@ band; (2) mechanism — towers built in a DefaultLarge trace materially above 3;
 (3) the big-map recoveries from 2b (Huge/Money/Oasis) are retained.
 Run: 20260906-185051.
 
+**Result: ACCEPTED as iteration 2** (snapshot `src/alice_iter2/`).
+
+| pre-registered criterion | result | verdict |
+|---|---|---|
+| (1) H2H vs alice_iter1 > 50% and >= 16/24 | **20/24 (83%)** | PASS (far outside the 13-15/24 noise band; 20/24 ≈ 99.9% one-sided) |
+| (2) DefaultLarge towers materially above 3 | **16 towers** (vs iter1's 8) | PASS |
+| (3) Huge/Money/Oasis recoveries retained | won from BOTH sides on all three | PASS |
+
+Overall 41/48 (85.4%); vs alice_iter0 21/24 (88%) — regression check clean.
+Mechanism replay archived: `replays/iter02_alice_iter1_DefaultLarge_A_WIN.bc25`
+(r2000: mine 16 towers / cov 562‰ / 52 soldiers vs iter1 8 towers / cov 161‰ /
+24 soldiers). The chip reserve works exactly as designed: iter1 stalls at 8
+towers, 2c compounds to 16.
+
+**Diff shape vs 2b** (48 common games, 19 flips, **+15 / -4**): gains spread
+across 7 maps (Circuit +4, DefaultLarge/Medium/Small/Paintball +2 each,
+Money/Oasis/sierpinski +1) — broad, one-directional, not churn. The only
+concentrated regression is **maze: -3 (swept-loss vs iter1 both sides, plus
+iter0 side A)**. Carried as a known unresolved regression, traced below; per the
+precedent set at iteration 1 (DefaultSmall), a concentrated regression inside a
++15/-4 accept becomes the next target rather than a veto.
+
+### Trace: why maze regressed (and the degeneracy it exposed)
+`replay-dump` on `alice_iter1__maze__botA` (60x60, coverage 159‰ vs 168‰ at
+r2000 — both teams are barely painting anything):
+- T1 (2c) ends with **19 soldiers and 183 moppers**; T2 (iter1) 20 / 179.
+- **`MopAction` count is 0 in every sample window of the entire game.** The
+  moppers never mop. They never paint either (moppers have no paint action).
+  They are ~90% of the army and contribute literally nothing.
+The same shape, larger, on the DefaultLarge mechanism replay: **677 moppers vs
+52 soldiers at r2000, with $120,840 unspent chips**, and coverage that *peaks*
+at 604‰ (r1000) and then **declines to 562‰**.
+
+**Root cause of the mopper glut (mechanistic, from the cost table)**: mopper
+costs 100 tower-paint, soldier 200. Tower paint — not chips — is the binding
+spawn resource (money towers produce 0 paint; paint towers 5-15/turn). A tower
+sitting at 100-199 paint *cannot* build the soldier the 75% branch asks for, so
+that turn spawns nothing; on the 25% mopper turns it always can. The spawn mix
+is therefore nowhere near 3:1 in practice — it converges on moppers, and each
+mopper built consumes exactly the paint a soldier needed.
+
+**Secondary harm**: 677 wandering moppers put allies permanently inside the
+adjacency tax (-1 paint per adjacent ally per turn, -2 on enemy paint), which
+is a plausible cause of both the soldier paint starvation (~45-round lifetimes,
+first seen at iteration 2) and the late-game coverage *decline*.
+
+---
+
+## Iteration 3 — stop building moppers (running)
+
+**Target selection**: not a loss-sampled target — an absolute degeneracy signal
+(TRAINING_ALGORITHM step 1: "prefer absolute degeneracy signals over
+opponent-relative comparisons"). 677 units performing 0 actions needs no
+opponent to be wrong. It also matches the recurring winner's profile in the
+cross-year research: *removing pure waste*.
+
+**Hypothesis**: moppers are pure waste in the current bot — 0 mop actions
+observed across two full games, no paint contribution, 300 chips + 100
+tower-paint each, and they crowd out soldiers for the binding resource (tower
+paint) while taxing allies through adjacency. Building only soldiers redirects
+tower paint into the coverage engine and raises final painted area.
+
+**Change** (single, isolated): `runTower` spawn line — always `SOLDIER`.
+
+**Pre-registered**:
+1. H2H vs `alice_iter2` on EVAL12 both sides **> 50% and >= 16/24** (noise band).
+2. Mechanism, on a DefaultLarge re-run vs alice_iter1: mopper count at r2000
+   **< 50** (from 677) and soldier count **materially above 52**; final coverage
+   **above 562‰**.
+3. No new swept-loss on a map 2c wins from both sides (DefaultSmall/Medium/
+   Large/Huge, Paintball, Money, Gears, Circuit, Oasis).
+4. maze does not get worse (it is already a swept-loss; if it recovers, the
+   adjacency-tax half of the hypothesis gains support).
+
+**Representativeness pre-check (doctrine #4)**: moppers are the bot's only
+answer to enemy paint, so cutting them is a defensive ablation. Does the
+evaluating pool pose the threat? *No* — my whole lineage paints with soldiers,
+which by engine rule cannot overwrite enemy paint, and no lineage member builds
+splashers. So enemy paint is never contested by anyone and the defense is
+untested by this instrument. Recorded explicitly: **if a sibling bot in the
+tournament fields splashers/moppers aggressively, this decision must be
+re-opened** — the gauntlet cannot see that threat.
+
 ### Standing bytecode check (2b build, DefaultLarge full 2000-round game)
 Rounds 1000-1999: **0 overruns, 0 near-misses** (indicator counters OVR=/near=
 never appear). Peak observed: soldiers 1638 / 17500 (9%), towers 534 / 20000
@@ -213,6 +296,13 @@ painted-area tiebreak that decides every peer game. Only splashers convert
 enemy paint directly (r^2<=2 of center), and the bot has never built one.
 Coverage economics: soldier 0.20 tiles/paint (empty/ally only); splasher 0.26
 tiles/paint plus up to 5 enemy conversions per attack. Draft prepared.
+
+*Trigger-frequency pre-check* (BC22 lesson — verify the gate fires): at r1000 on
+DefaultLarge, coverage was 31% mine / 39% enemy / ~30% empty, so a typical
+13-tile splash area holds several enemy and several empty tiles; a
+score>=6 gate (enemy*2 + empty) fires routinely rather than being dead code.
+This is an estimate from aggregate coverage, not a per-tile count — if the
+iteration is run, confirm with actual SPLASH action counts in the replay.
 
 ### Engine trap found (RULES.md updated)
 `transferPaint(loc, -N)` credits the withdrawer through `addPaint`, which clamps
