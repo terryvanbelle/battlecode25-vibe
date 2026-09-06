@@ -107,6 +107,31 @@ Moppers cannot paint; painted area is the win condition.
 did zero mopping while the opponent erased its paint all game (see §2 — coverage
 is a contested stock). The useful range is an interior one.
 
+## 3c. The absorbing state — the most expensive bug this lineage has had
+
+Tower paint funds spawning. A soldier costs 200 of it, a mopper 100, and tower
+paint income is 5-15/turn. So the tower funds the cheap unit twice as often and
+never saves for the expensive one — and **the drain is self-reinforcing**:
+
+> tower paint → 0 ⇒ only the 100-paint mopper is affordable ⇒ moppers complete no
+> tower patterns ⇒ no new towers ⇒ paint income never recovers ⇒ tower paint stays 0
+
+This is not a skewed ratio, it is an **absorbing state**. On Mirage the accepted
+iteration-4 build entered it at **round 200** and played the remaining 1,369
+rounds with 2 towers, 0 soldiers and coverage falling 132 → 15‰ before being
+eliminated. The same signature appears in every loss examined (box; HungerGames
+spawning 97% moppers at r2000).
+
+It also re-explains **split-by-side maps**, which I had filed as positional noise:
+when both sides run the same rule, the map is a race into the same absorbing
+state, and small positional differences decide who falls in first. One mechanism,
+not fifteen coin flips. **Whenever many maps split by side, look for a shared
+runaway before concluding "positional".**
+
+The fix (iteration 5) is one line and carries no tuned constant: build a mopper
+only if the tower could have afforded a soldier instead —
+`rc.getPaint() < UnitType.SOLDIER.paintCost`.
+
 ## 4. Methodology lessons paid for in this project
 
 **A replay counter means nothing until you have found its call site.** I built a
@@ -135,6 +160,20 @@ the sign.
 Iteration 1 (DefaultSmall) and iteration 2 (maze) both accepted with one
 one-directional swept-loss carried forward; both times the trace of that
 regression was where the next real finding came from.
+
+**Don't pick the arm that won by less than the noise floor.** Iteration 5's dose
+50 scored two games above dose 100 (23/30 vs 21/30), but on the 27 (map,side)
+cells both arms played they disagreed on *three*. I took dose 100, because its
+threshold equals a game constant (`SOLDIER.paintCost`) while dose 50's is
+arbitrary. Choosing the arbitrary constant *because* it won one extra cell on the
+sample it was measured on is fitting the instrument, and the algorithm's stated
+preference for self-calibrating thresholds is the tie-breaker that avoids it.
+
+**Instrument any pool the change draws on, in the first run.** Iteration 6's
+refill and the tower's spawn draw on the same tower paint. Printing `twPaint`
+showed refilling *substitutes* for spawning rather than adding to it (pool drained
+to 40% of baseline, 17% fewer soldiers) — which inverted my dose prediction before
+the sweep rather than after it.
 
 **Rejections are the cheapest evidence available.** Iteration 3 cost one run and
 overturned two beliefs, opened a functional area, and explained why the current
