@@ -131,3 +131,42 @@ Engine-verified facts marked [E].
 - `getNumberTowers()`, `getChips()`/`getMoney()`, `getPaint()` (own stash).
 - `disintegrate()` — could recycle a stuck 0-paint robot (unit count → careful re: destroy-all).
 - Indicator strings ≤256 chars; `setTimelineMarker` for round labels.
+
+## Pattern shapes (decoded from constants; X=secondary, .=primary; y up)
+
+```
+SRP      PAINT    MONEY    DEFENSE
+XX.XX    X...X    .XXX.    ..X..
+X...X    .X.X.    XX.XX    .XXX.
+..X..    ..X..    X...X    XXXXX
+X...X    .X.X.    XX.XX    .XXX.
+XX.XX    X...X    .XXX.    ..X..
+```
+(center tile of tower patterns is the ruin — unpaintable; SRP center must be painted
+and is its marked center. 24 paintable tiles per tower pattern, 25 for SRP.)
+
+## Engine probes — exploitable details (from RobotControllerImpl.java) [E]
+
+1. **Tower attacks are FREE.** `assertCanAttackTower` checks only the per-turn
+   `hasTowerSingleAttacked`/`hasTowerAreaAttacked` flags — no `assertIsActionReady`, and
+   `towerAttack` never adds action cooldown. A tower can single-attack, AoE-attack, AND
+   build a robot in the same turn. Never gate tower attacks on `isActionReady()`.
+2. `canAttack` for a soldier is TRUE on ally-painted tiles ("paint type is irrelevant for
+   checking attack validity"). Repainting own paint silently wastes 5 paint + a turn.
+   Check `MapInfo.getPaint()` yourself. `canPaint(loc)` does check paintability (wall/ruin).
+3. `completeTowerPattern` additionally requires: no robot standing on the ruin center,
+   team has the tower's moneyCost (1000 chips) in chips, team tower count < 25.
+   A soldier that walks onto the ruin center blocks its own completion.
+4. `buildRobot` requires paint from the TOWER's own stash (not team-wide) + team chips,
+   target within r2=4, unoccupied and passable.
+5. `upgradeTower` costs the NEXT level's moneyCost (2500 for lv2, 5000 for lv3), r2=2.
+6. Mopper `attack` requires `isPassable(loc)` — cannot mop tiles with walls or ruins.
+7. Mark/complete resource pattern radius is r2=8 (reach the whole 5x5 from the center-ish).
+8. `getMoney()` is team-wide and shared; paint is strictly per-unit.
+
+**Economic consequence**: paint is the binding resource. A lv2 paint tower makes 10
+paint/turn; a soldier costs 200 paint to build and 5 paint per tile painted. Money towers
+generate no paint, so a money tower can spawn ~2 robots from its 500 starting stash and
+then goes dry until a mopper refills it. Chips accumulate uselessly unless spent on towers
+/upgrades/SRPs. Each active SRP adds +3/turn to EVERY paint tower and EVERY money tower,
+so SRP value scales with tower count.
