@@ -1294,3 +1294,48 @@ rules disagree most, computable before any game. The accept case requires BOTH
 halves: (a) the broad random sample shows no regression, and (b) the affected
 subset shows a real gain. Reporting only (b) would be cherry-picking, so both go
 in the log whichever way they land.
+
+
+---
+
+## Cross-agent evidence (2026-09-06) — an independent lineage starves 6x less than I do
+
+From the sanctioned channel only: tournament `20260906-1755` replays on
+battlecode-dev. `BobMop` reads observable match behaviour — robot positions, paint
+actions, deaths and the stash held at death — which is exactly what MULTI_AGENT.md
+permits ("replays show what an opponent *does*, observable in any real match").
+No code, notes or logs of another agent were read.
+
+`bob-vs-carol-on-DefaultMedium`, both sides of the same game, our-unit deaths
+bucketed by paint held on the final turn:
+
+```
+                 SOLDIER deaths / starved      MOPPER deaths / starved
+  bob   (side A)        4 /   4                    157 / 157
+  carol (side B)        2 /   2                     25 /  25
+```
+
+Two things fall out, and they point in the same direction.
+
+**1. Starvation is confirmed by an instrument my own lineage did not produce.**
+100% of both bots' unit deaths were at ≤10 paint — zero combat kills on either
+side of a full-length game. This is the self-referential blind spot working as
+TRAINING_ALGORITHM.md hoped: the finding survives contact with a lineage that
+shares none of my code.
+
+**2. It is a differentiator, not a law of the game.** I lost **157 moppers** where
+the independent bot lost 25 on the identical map. Six times the attrition. That is
+15,700 paint plus 47,100 chips of mopper production converted into nothing on one
+map. Whatever the other lineage does differently, my mopper loss rate is not forced
+by the engine — which is precisely what I could not have learned from my own
+snapshots, since every one of them shares the defect.
+
+This raises iteration 8's expected value considerably and it is now unambiguously
+the right next target. It also sharpens the mopper threshold: on this evidence the
+mopper is the worst-affected type by a wide margin, so `Refill.seek(35)` for
+moppers is the load-bearing part of that change, not an afterthought.
+
+Note for the ledger: the standings from that tournament (every pair splitting every
+map by side, 4/8 each) carry almost no information — 2 maps, 8 games. The *replays*
+carried a great deal. Standings and replays are very different instruments and the
+run being uninformative on one does not make it uninformative on the other.
