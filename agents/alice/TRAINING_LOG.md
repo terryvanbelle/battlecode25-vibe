@@ -1011,3 +1011,26 @@ Two things worth carrying forward:
 Watch criterion (4) reads: soldier share rose *and* coverage moved, so the spawn
 mix was a real constraint — but starvation deaths did not fall, so it is not the
 *only* one.
+
+### Free play-symmetry check (no VM cost) — no side bias in the accepted build
+
+The algorithm asks for periodic mirror-matching to catch fixed absolute-order
+decisions that hand one side a compounding tempo edge. The full mirror
+(`alice_mirror`) is still un-run, but iteration 4's 100-game run already answers
+the cheap half of the question:
+
+| | as side A | as side B |
+|---|---|---|
+| overall | 44/50 (88%) | 43/50 (86%) |
+| vs alice_iter2 | 20/25 (80%) | 19/25 (76%) |
+| vs alice_iter1 | 24/25 (96%) | 24/25 (96%) |
+
+One game of difference on each split — nowhere near the noise floor for n=25.
+Whatever else is wrong with this bot, **team identity is not correlated with its
+result**, which is consistent with the two deliberate symmetry defences already
+in the code (randomised tie-break order in `tryMove`, tower type chosen by ruin
+coordinate parity rather than by treasury state at mark time).
+
+This does **not** retire the mirror run: it cannot see a bias that is symmetric
+between the two *lineage members* here, and 11 of 25 maps were split-by-side,
+which is exactly where a per-map positional effect would hide. Still queued.
