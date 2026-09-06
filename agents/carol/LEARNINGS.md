@@ -250,3 +250,26 @@ gave 0, 0, 0 across 2,955 rounds, and it is that pair that makes the signal: the
 fires in all three losses and none of the wins, so disarming the reserve cannot misfire while
 a game is going well. The algorithm's "don't sample only losses" is usually framed as avoiding
 tautological conclusions; it is just as valuable for establishing that a trigger is *safe*.
+
+## A mechanism can rewrite the whole game and move nothing
+
+Iteration 6's self-calibrating tower mix was verified to work in every sense that is not the
+scoreboard. The gate genuinely flipped (tower paint spans 0-1000 on Mirage), the tower count
+on the motivating map went 4-5 to 8, and diffing indicator trajectories between the two doses
+showed **31,274 differing lines on Mirage and 59,798 on Leaf** — essentially every robot-turn
+of those games changed. The winner did not.
+
+Across 40 paired games on identical maps, 37 outcomes were unchanged, and a direct
+head-to-head between the two doses came out 20/40. Three instruments, one answer.
+
+The trap is that the mechanistic story was *true*, and a true mechanistic story is the most
+convincing thing available short of a head-to-head. "The threshold sits above the operating
+band, so it builds the wrong tower type" was correct, checkable, and checked — and the thing
+it predicted about winning was still false. This is why the accept gate is a head-to-head and
+not a mechanism check, and it is worth re-reading whenever a mechanism verification comes back
+beautiful.
+
+The practical tell: if a change rewrites tens of thousands of robot-turns and the outcome does
+not move, the quantity it controls is not on the path to winning. Do not spend a refinement on
+a better value of it — the lever is the wrong lever, not the wrong setting. Two near-miss
+refinements were available under the rules here and taking them would have been a mistake.
