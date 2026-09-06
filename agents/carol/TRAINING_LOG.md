@@ -1410,3 +1410,38 @@ its first appearance in a gauntlet, after iteration 7.
 
 Same compile check also confirms the **6b candidate compiles**, so the run cannot fail on a
 build error.
+
+### Functional-area map (kept current, per §1's "track functional areas, not just games")
+
+| iteration | area | outcome |
+|---|---|---|
+| 1 | paint | accepted |
+| 2 | econ | accepted |
+| 3 | nav | accepted |
+| 4 | paint + econ | **rejected** |
+| 5 | econ | accepted |
+| 6 | econ | **near miss (45.0%)** |
+| 6b | econ | running |
+| 7 (queued) | **robustness** (degeneracy fix) | — |
+| 8 (queued) | econ (SRPs) | — |
+| 9 (queued) | econ (two-sided mix) | — |
+
+`MaxConsecutiveRejects` is **not** triggered — econ has one reject, one accept and one near
+miss, not three consecutive rejects — so the letter of the rule permits continuing. But the
+concentration is worth naming honestly: **six of the last seven attempts, and two of the three
+queued, are econ.** The spirit of §1 is that a thread can close without anyone noticing.
+
+Two things keep this from being that failure, and I want them written down so the claim can be
+checked later rather than assumed:
+- Iteration 7 is not an econ *strategy* bet at all. It is a robustness fix for an absolute
+  degeneracy with a mechanism gate, a perfect trigger-frequency separation (fires in 3/3
+  losses, 0/3 wins) and a known cause. Reclassified as `robustness` for exactly that reason.
+- Iteration 8 (SRPs) is econ, but it is not another turn of the same screw — every previous
+  econ attempt tuned the *ratio between two tower types*, whereas SRPs are an entire unused
+  game mechanic with a 7x effect on the binding resource. Same area label, different thread.
+
+**Standing trigger**: if 6b rejects and iteration 9 (the two-sided mix) also fails, that is
+three econ tower-mix attempts closed and the mix thread is done — the next attempt after that
+must leave econ entirely, and the candidates are nav (frontier-seeking exploration, already
+traced at 97% of idle turns on open maps) and combat/micro, which this lineage has never
+touched at all.
