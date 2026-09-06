@@ -168,3 +168,31 @@ stated, or it is cherry-picking.
 **Deaths are in `DieAction`, not `Round.diedIds`.** `diedIds` is empty for the whole
 game in this engine. Anything counting deaths off it silently counts zero — which
 is what my first death-forensics pass did, and it looked like a clean result.
+
+## 8. Instrument bugs produce plausible output (2026-09-06)
+
+Three in one session, all in tooling I wrote, none caught by reading the code:
+
+- **A masked compile failure ran a stale class.** `mop-trace.sh` piped `javac`
+  through `head`, so a compile error scrolled past and the previous `.class` ran,
+  printing believable metrics from the *previous* version of the tool. Make the
+  compile fatal in every wrapper script.
+- **Assumed enum ordering.** `RobotType` is NONE=0, PAINT_TOWER=1, MONEY_TOWER=2,
+  DEFENSE_TOWER=3, SOLDIER=4, SPLASHER=5, MOPPER=6 — MOPPER is the *highest*. A
+  filter of `type > MOPPER` meant to drop towers dropped nothing, and the census
+  reported a believable 63/26/9 split that was really 84/3/12. It reversed a
+  queued iteration.
+- **Assumed a schema field carried data.** Deaths are `DieAction` inside a turn;
+  `Round.diedIds` is empty all game, so the first death-forensics pass counted
+  zero and looked like a clean result.
+
+The common shape: every one of them printed something plausible. What caught them
+was a single value whose correct magnitude was predictable in advance — nothing
+printed at all, a 0% that could not be 0%. **Put at least one such value in every
+report and check it first.** Probing the enum with `javap -constants` takes ten
+seconds and would have prevented two of the three.
+
+Corollary, learned the same day: a denominator is part of the claim. "1% of action
+capacity" (cumulative spawns) became ~37% (live population), and "32% of unit-turns
+waste a free step" became 10% once towers stopped being counted as units. Both
+reversed the resulting decision.
