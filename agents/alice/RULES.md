@@ -62,7 +62,12 @@ line refs below are to `engine/src/main/battlecode/world/*.java`.
   steals 10 paint (gains 5). Free (0 paint).
 - **Mop swing** (cardinal, CD 20): 2 rows of 3 tiles in front, -5 paint per enemy robot hit (6 tiles).
 - **transferPaint** r^2<=2: moppers give to ally robots/towers; ANY robot can withdraw
-  from ally towers (negative amount). CD 10.
+  from ally towers (negative amount). CD 10. Cannot target self; amount != 0;
+  withdraw capped by the tower's current paint.
+  **TRAP (engine-verified)**: `transferPaint(loc, -N)` credits the withdrawer via
+  `addPaint`, which CLAMPS at its capacity, while the tower is debited the FULL N.
+  Asking for more than you can hold silently burns the tower's paint. Always
+  request exactly `min(myCapacity - myPaint, towerPaint)`.
 
 ## Towers
 | type | build/upg cost (chips) | actRadius^2 | single dmg | AoE dmg | prod | HP |
