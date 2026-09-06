@@ -1957,3 +1957,31 @@ session already established (iteration 5) that a self-calibrating threshold beat
 searched one. The principled form is "when no unbuilt ruin remains" — i.e. gate on
 tower saturation rather than a magic 10 — and that is the first refinement to try
 if the constant proves map-sensitive.
+
+### Iteration 7 interim diff shape — the terrain worry resolves as positional
+
+At 23/24 on the gate arm (20/23, 87%), the pre-registered loss diagnostic gives a
+clean answer. All three losses so far, checked from both sides:
+
+| map | i7 as A | i7 as B |
+|---|---|---|
+| maze | lost | **WON** |
+| headphones | **WON** | lost |
+| box | **WON** | lost |
+
+**Zero swept losses.** Every loss is split-by-side, which by the diff-shape rule
+(doctrine #7) is positional churn rather than a causal effect — there is no map
+where iteration 7 loses from both sides.
+
+**This settles the maze question against my own hypothesis, which is the useful
+direction.** I had found iteration 7 losing maze in a single match, flagged a
+pathfinding-stall mechanism, then struck the claim when yearofthesnake (18.4%
+walls) came back a win. The gauntlet now plays maze from both sides and iteration 7
+**wins one of them**. So the original maze loss was side-positional, and there is
+no terrain law — the stall risk remains real in principle (the code genuinely has
+no bug-nav) but it is not costing games at this wall density.
+
+Consequence: **the pre-registered stall-guard refinement is not triggered.** I will
+not spend it, because the evidence that motivated it evaporated. Hybrid bug-nav
+stays drafted and unqueued, with its motivating evidence now retracted — logged so
+a later session does not rediscover the draft and assume it was justified.
