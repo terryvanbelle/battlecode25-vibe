@@ -2910,3 +2910,51 @@ exploration and splashers (still never built, per the API sweep) — as the bett
 
 I am letting iteration 10 run rather than pre-judging it: the prediction may be wrong, and a
 run already in flight costs nothing more. But the interpretation is fixed in advance either way.
+
+### What carol's soldiers actually do — measured on the accepted build, and it reorders everything
+
+Four paired games, both builds tagged and in the same replay. Accepted build (`[i7]`), 18,431
+soldier turns:
+
+| action | turns | share |
+|---|---|---|
+| a ruin is in view / being worked | 7,883 | 42.8% |
+| **IDLE-ENEMY** (enemy paint in reach, soldier physically cannot touch it) | 4,150 | **22.5%** |
+| **IDLE-ALLY** (standing on our own paint, nothing to do) | 2,923 | **15.9%** |
+| `pnt` — painted a nearby empty tile | 1,885 | 10.2% |
+| `slf` — painted its own tile | 413 | 2.2% |
+| `hitT` — attacked an enemy tower | 350 | 1.9% |
+| **IDLE total** | **7,073** | **38.4%** |
+
+**Carol's soldiers paint a tile on 12.4% of their turns and are idle on 38.4%** — in a game my
+own LEARNINGS opens by calling *"a coverage race, not a fight"*. Add the 13.4% of turns spent
+frozen at zero paint, and the picture is a large army doing very little.
+
+**The single biggest block is IDLE-ENEMY at 22.5%** — larger here than IDLE-ALLY. That is
+soldiers standing next to enemy paint they *cannot convert*, because a soldier's attack paints
+only EMPTY or already-ally tiles (engine-verified, in RULES.md). LEARNINGS states the
+consequence plainly: **splashers are the only unit that bulk-converts enemy paint**, and the API
+sweep found carol **has never built one** — `runSplasher()` is compiled and unreachable.
+
+**This settles the direction after iteration 10**, and it is now supported by three independent
+lines rather than one:
+1. **Production is not the binding constraint.** Iterations 5, 8 and (predicted) 10 raise unit
+   production by three different routes. Iteration 8 fielded **2.2x the soldiers** and went
+   exactly 50/50.
+2. **Soldiers are idle 38% of the time**, and the largest single cause is a capability carol
+   does not possess.
+3. **The capability is already written and compile-verified** — the splasher spawn is one token,
+   and iteration 4's rejection never measured it alone (it was bundled with the money-tower
+   ratio, which iteration 5 then proved was the valuable half).
+
+**So the queue is now**: iteration 10 (running) -> **splashers** -> SRPs. Splashers move ahead
+of SRPs for the same reason the paint reserve did: SRPs multiply an economy whose output is
+already being wasted at 38% idle, and fixing what soldiers *do* should precede giving carol
+more of them.
+
+**Measurement-error note, because I nearly filed the wrong numbers.** My first extraction used
+`grep -o '\[i7\][^|]*| S [^p]*'`, whose `[^p]*` silently dropped every token containing "p" —
+including `pnt`, the very action I was trying to count. It reported `pnt` as **zero** and would
+have supported a much more dramatic and completely false claim. Caught it only because zero was
+implausible. A character class in a hand-written extraction is exactly the kind of thing that
+fails silently and in the direction of whatever you were expecting.
