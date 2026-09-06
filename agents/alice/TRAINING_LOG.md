@@ -2293,3 +2293,46 @@ alongside 10e.
 Both refinements are the same idea arrived at twice independently — **towers
 first, luxuries from the leftovers** — which is now the strongest structural rule
 this lineage has.
+
+---
+
+# CURRENT STATE v2 (supersedes the earlier index)
+
+**Accepted lineage**: `iter0 → iter1 → iter2 → iter4 → iter5 → iter7` (current).
+`src/alice` == `src/alice_iter7`, compiles, and is what plays in the tournament.
+Gaps at 3 and 6 are rejected iterations.
+
+| iter | change | result |
+|---|---|---|
+| 4 | towers self-upgrade with idle chips | ACCEPTED 39/50 |
+| 5 | mopper only if a soldier was affordable | ACCEPTED 21/30 |
+| 6 | soldiers refuel at towers | REJECTED 13/30, 4/30 |
+| 7 | moppers navigate to visible enemy paint | ACCEPTED 20/23, 0 swept losses |
+| 8 | soldiers stand still to save upkeep | rejected on trace |
+| 9 | remember unbuilt ruins | discarded on reachability |
+| 10 | SRPs, tower-count gate (`10d`) | **NEAR MISS 13/24** → refined to `10e` |
+| 11 | splashers, ungated (`11c`) | REJECTED 5/18 → refined to `11d` |
+
+**Fixed roster (absolute strength, solid points)**: `alice_iter5` beats
+`alice_iter0` 23/24 and `alice_iter1` 23/24 — both 95.8%.
+
+**Next action**: sweep `alice_i10e` and `alice_i11`(=11d) against `alice_iter7`,
+`NMAPS=12`, gate >= 16/24.
+- `10e` = SRPs built only where **no ruin is visible** (self-calibrating; also the
+  engine-mandated interior placement, since ruins are the contested frontier).
+- `11d` = splashers only once `getNumberTowers() >= 10`.
+
+**The strongest structural rule found this session**: *towers first, luxuries from
+the leftovers.* Reached independently by iteration 10 (SRPs displaced tower
+building) and iteration 11 (early splashers displaced it harder). Towers are the
+master variable; ruin **supply**, not discovery, caps them.
+
+**Instrument warnings for a fresh session**
+- Deaths are `DieAction` inside a Turn, not `Round.diedIds`.
+- `PaintAction` = tile paint (MapLocation arg); `AttackAction` = hit a robot/tower (id arg).
+- `+sold/+mop/+spl/died/xfer/starved` are **per-window** counters. **Read every
+  window, not the tail** — that error produced two wrong "dead code" diagnoses.
+- `setIndicatorString` is unusable for probes: `run()`'s `finally` overwrites it
+  with the bytecode report every turn. Read SPAWN/action lines instead.
+- A shared tool rewritten mid-run (`git pull`) can throw a bogus syntax error;
+  only collation is lost, recover with `gauntlet-collect.sh`.
