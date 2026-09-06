@@ -1216,3 +1216,81 @@ it would be a well-earned one that closes the direction properly.
 **Confound to keep separate:** iteration 7, if accepted, creates paint towers on
 maps that previously had none, which would make refill more valuable. That is why 7
 is being measured first and alone.
+
+
+---
+
+## Iteration 7 mid-run analysis (2026-09-06) — the whole map pool, measured, and a direction closed by arithmetic
+
+Done while the evaluation ran, on the map files themselves. New tool
+`bob-tools/BobRuins.java`: every `.map25` is a flatbuffer whose root is a `GameMap`
+carrying the ruin list, so "what tower mix does `towerTypeFor` produce on this map"
+is a question about the maps and needs **no games at all**. Answered exactly for
+all 75.
+
+### The offline pre-check I ran before the iteration was measuring the wrong population
+
+I validated the hash against *simulated* ruin lattices and concluded the old parity
+rule "returns 100% one type on every EVEN ruin spacing". Against the real maps:
+
+```
+deviation from a 50/50 mix     old rule   new hash   fair coin (expected)
+  > 10 points                        24         33                   30.4
+  > 20 points                        13          6                    8.6
+  > 30 points                         7          0                    2.1
+  > 40 points                         4          0                    0.3
+mean deviation                      9.3        9.9                   10.1
+```
+
+The old rule degenerates completely on **4 maps of 75** — CastleDefense, Filter,
+Snowman, gridworld — not on a broad class. And its *mean* behaviour is slightly
+BETTER than the hash's, because parity on a spatially structured ruin set is
+anti-correlated in a way that lands near 50/50 on most maps while failing totally
+on a few. My lattice model predicted the failures but badly overstated how many
+maps they covered.
+
+### Direction CLOSED by arithmetic: no pure function can beat this hash
+
+The fair-coin column above is computed exactly, per map, from that map's own ruin
+count. The hash's 9.9 mean deviation *is* the fair-coin floor of 10.1 — it is
+behaving as a fair coin, which is all any function of a single ruin's coordinates
+can be. A ruin's type being a pure function means each ruin decides independently,
+so the split is binomial and the median map's 17 ruins give a standard deviation of
+50/sqrt(17) = 12 points no matter what mask, multiplier or mixing constant is used.
+
+- **CLOSED: "search for a better hash / a different mask / more avalanche steps."**
+  Killed by the table above, not by a run. There is nothing left on the table:
+  9.9 against a floor of 10.1.
+- **The only way past the floor is an adaptive rule**, which requires removing the
+  marking deadlock first (derive a ruin's type from its existing marks by diffing
+  `rc.getTowerPattern()` for the two types and reading the mark at a disagreeing
+  cell). That enabler is already recorded above and is now the *only* live
+  descendant of this thread.
+
+Interesting for its own sake: the hash beats the fair coin in the tails (0 maps
+over 30 points where a coin expects 2.1). That is luck, not design, and I am not
+going to claim it as a property.
+
+### What the change is actually worth, stated honestly
+
+It converts 4 maps from "100% one tower type" to a mix and pulls 7 maps back from
+over 30 points of skew, at the cost of moving typical behaviour from a
+lucky-structured 9.3 to a fair-coin 9.9. That trade is good on convexity, not on
+the mean: a 100%-money map has **no paint income at all** beyond the single
+starting paint tower, which the iteration 3 work showed is crippling, whereas a
+60/40 map is unremarkable. Harm is convex in skew; the mean is the wrong summary.
+
+### And the sample cannot see it
+
+The run's 20-map sample contains **none of the 4 degenerate maps**. That is exactly
+the interpretation I pre-registered before the numbers existed: "a sample problem,
+not a verdict." The h2h from this run therefore measures *no regression on ground
+where the change is a lateral move* — a real and necessary thing to measure, but
+not the value of the fix.
+
+Accordingly, and pre-registered now, before the affected-subset run: the affected
+subset is defined **by the mechanism, not by outcome** — the maps where the two
+rules disagree most, computable before any game. The accept case requires BOTH
+halves: (a) the broad random sample shows no regression, and (b) the affected
+subset shows a real gain. Reporting only (b) would be cherry-picking, so both go
+in the log whichever way they land.
