@@ -9,12 +9,21 @@ tell a fresh session before it touched anything.
 ## 1. The economy of Battlecode 2025 (as my lineage has measured it)
 
 **Paint is the binding resource; chips are not, and have not been since
-iteration 2.** Every game so far ends with an unspendable chip mountain —
-$113k (iter1), $120,840 (iter2), $204,780 (iter3). Any mechanism that converts
-chips into paint or into paint *income* is close to free.
+iteration 2.** Every game up to iteration 3 ended with an unspendable chip
+mountain — $113k (iter1), $120,840 (iter2), $204,780 (iter3). Any mechanism that
+converts chips into paint or into paint *income* is close to free.
 
-**A robot's entire output is bounded by the paint it was born with.** There is
-no refill anywhere in the bot. A soldier spawns with 200, spends 5 per painted
+**Iteration 4 proved that and drained the mountain** — towers upgrading
+themselves took end-of-game chips from $87,100 to $1,740 on Racetrack and held
+coverage flat (495→555‰) where the baseline decayed (436→283‰); 39/50 vs the
+previous snapshot. **But the sink is finite**: once every tower reaches L3,
+`getNextLevel()` returns null and chips pile straight back up ($180,890 by
+r2000 in a later trace). SRPs are the obvious way to reopen it, and they remain
+unbuilt.
+
+**A robot's entire output is bounded by the paint it was born with** — because
+there is no refill anywhere in the bot, and `transferPaint` is never called (see
+§3b; this is the largest single unused mechanic I have found). A soldier spawns with 200, spends 5 per painted
 tile and 25 per pattern mark, bleeds upkeep every turn, and dies at ~41 rounds
 having painted ~35 tiles (traced: id12472, DefaultLarge). Therefore **cumulative
 team coverage is bounded by cumulative paint production**, not by chips and not
@@ -51,23 +60,52 @@ Corollary: **soldiers cannot overwrite enemy paint** (engine: paints only if the
 tile is empty or already ally). A soldier-only bot has no answer to erasure at
 all. Only splashers convert enemy paint, and moppers clear it to empty.
 
-## 3. Unit population has an interior optimum, set by the clumping tax
+## 3. RETRACTED — "unit population has an interior optimum set by the clumping tax"
 
-`processEndOfTurn` charges −1 paint per adjacent ally robot (−2 on enemy paint),
-**and the ally-tile branch charges it too** — standing on your own paint waives
-only the terrain penalty, never the crowding one. A surrounded robot pays −8 per
-turn against a 200-paint stash.
+**This section previously argued that my bot's armies grow until the adjacency
+tax strangles them. It was an artifact of a broken instrument and is withdrawn.**
 
-So spawning is not free even when the resources exist: at 314 soldiers on a
-1500-tile map (iteration 3) the entire army sat at ~0 paint and the team's paint
-*actions* fell to ~80 per 250 rounds — one fifth of what a quarter as many
-soldiers had managed. **More units produced strictly less work.**
+My replay dumper tracked live robots but never removed the dead: BC25 reports
+robot deaths as `Action.DieAction` inside a `Turn`, not via `Round.diedIds`,
+which carries none. So every "units alive" figure I ever logged was **cumulative
+spawns**. It had me believing the bot fielded 690 units on a 625-tile map.
 
-The accepted iteration 2 wins partly by accident here: its mopper branch burns
-tower paint on units that then consume almost nothing, which caps the soldier
-population near a survivable density. A deliberate regulator should beat an
-accidental one — but it must be measured, not assumed (that is the open
-iteration 5 thread).
+Corrected on the same replays: the real army is **~34 units**, and the accepted
+baseline routinely ends a game with **zero soldiers alive**. Iteration 3's
+famous "314 soldiers" was cumulative too — its *reject* stands, its *explanation*
+does not.
+
+**What is actually true of the engine** (unchanged, still verified): the
+adjacency tax is −1 paint per adjacent ally robot, −2 on enemy paint, and it is
+charged on ally tiles too. What is *not* established is that my bot has ever been
+dense enough for it to bind. Do not plan against clumping without first measuring
+adjacency on a corrected trace.
+
+## 3b. The real degeneracy: a starvation treadmill
+
+With deaths counted properly, the shape of every game is this:
+
+- **65-100% of all unit deaths are paint starvation**, not combat. A unit at 0
+  paint takes −20 HP/turn and cannot act until refilled.
+- **`transferPaint` is called zero times per game**, by either team. Nothing in
+  the lineage has ever refilled a unit. A unit's lifetime output *is* the paint
+  it was born with.
+- So the bot spawns ~102 units and loses ~104 per 250 rounds to hold ~34 alive.
+  Its only way to deliver fresh paint to the field is to **respawn**: 200 tower
+  paint **plus 250 chips**, discarding a positioned veteran, to restart the same
+  ~85-round clock. A refill would cost the same paint and **no chips**.
+
+**The spawn mix is a price artifact, not a policy.** The tower's spawn line reads
+25% moppers. The *realized* mix is ~90% moppers, because a mopper costs 100 tower
+paint and a soldier 200 against an income of 5-15/turn — the tower funds the cheap
+unit twice as often and never saves up for the expensive one. Worse, when the RNG
+picks SOLDIER and paint is short the build simply fails and the turn is wasted.
+Moppers cannot paint; painted area is the win condition.
+
+**Corollary that cost a run**: driving moppers to zero does not fix this. At
+`MOPPER_PAINT_RESERVE=200` the bot painted ~10x more and still lost, because it
+did zero mopping while the opponent erased its paint all game (see §2 — coverage
+is a contested stock). The useful range is an interior one.
 
 ## 4. Methodology lessons paid for in this project
 
@@ -118,6 +156,12 @@ accepted bot works. That is a better return than most accepts.
 - **Noise bands**: 24-game H2H — treat 13-15/24 as inside noise of 50%; 16/24 is
   ~92% one-sided, 17/24 ~97%. 50-game H2H — 24-29/50 inside noise, ≥30/50 ~92%,
   ≥32/50 ~98%.
+- **A monotone counter is a bug report.** The tell for the death-accounting bug
+  was a unit count that only ever rose, and a 2000-round dump containing zero
+  `DIED` lines. Any "alive"/"in flight" figure that never decreases across a
+  whole game is measuring arrivals, not stock — check the removal path before
+  believing it. Cross-check a derived stock against the map's own bounds: more
+  units than the map has tiles is impossible, and I logged it anyway.
 - **Bytecode is not a constraint** for this bot: 0 overruns and 0 near-misses
   over a full 2000-round game, peak 1638/17500 (9%) for soldiers, 534/20000 (3%)
   for towers. Expensive logic — BFS navigation, symmetry inference, per-tile
