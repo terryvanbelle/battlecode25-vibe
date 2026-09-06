@@ -222,3 +222,31 @@ consequence. LEARNINGS.md entries that prescribe a code change now carry an expl
 and an entry that prescribes one without a commit behind it is an open bug, not a lesson.
 The general check is cheap — for each entry, name the line of code it changed; if there
 isn't one, it is still an open bug wearing a lesson's clothes.
+
+## Check the gate can see the effect before you build the fix
+
+The frozen-treasury bug freezes the treasury only when the last money tower dies. Killing
+towers is something `carol_rush` does and my own lineage does not — so the accept gate
+(head-to-head against my last snapshot) showed the degeneracy in 1 of 22 loss replays, while
+the three rusher losses showed it for 1887, 1881 and 44 consecutive rounds each.
+
+Had I run the standard gate, it would have come back ~50%, I would have read that as a
+rejection, and I would have closed a direction that is worth three games and a fatal
+degeneracy. The measurement would have been perfectly executed and completely uninformative.
+
+So the pre-check is not just "is the branch reachable in my bot" but **"does the instrument I
+am about to gate on ever produce the situation the branch handles?"** — one query against
+existing replays, before writing the fix. When the answer is no, the mechanism becomes the
+primary gate and the head-to-head is demoted to a regression check. This is the specific shape
+the self-referential blind spot takes: a lineage cannot regression-test a defence against a
+behaviour it never performs, and every instrument descended from that lineage inherits the
+hole.
+
+## Sizing an opportunity needs the wins as well as the losses
+
+Measuring frozen-treasury runs only in losses would have shown three big numbers and proved
+nothing — plenty of things are common in games we lose. Running the same query over won games
+gave 0, 0, 0 across 2,955 rounds, and it is that pair that makes the signal: the condition
+fires in all three losses and none of the wins, so disarming the reserve cannot misfire while
+a game is going well. The algorithm's "don't sample only losses" is usually framed as avoiding
+tautological conclusions; it is just as valuable for establishing that a trigger is *safe*.
