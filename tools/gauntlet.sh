@@ -4,7 +4,25 @@
 #
 #   cd agents/alice
 #   BOT=alice OPPONENTS="examplefuncsplayer alice_iter1" ../../tools/gauntlet.sh
+#   NMAPS=40 ../../tools/gauntlet.sh                      # wider sample
 #   MAPS="DefaultSmall DefaultMedium" MAXJOBS=2 ../../tools/gauntlet.sh
+#
+# MAP SAMPLING: with no MAPS set, the run plays a fresh RANDOM sample of NMAPS
+# (default 25) maps drawn from tools/bc25-maps.txt -- not all 75, and not the
+# same 25 every time. Both sides of every map are still played, so the run stays
+# balanced; the sample is drawn once and shared by every opponent in the run, so
+# within-run comparisons between opponents are exact. The sample is written to
+# gauntlet/<run-id>/maps.txt, and passing MAPS="$(cat .../maps.txt)" replays a
+# run on exactly the same maps.
+#
+# WHY RANDOM RATHER THAN A FIXED SET: a fixed map list is an overfitting
+# surface -- accepted iterations drift toward the handful of maps in the list.
+# Resampling each run tests each iteration on ground its predecessors were not
+# tuned against. The cost is that win rates from two different runs are measured
+# on different maps, so cross-run deltas are noisier; the accept gate is a
+# within-run head-to-head, which is unaffected. Pin MAPS explicitly when you
+# specifically need run-to-run comparability (regression checks, ablations,
+# tracing a single map).
 #
 # Output (workspace-local, gauntlet/<run-id>/):
 #   results.csv  opponent,map,bot_side,winner_side,rounds,bot_result
@@ -24,11 +42,15 @@ default_bot="$(basename "$WS_REL")"; [ "$default_bot" = arena ] && default_bot=e
 BOT="${BOT:-$default_bot}"
 OPPONENTS="${OPPONENTS:-examplefuncsplayer}"
 MAXJOBS="${MAXJOBS:-3}"          # this run's concurrent games
+NMAPS="${NMAPS:-25}"            # size of the random map sample when MAPS is unset
 GLOBAL_CAP="${GLOBAL_CAP:-5}"   # BC25 games in flight across ALL agents+tournament
 HARD_CAP="${HARD_CAP:-7}"       # machine-wide ceiling, counts the BC26 project too
 
+SAMPLED=0
 if [ -z "${MAPS:-}" ]; then
-  if [ -f "$REPO_ROOT/tools/bc25-maps.txt" ]; then MAPS="$(tr '\n' ' ' < "$REPO_ROOT/tools/bc25-maps.txt")"
+  if [ -f "$REPO_ROOT/tools/bc25-maps.txt" ]; then
+    MAPS="$(shuf -n "$NMAPS" "$REPO_ROOT/tools/bc25-maps.txt" | tr '\n' ' ')"
+    SAMPLED=1
   else MAPS="DefaultSmall"; fi
 fi
 
@@ -36,7 +58,10 @@ RUN_ID="$(date +%Y%m%d-%H%M%S)"
 OUT="$WS_DIR/gauntlet/$RUN_ID"
 mkdir -p "$OUT/losses"
 NGAMES=$(( $(echo "$OPPONENTS" | wc -w) * $(echo "$MAPS" | wc -w) * 2 ))
-echo "gauntlet $RUN_ID  ws=$WS_REL bot=$BOT  opponents=[$OPPONENTS]  maps=$(echo "$MAPS" | wc -w)  games=$NGAMES  jobs=$MAXJOBS"
+printf '%s\n' $MAPS > "$OUT/maps.txt"
+[ "$SAMPLED" = 1 ] && MAPTAG="$(echo "$MAPS" | wc -w) sampled of $(wc -l < "$REPO_ROOT/tools/bc25-maps.txt")" \
+                   || MAPTAG="$(echo "$MAPS" | wc -w) pinned"
+echo "gauntlet $RUN_ID  ws=$WS_REL bot=$BOT  opponents=[$OPPONENTS]  maps=$MAPTAG  games=$NGAMES  jobs=$MAXJOBS"
 
 ensure_vm
 gssh "mkdir -p ~/$REMOTE_REPO/$WS_REL/src" >/dev/null
@@ -157,7 +182,11 @@ done
 {
   total=$(($(wc -l < "$OUT/results.csv") - 1))
   wins=$(grep -c ',win$' "$OUT/results.csv" || true)
-  echo "run $RUN_ID  ws=$WS_REL bot=$BOT"
+  echo "run $RUN_ID  ws=$WS_REL bot=$BOT  maps=$MAPTAG"
+  if [ "$SAMPLED" = 1 ]; then
+    echo "  map sample (random this run; replay with MAPS=\"\$(cat $OUT/maps.txt)\"):"
+    tr '\n' ' ' < "$OUT/maps.txt" | fold -s -w 76 | sed 's/^/    /'
+  fi
   awk -v w="$wins" -v t="$total" 'BEGIN{printf "overall: %d/%d wins (%.1f%%)\n", w, t, (t>0)?100*w/t:0}'
   echo
   echo "  swept maps (won from BOTH sides) -- immune to spawn advantage:"

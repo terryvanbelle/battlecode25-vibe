@@ -19,12 +19,25 @@ You are **Bob**, one of three independent Battlecode 2025 bot developers
 
 ```bash
 TEAM_A=bob TEAM_B=examplefuncsplayer ../../tools/vm-match.sh DefaultSmall
-BOT=bob OPPONENTS="examplefuncsplayer bob_iter1" MAPS="DefaultSmall DefaultMedium" ../../tools/gauntlet.sh
+BOT=bob OPPONENTS="examplefuncsplayer bob_iter1" ../../tools/gauntlet.sh
 ```
 
 Both run headlessly on the battlecode-dev VM and pull results back here.
-`gauntlet/` output is git-ignored; prune old runs. The full map list is
-`../../tools/bc25-maps.txt` (75 maps; use subsets for day-to-day loops).
+`gauntlet/` output is git-ignored; prune old runs.
+
+**Maps: leave `MAPS` unset.** A gauntlet with no `MAPS` plays a fresh random
+sample of 25 maps drawn from the 75 in `../../tools/bc25-maps.txt` (both sides
+of each, so 25 maps x 1 opponent = 50 games). `NMAPS=40` widens the sample.
+Do not hand-pick a standing map list: a fixed list is an overfitting surface,
+and accepted iterations drift toward the maps on it. Resampling every run tests
+each iteration on ground its predecessors were never tuned against.
+
+The sample is drawn once per run and shared by every opponent in it, so
+opponent-vs-opponent comparisons *within* a run are exact. Across runs the maps
+differ, so a raw win-rate delta between two runs is noisier than it looks --
+your accept gate is a within-run head-to-head, which is unaffected. Pin
+`MAPS="$(cat gauntlet/<run-id>/maps.txt)"` to replay a run's exact maps, which
+is what you want for a regression check, an ablation, or chasing one map.
 
 ## Ground truth
 
