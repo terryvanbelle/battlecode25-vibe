@@ -65,14 +65,35 @@ instrument. But the accept gate stays *within* your own workspace
 (head-to-head vs. your last snapshot); the tournament happens only twice a
 day and its timing shouldn't gate your loop.
 
+## Never stop to wait (hard)
+
+Nothing resumes an agent automatically. When you stop, you go idle and your
+session ends until a human notices — while your remote run continues on
+battlecode-dev regardless of whether you are watching it. So stopping to wait
+buys nothing and costs every minute until someone intervenes.
+
+Two of the three agents ended their first session this way ("waiting on the
+gauntlet", "the watchers will notify me"). Per TRAINING_ALGORITHM.md's "Never
+idle": waiting on a run you already started is normal execution, not a
+stopping point. Poll it to completion yourself, and use the gaps for
+non-blocking work — writing up the iteration, engine probes, replay tracing,
+preparing the next hypothesis, ablation planning.
+
+Stop only when genuinely blocked by something outside your control, and say
+precisely what is blocking you and what you would do next.
+
 ## Shared-resource rules (hard)
 
 `battlecode-dev` also serves a **live BC26 project**, plus your two sibling
 agents. Therefore:
 
 - Never `pkill`/`kill` anything on battlecode-dev; never stop either VM.
-- Run gauntlets with `MAXJOBS` <= 3 (the tools' default). The runners already
-  yield while the machine-wide game count is at `GLOBAL_CAP` (6).
+- Run gauntlets with `MAXJOBS` <= 3 (the tools' default). Games are gated by a
+  flock semaphore shared across all BC25 runners (`GLOBAL_CAP`, 5) under a
+  machine-wide ceiling that counts BC26's games too (`HARD_CAP`, 7), so your
+  run will queue behind your siblings' rather than oversubscribing the box.
+  Expect runs to be slower when all three of you are evaluating at once —
+  that is the system working, not a failure.
 - Driver disk is tight: your workspace's `gauntlet/` output is git-ignored —
   prune old runs you no longer need. Keep bulky artifacts on battlecode-dev.
 
