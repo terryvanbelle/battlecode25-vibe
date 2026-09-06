@@ -69,7 +69,7 @@ game () {  # <opp> <map> <side>
     -Dbc.server.robot-player-to-system-out=false -Dbc.server.debug=false \\
     -Dbc.engine.debug-methods=false -Dbc.engine.enable-profiler=false -Dbc.engine.show-indicators=true \\
     -Dbc.game.team-a="\$TA" -Dbc.game.team-b="\$TB" \\
-    -Dbc.game.team-a.url=\$(pwd)/build/classes/java/main -Dbc.game.team-b.url=\$(pwd)/build/classes/java/main \\
+    -Dbc.game.team-a.url=build/classes -Dbc.game.team-b.url=build/classes \\
     -Dbc.game.team-a.package="\$TA" -Dbc.game.team-b.package="\$TB" \\
     -Dbc.game.maps="\$MAP" -Dbc.server.validate-maps=true -Dbc.server.alternate-order=false \\
     -Dbc.server.save-file="\$REPLAY" \\
