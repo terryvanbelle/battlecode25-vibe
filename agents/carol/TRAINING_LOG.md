@@ -1088,3 +1088,65 @@ inference from tower counts, because carol and its snapshot emit byte-identical 
 formats. The iteration-5 log already flagged this; it has now cost real time twice. The
 refinement run will stamp a build tag into every indicator string. This is play-neutral —
 indicator strings cannot affect the game — so it is instrumentation, not a bundled mechanism.
+
+## Iteration 6b (2026-09-06) — near-miss refinement #1 of 3: `PAINT_PLENTIFUL` 500 -> 250
+
+**Area**: econ (3rd consecutive attempt). `MaxConsecutiveRejects` is not yet implicated —
+iteration 5 accepted and iteration 6 is a near miss, not a reject — but if 6b fails the next
+attempt must leave econ. Recording that trigger now so it is not negotiated away later.
+
+**Change**: one constant, 500 -> 250. Plus a play-neutral build tag in the indicator string.
+
+**Pre-registered gate**:
+- PRIMARY: h2h vs `carol_iter5` > 50% accept, 45-50% near miss (refinement #2), < 45% reject.
+- DOSE: h2h vs `carol_i6a` (the 500 arm, byte-identical but for the constant and its tag)
+  must be > 50%. This is the arm the whole refinement claims to beat; losing it while beating
+  `carol_iter5` would mean the gain came from somewhere other than the dose.
+- MECHANISM: on Mirage the money-tower share must rise vs the 500 arm; on MoneyTower it must
+  NOT (average tower paint ~20 there is below both thresholds, so that map must be
+  *unchanged*). A run where MoneyTower also moves means something other than the dose changed.
+- REGRESSION: no new swept-loss map that the 500 arm swept as a win; 0 exceptions.
+
+**Design of the run**: `MAPS` **pinned to `gauntlet/20260906-212704/maps.txt`** — the same 20
+maps as the 500 arm. AGENT.md's default is a fresh random sample, and that is right for an
+accept gate, but this is a dose comparison and doctrine #1/#2 want the two arms measured on
+identical ground. `OPPONENTS="carol_iter5 carol_i6a"` -> 2 x 20 x 2 = 80 games. Both arms
+were built from the same file (`src/carol_i6a/` differs from `src/carol/` in exactly two
+lines: the constant and the build tag), so this is a true zero-vs-dose comparison rather than
+two independently-written bots.
+
+**Arm-to-arm identity check** (doctrine #3) planned before interpreting anything: hash the
+250-arm's replays against the 500-arm's from run 20260906-212704 on the same (map, side).
+All-identical would mean the constant never changed a decision and the result is the same bot
+measured twice. Some identical games are expected and fine — MoneyTower's should be identical
+by the mechanism prediction above, which makes that map a built-in positive control.
+
+## Engine probe — the SRP payout, read out of the bytecode (settles iteration 7's ROI)
+
+Disassembled `InternalRobot.processBeginningOfRound()` rather than trusting the digest,
+because iteration 7's entire case is this one formula. It reduces to:
+
+```java
+if (type.paintPerTurn != 0) addPaint(type.paintPerTurn + 3 * numSRPs);          // per PAINT tower
+if (type.moneyPerTurn != 0) teamInfo.addMoney(team, type.moneyPerTurn + 3 * numSRPs); // per MONEY tower
+```
+(`extraResourcesFromPatterns(team)` is literally `getNumResourcePatterns(team) * 3`.)
+
+`processBeginningOfRound` runs **per robot**, so the bonus is applied once per tower, gated
+on that tower's own type. Confirms the per-tower reading, and sharpens the ROI beyond what I
+logged earlier:
+
+- A lv1 paint tower mines **5** paint/turn. Ten SRPs make it **5 + 30 = 35/turn — a 7x
+  multiplier** on the resource the MoneyTower trace showed to be the hard cap.
+- The lv2 upgrade buys **+5**/turn for 2500 chips. One SRP buys **+3/turn to every paint
+  tower simultaneously** for 200 chips.
+
+So the two candidates are not close, and the earlier ranking correction stands but understated
+it: SRPs beat upgrades by more than an order of magnitude once the bonus is counted per tower.
+
+`isValidPatternCenter(loc, isTower)` also disassembled: requires only `2 <= x < W-2`,
+`2 <= y < H-2`, and (for SRPs) `areaIsPaintable(loc)` — every one of the 25 tiles free of
+walls and ruins. **There is no engine constraint against SRPs overlapping each other**; the
+only thing stopping two SRPs sharing tiles is that both patterns must hold simultaneously.
+The map-centre lattice in the iteration-7 draft avoids the issue by construction, and the
+draft must also skip centres whose 5x5 contains a wall, not just a ruin.

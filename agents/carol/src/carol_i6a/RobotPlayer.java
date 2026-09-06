@@ -1,4 +1,4 @@
-package carol;
+package carol_i6a;
 
 import battlecode.common.*;
 
@@ -23,7 +23,7 @@ public class RobotPlayer {
      * every iteration; a snapshot then freezes its own tag and the pair is always separable.
      * Play-neutral: indicator strings cannot affect the game.
      */
-    static final String BUILD = "i6b";
+    static final String BUILD = "i6a";
 
     // Bytecode monitoring
     static int bcOverruns = 0;      // confirmed: our logic crossed a round boundary
@@ -246,7 +246,7 @@ public class RobotPlayer {
      * separation the self-calibrating mix is for: money towers where they can be fed, paint
      * towers where they cannot.
      */
-    static final int PAINT_PLENTIFUL = 250;
+    static final int PAINT_PLENTIFUL = 500;
 
     static UnitType towerTypeFor(MapLocation ruin) throws GameActionException {
         // If the ruin is already marked, follow whoever marked it -- never re-decide, or two
