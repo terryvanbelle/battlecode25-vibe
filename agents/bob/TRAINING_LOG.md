@@ -2165,3 +2165,44 @@ rather than treated as settled. That is a real test, not a hedge — the chips c
 of any replay answers it.
 
 Reverted to `bob_iter7`. Next: iteration 9, SRPs.
+
+
+---
+
+## Iteration 9 (2026-09-06) — Special Resource Patterns — RUNNING
+
+Prepared as "iteration 6" and gated behind iteration 5; the code was recovered off
+the VM this session and grafted onto `bob_iter7` with `bob-tools/shelved/apply-srp.py`
+rather than copied, so iteration 7 survives intact (90 lines added, `Soldier.java`
+only). Full rationale and engine derivation in the iteration 6 entry above.
+
+Short version: `extraResourcesFromPatterns(team) = 3 * numResourcePatterns(team)` is
+added to **every allied tower's per-turn income**, so an SRP is +3 paint/turn on
+every paint tower for 200 chips, against a tower upgrade's +5 paint/turn on one
+tower for 2,500 chips. `srpA`/`srpB` are 0 in every replay ever dumped — the whole
+mechanic is unused.
+
+Evaluation: 20 maps x 2 sides x `bob_iter7` (accept gate) and `bob_denier` = 80
+games. `examplefuncsplayer` and the iter0/iter1 roster are excluded per the pool
+decision above.
+
+Pre-registered accept criteria (1-3 carried from the iteration 6 entry, 4 added
+today on the strength of what iteration 8 taught):
+1. **h2h vs `bob_iter7` > 50%** — accept gate.
+2. swept-win > swept-loss.
+3. Mechanistic: `srpA` reaches ≥3 and **stays** there. If SRPs are built and keep
+   collapsing to 0, our own splashers are clipping them (the engine restarts the
+   50-round activation clock on any pattern mismatch) and the fix is a splasher
+   exclusion zone, not abandoning the mechanic.
+4. **NEW — the iteration 8 re-open test, measured in the same run.** Iteration 8 was
+   closed because paint binds and chips are free (55,630 unspent). If SRPs raise
+   paint income enough that **team chips stop accumulating** — sustained below
+   ~5,000 while towers still want to spawn — then spawning has become chip-limited,
+   paint is no longer convertible into bodies, and refilling stops being dominated.
+   Read the `moneyA` column. This costs nothing extra and either re-opens a closed
+   direction on evidence or confirms its closure.
+
+Note what criterion 4 is doing: iteration 8's rejection was not just a discarded
+iteration, it produced a *quantitative condition* under which its conclusion flips.
+That condition is now a pre-registered readout on the next run rather than a note
+someone might revisit.
