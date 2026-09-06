@@ -49,6 +49,9 @@ public class BobMop {
     // -2 on enemy. standAdj counts allied robots in the 8 neighbours (+1 each).
     static long standAlly = 0, standNeutral = 0, standEnemy = 0, standAdj = 0, standTurns = 0;
     static long couldHaveStoodAlly = 0;
+    // Is the crowding already happening AT our towers? This decides whether iteration
+    // 8 (which deliberately sends units back to towers) amplifies a cost we already pay.
+    static long adjNearTower = 0, adjFarFromTower = 0;
     static final List<int[]> pendingDeaths = new ArrayList<>();  // [id, dieType]
 
     public static void main(String[] args) throws Exception {
@@ -182,6 +185,15 @@ public class BobMop {
                 pendingDeaths.clear();
                 // standing census: needs the paint grid AFTER this round's actions
                 {
+                    List<int[]> ourTowers = new ArrayList<>();
+                    for (int j = 0; j < r.turnsLength(); j++) {
+                        r.turns(turn, j);
+                        Integer t3 = idTeam.get(turn.robotId());
+                        Integer y3 = idType.get(turn.robotId());
+                        if (t3 != null && t3 == us && y3 != null && y3 >= RobotType.PAINT_TOWER
+                                && y3 <= RobotType.DEFENSE_TOWER)
+                            ourTowers.add(new int[]{turn.x(), turn.y()});
+                    }
                     Set<Long> occupied = new HashSet<>();   // ALLIED units only: the
                     // engine's penalty term is "+1 per adjacent ALLIED robot", so counting
                     // both teams would overstate it.
@@ -190,7 +202,7 @@ public class BobMop {
                         r.turns(turn, j);
                         Integer t2 = idTeam.get(turn.robotId());
                         Integer y2 = idType.get(turn.robotId());
-                        if (t2 == null || y2 == null || y2 > RobotType.MOPPER) continue;
+                        if (t2 == null || y2 == null || y2 < RobotType.SOLDIER) continue;   // units only
                         if (t2 == us) {
                             ours.add(new int[]{turn.x(), turn.y()});
                             occupied.add(key(turn.x(), turn.y()));
@@ -209,7 +221,16 @@ public class BobMop {
                             if (dx == 0 && dy == 0) continue;
                             int x = u[0] + dx, y = u[1] + dy;
                             if (x < 0 || y < 0 || x >= W || y >= H) continue;
-                            if (occupied.contains(key(x, y))) standAdj++;
+                            if (occupied.contains(key(x, y))) {
+                                standAdj++;
+                                int bd = Integer.MAX_VALUE;
+                                for (int[] tw : ourTowers) {
+                                    int ddx = tw[0] - u[0], ddy = tw[1] - u[1];
+                                    int dd = ddx * ddx + ddy * ddy;
+                                    if (dd < bd) bd = dd;
+                                }
+                                if (bd <= 8) adjNearTower++; else adjFarFromTower++;
+                            }
                             if (owner[y * W + x] == us) allyNear = true;
                         }
                         if (o != us && allyNear) couldHaveStoodAlly++;
@@ -266,6 +287,11 @@ public class BobMop {
                 + (standAdj * 100 / standTurns) + " per 100 unit-turns (+1 paint each)");
             System.out.println("#   OFF ally paint but WITH an ally tile adjacent (a free step away): "
                 + couldHaveStoodAlly + " (" + 100*couldHaveStoodAlly/standTurns + "% of all unit-turns)");
+        }
+        if (standAdj > 0) {
+            System.out.println("#   of those ally-neighbour instances, "
+                + (adjNearTower * 100 / standAdj) + "% are within r2<=8 of one of OUR towers ("
+                + adjNearTower + " near / " + adjFarFromTower + " away)");
         }
         System.out.println("# exceptionDeaths=" + exceptionDeaths);
         System.out.println("# DEATHS of our units, bucketed by paint held on the last turn");

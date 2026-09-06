@@ -1910,3 +1910,64 @@ recorded `bob_iter3`. For -2127 the build that actually played was the iteration
 candidate, now `bob_iter7`. The win% values are correct; only the label lags. Not
 hand-editing, because the tool is shared and would rewrite it — recorded here
 instead so the chart is not misread.
+
+
+---
+
+## CORRECTION (2026-09-06) — the standing census counted towers as units
+
+Caught by an implausible number rather than by review: the crowding-at-towers check
+came back "0% of ally-neighbour instances are near one of our towers", which cannot
+be true. The cause is an engine constant I assumed instead of probing:
+
+```
+battlecode.schema.RobotType:  NONE=0  PAINT_TOWER=1  MONEY_TOWER=2
+                              DEFENSE_TOWER=3  SOLDIER=4  SPLASHER=5  MOPPER=6
+```
+
+**MOPPER is the HIGHEST value, not the lowest.** My filter `if (type > MOPPER)
+continue` was meant to exclude towers and excluded nothing, so towers were counted
+as units in the standing census — as subjects *and* as each other's neighbours. This
+is the same class of error as assuming deaths live in `Round.diedIds`, and the same
+fix applies: probe the enum, never infer the ordering.
+
+### Corrected numbers (Castle, our side, units only — 29,183 unit-turns, not 38,616)
+
+```
+                          reported (wrong)   corrected
+on ally paint                  63%              84%
+on neutral                     26%               3%
+on enemy paint                  9%              12%
+allied neighbours/unit-turn    0.49             0.53   (15,600 total)
+free ally step available       32%              10%
+```
+
+### What this changes, and it is not cosmetic
+
+**The "prefer ally paint when stepping" lever is largely dead, and I am striking
+it.** I claimed it was worth ~17,000 paint on the strength of "32% of unit-turns are
+off ally paint with a free step available". The real figure is **10%**, and units
+are already on ally paint **84%** of the time. The neutral-territory term is 909
+unit-turns — about 909 paint in a game, i.e. nothing. The remaining off-ally time is
+12% on *enemy* paint, which is where splashers and moppers are supposed to be. There
+is no meaningful waste here to remove.
+
+**Anti-crowding is promoted, and is now clearly the largest non-starvation lever.**
+Adjacency is 15,600 paint against a total drain of roughly 23,000 — about two thirds
+of it — and it remains large compared with the 23,780 that ever reached the map.
+
+**And the new measurement answers the question I built it for:** only **18%** of
+ally-adjacency happens within r²≤8 of one of our own towers. Crowding is not units
+queueing at home; it is units traveling and working in clumps out on the map. So
+iteration 8, which deliberately sends units back to towers, is adding to a term that
+is currently only a fifth of the problem, rather than doubling the whole thing. That
+is a materially smaller risk than the version I logged earlier, and it is worth
+knowing before the result lands rather than after.
+
+**Method note.** Two instrument bugs in one session — a masked `javac` failure
+running a stale class, and this enum-ordering assumption — and both produced
+*plausible-looking output*. The stale class printed believable metrics; this one
+printed a believable 63/26/9 split. Neither was caught by reading the code. Both
+were caught by one number being obviously impossible (nothing printed at all; 0%).
+The habit that works is to put a value in every report whose correct magnitude I can
+predict in advance, and check that one first.
