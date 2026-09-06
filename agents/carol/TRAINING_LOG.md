@@ -2115,3 +2115,52 @@ the frontier and therefore strictly worse at the one thing it exists for.
 `carol_decap` v2 is registered but **deprioritised**: it is instrument-building, and the
 instrument is only worth rebuilding if a change actually needs it. Iteration 7 is the only
 queued change that does, and its own value now looks small.
+
+## NEW ABSOLUTE DEGENERACY: losing the last PAINT tower is an unrecoverable loss
+
+Traced the Dominoes swept loss (the only new loss in iteration 7's `carol_rush` block, and
+confirmed *not* to be the frozen-treasury bug — `stag` max 0). It is worse than the bug
+iteration 7 fixes.
+
+| round | chips | towers | tower paint |
+|---|---|---|---|
+| 1 | 2,530 | 2 | [300, 410] |
+| 200 | 6,000 | **1** | **[0]** |
+| 900 | 27,000 | 1 | [0] |
+| 2000 | **60,000** | 1 | **[0]** |
+
+Carol's starting **paint** tower dies around round 150-200. The surviving tower is the
+starting **money** tower, whose paint stash is 0 and stays exactly 0 for 1,800 rounds while
+chips climb to 60,000. Total soldier actions in the entire game: **29**.
+
+**Why it is unrecoverable, from the engine rather than from the symptom.**
+`InternalRobot.processBeginningOfRound` (disassembled earlier today) gates the paint income on
+the tower's own type: `if (type.paintPerTurn != 0) addPaint(paintPerTurn + 3*numSRPs)`. A money
+tower has `paintPerTurn == 0`, so **it never gains paint by any route** — not by mining, and
+not from SRPs either, since the SRP bonus is inside that same guard. Robot paint is drawn from
+the building tower's stash, so with every surviving tower at 0 paint, `canBuildRobot` fails
+forever. No robots means no ruin can ever be painted, so no new tower can be built, so no paint
+tower can be recovered. 60,000 chips buy nothing.
+
+**So: a team with no paint tower and no robots holding paint has already lost, at whatever
+round that happens, silently.** There is no comeback path in the rules. Adding this to
+`RULES.md` as a hard loss condition — it is the sort of thing that belongs in the ground-truth
+digest, not buried in a trace.
+
+**Why iteration 7 cannot help here**, and why that is the right behaviour: chips are *growing*
+(the money tower mines 20-30/turn), so `stagnantTurns` stays 0 and the reserve stays armed.
+Correctly — this is not a chip problem. It is the paint-side twin of the same failure, and it
+needs its own fix.
+
+**Registered as the next iteration, promoted above SRPs.** It is an absolute degeneracy
+(no opponent needed for it to be wrong), it is catastrophic rather than marginal, and it
+occurred in **2 of 40** games against one opponent. The cheap, targeted form: carol starts with
+exactly one paint tower (`NUMBER_INITIAL_PAINT_TOWERS = 1`) and its `towerTypeFor` key makes
+roughly one ruin in three a money tower **without ever asking what the team already has**. A
+soldier can count ally tower types in sense range, and while it can see at most one paint tower
+it should build PAINT. That converts "carol has one paint tower for the first 200 rounds" —
+a single point of failure the whole game hangs on — into two or three.
+
+Note this is the same gap iteration 9 (the two-sided mix) was registered for, but sharpened
+from "read chips as well as paint" to something far more specific and far better evidenced:
+**never let the paint-tower count reach one.**
