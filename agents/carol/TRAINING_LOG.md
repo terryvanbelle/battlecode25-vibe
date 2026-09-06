@@ -1150,3 +1150,73 @@ walls and ruins. **There is no engine constraint against SRPs overlapping each o
 only thing stopping two SRPs sharing tiles is that both patterns must hold simultaneously.
 The map-centre lattice in the iteration-7 draft avoids the issue by construction, and the
 draft must also skip centres whose 5x5 contains a wall, not just a ruin.
+
+## DEGENERACY FOUND: the CHIP_RESERVE dead band is still live and still fatal
+
+Iteration 6's run lost to `carol_rush` on DefaultSmall by **annihilation at round 69**.
+LEARNINGS.md records that exact signature — "production stopped completely and permanently at
+round 25, with a full paint stash and 1350 chips unspent, ending in annihilation at round 69"
+— under the heading "Fixed constants rot into dead bands". **The lesson was written and the
+code was never changed.** Same pathology as the API sweep two hours ago: the diagnosis lives
+in my notes, the bot is unaffected.
+
+Traced the replay rather than assuming it was the same bug. Tower indicator, side A:
+
+| round | chips | towers | tower paint |
+|---|---|---|---|
+| 1-25 | 1230-1530, moving | 2 | 100 -> 0 |
+| **26** | **1350** | **1** | 160 |
+| 30 | **1350** | 1 | 200 |
+| 40 | **1350** | 1 | 300 |
+| ... | **1350, never once changing** | 1 | climbing to full |
+| 69 | — | 0 | annihilated |
+
+The arithmetic, with costs re-read from `RULES.md` rather than recalled: `runTower` builds only
+when `chips >= CHIP_RESERVE(1200) + want.moneyCost`, and a soldier costs **250** chips, a
+mopper **300**. So the build gate is **1450** (soldier) or **1500** (mopper). Once the last
+money tower dies, team income is 0 and the treasury freezes — here at exactly **1350**.
+
+**1200 <= 1350 < 1450: the treasury is above the reserve and below the gate, permanently.**
+Unit production stops for good at round 26, with a paint tower filling to its cap and 1350
+chips banked, and the bot is killed 43 rounds later without building a single robot. The
+reserve is protecting a 1000-chip tower completion that can never happen because it also
+prevents building the soldiers that would complete a ruin.
+
+This is an *absolute* degeneracy — "our bot stalls at round N" — which the algorithm ranks
+above any opponent-relative signal, and it needs no opponent to be wrong.
+
+### Iteration 7 (promoted): make the reserve self-cancelling when income stops
+
+Registered now, ahead of SRPs, because it is smaller, safer, and converts guaranteed losses.
+
+**Change** (in `runTower`, ~6 lines): a tower remembers last turn's chip total. Chips rise
+every round there is income and fall whenever anything is built, so "chips did not increase
+for N consecutive turns" is a direct, self-calibrating read of *income has stopped and nothing
+is being built*. In that state the reserve cannot ever be reached, so hoarding is strictly
+fatal — drop it to 0 and spend.
+
+```java
+int chips = rc.getChips();
+stagnant = (lastChips >= 0 && chips <= lastChips) ? stagnant + 1 : 0;
+lastChips = chips;
+int reserve = (stagnant >= STAGNANT_ROUNDS) ? 0 : CHIP_RESERVE;   // dose = STAGNANT_ROUNDS
+```
+
+**Pre-checks.** *Reachability*: the trace above is the branch, and it holds for 43 consecutive
+rounds in this game alone. *History*: this does **not** revert iteration 2's reserve, which was
+accepted on a real tower collapse and stays fully armed whenever income is positive — it only
+covers the regime iteration 2 never measured, which is the precise rule LEARNINGS.md already
+derived ("arm a reserve only once the thing it protects is demonstrably happening").
+*Play-symmetry*: inputs are team chips and a turn counter, neither correlated with team
+identity. *Trigger frequency*: must be checked across other replays before the run — if
+`stagnant` climbs during normal play the reserve would be disarmed when it is still wanted,
+which is the one way this change can do harm.
+
+**Pre-registered gate**: h2h vs the then-accepted snapshot > 50%; MECHANISM — zero games where
+chips sit unchanged for >20 consecutive rounds while towers stand (that counter goes in the
+indicator, per LEARNINGS.md's own unimplemented advice to "instrument the gate value itself");
+REGRESSION — no loss of the tower-collapse protection, checked as tower count never falling
+below iteration 5's on the same maps. Dose = `STAGNANT_ROUNDS` (5 / 10 / 20), zero arm = the
+current always-armed reserve.
+
+**SRPs move to iteration 8.**

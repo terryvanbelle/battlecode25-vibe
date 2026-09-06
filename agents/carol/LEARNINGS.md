@@ -206,3 +206,19 @@ committing a threshold, read the actual distribution of the quantity it tests ou
 and check the threshold falls *inside* it — and for a map-adaptive threshold, check it
 separates the map classes you meant it to separate. That check costs one replay and would
 have set this constant correctly the first time.
+
+## Writing the lesson is not fixing the bug
+
+"Fixed constants rot into dead bands" was written after `CHIP_RESERVE` froze the treasury at
+1350 and got carol annihilated on DefaultSmall at round 69. Four iterations later the same
+map produced the same annihilation at the same round, because the entry ended with two rules
+("arm a reserve only once the thing it protects is happening"; "instrument the gate value
+itself") and **neither was ever implemented**. The identical shape had just appeared in the
+API sweep: `RULES.md` concluded chips are wasted without SRPs/upgrades, and the bot called
+none of them.
+
+Two distinct failure modes, one root: a conclusion recorded in prose has no mechanical
+consequence. LEARNINGS.md entries that prescribe a code change now carry an explicit status,
+and an entry that prescribes one without a commit behind it is an open bug, not a lesson.
+The general check is cheap — for each entry, name the line of code it changed; if there
+isn't one, it is still an open bug wearing a lesson's clothes.
