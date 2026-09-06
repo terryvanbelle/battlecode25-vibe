@@ -1,0 +1,4 @@
+date,current_snapshot,opponent,wins,total,win_pct,source
+2026-09-06T18:35:31+00:00,bob_iter0,bob_iter0,16,24,66.7,backfill
+2026-09-06T18:49:18+00:00,bob_iter1,bob_iter1,12,24,50.0,backfill
+2026-09-06T20:21:39+00:00,bob_iter1,bob_iter1,21,24,87.5,backfill

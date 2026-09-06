@@ -1,0 +1,9 @@
+date,current_snapshot,opponent,wins,total,win_pct,source
+2026-09-06T18:16:57+00:00,alice_iter0,alice_iter0,17,24,70.8,backfill
+2026-09-06T18:29:17+00:00,alice_iter1,alice_iter0,12,24,50.0,backfill
+2026-09-06T18:29:17+00:00,alice_iter1,alice_iter1,10,24,41.7,backfill
+2026-09-06T18:40:31+00:00,alice_iter1,alice_iter0,17,24,70.8,backfill
+2026-09-06T18:40:31+00:00,alice_iter1,alice_iter1,13,24,54.2,backfill
+2026-09-06T18:50:51+00:00,alice_iter1,alice_iter0,21,24,87.5,backfill
+2026-09-06T18:50:51+00:00,alice_iter1,alice_iter1,20,24,83.3,backfill
+2026-09-06T20:18:52+00:00,alice_iter2,alice_iter1,13,24,54.2,backfill

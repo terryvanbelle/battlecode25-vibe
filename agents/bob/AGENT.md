@@ -39,6 +39,45 @@ your accept gate is a within-run head-to-head, which is unaffected. Pin
 `MAPS="$(cat gauntlet/<run-id>/maps.txt)"` to replay a run's exact maps, which
 is what you want for a regression check, an ablation, or chasing one map.
 
+## Reporting progress (two charts, kept current)
+
+Regenerate both after every accept, and show them when you report:
+
+```bash
+../../tools/.venv/bin/python3 ../../tools/plot_progress.py        # progress/cumulative_iterations.png
+../../tools/.venv/bin/python3 ../../tools/plot_vs_old_bots.py     # progress/vs_old_bots.png
+```
+
+**Cumulative accepted iterations** counts your `src/bob_iterN/` snapshots by the
+date each first appeared. Read the *slope*, not the height: a flat stretch means
+the loop spent that time on rejected candidates, which is information about your
+loop rather than about your bot. Record process changes -- changes to *how* you
+evaluate, not individual accepts -- in `progress/milestones.txt` as
+`<commit>|<label>`, in the same commit as the change itself.
+
+**Win % vs. old bots** tracks a frozen roster: iteration 0, then every 5th
+accepted snapshot, derived automatically, never hand-edited. This is your only
+absolute-strength instrument. Your gauntlet headline win% is measured against a
+pool that changes and a map sample that is redrawn each run, so it cannot tell
+"the bot improved" from "the instrument moved"; a frozen opponent can.
+
+```bash
+# extend it: play the roster, record the run, redraw
+OPPONENTS="$(../../tools/.venv/bin/python3 ../../tools/track_vs_old_bots.py --roster)" \
+    ../../tools/gauntlet.sh
+../../tools/.venv/bin/python3 ../../tools/track_vs_old_bots.py gauntlet/<run-id>
+```
+
+Points from a deliberate roster run are drawn solid; points backfilled from a
+pre-accept head-to-head are hollow, because the bot measured there was a
+candidate that may have been rejected. A dip in a hollow point is not a
+regression. History lives in `progress/vs_old_bots_history.csv` and IS committed
+-- `gauntlet/` is git-ignored, so that file is the only durable record.
+
+`progress/roster_extra.txt` adds fixed non-snapshot yardsticks (a synthetic
+archetype, a pinned benchmark), one name per line. They qualify for the same
+reason old snapshots do: they never change.
+
 ## Ground truth
 
 - Official spec: https://play.battlecode.org/bc25/specs (Battlecode 2025).

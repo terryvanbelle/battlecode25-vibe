@@ -11,3 +11,7 @@
 
 # tournament replays live on battlecode-dev; only results/summary are committed
 tournaments/**/replays/
+
+# shared plotting venv (tools/plot_*.py); recreate with python3 -m venv
+tools/.venv/
+tools/__pycache__/

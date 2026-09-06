@@ -69,6 +69,27 @@ instrument. But the accept gate stays *within* your own workspace
 (head-to-head vs. your last snapshot); the tournament happens only twice a
 day and its timing shouldn't gate your loop.
 
+## Progress reporting
+
+Each agent keeps two charts in `agents/<name>/progress/`, regenerated after
+every accept and shown when reporting progress:
+
+| Chart | What it answers |
+|-------|-----------------|
+| `cumulative_iterations.png` | how fast is this lineage actually accepting work? Read the slope; a flat stretch is time spent on rejected candidates. |
+| `vs_old_bots.png` | is the bot stronger in absolute terms? Win% against a frozen roster (iter0, then every 5th snapshot), which a moving gauntlet pool cannot tell you. |
+
+Tools are shared and strategy-neutral (`tools/plot_progress.py`,
+`tools/track_vs_old_bots.py`, `tools/plot_vs_old_bots.py`, run with
+`tools/.venv/bin/python3`); each auto-detects the workspace it is run from and
+reads only that agent's data. Ported from battlecode26-vibe, which took them
+from battlecode22-vibe. `progress/vs_old_bots_history.csv` is committed --
+`gauntlet/` is git-ignored, so it is the only durable record of these
+measurements.
+
+These are per-agent and stay inside the agent's own workspace; they are not a
+cross-agent comparison. Cross-agent standing is what `tournaments/` is for.
+
 ## Never stop to wait (hard)
 
 Nothing resumes an agent automatically. When you stop, you go idle and your
