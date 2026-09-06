@@ -1220,3 +1220,38 @@ below iteration 5's on the same maps. Dose = `STAGNANT_ROUNDS` (5 / 10 / 20), ze
 current always-armed reserve.
 
 **SRPs move to iteration 8.**
+
+### Iteration 7 trigger-frequency pre-check — a clean separation, and one design correction
+
+The algorithm's §3 pre-check asks how often the triggering condition fires in *other* games,
+because "helps the diagnosed case, hurts broadly" is the recognisable failure shape. Measured
+the longest run of consecutive rounds with the treasury exactly unchanged while towers stand,
+across every `carol_rush` game I have (that opponent emits `RUSH -> [..]` indicators, so its
+replays isolate carol's own treasury cleanly — no team-separation guesswork):
+
+| map | outcome | longest frozen-treasury run | frozen at |
+|---|---|---|---|
+| DefaultMedium | LOSS | **1887 rounds** (r113 -> r2000) | 290 chips, 3 towers |
+| Fossil | LOSS | **1881 rounds** | 1220 chips, 2 towers |
+| DefaultSmall | LOSS (annihilated r69) | **44 rounds** | 1350 chips, 1 tower |
+| Leaf | WIN | **0** | — |
+| Portal | WIN | **0** | — |
+| windmill | WIN | **0** | — |
+
+**All three losses to `carol_rush` are this one bug, and it fires in none of the wins** — zero
+false positives across 2,955 won rounds. The condition cannot disarm the reserve in a game
+that is going well, because while any money tower lives the treasury changes every single
+round. That is as clean a trigger-frequency result as this project has produced, and it also
+re-prices the fix: `carol_rush` was 37/40, and all three losses are potentially recoverable.
+
+**All three are recoverable by the same one-line disarm**, which I checked rather than
+assumed: the frozen totals are 290, 1220 and 1350 chips, and a soldier costs 250 — so with
+the reserve dropped to 0 the bot can build in *every* one of them. (I had expected
+DefaultMedium's 290 to be beyond help; it is not.)
+
+**Design correction found by this check.** My first sketch used `chips <= lastChips`. That is
+wrong: heavy spending also drives chips down, so a healthy build spree would count as
+stagnation and disarm the reserve exactly when it is doing its job. The condition must be
+`chips == lastChips` — strict equality is what means *income is zero AND nothing was built*,
+which is the only state where the reserve is unreachable. The three frozen traces hold exact
+equality for hundreds of rounds, so the strict test loses nothing.
