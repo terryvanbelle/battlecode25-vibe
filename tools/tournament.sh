@@ -15,13 +15,15 @@
 # ~/battlecode25-vibe/arena/tournaments/<run-id>/ (driver disk is tight).
 #
 # SHARED VM: battlecode-dev also serves a live BC26 project. Never kill
-# processes, never stop the VM; the runner yields at GLOBAL_CAP like gauntlet.sh.
+# processes, never stop the VM; games are gated by the same shared flock
+# semaphore as tools/gauntlet.sh (GLOBAL_CAP) under a machine-wide HARD_CAP.
 set -euo pipefail
 source "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
 BOTS="${BOTS:-alice bob carol}"
 MAXJOBS="${MAXJOBS:-4}"
-GLOBAL_CAP="${GLOBAL_CAP:-6}"
+GLOBAL_CAP="${GLOBAL_CAP:-5}"   # BC25 games in flight across ALL agents+tournament
+HARD_CAP="${HARD_CAP:-7}"       # machine-wide ceiling, counts the BC26 project too
 if [ -z "${MAPS:-}" ]; then
   if [ -f "$REPO_ROOT/tools/bc25-maps.txt" ]; then MAPS="$(tr '\n' ' ' < "$REPO_ROOT/tools/bc25-maps.txt")"
   else MAPS="DefaultSmall"; fi
@@ -89,13 +91,29 @@ for B in \$OK_BOTS; do cp -r stage-$RUN_ID/\$B src/; done
 ./gradlew --no-daemon -q build >/dev/null 2>&1 || { echo "BUILD-FAILED" >> "\$RUNDIR/results.txt"; echo TOURNAMENT-COMPLETE >> "\$RUNDIR/results.txt"; exit 1; }
 CP=\$(./gradlew --no-daemon -q printClasspath | tail -1)
 
-yield_load () {
-  while [ "\$(pgrep -fc battlecode.server.Main || true)" -ge $GLOBAL_CAP ]; do sleep 10; done
+# Same cross-runner counting semaphore as tools/gauntlet.sh -- the agents'
+# gauntlets keep running while a tournament plays, so the cap has to bind
+# across all of them, not just within this script.
+SLOTDIR=\$HOME/.bc25-slots; mkdir -p "\$SLOTDIR"
+acquire_slot () {   # sets SFD; held until the game's subshell exits
+  while true; do
+    # Politeness toward the BC26 project, which runs its own games outside this
+    # semaphore: never push the machine-wide game count past HARD_CAP. Checked
+    # BEFORE taking a slot, so we never idle while holding one.
+    while [ "\$(pgrep -fc battlecode.server.Main || true)" -ge $HARD_CAP ]; do sleep 10; done
+    for i in \$(seq 1 $GLOBAL_CAP); do
+      exec {SFD}>"\$SLOTDIR/slot.\$i"
+      flock -n \$SFD && return 0
+      exec {SFD}>&-
+    done
+    sleep 5
+  done
 }
 
 game () {  # <botA> <botB> <map>   (botA plays side A)
   local TA=\$1 TB=\$2 MAP=\$3 LOG W R RE
   local REPLAY="\$RUNDIR/replays/\${TA}-vs-\${TB}-on-\${MAP}.bc25"
+  acquire_slot
   LOG=\$(java -Xmx2g \\
     --add-opens=java.base/jdk.internal.misc=ALL-UNNAMED \\
     --add-opens=java.base/jdk.internal.math=ALL-UNNAMED \\
@@ -127,7 +145,6 @@ for PAIR in $PAIRS; do
   for MAP in $MAPS; do
     for ORDER in "\$X \$Y" "\$Y \$X"; do
       while [ "\$(jobs -rp | wc -l)" -ge $MAXJOBS ]; do wait -n; done
-      yield_load
       game \$ORDER "\$MAP" &
     done
   done

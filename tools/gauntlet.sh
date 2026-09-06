@@ -13,9 +13,9 @@
 #   losses/*.bc25  replays of lost games
 #
 # SHARED VM RULES: battlecode-dev also serves a live BC26 project. This script
-# never kills processes and never stops the VM, and its remote runner yields
-# while the machine-wide battlecode.server count is at/above GLOBAL_CAP, so
-# both projects' runs interleave instead of trampling each other.
+# never kills processes and never stops the VM. Games are gated by a flock
+# semaphore shared by every BC25 runner (GLOBAL_CAP), plus a machine-wide
+# ceiling (HARD_CAP) that counts the BC26 project's games too.
 set -euo pipefail
 source "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
@@ -24,7 +24,8 @@ default_bot="$(basename "$WS_REL")"; [ "$default_bot" = arena ] && default_bot=e
 BOT="${BOT:-$default_bot}"
 OPPONENTS="${OPPONENTS:-examplefuncsplayer}"
 MAXJOBS="${MAXJOBS:-3}"          # this run's concurrent games
-GLOBAL_CAP="${GLOBAL_CAP:-6}"    # machine-wide battlecode.server ceiling (BC26 included)
+GLOBAL_CAP="${GLOBAL_CAP:-5}"   # BC25 games in flight across ALL agents+tournament
+HARD_CAP="${HARD_CAP:-7}"       # machine-wide ceiling, counts the BC26 project too
 
 if [ -z "${MAPS:-}" ]; then
   if [ -f "$REPO_ROOT/tools/bc25-maps.txt" ]; then MAPS="$(tr '\n' ' ' < "$REPO_ROOT/tools/bc25-maps.txt")"
@@ -51,14 +52,34 @@ cd ~/$REMOTE_REPO/$WS_REL
 CP=\$(./gradlew --no-daemon -q printClasspath | tail -1)
 mkdir -p gauntlet/$RUN_ID; : > gauntlet/$RUN_ID/results.txt
 
-yield_load () {  # wait while the whole machine is at the game cap (BC26 runs too)
-  while [ "\$(pgrep -fc battlecode.server.Main || true)" -ge $GLOBAL_CAP ]; do sleep 10; done
+# Cross-runner counting semaphore. Three agents plus the tournament all run
+# gauntlets on this VM, and a pre-launch "is the machine busy" check races:
+# each runner can observe the count below the cap and then all launch at once
+# (observed: 7 games against a cap of 6, load 10.3 on 8 vCPUs). Slot files held
+# under flock for the LIFETIME of each game make the cap actually binding
+# across every BC25 runner. The lock releases automatically when the game's
+# subshell exits, so a crashed game cannot leak a slot.
+SLOTDIR=\$HOME/.bc25-slots; mkdir -p "\$SLOTDIR"
+acquire_slot () {   # sets SFD; held until the game's subshell exits
+  while true; do
+    # Politeness toward the BC26 project, which runs its own games outside this
+    # semaphore: never push the machine-wide game count past HARD_CAP. Checked
+    # BEFORE taking a slot, so we never idle while holding one.
+    while [ "\$(pgrep -fc battlecode.server.Main || true)" -ge $HARD_CAP ]; do sleep 10; done
+    for i in \$(seq 1 $GLOBAL_CAP); do
+      exec {SFD}>"\$SLOTDIR/slot.\$i"
+      flock -n \$SFD && return 0
+      exec {SFD}>&-
+    done
+    sleep 5
+  done
 }
 
 game () {  # <opp> <map> <side>
   local OPP=\$1 MAP=\$2 SIDE=\$3 TA TB
   if [ "\$SIDE" = A ]; then TA=$BOT; TB=\$OPP; else TA=\$OPP; TB=$BOT; fi
   local REPLAY=gauntlet/$RUN_ID/\${OPP}__\${MAP}__bot\${SIDE}.bc25 LOG W R RE
+  acquire_slot
   LOG=\$(java -Xmx2g \\
     --add-opens=java.base/jdk.internal.misc=ALL-UNNAMED \\
     --add-opens=java.base/jdk.internal.math=ALL-UNNAMED \\
@@ -89,7 +110,6 @@ for OPP in $OPPONENTS; do
   for MAP in $MAPS; do
     for SIDE in A B; do
       while [ "\$(jobs -rp | wc -l)" -ge $MAXJOBS ]; do wait -n; done
-      yield_load
       game "\$OPP" "\$MAP" "\$SIDE" &
     done
   done
