@@ -2066,3 +2066,102 @@ null, so exactly the units affected by the bug above also sense every single tur
 Baseline peak is 9126 of 17500 and a sense is a few hundred bytecodes, so this is
 not dangerous — but it is worth checking `maxbc` in the result rather than assuming,
 which criterion 3 already requires.
+
+
+---
+
+## Iteration 8 RESULT (2026-09-06) — REJECTED, and it reverses the finding that motivated it
+
+```
+vs bob_iter7 (accept gate)   16/40 (40%)   swept-win  2  swept-loss 6
+vs bob_iter3                 18/40 (45%)   swept-win  4  swept-loss 6
+vs bob_denier                30/40 (75%)   swept-win 13  swept-loss 3
+```
+
+Gate required >50%. **40%, with six swept losses to two swept wins** — one-directional,
+well outside the 3.2-game noise floor. Not a near miss.
+
+### The mechanism worked. That is why we lost.
+
+Castle, our side A, against the same opponent and map as the baseline trace:
+
+```
+                          bob_iter3 baseline      iteration 8
+unit deaths                     283                    31      (-89%)
+of which starved (<=10)     221 (78%)               12 (39%)
+paint reaching the map      11.9 / round           6.7 / round  (-44%)
+```
+
+Starvation fell exactly as designed — deaths down 89%, the starved fraction halved.
+Criterion 2 passes emphatically. And the h2h collapsed to 40%.
+
+### Why, with the full causal chain measured
+
+```
+round   ourCov  theirCov   ourChips  theirChips   ourSoldiers  theirSoldiers
+ 200      480      494        4,470      2,070          19            21
+ 400      497      464        8,660      4,210          22            33
+ 600      417      553       17,480      4,990          26            44
+ 889      267      703       55,630      7,610          29            45
+                                    FOOTER  winner=B  MAJORITY_PAINTED  r889
+```
+
+Refill trips drained the towers' paint, so the towers could not afford to spawn.
+**Our chips piled up to 55,630 unspent** — the classic dead-resource signature — while
+the opponent, spending its paint on bodies instead, held only 7,610 and built **45
+soldiers to our 29**. Fewer bodies painted less; coverage collapsed 480 → 267 and the
+game ended at round 889.
+
+### The economics, and they are general
+
+Spawning converts 200 paint into **200 paint plus a body**. Refilling converts 200
+paint into **200 paint**. Bodies are the scarce resource — the standing army is ~15
+against ~290 built — and chips are abundant (55k unspent here, 327k in the earlier
+trace), so chips never bind. While paint is the binding constraint and chips are
+free, **spawning strictly dominates refilling**, and every unit of paint sent to a
+living unit is a body not built.
+
+**So the finding that motivated this iteration was real and my reading of it was
+backwards.** 78% of deaths at ≤10 paint is not waste: a unit that paints until it
+starves has converted its entire stash into tiles and then *freed the economy to
+build a replacement that arrives with a fresh body and a full stash*. Dying at zero
+is the efficient terminal state. I had it as the bot's largest leak; it is closer to
+the bot's most efficient behaviour.
+
+This is precisely TRAINING_ALGORITHM.md's recorded regularity — "survival bought
+with inactivity; units die doing the thing that wins" — and I walked into it with
+the warning quoted in my own pre-registration two entries above. Pre-registering the
+trap did not stop me falling into it, but it did mean the diagnosis took one trace
+rather than three iterations.
+
+### No refinement is attempted, and that is a reasoned choice
+
+Two refinements were pre-registered. Neither is worth a run, because the failure is
+structural rather than mis-tuned:
+
+- *Refinement #1 (don't interrupt ruin work)* and *#2 (don't park at sterile money
+  towers)* both reduce the number of refill trips. They shrink the harm toward zero;
+  they cannot produce a gain, because every completed refill is still a body not
+  built.
+- The one refinement that would address the cause directly — let a unit withdraw
+  only paint **above** a spawn's cost, so refills never block spawning — is a no-op
+  by measurement: paint towers were measured hovering at ~100 paint against a
+  200-paint soldier, so surplus above 200 essentially never exists. The refinement
+  would make the mechanism fire almost never.
+
+### CLOSED, with a precise re-open trigger
+
+**CLOSED: "keep units alive by walking them back to a tower to refill."** Killed by
+the chip/paint economics above, not by a tuning failure. `bob-tools/shelved/` keeps
+both candidate builds.
+
+**Re-open when paint stops being the binding constraint.** Concretely: when team
+chips stop accumulating — say sustained below ~5,000 while towers still want to
+spawn — spawning has become chip-limited, paint is no longer convertible into
+bodies, and refilling is then free rather than dominated. **Iteration 9 (SRPs) is
+the most likely trigger**: +3 paint/turn per allied paint tower per pattern directly
+attacks the paint constraint, and if it lands, this decision should be re-examined
+rather than treated as settled. That is a real test, not a hedge — the chips column
+of any replay answers it.
+
+Reverted to `bob_iter7`. Next: iteration 9, SRPs.
