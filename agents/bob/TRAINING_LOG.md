@@ -1478,3 +1478,59 @@ structure improved in one place and worsened in another, netting out near zero.
 The pre-registered affected-subset run is now the tiebreaker, and its decision rule
 was fixed before any of this was known. I am not going to relax it because I have
 since found an extra argument on either side.
+
+
+---
+
+## Structural trace (2026-09-06) — the supply side: our towers are chronically paint-poor
+
+Found while blocked on a saturated VM, from a replay already on disk. `BobMop` now
+also reports our paint towers' count and stash.
+
+`Tower.run` step 3 gates spawning on **chips only** — `if (chips >= want.moneyCost
++ reserve)`. It never looks at the tower's own paint. The engine stops an
+unaffordable build (`canBuildRobot` checks paint), so the tower simply spends down
+to the floor and stays there. Castle, our side, paint towers only:
+
+```
+round   livePaintTowers   avg stash   min stash
+ 250          1              100        100
+ 500          2               90         75
+ 750          2              122         40
+1000          2              142         75
+1500          3               93         45
+1750          3               48          0
+2000          3              110         50
+```
+
+A soldier costs **200 paint** to spawn and a mopper 100. Our paint towers average
+about 100 and touch zero. They are converting every drop of regen into new units
+the moment they can afford one, which is precisely why the units that already exist
+have nothing to refill from — the two findings are the demand and supply sides of a
+single leak.
+
+**This is a live risk to iteration 8, and I want it on record before that run, not
+after.** `Refill.seek` requires a tower with ≥100 paint before withdrawing; on this
+evidence that condition will often be false. The candidate handles it (a unit that
+has arrived waits adjacent for regen rather than wandering off), but waiting is
+inactivity, which is the failure mode the algorithm warns about. So iteration 8 may
+well come back as a *partial* success — starvation down, tempo flat — and if it
+does, the reason is already identified and is not a mystery to be re-traced.
+
+### Queued (NOT bundled into iteration 8)
+
+**Tower paint reserve**: do not spawn unless the tower would retain a float for
+refills, e.g. `rc.getPaint() >= want.paintCost + FLOAT`. Note the shape: iteration 5
+*removed* a fixed reserve because it protected an expansion that had already
+finished, so it was blocking production to protect nothing. This *adds* one, and
+the distinction is that it protects a demand which is continuous rather than a
+one-off event — refills happen all game. The iteration 5 lesson is not "reserves are
+bad", it is "a reserve must protect a demand that still exists", and this one does.
+It also must be measured on paint towers specifically: a money tower has
+`paintPerTurn == 0`, so once its initial stash is gone it can never refill anyone
+and reserving its paint would be pointless.
+
+Order stays: iteration 8 (demand side) alone first, then this (supply side) alone,
+so each is interpretable. If they interact, the interaction is measurable as the
+difference between their individual and combined effects — which is only possible
+if they are run separately first.

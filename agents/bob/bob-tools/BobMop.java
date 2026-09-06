@@ -63,7 +63,7 @@ public class BobMop {
         System.out.println("# denial-opportunity trace, our team = " + (char)('A'+us));
         System.out.println("round,ourMop,ourSpl,enemyTiles,ourTiles,"
             + "mopInAct,mopInVis,mopMedDist,splInAct,splInVis,splMedDist,"
-            + "ourSold,mopAvgPaint,mopMinPaint,splAvgPaint");
+            + "ourSold,mopAvgPaint,mopMinPaint,splAvgPaint,ptow,ptowAvgPaint,ptowMinPaint,mtow");
 
         for (int i = 0; i < gw.eventsLength(); i++) {
             EventWrapper ew = gw.events(i);
@@ -90,6 +90,7 @@ public class BobMop {
                 // --- apply this round's paint changes, and collect our unit positions
                 List<int[]> mops = new ArrayList<>(), spls = new ArrayList<>();
                 int liveSold = 0, mopPaint = 0, splPaint = 0, mopLowest = 999;
+                int ptowN = 0, ptowPaint = 0, ptowMin = 99999, mtowN = 0;
                 for (int j = 0; j < r.turnsLength(); j++) {
                     r.turns(turn, j);
                     Integer tm = idTeam.get(turn.robotId());
@@ -107,6 +108,10 @@ public class BobMop {
                             spls.add(new int[]{turn.x(), turn.y()});
                             splPaint += turn.paint();
                         } else if (ty == RobotType.SOLDIER) liveSold++;
+                        else if (ty == RobotType.PAINT_TOWER) {
+                            ptowN++; ptowPaint += turn.paint();
+                            if (turn.paint() < ptowMin) ptowMin = turn.paint();
+                        } else if (ty == RobotType.MONEY_TOWER) mtowN++;
                     }
                     for (int a = 0; a < turn.actionsLength(); a++) {
                         byte at = turn.actionsType(a);
@@ -168,7 +173,11 @@ public class BobMop {
                     + "," + liveSold
                     + "," + (mops.isEmpty() ? -1 : mopPaint / mops.size())
                     + "," + (mops.isEmpty() ? -1 : mopLowest)
-                    + "," + (spls.isEmpty() ? -1 : splPaint / spls.size()));
+                    + "," + (spls.isEmpty() ? -1 : splPaint / spls.size())
+                    + "," + ptowN
+                    + "," + (ptowN == 0 ? -1 : ptowPaint / ptowN)
+                    + "," + (ptowN == 0 ? -1 : ptowMin)
+                    + "," + mtowN);
             }
         }
         String[] tn = new String[8];
