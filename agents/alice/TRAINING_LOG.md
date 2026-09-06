@@ -656,3 +656,25 @@ OPPONENTS=alice_mirror` is therefore a true mirror. **Not yet run** — the VM i
 congested with three agents and an accept-gate run outranks an audit; queued as
 the next non-candidate run. Pre-registered statistic stands: number of maps
 where the same side wins both games, null Binomial(n, 1/2).
+
+### Ops: throughput on the shared VM (iteration 4 run)
+The 100-game run is completing ~4 games per 11 minutes with three agents plus
+BC26 on the box (load ~7.6 on 8 vCPUs, all 5 BC25 semaphore slots held
+continuously). That is ~4.5 hours for 100 games and longer than the runner's
+180-minute poll deadline. **Not a failure — the semaphore is doing its job** —
+but it changes run design:
+- Opponents are iterated in the OUTER loop, so a truncated run yields complete
+  data for the *first* opponent. Always list the accept-gate opponent first
+  (`alice_iter2` here); a deadline truncation then costs the regression check,
+  not the gate.
+- For dose sweeps and audits, drop to `NMAPS=12..15`; resolution scales with
+  sample size but three arms at 24 games each beats one arm at 100 that never
+  finishes.
+- Plan roster runs at `NMAPS=15` (60 games) rather than the default 25.
+
+### If iteration 4 is a near miss, the pre-registered refinement is
+**upgrade paint towers only.** Chips are not scarce, so a money tower's
+20→30/turn buys more of the resource I already cannot spend, while a paint
+tower's 5→10/turn buys the one that binds. The uniform version was run first
+because it is the isolated single mechanism; "which towers" is a dose on the
+same mechanism, not a new one.
