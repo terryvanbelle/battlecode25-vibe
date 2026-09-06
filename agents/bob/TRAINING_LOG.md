@@ -64,3 +64,33 @@ Nav: greedy + slide, avoids enemy paint, stuck-kick.
 
 Snapshot: src/bob_iter0. Evaluation: gauntlet vs examplefuncsplayer on DEV12 (24
 games) — results below when complete.
+
+Result: 24/24 (100%) vs examplefuncsplayer on DEV12, all 12 maps swept. 0 exceptions.
+Bytecode (mirror DefaultMedium trace): towers ~550, soldiers ~1k, moppers ~1.9k,
+splashers ~8.3k max of 17500; ov=0 everywhere. examplefuncsplayer classified
+BENCHMARK-beaten (100% x2 would retire it; keep as occasional sanity check only).
+Baseline accepted; bob_iter0 is the first h2h gate.
+
+---
+
+## Iteration 1 (2026-09-06) — soldier idle-action painting — ACCEPTED
+
+Target (structural/degeneracy): mirror needed 1757 rounds to reach 70% paint on
+DefaultMedium — soldiers idle their action on most turns (only painted own tile when
+non-ally, or pattern tiles). Absolute stall signal, no opponent needed.
+
+Hypothesis: using idle actions to paint the nearest EMPTY tile within action r²9
+(own tile first; skip marked tiles to not fight patterns) raises team paint rate →
+faster 70% and h2h win. Pre-registered: (1) h2h vs bob_iter0 DEV12 >50% (accept
+gate), (2) median win-round vs examplefuncsplayer drops vs iteration-0 run.
+
+Change: Soldier.paintSomething() — own tile if non-ally else nearest empty passable
+unmarked tile in r²9. PAINT_FLOOR=15 unchanged.
+
+Evaluation (gauntlet 20260906-183531): **16/24 (66.7%) vs bob_iter0**, swept-win
+4/12, swept-loss 0, split 8. Losses scattered both sides (5 of 8 at r2000
+tiebreak) — no one-directional regression. ACCEPT. Snapshot src/bob_iter1.
+Secondary metric (round-speed vs examplefuncsplayer) run follows.
+
+Learning: splits-by-side on 8/12 maps in near-mirror matchups — side asymmetry is
+large relative to this feature's edge; swept-map counts are the sturdier signal.

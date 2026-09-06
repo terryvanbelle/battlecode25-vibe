@@ -126,6 +126,17 @@ RESOURCE      PAINT tower   MONEY tower   DEFENSE tower
   TRAINING_LOG Phase 0).
 - Turn order is sequential within a round (spawn order). `GAME_DEFAULT_SEED=6370`.
 
+## Engine internals (from GameWorld.java)
+- **SRP integrity re-checked every round**: if ANY tile of an SRP stops matching, ownership
+  resets to NEUTRAL and the 50-round activation clock restarts from 0. One enemy
+  splash/mop inside the 5x5 de-activates it. SRPs deep in safe territory only.
+- **Coverage denominator = areaWithoutWalls** (ruins ARE in the denominator though
+  unpaintable). Coverage tracked in per-mil per round in replays.
+- Pattern bit at (dx,dy): bit index 5*(dx+2)+(dy+2) — use rc.getTowerPattern()/
+  getResourcePattern() rather than hand-decoding.
+- Defense-tower buff applied on spawn/upgrade/destroy of defense towers, team-global.
+- Tower destroyed → towersByLoc=NEUTRAL, ruin becomes rebuildable by either team.
+
 ## Economy quick math
 - Start: 2500 chips + 30 chips/turn (money L2) + 10 paint/turn (paint L2), 500 paint per tower.
 - Soldier = 250c+200p; new tower = 1000c (+ ~30-50 paint for the pattern, 25 mark).
