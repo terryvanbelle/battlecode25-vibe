@@ -1462,3 +1462,26 @@ It is a candidate in its own right, and it becomes a *prerequisite* rather than 
 option the moment any target-seeking iteration is accepted. Note the bytecode
 budget is not an obstacle — measured 1638/17500 (9%) peak for soldiers, so BFS is
 affordable.
+
+### Iteration 7 generality — 8/8, all four maps swept from both sides
+
+Single matches vs the accepted `alice_iter5`, each map played from both sides:
+
+| map | i7 as A | i7 as B |
+|---|---|---|
+| starburst (iteration 5's swept loss) | **win** | **win** |
+| Racetrack | **win** | **win** |
+| Mirage | **win** | **win** |
+| DefaultLarge | **win** | **win** |
+
+Four **swept** maps — won from both sides, so the result is immune to spawn-side
+advantage, which is the property that made me distrust the single-side reads
+earlier. Under a null of 50% per game, 8/8 is p≈0.004; treating each *map* as the
+unit (a sweep is the informative event) it is 4/4 sweeps, p≈0.0625.
+
+That is a prior, **not an accept**. These are four maps I chose, and starburst was
+chosen precisely because it favours the mechanism. The gate remains a full sweep
+on a fresh random sample against the then-accepted snapshot, and the recorded risk
+(no pathfinding; units may stall on wall-heavy maps) is untested by any of these
+four, which are open terrain. The random sample will include maze-like maps and is
+the honest test.
