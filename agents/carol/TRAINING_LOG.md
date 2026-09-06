@@ -2037,3 +2037,41 @@ it.
 **The general error, for LEARNINGS**: a pre-check must be run against the *base the change will
 sit on*, not against whatever replays are freshest. Mine were one rejected iteration out of
 date, and the rejection had already been decided when I used them.
+
+### Iteration 7's primary gate is not comparative — the zero arm has to be run
+
+`carol_rush` came in at **35/38** (block still landing) with losses on DefaultSmall A (r155,
+the degeneracy, improved from r69) and **Dominoes A and B**, which are *not* the degeneracy —
+Dominoes A shows `stag` max 0 and a frozen run of 0, so carol simply loses that map.
+
+Two problems with the gates as I wrote them, both visible now:
+
+1. **The confirmation gate compares across builds *and* map samples.** "≥ 37/40, ideally
+   40/40" was calibrated against run `20260906-212704`, which was the iteration-6 build on a
+   *different* 20-map sample. 92.1% vs 92.5% across two different instruments is not a
+   measurement of anything. This is the cross-run comparability trap my own LEARNINGS entry on
+   random map sampling warns about, and I walked into it while writing the pre-registration.
+
+2. **The primary mechanism gate is absolute, not comparative.** "Zero games with a ≥50-round
+   frozen treasury" can pass because the fix works *or* because the baseline never froze on
+   this map sample either — and the self-correction above shows the baseline freezes far less
+   than the iteration-6 replays led me to believe. An absolute gate that the control would also
+   pass measures nothing.
+
+**Fix: run the zero arm, which I pre-registered and then nearly skipped.** The pre-registration
+says "Dose = `STAGNANT_ROUNDS` (5 / 10 / 20), zero arm = the always-armed reserve (iteration
+5)". The candidate half is already played; only the control is missing:
+
+```
+BOT=carol_iter5 OPPONENTS=carol_rush MAPS="$(cat gauntlet/20260906-220604/maps.txt)"
+```
+
+40 games, identical maps, identical opponent — so the comparison is paired game-for-game, the
+construction that made 6b's verdict decisive. It answers the only question that matters: on
+the maps carol actually plays, does the always-armed reserve freeze where the self-cancelling
+one does not, and does it lose games the candidate wins?
+
+Holding the accept/reject decision until that lands. On present evidence I expect it to show a
+small real effect on one or two games and no win-rate move — in which case iteration 7 is a
+correct robustness fix whose value is currently near zero, which is a legitimate and useful
+thing to establish rather than a failure to explain away.
