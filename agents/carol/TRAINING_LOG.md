@@ -2723,3 +2723,32 @@ directory, so every path in a file-creating command must be absolute or explicit
 relative path silently wrote into someone else's tree, and only an unrelated failure
 (`No such file`) surfaced it — had the tool merely worked from there, I would have committed
 carol's private instrument into shared infrastructure without noticing.
+
+### A prediction about iteration 8 that its retracted gate does not cover
+
+Iteration 8's stated purpose is dead (it cannot reach the no-paint-tower games). But the change
+it actually makes — **forcing the first one or two ruin completions to be PAINT towers** — is,
+by accident, an intervention on the *other* thing I have just measured: opening paint income.
+
+More paint towers early means more paint mined per turn in exactly the window where carol is
+measured to be blocked a median of 28 rounds in 100. So:
+
+**Prediction, registered before the results**: iteration 8 should **lower** the opening-paint
+blocked count versus `carol_iter7`, measurable with `tools/opening-paint.py` on the h2h replays
+(carol is the `[i8]`-tagged side, `carol_iter7` the `[i7]` side — both tagged, so the split is
+exact for the first time).
+
+Three ways this can land, all stated now:
+1. **Blocked count falls and the h2h clears 50%** — accept, but explicitly *for a different
+   reason than it was proposed*, and the log must say so. It would also be independent
+   corroboration of the paint-starvation thesis from a change I did not design for it.
+2. **Blocked count falls and the h2h does not clear** — the strongest possible result for
+   iteration 10, because it isolates "more opening paint" as insufficient *on its own* while
+   leaving the leak unplugged. That makes the reserve the sharper intervention, not a rival one.
+3. **Blocked count does not move** — then the floor is not producing paint towers where it
+   matters (most likely because the key already answered PAINT on those ruins), and the run
+   reduces to a pure regression check.
+
+Writing this down because case 1 is the one where I would be most tempted, afterwards, to claim
+I had aimed at it. I did not: I aimed at the degeneracy and missed, and the trace that found the
+miss is what produced the paint thesis.
