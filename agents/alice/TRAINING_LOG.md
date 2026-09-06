@@ -1574,3 +1574,37 @@ packages — so there is nothing to revert.
 |---|---|---|
 | Refuel units from towers (`transferPaint` withdraw) | iteration 6: 13/30 at dose 60, 0/6 at dose 120, monotone decreasing; `twPaint` shows refills substitute for spawning | **paint becomes non-binding** (large SRP income, or many L3 paint towers), so the refill stops competing with spawning. Not before. |
 | "Reduce starvation deaths" as a goal in itself | same | it is re-framed: a unit at 0 paint has delivered its full payload; dying is not the failure |
+
+### Correction and an open instrument question (raised before it can mislead iteration 8)
+
+Two things about the reject entry above need tightening.
+
+**1. "A starved unit has delivered its full payload" is too strong.** A soldier's
+200 paint is split between *painting* (5/action) and *upkeep* (−1/turn on neutral,
+−2 on enemy, 0 on ally paint, plus −1 per adjacent ally). It is upkeep, not
+painting, that empties most tanks. The defensible version of the claim is narrower
+and still supports the reject: **topping the tank up does not change the
+conversion rate of tower paint into painted tiles**, because the refill draws on
+the same pool a new soldier would have used. The measurement (monotone-decreasing
+dose-response) stands on its own regardless.
+
+**2. `p` (PaintAction) may not be counting soldier tile-painting at all.** Working
+the arithmetic: ~175 paint actions per 250 rounds across ~27 living soldiers is
+~2.8% of soldier-turns, i.e. roughly **3 paint actions per soldier lifetime**. That
+is implausibly low — a soldier can move and act in the same turn, so it should
+manage tens. Meanwhile `a` (AttackAction) runs in the hundreds to thousands.
+
+The likely explanation is that the engine records a soldier's tile-painting as
+**AttackAction**, not PaintAction, and my `p` counter has been measuring something
+else all along. This is *exactly* the failure already in LEARNINGS §4 — "a replay
+counter means nothing until you have found its call site" — which I wrote about
+`MopAction` and then walked into again.
+
+**What this does and does not affect.** Every conclusion I have accepted rests on
+**coverage** (`cov`, the engine's own painted-area figure) and on win/loss, not on
+`p`: iterations 4, 5, 6 and 7's evidence are unaffected. What it *would* corrupt is
+iteration 8's pre-registered mechanism gate, which I wrote as "paint actions per
+soldier alive must rise". **Do not evaluate iteration 8 until the emitter of
+PaintAction vs AttackAction is confirmed by reading the engine** — the same
+one-minute check that settled the clumping-tax question. Logged as a blocking
+prerequisite rather than a note.
