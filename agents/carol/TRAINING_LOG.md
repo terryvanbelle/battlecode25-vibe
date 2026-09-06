@@ -1915,3 +1915,41 @@ Deliberately not fixed in this iteration: adding "step toward the SRP centre" wo
 navigation change with the SRP mechanism and make a rejection uninterpretable. If the run shows
 `SRP-nosite` dominating the idle tags, that is the first refinement to try, and the log will
 already say so rather than inventing the explanation afterwards.
+
+### Iteration 7 arm-to-arm identity check — the h2h carries *exactly* zero information
+
+The h2h block came in at 20/39 = 51.3% with **19 of 19 completed maps splitting by side**.
+A split-by-side result on literally every map is the signature of two bots that behave
+identically, so I checked it instead of interpreting it. Pulled three h2h replays — including
+Fossil and DefaultMedium, two of the three maps where `carol_rush` produced 1,880-round
+freezes — and grepped the new gate instrumentation:
+
+| map | turns with `rsv=0` | max `stag` |
+|---|---|---|
+| Fossil | **0** | **0** |
+| DefaultMedium | **0** | **0** |
+| Castle | **0** | **0** |
+
+`stag` never leaves zero, so `rsv` is never dropped: **the iteration-7 mechanism does not fire
+even once against `carol_iter5`.** The candidate is behaviourally identical to the baseline in
+that entire block, which is why every map split by spawn side — those games are the same bot
+played against itself.
+
+This is doctrine #3's "all-identical means the change never executed", and normally it would
+kill a result as uninterpretable. Here it is the **pre-registered prediction landing exactly**:
+I wrote before the run that the h2h "is expected to be ~50%: the threat is largely absent from
+that instrument, so a flat result here is the prediction, not a rejection". It came in at
+51.3% for the most mechanical reason possible.
+
+Two consequences:
+1. The **regression check passes trivially** — a build that never diverges cannot regress. The
+   45% floor is met with no risk attached.
+2. The **entire decision now rests on `carol_rush`, `carol_decap`, and the frozen-treasury
+   gate**, exactly as pre-registered. Had I not restructured the gate three hours ago on the
+   doctrine-#4 finding, I would now be holding a 51.3% "near miss" on an instrument that
+   provably measured nothing, and the honest reading of it would have been unavailable.
+
+Also note what this says about `carol_iter5` as an instrument for *this* class of change: it
+cannot pose the threat, so it cannot regression-test it. That is the self-referential blind
+spot with a number attached — 0 firings in 39 games — and it is the concrete justification for
+`carol_decap` existing at all.
