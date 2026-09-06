@@ -1647,3 +1647,70 @@ Both are the "capability preserved at zero marginal cost" shape: no new sensing,
 resource spent, pure waste removed. They go in the queue *behind* iteration 8, which
 is already built and pre-registered — but ahead of the tower paint reserve, because
 their doses are measured and the reserve's is not.
+
+
+---
+
+## Iteration 7 BROAD RUN result (2026-09-06) — run 20260906-212734, 200 games
+
+```
+vs bob_iter3           21/40 (52%)   swept-win  3  swept-loss  2  split-by-side 15
+vs bob_iter0           36/40 (90%)   swept-win 16  swept-loss  0
+vs bob_iter1           34/40 (85%)   swept-win 14  swept-loss  0
+vs examplefuncsplayer  40/40 (100%)  swept-win 20  swept-loss  0
+vs bob_denier          32/40 (80%)   swept-win 14  swept-loss  2
+overall 163/200 (81.5%)
+```
+
+**Criterion 1 (accept gate, h2h > 50%): PASSES, 21/40 = 52.5%.** Marginal: the
+binomial standard deviation on 40 games is 3.2, so 21 versus 20 is 0.3 sd. This
+number on its own is a coin flip and I am not going to pretend otherwise.
+
+**No regression, which is the half this sample CAN measure.** Roster comparison
+against the previous run's 15-map sample: `bob_iter0` 87% → 90%, `bob_iter1` 80% →
+85%. Different map samples, so those deltas are soft, but nothing moved down.
+Swept-loss count against the gate opponent is 2 against 3 swept wins.
+
+### Dose-response — the analysis this iteration was actually designed around
+
+Every map's dose is known exactly and in advance (`bob-tools/ruins-mix.csv`): how
+many points the hash moves that map's tower mix toward or away from 50/50. Grouping
+the h2h games by dose rather than reading the headline:
+
+```
+maps whose mix the change IMPROVED   8/12  (67%)
+maps it left alone                    3/6  (50%)
+maps whose mix it made WORSE        10/22  (45%)
+```
+
+Monotone, in the predicted order, and the prediction was registered before the run.
+The two swept wins (DefaultMedium +21, UnderTheSea +13) are the two most-improved
+maps in the sample; both swept losses (leavemealone −7, quack −8) are maps it makes
+worse. That is measurement doctrine #7's causal shape rather than churn.
+
+It is also **underpowered**, and saying so is part of the result: the
+better-minus-worse gap of 22 points has a standard error of about 18 points on
+these sample sizes, so it is ~1.2 sd, p≈0.11 one-tailed. Suggestive. Not decisive.
+
+### Why I am NOT deciding on this run
+
+The sample contains **none of the four maps where the old rule degenerates
+completely**, and the entire case for the change rests on those. TRAINING_ALGORITHM.md
+rule 10 is explicit: "don't let pre-registered metrics decide when a cheap unrun
+instrument could reverse them." The affected-subset run is exactly that instrument
+and it costs 30 games against this run's 200. It is launched.
+
+### Two pool-management notes, acted on rather than filed
+
+- **`examplefuncsplayer` is 40/40 and was 30/30 before** — two consecutive
+  evaluations at 100%, which is the retirement condition. It stays in
+  `roster_extra.txt` because the absolute-strength chart needs a frozen yardstick
+  and roster entries are never retired, but it consumed **20% of this run's games**
+  to tell me nothing. From now on it plays in deliberate roster runs only, not in
+  every gauntlet.
+- **`bob_denier` scored 80% on its first outing** — one evaluation at the retirement
+  threshold, and it is the only opponent besides the gate that took games off me
+  (2 swept losses, on Paintball and leavemealone). It stays as a peer for now. Its
+  README already records that it is forked from `bob_iter3` and must be re-forked
+  when it stops being a challenge; one more evaluation at ≥80% triggers that, and
+  the re-fork gets logged so no win rate is compared across it.
