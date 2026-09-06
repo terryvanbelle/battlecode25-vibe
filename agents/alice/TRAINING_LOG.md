@@ -1485,3 +1485,31 @@ on a fresh random sample against the then-accepted snapshot, and the recorded ri
 (no pathfinding; units may stall on wall-heavy maps) is untested by any of these
 four, which are open terrain. The random sample will include maze-like maps and is
 the honest test.
+
+### Wall-density instrument, and the quantified blind spot in iteration 7's prior
+
+Added map wall density and ruin count to the dumper's `MatchHeader` line, because
+both decide whether a target-seeking unit can be trapped and how far tower
+expansion can go, and I was about to reason about "open vs maze-like" maps without
+a number for it.
+
+My four generality maps, measured:
+
+| map | walls | ruins |
+|---|---|---|
+| DefaultLarge | 24/1500 (**1.6%**) | 24 |
+| starburst | 56/900 (**6.2%**) | 12 |
+| Mirage | 120/1600 (**7.5%**) | 22 |
+| Racetrack | 63/625 (**10.1%**) | 14 |
+
+The spec allows walls up to **20%** of a map. Every map in my 8/8 sweep sits in
+the bottom half of that range, and the most obstructed is only 10.1%. So the
+caveat I recorded by intuition is now a measured fact: **iteration 7's prior is
+drawn entirely from open terrain and does not test the pathfinding risk at all.**
+
+This is the representativeness rule (doctrine #4) applied to my own favourable
+evidence rather than to an opponent's: an instrument that cannot pose the threat
+cannot clear the feature of it. The random 15-map sample in the accept run will
+include wall-heavy maps; if iteration 7 has a terrain problem, that is where it
+appears, and the wall-density figure now lets me check the losses against it
+directly instead of guessing.

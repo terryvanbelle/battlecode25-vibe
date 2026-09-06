@@ -88,8 +88,19 @@ public class ReplayDump {
                 MatchHeader mh = (MatchHeader) ew.e(new MatchHeader());
                 GameMap map = mh.map();
                 mapWidth = map.size().x();
+                int wallN = 0;
+                for (int w = 0; w < map.wallsLength(); w++) if (map.walls(w)) wallN++;
+                int tiles = map.size().x() * map.size().y();
+                int ruinN = map.ruins() != null ? map.ruins().xsLength() : 0;
+                // Wall density and ruin count are the two map properties that decide
+                // whether a target-seeking unit can get trapped and how far tower
+                // expansion can go. Printed so map-class effects are checkable
+                // without re-deriving them per investigation.
                 System.out.println("=== MatchHeader map=" + map.name() + " " + map.size().x() + "x" + map.size().y()
-                        + " symmetry=" + map.symmetry() + " maxRounds=" + mh.maxRounds());
+                        + " symmetry=" + map.symmetry() + " maxRounds=" + mh.maxRounds()
+                        + " walls=" + wallN + "/" + tiles
+                        + String.format(" (%.1f%%)", 100.0 * wallN / Math.max(1, tiles))
+                        + " ruins=" + ruinN);
                 InitialBodyTable ibt = map.initialBodies();
                 if (ibt != null) {
                     int o2 = ibt.__offset(4); // spawnActions vector of structs
