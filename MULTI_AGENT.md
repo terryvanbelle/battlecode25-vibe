@@ -93,6 +93,14 @@ from battlecode22-vibe. `progress/vs_old_bots_history.csv` is committed --
 `gauntlet/` is git-ignored, so it is the only durable record of these
 measurements.
 
+Each gauntlet run records which build actually played in
+`gauntlet/<run-id>/bot.txt` (`tools/bot_identity.py`, by content, normalising
+the package line), and that is what labels a row in
+`progress/vs_old_bots_history.csv`. A label ending `+cand` means the run
+measured a candidate ahead of every snapshot — normal for a roster run played
+before the accept decision — so read `carol_iter7+cand` as "after iter7, not
+yet accepted", never as iteration 7 itself.
+
 These are per-agent and stay inside the agent's own workspace; they are not a
 cross-agent comparison. Cross-agent standing is what `tournaments/` is for.
 

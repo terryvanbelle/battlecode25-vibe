@@ -55,6 +55,15 @@ FIELDS = ["date", "current_snapshot", "opponent", "wins", "total", "win_pct", "s
 #               mean "that candidate was bad" rather than "the bot regressed".
 SOURCES = ("roster-run", "backfill")
 
+# `current_snapshot` names the build that PLAYED, and comes from the run's own
+# bot.txt (written by gauntlet.sh at launch). A name ending `+cand` is a
+# candidate ahead of every snapshot -- the usual case for a roster run, since
+# roster runs are normally played before the accept decision. Do not read
+# `carol_iter7+cand` as iteration 7; it means "something after iter7, not yet
+# accepted". Runs older than bot.txt fall back to a date-based reconstruction,
+# which names the previous accepted iteration and is why two of carol's rows
+# had to be relabelled by hand.
+
 
 def tally_run(results_csv, roster):
     """{opponent: [wins, total]} for roster opponents in one run."""
@@ -86,6 +95,25 @@ def write_history(path, rows):
         w = csv.DictWriter(f, fieldnames=FIELDS)
         w.writeheader()
         w.writerows(rows)
+
+
+def bot_label(rundir):
+    """What the run itself recorded about the build that played, if anything.
+
+    gauntlet.sh writes bot.txt at launch, when which-build-is-this is still a
+    fact rather than a reconstruction. Prefer it: `snapshot_as_of` can only
+    guess from snapshot dates, and a roster run normally measures a CANDIDATE
+    that is ahead of every snapshot, so its guess names the previous accepted
+    iteration and silently changes once the candidate is snapshotted. Returns
+    "" for runs launched before bot.txt existed, which keep the old behaviour.
+    """
+    f = rundir / "bot.txt"
+    if not f.is_file():
+        return ""
+    fields = dict(
+        line.split("=", 1) for line in f.read_text().splitlines() if "=" in line
+    )
+    return fields.get("label", "").strip()
 
 
 def main():
@@ -137,7 +165,7 @@ def main():
         if not tally:
             print(f"  skip {rundir.name} (no roster opponents in it)")
             continue
-        snap = pl.snapshot_as_of(repo_root, ws_dir, agent, when)
+        snap = bot_label(rundir) or pl.snapshot_as_of(repo_root, ws_dir, agent, when)
         ts = when.isoformat()
         for opp, (wins, total) in sorted(tally.items()):
             row = {"date": ts, "current_snapshot": snap, "opponent": opp,
