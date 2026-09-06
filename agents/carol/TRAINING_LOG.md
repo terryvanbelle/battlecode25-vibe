@@ -3040,3 +3040,48 @@ uninterpretable — the mistake that cost this direction four iterations of dela
 splasher is invisible in every replay. It will report its splash score, whether it fired, and
 its paint — otherwise the mechanism gate cannot be checked at all, which is the failure mode
 `tools/frozen-treasury.py` was built to prevent.
+
+### Iteration 10 h2h RESULT — 19/40 = 47.5%, and the registered prediction lands exactly
+
+I wrote, before this run reported: *"iteration 10 lands at or below 50%, with the opening-paint
+metric improved and the dry rate worse. If so, the honest conclusion is not 'tune the reserve'
+but that carol's binding constraint is not unit production at all."*
+
+| instrument | result | predicted |
+|---|---|---|
+| h2h vs `carol_iter7` | **19/40 = 47.5%** | at or below 50% — **yes** |
+| mechanism: opening paint blocked (paired) | DefaultSmall **51 -> 35**, Gears **28 -> 18**, Fossil 16 -> 13, PlumberGame 16 -> 18 | improved — **yes** |
+| counter-metric: soldier dry rate | 12.5% -> **12.8%** | worse — **yes**, marginally |
+| soldier turns fielded | 12,148 -> **49,411 (4.1x)** | (not predicted — larger than expected) |
+| side split | A 9/20, B 10/20 | even, no artifact |
+| swept shape | 4 swept-win, 5 swept-LOSS, 11 split | churn |
+
+**The mechanism worked emphatically and converted nothing.** The reserve did exactly what it was
+designed to do — it stopped soldiers draining the tower stash, cut opening starvation by up to
+16 rounds in 100, and let carol field **four times** the soldier-turns. The scoreboard moved
+backwards.
+
+**Three iterations, three different routes, one answer.** This is now a converging result rather
+than a single null:
+
+| iteration | how it raised unit production | h2h |
+|---|---|---|
+| 5 (accepted) | more chip income via money towers | 66.7% *(accepted on other grounds — chips were then the binding cap)* |
+| 8 (rejected) | more paint income via early paint towers, **2.2x soldiers** | 50.0% |
+| 10 (rejected) | stop the paint leak, **4.1x soldiers** | 47.5% |
+
+**Carol's binding constraint is not unit production.** She can already field four times the army
+she does and it changes nothing, because — measured on the accepted build — her soldiers are
+**idle 38.4% of the time and paint on only 12.4% of their turns**. Adding soldiers multiplies a
+per-unit output that is close to zero.
+
+**DECISION: REJECT** (pending the `carol_rush` block for the record). Declining the near-miss
+refinements on `TOWER_PAINT_RESERVE` for the third time this session, and for the reason
+LEARNINGS already states: a mechanism that moves its metric hard and the scoreboard not at all
+means the lever is wrong, not its setting. The dose curve's remaining arms (100, and the 1000
+full-ablation) would only refine a quantity now shown not to matter.
+
+**This is the strongest argument yet for the splasher iteration**, and it is no longer an
+inference from one measurement but the conclusion of a three-iteration series: the only way left
+to improve output is to make each soldier-turn worth more, and the largest single block of
+wasted turns — **22.5% IDLE-ENEMY** — is precisely what splashers exist to convert.
