@@ -2752,3 +2752,39 @@ Three ways this can land, all stated now:
 Writing this down because case 1 is the one where I would be most tempted, afterwards, to claim
 I had aimed at it. I did not: I aimed at the degeneracy and missed, and the trace that found the
 miss is what produced the paint thesis.
+
+### Iteration 8 mechanism: the registered side-prediction is confirmed
+
+Measured on four completed h2h games. Both builds carry BUILD tags for the first time
+(`[i8]` = candidate, `[i7]` = baseline), so the two sides are split **exactly** — and because
+they are in the *same replay*, this is a within-game paired comparison with no map, sampling or
+opponent confound of any kind. It is the cleanest instrument this project has produced.
+
+Rounds in the first 100 with **no tower able to afford a 200-paint soldier**:
+
+| map | `[i7]` baseline | `[i8]` candidate | delta |
+|---|---|---|---|
+| DefaultSmall A | 50 | **33** | **-17** |
+| Gears A | 28 | **18** | **-10** |
+| Fossil A | 16 | **13** | -3 |
+| PlumberGame B | 16 | 18 | +2 |
+
+**Iteration 8 reduces opening paint starvation in 3 of 4 games, substantially in two.** The
+mechanism is exactly as predicted: forcing the first completions to be PAINT towers puts more
+paint-mining capacity on the board in precisely the window carol is measured to be blocked.
+
+Two things follow:
+
+1. **Independent corroboration of the paint-starvation thesis, from a change not designed for
+   it.** The thesis came from tracing iteration 8's *failure*; this is a separate intervention
+   moving the same metric in the predicted direction. That is worth more than another
+   measurement of the same kind, because it could easily have shown nothing.
+2. **The interpretation is now pinned in advance.** Whatever the h2h says, iteration 8 does not
+   get credit for fixing the degeneracy it was aimed at — it cannot reach it. If it accepts, the
+   log will record that it accepted for the opening-paint reason, discovered after the fact.
+
+h2h stands at 18/34 with 6 games to play, so the verdict is still open and I am not scoring a
+prefix. But the two landings I care about are already distinguishable: if the h2h clears, case 1;
+if it does not, case 2 — which would be the *strongest* result for iteration 10, since it would
+isolate "more opening paint income" as insufficient on its own while the refill leak stays
+unplugged, making the reserve the sharper intervention rather than a rival one.
