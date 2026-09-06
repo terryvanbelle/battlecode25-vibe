@@ -1985,3 +1985,45 @@ Consequence: **the pre-registered stall-guard refinement is not triggered.** I w
 not spend it, because the evidence that motivated it evaporated. Hybrid bug-nav
 stays drafted and unqueued, with its motivating evidence now retracted — logged so
 a later session does not rediscover the draft and assume it was justified.
+
+---
+
+## Iteration 7 — RESULT: ACCEPTED (snapshot `src/alice_iter7/`)
+
+Run `20260906-222958`, 12-map random sample, both sides. Gate arm complete.
+
+| pre-registered criterion | result | verdict |
+|---|---|---|
+| H2H vs `alice_iter5` > 50%, >= 16/24 | **20/23 (87%)** | **PASS**, far clear |
+| mechanism: unpaints **per mopper alive** must rise materially | ~76 vs ~23 per 500 rounds (**~3x**) | **PASS** |
+| targeted: fix starburst, iteration 5's swept loss | starburst **swept** (both sides) | **PASS** |
+| watch: soldier share / coverage must not fall | 26 vs 9 soldiers, 654 vs 319‰ | **PASS** |
+
+Diff shape: **8 swept wins, 0 swept losses**, 4 split. No map is lost from both
+sides, so accept condition 3 is met with nothing outstanding.
+
+**The mechanism is one line of navigation.** A mopper picks targets within r²≤2 —
+its 8 adjacent tiles — while seeing r²=20, about 60. It now walks toward the
+nearest enemy paint in vision instead of wandering. Mopper *population* is
+unchanged (4-6); the same few units simply stop being blind. This is the
+"capability preserved at zero marginal cost" shape the algorithm names as the
+recurring winner's profile — nothing extra is spent, an existing unit stops
+wasting its own sensing.
+
+**Why it mattered strategically**: iteration 5 bought a soldier-heavy army and
+paid for it on maps where erasure decides the game (starburst: it painted ~2x the
+baseline and still lost both sides). Iteration 7 buys the erasure back *without*
+returning the soldier share, which was the design constraint. Coverage is a
+contested stock, and this is the first iteration that contests it deliberately.
+
+**Archived replay**: `replays/iter07_alice_iter5_starburst_A_WIN.bc25` — the
+accepted build winning the exact map its predecessor lost from both sides.
+
+### Functional-area map
+- economy/chip conversion — iteration 4 ACCEPTED; iteration 10 (SRPs) queued
+- spawn economics — iteration 5 ACCEPTED
+- unit sustain (refuel) — iteration 6 REJECTED, closed
+- mopper targeting — **iteration 7 ACCEPTED**
+- soldier targeting/immobility — iteration 8 rejected on trace, closed
+- ruin discovery — iteration 9 discarded on reachability, closed
+- navigation (bug-nav) — drafted, unqueued, motivating evidence retracted
