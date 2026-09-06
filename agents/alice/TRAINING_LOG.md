@@ -1034,3 +1034,59 @@ coordinate parity rather than by treasury state at mark time).
 This does **not** retire the mirror run: it cannot see a bias that is symmetric
 between the two *lineage members* here, and 11 of 25 maps were split-by-side,
 which is exactly where a per-map positional effect would hide. Still queued.
+
+---
+
+## Iteration 6 — soldiers refuel at towers instead of starving (prepared, verified, queued)
+
+**Area**: unit sustain (new area; opened by the API sweep and the death-cause probe).
+
+**Premise, measured**: 65-100% of unit deaths are paint starvation, and
+`transferPaint` had been called **zero** times per game by either team across
+this lineage's entire history. The bot's only way to deliver fresh paint to the
+field is to respawn — 200 tower paint **plus 250 chips**, discarding a positioned
+veteran, restarting the same ~85-round clock. A refill costs the same paint and
+**no chips**.
+
+**Change** (one mechanism, `src/alice_i6/`, built on the leading dose from
+iteration 5): a soldier below `LOW_PAINT` walks to the last ally tower it has
+seen and withdraws `min(capacity - paint, towerPaint)`. Seek and withdraw are
+deliberately *not* split: vision is only r²=20, so a soldier that merely tops up
+when it happens to stand beside a tower is dead code — with no ruin to work it
+wanders and never approaches one on purpose. The withdrawal amount respects the
+engine trap in `RULES.md` (over-asking clamps the credit but debits the tower in
+full, silently burning its paint).
+
+**Mechanistic verification — Racetrack, alice_i6 (A) vs alice_r100, WIN by
+AREA_PAINTED.** Per 250 rounds at r2000:
+
+| | alice_i6 | alice_r100 |
+|---|---|---|
+| **paint transfers** | **14-20** | **0** |
+| starvation deaths | 28-35 | 29-45 |
+| total deaths | 53-61 | 60-67 |
+| coverage 1000→2000 | 489 → **502‰** | 486 → **473‰** |
+
+Outcome class 1 (won, mechanism engaged). The mechanic fires for the first time
+in this lineage, starvation deaths fall ~20-25%, and coverage trends up where the
+baseline's trends down.
+
+**But engagement is weak and that is the interesting part**: ~16 transfers per
+~58 deaths means only about a quarter of soldiers ever refuel once. Two candidate
+causes, and they have different fixes — (a) `LOW_PAINT = 60` triggers too late,
+since cooldowns already scale up below 50% stash (=100 paint), so a soldier is
+crippled long before it qualifies; (b) soldiers are simply too far from any tower
+to make the trip. `LOW_PAINT` is therefore the natural dose, and the pre-registered
+sweep is **60 / 100 / 140** with the zero arm being iteration 5's accepted build.
+
+**Pre-registered** (to run when the VM frees):
+1. **Accept gate** — H2H vs iteration 5's accepted snapshot > 50%, and >= 18/30
+   at NMAPS=15 for the noise band.
+2. **Mechanism** — `xfer` per 250 rounds must stay materially > 0 (it is 0 in every
+   prior build), and the starvation share of deaths must fall.
+3. **Dose-response** — with the zero arm at 0 transfers, a monotone rise through
+   60→100→140 would say the trigger is simply too late; a peak at 60 would say
+   distance-to-tower, not the threshold, is the binding constraint.
+4. **Watch (not a gate)** — paint actions per 250 rounds. If refuelling merely
+   trades painting turns for walking turns, coverage will not move and the real
+   answer is to refuel *without* leaving the work site.
