@@ -107,6 +107,32 @@ preparing the next hypothesis, ablation planning.
 Stop only when genuinely blocked by something outside your control, and say
 precisely what is blocking you and what you would do next.
 
+## If your session dies mid-run
+
+The gauntlet's remote runner is launched with `setsid` on battlecode-dev and is
+**not** tied to your session: when the driver-side poll loop dies (a dropped
+SSH, a killed session, the 180-minute poll deadline), the games keep playing to
+completion. What is lost is only the collation.
+
+So never re-run a gauntlet you were already running — that discards finished
+matches and burns shared VM time twice. Recover it:
+
+```bash
+cd agents/<you>
+../../tools/gauntlet-collect.sh --list          # runs on the VM + whether each finished
+../../tools/gauntlet-collect.sh <run-id>        # collate it here (default: newest)
+```
+
+It writes the usual `results.csv` / `reasons.txt` / `summary.txt` / `losses/`.
+A run with no `GAUNTLET-COMPLETE` marker is still collated, with `!! INCOMPLETE`
+at the top of its summary — read that line first, as with tournament summaries:
+opponents are the outer loop, so a truncated run's later opponents may have no
+games at all.
+
+Anything you chained *on the driver* to fire when a run finished (a watcher
+loop, a queued follow-up gauntlet) does die with the session. After a recovery,
+check whether the thing you queued behind the run actually launched.
+
 ## Shared-resource rules (hard)
 
 `battlecode-dev` also serves a **live BC26 project**, plus your two sibling
