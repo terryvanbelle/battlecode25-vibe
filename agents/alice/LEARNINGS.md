@@ -423,3 +423,46 @@ all-MONEY loses **5/20 (25%)** on the maps where the branch is live. I nearly
 deleted a feature worth 75-25 because the map I chose could not see it. The
 ledger entry that says "this direction is closed, and here is the number" is the
 asset — not the iteration I thought I was running.
+
+## Theme: a contested quantity sits at an equilibrium — measure throughput, not level
+
+Iteration 19 made moppers clear the enemy paint that blocks tower patterns. The
+metric I pre-registered as the mechanism gate barely moved:
+
+| | gridworld | UnderTheSea |
+|---|---|---|
+| % of ruin-targeted soldier turns with enemy paint in the pattern | 35.8% → **36.1%** | 81.2% → **81.4%** |
+| near-stall samples (≥20/24 done, soldier at the ruin) | 724 → **358** | 1,714 → **465** |
+| ruin-targeted soldier turns in total | 22,092 → **18,604** | 6,477 → **3,130** |
+
+Both readings are correct and they are not in conflict.
+
+> **A quantity both sides act on settles at an equilibrium level, and clearing it
+> faster raises the flow through it without moving the level.** The opponent
+> repaints as fast as I clear, so the *fraction of ruins blocked* is pinned. What
+> changes is how long each individual blockage lasts — visible as fewer soldier
+> turns spent stalled, not as fewer blockages.
+
+This generalises past this iteration. Coverage is contested (LEARNINGS §2 already
+says so). So is map control, so is any stock the opponent can subtract from. For
+all of them:
+
+1. **Pre-registering a *level* as the mechanism gate is a mistake when the
+   quantity is contested.** I nearly failed a working mechanism on its own gate.
+   The right pre-registration is a rate, a duration, or a count of the *state
+   being exited* — "how many turns are spent blocked", not "how often is
+   something blocked".
+2. **The tell is that the level is flat while a downstream count moves a lot.**
+   Flat level + halved stall count + fewer total turns is not a contradiction and
+   not noise; it is the signature of a throughput change under a pinned level.
+3. **It is also the reason a mechanism can be real and still small.** Raising
+   throughput through an equilibrium buys the difference in flow, not the whole
+   stock. Iteration 19 gained exactly +1 tower per map over the mirror null —
+   consistent with a genuine but bounded effect, and I recorded that prediction
+   before the evaluation returned rather than after.
+
+The corollary for design: **if you want the level to move, you must change who
+supplies the quantity, not how fast you consume it.** That is why iteration 20 —
+soldiers refusing to commit to blocked ruins — is a different mechanism and not
+a refinement of 19: it does not fight the equilibrium at all, it stops paying
+for it.
