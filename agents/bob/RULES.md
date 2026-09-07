@@ -117,6 +117,30 @@ RESOURCE      PAINT tower   MONEY tower   DEFENSE tower
 - Mop swing reaches 2 tiles cardinally (beyond mopper attack r²=2).
 - Message r²=20 = vision; broadcast r²=80 = tower relay backbone.
 
+## Pattern mechanics (javap-verified, iteration 10)
+- `assertCanMarkResourcePattern` has exactly four conditions: robot type,
+  `assertCanActLocation(loc, 8)`, `GameWorld.isValidPatternCenter(loc, false)`, and
+  `getPaint() >= 25`. So a pattern may be MARKED at any centre with r² ≤ 8 — all 25 tiles
+  of the surrounding 5x5, since (2,2) is r² = 8.
+- `isValidPatternCenter` = `x >= 2 && y >= 2 && x < width-2 && y < height-2 &&
+  areaIsPaintable(loc)` (all 25 tiles free of walls and ruins). This is the dominant
+  refusal in practice: measured at 87-99% of SRP start attempts.
+- **Marking at range is legal; PAINTING at range is not.** Soldier action r² = 9 and the
+  5x5 around the soldier's OWN tile tops out at r² = 8 — that exact fit is the design.
+  A centre at r² = 8 puts the pattern's far corner at r² = 32, unreachable. Do pattern
+  work from the centre tile.
+- **`senseNearbyMapInfos(centre, r)` SILENTLY TRUNCATES**: it builds
+  `getAllLocationsWithinRadiusSquared(centre, min(r, visionR2))` and then filters by
+  `canSenseLocation` — it does NOT throw for tiles out of vision. Any area check around a
+  remote point must verify the returned count, or it is approving ground it cannot see.
+  With vision r² = 20, only the 13 offsets with dx²+dy² ≤ 4 have their whole 5x5 visible
+  ((2,0) lands on 20, (2,1) on 25).
+- **Marks are a contended, map-wide resource.** `markTowerPattern` blankets a 5x5 around
+  every ruin under construction, and a resource pattern marked over those tiles would
+  overwrite them and break the tower. Tower patterns and resource patterns compete for
+  ground; measured, existing marks refuse >100% of geometrically-valid SRP candidates per
+  turn in ruin-dense areas.
+
 ## Misc engine facts
 - `getAllLocationsWithinRadiusSquared`, `senseNearbyRuins(int)` exist. `getChips()==getMoney()`.
 - `attack(loc)` / `attack(loc, useSecondary)`; mopper attack with no target tile? attack(loc) mops.
