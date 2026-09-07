@@ -6373,3 +6373,48 @@ measurement*, not a decision to keep a build I like.
 mis-applied — it was applied correctly and the mechanism is real — but because doctrine #9
 says *"on thin accept margins, run the frozen roster BEFORE accepting"*, and I ran it after.
 A +6 with 6 sweeps did not feel thin, which is exactly the state in which the rule matters.
+
+### Iteration 19 2x2 built and launched (2026-09-07 22:45)
+
+Arms forked from the shelved iteration-11 patch (`bob-tools/shelved/iter11-ruin-memory/
+apply.py`, capacity 24 — the value iteration 11 shipped), applied to each base and then
+lifted into its own package. `src/bob` was restored from git afterwards and verified clean.
+
+```
+                    ruin memory OFF          ruin memory ON (RUIN_MEM = 24)
+RUIN_FLOOR = 15     A  bob_iter12            C  bob_mC
+RUIN_FLOOR =  0     B  bob_iter18            D  bob_mD
+```
+
+Gate check, because these two constants are the whole experiment and confusing them would
+silently ruin it:
+
+```
+mC   workOnRuin uses PAINT_FLOOR   (both pattern-paint sites)   <- iteration 12 base
+mD   workOnRuin uses RUIN_FLOOR, paintSomething keeps PAINT_FLOOR <- iteration 18 base
+```
+
+Both compile-checked in isolation. Launched as `BOT=bob_iter11` against all four on **one
+shared 25-map sample** (200 games, `20260907-224...`), so every arm-to-arm comparison in the
+table is exact. `bob_iter11` is the right common reference: it is the ancestor where the
+drop appears, it is frozen, and A and B against it are already measured at 24/50 and 18/50
+on a different draw, which gives a consistency check on the new sample.
+
+**Pre-registered reading, before any games are played:**
+
+- **D > C and D > B, with the B−A gap reversing sign under memory** -> the destructive pair
+  is real. `RUIN_FLOOR = 0` is a good mechanism that requires a feature iteration 12 had
+  already deleted, and the fix is to restore ruin memory *and then* re-accept the floor —
+  as a pair, never separately.
+- **D ≈ B (memory does not rescue it)** -> the pair is refuted, iteration 18 is simply a
+  regression, and I revert it. **I am pre-committing to this now**, because the base rate
+  in this project says refutation is the likely outcome (2 of 3 nominated pairs refuted)
+  and I do not want to be arguing for my own mechanism after seeing the number.
+- **C > A as well** -> ruin memory is independently valuable and iteration 12's removal of
+  it was the actual regression, which would make the flat 58 -> 56 -> 50 stretch a story
+  about iteration 12 rather than about iteration 18.
+
+Note what makes this legitimate under §5b: I am not ablating because a pair *looks* like it
+should interact. I am ablating because the frozen roster dropped and then an exact
+same-sample run confirmed the drop — and the ancestry, not my imagination, named which two
+features to cross.
