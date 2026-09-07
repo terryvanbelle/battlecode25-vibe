@@ -6755,3 +6755,48 @@ repaint counts from `PaintAction`, which is a next-run measurement, not a free o
 
 Pre-check 3: **DONE**. Pre-check 4 (instrument the target choice at full width) remains **not
 done**, and is now the only one outstanding before a build.
+
+### Pre-check 4 (instrument the choice at full width) — REFUTES the ranking design, before a build
+
+`gauntlet/20260907-202304`, 8 games, i27a vs `carol_iter25`. **Identity check passes**: 4/8, all
+four maps split by side, zero swept — the mirror-null shape, so the probe is a confirmed no-op
+and the counters below describe iteration 25's own play.
+
+| map | paint decisions | **candidates per decision (the WIDTH)** | chosen tile contested | **a less-contested option existed** |
+|---|---|---|---|---|
+| DefaultMedium | 52 | **5.10** | 11.5% | **11.5%** |
+| Fossil | 14 | **4.93** | 14.3% | **14.3%** |
+| Bunny | 23 | **3.39** | 21.7% | **8.7%** |
+| Mirage | 24 | **2.33** | 0.0% | **0.0%** |
+
+**The design is refuted and the reason is structural.** My intended first attempt was "rank the
+paint target by contestedness rather than by distance". But the choice set is **2.3 to 5.1 tiles
+wide**, and on **85.5–100% of decisions no strictly less-contested candidate existed at all.**
+A better ranking over a menu that averages four items, where the best item is already chosen
+seven times in eight, cannot move a game.
+
+The cause is a scale mismatch I should have seen without a run: the paint step chooses within the
+**action radius, r²=9** — at most a couple of tiles away. Contested-versus-uncontested is a
+property of the map at the scale of *a corner fifteen tiles away*. **The distinction I traced
+does not exist inside the decision I was about to change.**
+
+**What is refuted, stated narrowly.** This kills re-ranking the *paint target* within the action
+radius. It does **not** test re-ranking the *exploration/frontier target*, which is a different
+decision made over `senseNearbyMapInfos(-1)` at r²=20 — a candidate set several times larger,
+and the one `nearestVisibleEmpty()` actually serves. My own LEARNINGS rule is that a counter must
+be as wide as the decision; I instrumented the r²=9 decision at full width and the r²=20 decision
+not at all, so the honest verdict is **one of the two branches refuted, the other still open**.
+Recording that rather than letting a clean refutation of the cheap branch read as a refutation of
+the direction.
+
+**Bytecode caution, which the probe surfaced by nearly breaking itself.** Peak robot usage went
+from the baseline's 37.5% of 17,500 to **88.5%** (15,489), with 1–2 near-misses per game and
+**zero overruns**. The identity check confirms no behaviour changed, so the measurement stands.
+But a production version that rebuilt an 11×11 enemy-paint window every painting turn would be
+running at the edge of the limiter, where an overrun silently truncates a turn. Any real
+implementation of contestedness needs a cheaper representation — and I would not have known that
+from reasoning.
+
+**Score for the session's pre-checks: four registered, four run, two designs killed before a
+build** (24a/24b by decision counters, this one by width), one direction re-costed into the
+favourable range (pre-check 3), one sizing result that corrected my own overstatement.
