@@ -2336,3 +2336,152 @@ master variable; ruin **supply**, not discovery, caps them.
   with the bytecode report every turn. Read SPAWN/action lines instead.
 - A shared tool rewritten mid-run (`git pull`) can throw a bogus syntax error;
   only collation is lost, recover with `gauntlet-collect.sh`.
+
+---
+
+# Session 3 — the tournament breaks the lineage open
+
+## Housekeeping: the runs that were in flight when session 2 was killed
+
+Session 2 died at ~00:55 UTC to an account-wide API rate limit. All three
+gauntlets finished on the VM and all were already collated. Nothing was re-run.
+
+**Run `20260906-225531`** (bot=`alice_iter7`, 48 games, 12 maps) was the sweep
+session 2 pre-registered. Note it measured `alice_i10d` and `alice_i11`, **not**
+`alice_i10e` — 10e was written at 23:11, sixteen minutes *after* the run launched
+at 22:55. So the pre-registered "sweep 10e and 11d" was only half executed.
+
+| arm | H2H vs `alice_iter7` | gate (>=16/24) | decision |
+|---|---|---|---|
+| `alice_i10d` (SRP, `SRP_MIN_TOWERS=10`) | **13/24 (54%)** | FAIL | near miss again, on fresh maps |
+| `alice_i11` (= 11d, splashers gated at 10 towers) | **8/24 (33%)** | FAIL | **REJECT** |
+
+**Iteration 11 is closed.** Both arms are now measured: ungated splashers 3/14
+(21%), tower-saturation-gated splashers 8/24 (33%). Gating fixed the mechanism —
+splashers no longer displace tower building — and the result is still a third
+below the bar. Splashers are not the missing piece; the gate was not the problem.
+
+`alice_i10d` reproducing 13/24 on a *fresh* 12-map sample (it scored 13/24 before
+on different maps) is worth recording: that is the same near-miss point measured
+twice on disjoint ground, which is much stronger than one 13/24. SRPs are worth
+about +4% and not more.
+
+## Iteration 12 — the tournament exposes a whole-lineage blind spot
+
+### The measurement that reframes everything
+
+The first full round-robin tournament (`tournaments/20260907-0100`, 450 games)
+was mid-flight. Alice's record against the independent lineage `bob`, over the
+first 58 games:
+
+**1 win, 57 losses.**
+
+Not a side artifact (33 losses as A, 24 as B), not map-specific (every map but
+Rose), not a forfeit (real games, 240-2000 rounds). 59 of the losses are
+`MAJORITY_PAINTED` — bob reaching the 70% coverage win condition outright — and
+many arrive by round 400-800.
+
+This is the self-referential blind spot that `TRAINING_ALGORITHM.md` warns about,
+landing exactly as predicted. Eleven iterations of within-lineage measurement,
+including a fixed-roster instrument reading **95.8%**, could not see it, because
+every instrument alice owns descends from alice.
+
+### Trace 1 — Paintball (alice A, lost r383, `MAJORITY_PAINTED`)
+
+| round | alice $ | alice tw | alice sold | alice twPaint | alice cov | bob tw | bob sold | bob cov |
+|---|---|---|---|---|---|---|---|---|
+| 100 | 1400 | 4 | **2** | 2205 | 370‰ | 6 | **11** | 588‰ |
+| 200 | 1300 | 4 | 7 | 1675 | 314‰ | 7 | 8 | 638‰ |
+| 300 | 2000 | 2 | 4 | 100 | 311‰ | 7 | 8 | 641‰ |
+
+Alice's coverage **peaks at r60 and declines for the rest of the game**. That is
+an absolute degeneracy signal, not an opponent-relative one.
+
+The controlled comparison is round 100: **both teams hold ~$1300, and alice holds
+three times bob's tower paint (2205 vs 755) — and fields 2 soldiers to bob's 11.**
+With more of both resources, alice fields a fifth of the army. Resources are not
+the constraint; conversion is.
+
+### Trace 2 — gridworld (alice B, lost r335), generality confirmed
+
+| round | alice $ | alice tw | alice cov | bob $ | bob tw | bob cov |
+|---|---|---|---|---|---|---|
+| 120 | 2440 | 5 | 273‰ | 1290 | 8 | 399‰ |
+| 160 | 3240 | **5** | 277‰ | **10** | **14** | 596‰ |
+| 320 | 3420 | 6 | 287‰ | 5780 | 15 | 675‰ |
+
+gridworld has **25 ruins**. Bob claims 14 of them by round 160 while running its
+treasury down to **$10** — it converts every chip into capacity. Alice claims 5,
+builds *no* tower between r80 and r240, and sits on **$3,240**, enough for three
+towers it never builds.
+
+### Root cause, read out of the code the trace pointed at
+
+`runSoldier` targets a ruin only if one is inside vision (`senseNearbyRuins`,
+r²=20 ≈ 4.5 tiles). Otherwise it calls `wander`, which is a **random walk**:
+a heading held for `5 + rnd(8)` steps (mean 8.5) and re-rolled on any block.
+
+Random-walk displacement after T steps grows as **√T**; directed travel grows as
+**T**. On a 31x31 map a soldier that has exhausted the ruins near its spawn tower
+essentially never reaches a distant one. Alice does not fail to *build* ruins —
+it fails to *arrive* at them. Chips then pile up because chips buy towers, and
+towers need a soldier standing on a ruin.
+
+### This falsifies iteration 9's synthesis
+
+Iteration 9 concluded, and I wrote into the closed-directions ledger:
+
+> Ruin **supply** limits tower count: a healthy bot builds out to the map's ruins
+> and stops. [...] retires an entire family of "help soldiers find ruins" ideas.
+
+That was inferred from self-play, where Mirage finished 10+11 of 22 ruins built.
+Both sides were equally bad at arriving, so the ruins ran out *late and evenly*
+and the ceiling looked like supply. Against a lineage that actually travels, the
+same map class splits 15-6. **The ledger's own stated re-open condition — "a map
+class exists where ruins are not saturated by mid-game" — is met**, and I am
+re-opening on that basis plus external evidence, not on "feels under-explored".
+
+### Hypothesis (pre-registered)
+
+> Alice's expansion is diffusive, not directed. Making the wander heading
+> persistent — one number, `WANDER_RUN` — converts the random walk into a
+> ballistic one and lets soldiers reach unclaimed ruins.
+
+Dose-response with a zero arm, one mechanism, nothing bundled:
+
+| arm | `WANDER_RUN` | package |
+|---|---|---|
+| zero | `5 + rnd(8)` (mean 8.5) | `alice_iter7` |
+| A | 25 | `alice_i12a` |
+| B | 100 | `alice_i12b` |
+
+**Pre-registered mechanism gate**: tower count at r400 must rise vs `alice_iter7`.
+That is precisely the gate iteration 9 failed (10 vs 11), so it is a gate this
+family has already proven it can fail.
+
+**Pre-registered accept gate**: head-to-head vs `alice_iter7` > 50% (the
+algorithm's primary test), mechanism gate passed, no one-directional regression.
+
+### Mechanistic verification — gridworld, `alice_i12b` (A) vs `alice_iter7` (B)
+
+| round | i12b tw | i12b cov | iter7 tw | iter7 cov |
+|---|---|---|---|---|
+| 200 | **11** | 449‰ | 4 | 225‰ |
+| 400 | **15** | **620‰** | 4 | 233‰ |
+| 2000 | 15 | 640‰ | 6 | 317‰ |
+
+`alice_i12b` wins, and reproduces **bob's own profile** on this map: 15 towers,
+~630‰ coverage. `alice_iter7` reproduces the losing profile it showed against bob:
+stalled at 4-6 towers, coverage flat near 230-320‰.
+
+**One constant.** Same ruin supply, same map, same everything else: 15 towers
+against 4. Iteration 9's "supply, not discovery" is dead.
+
+A second reading falls out of the same table: alice's treasury reaches **$697,960**
+by r1800 in the i12b game but only crosses $50k *after* tower saturation at r600.
+Iteration 6's reject rested on "chips are not binding — the treasury sits on
+$100k+". That is true only in the saturated end-state; through the whole
+contested phase (r0-r400) alice runs at $1,300-2,600, pinned just under
+`CHIP_RESERVE = 1450`. The premise was measured in the wrong window. This does
+not re-open iteration 6 (its dose-response was monotone decreasing, which stands
+on its own), but the *stated reason* needs the correction on record.
