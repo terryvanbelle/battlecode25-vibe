@@ -4853,3 +4853,38 @@ consistent with the flat tower count.
 test it properly I would need a same-opponent pair, which the 72-game H2H
 against `alice_iter19` supplies directly. Waiting for it rather than reading
 tea leaves from two games.
+
+### Iteration 20 — decision rule fixed BEFORE `p10` and `p25` are visible
+
+`p5` is in at **12/24 — exactly the mirror null.** The mildest dose removes a
+large measured waste (blocked fraction −10.4 and −19.4 points) and converts it
+into precisely zero games.
+
+The coordinator's note makes explicit what my own pre-registration implied, and
+I am binding myself to it here rather than after the numbers:
+
+> **The "tower count does not rise" caveat OUTRANKS the win rate.** If `p10` or
+> `p25` returns a thin positive, that is not an accept. "Improves a metric
+> without converting" is the shape this project has been fooled by repeatedly —
+> five mechanism-verified damage increases converting to nothing in 2026, and
+> my own iteration 16 chip-gate before that.
+
+Concretely, for iteration 20 to be accepted it must clear **both**:
+
+1. **≥ 16/24** on at least one dose — the point where the exact binomial gives
+   p ≤ 0.076, i.e. outside the 13–15 band my own noise floor calls noise. A
+   15/24 does **not** qualify here, even though it did for iteration 19,
+   *because iteration 19 had 3–0 swept maps against a zero-variance null to
+   carry it and iteration 20 has a flat tower count arguing against it.*
+2. **A mechanism-to-outcome link that is not merely the win rate** — either
+   tower count rising over the null, or swept maps clearly one-directional.
+
+Anything less is a **reject**, and the direction closes with the waste measured
+and documented: *soldiers stop wasting turns on unfinishable ruins, and it buys
+nothing.* That is a genuinely useful negative — it says the wasted turns were
+not the binding constraint, which redirects effort to what is.
+
+**Falsifier for the whole thread, stated plainly**: if removing 27–57% of
+ruin-targeted soldier turns changes nothing, then soldier *turns* are not scarce
+— soldier *paint* is (median 18 at a ruin against a 120-paint pattern), and the
+next iteration should attack the paint budget rather than the turn budget.
