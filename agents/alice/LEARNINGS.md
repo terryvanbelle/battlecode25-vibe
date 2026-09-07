@@ -803,3 +803,56 @@ have cited that entry. Cross-referenced now, in both directions.
 underneath marked DESCRIPTIVE ONLY, and carries the whole story in a source
 comment. A lesson that lives only in a log entry has to be remembered by whoever
 next runs the tool; a lesson compiled into the tool's output does not.
+
+## Theme: when a covariate analysis fails twice, stop correlating and go price the code path
+
+Iteration 23 changed one clause that does two things at once: it stops paying 5
+paint for an engine-refused attack, **and** it `continue`s, so the soldier scans
+onward and lands on a paintable tile further along the same pattern. I tried
+twice to separate them with map-level covariates, and both attempts failed:
+
+| attempt | variable | rho | p |
+|---|---|---|---|
+| pre-registered | ruin **density** | +0.318 | 0.127 |
+| post-hoc rescue | absolute ruin **count** | +0.104 | 0.640 |
+| (control) | map **area** | −0.116 | 0.606 |
+
+The pre-registered prediction had the **wrong sign**. The post-hoc replacement,
+built specifically to fix that, performed **worse than the thing it replaced**.
+
+### Three rules, in the order they cost me something
+
+**1. A post-hoc explanation earns exactly one thing: the next test.**
+When the density prediction failed I constructed a tower-conversion story that fit
+the data, and it was a *good* story — the replay backs it (18 towers vs 9). But I
+named its sharper prediction and ran it within minutes, and it died. Had I written
+the story down without testing it, it would have sat in this file beside a null it
+"agreed with", survived because nobody re-checked it, and been quoted three
+iterations later as established. **That is exactly how this project once ended up
+with the wrong and right models eight lines apart.**
+
+**2. A null with a point estimate is not a trend, and "agrees with my story" is
+not evidence.** rho = +0.318 at p = 0.127 is a null. I caught myself writing that
+"two independent readings now agree" when one was that null and the other was a
+single game. Superseded in place.
+
+**3. When the correlational route fails, the answer is a game experiment, not a
+better covariate.** §5b already says it: **an ablation prices a CODE PATH, not a
+concept.** The separating arm is `src/alice_i23abl`, which differs from the
+candidate by **one keyword** — `break` instead of `continue`. That is a cleaner
+instrument than any regression over 25 maps, because there is no question about
+what was gated.
+
+### The generalisable shape
+
+> **Cross-map variation can only separate two mechanisms if they scale with
+> different map properties.** When two co-occurring effects both scale with
+> "how much of the game this branch runs", no covariate will split them, and
+> hunting for a better one is a way of avoiding the experiment that would.
+
+And the corollary, which is the useful part: **a change with no detectable
+covariate structure is not a weak result — it is a uniform one.** Across a 4.8x
+ruin-density range and a 6x area range, iteration 23 swept 9 maps and lost none
+from both sides. "Works everywhere" is the strongest shape a change can have for a
+bot that must play an unknown map, and it is the same fact the swept-map count was
+already reporting in a different language.
