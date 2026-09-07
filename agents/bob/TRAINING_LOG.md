@@ -5706,3 +5706,80 @@ regressions.
 
 **Sequencing.** RUN 2 of iteration 16 is still in flight and owns the VM budget; this gets
 built and compile-checked now, and evaluated when that lands.
+
+---
+
+## Iteration 16 RUN 2 RESULT (2026-09-07 20:45) — and a confound I have to name
+
+`BOT=bob_iter12`, opponents `bob_d1 bob_d0`, fresh 25-map sample, 100 games, run
+`20260907-185613`. Reported as each arm's wins against `bob_iter12`:
+
+```
+arm                        wins/50   95% CI    per-map 0/1/2      vs the denier (RUN 1)
+bob_d1  4S : 0Sp : 1M        7/50    [3, 12]   18 / 7 / 0             30/50
+bob_d0  5S : 0Sp : 0M        2/50    [0,  5]   23 / 2 / 0             10/50
+                                   mirror null = 25/50, zero sweeps
+```
+
+**Both arms collapse against my own lineage too — harder than they collapse against the
+denier.** `bob_d0` wins 2 games in 50 and sweeps not one map of 25. My pre-registered
+fourth branch ("both arms below 50% on RUN 2 with `D_denial` small") does not apply, since
+`D_denial` was large; but the *size* of this collapse is not what the denial story
+predicts, and I am not going to pretend it is.
+
+### The premise of my own experimental design was wrong
+
+I wrote, in the pre-registration: *"an ablation of a defensive capability run only against
+my own lineage — which never denies paint — would prove nothing."* **My lineage does deny
+paint.** `bob_iter12` spawns 1 splasher and 1 mopper in every 5 units; that is the very
+mix under test. What my lineage does not do is deny paint *well*. So RUN 2 was never the
+"no threat present" control I designed it to be — it is a second measurement against a
+weak denier, not a measurement against a non-denier.
+
+The design error did not corrupt RUN 1, which is the run the decision rests on, and
+`bob_denier` remains a genuine strong-denial opponent. But it means I have **no** clean
+non-denier control, and the "standing insurance premium" question I set RUN 2 to answer is
+still unanswered.
+
+### And a confound that would explain the size of the collapse without any denial at all
+
+`Tower.run` spawns only when `chips >= want.moneyCost + reserve`, and the engine pays the
+unit's **paint** cost out of the spawning tower's stash. Exact costs:
+
+```
+SOLDIER   200 paint / 250 chips
+MOPPER    100 paint / 300 chips     <- half a soldier's paint
+SPLASHER  300 paint / 400 chips
+```
+
+Iteration 17's probe measured my tower paint pool sitting at **110-260** for whole games —
+straddling a soldier's 200-paint price. A tower in that band can often afford a **mopper**
+and not a soldier. So the 3:1:1 rotation is not only a mix of capabilities, it is a mix of
+**price points**, and `bob_d0` — soldiers only — is a bot whose towers simply cannot spawn
+anything for long stretches. That alone could produce 2/50 without denial mattering at all.
+
+This is the algorithm's own caution, which I quoted at myself this morning and then walked
+past: **an ablation prices a CODE PATH, not a concept.** I gated the spawn *ternary* and
+then read the result as the price of *denial*. Two things changed together.
+
+**What the runs do establish, stated no more strongly than the evidence allows:**
+
+1. The 3:1:1 spawn mix is strongly load-bearing. Both departures from it lose decisively,
+   on two independent map samples, against two different opponents, with intervals nowhere
+   near the null. That is 250 games and it is not in doubt.
+2. Deleting denial slots to reclaim paint is **rejected**, which was the decision this
+   iteration existed to make.
+3. *Why* it is load-bearing is **not** established. Denial capability and spawn
+   affordability are confounded in every arm I ran.
+
+**Follow-up that separates them, recorded but not run now:** an arm with 3 soldiers : 2
+moppers : 0 splashers holds the price mix roughly fixed while removing the splasher's
+denial; and an arm of soldiers-only with the spawn reserve dropped so throughput is not
+paint-gated isolates affordability. Neither is worth a run today — the decision they would
+inform (keep the mix) is already made, and iteration 17 has a live mechanism with a
+measured degeneracy behind it. Logged so the question is not silently lost.
+
+**Functional-area note.** Iteration 16 is a reject, in spawn policy. That is three
+rejects in three different areas (13/15 movement, 16 spawn), so `MaxConsecutiveRejects`
+does not bind; iteration 17 is tower construction, a fourth area, and it is where the
+evidence is strongest.
