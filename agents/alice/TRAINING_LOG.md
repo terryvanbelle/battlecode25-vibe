@@ -4645,3 +4645,62 @@ near miss rather than a clean accept" — is what happened. I am not promoting
 
 Pooling the two arms is *not* the test — they are different doses, not
 replicates — but for reference 30/48 would give p = 0.056 and 32/48 p = 0.015.
+
+## Iteration 19 — ACCEPTED (snapshot `src/alice_iter19/`), arm A
+
+Run `20260907-141653`, 12 maps both sides, `alice_iter14` as baseline.
+
+| arm | rule | H2H | swept-WIN | swept-LOSS | split |
+|---|---|---|---|---|---|
+| zero | `alice_iter14` | 12/24 by definition | 0 *(mirror null)* | 0 *(null)* | 12 |
+| **A** `alice_i19a` | prefer pattern-blocking enemy paint | **15/24 (62.5%)** | **3** | **0** | 9 |
+| B `alice_i19b` | ignore all other enemy paint | **15/24 (62.5%)** | **3** | **0** | 9 |
+
+**Every condition of the decision rule I fixed before arm B was visible is met**:
+arm A ≥ 15/24 ✓, arm B > 12/24 ✓, arm A swept wins > swept losses ✓ (3 > 0), no
+unresolved one-directional regression ✓ (zero swept losses).
+
+### The swept count is what carries this, not the 62.5%
+
+15/24 alone is p = 0.154 — inside my own recorded noise band, and I said so
+before arm B landed. What decides it is the swept-map column. Swept maps are
+won from **both sides**, so they are immune to spawn advantage, and the mirror
+null for this baseline is **0 swept wins and 0 swept losses with zero
+variance**. Three swept wins against zero swept losses, reproduced
+**identically by two independent doses**, is a one-directional result that the
+raw win rate understates. Per Measurement doctrine #7, a one-directional diff
+concentrated this way is a real causal effect rather than churn.
+
+### The dose curve is a plateau, and that is why arm A is the rung taken
+
+12 → 15 → 15. This is **not** iteration 16's flatness: that was flat *at the
+null* and said the parameter was dead. This is flat *above* the null, which says
+the mechanism saturates immediately — the soft preference already captures the
+entire benefit and the exclusive rung adds nothing.
+
+**Arm A is therefore the correct rung at equal measured value**, because arm B
+additionally carries the two failure modes I recorded in advance (an unreachable
+blocking tile capturing every mopper; moppers withdrawn from the coverage
+contest). Neither fired on these 12 maps — but paying for exposure that buys
+zero measured benefit is not a trade worth making. Prefer the smaller change.
+
+### Mechanism, restated with the outcome known
+
+The blocked *fraction* did not move (35.8→36.1, 81.2→81.4) and was never going
+to: it is an equilibrium the opponent replenishes. What moved is throughput —
+near-stall samples halved (724→358, 1,714→465) and total ruin-targeted soldier
+turns fell 16% and 52% — and that converted to +1 tower per map over the null
+and 3 swept maps. Distilled into `LEARNINGS.md` as a rule about pre-registering
+rates rather than levels for contested quantities.
+
+**Bytecode**: mopper max 1,898 → 3,385 of 17,500; zero overruns, zero
+near-misses.
+
+**Archived replay**: `replays/iter19_alice_iter14_UnderTheSea_A.bc25` — the
+instrumented mechanism win, chosen over a gauntlet replay because it carries the
+census that shows *why* it works.
+
+**Still in flight in the same run**: `alice_flood` (22 games) for its first
+roster point against `alice_iter14`. That measures the *old* baseline against
+the new archetype, so it is a separate instrument reading and gets its own
+commit when the run collates.
