@@ -580,3 +580,42 @@ Had I generalized from the splasher measurement to "carol's units are paint-star
 have built refill logistics for soldiers and addressed 8–17% of turns while believing I was
 addressing 79%. **Measure the state distribution per unit type, never pooled** — a pooled
 "idle" counter would have averaged these two into a number describing neither.
+
+## Cost the price, not just the benefit — twice in one session, two different disguises
+
+Two rejected iterations, one shared error, and I did not recognize it the second time even
+though I had just written up the first.
+
+**Iteration 17 (send dry splashers home to refill).** I measured the benefit precisely: 1,987
+turns per game in which a splasher could not act. I never measured the **price** — the walk.
+Result: `rw` shows a splasher spending 10–49 turns walking to gain at most **2** refuels, while
+walking away from the frontier it must then walk back to. Final: 20/40, exactly the null, +0
+games.
+
+**Iteration 19a (stop building moppers).** I measured the benefit precisely: moppers idle on
+95.1% of 78,480 turns, at 5 of every 20 spawns. I never measured the **price** — a mopper costs
+**100 paint against a soldier's 200**, and `buildRobot` draws that from the tower's own stash,
+which is under 200 paint on 57–99% of tower turns. Cutting the cheap unit in a paint-starved
+economy *removes* production. Running at 32%.
+
+The disguise differs — one price is measured in turns, the other in the scarce resource — but
+the shape is identical: **I counted what the change would gain and never counted what it would
+spend.** An idle unit is not free to redirect, and a cheap unit is not cheap to delete.
+
+The habit that fixes it is small and mechanical:
+
+- **For every mechanism, write the benefit and the price as two numbers before running it.**
+  Iteration 17's "10–49 turns walking for 2 refuels" was computable from a single verification
+  match; I ran that match and only read the firing counter off it.
+- **Name the units.** "1,987 idle turns" and "a 40-turn walk" are the same currency and can be
+  compared; "95% idle" and "300 chips" cannot, which is exactly how the second one slipped past.
+- **Ask what the thing costs on the axis that binds.** Carol's binding resource is tower paint.
+  Both mistakes evaluated a change on a non-binding axis (turns, spawn slots) while the price
+  fell on the binding one.
+
+Contrast with the two that worked. Iteration 14 (frontier-seeking): benefit = redirect an idle
+soldier, price = **zero**, it only changes the destination of a move already happening; +6
+games. Iteration 18 (release the pinned reserve): benefit = unblock production, price = **zero
+towers**, verified by a paired within-game count; +7 games. Both are the "capability preserved
+at zero marginal cost" profile — and the reason that profile keeps winning is precisely that
+its price term is *zero*, so getting the price wrong cannot hurt you.
