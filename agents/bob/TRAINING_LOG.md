@@ -2707,3 +2707,70 @@ reject — would have been about something else entirely.
 
 That is the concrete argument for criterion 3 being a *mechanistic* criterion checked
 *before* the win rate, and for reading it even when the win rate looks good.
+
+## Iteration 10 RESULT (2026-09-07) — REJECTED, premise refuted, never reached a gauntlet
+
+With all three defects fixed, the mechanism is well-formed — the visibility guard now
+refuses **0%** of attempts, where it had been refusing 70% — and the candidate is
+*worse*, losing quack (r920) and Castle (r283) to `bob_iter9`. It was never worth a
+gauntlet, and the counters say why.
+
+```
+                          quack            Castle
+attempts to start          1,795              95
+  canMark refusals      19,904 (11.1/try)  1,192 (12.5/try)
+  visibility guard           0   0.0%          0    0.0%
+  EXISTING MARK          2,298 128.0%         43   45.3%
+  starts                     1                 0
+  completions                0                 0
+```
+
+**The blocker is mark saturation, not sampling.** Of the ~1–2 candidates per turn that
+survive the geometry check, essentially all are refused because some tile of their 5×5
+already carries a mark — at 128% of attempts on quack, more than one refusal per turn.
+
+And those marks are overwhelmingly **tower-pattern marks**, not SRP marks.
+`markTowerPattern` blankets a 5×5 around every ruin under construction, and soldiers
+congregate at ruins because that is where the work is — so the neighbourhoods they
+scan are precisely the marked ones. `srpSiteSafe` *must* refuse them:
+`markResourcePattern` would overwrite those marks and break a tower another soldier is
+building, and a tower is worth far more than an SRP.
+
+So iteration 10's hypothesis — "SRP construction is limited by candidate-site
+sampling" — is **wrong**. Sampling was a real defect (the bot did test 1 of 25 legal
+centres), but fixing it exposes the actual constraint underneath: SRPs and tower
+patterns compete for the same ground, and tower patterns rightly win. Scanning 13
+neighbours of a marked tile finds 13 more marked tiles.
+
+Bytecode was checked first as pre-registered and **exonerated**: `maxbcA` peaks at
+8,601 of a soldier's 17,500 even with 13 `canMarkResourcePattern` calls per turn. The
+veto did not fire; the idea simply does not work.
+
+**CLOSED: "build more SRPs by searching harder for sites."** Re-open only if tower
+marks stop blanketing the areas soldiers occupy — e.g. if a future change clears marks
+after a tower completes, or moves SRP construction deliberately *away* from ruins.
+That second one is a real idea and is recorded here rather than attempted now: it is a
+different mechanism (site selection policy at the map level) from the one just killed.
+
+Reverted `src/bob/Soldier.java` to the iteration 9 snapshot, verbatim and
+compile-checked. **`bob_iter9` remains the current bot.**
+
+### What iteration 10 bought
+
+No accept, and three durable engine facts that were not in `RULES.md` and would have
+cost far more to learn later:
+
+1. `senseNearbyMapInfos(centre, r)` **silently truncates** outside vision — it filters
+   by `canSenseLocation` rather than throwing. Any "check an area around a remote
+   point" code in this bot is suspect unless it verifies the returned count.
+2. A soldier's **action radius r² = 9 versus vision r² = 20** means it can *evaluate*
+   ground it cannot *act on*. The 5×5 pattern around its own tile (max r² = 8) fits
+   the action radius exactly — that is not a coincidence in the rules, it is the
+   design, and any pattern work must be done from the centre tile.
+3. Marks are a **shared, scarce, map-wide resource** contended between tower patterns
+   and resource patterns, and nothing in the bot models that contention.
+
+Fact 3 is the one with legs: it reframes SRPs as competing with expansion for ground,
+which is a much better model than "SRPs are free paint income" — and it means
+iteration 9's accept was buying its +3/turn on maps *open enough* to have spare
+unmarked ground, which is exactly the Oasis-versus-Castle split it showed.

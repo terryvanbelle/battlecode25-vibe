@@ -21,29 +21,6 @@ public class Soldier {
     static final int SRP_PATIENCE = 120;     // turns spent on one site before abandoning it
     static MapLocation srp = null;           // centre this soldier is building
     static int srpTurns = 0;
-
-    // ---- SRP site search (iteration 10) ----
-    // assertCanMarkResourcePattern permits any centre with r^2 <= 8 (javap-verified:
-    // assertCanActLocation(loc, 8)), which is all 25 tiles of the 5x5 around us --
-    // (2,2) is r^2 = 8 and qualifies. Iteration 9 tested exactly one of those 25, the
-    // tile underfoot, and a probe measured 87-99% of its refusals as GEOMETRY
-    // (isValidPatternCenter: >=2 from every edge, all 25 tiles free of walls/ruins).
-    // So the bot was sampling one square of a 25-square neighbourhood and concluding
-    // the neighbourhood was unusable.
-    // Offsets are ordered by increasing r^2 so the nearest legal centre wins, and the
-    // tail is rotated by robot ID so soldiers do not all probe the same tile first --
-    // a fixed compass order here is exactly the play-symmetry bug class.
-    // SRP_SCAN is capped at 13 for a hard reason, not as a tuning choice. srpSiteSafe
-    // must inspect all 25 tiles of a candidate's 5x5, and senseNearbyMapInfos does NOT
-    // throw for tiles out of vision -- it filters by canSenseLocation and silently
-    // returns fewer (javap-verified). With vision r^2 = 20, the farthest tile of the
-    // 5x5 around a centre at offset (dx,dy) sits at (|dx|+2)^2 + (|dy|+2)^2, which is
-    // <= 20 exactly for the 13 offsets with dx^2+dy^2 <= 4 -- (2,0) lands on 20, (2,1)
-    // on 25. The first 13 entries below are precisely those, in r^2 order. Scanning
-    // past 13 marks patterns we cannot fully see.
-    static final int SRP_SCAN = 13;          // candidate centres examined per turn (1 = iteration 9)
-    static final int[] SRP_DX = {0, 1,0,-1,0, 1,1,-1,-1, 2,0,-2,0, 2,1,-1,-2,-2,-1,1,2, 2,2,-2,-2};
-    static final int[] SRP_DY = {0, 0,1,0,-1, 1,-1,1,-1, 0,2,0,-2, 1,2,2,1,-1,-2,-2,-1, 2,-2,2,-2};
     static final int REFILL_BELOW = 50;      // start seeking refill when paint below this
     static final int PAINT_FLOOR = 15;       // don't paint below this stash level
 
@@ -240,36 +217,16 @@ public class Soldier {
         if (srp != null && ++srpTurns > SRP_PATIENCE) srp = null;
 
         if (srp == null) {
-            // Search the markable neighbourhood. canMarkResourcePattern enforces the
-            // geometry and the 25-paint marking cost; srpSiteSafe is checked only on
-            // a candidate that already passed, because it senses 25 tiles and is the
-            // expensive half.
+            // Start one here. canMarkResourcePattern already enforces the geometry
+            // (centre >=2 from every edge, all 25 tiles paintable -- no walls, no
+            // ruins) and that we hold the 25 paint the marking costs.
             if (rc.getChips() < SRP_MIN_CHIPS) return false;
-            MapLocation site = null;
-            // Rotate within the FULLY-VISIBLE offsets only (indices 1..12, the ones
-            // with dx^2+dy^2 <= 4). Rotating over all 24 pulled in the r^2 = 5 and 8
-            // offsets, whose 5x5 corner lies outside vision r^2 = 20 -- measured at
-            // 70% of all attempts refused by the visibility guard, i.e. most scan
-            // slots spent on candidates that could never pass.
-            int rot = rc.getID() % 12;
-            for (int k = 0; k < SRP_SCAN; k++) {
-                int i = (k == 0) ? 0 : 1 + ((k - 1 + rot) % 12);
-                MapLocation c = me.translate(SRP_DX[i], SRP_DY[i]);
-                if (rc.canMarkResourcePattern(c) && srpSiteSafe(c)) { site = c; break; }
-            }
-            if (site == null) return false;
-            rc.markResourcePattern(site);
-            srp = site;
+            if (!rc.canMarkResourcePattern(me) || !srpSiteSafe(me)) return false;
+            rc.markResourcePattern(me);
+            srp = me;
             srpTurns = 0;
-        } else if (!me.equals(srp)) {
-            // Walk to the centre and paint only from there. A soldier's action radius
-            // is r^2 = 9, and the 5x5 around its OWN tile tops out at r^2 = 8, so
-            // standing on the centre is what makes every pattern tile attackable.
-            // Iteration 10 lets the SEARCH range out to r^2 = 8, which puts the far
-            // corner of a remote pattern at r^2 = 32 -- unreachable. Searching at
-            // range and painting from range are different things; only the first is
-            // legal here, so the soldier commits to the site by standing on it.
-            Nav.navTo(srp);
+        } else if (me.distanceSquaredTo(srp) > 8) {
+            Nav.navTo(srp);                      // wandered off (e.g. to refill)
             return true;
         }
 
@@ -308,13 +265,7 @@ public class Soldier {
      */
     static boolean srpSiteSafe(MapLocation c) throws GameActionException {
         RobotController rc = G.rc;
-        MapInfo[] area = rc.senseNearbyMapInfos(c, 8);
-        // isValidPatternCenter already guarantees the centre is >=2 from every map
-        // edge, so all 25 tiles exist; anything short of 25 means we cannot SEE the
-        // whole pattern, and marking one we cannot inspect is how two soldiers end up
-        // with contradictory marks that never complete.
-        if (area.length < 25) return false;
-        for (MapInfo t : area) {
+        for (MapInfo t : rc.senseNearbyMapInfos(c, 8)) {
             if (t.getPaint().isEnemy()) return false;      // soldiers cannot repaint it
             if (t.isResourcePatternCenter()) return false;  // overlaps a finished SRP
             if (t.getMark() != PaintType.EMPTY) return false; // overlaps a pattern already
