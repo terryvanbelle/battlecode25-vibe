@@ -4780,3 +4780,63 @@ Evaluated against **both** `bob_iter12` and arm A on one fresh sample, because t
 refinement and arm A differ by exactly the terrain check, so a direct head-to-head is
 far more sensitive than comparing their records against a third party — and the arm A
 column simultaneously replicates today's result on a map draw it has never seen.
+
+
+## Iteration 15 RESULT — REJECTED, both arms, replicated on two independent map draws
+
+```
+run 20260907-153729, fresh 25-map sample (a draw neither arm had seen), 100 games
+                                        games    sweptW  sweptL  split   net      NULL: 25/50, 0-0
+refinement 1 (latch on terrain only)    21/50      0       4      21     -4
+arm A       (latch on any block)        21/50      2       6      17     -4
+arm A, first sample (20260907-144139)   24/50      4       5      16     -1
+arm A, both samples pooled              45/100     6      11      33     -5
+```
+
+**Rejected.** Arm A is below the null on both draws, and the refinement did not rescue
+it. `bob_iter12` remains the bot; `src/bob` reverted and verified byte-identical on all
+seven files.
+
+**My refinement hypothesis was wrong, and interestingly so.** I diagnosed arm A's losses
+as spurious latching onto *allies* rather than terrain, and predicted that restricting
+the latch to impassable terrain would recover them. It made things worse — 0 swept wins
+against arm A's 2. So the ally-latching was, on net, doing something useful. That is the
+caution TRAINING_ALGORITHM.md 0.7 records in its other form: *a consistent arbitrary
+preference can be supplying real formation cohesion that a "fair" fix destroys.* Here the
+"defect" was apparently helping soldiers flow around each other, and removing it cost
+more than the spurious wall-following did.
+
+**CLOSED: "bug navigation / wall-following for pathing."** Killed by two arms across two
+independent map draws, 150 games, against a null with zero sweeps: −1, −4, −4. The
+handedness audit came back clean (all 8 most obstacle-dense maps split 1-1), so this is
+not a symmetry artefact — the pathing simply is not what is costing games. Re-open only
+with evidence that a *specific* loss is caused by a robot failing to reach a reachable
+target, traced in a replay, rather than by map-level wall-density correlation.
+
+### The shape these three iterations share, and the rule it triggers
+
+```
+iteration 13  SRP prospecting   mechanism verified (SRPs where there were none)   -35 games
+iteration 14  adaptive tower type  premise refuted by the tournament before running
+iteration 15  bug navigation    mechanism verified (19 towers vs 4 on maze)        -4 games
+```
+
+Two of the three were **mechanistically perfect and worth nothing or less**. On maze the
+candidate builds 19 towers where iteration 12 builds 4 — the exact gap that diagnosed the
+swept loss — and the map still splits. This is TRAINING_ALGORITHM.md's recorded
+regularity, met twice in one session: *metrics that improve without converting to wins.*
+
+`MaxConsecutiveRejects` is 3 and iterations 13 and 15 are both **soldier movement**. The
+rule says the next attempt must leave that functional area, and it will.
+
+### Where the evidence actually points next
+
+The `catface` trace is the strongest untouched lead and it is in a different area
+entirely: an independent lineage removes paint **4-7x faster than I do** (178/199/335
+denial actions per 250 rounds against my 39/37/50) and destroys **both of my starting
+towers inside 250 rounds**. My own backlog measurement from 2026-09-06 says my splashers
+and moppers run at roughly 1-5% of their action capacity while consuming 2 of every 5
+units built. Those two facts are the same fact seen from both ends, one of them measured
+on an opponent that shares none of my code.
+
+That is iteration 16: **denial-unit utilisation**, not movement, not economy.
