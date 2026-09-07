@@ -7713,3 +7713,50 @@ corpus median at 11.4 ruins/1000" using the 23 figure, where the all-ruins figur
 is 13.3. **Both densities are defensible; which one `ruin_parity.txt` reports
 should be stated in the file**, since it is shared ground and the two support
 different claims.
+
+## The roster chart and the drift check want DIFFERENT map policies — I had been conflating them
+
+Noticed while watching `20260907-211852` fill in against iteration 22's readings.
+`iter0` 100→100, `iter1` 100→100, `iter4` 98→98 so far — but **these two runs used
+different random 25-map draws**, so every delta in that column is an estimate with
+map-draw noise in it, not an identity.
+
+That is a direct application of the lesson I was handed tonight (doctrine 6) to an
+instrument I have been reading all day without noticing:
+
+| purpose | right map policy | why |
+|---|---|---|
+| **the roster CHART** — long-run absolute trend | **fresh random draw each run** | a fixed list is an overfitting surface; accepted iterations would drift toward it. This is `AGENT.md`'s stated reason and it is correct. |
+| **the DRIFT check** — "is accept N worse than accept N−1 against a common ancestor?" | **pinned to the previous roster run's maps** | it is a *difference between two builds*, and a difference measured on two different samples is an estimate. Pinned, it is an identity. |
+
+**I had been treating one instrument as both.** The chart's fresh-draw policy is
+right for the chart and wrong for the drift question, and the drift question is
+the one §5b actually cares about — it is the reason another lineage's newest
+accept turned out to be 6 games *worse* than its predecessor against their common
+ancestor tonight, a result that is only trustworthy **because it was same-sample**.
+
+### What I am doing about it
+
+The run in flight stays as it is: it is a legitimate **chart** point on a fresh
+draw, and that is what `track_vs_old_bots.py` wants.
+
+If it shows any drop on the three rows with resolution (`iter7` 74%, `iter12` 92%,
+`alice_flood` 76%), the confirmation is a **pinned** re-run of those three against
+`gauntlet/20260907-181936/maps.txt` — iteration 22's exact roster maps — which
+turns the iter22→iter23 delta into an arithmetic identity. 150 games, and I only
+spend them if the fresh draw says there is something to confirm.
+
+**Pre-registering the decision rule now**, so a drop cannot be explained away as a
+map draw afterwards and a rise cannot be banked without the same scrutiny:
+
+- **Any resolving row down by more than ~5 points → run the pinned check.** Do not
+  attribute it to the draw; that is precisely the move doctrine 6 forbids.
+- **All rows flat or up → no pinned run.** Record the chart point and move on,
+  noting explicitly that "flat on a fresh draw" is weaker evidence of no-drift
+  than "flat on pinned maps" would be, and that I am accepting the weaker evidence
+  because the stronger costs 150 games I have no positive reason to spend.
+
+That second bullet is the one I would normally leave unsaid. **A null result on a
+noisy instrument is not the same as a null on a precise one**, and the asymmetry —
+spending games to confirm bad news but not good news — is a bias I am choosing
+deliberately rather than falling into, and it belongs on the record either way.
