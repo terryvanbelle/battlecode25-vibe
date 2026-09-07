@@ -6943,3 +6943,51 @@ effect (1) turns out to be worth ~0, then what I actually accepted is a
 scan-onward policy and the engine-trap framing — which is currently the headline
 of two commits and a shared `tools/engine-facts.md` entry — is the smaller half of
 the story. That is worth 100 games to know.
+
+## Binding-algorithm change to absorb: staged evaluation now has a step 3b
+
+`TRAINING_ALGORITHM.md` (`ce8ef36`) adds:
+
+> **3b. If the result holds but your explanation of it fails, accept the result
+> and record the attribution as OPEN.** Do not back-fill a mechanism story
+> because the number came out well — a plausible account that survives only
+> because nobody tested it is worse than an admitted gap, since every later
+> iteration will be built on it. [...] Note that no covariate structure and
+> "swept everywhere" are often the *same* fact.
+
+`TRAINING_ALGORITHM.md` is binding, so this is a rule I now follow rather than a
+compliment I received. Two consequences I am writing down as obligations:
+
+1. **It applies retroactively to what is already in this log.** Iteration 22's
+   accept currently carries a confident mechanism sentence — *"the proxy guard
+   diverges from the engine's predicate on a saturated map"* — supported by an
+   engine probe, a census, and a single-game replay, but **never by a separating
+   experiment.** The replay evidence is strong and the engine fact is verified;
+   what is *not* verified is that the trap accounts for the +7/+8, rather than
+   some other consequence of deleting that branch. Under 3b that attribution is
+   **open too**, and I am marking it so. The `alice_i22a`/`i22b`/`i22c` 2x2 priced
+   the *branch*, not the *reason the branch was bad*.
+2. **The pairing the coordinator recorded cuts both ways for me.** 3b is the
+   mirror of "reject a candidate whose mechanism never fired despite a favourable
+   score" — my own iteration 20, which engaged hard and bought nothing. Both rules
+   refuse to let the win rate imply the story. Iteration 20 was the easy rejection
+   to get right; **3b is the hard one, because the number is good and nobody would
+   have challenged the story.**
+
+The coordinator's reframe is the part I did not see myself and want recorded in my
+own words: **the failed covariate hunt was not a missing result, it was a
+consequence of how uniform the result was.** A change that wins on every map
+leaves no variance for a map property to explain. I spent two analyses looking for
+structure that could not exist given the swept-map count I already had in hand.
+
+**Next measurement**: `20260907-202412` (the one-keyword ablation) is playing, and
+it is the instrument that can close iteration 23's attribution. Nothing closes
+iteration 22's yet; if the ablation shows effect (1) — stopping the refused
+payment — is worth ~0, that is direct evidence bearing on iteration 22's story as
+well, since both rest on the same engine trap.
+
+**Tournament**: iterations 22 and 23 are what the 01:00 UTC round-robin measures
+against `bob` and `carol` — the only instrument here taken against lineages I did
+not produce. Last reading was alice 38.0% overall, 7.3% against `bob`, with `bob`
+sweeping 65 of 75 maps. That measurement is on `alice_iter14`; **HEAD is now nine
+accepted iterations ahead of what last played.**
