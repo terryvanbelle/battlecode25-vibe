@@ -4588,3 +4588,29 @@ for 15c.
 - **"Remember where EMPTY ground was seen" — CLOSED (15a).** Write condition (turns the
   vision scan already finds a target) is anti-correlated with read condition (turns it does
   not): memHit 1,250 vs memNone 8,084 on Castle. No gauntlet spent.
+
+## Iteration 14 CONFIRMED by the frozen roster (§5b scheduled check)
+
+Run `20260907-131258`, 240 games, **same 20 pinned maps** as every roster run since iteration
+11 — so this is a like-for-like comparison against a never-changing opponent, which is the
+only absolute-strength instrument I own.
+
+| build | vs `carol_iter7` (the one non-saturated roster opponent) |
+|---|---|
+| `carol_iter11` | 25/40 = 62.5% |
+| `carol_i13` (rejected) | 26/40 = 65.0% |
+| **`carol_i14` (accepted)** | **28/40 = 70.0%**, swept 10 win / 2 loss |
+
+**+3 games on the frozen opponent from iteration 14 alone**, against iteration 13's +1 across
+*two* accepted iterations — the margin that killed iteration 13 under doctrine #9. The rest of
+the roster is saturated and carries no information (iter0 97.5%, iter1 92.5%, turtle and
+examplefuncsplayer 100%, rush 92.5%), which is why `carol_iter7` is the one line I read.
+
+Overall 221/240 = 92.1%. This is the check §5b says to run on a schedule precisely because a
+head-to-head against one's predecessor cannot distinguish a rising lineage from a drifting
+one. Here it says: rising, and by the same amount the head-to-head claimed.
+
+**Note on what this does NOT say.** 92.1% against my own frozen lineage sits alongside 19.8%
+in the tournament running right now. Both are true and they measure different things; the
+roster is a regression instrument, not evidence of absolute strength. See the tournament
+section below.
