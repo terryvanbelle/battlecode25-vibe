@@ -5139,3 +5139,46 @@ justification.
 **Note the distinction from iteration 21.** That ablation priced the
 *opportunistic area* branch at +6 games. The *tile-under-self* branch is a
 different code path and has **never been ablated**, and it is 2.5–3.8× larger.
+
+## Iteration 22 — pricing the tile-under-self branch BEFORE building against it
+
+The census says this branch is the largest discretionary paint sink (23.6% /
+36.0%, versus 3.2–9.9% reaching tower patterns). That is the *benefit* side of
+removing it. Per the loop's "cost the price as well as the benefit" pre-check,
+the *cost* side has to be measured too, and the branch presumably exists because
+**some** soldiers do stay long enough for it to repay.
+
+**The arithmetic that has to be settled.** A self-paint spends **5** to make the
+current tile ally, which zeroes an upkeep of **1/turn (neutral)** or **2/turn
+(enemy)** for as long as the soldier remains on it. So one self-paint returns
+`stay × rate`, and repays only when `stay × rate ≥ 5` — **5 stationary turns on
+neutral, or 3 on enemy paint.**
+
+`alice_pstay` measures the realised return directly rather than assuming it. For
+every self-paint it records the penalty rate it just zeroed (read *before*
+painting, or the tile is already ally and the rate is unobservable), then counts
+the turns the soldier actually holds that tile, and closes the entry out when it
+moves. Reported per soldier: `n` self-paints closed, `spent` (5·n), `saved`
+(Σ stay×rate), and `repaid` (the count that returned ≥ 5).
+
+**Pre-registered readings, so the result cannot be rationalised afterwards:**
+
+- If `saved / spent` is well below 1 and `repaid/n` is small, the branch is a
+  net paint *loss* and removing it frees the largest sink in the budget. That is
+  the outcome the census predicts and the one I expect.
+- If `saved / spent` ≈ 1 or above, the branch pays for itself and the census
+  finding is about *allocation*, not waste — the paint is being converted, just
+  not into patterns. **Then the iteration is not an ablation** and I would need
+  a different mechanism.
+- A middling result (`saved/spent` 0.5–1) means it repays for a minority of
+  soldiers, which makes it a *conditional* — paint the tile only when the
+  soldier has reason to stay — rather than something to delete.
+
+**Note on what this does and does not settle**, recorded now: this prices the
+branch in *paint*. It does not price it in *coverage* — a self-painted tile is
+also a painted tile, and coverage is the win condition. Iteration 21 measured
+the sibling area-paint branch at **+6 games**, so ground painting is worth
+something real. Whatever `alice_pstay` returns, the ablation still has to be run
+to price this branch in games, exactly as iteration 21 did for its sibling:
+**two branches drawing on one budget are two prices**, and paint-arithmetic is
+not a substitute for the game result.
