@@ -5092,3 +5092,131 @@ It also retires the framing I carried into this session: `catface` is not a defe
 hole. Both my towers dying by r250 is real, but the game was lost on **paint** at r1431
 and on the r2000 tiebreak. I was one step from building a defensive iteration against a
 verdict that never occurs.
+
+### The price, computed before the run reports (2026-09-07 18:40)
+
+§3 requires both numbers written down before building. Exact costs from `RULES.md`
+(engine table: cost is paint/chips) — **paint is the binding constraint** (LEARNINGS §5:
+chips ran to 327k unspent while coverage sat at 45%), so paint is the denominator that
+matters and chips are close to free.
+
+```
+per 5 units spawned          paint   chips   painters   can remove enemy paint
+bob_iter12  3S : 1Sp : 1M     1000    1450      3              yes (2 units)
+bob_d1      4S : 0Sp : 1M      900    1300      4              yes (1 unit)
+bob_d0      5S : 0Sp : 0M     1000    1250      5              NO
+```
+
+`bob_d0` buys **5 painters for the same 1000 paint that buys iteration 12 three** — a 67%
+increase in painting capacity out of the binding resource, at no paint cost at all.
+`bob_d1` is cheaper still in paint (900) and keeps the denial capability at one unit.
+That is the benefit side, and it is larger than I expected before doing the arithmetic.
+
+The price side is the capability §5's zero-sum bullet names: **soldiers cannot overwrite
+enemy paint at all.** Once the map saturates, a pure-soldier team has no move that
+reduces enemy territory, and the tiebreak that decided 23 of my 300 games is "painted
+more". `bob_d0` cannot play that endgame. That is precisely why RUN 1 is against
+`bob_denier` and not against my own lineage.
+
+Second-order, and it cuts toward the ablation: the probe measured splashers idle on 98.9%
+of turns and moppers on 99.6%, and an idle unit is **not free** — end-of-turn territory
+penalty is −1 neutral / −2 enemy, doubled for moppers, plus 1 per adjacent ally. On
+`DefaultHuge` the splashers burned ~2,900 unit-turns of that upkeep plus 1,600 paint of
+attacks to place 32 splashes at a mean score of 4 tiles: order **35 paint per tile
+against a soldier's 5**. Moppers, 1,942 turns for 8 mops. `DefaultHuge` is an outlier map
+and I am not quoting those as pool figures — the point is only that the idle-unit branch
+of the price is a debit, not a zero, so the ablation's benefit is *not* purely the spawn
+paint.
+
+Correction to my own earlier note: I wrote "400 paint and 700 chips per five units" for
+the denial slots and then briefly doubted the chips figure while re-deriving it. The
+engine table reads paint/chips, so 400 paint and 700 chips is right — 40% of the paint and
+48% of the chips.
+
+### Tracing the eleven fast losses (2026-09-07 18:55) — two degeneracies, both opponent-free
+
+Still non-blocking work while RUN 1 plays. §1 of the algorithm says prefer *absolute
+degeneracy signals* over opponent-relative comparisons, and the census gave me eleven
+losses decided before round 900 to sort through. Dumped four of them with
+`bob-tools/dump-replay.sh` against the sanctioned tournament replays on battlecode-dev.
+
+**Tool caveat, recorded before the numbers.** `BobDump` counts my own side's
+spawns/paint correctly (the 3:1:1 mix is visible in them) but reports **zero unit spawns
+for the opponent** on every one of these — alice tripled her coverage on Jail with
+`soldB=0`, which is impossible. So I read only `cov*` and `money*` (engine team totals)
+for the opponent, and the unit/paint columns for my side alone. It is my own private
+tool, not shared `tools/`, so this is a note-to-self rather than a bug report; I will not
+quote an opponent's composition off it until it is fixed.
+
+**Mode 1 — paint bankruptcy, coverage goes into REVERSE.**
+
+```
+Rose (bob=B, lost r426)         r50   r100  r150  r200  r250  r300  r350  r400  r426
+  bob coverage                   87    89    106   101   101    97    63    45    49
+  bob robot paint held          193   128      6     0     0     0     0     0     0
+  bob chips (idle)             2200  3450   4300  5000  5850  6800  7800  4300  4680
+  bob towers built                0     0      0     0     0     0     0     0     0
+  opponent coverage             126   161    197   239   292   394   478   638   701
+
+CastleDefense (bob=B, lost r308)      r100  r150  r175  r200  r250  r300  r308
+  bob coverage                         215   250   244   200   115    76    65
+  bob robot paint held                 281     9     0     0     0     0     0
+  bob chips (idle)                    3200  3750  4250  5000  6500  8000  8240
+  bob towers built                       0     0     0     0     0     0     0
+```
+
+**My team's robots hold zero paint from round ~175 onward and never recover, while 8,240
+chips sit unspent.** Coverage does not stall — it *declines monotonically*, because a
+robot at zero paint cannot move or act and my painted tiles get overwritten by units I
+can no longer answer. This needs no opponent to be wrong.
+
+**Mode 2 — coverage stall at full health.**
+
+```
+Jail (bob=A, lost r434)         r50   r150  r250  r350  r434
+  bob coverage                  246    261   298   276   259     <- flat over 384 rounds
+  bob robot paint held          628    579   448   411   387     <- healthy throughout
+  bob units (S/Sp/M)          8/0/0  11/2/2 14/3/3 17/4/4 18/4/5
+  opponent coverage             320    387   374   541   700
+
+SandyBeach (bob=B, lost r544)   r50   r150  r250  r350  r450  r544
+  bob coverage                  251    240   224   223   271   241  <- flat over 500 rounds
+  bob robot paint held          169    319   396   332   239    11
+  bob units (S/Sp/M)          6/0/1  9/1/2 12/2/3 15/3/4 18/4/5 20/5/5
+  opponent coverage             293    251   230   296   585   701
+```
+
+On Jail I finish with **27 living units and a healthy stash, and 384 rounds of net-zero
+painting.** Twenty-seven units produced a coverage change of +13 tiles. That is the
+purest form of LEARNINGS §18: the only scored quantity, flat, while every input to it
+grows.
+
+**Nine of those 27 units — a third of the army — are splashers and moppers**, which is
+what iteration 16 is pricing right now. That is not proof the ablation will pay, but it
+puts the ablation on exactly the games I lose rather than on the ones I sweep.
+
+### Iteration 17, queued (do not start until 16 resolves)
+
+Mode 1 has a candidate mechanism already visible in my own `Tower.java`:
+
+```java
+static final int UPGRADE_RESERVE = 4000;
+...
+if (selfType.canUpgradeType() && chips >= selfType.getNextLevel().moneyCost + UPGRADE_RESERVE)
+```
+
+The reserve exists so a soldier can complete a new tower (1000 chips) the moment a
+pattern finishes. But my own iteration-13 measurement says **SRP/tower construction is
+refused by geometry on 99% of attempts**, and both bankruptcy games built **zero** towers
+in 300–430 rounds. So on these maps the reserve is withholding 4,000 chips to protect a
+purchase that never happens, while the team's paint — the binding resource — is at zero.
+On Rose the upgrade finally fired at r390, 240 rounds after bankruptcy; on CastleDefense
+it never fired at all despite 8,240 chips.
+
+Hypothesis to pre-register when 16 closes: **a paint tower holding zero paint should
+ignore `UPGRADE_RESERVE`.** It is a true dose with a zero arm (the reserve value, 0 =
+unconditional upgrade, 4000 = today), it is reachable (the guard's condition is measured
+false with 8,240 chips in hand), and it is the algorithm's recorded winner profile —
+*spending idle resources, capability at zero marginal cost*. The price to compute first:
+what the withheld 4,000 chips would otherwise have bought, on maps where construction is
+**not** geometry-blocked.
