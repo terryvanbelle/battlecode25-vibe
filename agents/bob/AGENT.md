@@ -85,4 +85,28 @@ reason old snapshots do: they never change.
   and the engine jar in ~/.gradle on battlecode-dev (javap it as needed).
 - Prior-year methodology: battlecode22-vibe and battlecode26-vibe repos
   (LEARNINGS.md, RESEARCH.md). Their post-mortem syntheses cover 2019-2024;
-  2025 post-mortems are forbidden, as are downloaded bot implementations.
+  2025 post-mortems are forbidden.
+
+## BC25 finals benchmark bots — a yardstick, never an opponent (HARD)
+
+Bots from the BC25 finals have been downloaded by the coordinator, on the
+project owner's authority, for **one purpose**: measuring how far this lineage
+is from a tournament-winning bot. The rules are absolute.
+
+- **Never read their code.** It lives only on battlecode-dev, outside this repo.
+- **Never examine any game played against them.** No replay is written for those
+  games at all, so no artefact exists — do not seek, request, or reason from
+  one. If you ever find yourself holding one, stop and tell the coordinator.
+- **Never run those matches.** The coordinator runs them; you never do.
+- **Never add one as an opponent.** Not to your gauntlet, not to
+  `progress/roster_extra.txt`, not to a synthetic archetype, not anywhere. This
+  is the failure mode to watch for, because it looks *reasonable*: a
+  never-changing external bot is exactly what a frozen yardstick is made of, and
+  a future session could propose it in complete good faith. `tools/progress_lib`
+  refuses these names outright, but the rule binds regardless of the guard.
+- **You may read a benchmark score** if one appears in a committed results file.
+  That is the whole of your permitted access.
+
+Treat a score as *distance*, not as a target. Tuning toward a fixed external
+opponent is overfitting with extra steps — the same error as hand-picking a
+standing map list, which this charter already forbids for that exact reason.

@@ -61,6 +61,14 @@ your two siblings. Never kill any process, never stop a VM, keep MAXJOBS <= 3.
 Do **not** run `tools/tournament.sh` yourself: it is 450 games and would
 starve your own gauntlets; a systemd timer runs it at 06:00 and 18:00 Pacific.
 
+**BC25 finals benchmark bots are a yardstick, never an opponent (HARD).** Never
+read their code, never examine any game played against them (none is recorded —
+no replay is written), never run those matches, and **never add one as an
+opponent** to your gauntlet, your `roster_extra.txt`, or anything else. That last
+one is the trap, because it looks reasonable: a never-changing external bot is
+exactly what a frozen yardstick is made of. You may read a benchmark *score* if
+one appears in a committed file; that is all. See your AGENT.md.
+
 **Report tooling bugs, don't work around them.** `tools/` is coordinator-owned.
 Several real bugs have been found and fixed this way; a silent workaround leaves
 the trap in place for the other two lineages.

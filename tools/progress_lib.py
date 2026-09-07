@@ -149,6 +149,18 @@ def roster_numbers(present, stride=5):
     return [nums[i] for i in range(0, len(nums), stride)]
 
 
+# BC25 finals benchmark bots. These are a yardstick measured by the coordinator,
+# never an opponent a lineage may train against, so the roster refuses them even
+# if a workspace lists one in roster_extra.txt. The rule is in every AGENT.md;
+# this is the guard that does not depend on anyone having read it.
+BENCHMARK_BOTS = {"spaark", "tspaarkhs", "quals_current_submission", "v3",
+                  "quals", "frontreset", "micro", "jottesen_test", "v1", "v2"}
+
+
+def is_benchmark(name):
+    return name.strip().lower() in BENCHMARK_BOTS
+
+
 def _history_opponents(ws_dir):
     """Opponent names already recorded in this workspace's roster history."""
     f = ws_dir / "progress" / "vs_old_bots_history.csv"
@@ -189,6 +201,10 @@ def roster_opponents(ws_dir, agent, stride=5, exclude_current=True):
     if extra_file.is_file():
         for line in extra_file.read_text().splitlines():
             line = line.split("#", 1)[0].strip()
+            if is_benchmark(line):
+                print(f"!! refusing benchmark bot {line!r} as a roster opponent -- "
+                      f"finals bots are a yardstick, never something to train against")
+                continue
             if line and line not in names:
                 names.append(line)
     return names
