@@ -2503,3 +2503,56 @@ the probe says 8,029 of 9,250 quack refusals are geometric, so a scan that exami
 live. What the probe cannot tell me is whether valid centres are *spatially
 clustered*, in which case 25 neighbours of a bad tile are also bad and the scan buys
 less than the arithmetic suggests. That is precisely what the dose curve measures.
+
+### Generality check on the Rose shape — it is the dominant loss mode, and it names iteration 11
+
+Four iteration-9 losses dumped (cumulative towers built, our side; `srp` is ours):
+
+```
+map      side  paint towers  money towers  srp  our chips (end)  coverage  result
+Snowman   A         0              2        0        5,810        224-711   loss r363
+Brat      B         0              3        0       46,590        276-703   loss r817
+fix       A         1              3        1        6,088        222-705   loss r358
+box       A         3              0        1        1,385        280-704   loss r634
+--- for contrast, the wins ---
+Oasis     A         7              6        8        3,648        704-283   win  r804
+quack     A         6              4        2        3,826        703-271   win  r1380
+Rose(t)   B         0              0        -        6,010         85-702   LOSS r581
+```
+
+**Three of four losses built zero or one paint tower**, and in exactly those games the
+chip pile runs away — 46,590 unspent on Brat, 6,088 on fix, 5,810 on Snowman — while
+paint delivered to the map decays toward a floor (Brat: 268 → 209 → 209 → 209).
+The two wins built six and seven paint towers and kept chips turning over at ~3,700.
+
+So the Rose-B tournament game was not an outlier. **Paint towers built is the master
+variable**, it is upstream of everything iteration 9 did — an SRP is *+3 paint/turn
+per allied paint tower*, so it is worth +21/turn with seven of them and +0 with none
+— and it is the same dead-chips signature as ever, one level further up the causal
+chain.
+
+### Why it happens (read from the source, not guessed)
+
+`towerTypeFor(ruin)` is an avalanche hash of the ruin's coordinates whose **low bit**
+picks the type: a **fixed 50/50 money/paint split**. That design solved a real earlier
+problem — a lattice-correlated choice produced all-one-type maps (gridworld 0 paint /
+9 money) — and the hash fixed the *correlation*. It never revisited the *ratio*.
+
+A 50/50 split is a bet that the two resources are equally valuable. Every measurement
+in this log says they are not: paint binds, chips accumulate unspent into the tens of
+thousands. Half of all ruins are being converted into more of the resource we already
+cannot spend.
+
+Note the hard constraint any fix must respect, recorded in the code and still true:
+the type must be a **pure function of the ruin**. `workOnRuin` marks a pattern and a
+later soldier probes "already marked?"; a type that varied with team state would let
+two soldiers disagree and deadlock a half-built tower. So the algorithm's usual
+preference for a self-calibrating threshold over a constant is **not available here**
+— the constant is what preserves consistency between soldiers. What can change is
+its value, which makes this a clean dose.
+
+**Iteration 11, queued behind iteration 10's evaluation** (not bundled with it):
+paint fraction of new towers ∈ {50% (zero arm = current), 75%, 100%}, implemented as
+the hash compared against a threshold instead of its low bit. The 100% arm is the one
+that answers whether money towers are worth building at all at this stage; the two
+wins above suggest the answer is "some, but far fewer than half".

@@ -21,6 +21,21 @@ public class Soldier {
     static final int SRP_PATIENCE = 120;     // turns spent on one site before abandoning it
     static MapLocation srp = null;           // centre this soldier is building
     static int srpTurns = 0;
+
+    // ---- SRP site search (iteration 10) ----
+    // assertCanMarkResourcePattern permits any centre with r^2 <= 8 (javap-verified:
+    // assertCanActLocation(loc, 8)), which is all 25 tiles of the 5x5 around us --
+    // (2,2) is r^2 = 8 and qualifies. Iteration 9 tested exactly one of those 25, the
+    // tile underfoot, and a probe measured 87-99% of its refusals as GEOMETRY
+    // (isValidPatternCenter: >=2 from every edge, all 25 tiles free of walls/ruins).
+    // So the bot was sampling one square of a 25-square neighbourhood and concluding
+    // the neighbourhood was unusable.
+    // Offsets are ordered by increasing r^2 so the nearest legal centre wins, and the
+    // tail is rotated by robot ID so soldiers do not all probe the same tile first --
+    // a fixed compass order here is exactly the play-symmetry bug class.
+    static final int SRP_SCAN = 13;          // candidate centres examined per turn (1 = iteration 9)
+    static final int[] SRP_DX = {0, 1,0,-1,0, 1,1,-1,-1, 2,0,-2,0, 2,1,-1,-2,-2,-1,1,2, 2,2,-2,-2};
+    static final int[] SRP_DY = {0, 0,1,0,-1, 1,-1,1,-1, 0,2,0,-2, 1,2,2,1,-1,-2,-2,-1, 2,-2,2,-2};
     static final int REFILL_BELOW = 50;      // start seeking refill when paint below this
     static final int PAINT_FLOOR = 15;       // don't paint below this stash level
 
@@ -217,13 +232,21 @@ public class Soldier {
         if (srp != null && ++srpTurns > SRP_PATIENCE) srp = null;
 
         if (srp == null) {
-            // Start one here. canMarkResourcePattern already enforces the geometry
-            // (centre >=2 from every edge, all 25 tiles paintable -- no walls, no
-            // ruins) and that we hold the 25 paint the marking costs.
+            // Search the markable neighbourhood. canMarkResourcePattern enforces the
+            // geometry and the 25-paint marking cost; srpSiteSafe is checked only on
+            // a candidate that already passed, because it senses 25 tiles and is the
+            // expensive half.
             if (rc.getChips() < SRP_MIN_CHIPS) return false;
-            if (!rc.canMarkResourcePattern(me) || !srpSiteSafe(me)) return false;
-            rc.markResourcePattern(me);
-            srp = me;
+            MapLocation site = null;
+            int rot = rc.getID() % 24;
+            for (int k = 0; k < SRP_SCAN; k++) {
+                int i = (k == 0) ? 0 : 1 + ((k - 1 + rot) % 24);
+                MapLocation c = me.translate(SRP_DX[i], SRP_DY[i]);
+                if (rc.canMarkResourcePattern(c) && srpSiteSafe(c)) { site = c; break; }
+            }
+            if (site == null) return false;
+            rc.markResourcePattern(site);
+            srp = site;
             srpTurns = 0;
         } else if (me.distanceSquaredTo(srp) > 8) {
             Nav.navTo(srp);                      // wandered off (e.g. to refill)
