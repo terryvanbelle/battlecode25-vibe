@@ -173,7 +173,20 @@ spawn point plus 500 starting paint. An SRP is +3/turn per tower.** Anything tha
 trades tower-building time for something else needs to clear that bar, and
 iteration 10 only worked once it was gated behind tower saturation.
 
-## 3e. Movement is not waste — it is the exploration that buys towers
+## 3e. PARTLY RETRACTED — movement is still exploration, but the paint
+## decomposition below is WRONG (see the paint-budget census)
+
+> **RETRACTION (iteration 22 census, `alice_pbudget`, box + UnderTheSea, exact
+> accounting to 200/soldier).** The claim "a soldier converts only ~8 of its 200
+> paint into painted tiles (~1.6 paint actions per lifetime); ~192 goes to
+> upkeep" is **false by an order of magnitude**. Measured: a soldier performs a
+> **median of 20 paint actions** of the 40 its tank allows, and upkeep is
+> **40–42%** of the budget, not 96%. The prediction that this would be retracted
+> was recorded before the run. The *conclusion* of 3e — that standing still to
+> save upkeep loses because it stops finding ruins (iteration 8, towers 6 v 8) —
+> **stands**; only the arithmetic under it was wrong.
+
+
 
 Measured: a soldier converts only ~8 of its 200 paint into painted tiles (~1.6
 paint actions per lifetime); ~192 goes to upkeep. Upkeep looks self-inflicted,

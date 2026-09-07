@@ -5085,3 +5085,57 @@ Three things follow, and two of them are corrections against me:
 | iteration 21 entry | "interaction −2, noise sd ≈ 4.9, 0.41 sd, comfortably inside noise" | **"interaction −2, map-resample sd 2.4, 0.84 sd, 95% CI [−7, +3]; no destructive pair supported, leans mildly complementary"** |
 | iteration 19 entry | "15/24 is p = 0.154, inside my recorded noise band" | **"15/24 is +2.0 sd by map resampling, 95% CI [12, 18]; the binomial floor understated it"** |
 | iteration 1 noise floor | "treat 13–15/24 as within noise" | **superseded — binomial. Use map resampling on the run's own per-map results.** |
+
+## Iteration 22 census — §3e RETRACTED, and the constraint is named
+
+`alice_pbudget` vs `alice_iter19`, box and UnderTheSea. Counters are per-soldier
+and cumulative; upkeep is the exact residual against the 200 tank (alice never
+withdraws from a tower, so nothing else can enter the account). **The
+decomposition closes to exactly 200/soldier on both maps**, which validates the
+method before anything is read off it.
+
+Soldiers with age ≥ 30 rounds (105 on box, 498 on UnderTheSea):
+
+| sink | box | UnderTheSea |
+|---|---|---|
+| `markTowerPattern` | 0.7% | 0.4% |
+| **pattern tiles** | **9.9%** | **3.2%** |
+| **tile under self** | **23.6%** | **36.0%** |
+| opportunistic area paint | 9.9% | 9.5% |
+| **movement upkeep** | **39.8%** | **42.1%** |
+| unspent at last sight | 16.2% | 8.9% |
+| **paint actions per soldier** | **median 20 of 40** | **median 20 of 40** |
+
+### The §3e claim is false by an order of magnitude
+
+§3e said ~1.6 paint actions per lifetime and ~192 of 200 to upkeep. Measured:
+**median 20 actions** and **40–42% upkeep**. The prediction that 3e would be
+retracted was recorded before the run; it is now retracted in place, with its
+*conclusion* (standing still loses because it stops finding ruins) left standing
+because iteration 8 measured that independently.
+
+### Which of the coordinator's two branches we are on
+
+The question was whether upkeep is the constraint (96% would dwarf everything
+downstream) or whether soldiers arrive with usable paint so the constraint is
+*where it goes after arrival*. **It is the second.** Upkeep is real but is under
+half the budget, and soldiers spend a median of 20 actions — they are not
+arriving empty, they are spending on the wrong things.
+
+### The actual finding: patterns get 3–10%, the tile underfoot gets 24–36%
+
+**A soldier puts 1.3–3.9 tiles into tower patterns in its entire life, against
+the 24 a pattern needs.** So it takes roughly **6–18 soldiers to complete one
+tower**, and that ratio is the tower economy in one number.
+
+Meanwhile the single largest *discretionary* sink is painting the tile the
+soldier is standing on — **2.4× to 11× more paint than goes into patterns**.
+That branch is justified in the code as "avoids paint penalty": it spends **5
+paint to save 1–2 per turn**, which only repays if the soldier stays 3–5 turns.
+A soldier that is travelling leaves immediately, and upkeep is *still* 40%
+despite all of it — so the purchase is largely not even buying its own
+justification.
+
+**Note the distinction from iteration 21.** That ablation priced the
+*opportunistic area* branch at +6 games. The *tile-under-self* branch is a
+different code path and has **never been ablated**, and it is 2.5–3.8× larger.
