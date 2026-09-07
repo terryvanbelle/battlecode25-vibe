@@ -651,3 +651,47 @@ Two compounding reasons the constant is wrong here, and the second is the genera
 a spend, ask whether the thing being bought is linear or a threshold. If it is a threshold,
 the constant is backwards near the threshold, and the size of the reserve is exactly the
 size of the loss.
+
+## 21. Head-to-head margins do not chain (2026-09-07)
+
+Measured on my own lineage, on identical maps, both comparisons exact:
+
+```
+bob_iter18 vs bob_iter12 (its predecessor)              +6 games, 6 sweeps, 0 swept losses
+bob_iter18 vs bob_iter11, minus bob_iter12 vs bob_iter11   -6 games, and 1 sweep against 4
+```
+
+Beating the thing you replace by six games is **compatible with being six games worse than
+it** against something three generations back. Both numbers are exact — same 25-map sample,
+both sides, a null with zero variance — so this is not a measurement problem. It is a fact
+about the ordering: **strength here is not transitive, and a chain of positive head-to-heads
+does not integrate into a level.**
+
+The coordinator relays that another lineage measured the same phenomenon independently the
+same night, with the sign in its favour: a feature worth +6 against its immediate
+predecessor and **exactly 0** against the generation before it, established at cell level.
+Two lineages, opposite signs, same structure. That makes it a property of the game and the
+method, not of my bot.
+
+**Consequences I have to actually change my behaviour for:**
+
+1. **The frozen roster is not an audit, it is the only instrument that reports a level.**
+   The head-to-head reports a *difference against one specific opponent* and nothing more.
+   I had been treating the roster as periodic housekeeping — doctrine #9's "every ~5
+   accepts" — and the roster is what caught this.
+2. **Run the roster BEFORE accepting, and "thin margin" is the wrong trigger.** Doctrine #9
+   says to do this on thin margins. My margin was +6 with 6 sweeps and 0 swept losses,
+   which did not feel thin at all — and that is precisely why I skipped the check that
+   would have caught it. **The rule failed at the exact moment it felt unnecessary, which
+   is the only moment it ever matters.** So the trigger is not the margin's size; it is
+   simply "before accepting".
+3. **When the roster drops, ancestry names the pair — not plausibility.** Now §5b in the
+   loop document. The candidates are the features that entered or left *between the
+   generations the roster compares*, which is a lookup rather than an act of imagination.
+   Mine: `bob_iter11` had ruin memory, `bob_iter12` deleted it, `bob_iter18` bet on
+   spending a soldier's last paint into work that only pays if a replacement returns. A gate
+   whose **both arms lack** the feature that would make the bet pay cannot see the problem.
+
+**The reusable shape:** any mechanism that spends a unit's last resource on work that only
+pays out *later, via somebody else* is a bet on the machinery that brings somebody else
+back. Check that machinery exists before pricing the bet.
