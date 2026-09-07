@@ -4440,3 +4440,215 @@ way they land — the same rule iteration 7's affected-subset run was held to.
 
 A broad fresh-sample run and the head-to-head against `bob_iter12` follow only if the
 subset clears; the subset is a screen, never the accept gate.
+
+
+---
+
+## Iteration 14's premise REFUTED by the tournament, before it cost a game (2026-09-07)
+
+Tournament `20260907-1300` completed while iteration 13's dose run was playing. It
+staged iteration 12 from HEAD, so it is the regression check on the reverted hash
+against two independent lineages:
+
+```
+bot     won/played   win%    vs 20260907-0100
+bob      277/300    92.3%        -3.3
+alice    114/300    38.0%        +2.7
+carol     59/300    19.7%        +0.7
+
+swept:  alice-bob   alice 1,  bob 65        bob-carol   bob 64,  carol 1
+```
+
+**The revert holds.** 92.3% with 65 and 64 swept maps of 75 against a measured null of
+zero sweeps. The −3.3 is worth naming but not chasing: both runs were complete over the
+same 75 maps, so it is a real 10-game move, and it is dwarfed by the sweep counts.
+
+### And then the same file killed my next iteration for free
+
+Iteration 14 was built, compiled and pre-registered on the claim that the parity rule's
+money bias costs games. The tournament is an **independent** test of exactly that claim,
+and I had it on disk before spending a gauntlet:
+
+```
+bob's 23 losses         on maps >=70% money under parity:  2  ( 9%)
+bob's 21 non-swept pairs on maps >=70% money under parity:  2  (10%)
+pool base rate                                                 15%
+```
+
+**Bob loses and fails to sweep on money-heavy maps LESS often than chance, not more.**
+And `gridworld` — the 21-ruin, 100%-money map that motivated the entire iteration, where
+iteration 12 runs 2000 rounds with zero paint towers and 461,480 idle chips — is **swept
+by bob against both siblings**.
+
+So the mechanism is real and the *inference from it* was wrong. The gridworld failure is
+genuine but it is a failure against `bob_denier`, a paint-denial archetype forked from
+my own code, and independent lineages do not exploit it. This is measurement doctrine #4
+biting from the other side: I checked that my instrument could *resolve* the effect and
+forgot to check that the effect *matters* against anything but my own archetype.
+
+**Iteration 14 is NOT run.** `src/bob_i14` is shelved, compiled and ready, with its
+re-open condition recorded: if an opponent ever appears that punishes a paint-tower
+shortage the way `bob_denier` does, the build already exists. One tournament report,
+already on disk, cost nothing and saved 150+ games.
+
+That is now the fifth time this session a question that looked like it needed a gauntlet
+was answered by a file I already had.
+
+### The target the same report DOES support
+
+In 450 games bob has exactly **two swept losses**: `maze` to alice and `catface` to
+carol — the only two maps where an independent lineage beats iteration 12 from *both*
+sides. Against a null of zero sweeps that is the sharpest signal the sanctioned channel
+can produce, it comes from lineages that share none of my code, and it is precisely what
+MULTI_AGENT.md says the tournament is for. That is iteration 15's target.
+
+
+---
+
+## Swept-loss trace (2026-09-07) — the two maps independent lineages take from me
+
+Tournament replays only (`~/battlecode25-vibe/arena/tournaments/20260907-1300/replays/`),
+which MULTI_AGENT.md sanctions: they show what an opponent *does*, as any real match
+would. No sibling code, notes or logs were read.
+
+```
+maze  (60x60, 28 ruins)    bob as A            bob as B
+  bob towers at r2000       2 paint + 2 money   2 paint + 2 money
+  sibling towers            9 paint + 12 money  9 paint + 10 money
+  bob soldiers built        202                 182
+  sibling soldiers built    651                 726
+  coverage                  338 vs 641          337 vs 643
+
+catface (30x30, 6 ruins)   bob as A, loss at r1431
+  bob towers at r250 and r500:  ZERO of either type   (both starting towers dead)
+  bob paint held, whole army:   553 -> 306 -> 297
+  sibling denial actions/250r:  178, 199, 335   against bob's 39, 37, 50
+```
+
+These are two completely different failures and both are side-independent.
+
+**`maze` is expansion, and the magnitude is not subtle: four towers from both sides
+against roughly twenty.** This is my lineage's documented dominant loss shape ("losses
+build 0-3 towers, wins build 10-14") appearing against an opponent that shares none of
+my code.
+
+**`catface` is denial**: the sibling removes paint 4-7x faster than I do and kills both
+of my starting towers inside 250 rounds. That is the same axis `bob_denier` attacks,
+now demonstrated by an independent lineage — which upgrades it from "my archetype's
+speciality" to a real weakness.
+
+### Why maze, specifically — and the test iteration 14 failed, run again
+
+`BobSites` also yields each map's blocked (wall + ruin) share, free:
+
+```
+most blocked of 75:  gridworld 22.2%  MAZE 20.6%  boxofchocolates 20.0%
+                     yearofthesnake 19.2%  sierpinski 17.7%  mit 17.0%
+                     CastleDefense 16.5%  Brat 16.3%          pool mean 11.2%
+```
+
+**maze is the 2nd most wall-blocked map in the pool**, and 60x60. Applying the same
+test that killed iteration 14's premise:
+
+```
+bob swept        129 pairs   mean blocked 11.0%
+bob NOT swept     21 pairs   mean blocked 12.2%        <- weak on the mean
+top-8 most blocked maps contested by a sibling: 5 of 8  (maze, sierpinski, mit,
+                                                         CastleDefense, Brat)
+base rate of contested maps: 21/75 = 28%
+```
+
+The mean barely moves, but **the extreme tail concentrates hard: 62% of the eight most
+blocked maps are contested against a 28% base rate.** That shape — flat until a
+threshold, then sharp — is what a navigation failure looks like: greedy movement is
+fine until obstacles are concave enough to trap it.
+
+Stated honestly: 5 of 8 is three maps above expectation, which is suggestive rather than
+conclusive on its own. It earns an iteration because it also has a mechanism, and
+because it passed the identical test that refuted iteration 14 rather than being
+excused from it.
+
+### Mechanism, read from my own source
+
+`Nav.navTo` considers **five** of the eight directions (the target direction and ±45°,
+±90°), refuses enemy paint on a first pass, and after three turns stuck picks a
+**random** direction. There is no wall-following of any kind. In a concave pocket the
+five-direction fan cannot move away from the target to get around an obstacle, and the
+random escape does not systematically circumnavigate anything — it resets progress.
+TRAINING_ALGORITHM.md lists hybrid bug-nav among the perennial mechanics; this bot has
+none of it, on any unit type.
+
+**Iteration 15 (queued): replace the greedy fan's failure mode with bug navigation** —
+on a blocked greedy step, latch a wall-following direction and hold it until the target
+is strictly closer than when the obstacle was met. Two things to watch, both from the
+algorithm's own warnings: this touches every unit type at once, so it must be measured
+broadly and not just on maze; and a fixed handedness for wall-following is exactly the
+"fixed absolute-order decision" Phase 0.7 flags, so the mirror gets run on it.
+
+
+---
+
+## Iteration 13 RESULT (2026-09-07) — REJECTED, monotone dose-response, no interior optimum
+
+Run `20260907-134632`, 150 games, `BOT=bob_iter1` frozen, all three arms on the identical
+25 pinned maps, both sides. Reported as each arm's own record (the run measures
+`bob_iter1`, so an arm's wins are 50 minus its opponent's).
+
+```
+arm                              games    win%   sweptW  sweptL  split   net    MIRROR NULL: 25/50, 0 sweeps
+ZERO ARM (iteration 12)          41/50   82.0%     16       0       9    +16
+iteration 13, share 1/3          30/50   60.0%      9       4      12     +5     -11 games, -11 net sweeps
+iteration 13, share 1/1           6/50   12.0%      0      19       6    -19     -35 games, -35 net sweeps
+```
+
+**REJECTED.** The curve is monotone downward — 82% -> 60% -> 12% — so there is no
+interior optimum, and my registered prediction that "1/3 is where an interior optimum
+would sit if one exists" is answered: none exists. At full dose the bot scores **zero
+swept wins and nineteen swept losses** against a snapshot from eleven iterations ago,
+against a null of zero sweeps in either direction. That is not a marginal call.
+
+**The zero arm reproduced 41/50 exactly**, matching the figure this log recorded for
+iteration 12 on these same pinned maps in run `20260907-011346`. Determinism held and
+the instrument is sound, so the two candidate arms' numbers are exact facts about these
+50 games rather than draws from anything.
+
+### What it actually taught, which is worth more than the accept would have been
+
+I built this on the reading that a soldier calling `Nav.wander()` is **idle capacity**:
+its action is already spent painting (step 4 runs regardless), so redirecting its
+*movement* looked free. The dose-response says movement is the opposite of free.
+
+**Soldier movement is this bot's scarcest capability, not its spare one.** Wandering is
+how the bot discovers ruins, ruins are the entire economy, and expansion is the
+documented dominant loss shape. Prospecting spends that discovery on pattern siting, and
+because SRP-legal ground is anti-correlated with ruins by construction (a ruin
+invalidates every 5x5 containing it — 47.6% of otherwise-legal centres), it does not
+merely fail to find ruins, it walks away from them. Full dose loses 3 of every 4 games
+it used to win.
+
+The mechanism was never the problem: it demonstrably produced active SRPs on maps where
+iteration 12 produces none in 2,000 rounds, at a bytecode cost of 8,286 of 17,500. It
+bought a real thing at a price I had assumed was zero without measuring it.
+
+**CLOSED: "spend soldier movement to find SRP sites."** Killed by a three-arm
+dose-response with a zero arm on pinned maps: −11 games at one soldier in three, −35 at
+all of them, monotone. Re-open only if soldier movement stops being the binding
+constraint on ruin discovery — for instance if a future iteration gives soldiers a
+non-movement way to find ruins, which is exactly what iteration 11's shelved ruin memory
+did. Note the connection: memory was worth +18 games in the hash world and −4 sweeps in
+the clean one, and this result says why the sign could flip so easily — both features
+trade against the same scarce quantity.
+
+`src/bob/` reverted to `bob_iter12`, verified byte-identical apart from the package line
+on all seven files. **`bob_iter12` remains the bot.**
+
+### Standing correction to how I read "idle"
+
+Three times now I have proposed spending something I called idle — idle chips (twice)
+and idle movement (once). Idle chips were genuinely idle and SRPs were right to take
+them. Idle movement was not idle at all. The distinction that separates them: a
+**resource** accumulates when unused and can be verified idle by watching it pile up
+(20,720 chips, 461,480 chips); a **capability** produces value continuously and looks
+idle only because its output is not on any counter I print. Before spending anything
+called idle again, ask which of the two it is, and find the counter that would show its
+output.
