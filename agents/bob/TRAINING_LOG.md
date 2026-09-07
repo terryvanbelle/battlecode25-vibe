@@ -2903,3 +2903,67 @@ says the leak is not fatal — but it names the two follow-ons precisely:
 
 Both are recorded now, before the gauntlet reports, so that whichever way iteration 11
 lands the next step is chosen from the trace rather than from the number.
+
+
+---
+
+## Fixed-roster run 20260907-011346 (bob_iter9) — the absolute instrument says something is wrong
+
+Run at the accept of iteration 9, 25 maps x 2 sides x 3 roster opponents = 150 games.
+`bot.txt` label is **`bob_iter9`** with no `+cand` suffix, so this measures the accepted
+snapshot, not a candidate.
+
+```
+                     bob_iter3 (20260906-212734)      bob_iter9 (20260907-011346)
+vs bob_iter0            36/40   90.0%                    48/50   96.0%
+vs bob_iter1            34/40   85.0%                    28/50   56.0%      <-- 
+vs examplefuncsplayer   40/40  100.0%                    50/50  100.0%
+overall                                                 126/150  84.0%
+```
+
+**Win rate against the frozen `bob_iter1` fell from 85.0% to 56.0%** — 29 points — over
+six accepted iterations, while the rate against `bob_iter0` rose and
+`examplefuncsplayer` stayed pinned at 100%. The swept-map view says the same thing more
+sharply, since it is immune to spawn advantage: **9 swept wins against 6 swept losses
+and 10 maps split by side**, where against `bob_iter0` it is 23-0.
+
+This is exactly the failure the fixed roster exists to detect, and it is the reason
+TRAINING_ALGORITHM.md doctrine #9 keeps a never-retired opponent: *every accept in this
+lineage cleared a within-run head-to-head against its immediate predecessor, and the
+lineage still went backwards against an older frozen bot.* A chain of locally-winning
+steps is not a globally improving path. My gauntlet headline (68.8% at iteration 9) is
+measured against a pool that moves; `bob_iter1` does not move.
+
+### Before treating it as established — the one competing explanation
+
+Map samples are redrawn per run (25 of 75), and `AGENT.md` warns explicitly that a raw
+win-rate delta *between* runs is noisier than it looks. The `bob_iter3` figure came off
+a different 25-map draw. So the honest position is that this is a strong signal, not yet
+a proven regression: 29 points at n=40-50 is roughly 6 binomial standard deviations,
+which no plausible sampling story covers on its own, but map draw is not a plain
+binomial.
+
+**The decisive experiment is cheap and pinned, and is the next thing to run after
+iteration 11 resolves**: replay `bob_iter3` and `bob_iter9` against `bob_iter1` on the
+*same* map list —
+
+```
+MAPS="$(cat gauntlet/20260907-011346/maps.txt)" BOT=bob_iter3 OPPONENTS=bob_iter1 ../../tools/gauntlet.sh
+```
+
+`bob_iter9`'s half is already measured on exactly those maps by this run, so one 50-game
+run answers it exactly, with the map variable eliminated by construction rather than
+argued away.
+
+### What it implies either way
+
+If it holds, the lineage has been drifting toward beating its own recent ancestors — the
+self-referential blind spot in TRAINING_ALGORITHM.md's own words — and the response is
+the ablation track: gate iterations 5, 7 and 9's features off one at a time and measure
+each against `bob_iter1` specifically, since that is the opponent that exposes it.
+Notably the tournament agrees that absolute strength is not the problem *versus alice*
+(143-7), which is consistent with a weakness that only an opponent of our own old shape
+can see.
+
+Recorded before iteration 11's gauntlet reports, so the interpretation of that run
+cannot be bent by this one.
