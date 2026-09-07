@@ -5783,3 +5783,40 @@ measured degeneracy behind it. Logged so the question is not silently lost.
 rejects in three different areas (13/15 movement, 16 spawn), so `MaxConsecutiveRejects`
 does not bind; iteration 17 is tower construction, a fourth area, and it is where the
 evidence is strongest.
+
+### Iteration 17 pre-check: the `coworker` counter weakens my hypothesis before it costs a run
+
+`bob_rp0` (ANCHOR=0) reproduces `bob_rprobe` **exactly** — same counters, same win at
+r446 — so the zero arm is verified as byte-equivalent behaviour and the dose is real.
+
+The new counter I added, `coworker` (turns holding a ruin with an ally soldier inside that
+ruin's 5x5), says my concentration story is largely already true:
+
+```
+soldier    hasRuin   coworker   share
+13761          202        149     74%
+13417          182        155     85%
+10351          235        107     46%
+11019          247         26     11%
+12930           26         25     96%
+10571           26         26    100%
+```
+
+**Soldiers are not scattered across separate patterns; most of them already have company.**
+That is not what "four soldiers each 60% through four patterns" predicts, and it is the
+main mechanical argument I pre-registered for anchoring. I am recording this as a partial
+refutation of my own hypothesis, arriving from a two-game probe rather than a 100-game
+gauntlet — which is precisely what §3's pre-checks are for.
+
+**What survives.** The dominant gate is still `lowPaint` at 44% of ruin-turns: soldiers
+are **broke**, not scattered. And there is a second-order route by which anchoring could
+still pay, which I did *not* pre-register and am writing down now so that if the arms win I
+do not credit the wrong mechanism: ruins near a soldier's birth tile are near its spawning
+**tower**, and `tryRefill` is vision-only (r²=20) — so a soldier working a ruin next to its
+own tower can actually refill, where one working a distant ruin cannot. Anchoring may
+therefore act as a **paint** fix disguised as a siting fix.
+
+That is a testable distinction, not a hedge: if the arms improve, `lowPaint` should fall
+sharply and `coworker` should barely move. If `coworker` rises and `lowPaint` does not,
+the concentration story was right after all. The counters to separate them are already in
+the probe, and the doses are already built and compile-checked.
