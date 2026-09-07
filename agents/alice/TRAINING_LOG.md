@@ -5985,3 +5985,65 @@ comparison is suggestive, not controlled. What it establishes is §4's criterion
 — **the mechanism demonstrably engaged as designed** — and nothing about game
 value. The head-to-head on a fresh 25-map sample remains the gate, and it is
 pre-registered above.
+
+## Saturation TIMING — the "paint empty ground" phase ends far earlier than I assumed
+
+Empty share = `1000 − T1cov − T2cov`, straight off the engine's counters in
+replays I already have. No games spent.
+
+| map | r200–250 | r400 | r600 | r1200 |
+|---|---|---|---|---|
+| **Money** (16.3 ruins/1000) | **43‰ empty** | — | — | 23‰ |
+| **UnderTheSea** (11.4, median) | 394‰ | 99‰ | **30‰** | — |
+
+**Money is 95.7% saturated by round 250. UnderTheSea by round 600.** The timing is
+map-dependent — denser ruins and smaller area saturate faster — but on both maps
+the empty-ground phase is over inside the first **12–30% of the game**, and for
+the remaining 70–88% there is essentially nothing left to claim.
+
+Meanwhile the tower keeps spawning the same ~75%-soldier mix for all 2,000 rounds.
+
+### What I must NOT conclude from this, and nearly did
+
+"So soldiers are useless after round 600" is wrong, and the replay says so. The
+`acts[... a...]` column — `AttackAction`, i.e. tower damage, not painting — runs
+at **600–1,200 per 250 rounds** in the late game. My soldiers are not idling;
+they have switched to attacking towers, which is real work (50 damage a hit) and
+is how tower counts move. It also is not free: `soldierAttack` debits the same 5
+paint for a tower hit, so a 1,000-HP tower costs ~100 paint to kill.
+
+So the late game is **soldiers trading paint for tower damage**, not soldiers
+doing nothing. Any hypothesis here has to beat that alternative use, not an idle
+baseline. Writing this down because "the mechanism I am attacking is doing nothing"
+is the assumption that made iteration 20 cost 72 games.
+
+### Queued structural candidate (iteration 24, not started)
+
+**Make the spawn mix respond to saturation instead of being a fixed 75/25.** The
+mix is a constant chosen when the map was empty, and it is still 75% soldiers when
+there has been no empty ground for 1,400 rounds. Moppers are the only unit that
+can take ground back, and mopping costs **zero paint** (mop is free; only the
+mopper's 100-paint build price is paid), against a soldier's 5 paint per tile that
+it may not even be allowed to spend.
+
+Three things this needs before it is worth a run, none of them done:
+
+1. **A dose, and a zero arm.** The mix fraction is a natural dose, and the current
+   75/25 is the zero. Doctrine #2 requires the zero arm and at least two nonzero
+   points, because a concave curve with an interior optimum is the shape this
+   kind of parameter has had twice in this lineage already (iteration 5's mopper
+   reserve, iteration 12's wander run).
+2. **Self-calibration over a constant.** The saturation round is 250 on one map and
+   600 on another, so a fixed round threshold is exactly the kind of tuned constant
+   this project has repeatedly found inferior to a threshold derived from
+   observation — here, the empty-tile fraction a unit can see, which every robot
+   already senses for free.
+3. **Price what the mopper displaces.** A mopper is 100 tower paint out of the same
+   pool that funds soldiers, and iteration 5 established that pool is the binding
+   one and that shifting the mix toward moppers has an *absorbing failure state*
+   (paint income collapses because moppers complete no patterns). §3c calls that
+   the most expensive bug this lineage has had. **The mix must not be moved
+   without instrumenting tower paint in the first run.**
+
+Queued behind iterations 22 and 23. Recorded now so the reasoning is dated before
+any result exists to flatter it.
