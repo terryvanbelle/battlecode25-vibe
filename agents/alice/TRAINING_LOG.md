@@ -4949,3 +4949,66 @@ not just the inherited one.
 | direction | closed by | can re-open if |
 |---|---|---|
 | "Iteration 1 × iteration 12 are a destructive pair fighting over soldier paint" | iteration 21: interaction **−2 games, 0.41 sd**, wrong sign and inside noise | a *different* pair is nominated by evidence, not by shape. This specific pair is priced and closed. |
+
+## Iteration 20 — REJECTED. The mechanism engaged hard and bought exactly nothing
+
+Run `20260907-145851`, 72 games, baseline `alice_iter19`.
+
+| arm | `BLOCK_PENALTY` | candidate | swept-WIN | swept-LOSS |
+|---|---|---|---|---|
+| zero | 0 (`alice_iter19`) | 12/24 by definition | 0 *(null)* | 0 *(null)* |
+| `p5` | 5 | **12/24 (50.0%)** | 0 | 0 |
+| `p10` | 10 | **12/24 (50.0%)** | 0 | 0 |
+| `p25` | 25 (exclusive) | **13/24 (54.2%)** | 1 | 0 |
+
+**Two of three doses land on the mirror null to the game**, and the third is one
+game above it. Against the binding rule I fixed before `p10` and `p25` were
+visible — **≥16/24 on some dose AND a mechanism-to-outcome link that is not the
+win rate** — this fails both clauses. 13/24 is p = 0.42, deep inside noise, and
+tower count was already flat. **Reject.**
+
+### This is the cleanest possible instance of the failure shape I named in advance
+
+The mechanism did not fail to engage. It engaged harder than iteration 19's did:
+
+| | gridworld | UnderTheSea |
+|---|---|---|
+| ruin turns on blocked ruins, `alice_iter19` | 36.1% | 81.4% |
+| ruin turns on blocked ruins, `alice_i20` | **25.7%** | **62.0%** |
+| total ruin-targeted soldier turns | −27% | −57% |
+
+**A 10-to-19-point reduction in measured waste converted to zero games.** I wrote
+"metrics that improve without converting to wins" into the log *before* the
+evaluation returned, and named the flat tower count as the tell. Both held.
+
+### The falsifier fires, and it redirects the next iteration
+
+Pre-registered: *"if removing 27–57% of ruin-targeted soldier turns changes
+nothing, then soldier **turns** are not scarce — soldier **paint** is."*
+
+That is now the measured conclusion, not a hypothesis. A soldier holds 200 paint
+and each paint action costs 5 (engine-verified: `soldierAttack` calls
+`addPaint(-UnitType.attackCost)`, `SOLDIER.attackCost = 5`), so it has **exactly
+40 actions in its life** against a 24-tile, 120-paint pattern. Giving a soldier
+*more turns* to spend a budget it has already exhausted buys nothing. **The
+binding constraint is the 200-paint tank, not the turn.**
+
+### Closed-directions ledger
+| direction | closed by | can re-open if |
+|---|---|---|
+| Making soldiers spend fewer turns on unfinishable ruins | iteration 20: doses 5/10/25 scoring **12, 12, 13 of 24**, flat on the null, with the mechanism verified at −10 to −19 points of measured waste | soldier paint stops binding first. Turn-efficiency is worthless while the tank is the constraint. |
+| "Wasted soldier turns cap tower count" | same — the waste was removed and tower count did not move | — |
+
+### What the two rejections together say
+
+Iterations 19 and 20 attacked the same waste from opposite sides. **19 accepted
+(15/24, swept 3–0) by making moppers clear blockages; 20 rejected by making
+soldiers avoid them.** The asymmetry is the finding: unblocking a pattern *adds*
+a tower, while avoiding a blocked ruin merely relocates a soldier whose paint is
+already spent. Removing waste only pays when the freed resource is the scarce
+one — and here it was not.
+
+**Next**: iteration 22 attacks the paint budget. The reachability groundwork is
+already logged (soldiers blind 94–96% of turns on normal-density maps), but the
+paint tank is now the better-evidenced target, and it needs its own
+instrumentation first — where the 200 paint actually goes, per action class.
