@@ -8303,3 +8303,78 @@ is a **flag on the interpretation**, not evidence against the candidate. The
 if the head-to-head comes back marginal, I will **not** rescue it with the
 starvation number, because the mechanism firing is exactly what is already
 established and is exactly what does not settle whether it pays.
+
+## Cross-lineage read on the bob gap (tournament replays — the sanctioned channel)
+
+Done while the gauntlet plays, from `tournaments/20260907-1300/results.csv` and two
+replays pulled from `arena/tournaments/.../replays/`. Caveat stated up front: the
+tournament exported **iteration 14** for me, so this describes a build nine accepts
+old. It still describes the *shape* of the gap, which has not moved in a while.
+
+### The gap is decided EARLY, not at the tiebreaker
+
+| how alice's 139 losses to bob ended | share |
+|---|---|
+| before round 500 | 23.0% |
+| round 500–999 | **49.6%** |
+| round 1000–1999 | 22.3% |
+| round 2000 (tiebreaker) | **5.0%** |
+
+**72.6% are over before round 1000**, and only one loss in twenty survives to the
+tiebreaker. bob is reaching the 700‰ instant-win bar around rounds 365–520 on the
+maps he closes fastest. Against my own lineage my games routinely run to 2000, so
+every instinct I have calibrated on self-play is calibrated on the wrong game
+length. This is the self-referential blind spot with a number on it.
+
+### Is it the maps or is it bob? — mostly bob, but not purely
+
+On the 12 maps bob closes out fastest, I still **sweep 4 against carol** (split 5,
+lost 3) against an overall sweep rate vs carol of **56% (42/75)**. So those maps are
+somewhat harder for me than average, and they are nowhere near unwinnable. The gap
+is bob-specific with a real but minority map-difficulty component.
+
+**A correction I have to make against myself here.** My first cut of this analysis
+printed "0 of 12" and I had *hardcoded* the conclusion "so these are not
+intrinsically hard maps" as an unconditional string — a sentence that would have
+been printed no matter what the number was, sitting directly under a number that
+contradicted it. The 0 was a genuine bug (`for m,_ in fast[:12]` unpacked
+`(mean, map)` backwards, so the lookup key was a float and every lookup missed).
+Two failures stacked: a wrong number, and a conclusion that could not be falsified
+by any number. The real answer is 4/12, and it changes the claim from "purely
+bob-specific" to "mostly bob-specific". **A hardcoded conclusion in an analysis
+script is the wrong-referent error with the referent removed entirely.**
+
+### What bob does that I never do: he fields NO moppers
+
+Piglets2, opening (T1 = alice @ iter14, T2 = bob):
+
+```
+round  1   alice sold1 mop1        bob sold2 mop0
+round  3   alice sold3 mop2        bob sold4 mop0      cov: alice 22m, bob 24m
+round 20   alice sold5 mop2        bob sold5 mop0      cov: alice 51m, bob 61m
+round 22   alice sold5 mop2        bob sold6 mop0      cov: alice 56m, bob 65m
+```
+
+**bob builds zero moppers through the entire opening**; I commit two immediately
+and never drop below. bob is ahead on coverage from round 3 and the lead widens
+monotonically. Coverage is the win condition, moppers cannot paint, and tonight I
+measured that a mopper converts 100 tower paint into ~80 rounds and then dies
+having produced *nothing* (its attack is free, so its paint bought only duration).
+
+Three independent lines now point the same way: the tournament's fastest instrument
+(bob), my own paint accounting, and §3c's absorbing state.
+
+**But this direction has already been tried once and it FAILED**, and I am not
+going to quietly forget that. §3b records: at `MOPPER_PAINT_RESERVE=200` the bot
+"painted ~10x more and still lost, because it did zero mopping while the opponent
+erased its paint all game." The reconciliation I would need before re-opening is
+specific: that failure was measured against **my own lineage**, which erases paint
+heavily *because it is ~90% moppers*. bob apparently does not need to erase paint
+at all. So the earlier refutation may have been an artifact of a self-referential
+opponent pool — which is precisely the blind spot the algorithm says the pool
+cannot see. **That is a candidate reason the recorded cause no longer applies, and
+it is exactly the form the ledger demands for a re-open — but it is an argument,
+not a measurement, and I have not run it.**
+
+Filed as the leading structural candidate for iteration 25. Not started: iteration
+24 is in flight and bundling is forbidden.
