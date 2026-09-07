@@ -1,4 +1,4 @@
-package alice_pdiag;
+package alice_i19r185;
 
 import battlecode.common.*;
 
@@ -18,8 +18,7 @@ public class RobotPlayer {
     // --- instrumentation ---
     static int overruns = 0;       // confirmed bytecode overruns (round advanced mid-logic)
     static int nearMisses = 0;     // ended turn within 15% of the limit
-    static int maxBc = 0;
-    static String pdMsg = null;          // worst bytecode usage seen
+    static int maxBc = 0;          // worst bytecode usage seen
 
     // --- state ---
     static int rngState;           // xorshift PRNG state (seeded from ID)
@@ -57,8 +56,7 @@ public class RobotPlayer {
                 if (bc > maxBc) maxBc = bc;
                 if (rc.getRoundNum() > startRound) overruns++;
                 else if (bc > limit - limit / 7) nearMisses++;
-                if (pdMsg != null) { rc.setIndicatorString(pdMsg); pdMsg = null; }
-                else rc.setIndicatorString("bc=" + bc + " max=" + maxBc
+                rc.setIndicatorString("bc=" + bc + " max=" + maxBc
                         + (overruns > 0 ? " OVR=" + overruns : "")
                         + (nearMisses > 0 ? " near=" + nearMisses : ""));
                 Clock.yield();
@@ -179,7 +177,6 @@ public class RobotPlayer {
                     }
                 }
             }
-            pdiag(rc, ruin, wantTower);
             // Complete whichever pattern is actually painted (the mark decided it).
             if (rc.canCompleteTowerPattern(UnitType.LEVEL_ONE_PAINT_TOWER, ruin)) {
                 rc.completeTowerPattern(UnitType.LEVEL_ONE_PAINT_TOWER, ruin);
@@ -190,14 +187,24 @@ public class RobotPlayer {
             wander(rc);
         }
 
-        // Paint the tile under us if it isn't ours yet (avoids paint penalty).
+        // Iteration 19: a soldier walking to a ruin keeps a paint reserve for the
+        // pattern. Measured on gridworld: a soldier standing AT a ruin has a
+        // MEDIAN of 18 paint left (55.6% have <=30), while a 24-tile tower
+        // pattern costs 24*5 = 120 plus 25 to mark. The tank is spent en route.
+        // Painting the tile under you costs 5 to save 1/turn of upkeep, which is
+        // a loss when you are leaving next turn; opportunistic area painting is
+        // pure diversion. Both are suppressed only while travelling and only
+        // below the reserve, so work at the ruin and idle soldiers are untouched.
+        // PATTERN_RESERVE = 0 is byte-identical to alice_iter14.
+        final int PATTERN_RESERVE = 185;
         MapLocation cur = rc.getLocation();
         MapInfo here = rc.senseMapInfo(cur);
-        if (!here.getPaint().isAlly() && rc.canAttack(cur)) {
+        int reserve = (ruin != null && cur.distanceSquaredTo(ruin) > 2) ? PATTERN_RESERVE : 0;
+        if (!here.getPaint().isAlly() && rc.getPaint() >= 5 + reserve && rc.canAttack(cur)) {
             rc.attack(cur);
         }
         // Otherwise spend the idle action painting the nearest empty tile in range.
-        if (rc.isActionReady() && rc.getPaint() >= 15) {
+        if (rc.isActionReady() && rc.getPaint() >= 15 + reserve) {
             MapLocation paintTarget = null;
             int paintD = 1 << 30;
             for (MapInfo t : rc.senseNearbyMapInfos(9)) {
@@ -305,51 +312,5 @@ public class RobotPlayer {
         if (rnd(2) == 0) { Direction t = l; l = r; r = t; }
         if (rc.canMove(l)) { rc.move(l); return; }
         if (rc.canMove(r)) { rc.move(r); return; }
-    }
-
-    // ---------------------------------------------------------- PAINT DIAGNOSTIC
-    /** Census of the 5x5 around `ruin` against the pattern `want` requires.
-     *  Emitted as an indicator string so replay-dump can read it. */
-    static void pdiag(RobotController rc, MapLocation ruin, UnitType want) {
-        try {
-            int pat = want == UnitType.LEVEL_ONE_PAINT_TOWER
-                    ? GameConstants.PAINT_TOWER_PATTERN : GameConstants.MONEY_TOWER_PATTERN;
-            int ok = 0, emp = 0, enemy = 0, wrong = 0, uns = 0, wall = 0, marked = 0, markbad = 0;
-            int inrange = 0, outrange = 0;
-            for (int dx = -2; dx <= 2; dx++) {
-                for (int dy = -2; dy <= 2; dy++) {
-                    if (dx == 0 && dy == 0) continue;
-                    MapLocation l = ruin.translate(dx, dy);
-                    if (!rc.canSenseLocation(l)) { uns++; continue; }
-                    MapInfo mi = rc.senseMapInfo(l);
-                    if (!mi.isPassable()) wall++;
-                    boolean sec = ((pat >> (5 * (dx + 2) + dy + 2)) & 1) == 1;
-                    PaintType need = sec ? PaintType.ALLY_SECONDARY : PaintType.ALLY_PRIMARY;
-                    PaintType have = mi.getPaint();
-                    PaintType mk = mi.getMark();
-                    if (mk != PaintType.EMPTY) { marked++; if (mk != need) markbad++; }
-                    if (have == need) ok++;
-                    else {
-                        // A mismatching tile is only workable if the soldier can
-                        // actually attack it from where it stands (soldier action
-                        // radius^2 = 9). Split the mismatches so a stalled pattern
-                        // can be told from an unfinished one.
-                        if (rc.getLocation().distanceSquaredTo(l) <= 9) inrange++; else outrange++;
-                        if (have == PaintType.EMPTY) emp++;
-                        else if (have.isEnemy()) enemy++;
-                        else wrong++;
-                    }
-                }
-            }
-            pdMsg = ("PD " + (want == UnitType.LEVEL_ONE_PAINT_TOWER ? "P" : "M")
-                    + " r=" + ruin.x + "," + ruin.y
-                    + " ok=" + ok + " e=" + emp + " x=" + enemy + " w=" + wrong
-                    + " uns=" + uns + " wall=" + wall + " in=" + inrange + " out=" + outrange
-                    + " mk=" + marked + " mkbad=" + markbad
-                    + " cP=" + (rc.canCompleteTowerPattern(UnitType.LEVEL_ONE_PAINT_TOWER, ruin) ? 1 : 0)
-                    + " cM=" + (rc.canCompleteTowerPattern(UnitType.LEVEL_ONE_MONEY_TOWER, ruin) ? 1 : 0)
-                    + " $=" + rc.getMoney() + " mp=" + rc.getPaint()
-                    + " d=" + rc.getLocation().distanceSquaredTo(ruin));
-        } catch (Exception e) { /* diagnostic only */ }
     }
 }

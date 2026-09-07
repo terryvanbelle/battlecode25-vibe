@@ -4233,3 +4233,87 @@ self-play only** — against a real opponent it drains to 100–150, which is wh
 the refill would compete with spawning exactly as iteration 6 measured. And
 **starvation deaths are now 0–2 per sample**, not the 65–100% of deaths that
 motivated iteration 6 at all; the premise has decayed. Re-closed, no run spent.
+
+## Tournament `20260907-1300` — the external verdict on iterations 12 and 14
+
+Both runs complete over the same 75 maps, so the deltas are real.
+
+| | 0100 | 1300 | delta |
+|---|---|---|---|
+| alice overall | 35.3% | **38.0%** | **+2.7** |
+| alice vs bob | 4.7% | **7.3%** | **+2.7** |
+| alice vs carol | 66.0% | **68.7%** | +2.7 |
+| swept maps alice–bob | 0 – 68 | **1 – 65** | +1 / −3 |
+
+The navigation work is **real and small**. Three independent quantities move
+together in the same direction — overall, the head-to-head, and the swept count
+on both sides of it — which is the report's own criterion for signal rather than
+noise. That is worth having, and it is nowhere near enough: bob still sweeps 65
+of 75 maps against me.
+
+**This is the instrument that matters.** My gauntlet says `alice_iter14` beats
+its own predecessors; the tournament says it wins 7.3% of games against an
+independent lineage. Only the second number is about strength.
+
+## Iteration 19 — diagnosis, and the fix I discarded before running it
+
+**Area**: tower expansion (the master variable — bob has 12 towers to my 5 at
+r150 on gridworld, and 14 to my 6 at r250).
+
+### The measurement
+
+A soldier holds **200 paint** and each paint action costs **5**, so a soldier
+has **40 actions in its whole life**. A tower pattern is **24 tiles = 120
+paint**, plus 25 to mark. Instrumented census, `alice_iter14` self-play:
+
+| map | soldier paint while travelling (median) | **soldier paint standing AT a ruin** | frac ≤30 |
+|---|---|---|---|
+| gridworld | 71 | **median 18** | 55.6% |
+| box | 52 | **median 20** | 56.4% |
+| UnderTheSea | 135 | **median 29** | 50.8% |
+
+**A soldier arriving at a ruin has roughly four paint actions left against a
+24-tile job.** No soldier can finish a pattern; towers only complete when enough
+soldiers each donate three or four tiles. That is the tower-count gap.
+
+### The fix I built and then discarded on the reachability pre-check
+
+I built three arms (`alice_i19r60/120/185`) that withhold opportunistic painting
+**while travelling to a ruin**, keeping a reserve for the pattern. Then I ran the
+generality check across the three maps before launching, and it kills the design:
+
+| map | ruin-targeted turns spent travelling (d>2) | spent at the ruin (d≤2) |
+|---|---|---|
+| gridworld | 18,422 (83%) | 3,670 |
+| box | 244 (**12%**) | 1,804 |
+| UnderTheSea | 639 (**10%**) | 5,838 |
+
+The travel phase dominates on gridworld and is **near-absent on the other two**.
+A reserve keyed on travelling would be **dead code on two maps out of three** —
+the same shape of error as the iteration 17 retraction, caught this time before
+a run instead of after one. The arms stay in the tree unevaluated.
+
+### What the census actually points at
+
+The distribution of pattern completeness while a soldier stands at a ruin is not
+smooth — it piles up short of the finish:
+
+```
+ok=14: 514    ok=18: 298    ok=19: 173    ok=22: 637    ok=24: 15
+```
+
+**637 samples sitting at 22 of 24 tiles correct, against 15 samples that ever
+reach 24.** Patterns stall two tiles from done.
+
+The geometric candidate: the soldier's ruin logic only ever calls
+`tryMove(rc, toRuin)` — it walks *toward* the ruin and then stays put. A soldier
+adjacent to the ruin cannot reach the pattern's far corners: its action radius²
+is **9**, while a corner at ruin-offset (±2,±2) sits up to **dsq 18** away from a
+soldier on the opposite side. The soldier then finds no attackable mismatch,
+falls through to opportunistic painting, and burns its remaining paint on ground
+tiles beside a pattern it is two tiles from completing.
+
+**Not yet proven** — I have extended `alice_pdiag` to split each mismatching tile
+into in-action-range (`in=`) and out-of-range (`out=`) and will run one match to
+confirm. If stalled samples read `in=0 out=2`, the mechanism is repositioning
+around the ruin, not a paint reserve, and it is reachable on every map.
