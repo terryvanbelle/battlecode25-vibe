@@ -37,6 +37,7 @@ gauntlet/ is git-ignored, so this file is the only durable record.
 """
 import argparse
 import csv
+import re
 from collections import defaultdict
 from pathlib import Path
 
@@ -63,6 +64,14 @@ SOURCES = ("roster-run", "backfill")
 # accepted". Runs older than bot.txt fall back to a date-based reconstruction,
 # which names the previous accepted iteration and is why two of carol's rows
 # had to be relabelled by hand.
+
+
+def _snapshot_opponents(results_csv, agent):
+    """Every <agent>_iterN opponent that actually appears in a run."""
+    pat = re.compile(rf"^{re.escape(agent)}_iter\d+$")
+    with open(results_csv) as f:
+        return {r["opponent"] for r in csv.DictReader(f)
+                if r.get("opponent") and pat.match(r["opponent"])}
 
 
 def tally_run(results_csv, roster):
@@ -162,6 +171,21 @@ def main():
             print(f"  skip {rundir.name} (run-id has no timestamp)")
             continue
         tally = tally_run(results_csv, set(roster))
+
+        # A run can contain an old snapshot that the CURRENT stride does not
+        # select, and silently dropping it is a trap: bootstrapping a new rung
+        # means playing it deliberately, and the rung only becomes permanent
+        # once it is in this CSV. So say so, with the command that records it,
+        # instead of skipping without comment.
+        skipped = sorted(_snapshot_opponents(results_csv, agent) - set(roster))
+        if skipped:
+            print(f"  !! {rundir.name} also played {', '.join(skipped)}, which the")
+            print(f"  !! current --stride {args.stride} roster does not select, so they are NOT")
+            print("  !! recorded. To keep them as permanent rungs, re-run this with a")
+            print("  !! stride that selects them, e.g.:")
+            print(f"  !!   track_vs_old_bots.py --stride 3 {rundir}")
+            print("  !! Once recorded they stay in the roster at any stride.")
+
         if not tally:
             print(f"  skip {rundir.name} (no roster opponents in it)")
             continue
