@@ -5820,3 +5820,110 @@ That is a testable distinction, not a hedge: if the arms improve, `lowPaint` sho
 sharply and `coworker` should barely move. If `coworker` rises and `lowPaint` does not,
 the concentration story was right after all. The counters to separate them are already in
 the probe, and the doses are already built and compile-checked.
+
+---
+
+## Iteration 17 RESULT — VOID before evaluation: the mechanism never executes
+
+**Arm-to-arm identity check (measurement doctrine #3), run before spending a gauntlet.**
+ANCHOR = 0, 1 and 3 on Rose vs `examplefuncsplayer`:
+
+```
+soldier   ANCHOR=0                                    ANCHOR=1        ANCHOR=3
+13761     hasRuin202 tile108 lowPaint30 heldMax171    identical       identical
+10351     hasRuin235 tile 44 lowPaint151 heldMax183   identical       identical
+11019     hasRuin247 tile 26 lowPaint210 heldMax247   identical       identical
+13417     hasRuin182 tile136 lowPaint10 heldMax154    identical       identical
+```
+
+**Every counter, for every soldier, at every dose. The change never runs.** Doctrine #3
+names exactly this: *"All-identical means the change never executed — this caught three
+'results' in one project that were the same bot measured twice."*
+
+**Why, and it is obvious in hindsight.** `chooseRuin` scores `rc.senseNearbyRuins(-1)` —
+**ruins currently in vision**, r² = 20, about 4.5 tiles. A soldier essentially never sees
+two unoccupied ruins at once, so the candidate set is a **singleton**, and every scoring
+function whatsoever picks the same element of a one-element set. I pre-registered
+reachability as a check and then applied it to the *guard* rather than to the *choice set*.
+To make soldiers agree on a ruin they would need memory of ruins seen earlier — a much
+larger change than the one I priced.
+
+**VOID, not rejected**: no evidence was produced about anchoring either way, and it cost
+three single-map games rather than a 100-game gauntlet. `src/bob_a1`, `src/bob_a3`,
+`src/bob_rp1`, `src/bob_rp3` are discarded. `src/bob` is untouched and still
+byte-identical to `bob_iter12`.
+
+### What the same three games did find — traced, not theorised
+
+`tools/replay-dump.sh --robot 11019` on the ANCHOR=0 replay, the soldier with
+`lowPaint=210`:
+
+```
+round   9  (24,18)  paint=139  mCD=10  aCD=10
+round  20  (23,17)  paint= 84  mCD=14  aCD=12
+round  40  (24,18)  paint= 14  mCD=12  aCD=22
+round  42  (23,17)  paint= 14  mCD=11  aCD= 2
+round  50  (24,18)  paint= 14  mCD=26  aCD= 0
+   ...
+round 225  (24,18)  paint= 13  mCD=24  aCD= 0
+round 234  (24,18)  paint=  5  mCD=10  aCD= 0     hp=250 throughout
+```
+
+Three facts, all directly read off the trace:
+
+1. **It oscillates between two tiles, (23,17) and (24,18), from round 9 to round 234+** —
+   225 rounds. `adjacent` was true on 245 of its 248 turns, so it is *at* its ruin the
+   whole time. `Nav.navTo(workRuin)` runs every turn even when the soldier has already
+   arrived. The SRP path beside it does the opposite and says so in its own comment —
+   *"holds position ... so it returns early"* — the third asymmetry I have now found where
+   the SRP path has a discipline the ruin path lacks.
+2. **`aCD` is 0 from round 42 to the end of the game.** Its action is available and unused
+   for roughly two hundred consecutive rounds, because `PAINT_FLOOR = 15` refuses to paint
+   and its stash is pinned at 14.
+3. **`hp` never leaves 250.** It does not die. `NO_PAINT_DAMAGE` only applies at *zero*
+   paint, and `PAINT_FLOOR` stops the soldier one point above the band that would kill it.
+
+**`PAINT_FLOOR` manufactures immortal do-nothing soldiers.** A soldier that spent its last
+paint would hit zero, take 20 HP/turn, die, and free the economy — which my own iteration-8
+economics concluded is the *efficient* terminal state ("dying at zero is the efficient
+terminal state ... it frees the economy to build a replacement that arrives with a fresh
+body and a full stash"). Instead it hoards fourteen paint and stands on a ruin for two
+hundred rounds. This is TRAINING_ALGORITHM.md's recorded regularity by name: **survival
+bought with inactivity.**
+
+And it compounds with the threshold insight. The last 15 paint is worth **more** spent on
+a tower pattern than held, because 119 of 120 paint on a pattern buys nothing while 120
+buys +5 paint/turn forever. `PAINT_FLOOR` is a linear-value heuristic sitting on top of a
+threshold good.
+
+### Iteration 18 PRE-REGISTERED — spend the floor on the pattern
+
+**One mechanism**: `workOnRuin` may paint below `PAINT_FLOOR`. Everything else, including
+`paintSomething`'s floor, is untouched — so the change is scoped to the threshold good and
+cannot be confused with a general "paint more" policy.
+
+**Dose with a verified zero arm**: the ruin-work floor at 15 (today) / 5 / 0.
+`RUIN_FLOOR = 15` must reproduce iteration 12 byte-for-byte, and I will check that with
+the same identity test that just voided iteration 17 **before** reading any arm.
+
+**Reachability, checked against the choice set this time, not the guard**: the branch is
+`rc.isActionReady() && rc.getPaint() > PAINT_FLOOR` inside `workOnRuin`. Measured: 401 of
+920 ruin-turns fail it, and one soldier failed it 210 times with `aCD = 0`. It is the
+single most-taken refusal in the probe.
+
+**Price, both numbers, before the code**:
+
+```
+benefit   401 ruin-turns team-wide are currently no-ops; at 5 paint per pattern tile the
+          stash they hoard is ~3 tiles per soldier, but those tiles land on a THRESHOLD
+          good, so their value is 0 or a whole tower, not 3/24 of one
+price     soldiers die sooner. Iteration 8 measured that as a GAIN, not a loss, but that
+          measurement assumed linear paint value, so it does not transfer unexamined --
+          which is why the arm at 0 and the arm at 5 are both run rather than just 0
+price     a soldier at exactly 0 paint cannot move, so it lingers ~13 rounds dying in
+          place, taxing adjacent allies 1 paint/turn each. The arm at 5 exists to price
+          precisely this against the arm at 0
+```
+
+**Accept gate**: head-to-head vs `bob_iter12`, fresh 25-map sample, both sides, read
+against the mirror null with intervals from `tools/map-resample.py`.
