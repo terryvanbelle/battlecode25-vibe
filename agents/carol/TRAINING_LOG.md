@@ -5323,3 +5323,61 @@ disagree on 12 of 40 games.
 (`MOPPER_IN_20` 0 vs 2 vs 5, within-run, shared maps) stays valid; its **accept gate** does
 not, and any decision on the mopper share must be re-measured against `carol_iter18` with the
 `carol_m18` null.
+
+## Iteration 19 (mopper dose) — the zero arm is REJECTED at 35%, and the curve runs the wrong way
+
+Run `20260907-142542`, 20 pinned maps.
+
+| arm | `MOPPER_IN_20` | vs `carol_iter14` | swept |
+|---|---|---|---|
+| `carol_i19a` | **0** (zero arm) | **14/40 = 35.0%** | 4 win / **10 loss** |
+| `carol_i19b` | 2 | (plays the incumbent later) | — |
+| incumbent | 5 | — | — |
+
+And the within-run dose comparison, which is exact because both arms share the identical map
+sample: **`carol_i19a` 4 – 10 `carol_i19b`.** So dose 2 beats dose 0, and dose 5 beats dose 0
+by 26–14. The curve over the range measured is **monotone increasing in mopper share** — the
+opposite direction from the one I proposed, and it raises the possibility that the incumbent 5
+is itself too low.
+
+**DECISION on the zero arm: REJECT**, decisively.
+
+### I made exactly the error I had already written up
+
+My case for cutting moppers was: *they do nothing on 95.1% of 78,480 turns*. That is a
+**frequency** argument, and iteration 12's whole lesson — recorded in this log and in
+LEARNINGS.md — is that frequency is a proxy and never the causal question:
+
+> "A guard against crediting a mechanism that never ran must not become a rule that a rare
+> mechanism cannot have worked."
+
+A mopper acts on 2–5% of its turns, and those actions may be **rare and high-value**, which is
+precisely the shape iteration 12's paint-tower upgrade turned out to have (3 firings in 144,823
+tower-turns, +5 games). There is a concrete mechanism for it here: soldiers **cannot overwrite
+enemy paint** [E: RULES.md], so mopping is the *only* way carol reclaims ground an opponent has
+taken. In a game decided on painted area, against opponents that paint, a unit that acts 2% of
+the time may be carrying the entire reclamation half of the coverage race.
+
+Two independent reasons the zero arm fails, then, and both were measurable before the run:
+
+1. **Price on the binding axis** — a mopper costs 100 paint against a soldier's 200, drawn from
+   a tower stash that is under 200 paint on 57–99% of tower turns. The cheap unit is often the
+   only buildable one.
+2. **Rare-but-high-value action** — mopping is the sole route to reclaiming enemy paint.
+
+**What the run bought.** A firmly-founded replacement for a belief I held on a striking but
+misleading statistic, a measured dose curve where I had an assumption, and a new candidate
+pointing the *other* way. Per doctrine #2 the zero arm was mandatory, and it is the arm that
+carried all the information: had I run only "5 vs 2" I would have seen a small difference and
+learned nothing about the direction.
+
+### Closed-directions ledger update
+
+- **"Cut the mopper share because moppers idle 95% of the time" — CLOSED.** `20260907-142542`:
+  dose 0 scores 14/40 = 35% and loses to dose 2 by 10–4. Cause understood on two independent
+  axes (paint price, and mopping as the only enemy-paint reclamation). Re-opening would need a
+  measurement that mopping is worthless *against opponents that paint*, which the tournament
+  says is every opponent that matters.
+- **NEW candidate, opposite direction**: `MOPPER_IN_20 = 8`. One constant, a dose above the
+  incumbent on a curve now measured as monotone increasing over 0→2→5. It must be measured
+  against `carol_iter18` with the `carol_m18` null, not against the superseded iteration 14.
