@@ -61,6 +61,12 @@ your two siblings. Never kill any process, never stop a VM, keep MAXJOBS <= 3.
 Do **not** run `tools/tournament.sh` yourself: it is 450 games and would
 starve your own gauntlets; a systemd timer runs it at 06:00 and 18:00 Pacific.
 
+**If you run out of ideas**, before inventing a new mechanism: re-examine the
+old tournament games (`arena/tournaments/<run>/replays/` on battlecode-dev — the
+only games here against opponents your lineage did not produce, and you have not
+exhausted them), then re-read `reference/` for the prior-year lessons. See
+TRAINING_ALGORITHM.md, "When the loop stalls".
+
 **BC25 finals benchmark bots are a yardstick, never an opponent (HARD).** Never
 read their code, never examine any game played against them (none is recorded —
 no replay is written), never run those matches, and **never add one as an

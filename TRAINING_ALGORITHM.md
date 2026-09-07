@@ -514,6 +514,28 @@ latest snapshot directory name.
 
 ## When the loop stalls
 
+**Out of ideas? Do these two things before inventing a new mechanism.** Both are
+cheap, both draw on material you already own, and both have a better hit rate
+than staring at the current bot.
+
+1. **Re-examine the old tournament games.** Every round-robin's replays are kept
+   on battlecode-dev under `arena/tournaments/<run>/replays/`, and they are the
+   only games in this project played against opponents your lineage did not
+   produce. You have almost certainly not exhausted them: a loss you traced once
+   for one hypothesis still contains everything you were not looking for at the
+   time. Read them for what the *other* lineages do that you never attempt —
+   that is the self-referential blind spot in its most directly observable form.
+2. **Re-read the prior-year reference docs** in `reference/`. Year-specific
+   mechanics rarely transfer; the shape of past mistakes does, and so does the
+   catalogue of ideas a lineage forgot to try. (Note what is *not* there and why:
+   both predecessors' `RESEARCH.md` are excluded because they are built on 2025
+   post-mortems, which stay forbidden second-hand as much as first-hand.)
+
+Neither is a substitute for a trace of your own bot losing. They are for the
+state where you have run out of hypotheses, not the state where you have one.
+
+
+
 **Never idle.** There is no valid state where nothing is being attempted.
 Waiting on a running evaluation is execution, not idling; finishing a search
 and stopping is not an acceptable outcome. In order of preference when stuck:
