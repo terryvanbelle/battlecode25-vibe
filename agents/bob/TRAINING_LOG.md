@@ -6140,3 +6140,71 @@ cannot tell a rising lineage from a drifting one.
    they should interact.
 
 `progress/vs_old_bots_history.csv` has the four new rows; `vs_old_bots.png` regenerated.
+
+---
+
+## ROSTER ON `bob_iter18` (2026-09-07 21:50) — the accept does NOT show on the absolute instrument
+
+Run `20260907-201817`, `label=bob_iter18`, `dirty=0`. The `bob_iter11` arm is complete at
+50 games; the `examplefuncsplayer` arm is still playing.
+
+```
+opponent          iter18 wins/50   95% CI    per-map 0/1/2     iter12's number (run 193911)
+bob_iter0             46/50       [42, 49]   0 / 4 / 21          46/50   same
+bob_iter1             43/50       [39, 47]   0 / 7 / 18          43/50   same
+bob_iter11            20/50       [15, 26]   7 / 16 / 2          25/50   -5 games
+                                  -1.78 sd
+```
+
+**Against `bob_iter11` the lineage now reads 58.0 -> 56.0 -> 50.0 (iter12) -> 40.0
+(iter18).** And the swept-map column, which is the near noise-free instrument here, is
+worse than the headline: iteration 18 sweeps **2** maps and is swept on **7**, where
+iteration 12 was 4 and 4.
+
+**This is the §5b shape, arriving on the very next accept after I flagged it.** The
+within-run head-to-head said iteration 18 beats iteration 12 by +6 games with 6 sweeps and
+0 swept losses — an exact comparison on one shared sample, the strongest kind I have. The
+frozen roster says iteration 18 is *further below* a three-generation-old ancestor than
+iteration 12 was. Both cannot be a simple statement about strength.
+
+### What I am NOT concluding, and why
+
+The two roster runs drew **different 25-map samples** (verified: `maps.txt` differs), so
+20/50 against 25/50 is a **cross-run** delta — exactly the comparison MULTI_AGENT.md warns
+is noisier than it looks. The intervals overlap, `[15, 26]` against `[19, 31]`. I cannot
+say from this that iteration 18 is weaker than iteration 12; I can only say that **neither
+is above the null against `bob_iter11`, and the newer one is not better on this evidence.**
+
+I am also **not** reverting the accept. Iteration 18's evidence is an exact within-run
+head-to-head with a zero arm measured at se = 0.00, and the mechanism it removed is a
+documented degeneracy (units immortal at 14 paint with an unused action for 200 rounds).
+Reverting on a cross-run comparison whose interval overlaps would be trading the stronger
+instrument for the weaker one.
+
+### The measurement that actually settles it — launched
+
+`BOT=bob_iter11 OPPONENTS="bob_iter12 bob_iter18"`, 100 games on **one shared map
+sample**. That makes the iteration-12-vs-iteration-18 comparison *exact* rather than
+cross-run, against the ancestor where the drop appears. It is the cheapest thing that can
+distinguish:
+
+- **iter18 < iter12 vs iter11 on a shared sample** -> the accept really did walk downhill
+  against older code despite beating its predecessor, which is §5b's destructive-pair
+  signature, and the answer is a **pairwise** ablation driven by this roster drop and not
+  by nomination (base rate in this project: 2 of 3 nominated pairs refuted; the one real
+  pair found by ablating after a roster drop).
+- **iter18 >= iter12 vs iter11 on a shared sample** -> the 50 -> 40 step was the map draw,
+  and the standing finding remains the *earlier* one: `bob_iter12` bought nothing over
+  `bob_iter11`, which is where the flatness actually starts.
+
+Either way the next action is determined by the measurement rather than by my judgement,
+which is the point of running it.
+
+### Tooling caveat worth reporting
+
+`tools/map-resample.py` printed `examplefuncsplayer 9/50 ... 95% CI [2, 17] -4.30 sd` for
+an arm that has played **9 games of 50**. It assumes the full `maps x 2` denominator, so a
+partial arm reads as a catastrophic loss rather than as incomplete. `gauntlet.sh`'s own
+summary warns about unequal game counts; the resampler does not. Not a wrong number so
+much as a missing guard, and it would be easy to misread in exactly the situation where
+someone is anxiously watching a roster run. Flagging rather than working around it.
