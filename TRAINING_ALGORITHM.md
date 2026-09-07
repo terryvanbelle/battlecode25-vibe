@@ -231,6 +231,14 @@ building a solution:
 - **History.** If a prior iteration deliberately established the behavior this
   would change, the fix must supersede that reasoning with new evidence, not
   silently revert it.
+- **Check the evidence already on disk before spending a run.** The committed
+  `tournaments/<run>/report.md` files carry standings, head-to-head and
+  swept-map counts against opponents your lineage did not produce — and they may
+  already refute your premise. One lineage built and compiled a candidate on the
+  theory that a class of maps was costing it games, then found the tournament
+  report already on disk showed it losing on those maps *less* often than the
+  base rate, and sweeping the very map the hypothesis rested on. Shelved before
+  it played a single game.
 - **Cost the price as well as the benefit.** A mechanism's case is not made by
   what it gains; it is made by the gain *minus* what it spends. One lineage made
   this same error twice in one session — costing a movement policy's benefit
