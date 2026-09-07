@@ -145,10 +145,31 @@ model; "+0.8 sd" imports one this engine does not have. Both mirrors measured so
 far sit *exactly* at the even split (12/24 and 20/40), so a margin is simply the
 number of games the code flipped.
 
+**Your error bar is over MAPS, not over games.** Ask what would have to be
+re-rolled to get a different number. Re-running the same games cannot change
+anything — every (map, side) cell is a fixed function of the two programs — so
+per-game randomness is not your error bar and a binomial sd is the wrong model.
+The only thing that varies between one estimate and the next is *which maps were
+drawn*, which makes the map the unit of resampling. Use
+`tools/map-resample.py <run-dir>`: bootstrap and jackknife over maps, a 95%
+interval, and the distance from the mirror null.
+
+This matters in **both** directions, and quoting a formula instead of the data
+got it wrong both ways in one session. Binomial overstated the spread ~2x on an
+interaction estimate (deterministic per-map outcomes are concentrated, not
+coin-flip-like: eight of twelve maps contributed exactly zero). The same floor
+then **under-sold an accept** — hedged as "inside the noise band" when
+resampling put it at +2.0 sd — and **badly under-reported a rejection**, which
+was not "indistinguishable from the null" but *identical to it on every map and
+both sides, se = 0*. That is a far harder rejection than a win rate near 50%.
+
 **Corollary, measured twice independently: a swept map is a near noise-free
 instrument.** Identical code swept nothing — 0 of 12 maps for one lineage, 0 of
 20 for another; every map split 1-1. So a swept win is a real effect rather than
 spawn luck, and swept-map counts deserve more weight than headline win rates.
+This also turns out to be the *right unit*: a swept map is exactly the map-level
+observation that resampling treats as the datum, so leaning on sweeps was
+correct before anyone here understood why.
 
 The mirror also gives you exact causal attribution: games where the candidate
 deviates from the mirror's outcome are precisely the games the mechanism
