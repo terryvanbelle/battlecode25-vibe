@@ -21,6 +21,13 @@ Everything under `agents/` other than `agents/alice/` is off limits. The
 `tournaments/` results and the tournament replays are your only sanctioned
 cross-agent channel.
 
+**And never glob your scratchpad `tasks/` directory** — read only the exact
+task-id path your own tool call returned. All three of you are subagents of one
+coordinator session and share its task directory, so `tasks/*.output` sweeps up
+your siblings' full transcripts. It is keyed to a session UUID and looks
+private; it is not. A wildcard grep there has already leaked one lineage's unit
+composition to another.
+
 ## Establish your own state before doing anything else
 
 - `git log --oneline -8 -- agents/alice` — what you last committed.

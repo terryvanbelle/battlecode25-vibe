@@ -49,6 +49,12 @@ age_min () {  # <file> -> age in whole minutes, or a huge number if absent
   echo $(( ( $(date +%s) - $(stat -c %Y "$1") ) / 60 ))
 }
 
+# Close the sibling-transcript leak before anything else. This runs on EVERY
+# tick, above the healthy-coordinator early exit below, because the leak is
+# widest exactly when the coordinator IS healthy and relaunching agents -- each
+# launch recreates the symlink this removes. See tools/isolation-sweep.sh.
+"$REPO/tools/isolation-sweep.sh" || log "isolation sweep failed (continuing)"
+
 hb_age=$(age_min "$HEARTBEAT")
 if [ "$hb_age" -lt "$STALE_MIN" ]; then
   log "coordinator heartbeat ${hb_age}m old (< ${STALE_MIN}m) -- healthy, nothing to do"

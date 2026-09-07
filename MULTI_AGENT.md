@@ -43,6 +43,18 @@ produced.
    prior-year projects' documentation (battlecode22-vibe, battlecode26-vibe).
 5. Standing project rules still apply to everyone: no bot implementations
    downloaded from the web; no post-mortems from the 2025 contest year.
+6. **Never glob or grep your session's scratchpad `tasks/` directory.** Read
+   only the exact task-id path your own tool call handed you. All three agents
+   run as subagents of one coordinator session and therefore SHARE that
+   session's task directory; a wildcard there sweeps up siblings' full
+   transcripts. The path is keyed to a session UUID, so nothing about it looks
+   shared -- which is precisely why the rule has to be written down. This is
+   not hypothetical: a `grep MatchHeader tasks/*.output` for one lineage's own
+   replay dumps pulled in a fragment of another's, disclosing a unit type that
+   lineage fields. The coordinator now also sweeps the sibling transcript
+   symlinks away every 10 minutes (`tools/isolation-sweep.sh`), but the sweep
+   is a backstop for the rule, not a replacement: it cannot run between the
+   moment an agent launches and its next tick.
 
 ## The tournament
 
