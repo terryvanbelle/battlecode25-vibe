@@ -2598,3 +2598,50 @@ One risk this raises, registered before the sweep: the same "walks into a corner
 and dies" defect gets *longer* commitment at dose 400. The re-roll-on-block should
 catch it (a map edge fails `canMove`, forcing a fresh heading), which is why the
 zero/25/100/400 curve is worth having rather than a single point.
+
+## Iteration 10 — CLOSED, REJECTED. SRPs are below the instrument's resolution
+
+Run `20260907-010620`, 48 games, 12 fresh maps, `bot=alice_i10e`.
+
+| arm | H2H | pre-registered gate |
+|---|---|---|
+| `alice_i10e` vs `alice_iter7` | **14/24 (58.3%)** | >=16/24 — **FAIL** |
+| `alice_i10e` vs `alice_i10d` | **12/24 (50.0%)** | — |
+
+Two readings, and the second is the one that closes the thread.
+
+**1. The headline misses the gate and sits inside the noise floor.** At n=24 with
+p=0.5 the binomial sd is 2.45 games, so 14/24 is +0.8 sd — indistinguishable from
+a coin. Doctrine #6 says distrust any delta under the noise floor regardless of
+how good the story is, and the story here is good, which is exactly when the rule
+earns its keep.
+
+**2. The self-calibrating gate is exactly tied with the tuned constant: 12/24.**
+This is the informative number. 10e replaced `SRP_MIN_TOWERS >= 10` with "build
+only where no ruin is visible", which I argued was both map-adaptive and
+engine-mandated. It is neither better nor worse. The design preference
+"self-calibrating thresholds beat fixed constants" is a real pattern but it is not
+a law, and here the threshold was never the binding term — the *feature* is.
+
+Pooling everything iteration 10 ever measured, on three disjoint map samples:
+
+| build | H2H vs `alice_iter7` |
+|---|---|
+| `alice_i10d` | 13/24, 13/24 |
+| `alice_i10e` | 14/24 |
+
+Three samples, 72 games, all within one sd of 12/24. SRPs are worth somewhere
+between nothing and ~+4%, and this instrument cannot resolve which. Iteration 10
+has now had four refinements (10b, 10c, 10d, 10e) against a `MaxNearMissRefinements`
+of 3. **Reject and leave the area** — which is also what `MaxConsecutiveRejects`
+requires, the economy area having produced iterations 10 and 11 back to back.
+
+### Closed-directions ledger
+| direction | closed by | can re-open if |
+|---|---|---|
+| SRPs (resource patterns) as a chip sink | iteration 10: 13/24, 13/24, 14/24 across 72 games on three disjoint map samples; all within 1sd of even | the *chip* constraint becomes binding in the contested phase (r0-r400). It is not today: iteration 12's trace shows chips pinned at CHIP_RESERVE while the real bottleneck is arriving at ruins. A future bot that expands properly and then runs out of chips would be a genuine re-open. |
+| "Self-calibrating beats a tuned constant" as an automatic design win | 10e vs 10d = 12/24, a dead tie | it is still the right default when a constant is *known* to trade one opponent against another; it is not a reason to expect a gain when the constant was never the binding term |
+
+**Both economy iterations (10 and 11) are now closed**, and the area is left. The
+loop moves to navigation, where iteration 12 already has a mechanistic result that
+dwarfs anything the economy area produced.
