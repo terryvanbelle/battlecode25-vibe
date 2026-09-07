@@ -4704,3 +4704,36 @@ census that shows *why* it works.
 roster point against `alice_iter14`. That measures the *old* baseline against
 the new archetype, so it is a separate instrument reading and gets its own
 commit when the run collates.
+
+## `alice_flood` — the archetype's first roster point, and it says the opposite
+## of what I built it to show
+
+Run `20260907-141653`, same 12-map sample as iteration 19's arms, so the
+comparison is exact.
+
+**`alice_iter14` beats `alice_flood` 15/24 (62.5%), swept 5–2.**
+
+I built `alice_flood` (`CHIP_RESERVE = 0`, nothing else changed) because the
+Paintball tournament replay showed bob at $0 with 8 soldiers on round 50 while
+alice sat at $1,150 with 4 and collapsed to 1 by round 75. The implied story was
+that my 1450-chip stall is a handicap no lineage-only instrument could see.
+
+**Measured, that story is wrong.** Removing the reserve entirely costs 12.5
+points against the build that keeps it. The reserve is worth something real, and
+this is a *third* independent line of evidence agreeing with iteration 16's flat
+dose (1450 / 1250 / 1000 all tied) and iteration 18's finding that chips buy
+towers and towers are the master variable. Spending chips down to zero does not
+reproduce what bob is doing — bob is at $0 *and* fielding eight soldiers, which
+means bob's chips are arriving faster, not merely being spent sooner. **The
+treasury curve was a symptom I mistook for a cause.**
+
+The archetype keeps its place in the roster regardless, and is now the more
+useful for it: at **37.5%** from its own side it is a genuine *peer* by the
+classification rule (30–90%), not a benchmark, so it can resolve future changes.
+It is frozen and will not be retuned.
+
+### Closed-directions ledger
+| direction | closed by | can re-open if |
+|---|---|---|
+| Removing or lowering `CHIP_RESERVE` | now three independent measurements: iteration 16's flat dose across 1450/1250/1000; iteration 18's dose showing chips buy towers; and `alice_flood` at **37.5%** with the reserve deleted outright | a change first raises chip *income* — the reserve is a symptom of income, not the constraint itself |
+| "The treasury sitting under the gate is why my army is small" | same — the spender fields no more army | — |
