@@ -130,6 +130,15 @@ a stale opponent, which is exactly the measurement you were trying to avoid. One
 agent's `alice_mirror` had drifted this way before it was ever run. Verify
 byte-identity apart from the package line, as you would for a snapshot.
 
+The subtler version bites *after an accept*: your mirror must be built from the
+**baseline the candidate is being measured against**, and that baseline moves
+every time you accept something. Attributing a candidate's deviations against a
+mirror of the previous accepted build **credits the candidate with games the
+already-accepted mechanism flipped**. Two nulls one accept apart disagreed on
+6 of 40 games — same net margin, different games. The tell is cheap to check:
+if maps appear in *both* the previous iteration's deviation list and this one's,
+you are reading a stale null.
+
 **Quote margins in games against the mirror null, not in standard deviations.**
 "+2 games against a null that never sweeps a map" imports no random-sampling
 model; "+0.8 sd" imports one this engine does not have. Both mirrors measured so
