@@ -700,3 +700,38 @@ those, the world can be full of opportunity that no unit is ever positioned to t
 iterations died on exactly that geometry this session (17's splasher refill, 20's ferry), and
 in both cases the fix is navigation, not a better threshold. **When the mechanism needs
 adjacency, ask who drives the unit there before asking whether the opportunity exists.**
+
+## The zero arm is where the information is — two sweeps, two surprises, neither guessable
+
+I swept two unit-share constants this session with the same design (zero arm, one interior arm,
+the incumbent), and both results contradicted the hypothesis that motivated the run.
+
+| knob | zero arm | shape found | outcome |
+|---|---|---|---|
+| `MOPPER_IN_20` (was 5) | 0 scores **35%** | concave, **incumbent far past the peak** | 2 accepted, **+6 games** |
+| `SPLASHER_IN_20` (was 3) | 0 scores **12.5%** | concave, **incumbent at the peak** | both arms rejected |
+
+**Neither shape was predictable from the other**, and the plausible unifying story — "carol
+over-provisions cheap support units" — would have been half right and half expensively wrong.
+The knobs look symmetric, sit three lines apart in the same function, and behave oppositely.
+
+What the zero arm actually buys, concretely:
+
+- **It makes the shape legible.** With only "2 vs 5" I would have had one number and no way to
+  tell a slope from a peak. With 0 in the run, dose 2 and dose 5 could each be scored against a
+  *common* opponent on identical maps, which is what exposed the concavity.
+- **It prices the feature.** Deleting splashers costs ~50 points; that number did not exist
+  before and it retroactively priced iteration 11, accepted ten iterations earlier on a 62.5%
+  head-to-head and never re-measured.
+- **It refutes the motivating hypothesis cheaply.** Both sweeps began as "this unit is wasteful,
+  cut it". Both were wrong, and the arm that proved it was one I was running anyway.
+
+The general rule I am taking from it: **when you propose removing or reducing something, the
+zero arm is not a control, it is the experiment.** The interior doses tell you where to go; the
+zero arm tells you whether the thing is worth having at all — and three times this session that
+was the answer I had confidently assumed and got backwards.
+
+A corollary on ordering: run the zero arm in the *same* run as the interior dose, never as a
+follow-up. Cross-run comparisons are confounded by the map sample; within one run, opponents
+share the sample exactly, and it is that exactness that let a 72.5%-vs-65.0% gap be read as a
+real ordering rather than noise.
