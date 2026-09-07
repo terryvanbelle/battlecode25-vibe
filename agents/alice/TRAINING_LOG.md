@@ -4408,3 +4408,59 @@ a soldier should *deprioritise a ruin whose pattern it cannot finish* and go
 find one it can — pure waste removal, the "capability preserved at zero marginal
 cost" profile, and a different mechanism from iteration 19 so the two must not
 be bundled.
+
+## Iteration 18 — REJECTED, and the dose curve is single-peaked ON THE CURRENT VALUE
+
+Run `20260907-134502`, 72 games, 12 maps both sides, `alice_iter14` as the zero
+arm (K=2, byte-identical by construction). Combining with `alice_i17c` (K=4)
+from run `20260907-043612`:
+
+| K | corpus money-share | candidate score | note |
+|---|---|---|---|
+| 0 | 0.00 | **1/24 (4.2%)** | always paint |
+| 1 | 0.26 | **5/24 (20.8%)** | |
+| **2** | **0.53** | **12/24 (50%)** | **`alice_iter14`, by definition** |
+| 3 | 0.77 | **6/22 (27.3%)** live maps | |
+| 4 | 1.00 | **5/20 (25.0%)** live maps | from run 043612 |
+
+**The curve is single-peaked and the peak is the value I already have.** It
+falls off monotonically in *both* directions — 4.2% and 20.8% below, 27.3% and
+25.0% above. Measurement doctrine #2 calls a curve that peaks in the middle
+stronger evidence than any single point; this one peaks on the incumbent, which
+is the cleanest possible "leave it alone".
+
+The arm-to-arm identity check held again: `Filter` is a self-mirror cell for K=3
+(0 ruins decided differently) and returned exactly **1/2**, one win per side.
+
+### My arithmetic prior was refuted, and that is the useful part
+
+I pre-registered the reasoning that a spawn costs 250 chips + 200 tower paint
+against L1 incomes of 20 chips vs 5 paint, so a spawn-limited economy should
+want ~3 paint towers per money tower — i.e. a peak nearer K=1. The measured
+peak is at 53% money and K=1 scores **20.8%**. The naive income ratio is simply
+not what sets the optimum: tower completions cost 1000 chips each, and a paint
+tower that cannot be paid for is worth nothing. Chips buy *towers*, and towers
+are the master variable.
+
+Also note K=0 at **4.2%** — worse than K=4's 25%. Building *only* paint towers
+is far more damaging than building only money towers. Paint is useless without
+the chips to convert it.
+
+### Closed-directions ledger
+| direction | closed by | can re-open if |
+|---|---|---|
+| Changing the money/paint tower mix ratio | iteration 18: five-point dose 0.00→1.00 scoring 4.2 / 20.8 / **50** / 27.3 / 25.0, single-peaked on the incumbent | the *mechanism* changes so the mix is no longer set per-ruin by geometry (e.g. a rule that reads the actual treasury/paint state). The ratio itself is settled; only a different decision rule could re-open it. |
+| The "production mix" thread opened in iterations 16 and 17 | same | closed. Three iterations circled this; it is now measured with a curve. |
+
+**Bytecode check** (Phase 0 #6, owed on every full evaluation): max
+**3,782 of 17,500**, zero overruns, zero near-misses across the census game.
+Ample headroom for iteration 20.
+
+### Correction to my reading of tournament `20260907-1300`
+
+The report gained a section after I first read it, and it corrects me: wins are
+**conserved** across the three lineages (they sum to 450), so my +2.7 means
+*improved relative to the other two*, not *got better*. Absolute strength is
+what the frozen roster measures. My roster is overdue — last extended around
+iteration 13 — and TRAINING_ALGORITHM §5b requires it on a schedule rather than
+on suspicion. Queued behind iteration 19's evaluation.
