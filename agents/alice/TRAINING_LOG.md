@@ -8489,3 +8489,53 @@ Three things, in order of size:
 
 None of this touches iteration 24, which is a paint-efficiency change in flight and
 is not competing with any of the above.
+
+## Reachability pre-check on the promoted splasher direction — the branch is DEAD CODE
+
+Before designing anything, I ran the reachability pre-check on the code a splasher
+experiment would build on. `runSplasher` in `src/alice`:
+
+```java
+int bestScore = 3;                       // "require at least a few tiles worth"
+for (MapInfo t : rc.senseNearbyMapInfos(rc.getType().actionRadiusSquared)) {
+    ...
+    int score = 0;
+    if (t.getPaint().isEnemy()) score += 2;                       // max 2
+    else if (t.getPaint() == PaintType.EMPTY && t.isPassable()) score++;   // max 1
+    if (score > bestScore) { bestScore = score; best = c; }       // 2 > 3 : never
+}
+if (best != null) rc.attack(best);                                // best is ALWAYS null
+```
+
+**`score` can only ever be 0, 1 or 2, and `bestScore` starts at 3, so the
+comparison is never true and `best` is never assigned. The splasher never
+attacks. Not rarely — never.**
+
+The intent is legible from the comment: `bestScore = 3` was meant to be a
+threshold on the **AoE footprint** ("a few tiles worth"), but `score` is computed
+from the **single centre tile** `t`. A sum over the blast area was written as a
+lookup of one tile, and the threshold that was correct for the former is
+unreachable for the latter.
+
+`src/alice_splashcensus` carries the identical dead branch, which also settles
+where its number came from: the "mean best blast 1.37 of 13 tiles" figure was
+produced by a *separate offline* census over soldier-chosen positions, **not** by
+this branch firing. That is consistent with the ledger note, and it means the
+1.37 was never evidence about this code.
+
+So the splasher capability is absent **twice over**: splashers are never built,
+and the handler could not act if one existed. Any future "we tried splashers"
+memory would be false — the ledger's "open and unpriced" is the correct status
+and is now better supported than when I wrote it.
+
+**Not fixing it now.** Iteration 24 is in flight and this is a different
+functional area; fixing a dormant branch mid-evaluation is exactly the bundling
+the algorithm forbids. Recorded as the concrete first step of the splasher
+direction, which is now: (1) repair the footprint scoring so the branch can fire,
+(2) verify it fires, (3) only then decide whether to build splashers at all.
+
+This is the second time today the reachability pre-check has paid, and both times
+it cost minutes: it killed iteration 23's premise on one map, and here it caught a
+direction that would have been "built on" code that cannot run. **A branch that
+has never executed cannot have been validated by any result the lineage has ever
+recorded** — including results I would have cited as reassurance.
