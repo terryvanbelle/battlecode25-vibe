@@ -6491,3 +6491,59 @@ doing exactly that.
 
 `tools/density-split.py` gets the rank correlation added so the trap is closed in
 the instrument rather than in my memory.
+
+## Iteration 23 — IN FLIGHT. Resumption state for whoever reads this next
+
+**Run `20260907-194028`** — `BOT=alice_i23`, opponents `alice_iter22` (accept
+gate) / `alice_flood` / `alice_iter7`, 25 maps, both sides, **150 games**. Launched
+19:40 UTC, running detached under setsid, so it survives this session dying. As of
+this note it is at 31/150 and moving slowly because the shared VM is contended.
+
+**If you are a fresh session: do NOT re-run it.** Check
+`../../tools/gauntlet-collect.sh --list`; if it shows complete, recover with
+`../../tools/gauntlet-collect.sh 20260907-194028`.
+
+### Interim, and why I am not reading it
+
+`alice_iter22`: 22/31 (71%), swept 6, swept-lost 0.
+
+**That number is not evidence yet and I am recording it only so the state is
+legible.** `gauntlet.sh`'s own header says a partial opponent has played an
+*easy-or-hard prefix* of the shared map list, never a random subsample, so a
+partial rate is confounded by map difficulty in an unknown direction. The gate is
+the completed 50 games.
+
+### The decision rule, restated so it cannot drift while the run finishes
+
+- **Accept** if head-to-head vs `alice_iter22` > 50% by map resampling, the two
+  peers hold >= 60%, and the swept-loss pattern is scattered rather than
+  concentrated on one map or side.
+- **Mechanism gate (can void an otherwise-passing score)**: refused pattern
+  attacks must be 0 — true by construction — and the *landed* count must rise.
+  Already verified on UnderTheSea: 53 vs 42 at r200, 28 vs 15 at r400, 1 vs 0 at
+  r700.
+- **Density**: primary statistic is **Spearman's rho with a permutation p-value**,
+  per today's retraction. The median split is descriptive only. Prediction on
+  record: negative rho.
+- **Price watch**: check `OVR=` on indicator strings (the loop now scans up to 24
+  tiles instead of breaking early) and check tower-paint and alive counts, since
+  fewer starvation deaths shifts the population and §3c's absorbing state came
+  from exactly that kind of shift. I stated before the run that **I could not find
+  this change's price**; that is a thing to resolve, not a thing to celebrate.
+
+### If it rejects
+
+Trace the flipped games first. The queued alternatives, in order, are already
+costed in this log: **iteration 24** (spawn mix responsive to saturation — needs a
+dose, a zero arm, a self-calibrating threshold, and tower-paint instrumentation),
+then the **structural track** from today's API sweep (**communication**, unused for
+22 iterations and made cheap by the saturation finding; **`mopSwing`**;
+**`mark`/`removeMark`** as a 1-paint coordination primitive).
+
+### Functional-area tracker
+
+Iterations 19, 20, 22 and 23 all sit in **soldier paint spending** — 19 accept, 20
+reject, 22 accept, 23 pending. `MaxConsecutiveRejects` is 3 and there is no reject
+streak, so the area is not closed. But four consecutive iterations in one area is
+worth noticing on its own: **if 23 rejects, the next attempt should leave this
+area** even though the formal rule would not yet require it.
