@@ -6458,3 +6458,213 @@ measurements of it; §16 bounds how the follow-up may be chosen.
 This is the second time the pass has earned its keep, and both times the failure was
 invisible per-entry: every one of these sections was correct when written and checked when
 written. Only *comparing* them failed — which is precisely what the algorithm predicted.
+
+---
+
+## Session recovery (2026-09-07 23:15 UTC)
+
+Session died shortly after launching the iteration-19 2x2. `gauntlet-collect.sh --list`
+showed `20260907-212222  200 games  complete` on the VM with only `results.txt` pulled
+locally and no `summary.txt` — the textbook session-death casualty. Collated it rather
+than re-running. Nothing else was queued on the driver, so nothing else was lost.
+
+Note for future sessions: the log entry below the 2x2 launch guessed the run id as
+`20260907-224...` from a wall-clock time in local zone; the actual id is `20260907-212222`
+(run ids are UTC). **Write the run id down from the tool's own output, never from a
+timestamp you reconstruct.**
+
+## Iteration 19 — the 2x2. The destructive pair is REFUTED.
+
+Run `20260907-212222`, `BOT=bob_iter11`, four arms, one shared 25-map sample, 200 games,
+complete. Columns are the ARM's wins (of 50) against the frozen common reference.
+
+```
+                     ruin memory OFF        ruin memory ON
+RUIN_FLOOR = 15   A  bob_iter12  22/50   C  bob_mC  26/50
+RUIN_FLOOR =  0   B  bob_iter18  19/50   D  bob_mD  22/50
+
+swept / swept-lost   A 3/6   B 3/9   C 5/4   D 4/7
+```
+
+- **Interaction = (D−C) − (B−A) = (−4) − (−3) = −1 game.** The pair I nominated does
+  not exist. Memory does not rescue `RUIN_FLOOR = 0`; it moves both rows by the same
+  amount. **Pre-committed to this reading before the games were played, and it is the
+  outcome the project base rate predicted (now 3 of 4 nominated pairs refuted).**
+- Main effect of ruin memory: **+4** (floor 15), **+3** (floor 0). Positive at both doses.
+- Main effect of `RUIN_FLOOR = 0`: **−3** (memory off), **−4** (memory on). Negative at both.
+- The third pre-registered branch fired: **C > A**, and C is the only arm that beats
+  `bob_iter11` at all.
+
+## Iteration 19 CANDIDATE — **REJECTED**
+
+Candidate = arm C: revert `RUIN_FLOOR` to `PAINT_FLOOR`, restore ruin memory (`RUIN_MEM=24`).
+Byte-verified `src/bob` == `bob_mC` mod the package line; both compiled in isolation.
+Run `20260907-232155`, `BOT=bob`, fresh 25-map sample, 200 games, complete.
+
+```
+opponent        wins by candidate   95% CI      vs null    swept / swept-lost
+bob_iter18            22/50        [18, 26]    -1.39 sd        1 / 4      <- ACCEPT GATE
+bob_iter12            22/50        [18, 26]    -1.40 sd        1 / 4
+bob_iter11            23/50        [17, 28]    -0.71 sd        3 / 5
+bob_mirror            25/50        [25, 25]    exactly the null (se=0, all 25 maps split)
+```
+
+**22/50 against the snapshot it would replace. The gate is not met. Rejected.**
+
+The mirror null came back at **exactly 25/50 with se = 0 and every one of 25 maps split
+1–1** — a third independent confirmation on a fresh build and a fresh draw. So −3 games
+is a real 3-game effect, not spread.
+
+### The two runs are in tension, and §5b says which one governs
+
+Both are exact within-run measurements and they disagree in direction:
+
+```
+run 212222 (draw 1), common reference bob_iter11:  mC 26  >  iter18 19     (+7 apart)
+run 232155 (draw 2), DIRECT head-to-head:          mC 22/50 vs iter18      (-3)
+```
+
+This is my own LEARNINGS §21 happening again, one day after I wrote it: **margins measured
+against a common third party do not chain into a direct margin.** A +7 gap versus
+`bob_iter11` did not survive as a direct head-to-head. Neither number is wrong; they are
+different quantities, and only the direct one is the accept gate.
+
+Within draw 2 the candidate is uniformly weak against all three ancestors (22, 22, 23) —
+whereas in draw 1 it looked like the strongest arm. A swing that large between draws means
+**the ruin-memory effect is map-dependent**, which is exactly the 3 Musketeers warning
+`reference/RESEARCH.md` §1 raises about small margins on a fixed map list. That is now the
+best available account of the +4: it was draw-specific.
+
+### Why I am NOT reverting iteration 18 after all — and flagging that I said I would
+
+I pre-committed: *"D ≈ B (memory does not rescue it) -> the pair is refuted, iteration 18
+is simply a regression, and I revert it."* The pair was refuted, so the pre-commitment is
+live and I am not going to quietly drop it. But the inference "iteration 18 is a
+regression" rested on iter18 < iter12 **against bob_iter11**, and the only *direct* test of
+a revert-containing build I now own says the revert **loses 3 games to iteration 18**.
+
+Two exact facts that do not compose:
+
+```
+iter18 beats iter12 directly            +6   (iteration 18's own accept)
+iter18 loses to iter12 against iter11   -3   (this 2x2, draw 1)
+```
+
+So the honest position is **not** "iteration 18 is a regression" and **not** "iteration 18
+is fine". It is: *the lineage is non-transitive around iterations 11/12/18, my roster is
+flat across that stretch, and I do not yet have an instrument that resolves the level.*
+Recorded **OPEN**, per §3b — I am not back-filling a story to make the pre-commitment come
+out tidy, and I am not executing a revert whose only direct measurement is negative.
+HEAD stays on iteration 18 for the 01:00 UTC tournament, which is the one non-self-referential
+reading available and was pre-registered before any of this.
+
+**Functional area: ruin work / paint floors. This is the 3rd consecutive reject in it
+(17 void, 18 accepted-then-doubted, 19 rejected). `MaxConsecutiveRejects` is reached: the
+next attempt must leave this area.** It does — see below.
+
+## Pre-check that KILLED a candidate before it was built: soldier repulsion
+
+`reference/RESEARCH.md` §7/§11 point at emergent coordination (wololo's repulsion fields).
+`Nav.wander()` already carries the momentum term and has **no** ally-awareness, so
+repulsion looked like a clean gap. Sized it offline first — soldier over-dispersion against
+a uniform-placement null, from replay arena grids:
+
+```
+map              r200    r400    r600    r800
+mit   60x60      3.2x    6.5x    4.2x    1.4x
+Gears 55x55      0.0x    1.0x    1.6x    1.6x
+rain  30x30      2.2x    2.5x    1.6x    2.2x
+quack 30x35      2.6x    1.0x    1.0x     -
+```
+
+**`mit` was a degenerate sizing map** — precisely the trap the algorithm names. On the other
+three maps my soldiers are only ~1.0–2.5x more clustered than uniform, and on the *largest*
+map barely at all. Not worth an iteration on this evidence. Cost: zero games.
+
+## A wrong-referent error I caught in my OWN instrument, mid-analysis
+
+My first coverage table read **`DefaultSmall 134%`**. Impossible, and the tell was that two
+artefacts which must agree did not. Cause: `teamCoverageAmounts` is **per-mille of TOTAL
+tiles** (`tools/engine-facts.md`), and I had divided it by *passable* tiles — the exact
+error doctrine #5 lists. Reconciled against the census printed in the same dump:
+
+```
+census 3025 tiles = 2002 painted (T1 1106) ... coverage per-mille T1 recon=366 engine=382
+```
+
+recon 366 vs engine 382, gap −16, and T1 had 17 units on the board occluding paint in the
+reconstructed grid. **The residual is explained to within one tile**, which is what licenses
+reading anything off the corrected numbers.
+
+## THE FINDING (2026-09-08) — the map is FULL for ~75% of every game
+
+With the denominator fixed, the coverage trajectories say something much stronger than
+"coverage saturates". Engine census on Gears at r800: **2883 of 2885 paintable tiles are
+painted — 2 tiles left.** Checked across every map I had a replay for:
+
+```
+map              walls   game ends   map full by       last cov T1/T2
+Brat             15.0%      r792     r200 (25% in)      632/315
+DefaultLarge      1.6%     r1398     r400 (29% in)      647/323
+DefaultSmall      7.0%      r717     r200 (28% in)      680/266
+Flower           12.0%      r925     r200 (22% in)      671/315
+Gears             4.6%     r1832     r400 (22% in)      685/304
+Justice           7.4%      r393     r100 (25% in)      622/342
+Money             6.9%     r1549     r200 (13% in)      661/292
+Piglets2         15.3%     r2000     r500 (25% in)      587/388
+boxofchocolates  19.5%     r1335     r700 (52% in)      694/290
+rain              5.6%     r1507     r300 (20% in)      666/305
+Jail             10.0%      r674     never              478/198
+Parking_lot      11.4%      r745     never              599/224
+```
+
+**10 of 12 maps fill completely, typically ~25% of the way through the game.** Now combine
+that with two facts already in RULES.md and LEARNINGS §5, which I have never put together:
+
+- **Soldiers cannot overwrite enemy paint at all.** Only splashers (r²≤2 of the splash
+  centre) and moppers can.
+- Robots **spawn with a full stash paid out of the spawning tower's paint**, so a soldier
+  costs 200 paint — and paint, not chips, is the binding resource.
+
+So for roughly three-quarters of every game, the map is saturated and a soldier can no
+longer change the score, yet 3 of every 5 units I build is a soldier. Gears steady state,
+per 100 rounds, from r700 to r1800:
+
+```
++sold ~38   died ~60, of which STARVED (died at 0 paint) ~57   =  ~95% of deaths
+soldiers alive ~110       paint actions ~300  (2.7 per soldier per 100 rounds)
+chips $5,932 -> $120,986 unspent
+```
+
+~38 soldiers x 200 paint = **~7,600 paint per 100 rounds spent re-buying soldiers that
+cannot affect a full map**, while ~95% of their deaths are starvation rather than combat.
+LEARNINGS §5 already says *"the 3:1:1 spawn ratio is an unmeasured iteration-0 default"*
+and *"once the map saturates, the 3-in-5 of production that is soldiers stops being able to
+affect the score."* It has been sitting in my own notes as an observation and was never
+converted into a candidate. It is the next one.
+
+### Iteration 20 hypothesis (pre-registered)
+
+**Once local ground is saturated, soldier production is near-pure waste; shifting the
+tower's spawn mix toward splashers (the only unit that converts enemy paint) at that point
+raises final coverage.** The threshold must be *self-calibrating* from what a tower can
+actually sense (unpainted tiles in its own vision), not a fixed round number — maps here
+saturate anywhere from r100 to r700.
+
+Pre-registered map-level prediction, per doctrine #4: the effect appears on the 10 maps
+that saturate and is **absent on Jail and Parking_lot**, which never do.
+
+**Pre-checks I have NOT done yet, named explicitly so the next session does not inherit
+momentum without the doubt:**
+
+1. **Price the reallocation.** A splasher costs 300 paint against a soldier's 200. I have
+   *not* computed what a soldier buys post-saturation (re-claiming tiles the enemy neutralises,
+   tower attacks) versus what a splasher buys. Iteration 16 measured the splasher slot at
+   +13 games, which is suggestive but is not this number.
+2. **Reachability of the sensing threshold.** I have not checked what a tower actually sees:
+   towers do not move, so a tower's own vision may be permanently saturated long before the
+   map is, making the trigger fire far too early.
+3. **The saturation sample is win-biased.** All 12 replays are games the candidate *won*
+   (they are `bob_iter11`'s losses). Saturation timing should be roughly outcome-independent,
+   but I have not verified it on a game I lost. Run 232155's `losses/` can settle this and I
+   have not looked.
