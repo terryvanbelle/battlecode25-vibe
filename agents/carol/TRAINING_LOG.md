@@ -5219,3 +5219,47 @@ what makes this a self-calibrating threshold in §5's sense and not simply a wea
 
 So the reserve was, in the pinned regime, protecting nothing at all: it was refusing to spend
 250 chips while sitting on 1,310 and completing exactly as many ruins either way.
+
+## Why iteration 19a (cut the moppers) is losing — and it is the paint constraint again
+
+`carol_i19a` (`MOPPER_IN_20 = 0`) is running at **8/25 = 32%** against `carol_iter14` partway
+through `20260907-142542`. Removing the unit that idles 95% of the time is *hurting*, and the
+reason follows directly from the finding two sections up.
+
+**A mopper costs 100 paint; a soldier costs 200** [E: RULES.md unit table]. `buildRobot` draws
+that paint from the **tower's own stash**, which is below 200 on 57–99% of tower turns. So:
+
+- cutting moppers does not reduce paint demand, it **doubles the paint cost of the replacement
+  unit** — and paint is precisely what carol has none of;
+- on a tower holding, say, 150 paint, a mopper is the **only unit it can build at all**. Delete
+  moppers and that tower builds nothing.
+
+So the mopper share is not really a unit-mix parameter. It is a **cheap-unit share**, and
+cutting it in a paint-starved economy removes production rather than redirecting it. My
+framing — "25% of spawns wasted on a unit that acts 5% of the time" — priced the mopper by
+what it *does* and ignored what it *costs*, on the one axis that binds.
+
+That is the same error as iteration 17, one level up: there I priced the idle turns and not the
+walk; here I priced the idleness and not the unit's cheapness. **Both times I costed the
+benefit and not the price.**
+
+**The dose curve is still worth completing.** `carol_i19b` (dose 2) plays next in the same run
+on the same maps, so the three points 0 / 2 / 5 are exact within-run comparisons. If the curve
+is monotone increasing, the incumbent 5 may itself be too low, which would be a genuinely
+surprising result and a cheap next iteration in the opposite direction from the one I proposed.
+
+### And it sharpens iteration 20 into a pair, not a single change
+
+The ferry (iteration 20) makes moppers **give** paint to towers. But `refillIfPossible` still
+lets any mopper **take** up to its full 100-paint capacity from any adjacent tower whenever it
+drops below half — including from a tower that is already dry. And a mopper's attack costs
+**0 paint** [E: RULES.md unit table]; it needs paint only to offset passive attrition (−2/turn
+on neutral ground, −4 on enemy). **Moppers are drawing a full tank they have almost no use
+for, from the resource the whole economy is starved of, and they are the most numerous unit
+carol has.**
+
+I am deliberately **not** bundling that into iteration 20. §4 is explicit and iteration 15b's
+bundle cost me an uninterpretable 27.5%. Iteration 20 stays the pure ferry; **iteration 21 is
+the withdrawal guard** (a mopper tops up only to what attrition needs, and never from a tower
+below `TOWER_DRY`). If 20's mechanism fires and moves nothing, 21 is the reason and I will
+already have the instrumentation to show it.
