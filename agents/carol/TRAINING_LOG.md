@@ -4812,3 +4812,54 @@ only.
 
 If the gains land on gridworld and Parking_lot instead, the mechanism I have described is not
 the one doing the work and I reject regardless of the headline.
+
+## Iteration 15c RESULT — REJECT at 52.5%, and it prices iteration 3's mechanism for the first time
+
+Run `20260907-135509`, same 20 pinned maps, null = `carol_m14`.
+
+| arm | h2h vs `carol_iter14` | margin vs the null | deviating maps |
+|---|---|---|---|
+| 15b (memory + **nearest**) | 11/40 = 27.5% | **-9 games** | 12 swept-loss / 3 swept-win |
+| **15c (memory + farthest)** | **21/40 = 52.5%** | **+1 game** | **exactly one: Gears** |
+
+Every map but Gears splits exactly as the null does. The visit-memory *sampling domain* — draw
+uniformly, keep the farthest, but re-roll a draw that lands on an already-visited cell —
+changes **one game in forty**.
+
+**DECISION: REJECT.** 52.5% is below `WinPct` 60% and below even the 55% near-miss band, and
+§5b is explicit that a marginal accept is an unpriced liability against every feature not yet
+written. A mechanism worth one game is not worth carrying.
+
+### What the run bought, which is why it was worth its VM time
+
+Splitting 15b's bundle gives a clean two-point decomposition of a 10-game swing:
+
+```
+null (identical code)          20/40
+15c  memory + FARTHEST         21/40      (+1)
+15b  memory + NEAREST          11/40      (-9)
+```
+
+**The distance policy alone is worth ten games in forty.** The memory contributes one.
+
+That is an **ablation of iteration 3's core mechanism** — "a soldier commits to a far map
+location instead of re-rolling a local step every turn" — and it had never been measured in
+the twelve iterations since it was accepted. TRAINING_ALGORITHM's stall list ranks ablating
+carried features first, and notes that a 2026 audit found the most valuable features were ones
+accepted almost incidentally. Iteration 3's exploration commitment is exactly that shape: it
+was accepted as one half of a coupled pair, and it turns out to be carrying ten games.
+
+So the rejected iteration converted two weakly-founded beliefs into firmly-founded ones — that
+target *commitment* rather than target *choice* is what the explorer is worth, and that
+per-robot visit memory adds nothing on top of it. Both are worth more than the accept would
+have been.
+
+### Closed-directions ledger update
+
+- **"Restrict the random exploration target to never-visited cells" — CLOSED.**
+  `20260907-135509`: 21/40, +1 game against a zero-variance null, deviating on one map.
+  Mechanism verified live (`xo` max 1 of 21,894 samples), so this is a measurement of the
+  idea, not of a dormant branch. Re-opening needs a reason the *commitment* it preserves is
+  worth more when aimed by memory, which this run says it is not.
+- **Iteration 3's "commit to a far target" is now PRICED at ~10 games/40** and must not be
+  weakened by any future navigation change without a measurement of the same size.
