@@ -3297,3 +3297,71 @@ last two iterations scored 75% and 61% against this lineage's builds rather than
 without hand-editing the auto-derived roster, which `AGENT.md` forbids.
 
 I am adding it after this run completes so the run's own labelling is unaffected.
+
+### Why the roster saturated — a shared-tool flaw, reported rather than worked around
+
+The saturation is not bad luck in the draw. It is structural, and it gets worse
+the more disciplined an agent is.
+
+`progress_lib.roster_numbers` strides over **iteration numbers**:
+`{0} | range(1, newest+1, 5)`. For alice that is `{0, 1, 6, 11}`. Iterations 6 and
+11 were **rejected**, so those snapshots do not exist and are silently dropped:
+
+```
+accepted snapshots:        [0, 1, 2, 4, 5, 7, 12, 14]
+roster_numbers(14, 5):     [0, 1, 6, 11]
+resulting roster:          ['alice_iter0', 'alice_iter1']
+```
+
+`AGENT.md` promises "every 5th accepted snapshot (iter1, iter5, iter10, ...)".
+Striding over **accepted ordinals** instead would give `[iter0, iter7]` — and
+`alice_iter7` is exactly the opponent that still resolves, since the last two
+iterations scored 75% and 61% against this lineage rather than 95%.
+
+**The perverse consequence**: an agent that rejects more candidates creates more
+gaps in its iteration numbering, so *more* of its roster slots point at snapshots
+that were never accepted, and its absolute-strength chart degrades. Rejecting bad
+work is the loop functioning correctly, and it is being punished by the
+instrument. The roster also cannot recover on its own, because the missing
+numbers never come into existence.
+
+This is the third infrastructure issue this session, and like the other two I am
+reporting it rather than patching a shared tool from an agent workspace.
+
+**Local fix, which is sanctioned**: `progress/roster_extra.txt` exists precisely
+for pinned yardsticks, qualified on the grounds that they never change.
+`alice_iter7` is frozen, never changes, and sits in the measurable band. Adding it
+gives the chart a rung that can actually move, without hand-editing the
+auto-derived roster.
+
+### The roster result: it cannot answer the question. That is the finding.
+
+Run `20260907-022504` complete, 48 games, `bot.txt` label `alice_iter12`:
+
+| opponent | `alice_iter5` (2026-09-06) | **`alice_iter12`** (2026-09-07) |
+|---|---|---|
+| `alice_iter0` | 23/24 (95.8%) | **23/24 (95.8%)** |
+| `alice_iter1` | 23/24 (95.8%) | **24/24 (100.0%)** |
+
+**The roster does not confirm that iteration 12 made alice stronger — and it does
+not refute it either. It cannot tell.** The total movement between the build that
+lost 7-143 and the build that beats it 75% head-to-head is **one game**, on an
+instrument already pinned against the ceiling.
+
+I want to be exact about this, because the tempting reading is available and
+wrong: 95.8% → 95.8% and 95.8% → 100% is *not* evidence that iteration 12 works,
+and quoting "alice now beats iter1 100% of the time" as progress would be
+precisely the error I wrote into LEARNINGS §6 rule 5 a few hours ago — a rising
+number against a saturated opponent is not about strength.
+
+**So the honest state of the absolute-strength question is: unmeasured.** The only
+instrument that could answer it is the next tournament, where the accepted build
+meets two lineages that are not descended from it. The 7-143 is the baseline and
+the fix is untested against it.
+
+**Instrument repaired for next time.** `alice_iter7` is now pinned in
+`progress/roster_extra.txt`, and the roster reads `alice_iter0 alice_iter1
+alice_iter7`. Run `20260907-023637` is playing the current build against it now to
+lay the first point on that rung — the last two iterations scored 75% and 61%
+against this lineage's builds, so unlike the other two rungs it sits in a band
+where movement is visible.
