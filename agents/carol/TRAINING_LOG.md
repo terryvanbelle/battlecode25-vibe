@@ -3680,3 +3680,52 @@ int need = CHIP_RESERVE + rc.getType().getNextLevel().moneyCost;
 guarded by `canUpgradeType()` so `getNextLevel()` is never called on a lv3 tower. Recompiled
 clean in isolation. The counter-metric I registered (chips must not drop below the reserve) is
 now satisfied **by construction** rather than needing the run to catch it.
+
+## Iteration 11 RESULT — ACCEPTED at 62.5%, and the registered prediction lands
+
+Run `20260907-013714`, 80 games, maps **verified byte-identical** to iteration 10's run (I
+diffed `maps.txt`; the summary header says "sampled" but that is a cosmetic label regression
+from the coordinator's `MAPS` fix, not a resample). So iterations 10 and 11 are measured on the
+same ground.
+
+| instrument | iteration 10 | **iteration 11** | gate |
+|---|---|---|---|
+| **h2h vs `carol_iter7`** | 19/40 = 47.5% | **25/40 = 62.5%** | **>50% — PASS** |
+| peer `WinPct` 60% | — | **62.5%** | **PASS** |
+| swept-win / swept-loss vs iter7 | 4 / 5 | **8 / 3** | one-directional, no unresolved regression |
+| vs `carol_rush` | 38/40 = 95% | 37/40 = 92.5% | — |
+| overall | 71.2% | **77.5%** | — |
+
+**DECISION: ACCEPT.** Snapshotted as `src/carol_iter11/`.
+
+**The prediction I registered before the run**: *"Iteration 11 lands above 50% ... the way it
+most plausibly fails is the paint price."* It landed at 62.5%. This is the **first** prediction
+this session I made in the *positive* direction, after three consecutive nulls, and the reason
+I gave for the asymmetry held up: iterations 5, 8 and 10 all raised how *many* units carol
+fields, and this one raised what a unit can *do*. The +15 points over iteration 10 on identical
+maps is the cleanest statement of that difference the instrument can produce.
+
+**Shape of the win.** 8 swept-wins against 3 swept-losses (iteration 10: 4 against 5). Swept
+maps are immune to spawn advantage, so this is a real causal effect rather than side churn.
+
+**What did NOT happen, recorded because I predicted it might.** The paint-cost failure mode —
+splashers at 300 paint displacing soldiers at 200 in a paint-bound economy — did not show up as
+a net regression. That does not mean it is absent; it means it was outweighed. The
+`SPLASH_MIN_SCORE = 8` threshold is still, by my own arithmetic, roughly 2.5x worse than a
+soldier on paint-per-tile, and the registered refinement ladder (8 -> 14) remains available as a
+future dose. I am **not** spending an iteration on it now: iteration 12 targets a far larger
+effect, and refining a threshold inside a just-accepted mechanism is the kind of local search
+that this session has repeatedly found less valuable than changing lever.
+
+**Opponent classification.** `carol_rush` has now been beaten 95% and 92.5% in two consecutive
+evaluations — two consecutive results at or above 80%, which per the algorithm's retirement
+rule makes it a **retire** candidate. I am keeping it one more evaluation as the fixed
+`roster_extra` yardstick (it is in `progress/roster_extra.txt`, and its value there is that it
+never changes), but it no longer informs accept decisions and I will stop reading it as a peer.
+
+**Iteration 12 branch resolution.** The pre-registration said: if iteration 11 is accepted, the
+committed `carol_i12` — forked from i7 — must **not** be run, because against the new i11
+baseline it would measure "add upgrades **and remove splashers**" at once. Iteration 11 is
+accepted, so that branch is now live and `carol_i12` is **rebuilt from i11** by
+`tools/rebuild-i12-from-current.py` before evaluation. Staging that ahead of the result is what
+made this a lookup instead of a temptation.

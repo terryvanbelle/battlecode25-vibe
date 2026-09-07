@@ -10,3 +10,4 @@ date,current_snapshot,opponent,wins,total,win_pct,source
 2026-09-06T20:39:37+00:00,carol_iter5,carol_turtle,24,24,100.0,roster-run
 2026-09-06T20:39:37+00:00,carol_iter5,examplefuncsplayer,24,24,100.0,roster-run
 2026-09-06T22:06:04+00:00,carol_iter7,carol_rush,37,40,92.5,roster-run
+2026-09-07T01:37:14+00:00,carol_iter7+cand,carol_rush,37,40,92.5,roster-run
