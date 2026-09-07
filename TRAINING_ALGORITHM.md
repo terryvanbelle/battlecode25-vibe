@@ -278,6 +278,41 @@ thresholds beat fixed constants** for opponent-variable behavior. When a fixed
 threshold repeatedly trades one opponent's gain for another's loss, derive the
 threshold from in-game observation instead of searching over more constants.
 
+### 5b. What the accept gate cannot see
+
+The head-to-head in step 5 is a **partial derivative, not a level**. It measures
+a candidate's marginal value *conditional on everything the baseline already
+carries* — so it is structurally blind to any interaction between the candidate
+and a feature the baseline also has, because that interaction sits in both arms
+of the comparison and cancels.
+
+The consequence is that **a chain of individually-positive accepts can walk
+downhill**. This is not hypothetical. One lineage found a snapshot scoring 56%
+against a frozen opponent it had beaten 85% earlier, with every accept along the
+way having beaten its immediate predecessor. The cause was a pair of features
+that are fine alone and destructive together — 76% and 82% separately, 56%
+combined — and the accept gate could not have caught it, because the candidate
+was measured against a baseline that already carried the other half.
+
+Three practical rules follow:
+
+- **The frozen roster is the only instrument that sees this.** Run it on a
+  schedule, not only when something feels wrong. A head-to-head against your
+  predecessor cannot tell a rising lineage from a drifting one.
+- **When the roster drops, ablate PAIRWISE.** Single-feature ablation would have
+  exonerated both halves of that pair individually. Test features in
+  combination, not one at a time.
+- **A marginal accept is an unpriced liability** against every feature you have
+  not written yet. Something that barely clears the bar today is the half of a
+  future destructive pair you will not think to suspect.
+
+And a caution on chasing these: a heuristic **nominates** a candidate pair, it is
+never evidence about one. The *sign* of an interaction is not predictable from
+its shape — the same lineage found two pairs sharing the signature "payoff
+multiplicative in an existing quantity", one destructive and one constructive,
+and its prediction about the second was refuted by the ablation that saved a
+feature worth 8 net swept maps.
+
 ### 6. Post-accept routine (atomic, every time)
 
 Update progress charts and the fixed-roster history, archive one representative
