@@ -5390,3 +5390,74 @@ decision-level instrument (§3: instrument the decision, not the outcome): count
 a soldier *wants* a ruin and what refuses it, on Rose specifically, where the opponent
 proves 15 sites exist. The upgrade-reserve and money-tower-upgrade defects are real and
 stay queued behind it, but they are second-order against a 15-tower gap.
+
+---
+
+## Iteration 16 RUN 1 RESULT (2026-09-07 19:55) — the denial slots are worth their paint, decisively
+
+`BOT=bob_denier`, one shared 25-map sample, 150 games, run `20260907-181731`. Reported
+below from **my** side (each arm's wins against `bob_denier`), with uncertainty from
+`tools/map-resample.py` — bootstrap/jackknife over maps, never a binomial formula.
+
+```
+arm                             wins/50   95% CI     per-map 0/1/2      swept   swept-lost
+bob_iter12  3S : 1Sp : 1M        43/50   [37, 48]    2 / 3 / 20          20         2
+bob_d1      4S : 0Sp : 1M        30/50   [23, 37]    5 / 10 / 10         10         5
+bob_d0      5S : 0Sp : 0M        10/50   [ 4, 17]   18 / 4 / 3            3        18
+                                        mirror null = 25/50, zero sweeps
+```
+
+**Consistency check passes exactly.** I pre-registered that `bob_iter12` should land near
+its 86% baseline from earlier today; it landed at 43/50 = **86.0%**. The instrument is
+reading true, so the other two arms can be trusted.
+
+```
+D_denial = 43 - 10 = 33 games (+66 pts)     value of the denial capability
+D_splash = 43 - 30 = 13 games (+26 pts)     value of the splasher slot alone
+```
+
+**Pre-registered decision rule: `D_denial >= 10 pts` -> the capability is load-bearing;
+do NOT delete it.** It came in at 66. `bob_d0`'s interval [4, 17] does not come close to
+`bob_iter12`'s [37, 48], and the per-map columns are the honest read: iteration 12 wins
+**both sides of 20 of 25 maps** against the denier, while the no-denial arm is swept on
+**18 of 25**. Identical code sweeps nothing, so an 18-map sweep is 18 real maps.
+
+**REJECTED: "delete the denial slots."** 40% of my unit paint is not buying nothing. It
+is buying the only capability that can reduce enemy territory, and a soldier — which
+cannot overwrite enemy paint at all — is not a substitute at any exchange rate.
+
+### Why this was worth 150 games even though it changed nothing
+
+This is measurement doctrine #4 doing exactly what it is for. The probe said splashers act
+on 1.1% of turns and moppers on 0.4%, and every instinct said delete them. Had I priced
+that ablation on my own lineage — which never denies paint — I would have seen the extra
+soldiers help and **deleted the capability that wins me 33 games in 50 against an opponent
+that does.** The recorded case in the algorithm is a mirror calling a defensive feature
+worthless when it was worth several games against rushers; this is the same shape, at
+larger scale, caught before the accept rather than after.
+
+It also settles the utilisation paradox rather than deepening it: **a mechanism can be
+rare and high-value.** A splasher firing on 1.1% of turns is not idle capacity going to
+waste — it is a standing threat whose 32 shots per game are worth more than the ~40 tiles
+the same paint would buy as a fourth soldier. MULTI_AGENT.md says this in one line and I
+had not believed it: *a low firing rate on its own is not evidence that it did not cause
+the result.*
+
+`D_splash = 13 games` also kills the cheaper variant before I could be tempted by it. The
+splasher slot alone, the 300-paint one I called "the worse deal at the current threshold"
+from the paint-per-tile arithmetic, is worth 13 of 50 games. **The arithmetic was right
+and the conclusion drawn from it was wrong**, because it priced the tiles a splash paints
+and ignored the enemy tiles it removes — which move the differential twice under a
+tiebreak decided by "painted more" (LEARNINGS §18).
+
+### RUN 2 launched anyway, and why it is not now moot
+
+The accept decision is made. RUN 2 (`BOT=bob_iter12`, opponents `bob_d1 bob_d0`) prices
+the *other* half: what the denial slots cost me against opponents that do **not** deny.
+The gap between the two runs is the thing no single instrument reports. If `bob_d0` beats
+`bob_iter12` handily on the lineage while collapsing against the denier, then the mix is
+paying a standing premium for insurance, and the right mechanism is the algorithm's
+recorded design preference — **a self-calibrating threshold**: spawn denial units in
+proportion to observed enemy paint, rather than at a fixed 2-in-5 chosen in iteration 0.
+If `bob_d0` is merely level on the lineage, there is no premium to reclaim and the fixed
+mix stands.
