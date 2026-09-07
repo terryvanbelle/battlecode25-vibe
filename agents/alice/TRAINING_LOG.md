@@ -7516,3 +7516,68 @@ exists and why a head-to-head chain cannot substitute for it.
    accidentally close about the number *in the matchup that produced it*. Neither
    the claim nor its retraction was right; the truth is matchup-dependent, which
    is a thing neither version of me had considered.
+
+## Comms pre-check — the channel is REACHABLE, and connectivity costs almost nothing
+
+`alice_commcensus` (iteration 23 code plus counters; sends nothing, behaviour
+unchanged) counts the decision using **the engine's own `rc.canSendMessage(loc)`**
+rather than my reconstruction of "within r²<=20 and paint-connected". Today's whole
+lesson, applied prospectively: a proxy for an engine predicate diverges exactly
+when the board state shifts, and connectivity *is* a board-state property.
+
+Two maps, deliberately at opposite ends of the density table:
+
+| map | round | robot turns | tower in vision | **CAN SEND** | of tower-in-vision turns, sendable |
+|---|---|---|---|---|---|
+| **UnderTheSea** (45x45, **median** density 11.4) | 300 | 1,163 | 55.3% | **53.0%** | **95.8%** |
+| | 800 | 3,960 | 66.3% | **65.4%** | **98.7%** |
+| DefaultSmall (20x20, density 20.0 — dense, small) | 200 | 576 | 69.1% | 63.9% | 92.5% |
+| | 500 | 200 | 89.0% | 79.5% | 89.3% |
+| | 880 | 439 | 89.1% | **89.1%** | **100.0%** |
+
+### The finding, and it is the one I predicted
+
+**The paint-connectivity requirement — normally the awkward part of BC25 comms —
+costs almost nothing here: 96–99% of turns that have a tower in vision can also
+send to it**, rising to 100% late on the small map. The binding constraint is
+plain **range** (r²<=20 to a tower), not connectivity.
+
+That is exactly what my saturation finding predicted: my territory is one
+contiguous painted mass from round 250–600 onward, so a 4-adjacent ally-paint path
+from a robot to a nearby ally tower almost always exists. **A constraint I would
+otherwise have had to engineer around is already satisfied by the board state I
+measured this afternoon.**
+
+And the channel is available on **the majority of robot turns** — 53% at r300 and
+65% at r800 on the median map, rising through the game. With 1 message/turn per
+robot and 2–3 towers simultaneously in range, throughput is not the limit either.
+
+**I checked the flattering map second, on purpose.** DefaultSmall is 20x20 at
+density 20.0 — small and dense, so towers are near everything, and it reads
+higher (up to 89%). Money taught me that lesson this afternoon at a cost; the
+median-density map is the number to quote and it is 53–65%.
+
+### What this does and does NOT establish
+
+**Does**: the direction is not priced out. Unlike the splasher, the underfoot
+restore, the map-class hypotheses and iteration 23's late-game premise — four
+candidates killed cheaply today — this one survives its pre-check. **It is the
+first green light of the session**, and I note that a pre-check regime that only
+ever says no would be a broken regime.
+
+**Does not**: reachability is not value. This says a message *can* be sent on most
+turns; it says nothing about whether there is anything worth sending. That is a
+design question, and the honest next step is not to build a schema but to name a
+**specific decision my bot currently makes badly for lack of information**, then
+check that the missing information is something a tower could actually supply.
+Building a comms layer because the channel is open is exactly the "capability
+looking for a use" shape that this project's ledger is full of.
+
+**Candidate decision to attack, recorded now so it can be tested rather than
+assumed**: soldiers find ruins by random walk within vision (`WANDER_RUN = 25`
+ballistic), and the tournament shows `bob` reaching 14–15 towers by round 160 on
+`gridworld` while this lineage stalled at 5–6. A tower knows where its own
+completed patterns are and could broadcast "claimed" so soldiers stop converging
+on ruins another soldier is already finishing. **Whether soldiers actually collide
+on ruins is a countable quantity I have not counted** — and by today's consistency
+pass, that count is the next artifact, not the schema.
