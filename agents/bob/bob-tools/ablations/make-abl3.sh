@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# Ablation A3: bob_iter9 with iteration 3's idle-chip tower self-upgrade REMOVED.
+# Ablation A3: bob_iter12 (parity + SRP) with iteration 3's idle-chip tower self-upgrade REMOVED.
 # Everything else is iteration 9 verbatim. Builds src/bob_abl3 (package bob_abl3).
 set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")/../.."
 rm -rf src/bob_abl3
-cp -r src/bob_iter9 src/bob_abl3
-sed -i 's/^package bob_iter9;/package bob_abl3;/' src/bob_abl3/*.java
+cp -r src/bob_iter12 src/bob_abl3
+sed -i 's/^package bob_iter12;/package bob_abl3;/' src/bob_abl3/*.java
 python3 - <<'PY'
 import pathlib
 p = pathlib.Path('src/bob_abl3/Tower.java')

@@ -3796,3 +3796,45 @@ losses eliminated.
   travel-distance hypothesis failed its own cheap pre-check. A refinement must come
   from tracing a swept-loss game, not from theorising — and the deviation attribution
   above hands the trace exactly three games to look at.
+
+
+---
+
+## Next pairwise ablation, chosen by LEARNINGS 15's own rule (2026-09-07)
+
+Rule 4 says to suspect an interaction wherever a mechanism's payoff is multiplicative
+in an existing quantity, and rule 3 says to ablate **pairwise, in the presence of the
+new mechanism** rather than one feature at a time. Applying both to my own remaining
+carried features rather than waiting for the roster to drop again:
+
+**Iteration 3's idle-chip tower self-upgrade is the candidate.** It and SRPs are the
+two things in this bot that consume chips, and their exchange rates are wildly
+different now that the mix is clean:
+
+```
+tower upgrade   2,500 chips  ->  +5 paint/turn on ONE tower
+SRP               200 chips  ->  +3 paint/turn on EVERY allied paint tower
+```
+
+With ~6-8 paint towers an SRP is `+18 to +24 paint/turn` for 200 chips against an
+upgrade's `+5` for 2,500 — **over an order of magnitude better per chip**. Iteration 3
+was accepted *before* SRPs existed, when the upgrade was the only chip sink available
+and chips were a dead resource piling to 70,000 unspent. Both of those conditions have
+since been falsified: iteration 9 gave chips a far better sink, and iteration 12's
+measurements show the treasury now turning over at ~1,300 rather than accumulating.
+
+So the exact shape LEARNINGS 15 warns about is present: a feature accepted under
+conditions that a later feature removed, still being carried, and competing for the
+same resource.
+
+`src/bob_abl3` is now rebuilt **on the iteration 12 baseline** (parity + SRP, no
+memory) with the upgrade gate turned off and nothing else touched — verified by diff,
+compile-checked. It is queued behind the roster run; one gauntlet per workspace.
+
+**Pre-registered readouts, in games and sweeps against the measured null of zero:**
+1. Swept wins/losses versus `bob_iter12` head-to-head, and separately against frozen
+   `bob_iter1` on the pinned maps for comparability with the whole curve above.
+2. **A null result here is informative and will be recorded as such.** Unlike A7, I
+   have no roster drop pointing at this feature — I am testing a *prediction* from the
+   lesson rather than diagnosing a known failure, and "the upgrade still pays despite
+   the arithmetic" would be a genuine correction to my model of the economy.
