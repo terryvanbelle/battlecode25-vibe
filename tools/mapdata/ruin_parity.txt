@@ -1,6 +1,18 @@
 # Ruin coordinate parity across the 75 official BC25 maps, read from the
 # engine jar's .map25 flatbuffers (tools/ruinscan/RuinScan.java).
 # Any policy keyed on (x+y)&1 is single-branch on the three odd=0 maps.
+#
+# WHICH RUINS THIS COUNTS -- read this before quoting a ruin count anywhere.
+# These are CLAIMABLE ruins: the .map25 `ruins()` vector, which excludes the
+# four tiles the starting towers occupy (two per team). A replay MatchHeader
+# reports ALL ruin tiles and is therefore consistently FOUR HIGHER:
+#     UnderTheSea    parity 23   header 27
+#     DefaultMedium  parity 19   header 23
+# Both numbers are correct and they answer different questions. "How many
+# towers can still be built" is this file; "how many ruins exist" is the
+# header. The two support different claims, so a per-ruin rate (soldiers per
+# ruin, rounds per ruin) changes by ~17% depending on which you divide by --
+# one published figure has already moved this way. Say which you used.
 AlarmClock              35x35  ruins= 16 even=  8 odd=  8
 Barcode                 50x21  ruins= 18 even=  9 odd=  9
 BatSignal               40x25  ruins= 10 even=  5 odd=  5
