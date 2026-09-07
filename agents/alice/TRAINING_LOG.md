@@ -7830,3 +7830,355 @@ not need to spend anything to get it.
 What survives the staleness: **bob swept 65 maps against me and I swept 1.** A gap
 that size is structural, not tuning, and no amount of iteration-14-era noise
 explains it. It stays the standing target.
+
+---
+
+# Iteration 24 candidate — the mopper never chooses the tile it stands on
+
+## Where this came from
+
+`src/alice_mopstand/` was on disk uncommitted when I resumed — an instrumented
+census build I wrote just before the session died. Reconstructing its intent from
+the code and then auditing it found the instrument itself was **measuring the
+wrong scale**, so the first work was fixing the instrument, not running it.
+
+## The mechanism, from the engine numbers rather than from a trace
+
+Two facts from `RULES.md`, both already verified against the engine:
+
+- **A mopper's attack costs 0 paint** (`UnitType`: Mopper atk cost 0). Mopping is
+  free.
+- End-of-turn upkeep (`InternalRobot.processEndOfTurn`): standing on an **enemy**
+  tile costs a mopper **-4/turn**; on an **ally** tile the terrain term is **0**.
+  (The -1/-2 per adjacent ally robot is charged either way, doubled on enemy.)
+
+Put together: **upkeep is the mopper's ONLY paint sink**, and terrain choice is
+most of it. A 100-paint mopper standing on enemy paint is empty in ~25 turns; at
+0 paint it takes -20 HP/turn and cannot act, and it has 50 HP. So a mopper that
+parks on enemy paint kills itself in roughly 28 turns without an enemy doing
+anything.
+
+Now the decision. `runMopper`'s last line is:
+
+```java
+if (target == null) wander(rc);
+else if (bd > 2) tryMove(rc, me.directionTo(target));
+// bd <= 2: already in mopping range, hold position and keep mopping.
+```
+
+**The hold branch never chooses where it stands, and it does not use its move.**
+The mopper arrives by walking *toward* enemy paint, so the tile it stops on is
+disproportionately likely to be enemy paint — the thing it was walking at.
+
+The candidate is: in the hold branch, step to an adjacent **ally** tile that is
+still adjacent to enemy paint. Zero terrain upkeep, mopping preserved.
+
+## Pricing it against what it displaces, not against zero
+
+Doctrine makes me price a reallocation by the forgone use. **The hold branch
+currently spends its movement on nothing** — it does not move at all. So the
+move is genuinely free, and this fits the recurring winner's profile the
+algorithm names: *capability preserved at zero marginal cost*. That is the
+strongest part of the case and also the part I should trust least without the
+counts below, because it is the comfortable direction.
+
+Two real prices I can name now:
+
+1. The candidate as scoped keeps me adjacent to *some* enemy tile, not the
+   *specific* pattern-blocking tile iteration 19 taught the mopper to prefer. If
+   the step trades a priority-0 target for a priority-2 one it is a downgrade.
+   Design must preserve the ranked target, not just "an" enemy neighbour.
+2. Moving can raise the **crowding tax** (-1/adj ally on an ally tile). A spot
+   with three adjacent allies is -3/turn and beats -4 only barely.
+
+## A competing branch that buys the SAME good, named now so the split is chosen
+
+A mopper can mop the tile **under itself** (`r^2=0` is inside its `r^2<=2` action
+radius), turning enemy paint into EMPTY, which is `-2`/turn for a mopper rather
+than `-4`. That halves the drain with no movement — but it **spends the action**,
+which is the mopper's scarce good, whereas the step spends a movement that is
+currently wasted. Two branches, same good, different budgets. Doctrine says the
+order they fire in would otherwise set the allocation by accident, so: **the step
+is strictly cheaper and is the one I am testing.** Recording the self-mop as a
+named, unpriced alternative rather than letting it get bundled in.
+
+## Pre-registration — the numbers that decide this, written before I read them
+
+The instrument as I found it computed `fs` = ally tiles adjacent to an enemy tile
+**anywhere in the 9x9 vision window**. That is a *vision-scale* supply count, and
+the decision I would change picks among **the 8 tiles I can step to this turn**.
+Wrong referent — the exact trap doctrine names (the lineage that ran reachability
+on a guard and never on the set the guard ranks). I added the decision-scale
+count `alt`: of the 8 tiles `canMove` actually permits (which covers walls *and*
+occupancy, unlike the paint grid), how many are ally paint AND still adjacent to
+≥1 enemy tile. `hold` records whether the turn took the hold branch at all.
+
+Deciding quantity: **P(u=X AND alt≥1 | hold=1)** — the share of hold-turns on
+which the mechanism could actually act.
+
+- **< 10%** → too rare to pay for; hypothesis dead, log it and leave.
+- **≥ 25%** → build the candidate.
+- **10–25%** → marginal; only proceed if starvation is independently visible.
+
+And the two checks I would have skipped, both of which have killed a hypothesis
+of mine already today:
+
+- **SUPPLY, not just frequency.** If `alt` is modally **0** whenever `u=X`, there
+  is nothing to step to and the hypothesis is dead however common `u=X` is. This
+  is the identical shape to the ruin-collision death: I counted collisions and
+  never counted the targets. Counting supply first this time.
+- **The drain must convert into harm.** If mopper paint `p` stays high all game,
+  -4/turn is a number and not a problem, and the fix buys nothing. A cost that
+  never binds is not a cost.
+
+Sizing on **three** maps (UnderTheSea, catface, CastleDefense), not one, because
+a quantity measured on one map is a statement about that map — `gridworld` once
+gave 25% where two other maps gave 95%.
+
+Identity check for the instrumented build: `src/alice` is byte-identical to
+`src/alice_iter23`, so `alice_mopstand vs alice_iter23` is a mirror of identical
+code and must reproduce `alice vs alice_iter23` exactly. If it does not, the
+census bytecode is changing behaviour and its numbers are not trustworthy.
+
+## `reference/RESEARCH.md` — now exists, read, and it lands on the candidate in flight
+
+The coordinator cleared a rebuilt `reference/RESEARCH.md` (2019–2024 only; both
+predecessors' versions were built on 2025 post-mortems and are excluded, and the
+sources here were filtered by `tools/redact-2025.py` *before* anyone read them,
+which is the ordering that makes the ban enforceable rather than aspirational).
+Four things bear on what I am doing tonight.
+
+**§1 — the instrument table, which independently confirms tonight's map-policy
+correction.** It sets out what each instrument can and cannot do, and the entry I
+should have had in front of me this morning is that a **lopsided instrument
+measures direction poorly in BOTH directions**: when you lose most games anyway,
+a change making you *worse* has little room to show. That is the same argument I
+reached from the other end when I noted `iter0`/`iter1`/`iter4` at 98–100% "have
+no resolution left and gate nothing". Mine was about a ceiling, §1's is about a
+floor; they are one fact. It also states plainly that the frozen roster is the
+*level* instrument and must be **same-sample to be an identity rather than an
+estimate** — which is exactly the distinction I drew between the chart and the
+drift check, arrived at independently. Two derivations meeting is the best
+evidence I have that the correction was right.
+
+**§8 — wololo's three-part test for whether a quantity is a RESOURCE.** (a) having
+none of it is near a loss condition, (b) you can remove it from the opponent, (c)
+the opponent can make it hard to get. Applied honestly to **mopper paint**:
+
+- (a) **Yes, and sharply.** 0 paint → -20 HP/turn and cannot act; a mopper has 50
+  HP. Three turns from empty to dead.
+- (b) **Yes.** A mopper attack on an enemy robot is *-10 paint to them, +5 to me*
+  (`RULES.md`) — a direct transfer, which is the strongest form of (b).
+- (c) **Yes.** Holding painted ground raises my upkeep on it.
+
+So mopper paint passes all three — it is a genuine resource, not a constraint.
+§11's item 8 ("check that your resource is one the opponent can deny you") is the
+check that would have killed this line, and it **passes**. That matters because
+my first hypothesis *in* this area is about to die below: the area survives even
+though the hypothesis does not, and those are separate verdicts.
+
+**§7 — emergent, not commanded, coordination.** The perennial finding is that
+sophisticated coordination schemes flop while local rules producing group
+behaviour are cheap and robust; the number to sit with is **~two-thirds of
+self-play games won from a spawn-ORDERING change alone**, no messages, no shared
+state. This is the constructive counterpart to my comms result: I refuted the
+*dispatch* application of comms yesterday and recorded the capability as "open and
+unpriced". §7 says I was refuting the right thing — a schema — and that the
+payoff in this space is reached without one. Recorded as a live direction.
+
+**§2/§3 — a trace proves a mechanism EXISTS, not that it is WORTH anything.** My
+closed-directions ledger is largely a list of exactly this. Nothing new to change;
+it is a correct description of my failure mode and belongs in LEARNINGS.
+
+## Census result, map 1 of 3 (UnderTheSea) — my hypothesis fails its own gate
+
+Instrumented build verified **behaviour-inert first**, and by a stronger argument
+than a game-diff: the census makes only read-only calls, so the *only* channel by
+which it could change play is the bytecode limiter truncating a turn — and
+**overruns = 0 across all 18,339 mopper-turns** (peak 13,760, no near-misses). Not
+"probably inert": inert by exhaustion of the one available mechanism, for free.
+
+18,339 mopper-turns, 6,348 of them (34.6%) in the hold branch.
+
+| where the mopper stands | all turns | hold-turns |
+|---|---|---|
+| **A** ally paint (0 terrain upkeep) | **82.8%** | **55.7%** |
+| **E** empty (-2/turn) | 12.9% | 31.8% |
+| **X** enemy paint (-4/turn) | **4.4%** | **12.5%** |
+
+**Pre-registered deciding quantity: P(u=X AND alt≥1 | hold) = 604/6348 = 9.5%.**
+My pre-registered threshold was **<10% → too rare to pay for, hypothesis dead.**
+
+It is 9.5%. **That is under the bar I set before I looked, and I am taking it.**
+
+This is as close to the line as it could land, which is precisely why the number
+was written down in advance. Had I set the gate after seeing 9.5% I would have
+found a reason it was enough.
+
+**The premise was simply wrong.** I argued the mopper "walks toward enemy paint,
+so the tile it stops on is disproportionately likely to be enemy paint". It is
+not: moppers stand on **ally** paint 82.8% of the time. The mechanism I designed
+addresses a situation that mostly does not arise.
+
+The supply check came out the *opposite* way from the ruin-collision death, which
+is worth recording because I predicted the same shape: when `u=X`, modal `alt` is
+0 (191/795) but **76% do have an alternative**. So supply was not the binding
+constraint this time — **frequency was**. I have now had one hypothesis killed by
+absent supply and one by absent frequency, and I checked both only because the
+first taught me to.
+
+### The census refutes my hypothesis and NOMINATES a better one
+
+The harm is real and I mis-attributed its cause. **6.9% of mopper-turns sit at
+p≤10 and 277 turns at p=0** — moppers genuinely starve. But they starve while
+standing on **ally paint 82.8% of the time**, where the terrain term is **zero**.
+Terrain cannot be what is draining them.
+
+`RULES.md` already names the only remaining sink, and I read past it: **the
+adjacency tax is charged on ALLY tiles too** — `addPaint(-allyRobotCount)` — so
+standing on your own paint waives the *terrain* penalty and never the *crowding*
+one. A surrounded mopper pays -8/turn on a 100-paint stash, on friendly ground,
+forever.
+
+So the drain is plausibly **crowding, not terrain** — and I did not instrument it.
+I counted adjacent *enemy tiles* and never adjacent *ally robots*. Added `aa` to
+the census. Not proceeding on it until the accounting closes: I will predict each
+mopper's per-turn paint delta from (terrain + crowding) and reconcile against the
+observed delta, because a decomposition that does not close is not evidence.
+
+**Holding the verdict until all three maps report.** One map is a statement about
+that map.
+
+## Census COMPLETE, all three maps — hypothesis REJECTED by its own gate, and it found something bigger
+
+| map | mopper-turns | hold-turns | **P(u=X & alt≥1 \| hold)** |
+|---|---|---|---|
+| UnderTheSea | 18,339 | 6,348 | **9.5%** |
+| catface | 5,626 | 4,056 | **8.3%** |
+| CastleDefense | 1,860 | 1,180 | **8.1%** |
+| **pooled** | **25,825** | **11,584** | **9.0%** |
+
+Gate was **<10% → dead**. Pooled 9.0%, and under 10% on all three maps
+independently, so this is not a degenerate-map artifact. **Iteration 24 as
+originally scoped is rejected.** The premise ("the mopper walks at enemy paint so
+it stops on enemy paint") is simply false — moppers stand on ally paint 75.7% of
+the time.
+
+### Closing the accounting BEFORE reading anything off it
+
+Before nominating a replacement I reconciled the observed per-turn paint delta
+against the engine's terrain table, on consecutive rounds only so each delta is
+exactly one end-of-turn charge (UnderTheSea, 18,145 deltas):
+
+| tile under mopper | engine terrain term | **observed mean Δpaint** | unexplained |
+|---|---|---|---|
+| **A** ally | 0 | **-0.54** | -0.54 |
+| **E** empty | -2 | **-2.04** | -0.04 |
+| **X** enemy | -4 | **-3.50** | +0.50 |
+
+**The accounting closes.** Terrain is essentially the whole sink, and the residual
+on ally tiles (-0.54) is the crowding tax — real, but small, because my moppers
+average only ~0.5 adjacent ally robots.
+
+**That kills my own follow-up hypothesis before it cost a game.** I had nominated
+crowding as the true drain and had already added an `aa` field to measure it. The
+reconciliation says crowding is -0.54/turn against terrain's -2 to -4. Nominated
+and refuted inside ten minutes, on data already on disk, for zero games. Recording
+it because a hypothesis I never ran is still a hypothesis I held.
+
+### The finding the census actually delivered — moppers are a self-terminating unit
+
+A mopper's attack costs **0 paint** and a mopper has **no paint income** (the bot
+calls `transferPaint` nowhere). So mopper paint declines monotonically and the
+only question is how fast. Sizing the consequence:
+
+| map | moppers | deaths | **died at exactly p=0** | died with >60 paint | median lifespan |
+|---|---|---|---|---|---|
+| UnderTheSea | 194 | 189 | **69.8%** | 18.5% | 80 rounds |
+| catface | 84 | 78 | **71.8%** | 21.8% | 61 rounds |
+| CastleDefense | 43 | 42 | **28.6%** | 50.0% | 38 rounds |
+| **pooled** | **321** | **309** | **64.7%** | 23.6% | — |
+
+**Roughly two-thirds of my moppers starve to death.** CastleDefense is the honest
+exception and it makes sense: it is the combat map of the three, where half the
+moppers are killed with paint still in the tank. Reported rather than pooled away.
+
+This is a **degeneracy signal**, not an opponent-relative comparison — "our units
+die in a dead band" needs no opponent to be wrong — which is the kind of target
+the algorithm says to prefer. It also compounds a failure mode already in my spawn
+comments: tower paint → 0 → only the 100-paint mopper is affordable → moppers
+complete no tower patterns → no paint income. Each such mopper converts 100 tower
+paint into ~80 rounds of presence and then dies, because **mopping is free, so its
+paint bought nothing but time.**
+
+### My pre-registration tested a PROXY, and my own engine-facts file says not to
+
+The gate I wrote asked about **enemy** paint. The engine charges a mopper on
+**every non-ally tile**: -4 on enemy and **-2 on EMPTY**. Empty tiles sit under my
+moppers *four times more often* than enemy ones. Re-running the same quantity on
+the engine's real predicate:
+
+| map | X & alt≥1 | E & alt≥1 | **(X or E) & alt≥1** |
+|---|---|---|---|
+| UnderTheSea | 9.5% | 21.7% | **31.2%** |
+| catface | 8.3% | 30.5% | **38.9%** |
+| CastleDefense | 8.1% | 17.4% | **25.5%** |
+| **pooled** | 9.0% | 24.4% | **33.3%** |
+
+**33.3%, and ≥25% on every map — over the "build" threshold I pre-registered.**
+
+I want to be exact about what happened, because it flatters me and that is when I
+should be hardest on myself. **My original hypothesis is dead and stays dead**;
+9.0% is under the bar I set and I am not rescuing it. The 33.3% figure is a
+*different, data-suggested* hypothesis and it carries the weaker evidential status
+that comes with being formed after looking. What it is not, though, is a fishing
+expedition: `engine-facts.md` — written by me — ends with *"guard on the engine's
+own predicate, not on a proxy you believe implies it."* I then wrote a gate on the
+proxy "enemy paint" when the engine's predicate is "not ally paint". The
+correction is my own recorded rule applied to my own pre-registration, which is
+the one form of post-hoc revision I think is legitimate.
+
+**Size of the prize, as an upper bound and labelled as one:** if every actionable
+hold-turn stood on ally paint, 7,303 paint is saved across the three games — **73
+mopper-lifetimes** against 321 moppers actually spawned, so ~23% of all mopper
+paint. Upper bound because it assumes every such turn relocates and that the move
+is free of side effects.
+
+### Where the closed `transferPaint` direction stands — NOT re-opened
+
+The obvious reading is "give moppers a refill". The ledger closed that at
+iteration 6 and the recorded cause **still applies**: a refill costs the tower the
+same paint as a fresh unit, so it is break-even on the binding resource and saves
+only chips, which sit at $290k. A mopper refill is 100 paint against a 100-paint
+new mopper — the *identical* arithmetic that closed it for soldiers. It stays
+closed. The candidate below does not spend tower paint at all; it stops wasting
+the paint the mopper already holds, which is a different lever.
+
+## Iteration 24 (rescoped) — the hold branch chooses its tile
+
+`src/alice_i24/`. In the `bd <= 2` hold branch, if the mopper stands on non-ally
+paint, step to a movable neighbour that is ally paint **and from which the chosen
+target is still within `r²<=2`**. One mechanism, nothing bundled.
+
+- **Price:** the hold branch currently does not move at all, so the movement is
+  already being wasted and nothing is displaced. This is the "capability preserved
+  at zero marginal cost" profile.
+- **Target preserved deliberately:** the step must keep *the ranked target* in
+  range, not merely "an" enemy tile — otherwise it could silently trade iteration
+  19's pattern-blocking priority-0 target for a priority-2 one. **Note this makes
+  the true actionable rate ≤ the measured 33.3%**, because `alt` only required
+  adjacency to *some* enemy tile. The `i24=` counter measures the real rate.
+- **Play-symmetry:** the neighbour scan starts at a random index. A fixed
+  compass-order `Direction[]` scan is precisely the bug class the audit forbids,
+  and here the candidates are interchangeable, so there is no formation cohesion
+  for randomisation to destroy.
+
+Pre-registered, before step 0 returns:
+
+- **Step 0 (mandatory):** one map, arms must NOT be byte-identical, and `i24=`
+  must be > 0. If the arms match, the mechanism is dead and no gauntlet is spent.
+- **Accept gate:** head-to-head vs `alice_iter23` > 50% on a full random sample.
+- **Prediction that can falsify the mechanism story even if the number is good:**
+  mopper deaths at p=0 must fall materially below 64.7%. If the win rate rises
+  while starvation is unchanged, the mechanism is not what won and the
+  attribution is OPEN, per step 3b — I do not get to back-fill it.

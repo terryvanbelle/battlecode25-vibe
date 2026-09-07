@@ -121,6 +121,63 @@ Moppers cannot paint; painted area is the win condition.
 did zero mopping while the opponent erased its paint all game (see §2 — coverage
 is a contested stock). The useful range is an interior one.
 
+### 3b-i. SHARPENED for moppers — "lifetime output IS the paint it was born with" is FALSE for a mopper
+
+§3b above says *"a unit's lifetime output is the paint it was born with."* That is
+true of a **soldier**, whose paint converts into painted tiles, and it is **exactly
+wrong for a mopper**. From `UnitType`: a **mopper's attack costs 0 paint.** A
+mopper with 8 paint mops precisely as well as one with 100.
+
+So for a mopper, paint buys **duration and nothing else** — and since a mopper has
+no income, upkeep is its *only* sink. Two levers exist and they are not equally
+priced: adding income (refill) or **reducing upkeep**. The first is the closed
+`transferPaint` direction; the second had never been looked at.
+
+Measured 2026-09-07 over 25,825 mopper-turns on three maps
+(`alice_mopstand`, verified inert: read-only calls, **0 bytecode overruns**):
+
+| map | moppers | **died at exactly p=0** | died with >60 paint | median lifespan |
+|---|---|---|---|---|
+| UnderTheSea | 194 | **69.8%** | 18.5% | 80 rounds |
+| catface | 84 | **71.8%** | 21.8% | 61 rounds |
+| CastleDefense | 43 | **28.6%** | 50.0% | 38 rounds |
+| **pooled** | **321** | **64.7%** | 23.6% | — |
+
+CastleDefense is the honest exception and it is the combat map of the three — on a
+map where the enemy kills moppers, the paint clock stops mattering. **A degeneracy
+whose rate depends this strongly on the map is a regime, not a constant.**
+
+**The accounting closes**, which is what licenses reading a mechanism off it. Per-turn
+Δpaint on consecutive rounds against the engine's terrain table:
+
+| tile under mopper | engine term | observed | unexplained |
+|---|---|---|---|
+| ally | 0 | **-0.54** | -0.54 (crowding tax) |
+| empty | -2 | **-2.04** | -0.04 |
+| enemy | -4 | **-3.50** | +0.50 |
+
+Terrain is the whole sink. **This refuted my own follow-up hypothesis for free**: I
+had nominated the crowding tax as the real drain and had already written the
+instrument for it, and the reconciliation priced crowding at -0.54 against
+terrain's -2 to -4. A decomposition that closes does not only license the
+conclusion you wanted — it kills the one you were about to spend a run on.
+
+### 3b-ii. A hypothesis dies of absent FREQUENCY or absent SUPPLY, and they look identical from the outside
+
+Two of my hypotheses died within a day of each other, both by a count I nearly
+did not take, and **the two counts are different**:
+
+| hypothesis | frequency of the situation | supply of alternatives | died of |
+|---|---|---|---|
+| ruin-collision dispatch | fine — groups of 3+ were common | **0 unclaimed ruins left** | **supply** |
+| mopper stands on enemy paint | **9.0%**, under its own gate | fine — 76% had an alternative | **frequency** |
+
+The ruin case taught me to count supply, so on the mopper case I pre-registered a
+supply check — and supply was *not* the problem. Had I checked only supply, having
+"learned the lesson", the mopper hypothesis would have passed. **The transferable
+rule is to take both counts, because the previous failure tells you which question
+you asked last time, not which one matters this time.**
+
 ## 3c. The absorbing state — the most expensive bug this lineage has had
 
 Tower paint funds spawning. A soldier costs 200 of it, a mopper 100, and tower
@@ -723,6 +780,31 @@ branches drew on the **same** budget in the **same** turn:
 Removing both scored **0/24** at zero variance: they are the only paint that ever
 reaches ground outside a tower pattern, so they are complements. **A 13-game swing
 between two branches of the same method, decided by one predicate.**
+
+### It recurred in a PRE-REGISTRATION, which is the worst place for it (2026-09-07)
+
+The rule above is written in my own words in `tools/engine-facts.md`. I then wrote
+an iteration-24 accept gate on the proxy **"enemy paint"** when the engine's charge
+is on **every non-ally tile** — a mopper pays -4 on enemy and **-2 on EMPTY**. Empty
+tiles sit under my moppers four times more often than enemy ones, so the gate
+measured 9.0% where the engine's own predicate measures **33.3%**.
+
+Two things make this worth its own entry rather than a footnote:
+
+- **A proxy in a gate is more dangerous than a proxy in a guard.** A bad guard
+  loses paint and shows up in a trace. A bad gate **silently mis-scores the
+  hypothesis** and the loss is invisible — I would have recorded "measured, dead"
+  and moved on, with a number that was correctly computed against the wrong thing.
+  That is the wrong-referent error (doctrine 5) reaching the measuring instrument.
+- **The fix is only legitimate because the rule pre-dates the data.** Rescoping a
+  gate after seeing the number is normally fishing. It is defensible here *only*
+  because the predicate was written down before the gate was, and the original
+  hypothesis stays rejected on its own terms rather than being rescued.
+
+**Practical form: when pre-registering a threshold on an engine-charged quantity,
+quote the engine's charge table into the pre-registration.** Had the three-row
+table (ally 0 / empty -2 / enemy -4) been sitting in my gate, the omission of
+"empty" would have been unmissable.
 
 ### Two corrections this forces on my own reasoning
 
