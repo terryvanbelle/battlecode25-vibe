@@ -4197,3 +4197,45 @@ overwrites) before being believed. It is recorded as the leading explanation, no
   **only** with a specific mechanism for SRP persistence — e.g. excluding SRP tiles from
   splasher targeting — since the recorded cause is the cost/persistence imbalance, not the
   hypothesis that SRP income is valuable.
+
+## Iteration 14 (frontier-seeking) — conditional gate read 8 games in, and it reframes the problem
+
+**Hypothesis**: soldiers reaching IDLE-ALLY have nothing paintable within the ACTION radius
+(r2=9), but vision is r2=20 — more than twice the area — and `newExploreTarget()` picks a
+**random map coordinate** with no notion of where unpainted ground is. So an idle soldier deep
+in our own territory wanders toward more of our own territory. Retarget it at the nearest
+visible EMPTY tile. Costs no resource; only redirects a move already happening.
+
+**Conditional reachability, read from live replays 8 games in** (~5 minutes, versus 40 for the
+full run — the practice that would have saved iteration 12's design):
+
+| map | soldier turns | IDLE-ALLY | `frontFound` | `frontNone` | **hit-rate among targeted turns** |
+|---|---|---|---|---|---|
+| DefaultMedium | 18,464 | 3,473 (18.8%) | 227 | 3,246 | **6.5%** |
+
+**The hypothesis is wrong, and the counter says exactly how.** Of the idle turns this targets,
+**93.5% have no empty tile anywhere in vision at all.** Soldiers are not failing to navigate to
+paintable ground they can see — there **is** none in sight. They are sitting inside saturated
+territory with the frontier beyond r2=20.
+
+**I am NOT killing the run on that number**, and the reason is iteration 12: a low firing count
+is not evidence a mechanism did not cause a result. 227 firings could still flip games if each
+is valuable. The decision comes from **mirror deviation against `carol_m12`**, not from
+frequency. The gate lowers my expectation; it does not make the call.
+
+**What this measurement buys regardless of the verdict — a better-founded next hypothesis.**
+The blocker is not local navigation but that **the frontier is outside vision entirely**. A
+soldier cannot steer toward what it cannot sense, and carol has no map-wide memory and no
+communication — `sendMessage`/`readMessages`/`broadcastMessage` are all still on the uncalled
+list from this session's API sweep. The remaining options are therefore:
+
+1. **Remembered frontier**: each robot keeps a coarse map-wide record of where it has seen
+   EMPTY ground and steers there when idle. No comms needed, no resource cost.
+2. **Symmetry extrapolation**: `TRAINING_ALGORITHM.md` Phase 0 item 8 — maps are guaranteed one
+   of a small set of symmetries, so unseen enemy territory can be inferred from our own half.
+   Carol has never used this, and it is standard practice among strong teams every year.
+3. **Comms**: towers can broadcast at r2=80; robot<->tower within r2=20 on a connected paint
+   path. The costliest of the three and the one most likely to be bytecode-bound.
+
+Option 1 is the cheapest and is a strict superset of iteration 14's mechanism (vision is a
+memory of depth zero), so it is the natural refinement whichever way this run lands.
