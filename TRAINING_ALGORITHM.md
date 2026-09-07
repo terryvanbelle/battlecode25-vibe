@@ -484,6 +484,16 @@ Three practical rules follow:
   fire in sets the allocation, by accident rather than by measurement**, which is
   a policy nobody chose. Price them separately, then choose the split.
 
+**When the roster drops, let ANCESTRY name the pair, not plausibility.** The
+candidates are the features that entered or left between the generations the
+roster is comparing — read the lineage, not your intuition about what ought to
+interact. One lineage did exactly this: its ancestor carried a memory feature,
+the next accept deleted it, and a later accept spent a unit's last resource into
+work that only pays if a replacement returns to finish it. That is a bet which
+only pays out under a feature an earlier accept had already removed — and it is
+structurally invisible to a gate whose *both* arms lack that feature. The pair
+was named by the ancestry in three lines of log, not by imagination.
+
 **Nominations are usually wrong — the base rate says so.** Three candidate pairs
 have been nominated by reasoning in this project and ablated properly; **two
 were refuted**, one of them with the interaction coming out the *opposite sign*
