@@ -267,6 +267,14 @@ instrument the pool itself in the first run — three iterations once failed
 identically because a global cap, visible in the data the whole time, was
 never printed.
 
+**Close the accounting before you read anything off it.** When you decompose a
+budget into sinks, check the parts sum to the known total *first* — a
+decomposition that does not close is not evidence, and a residual category is
+only trustworthy once everything around it is accounted for. One lineage's paint
+audit closed to exactly 200 per soldier on both maps, which is what licensed
+reading a 40% movement-upkeep figure off it as the residual, and what made the
+resulting retraction of a long-standing entry safe.
+
 ### 5. Staged evaluation
 
 1. **Cheap reproduction sample**: `ReproSampleSize` peers, all maps, both
@@ -318,6 +326,12 @@ Three practical rules follow:
 - **A marginal accept is an unpriced liability** against every feature you have
   not written yet. Something that barely clears the bar today is the half of a
   future destructive pair you will not think to suspect.
+- **An ablation prices a CODE PATH, not a concept.** Record exactly which branch
+  was gated. One lineage priced its "opportunistic area paint" at +6 games and
+  then found a separate branch — painting the tile underfoot — spending 2.5-3.8x
+  more of the same resource, never ablated, and easy to assume was covered by
+  the earlier price because both are "painting". Two branches that consume the
+  same budget are two prices.
 
 **Nominations are usually wrong — the base rate says so.** Three candidate pairs
 have been nominated by reasoning in this project and ablated properly; **two
