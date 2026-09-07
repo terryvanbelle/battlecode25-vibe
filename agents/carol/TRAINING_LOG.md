@@ -6239,3 +6239,92 @@ construction and must not be reused).
 Tower-mix policy: 24a rejected, 24b rejected, 25 accepted. The two rejects cost 4 games of VM
 time between them because both were killed by decision counters at the pre-check stage rather
 than by evaluations. That is the thread closing successfully, not a run of rejects.
+
+## Re-opening the SRP direction — the recorded cause of the deferral no longer holds
+
+The new shared `tools/replay-dump.sh` gave me the per-round team aggregates I had been
+reconstructing piecemeal, and its very first two traces produced a finding much larger than the
+iteration I was running.
+
+### What the trajectories show (both maps, mirror games, so both sides are carol)
+
+`DefaultMedium` and `Fossil`, from `gauntlet/20260907-182709`. `twPaint` is total paint held
+across all the team's towers; `p`/`u` are paint and mop actions in the sampling window;
+`starved` is deaths with paint <= 0.
+
+| | round 200 | 400 | 600 | 800 | 1000 |
+|---|---|---|---|---|---|
+| **Fossil T1 coverage** | 279 | **351 (peak)** | 290 | 265 | **242** |
+| Fossil T1 `twPaint` | 4188 | 2108 | 468 | 348 | **218** |
+| Fossil T1 paint actions | 267 | 206 | 81 | 31 | **22** |
+| Fossil T1 mop actions | 22 | 21 | 49 | 83 | 60 |
+| Fossil T2 coverage (same bot!) | 450 | 520 | 583 | 667 | **695** |
+
+**carol's coverage peaks around round 400 and then declines for the rest of the game.** Tower
+paint collapses to ~40 per tower, paint actions fall by 92%, and the unit that survives is the
+mopper — because moppers do not starve. **The standing army drifts mopper-heavy through
+differential survival, not through the production ratio I spent iterations 19-23 tuning.**
+
+And on both maps, in every sampling window, **75-80% of carol's deaths are paint deaths**.
+Meanwhile chips sit at $1200-$1700 all game, pinned at `CHIP_RESERVE`, doing nothing.
+
+Two engine facts make this a single coherent story: robots spawn with a full stash drawn from
+the building tower (200 for a soldier), and standing on a neutral tile costs 1 paint/turn,
+enemy tile 2. So a paint-poor army bleeds upkeep on the very ground it is trying to take.
+
+### The History pre-check, done properly
+
+The SRP direction is on my own deferred list. Iteration 4/5 recorded the reason:
+
+> The SRP work drafted from the API sweep moves behind both; **it is a chip *sink*, and a sink
+> is worth little until the chip *source* is fixed.**
+
+That was correct then and it is **specifically obsolete now.** The chip source *was* fixed —
+the money-tower mix went in at iteration 5, iteration 18 unpinned the treasury — and the
+evidence the re-opening condition asked for is exactly what the traces show: chips idle at
+$1200-1700 for entire games *after* the money mix is in, while the binding resource runs dry.
+The closed-directions rule allows re-opening only with a specific reason the recorded cause no
+longer applies, and this is that reason rather than "feels under-explored".
+
+The neighbouring closed entry (tower upgrades) is **not** re-opened: its own condition was
+"chips idle after both the money mix *and* SRPs are in", and SRPs are not in yet.
+
+### Benefit and price, as two numbers, before building (§3)
+
+Engine constants read from the jar with `javap -constants`, not from my digest:
+`COMPLETE_RESOURCE_PATTERN_COST = 200` chips, `MARK_PATTERN_PAINT_COST = 25` paint,
+`EXTRA_RESOURCES_FROM_PATTERN = 3`, `RESOURCE_PATTERN_ACTIVE_DELAY = 50`,
+`RESOURCE_PATTERN_RADIUS_SQUARED = 8`, `PATTERN_SIZE = 5`.
+
+- **Price: ~150 paint and 200 chips, one-off.** 25 to mark, plus up to 125 to paint the 25
+  tiles at 5 each (less whatever is already ally-painted). The 200 chips are free — carol is
+  provably not spending them. And the paint is only half-spent: those 25 tiles become ally
+  paint, which is the `AREA_PAINTED` win condition carol *lost on* in both traced games.
+- **Benefit: +3 paint/turn per PAINT tower per SRP**, gated inside
+  `if (type.paintPerTurn != 0) addPaint(paintPerTurn + 3*numSRPs)` — so money towers get
+  nothing, which my own LEARNINGS already records from the disassembly. At carol's observed 3-6
+  paint towers, one SRP is **+9 to +18 paint/turn**. Payback ~13 rounds; an SRP laid at round
+  400 returns on the order of **15,000 paint** over the rest of the game.
+
+For scale: carol's *entire tower paint stock* across all towers at Fossil round 1000 was **218**.
+
+### Iteration 26a: instrument the DECISION first
+
+The arithmetic is overwhelming, which is exactly when I should be most suspicious — the
+reachability pre-check has caught this lineage three times in one session. The question is not
+"is an SRP worth it" but **"can a carol soldier ever actually lay one"**, and there is a
+specific reason to doubt it: marking costs **25 paint**, and carol's soldiers are the
+chronically paint-starved units in the story above. If the mechanism is unreachable *because*
+the bot needs it, that is a real finding and not a disappointment.
+
+`src/carol_i26a` is instrumentation only — a read-only probe at the top of `runSoldier`, taking
+no action and changing no state the bot reads, so its games must reproduce iteration 25's.
+Counters, all decisions rather than outcomes:
+
+- `srpTurns` — soldier turns sampled
+- `srpPoor` — ... of which the soldier held < 25 paint, so marking is unaffordable
+- `srpOk` — ... of which `canMarkResourcePattern(here)` was **true**
+
+**Pre-registered kill condition**: if `srpOk` is ~0 while `srpPoor` is the bulk, the direction is
+blocked at the paint gate and the fix must be to soldiers' paint supply, not to SRPs. If `srpOk`
+is large, the mechanism is simply unused and iteration 26 builds it.
