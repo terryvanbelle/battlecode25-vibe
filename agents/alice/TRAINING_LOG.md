@@ -4776,3 +4776,53 @@ mechanism is written.
 result on its own navigation is not evidence about mine, and designing around it
 would be borrowing a conclusion I have not earned. This will be measured from my
 own traces or not at all.
+
+## Iteration 20 — mechanism VERIFIED, and it moves the number iteration 19 could
+## not. Evaluation running (`20260907-145851`)
+
+`alice_i20diag` (penalty 10 + census) vs `alice_iter19`, gridworld and
+UnderTheSea. Both won.
+
+| build | map | ruin-targeted turns | **% blocked** | median paint at ruin |
+|---|---|---|---|---|
+| `alice_iter14` | gridworld | 22,092 | 35.8% | 18 |
+| `alice_iter19` | gridworld | 18,604 | 36.1% | 35 |
+| **`alice_i20` p10** | gridworld | **13,525** | **25.7%** | 33 |
+| `alice_iter14` | UnderTheSea | 6,477 | 81.2% | 29 |
+| `alice_iter19` | UnderTheSea | 3,130 | 81.4% | 26 |
+| **`alice_i20` p10** | UnderTheSea | **1,346** | **62.0%** | 29 |
+
+**The pre-registered gate passes on both maps**: −10.4 and −19.4 points on the
+one metric iteration 19 left dead flat. That is the design working exactly as
+argued — 19 raised *throughput* through an equilibrium it could not shift, 20
+declines to pay for the equilibrium at all, so the level itself moves. Total
+ruin-targeted soldier turns fall a further 27% and 57% on top of iteration 19's
+reduction: soldiers now spend their turns on ruins they can actually finish.
+
+### The caveat, recorded BEFORE the evaluation returns
+
+**Tower count does not rise.** Against the mirror null:
+
+| map | null | `alice_iter19` | `alice_i20` p10 |
+|---|---|---|---|
+| gridworld | T1 12 | 13 | **13** |
+| UnderTheSea | T1 12 / T2 11 | 13 / 10 | **12 / 11 — exactly the null** |
+
+So iteration 20 removes a large, real, measured waste and, on this evidence,
+**converts none of it into towers**. That is precisely the failure shape the
+algorithm names — *"metrics that improve without converting to wins"*, five
+mechanism-verified damage increases converting to nothing in 2026 — and I am
+naming it now rather than after the result.
+
+**Honest prediction, recorded in advance**: a large mechanism move with a flat
+tower count most often lands at or near the null. I expect a reject or a thin
+near miss, and if the H2H does come in high I will treat the gap between "waste
+removed" and "towers gained" as the thing to explain rather than as a bonus.
+
+The saved soldier turns have to go *somewhere*, and the candidate explanation is
+that they go into ground painting — which is coverage, the actual win condition,
+and would show up as a win without a tower gain. That is checkable in the same
+census and is the first thing I will look at.
+
+**Launched**: run `20260907-145851`, `BOT=alice_iter19 OPPONENTS="alice_i20p5
+alice_i20p10 alice_i20p25" NMAPS=12`, 72 games, alongside iteration 21's audit.
