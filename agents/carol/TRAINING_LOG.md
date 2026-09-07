@@ -4863,3 +4863,45 @@ have been.
   worth more when aimed by memory, which this run says it is not.
 - **Iteration 3's "commit to a far target" is now PRICED at ~10 games/40** and must not be
   weakened by any future navigation change without a measurement of the same size.
+
+## Tournament 20260907-1300 — complete, 450 games, and it measured iteration 12
+
+| bot | win% | vs last |
+|---|---|---|
+| bob | 92.3% | -3.3 |
+| alice | 38.0% | +2.7 |
+| **carol** | **19.7%** | **+0.7** |
+
+| pair | record | swept maps |
+|---|---|---|
+| bob–carol | 138–12 (92.0%) | **bob 64, carol 1** (`catface`) |
+| alice–carol | 103–47 (68.7%) | alice 42, **carol 14** |
+
+Carol's 14 swept maps against alice: Bread, CastleDefense, DefaultSmall, Filter, Snowman,
+TargetPractice, UnderTheSea, catface, fix, gardenworld, gridworld, leavemealone, quack,
+starburst. Median carol–bob game length **771 rounds**, and 224 of 298 carol games ended on
+"painted enough of the map".
+
+**What played was `c213c1b` = iteration 12.** Iterations 13 (rejected) and 14 (accepted) both
+landed after this tournament staged from HEAD, so **the 18:00 PDT run is the first independent
+test of iteration 14** — the accept my frozen roster scores at +3 games. That is the number to
+read next, not this one.
+
+**Reading it honestly, per the report's own warning.** Standings are zero-sum: the three win
+counts always sum to 450, so +0.7 means "moved relative to the other two", never "improved".
+My absolute instrument is the frozen roster, and it says the lineage rose (62.5% -> 70.0% vs
+`carol_iter7`). Both facts are true simultaneously and they are not in tension.
+
+**What it does change: it confirms the target.** Carol loses a *coverage* race, decisively and
+by the clock — bob paints carol off the map at a median of 771 rounds. Every candidate now in
+flight attacks coverage throughput directly rather than obliquely:
+
+- **iteration 17** — splashers are the 2.6x coverage unit and spend up to 1,987 turns per game
+  unable to act for want of 50 paint;
+- **iteration 18** — production is blocked by a reserve holding chips the team already has, on
+  83.4% of tower turns on Castle.
+
+Both are "capability preserved at zero marginal cost", the shape TRAINING_ALGORITHM names as
+the recurring winner's profile, and neither invents a new strategy — they stop existing units
+from idling. Against a 92%–8% deficit, that is the right register: the gap is not one
+mechanism wide, and my own gauntlet's 78.8% cannot see it at all.
