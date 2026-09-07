@@ -7262,3 +7262,58 @@ The coordinator is right to flag the boundary, so I am marking it explicitly:
 itself, which is verified by decompilation, re-derived independently by the
 coordinator before promotion, and recorded in `tools/engine-facts.md` with the
 command that re-derives it. Effect (1) at +8 remains the larger half.
+
+## Next target selection — the soldier-paint area is mined out, and I should leave it
+
+**Functional-area tracker.** Iterations 19, 20, 22 and 23 all sit in **soldier
+paint spending**: 19 accept, 20 reject, 22 accept, 23 accept. `MaxConsecutiveRejects`
+is 3 and I have no reject streak, so the formal rule does not force me out. I am
+leaving anyway, for a reason stronger than the rule:
+
+**The area is measurably exhausted.** The whole-build engine-predicate audit
+enumerated every call site that can spend paint on a refused action and found
+exactly one remaining — the ruin-pattern loop — which iteration 23 fixed. There is
+no third instance to find. The area did not run out of ideas; **it ran out of
+defects, and I can name the audit that proves it.** That is a much better reason
+to move than a reject counter.
+
+### What the evidence on disk says to do next, ranked
+
+1. **Communication** — `sendMessage` / `readMessages` / `broadcastMessage`, **zero
+   calls in 23 iterations.** The largest unexplored capability I own, and my own
+   saturation finding removes the constraint that normally makes BC25 comms
+   awkward: robot↔tower messaging needs a 4-adjacent ally-paint path, and my
+   territory is one contiguous painted mass from round 250–600 onward. Towers also
+   broadcast at r²<=80 with no connectivity requirement, and I field 11–18 of them.
+2. **Saturation-responsive spawn mix** — the tower spawns a fixed 75/25
+   soldier/mopper split for all 2,000 rounds, chosen when the map was empty; the
+   map is ~90% painted by round 300. Needs a dose with a zero arm, a
+   self-calibrating threshold (the saturation round is 250 on one map and 600 on
+   another, so a round constant is exactly the tuned constant this project keeps
+   finding inferior), and **tower-paint instrumentation in the first run**, because
+   §3c's absorbing state came from moving this very mix.
+3. **`mopSwing`** — never called; 6 tiles, −5 paint per enemy robot, cooldown 20
+   against the ordinary mop's 30. Attractive because **65–100% of deaths in this
+   game are paint starvation**, so draining enemy paint is the direct cause of how
+   units die rather than a metric needing conversion. Priced honestly: a swing does
+   no ground work, and ground work is what iteration 19 accepted.
+
+### The pre-check that must run before any of them
+
+Today killed four candidates for free — the splasher (census), iteration 23's
+premise (nearly filed dormant on late-game reachability, saved only by sampling
+early), the map-class hypotheses (tournament data already on disk), and the
+underfoot restore (decision census, zero occurrences in 4,331 turns). **Every one
+of those was killed by counting a decision, not by running a gauntlet.**
+
+So whichever of the three I take, the first artifact is a diagnostic build that
+counts the decision, and the gauntlet is spent only if the count justifies it.
+For comms that means: **how often is a robot within r²<=20 of an ally tower AND
+paint-connected to it?** If that is rare the whole direction is priced out before
+a schema is designed — and given saturation I expect it to be common, which is
+exactly the kind of expectation that has been wrong three times today.
+
+**Nothing starts until `20260907-205244` lands.** It is the arithmetic identity
+that settles whether iteration 23's two effects are sub-additive, and starting a
+new thread while an open question has a run in flight is how the flagged-caveat
+failure happened in the first place.
