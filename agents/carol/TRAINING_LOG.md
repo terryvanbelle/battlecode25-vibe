@@ -4995,3 +4995,53 @@ arm wins the h2h but drops materially against `carol_rush`, that is the defensiv
 appearing and I will read it as a dose question, not a win.
 
 **Held, not launched**: iterations 17 and 18 are already using the VM. Queued behind them.
+
+## Iteration 17 RESULT — REJECT at exactly 50.0%, the null to the game
+
+Run `20260907-140851`, 20 pinned maps, null `carol_m14`.
+
+| instrument | result |
+|---|---|
+| h2h vs `carol_iter14` | **20/40 = 50.0%** |
+| **margin vs the null** | **+0 games** |
+| maps that moved | **4: DefaultSmall +1, defensetower +1, HungerGames -1, gridworld -1** |
+| swept-win / swept-loss | 2 / 2 |
+| mechanism (`rw`, dry turns walking home) | **live: 10–49 per robot in every game inspected** |
+
+**The mechanism worked and bought nothing.** `rw` fires 10–49 times per splasher in all six
+flipped-game replays I pulled, `rh` confirms real refuels, and the splash count rises (13 vs
+10 on gridworld). The flip shape is perfectly mixed — two maps each way, net zero — which
+doctrine #7 defines as churn rather than a causal effect.
+
+**My pre-registered map prediction failed, and that is what makes the rejection firm rather
+than reluctant.** I predicted Parking_lot (1,987 `noPaint` turns) and gridworld (381) would
+move toward iteration 17. Parking_lot did not move at all and **gridworld moved against it**.
+The two maps that did move for it, DefaultSmall and defensetower, are not in the 8-map set I
+measured `noPaint` on, so I had no prediction covering them. Whatever produced those two wins,
+it is not the account I wrote down.
+
+**Why it fails, mechanistically — and the number I should have computed beforehand.** A dry
+splasher spends 10–49 turns walking home and gains at most **2** refuels (`rh` max 2 across
+every game). Two refuels is about 12 extra splashes, ~150 tiles, in a 2,000-round game — while
+those 10–49 turns are spent walking *away from the frontier*, which is where RULES.md says a
+splasher is worth 2.6x a soldier and where it must return afterwards. The round trip costs
+roughly what it earns. **I priced the idle turns and never priced the walk.**
+
+**DECISION: REJECT.** `src/carol` remains iteration 14.
+
+### Closed-directions ledger update
+
+- **"Send a paint-starved splasher back to a tower to refill" — CLOSED.** `20260907-140851`:
+  20/40, +0 games against a zero-variance null, 2–2 churn, mechanism verified live. The cost
+  of the walk cancels the value of the refuel. Re-opening is legitimate only with a mechanism
+  that brings paint *to* the splasher rather than the splasher to the paint — and RULES.md
+  line 87 names exactly one: **moppers are the only unit that can transfer paint robot→robot**,
+  and carol has never called it. That is a real re-opening condition, not a hope.
+
+### What this changes about iteration 19
+
+It sharpens it. Splasher idleness was ~2,000 turns per game and fixing it was worth zero.
+Mopper idleness is **78,480 turns across 8 games at 95.1%**, on a unit taking 5 of every 20
+spawns — an order of magnitude more waste, and cutting it returns production rather than
+spending turns to reclaim it. Iteration 19 does not have to move a unit anywhere; it stops
+building one.
