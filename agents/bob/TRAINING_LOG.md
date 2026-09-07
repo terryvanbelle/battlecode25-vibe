@@ -6023,3 +6023,76 @@ diff the counters. If the arms are byte-identical the mechanism is dead and the 
 wasted. That check cost three games and would have caught a 100-game run; it is now
 mandatory rather than lucky. Iteration 18's zero arm (`bob_f15`) is built to be
 byte-identical to `bob_iter12` precisely so this check runs inside the evaluation itself.
+
+---
+
+## Iteration 18 RESULT — **ACCEPTED**. Spend the last paint on the pattern.
+
+Run `20260907-192946`, `BOT=bob_iter12`, one shared fresh 25-map sample, 150 games.
+Reported as the **arm's** wins; intervals from `tools/map-resample.py` over maps.
+
+```
+RUIN_FLOOR   arm wins/50   vs null   95% CI (iter12's wins)   swept   swept-lost
+   15 (zero)     25/50        +0        [25, 25]  se = 0.00      0         0
+    5            27/50        +2        [18, 28]                 4         2
+    0            31/50        +6        [15, 23]                 6         0
+```
+
+**The zero arm is a perfect null: 25/50, standard error exactly 0.00, and all 25 maps
+split 1-1.** `bob_f15` is `bob_iter12` with the constant renamed and no behaviour change,
+and the engine confirms it to the game. That is simultaneously the mandatory identity
+check, and a mirror regenerated from the current baseline on this exact map sample —
+which is what MULTI_AGENT.md requires and what makes every margin below a count of games
+the code actually flipped, not a standard-deviation claim.
+
+**Dose-response is monotone toward zero: +0, +2, +6.** Three arms, one map sample, exact
+within-run comparison. The mechanism gets better the more of it you take, right up to the
+boundary (paint cannot go below 0), so 0 is both the best tested dose and the end of the
+dose axis.
+
+**Six swept maps and zero swept losses.** `Piglets2`, `Crab`, `HungerGames`, `Dominoes`,
+`mit`, `Money`. Identical code sweeps nothing — measured at 0 of 25 in the zero arm of
+this very run — so six sweeps are six real maps. And **`mit` and `Dominoes` are both maps
+I lost to alice in tournament `20260907-1300`**, which is a cross-check I did not
+engineer: the fix flips maps an independent lineage beats me on.
+
+**The diff has no one-directional regression**: the arm loses both sides of no map at all.
+
+### Accepted, and what it changes
+
+```java
+static final int RUIN_FLOOR = 0;   // was PAINT_FLOOR = 15, for tower-pattern work only
+```
+
+`paintSomething` deliberately keeps `PAINT_FLOOR = 15`. The change is scoped to the
+**threshold good** and is not a general "paint more" policy — which is what makes the
+result interpretable.
+
+`src/bob` updated, snapshotted to `src/bob_iter18` (compile-checked in isolation), charts
+regenerated, replay archived as `replays/iter18_bob_iter12_mit_botA_WIN.bc25`
+(`bob_iter18` beats `bob_iter12` on `mit` at r896).
+
+### Why this one worked when five before it did not
+
+Every rejected hypothesis in this block was a story about what a good bot *would* do. This
+one came from `tools/replay-dump.sh --robot 11019` showing a single soldier with
+`aCD = 0` and `paint <= 14` for two hundred consecutive rounds while its HP never moved —
+an absolute degeneracy, visible without reference to any opponent, exactly the selection
+discipline §1 asks for and that I had not been following.
+
+The general lesson is now LEARNINGS §20: **a floor constant is a linear-value heuristic,
+and it was guarding a threshold good.** Under a threshold the marginal value of the last
+point spent is the *highest*, not the lowest, which inverts the reasoning a floor is built
+on. `PAINT_FLOOR` was also parking soldiers one point above the band that kills them —
+`NO_PAINT_DAMAGE` applies only at *zero* — so it manufactured immortal do-nothing units,
+against my own iteration-8 finding that dying at zero is the efficient terminal state.
+
+### Still open, recorded so it is not lost
+
+- The **frozen roster run** (`20260907-193911`) is still in flight and measures
+  `bob_iter12`, the pre-accept baseline. That is the clean "before" point; `bob_iter18`
+  needs its own roster run next, and doctrine #9 wants one every ~5 accepts regardless.
+- Iteration 16's confound (denial capability vs. spawn **affordability**) is unresolved.
+- Iteration 17 is void, not closed; re-opening needs ruin memory so the choice set stops
+  being a singleton.
+- The `UPGRADE_RESERVE` and money-tower-upgrade defects in `Tower.run` remain queued.
