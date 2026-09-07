@@ -262,9 +262,12 @@ accepted bot works. That is a better return than most accepts.
   (regression checks, ablations, dose sweeps, re-tracing one game).
 - **A hand-picked standing map list is an overfitting surface.** Mine (EVAL12)
   is retired.
-- **Noise bands**: 24-game H2H — treat 13-15/24 as inside noise of 50%; 16/24 is
-  ~92% one-sided, 17/24 ~97%. 50-game H2H — 24-29/50 inside noise, ≥30/50 ~92%,
-  ≥32/50 ~98%.
+- **Noise bands — SUPERSEDED, these were binomial.** The old table ("13-15/24
+  inside noise, 16/24 ~92%, 17/24 ~97%", and the 50-game equivalents) assumed
+  per-game randomness this engine does not have, and got readings wrong in
+  *both* directions (see the deterministic-uncertainty theme below). **Use
+  `../../tools/map-resample.py <run-dir>`** — bootstrap and jackknife over the
+  run's own per-map results — and quote its interval, never a formula.
 - **A monotone counter is a bug report.** The tell for the death-accounting bug
   was a unit count that only ever rose, and a 2000-round dump containing zero
   `DIED` lines. Any "alive"/"in flight" figure that never decreases across a
@@ -568,3 +571,59 @@ map-level variance than binomial would predict.
 would have to be re-rolled to get a different one. If re-running the same games
 cannot change the answer, per-game randomness is not the source of your error
 bars, and any formula that assumes it is describing a different experiment.
+
+## Theme: two rules in one document can disagree, and neither looks wrong alone
+
+Prompted by the coordinator after the binomial correction: a periodic
+**consistency pass** over this file, rather than only appending to it. The first
+pass found three, and the first one is the sharpest.
+
+### 1. The right method and the wrong one, side by side, in the same section
+
+§4 says *"Don't pick the arm that won by less than the noise floor"* — and the
+reasoning it actually uses is **cell disagreement**: iteration 5's two doses
+"disagreed on *three* of the 27 (map,side) cells they both played". **That is the
+deterministic method.** It counts cells that actually differ, which is exactly
+what map resampling formalises.
+
+Eight lines later, §5 stated the binomial noise band ("13–15/24 is inside
+noise") as live guidance. **I had the correct model and the incorrect model in
+the same document, in adjacent sections, for the entire session** — and quoted
+the wrong one all the way through iterations 19, 20 and 21.
+
+> **Neither entry looks wrong in isolation.** That is the whole failure mode. A
+> per-entry review passes both; only *comparing* them fails. Append-only notes
+> accumulate contradictions silently, because every check is local.
+
+The binomial band is now marked superseded in place, pointing at
+`../../tools/map-resample.py`. Superseding beats deleting: the wrong rule was
+load-bearing for months of reasoning, and a reader of the old entries needs to
+know it was withdrawn and why.
+
+### 2. Measurement doctrine #1 versus the noise floor
+
+The governing document says re-running is worthless *because the engine is
+deterministic*. My own noise floor assumed per-game randomness. **A rule that
+says "there is no per-game randomness" and a rule that says "here is your
+per-game randomness" cannot both be right**, and I used both without noticing.
+The tell I now watch for: *a rule about determinism and a rule about noise, in
+the same project, that never cite each other.*
+
+### 3. §3e "movement is exploration" versus iteration 20 "turns are not scarce"
+
+These read as contradictory and are not — but only for a reason worth writing
+down. §3e's movement buys **reaching ruins that were never reached**; iteration
+20's freed turns were re-spent *locally*, on ruins already in vision, by soldiers
+whose paint was already gone. **Movement that expands the reachable set buys
+towers; turns handed back inside the set already explored buy nothing.** The
+resource freed has to be convertible into the thing that is scarce — the same
+rule as the waste-removal theme, arriving from a different direction.
+
+**Flagged as an open inconsistency rather than resolved**: §3e also claims a
+soldier converts "~8 of its 200 paint into painted tiles (~1.6 paint actions per
+lifetime); ~192 goes to upkeep". That is hard to reconcile with a median of 18
+paint remaining *at a ruin* after a soldier has been painting a pattern. One of
+the two numbers is wrong, and `alice_pbudget` — which decomposes the 200 by
+action class with upkeep as the exact residual — is built precisely to settle
+it. **Recorded as a pre-registered prediction: I expect §3e's decomposition to
+be retracted.**
