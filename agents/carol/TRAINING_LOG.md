@@ -6860,3 +6860,35 @@ second one is a direct consequence of tonight's bytecode findings:
    an overrun truncates turns silently. Cost the bytecode before the behaviour.
 3. **Play-symmetry** — a memory keyed on absolute map coordinates is exactly the fixed-absolute-
    order hazard Phase 0 item 7 warns about; check it cannot give one side a tempo edge.
+
+### Next target, pre-check 1 (sizing/reachability) — PASSES, free, from a frame already on disk
+
+Before spending anything on map memory, the cheapest way to kill it: **if the unclaimed ground is
+walled off, no amount of memory helps.** Flood-filled the DefaultMedium round-1200 arena frame
+(8-directional, walls the only barrier) from every carol-painted tile:
+
+```
+tile census        empty 116   painted 1075   ruin 3   wall 31   (= 1225 = 35x35, closes)
+empty tiles reachable from carol's own territory:  116 / 116  = 100.0%
+walled off:                                          0
+bounding box of reachable empty ground:  x 0-34, y 0-25  (i.e. everywhere)
+```
+
+**Not one unclaimed tile is inaccessible.** The corner is not hard to reach; it is simply never
+visited. The direction survives its cheapest possible refutation.
+
+**Counting caveat, stated because the two numbers disagree.** The grid census gives 116 empty
+tiles; the per-mille arithmetic earlier in this log gave ~149. The census closes exactly to
+35×35, so it is not a parse error — the gap is that the arena overlays *units* on top of paint, so
+an unpainted tile with a soldier standing on it renders as `s` and I counted it as painted. So
+**116 is a lower bound and ~149 the upper**, and the true figure is between. The reachability
+conclusion is untouched either way: the extra tiles are by construction the ones with units on
+them, which are trivially reachable.
+
+That is the same class of error as the tooling inversion — a metric that looks like it answers
+one question while actually answering a slightly different one. I am recording both numbers and
+which is which rather than picking the convenient one.
+
+Pre-checks for the map-memory target: **1 (sizing/reachability) DONE and passing**; 2 (bytecode
+budget costed before behaviour) and 3 (play-symmetry of a coordinate-keyed memory) remain **not
+done**, and both stay build gates.
