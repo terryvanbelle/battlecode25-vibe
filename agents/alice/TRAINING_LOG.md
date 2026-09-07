@@ -7636,3 +7636,80 @@ turns), which is a fact about the channel and not a reason to build anything.
 **Reachable is not useful.** This count is what decides whether there is a
 decision worth informing, and it costs one match against a 300-game gauntlet if I
 guessed wrong.
+
+## Ruin-collision census — the hypothesis is DEAD, killed by its own falsifier
+
+`alice_ruincensus` reports each soldier's current ruin target; grouping done
+offline across soldiers from the replay. UnderTheSea.
+
+| round | soldiers | **no target** | targeting | distinct ruins | soldiers-per-ruin | largest group |
+|---|---|---|---|---|---|---|
+| 200 | 9 | 4 | 5 | 3 | `{1:1, 2:2}` | 2 |
+| 300 | 21 | **13** | 8 | 3 | `{2:2, 4:1}` | 4 |
+| 500 | 37 | **24 (65%)** | 13 | **3** | `{2:1, 5:1, 6:1}` | **6** |
+
+### My pre-registered reading passes — and it is the wrong question
+
+I pre-registered: *"modal group 1 → hypothesis dead; groups of 3+ common → schema
+worth designing."* Groups of 3+ appear at r300 and r500, so **by the letter my
+hypothesis survived and my prediction (collisions are common) was correct.**
+
+It is still dead, because the number that matters is one I did not pre-register:
+**65% of soldiers have no ruin target at all**, and the 13 that do are piled onto
+**3** ruins.
+
+### The falsifier I ran before claiming a dispatch opportunity
+
+The obvious story — *"tell the idle 65% where the unworked ruins are"* — requires
+unworked ruins to exist. Checking, from the same replay's own header and counters:
+
+```
+UnderTheSea: 27 ruins (engine header)
+round 500:   T1 15 towers + T2 9 towers = 24 towers
+             => 27 - 24 = 3 ruins unclaimed
+```
+
+**Soldiers were targeting exactly 3 distinct ruins. That is every unclaimed ruin
+on the map.** The 24 soldiers with "no target" are not mis-dispatched — **there is
+nothing left to dispatch them to.** And 5–6 soldiers per remaining ruin is not
+waste either: the paint census put the ratio at **6–18 soldiers per completed
+tower**, so those groups are, if anything, undersized.
+
+**The coordination/dispatch use-case for comms is refuted.** Not "unsupported" —
+refuted, by an arithmetic identity between towers, ruins, and targets.
+
+### Third instance today of the same failure, and it is mine
+
+I pre-registered two readings and **both were about collisions**. Neither asked
+"how many targets exist to distribute". So this is the session's own theme —
+*a valid analysis silent about frequency* — committed one more time, in the very
+pre-registration written to prevent it. The generalised rule from this morning's
+consistency pass says: when an argument turns on "this situation matters", the
+next sentence must be a count. **I counted the collisions and not the supply.**
+
+The saving grace is structural rather than personal: **the falsifier was one line
+of arithmetic on data already in the replay**, and I ran it before writing a
+schema. Cost: one match. That is the fifth candidate killed by a pre-check today.
+
+### Where this leaves comms
+
+The channel is reachable (53–65% of turns, connectivity nearly free) and **has no
+use I can currently justify.** Recorded as **open and unpriced**, not closed — the
+same status as the splasher, and for the same reason: I have refuted one
+application, not the capability. Any future comms proposal must name a decision,
+show the decision is made badly, **and show the information that would fix it
+exists somewhere a tower can see.** This one failed the third test.
+
+### Tooling note for the coordinator — a ruin-count discrepancy worth documenting
+
+`tools/mapdata/ruin_parity.txt` lists **UnderTheSea ruins=23**; the shared
+dumper's `MatchHeader` reads **ruins=27**. The gap is exactly **4**, which is the
+number of towers on the board at spawn (2 per team) — so both are almost certainly
+right and counting different things: **27 ruin tiles total, 4 pre-occupied at
+spawn, 23 claimable.**
+
+Not a bug, but it changed a number I published today: I called UnderTheSea "the
+corpus median at 11.4 ruins/1000" using the 23 figure, where the all-ruins figure
+is 13.3. **Both densities are defensible; which one `ruin_parity.txt` reports
+should be stated in the file**, since it is shared ground and the two support
+different claims.
