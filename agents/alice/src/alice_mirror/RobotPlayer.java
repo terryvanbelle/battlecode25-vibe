@@ -65,7 +65,35 @@ public class RobotPlayer {
     }
 
     // ------------------------------------------------------------------ tower
+    /** Chips held back so a 1000-chip tower completion can always fund (iteration 2). */
+    static final int CHIP_RESERVE = 1450;
+
+    /** Iteration 12 dose: how many steps a wandering unit holds one heading.
+     *  alice_iter7 used 5+rnd(8) (mean 8.5) -- a DIFFUSIVE random walk, whose
+     *  displacement after T steps grows as sqrt(T). Tournament replays show the
+     *  independent lineage 'bob' reaching 14-15 towers by round 160 on gridworld
+     *  (25 ruins) while this lineage stalls at 5-6 while holding $3,240 unspent.
+     *  Soldiers only target ruins within vision (r^2=20) and random-walk otherwise,
+     *  so unclaimed ruins are stumbled upon rather than travelled to. Raising the
+     *  run length makes the walk BALLISTIC (displacement ~ T). One mechanism, one
+     *  number, zero arm = alice_iter7. */
+    static final int WANDER_RUN = 25;
+
+
     static void runTower(RobotController rc) throws GameActionException {
+        // Iteration 4: spend idle chips upgrading myself. Chips have not been the
+        // binding resource since iteration 2 ($120,840 unspent at r2000 on
+        // DefaultLarge) while PAINT bounds everything: a soldier's entire output
+        // is the 200 paint it was born with. Upgrading raises paint income
+        // 5->10->15/turn (money 20->30->40) permanently.
+        // Engine-verified: assertCanUpgradeTower only checks range + on-map, and
+        // upgradeTower adds no cooldown, so a tower upgrading ITSELF (distance 0)
+        // costs chips and nothing else -- no action, no turn, no cooldown.
+        UnitType nextLevel = rc.getType().getNextLevel();
+        if (nextLevel != null && rc.getMoney() >= nextLevel.moneyCost + CHIP_RESERVE
+                && rc.canUpgradeTower(rc.getLocation())) {
+            rc.upgradeTower(rc.getLocation());
+        }
         // Attack: single-target the lowest-HP enemy robot in range, then AoE if any enemy near.
         RobotInfo[] enemies = rc.senseNearbyRobots(rc.getType().actionRadiusSquared, rc.getTeam().opponent());
         if (enemies.length > 0) {
@@ -80,8 +108,28 @@ public class RobotPlayer {
         // Spawn: mostly soldiers, some moppers. Keep a chip reserve so 1000-chip
         // tower completions can always fund (spawning greedily at 250/unit pins
         // money near zero and stalls tower expansion permanently).
-        if (rc.getMoney() >= 1450) {
+        if (rc.getMoney() >= CHIP_RESERVE) {
             UnitType want = (rnd(4) == 0) ? UnitType.MOPPER : UnitType.SOLDIER;
+            // Iteration 5: reserve tower PAINT for soldiers. Measured defect --
+            // a mopper costs 100 tower paint, a soldier 200, and a tower's paint
+            // income is only 5-15/turn, so the tower can fund a mopper twice as
+            // often and never accumulates the 200 a soldier needs. The realized
+            // army mix is therefore ~90% moppers, not the 25% this line reads as
+            // (Racetrack r1750-2000: +9 soldiers vs +93 moppers). Moppers cannot
+            // paint, and painted area is the win condition. Worse, the drain is an
+            // ABSORBING STATE: once tower paint reaches 0 only the 100-paint mopper
+            // is affordable, moppers complete no tower patterns, so paint income
+            // never recovers (Mirage: dead at r200, coverage 132 -> 15 per-mille).
+            // The threshold is SOLDIER.paintCost rather than a tuned constant --
+            // "only build a mopper if a soldier was affordable too". Doses 50 and
+            // 100 were statistically tied (they disagreed on 3 of 27 shared cells),
+            // so this picks the self-calibrating form over the searched one.
+            // Refusing the mopper here does NOT substitute a cheaper unit: the
+            // build below simply fails and the paint accumulates until a soldier
+            // is affordable, which is the intent.
+            if (want == UnitType.MOPPER && rc.getPaint() < UnitType.SOLDIER.paintCost) {
+                want = UnitType.SOLDIER;
+            }
             int off = rnd(8);
             for (int i = 0; i < 8; i++) {
                 MapLocation loc = rc.getLocation().add(directions[(i + off) % 8]);
@@ -195,7 +243,23 @@ public class RobotPlayer {
             }
             if (best != null) rc.attack(best);
         }
-        wander(rc);
+        // Iteration 7: walk toward the nearest enemy paint ANYWHERE in vision
+        // instead of wandering. The mopper picks targets within r^2<=2 -- the 8
+        // adjacent tiles -- while its vision is r^2=20, roughly 60 tiles: it has
+        // been blind to ~90% of what it can see. Motivated by the starburst trace,
+        // where iteration 5 painted ~2x the baseline and still lost both sides
+        // because the baseline erased ~2x as much.
+        MapLocation me = rc.getLocation();
+        MapLocation target = null;
+        int bd = 1 << 30;
+        for (MapInfo t : rc.senseNearbyMapInfos(-1)) {
+            if (!t.getPaint().isEnemy()) continue;
+            int d = me.distanceSquaredTo(t.getMapLocation());
+            if (d < bd) { bd = d; target = t.getMapLocation(); }
+        }
+        if (target == null) wander(rc);
+        else if (bd > 2) tryMove(rc, me.directionTo(target));
+        // bd <= 2: already in mopping range, hold position and keep mopping.
     }
 
     // ------------------------------------------------------------------ moves
@@ -203,15 +267,29 @@ public class RobotPlayer {
         if (!rc.isMovementReady()) return;
         if (wanderDir == null || wanderSteps <= 0) {
             wanderDir = directions[rnd(8)];
-            wanderSteps = 5 + rnd(8);
+            wanderSteps = WANDER_RUN;
         }
         if (rc.canMove(wanderDir)) {
             rc.move(wanderDir);
             wanderSteps--;
         } else {
-            wanderDir = directions[rnd(8)];
-            wanderSteps = 5 + rnd(8);
-            if (rc.canMove(wanderDir)) { rc.move(wanderDir); wanderSteps--; }
+            // Iteration 14: SLIDE along the obstacle, keeping the heading, instead
+            // of throwing it away. Re-rolling on every block makes the effective
+            // run length the mean free path between obstacles rather than
+            // WANDER_RUN -- which is why iteration 12's margin was only 8 towers
+            // to 5 on boxofchocolates (19.5% walls) against 15 to 4 on gridworld.
+            // Randomise which side is tried first: a fixed rotate order is exactly
+            // the compass-order tie-break that Phase 0 #7 warns compounds into a
+            // per-side tempo edge.
+            Direction l = wanderDir.rotateLeft(), r = wanderDir.rotateRight();
+            if (rnd(2) == 0) { Direction t = l; l = r; r = t; }
+            if (rc.canMove(l)) { rc.move(l); wanderSteps--; }
+            else if (rc.canMove(r)) { rc.move(r); wanderSteps--; }
+            else {
+                wanderDir = directions[rnd(8)];
+                wanderSteps = WANDER_RUN;
+                if (rc.canMove(wanderDir)) { rc.move(wanderDir); wanderSteps--; }
+            }
         }
     }
 

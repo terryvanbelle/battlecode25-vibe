@@ -3639,3 +3639,68 @@ informative line is `alice_iter7`, and it has exactly two points. The honest
 reading of my absolute-strength instrument is that it is **one rung deep** — which
 is better than the zero it was this morning, and thin. It will not become
 trustworthy until several more accepted snapshots give it rungs at 60-90%.
+
+## Mirror calibration — the null is EXACTLY 50%, and identical code never sweeps a map
+
+Run `20260907-032745`, `alice` vs `alice_mirror`, 12 maps both sides.
+`alice_mirror` was **stale** — a fork of some early build — and was regenerated as
+a byte-identical copy of `src/alice` differing only in its package line, verified
+by diff. (The algorithm's warning that forked archetypes "go silently stale and
+inflate win rates" was live in my own workspace and I had never checked it.)
+
+```
+overall: 12/24 wins (50.0%)
+vs alice_mirror   swept-win 0/12   swept-loss 0/12   split-by-side 12
+```
+
+**Every one of the twelve maps split 1-1. Not one sweep in either direction.**
+
+### What this establishes
+
+1. **The null is exactly 50%.** My accept gates were calibrated against the right
+   baseline. There is no hidden positional tilt inflating or deflating them.
+2. **A swept map is an almost noise-free instrument.** Identical code produced
+   **zero** swept wins and **zero** swept losses across 12 maps. So when a
+   candidate sweeps a map it has beaten *both* spawn positions, which the null
+   never does. That retroactively strengthens every swept-map claim this session:
+   iteration 12 dose 25's **5 swept wins / 0 swept losses**, iteration 14's 4/1,
+   and the rung runs' 2/0 are all real effects, not spawn luck.
+3. **The per-map winner is decided by spawn position**, and it cancels exactly
+   over both sides. This is why the algorithm insists on playing both sides, and
+   the mirror shows the cancellation is perfect rather than approximate.
+
+### And it invalidates the *reasoning* I used to reject iteration 10
+
+I wrote, closing the SRP thread: *"At n=24 with p=0.5 the binomial sd is 2.45
+games, so 14/24 is +0.8 sd — indistinguishable from a coin."*
+
+**There is no coin.** The engine is deterministic and the mirror is exactly
+balanced, so re-running produces identical games and there is no game-level
+sampling noise for a binomial to describe. A candidate at 14/24 has flipped
+**exactly two games** relative to a null that sits exactly at 12/24, and those two
+games were flipped *by the code change*.
+
+What variance remains is **map-sample** variance, not game variance — which is
+precisely why pooling across disjoint samples is the right move. Pooling SRPs:
+
+| build | H2H vs `alice_iter7` |
+|---|---|
+| `alice_i10d` | 13/24, 13/24 |
+| `alice_i10e` | 14/24 |
+| **pooled** | **40/72 (55.6%)** |
+
+**So SRPs were probably a small real positive (+4 games in 72), not nothing.**
+The reject decision still stands on its own terms — it missed the pre-registered
+16/24 gate three times and had exhausted `MaxNearMissRefinements` — but the
+*reason* I recorded was wrong, and the ledger entry needs correcting: SRPs are a
+**small real effect below the accept bar**, not an unmeasurable one.
+
+### Correction to the closed-directions ledger
+| direction | corrected status |
+|---|---|
+| SRPs as a chip sink | Previously "within noise, cannot resolve". **Corrected: a small real gain (~+5.6 points, 40/72 pooled) that never cleared the pre-registered bar.** Re-open condition unchanged — it should be revisited if chips ever become binding in the contested phase — but it should be re-opened as "known small positive", not as "unknown". |
+
+### Method note for every future gate
+Quote **margin over the mirror null in games**, not standard deviations. "+2 games
+against a null that never sweeps a map" is the honest form; "+0.8 sd" imports a
+random-sampling model this engine does not have.
