@@ -319,7 +319,15 @@ Three practical rules follow:
   not written yet. Something that barely clears the bar today is the half of a
   future destructive pair you will not think to suspect.
 
-And a caution on chasing these: a heuristic **nominates** a candidate pair, it is
+**Nominations are usually wrong — the base rate says so.** Three candidate pairs
+have been nominated by reasoning in this project and ablated properly; **two
+were refuted**, one of them with the interaction coming out the *opposite sign*
+to the argument for it. The one real destructive pair was found by ablating
+after a frozen-roster drop, not by predicting it. So run the 2x2 when the roster
+says something is wrong; do not run it because a pair *looks* like it should
+interact.
+
+A caution on chasing these: a heuristic **nominates** a candidate pair, it is
 never evidence about one. The *sign* of an interaction is not predictable from
 its shape — the same lineage found two pairs sharing the signature "payoff
 multiplicative in an existing quantity", one destructive and one constructive,
