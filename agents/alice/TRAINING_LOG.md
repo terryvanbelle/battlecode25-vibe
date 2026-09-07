@@ -6796,3 +6796,42 @@ still `break`s** isolates the paint-reclaim effect from the scan-onward effect.
 That is what iteration 23 earns if it accepts, and it prices two code paths in one
 line — which §5b warns is exactly where a price does not divide the way the story
 does.
+
+## The separating ablation, built and pre-registered (`src/alice_i23abl`)
+
+Iteration 23 changes one clause that does **two** things, and the whole-map
+covariate analysis has just failed twice to tell them apart. So the separation has
+to be done the way §5b says — **by pricing the code paths, in games** — not by
+another correlation.
+
+The three arms differ by **one keyword**:
+
+| arm | the clause | what it does |
+|---|---|---|
+| `alice_iter22` (baseline) | *(absent)* | attacks the enemy tile: pays 5, refused, then `break`s |
+| **`alice_i23abl`** | `if (isEnemy()) break;` | **declines to pay, then stops** — effect (1) only |
+| `alice_i23` (accepted candidate, if it accepts) | `if (isEnemy()) continue;` | declines to pay **and scans onward** — effects (1) + (2) |
+
+Verified by diff: `alice_i23abl` and `alice_i23` are byte-identical apart from
+`break` versus `continue` on one line. That is as clean as an ablation gets in
+this project — no rebuild drift, no bundled second change, nothing to argue about
+regarding what was gated.
+
+**Pre-registered readings, before the arm has played a game:**
+
+- `i23abl` vs `iter22` prices **effect (1)**, stopping the refused payment.
+- `i23` vs `i23abl` prices **effect (2)**, scanning onward to a paintable tile.
+- The two should sum to roughly the 34/50 that `i23` scored against `iter22`. **If
+  they do not sum, one of the two arms is interacting with something I have not
+  named**, and that is more interesting than either price.
+
+**My prediction, recorded now**: effect (2) is the larger, because the mechanism
+census already showed 11 of 14 refused attacks at r200 becoming *landed* attacks
+rather than merely avoided ones, and because the tower count doubling needs
+patterns to actually complete — which only effect (2) delivers. **I have been
+wrong twice today about what drives this change**, so this prediction is worth
+exactly what the last two were until it is measured.
+
+**This does not run yet.** Iteration 23's peer gate is still playing, and running
+an ablation on a candidate that has not been accepted would be spending shared VM
+time on a question that might not arise.
