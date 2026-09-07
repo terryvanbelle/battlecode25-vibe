@@ -4591,3 +4591,24 @@ term is interpreted** — the main effects are ordinary ablations and are alread
 covered by the accept gates that installed them.
 
 Queued behind iteration 19 and 20; this is an audit and does not block the loop.
+
+### Iteration 19 arm B — predicted failure mode, recorded before the result
+
+`alice_i19b` is the exclusive rung: if any pattern-blocking enemy tile is in
+vision, every other enemy tile is ignored. Two ways that can misfire, written
+down now so neither can be invented afterwards as an explanation:
+
+1. **Unreachable blocker.** A blocking tile visible but behind a wall keeps
+   `anyBlocking` true forever, so the mopper walks at it and ignores all other
+   enemy paint. `tryMove`'s slide keeps it from freezing outright, but it can
+   oscillate against the obstacle. Arm A has no such failure mode because a
+   blocked tile only reorders the preference, it never suppresses the fallback.
+2. **Erasure withdrawn from the contest.** Iteration 5's starburst trace showed
+   coverage is a *contested* stock and that a build which paints twice as much
+   still loses to one that erases twice as much. Sending every mopper to ruins
+   removes them from that contest.
+
+If arm B underperforms arm A, these are the two candidate causes and they are
+distinguishable in a trace: (1) shows as moppers with near-zero mop actions and
+high movement, (2) as a fall in team unpaint actions per round with moppers
+still busy.
