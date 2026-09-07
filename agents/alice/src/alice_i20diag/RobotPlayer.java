@@ -1,4 +1,4 @@
-package alice_i21a;
+package alice_i20diag;
 
 import battlecode.common.*;
 
@@ -18,7 +18,8 @@ public class RobotPlayer {
     // --- instrumentation ---
     static int overruns = 0;       // confirmed bytecode overruns (round advanced mid-logic)
     static int nearMisses = 0;     // ended turn within 15% of the limit
-    static int maxBc = 0;          // worst bytecode usage seen
+    static int maxBc = 0;
+    static String pdMsg = null;          // worst bytecode usage seen
 
     // --- state ---
     static int rngState;           // xorshift PRNG state (seeded from ID)
@@ -56,7 +57,8 @@ public class RobotPlayer {
                 if (bc > maxBc) maxBc = bc;
                 if (rc.getRoundNum() > startRound) overruns++;
                 else if (bc > limit - limit / 7) nearMisses++;
-                rc.setIndicatorString("bc=" + bc + " max=" + maxBc
+                if (pdMsg != null) { rc.setIndicatorString(pdMsg); pdMsg = null; }
+                else rc.setIndicatorString("bc=" + bc + " max=" + maxBc
                         + (overruns > 0 ? " OVR=" + overruns : "")
                         + (nearMisses > 0 ? " near=" + nearMisses : ""));
                 Clock.yield();
@@ -144,11 +146,35 @@ public class RobotPlayer {
         MapLocation ruin = null;
         MapLocation[] ruins = rc.senseNearbyRuins(-1);
         MapLocation me = rc.getLocation();
+        // Iteration 20: penalise a ruin whose pattern currently holds enemy paint.
+        // A soldier can never overwrite enemy paint, so such a pattern cannot be
+        // finished until a mopper arrives. Measured on alice_iter14 self-play,
+        // 35.8%/77.8%/81.2% of ALL ruin-targeted soldier turns (gridworld/box/
+        // UnderTheSea) are spent on exactly such a ruin. Iteration 19 attacked the
+        // same waste from the mopper side and raised THROUGHPUT through the blocked
+        // state while leaving the blocked FRACTION untouched (35.8->36.1) -- because
+        // that fraction is an equilibrium the opponent replenishes. This stops
+        // paying for the equilibrium instead of fighting it, so it is a different
+        // mechanism, not a refinement, and it is measured on top of iteration 19.
+        // Ruins are sensed within vision (r^2 <= 20), so a penalty of 25 strictly
+        // prefers any unblocked ruin. BLOCK_PENALTY = 0 never calls patternBlocked
+        // and is byte-identical to alice_iter19.
+        // KNOWN BIAS, recorded rather than discovered later: a distant ruin whose
+        // 5x5 lies partly outside vision cannot be tested and so reads as
+        // unblocked. Large penalties therefore bias toward ruins we merely cannot
+        // see yet, which is why the ladder is small and the exclusive rung is
+        // measured rather than assumed safe.
+        final int BLOCK_PENALTY = 10;
         int bestD = 1 << 30;
         for (MapLocation r : ruins) {
             if (rc.canSenseRobotAtLocation(r)) continue; // tower already there
             int d = me.distanceSquaredTo(r);
-            if (d < bestD) { bestD = d; ruin = r; }
+            if (d >= bestD) continue;                    // cannot win even unpenalised
+            if (BLOCK_PENALTY > 0 && patternBlocked(rc, r)) {
+                d += BLOCK_PENALTY;
+                if (d >= bestD) continue;
+            }
+            bestD = d; ruin = r;
         }
 
         if (ruin != null) {
@@ -177,6 +203,7 @@ public class RobotPlayer {
                     }
                 }
             }
+            pdiag(rc, ruin, wantTower);
             // Complete whichever pattern is actually painted (the mark decided it).
             if (rc.canCompleteTowerPattern(UnitType.LEVEL_ONE_PAINT_TOWER, ruin)) {
                 rc.completeTowerPattern(UnitType.LEVEL_ONE_PAINT_TOWER, ruin);
@@ -193,10 +220,8 @@ public class RobotPlayer {
         if (!here.getPaint().isAlly() && rc.canAttack(cur)) {
             rc.attack(cur);
         }
-        // ITERATION 21 ABLATION: iteration 1's idle-action painting is GATED OFF.
-        // Kept as a live branch rather than deleted so the diff against
-        // alice_iter19 is exactly one boolean.
-        if (false && rc.isActionReady() && rc.getPaint() >= 15) {
+        // Otherwise spend the idle action painting the nearest empty tile in range.
+        if (rc.isActionReady() && rc.getPaint() >= 15) {
             MapLocation paintTarget = null;
             int paintD = 1 << 30;
             for (MapInfo t : rc.senseNearbyMapInfos(9)) {
@@ -334,5 +359,63 @@ public class RobotPlayer {
             if (ruins[i].distanceSquaredTo(l) <= 8) return true;
         }
         return false;
+    }
+
+    /** Does this ruin's 5x5 tower pattern currently hold any enemy paint?
+     *  Enemy paint cannot be overwritten by a soldier (engine: soldierAttack
+     *  paints only empty or already-ally tiles), so the pattern is unfinishable
+     *  until a mopper clears it. Tiles outside vision are not counted -- see the
+     *  bias note at the call site. */
+    static boolean patternBlocked(RobotController rc, MapLocation ruin) throws GameActionException {
+        for (MapInfo t : rc.senseNearbyMapInfos(ruin, 8)) {
+            if (t.getPaint().isEnemy()) return true;
+        }
+        return false;
+    }
+
+    // ---------------------------------------------------------- PAINT DIAGNOSTIC
+    /** Census of the 5x5 around `ruin` against the pattern `want` requires.
+     *  Emitted as an indicator string so replay-dump can read it. */
+    static void pdiag(RobotController rc, MapLocation ruin, UnitType want) {
+        try {
+            int pat = want == UnitType.LEVEL_ONE_PAINT_TOWER
+                    ? GameConstants.PAINT_TOWER_PATTERN : GameConstants.MONEY_TOWER_PATTERN;
+            int ok = 0, emp = 0, enemy = 0, wrong = 0, uns = 0, wall = 0, marked = 0, markbad = 0;
+            int inrange = 0, outrange = 0;
+            for (int dx = -2; dx <= 2; dx++) {
+                for (int dy = -2; dy <= 2; dy++) {
+                    if (dx == 0 && dy == 0) continue;
+                    MapLocation l = ruin.translate(dx, dy);
+                    if (!rc.canSenseLocation(l)) { uns++; continue; }
+                    MapInfo mi = rc.senseMapInfo(l);
+                    if (!mi.isPassable()) wall++;
+                    boolean sec = ((pat >> (5 * (dx + 2) + dy + 2)) & 1) == 1;
+                    PaintType need = sec ? PaintType.ALLY_SECONDARY : PaintType.ALLY_PRIMARY;
+                    PaintType have = mi.getPaint();
+                    PaintType mk = mi.getMark();
+                    if (mk != PaintType.EMPTY) { marked++; if (mk != need) markbad++; }
+                    if (have == need) ok++;
+                    else {
+                        // A mismatching tile is only workable if the soldier can
+                        // actually attack it from where it stands (soldier action
+                        // radius^2 = 9). Split the mismatches so a stalled pattern
+                        // can be told from an unfinished one.
+                        if (rc.getLocation().distanceSquaredTo(l) <= 9) inrange++; else outrange++;
+                        if (have == PaintType.EMPTY) emp++;
+                        else if (have.isEnemy()) enemy++;
+                        else wrong++;
+                    }
+                }
+            }
+            pdMsg = ("PD " + (want == UnitType.LEVEL_ONE_PAINT_TOWER ? "P" : "M")
+                    + " r=" + ruin.x + "," + ruin.y
+                    + " ok=" + ok + " e=" + emp + " x=" + enemy + " w=" + wrong
+                    + " uns=" + uns + " wall=" + wall + " in=" + inrange + " out=" + outrange
+                    + " mk=" + marked + " mkbad=" + markbad
+                    + " cP=" + (rc.canCompleteTowerPattern(UnitType.LEVEL_ONE_PAINT_TOWER, ruin) ? 1 : 0)
+                    + " cM=" + (rc.canCompleteTowerPattern(UnitType.LEVEL_ONE_MONEY_TOWER, ruin) ? 1 : 0)
+                    + " $=" + rc.getMoney() + " mp=" + rc.getPaint()
+                    + " d=" + rc.getLocation().distanceSquaredTo(ruin));
+        } catch (Exception e) { /* diagnostic only */ }
     }
 }

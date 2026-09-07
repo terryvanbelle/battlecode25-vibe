@@ -193,9 +193,9 @@ public class RobotPlayer {
         if (!here.getPaint().isAlly() && rc.canAttack(cur)) {
             rc.attack(cur);
         }
-        // ITERATION 21 ABLATION: iteration 1's idle-action painting is GATED OFF
-        // here. Kept as a live branch rather than deleted so the diff against
-        // alice_iter14 is exactly one boolean.
+        // ITERATION 21 ABLATION: iteration 1's idle-action painting is GATED OFF.
+        // Kept as a live branch rather than deleted so the diff against
+        // alice_iter19 is exactly one boolean.
         if (false && rc.isActionReady() && rc.getPaint() >= 15) {
             MapLocation paintTarget = null;
             int paintD = 1 << 30;
@@ -234,14 +234,32 @@ public class RobotPlayer {
 
     // ----------------------------------------------------------------- mopper
     static void runMopper(RobotController rc) throws GameActionException {
-        // Mop adjacent enemy paint (prefer tiles with enemy robots on them).
+        // Iteration 19: a mopper prefers enemy paint that BLOCKS a tower pattern.
+        // Census over alice_iter14 self-play, samples where a soldier stands at a
+        // ruin with >=20 of the 24 pattern tiles already correct: the remaining
+        // tiles are ENEMY paint 87% (gridworld), 78% (UnderTheSea), 62% (box)
+        // of the time. A soldier can NEVER overwrite enemy paint (engine:
+        // soldierAttack paints only empty or already-ally tiles), so those
+        // patterns are permanently stalled -- 637 samples sat at 22 of 24 tiles
+        // against 15 that ever reached 24. Only a mopper can unblock them, and
+        // today a mopper walks to the nearest enemy paint without caring whether
+        // it is holding up a tower. This changes WHICH enemy paint it prefers and
+        // nothing else, so it costs nothing when no pattern is blocked.
+        MapLocation[] openRuins = rc.senseNearbyRuins(-1);
+        int nOpen = 0;
+        for (int i = 0; i < openRuins.length; i++) {
+            if (!rc.canSenseRobotAtLocation(openRuins[i])) openRuins[nOpen++] = openRuins[i];
+        }
+        // Mop adjacent enemy paint (prefer pattern-blocking tiles, then robots).
         if (rc.isActionReady()) {
             MapLocation best = null;
+            int bestPri = 3;
             for (MapInfo t : rc.senseNearbyMapInfos(2)) {
-                if (t.getPaint().isEnemy() && rc.canAttack(t.getMapLocation())) {
-                    best = t.getMapLocation();
-                    if (rc.canSenseRobotAtLocation(best)) break; // robot on it: steal paint
-                }
+                MapLocation l = t.getMapLocation();
+                if (!t.getPaint().isEnemy() || !rc.canAttack(l)) continue;
+                int pri = blocksPattern(openRuins, nOpen, l) ? 0 : 2;
+                if (pri == 2 && rc.canSenseRobotAtLocation(l)) pri = 1; // robot on it: steal paint
+                if (pri < bestPri) { bestPri = pri; best = l; if (pri == 0) break; }
             }
             if (best != null) rc.attack(best);
         }
@@ -254,10 +272,13 @@ public class RobotPlayer {
         MapLocation me = rc.getLocation();
         MapLocation target = null;
         int bd = 1 << 30;
+        int bestPri = 1;
         for (MapInfo t : rc.senseNearbyMapInfos(-1)) {
             if (!t.getPaint().isEnemy()) continue;
-            int d = me.distanceSquaredTo(t.getMapLocation());
-            if (d < bd) { bd = d; target = t.getMapLocation(); }
+            MapLocation l = t.getMapLocation();
+            int pri = blocksPattern(openRuins, nOpen, l) ? 0 : 1;
+            int d = me.distanceSquaredTo(l);
+            if (pri < bestPri || (pri == bestPri && d < bd)) { bestPri = pri; bd = d; target = l; }
         }
         if (target == null) wander(rc);
         else if (bd > 2) tryMove(rc, me.directionTo(target));
@@ -304,5 +325,14 @@ public class RobotPlayer {
         if (rnd(2) == 0) { Direction t = l; l = r; r = t; }
         if (rc.canMove(l)) { rc.move(l); return; }
         if (rc.canMove(r)) { rc.move(r); return; }
+    }
+
+    /** Is `l` inside the 5x5 tower pattern of any ruin that has no tower on it?
+     *  Pattern radius is r^2 <= 8 around the ruin centre (the 5x5 box corners). */
+    static boolean blocksPattern(MapLocation[] ruins, int n, MapLocation l) {
+        for (int i = 0; i < n; i++) {
+            if (ruins[i].distanceSquaredTo(l) <= 8) return true;
+        }
+        return false;
     }
 }
