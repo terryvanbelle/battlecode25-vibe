@@ -5929,3 +5929,59 @@ arrives latest, and therefore the map where "paint empty ground" stays a winning
 policy longest. That is the same saturation story from the other end, and it is
 the single most informative game I own against an opponent my lineage did not
 produce. Archiving it is the right use of the post-accept replay slot.
+
+## Iteration 23 mechanism check — the clause fires, and its LARGER effect is the one I listed second
+
+`alice_i23v` (= `alice_i23` plus counters, same indicator encoding as
+`alice_i23diag` so the two parse identically) vs the iteration 22 build,
+UnderTheSea, round 200. Against the baseline census on the same map and round:
+
+| round | | pattern-loop turns | **landed** (real pattern tiles) | refused attacks |
+|---|---|---|---|---|
+| 200 | baseline `alice_i23diag` | 123 | 42 | **14** |
+| 200 | **candidate `alice_i23v`** | 123 | **53** | **0** |
+| 400 | baseline | 79 | 15 | **21** |
+| 400 | **candidate** | **209** | **28** | **0** |
+| 700 | baseline | 47 | **0** | **29** |
+| 700 | **candidate** | 48 | 1 | **0** |
+
+Zero refused attacks at every round, which is true by construction and is the
+weakest of the three rows. The interesting ones are the others: at r400 the
+candidate reaches the pattern loop **209 times against the baseline's 79** and
+lands **28 against 15**, and at r700 the baseline lands **exactly zero** while
+refusing 29. The r400 turn count more than doubling is the starvation channel
+showing up again — soldiers that are not burning paint on refused attacks are
+still alive and still working ruins.
+
+Both decompositions close to 123. **The candidate lands 53 pattern tiles against
+the baseline's 42 — +26% — while making zero refused attacks.**
+
+So of the baseline's 14 refused attacks, **11 became landed attacks** and 3 became
+fall-throughs to the area branch. That is effect (2) from the design note —
+"`continue` rather than `break`, so it finds a paintable tile further along the
+same pattern" — and it is **larger than effect (1), the saved paint**, which I had
+listed first. Second time today the mechanism I ranked second turned out to
+dominate; the pattern is that I keep pricing the *removal* and under-pricing what
+the freed action slot goes on to do.
+
+### Correcting a metric I printed before anyone had to challenge it
+
+My dump script computed `paint saved = 5 x skipped = 2,830`. **That number is
+meaningless and I am striking it.** `skipped` counts enemy tiles passed over
+*while scanning a pattern* — many per turn — whereas the baseline could only ever
+burn 5 paint **once per turn**, because it `break`s. The baseline's real waste at
+r200 is 14 attacks = **70 paint**, not 2,830. The 566 skips are a fact about the
+board (the patterns being worked hold ~4.6 enemy tiles each), not about paint.
+**A counter that is not in the same units as the thing it is compared against is
+not evidence**, and the decomposition closing to 123 is what makes the rest of
+this table trustworthy.
+
+### The caveat that bounds all of the above
+
+These are **two different games**. `alice_i23diag` vs `alice` and `alice_i23v` vs
+`alice` share an opening and then diverge at the first decision the clause
+changes, so by round 200 they are different trajectories and the 42-vs-53
+comparison is suggestive, not controlled. What it establishes is §4's criterion 2
+— **the mechanism demonstrably engaged as designed** — and nothing about game
+value. The head-to-head on a fresh 25-map sample remains the gate, and it is
+pre-registered above.
