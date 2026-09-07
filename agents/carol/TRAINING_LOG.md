@@ -6328,3 +6328,65 @@ Counters, all decisions rather than outcomes:
 **Pre-registered kill condition**: if `srpOk` is ~0 while `srpPoor` is the bulk, the direction is
 blocked at the paint gate and the fix must be to soldiers' paint supply, not to SRPs. If `srpOk`
 is large, the mechanism is simply unused and iteration 26 builds it.
+
+## Iteration 26a — the SRP direction is REACHABLE, and the blocker is not the one I feared
+
+`gauntlet/20260907-190752`, 8 games, i26a vs `carol_iter25` on four maps. Identity check: 4/8,
+all four maps split by side — the instrumentation is a confirmed no-op.
+
+Per-robot counters, taken from the longest-lived soldier in each game:
+
+| map | soldier turns | `srpPoor` (< 25 paint) | `srpOk` (`canMarkResourcePattern` true) |
+|---|---|---|---|
+| DefaultLarge | 125 | 24 (19.2%) | **36 (28.8%)** |
+| DefaultMedium | 181 | 17 (9.4%) | 4 (2.2%) |
+| Fossil | 113 | 23 (20.4%) | 2 (1.8%) |
+| gridworld | 355 | 19 (5.4%) | **0 (0.0%)** |
+
+**The pre-registered kill condition did not fire.** `srpPoor` is 5–20%, not the bulk, so the
+25-paint mark cost is *not* what blocks this — my specific worry was wrong. The direction is
+reachable on three of four maps, and gridworld's zero is unsurprising: it is a wall lattice with
+a ruin every six tiles and no clear 5×5 anywhere.
+
+And 2% is plenty. This mechanism does not need a high firing rate — a game needs a handful of
+SRPs, not hundreds. 2% of one soldier's 181 turns is ~4 opportunities for *one* robot, and carol
+fields many.
+
+### A flaw in my own probe, recorded rather than quietly fixed
+
+`srpOk` tests `canMarkResourcePattern(rc.getLocation())` — **the soldier's own tile as the
+pattern centre, and only that**. But `RESOURCE_PATTERN_RADIUS_SQUARED = 8` means a soldier may
+mark a pattern centred anywhere within r²=8, which is ~25 candidate centres. So every number in
+that table is a **lower bound**, and possibly a very loose one. It did not change the decision
+(a lower bound above zero already clears the gate) but it would have if the answer had come back
+near zero — I would have concluded "unreachable" from a measurement that only ever asked about
+one of twenty-five options.
+
+The general form is worth keeping: **when instrumenting a decision, check that the counter's
+condition is the same width as the decision the bot would actually get to make.** A narrower
+proxy can only produce false negatives, and a false negative here reads exactly like a refutation.
+
+### Where the turns come from — answered free, from replays already on disk
+
+The idle-soldier branch already carries iteration 14's `frontFound`/`frontNone` counter, so the
+question "is there a budget for this, and does it collide with an existing consumer" cost no VM
+time at all:
+
+| map | IDLE-ALLY turns | `frontFound` | `frontNone` |
+|---|---|---|---|
+| DefaultLarge | 1032 | 292 | **740 (72%)** |
+| DefaultMedium | 3443 | 809 | **2634 (77%)** |
+| Fossil | 2947 | 340 | **2607 (88%)** |
+| gridworld | 6647 | 1621 | **5026 (76%)** |
+
+`frontNone` — nothing paintable in action range *and* nothing empty anywhere in vision — is the
+dominant idle case at 72–88%, thousands of turns per game. Iteration 14 consumes only
+`frontFound`. So SRP work fires exclusively in `frontNone`, and the two mechanisms **partition
+the idle budget by an explicit decision** rather than by which happens to be written first —
+which is precisely the accidental-allocation trap §5b describes.
+
+It is also the right *place*, not just the right time: `frontNone` means the soldier is deep
+inside saturated ally territory, which is where a pattern can survive its 50-round activation
+delay and where most of its 25 tiles are already the correct colour. `RESOURCE_PATTERN` has 13
+of 25 bits set, so in ally-primary territory only 13 tiles need recolouring: 25 + 13×5 = **90
+paint**, not the 150 I costed on virgin ground.
