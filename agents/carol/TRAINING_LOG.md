@@ -4239,3 +4239,87 @@ list from this session's API sweep. The remaining options are therefore:
 
 Option 1 is the cheapest and is a strict superset of iteration 14's mechanism (vision is a
 memory of depth zero), so it is the natural refinement whichever way this run lands.
+
+### Iteration 14 DECISION — ACCEPT. The conditional gate was read on an unrepresentative slice, and the full run says so.
+
+Run `20260907-043104` (80 games, maps pinned to the i12/i13 set), collated after the session
+was killed by an account-wide rate limit at ~04:40. The games had finished on the VM regardless;
+only collation was lost, exactly as MULTI_AGENT.md's "if your session dies mid-run" describes.
+
+| gate | threshold | result |
+|---|---|---|
+| h2h vs `carol_iter12` | >50% | **26/40 = 65.0%** |
+| peer `WinPct` | 60% | **met** |
+| swept-win / swept-loss | — | **6 / 0**, 14 split-by-side |
+| **mirror-null margin** vs `carol_m12` | >0 games | **+6 games, 6 wins / 0 losses** |
+| flip shape | one-directional | **perfectly one-directional** |
+| mechanism firing in the flipped games | any | **207–2,747 `frontFound` per game, all six** |
+| bytecode | no overruns, no near-misses | **ov=0 nm=0; max 6,419/17,500 (37%)** |
+| regression vs `carol_rush` | no drop | 37/40 = 92.5%, **identical to i12** |
+
+**The null is the right one.** `20260907-034013` played `carol_iter12` vs `carol_m12` — verified
+byte-identical apart from the package line — on the *same 20 pinned maps*, and split them
+20/40 with zero sweeps. The candidate is measured against `carol_iter12`, so the baseline the
+mirror is built from and the baseline the candidate is measured against are the same build.
+That is the staleness rule I put into MULTI_AGENT.md, and this time it is satisfied by
+construction rather than by luck.
+
+The six deviations:
+
+```
+DefaultLarge   A   loss -> win        PlumberGame    B   loss -> win
+DefaultMedium  B   loss -> win        gridworld      A   loss -> win
+Parking_lot    B   loss -> win        walalilongla   B   loss -> win
+```
+
+**The mistake I made reading the gate 8 games in, stated plainly.** I reported "of the idle
+turns this targets, 93.5% have no empty tile anywhere in vision at all — the hypothesis is
+wrong." That number came from a partial replay slice. Measured over complete games:
+
+| map/side | `frontFound` | `frontNone` | hit-rate among targeted turns |
+|---|---|---|---|
+| Parking_lot B | 2,747 | 826 | **76.9%** |
+| Bunny B | 1,081 | 754 | 58.9% |
+| walalilongla B | 696 | 699 | 49.9% |
+| gridworld A | 868 | 1,832 | 32.1% |
+| PlumberGame B | 1,378 | 3,464 | 28.5% |
+| **DefaultMedium B** | 658 | 2,551 | **20.5%** |
+| DefaultLarge A | 207 | 1,609 | 11.4% |
+| Castle B | 295 | 7,162 | 4.0% |
+
+DefaultMedium alone went from the 6.5% I quoted to 20.5% over the full game, and the hit-rate
+ranges 4%–77% across maps — it is a **map-and-phase-dependent** quantity, not a constant. Early
+rounds are exactly when territory is least saturated and the frontier is *nearest*, so my slice
+was biased in a direction I did not think about.
+
+**The generalizable lesson, and it is not the one I expected.** The practice of reading a
+conditional gate a few games in — invented after iteration 12 and genuinely good — has a failure
+mode of its own: **a partial-game read is a biased sample of game phases, not a small random
+sample of turns.** Any counter whose rate varies over the course of a game will be misread by
+it. The fix is not to abandon the early read (it is still 5 minutes versus 40) but to treat it
+as *directional only*, and never to write "the hypothesis is wrong" on the strength of one.
+
+**What saved the iteration was the decision rule, not the diagnosis.** I wrote at the time: "I
+am NOT killing the run on that number ... the decision comes from mirror deviation against
+`carol_m12`, not from frequency." That was iteration 12's lesson applied — a low firing count is
+not evidence a mechanism did not cause a result — and it is the second time in two days that
+holding the run open past a discouraging frequency counter produced the session's best accept.
+Had I killed the run on the gate, I would have discarded a +6-game one-directional result.
+
+**Why it works, mechanistically.** `newExploreTarget()` picks a *random map coordinate*, so an
+idle soldier deep in friendly territory is as likely to walk further in as out. Retargeting it
+at the nearest visible EMPTY tile costs no resource and creates no contention — it only
+redirects a move that was already happening. That is the "capability preserved at zero marginal
+cost" profile TRAINING_ALGORITHM.md names as the recurring winner's shape, and it is now the
+third of carol's accepts to have it.
+
+**And it is a direct answer to the tournament's verdict.** The first tournament said carol loses
+the *coverage* race — bob wins by painting, at a median of 737 rounds. Frontier-seeking is
+coverage work: it converts the largest remaining block of soldier waste (IDLE-ALLY, 34.9%–46.2%
+of soldier turns) into paint at the boundary rather than random wandering inside our own half.
+
+**DECISION: ACCEPT.** Snapshotted `carol_iter14`; `src/carol` is now iteration 14. Fresh mirror
+`carol_m14` generated from the new baseline in the same commit, so the next candidate is
+measured against a null that is not stale. Roster run `20260907-131258` launched on the same
+pinned maps *before* the writeup (240 games) as the §5b scheduled frozen-roster check; it will
+compare directly against `carol_i13`'s 26/40 and `carol_iter11`'s 25/40 vs `carol_iter7`.
