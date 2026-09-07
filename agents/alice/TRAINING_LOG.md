@@ -8182,3 +8182,63 @@ Pre-registered, before step 0 returns:
   mopper deaths at p=0 must fall materially below 64.7%. If the win rate rises
   while starvation is unchanged, the mechanism is not what won and the
   attribution is OPEN, per step 3b — I do not get to back-fill it.
+
+## Iteration 24 step 0 — PASSED, and the identity question is settled by logic not by a diff
+
+One map (UnderTheSea), `alice_i24` vs `alice_iter23`. Candidate wins on
+tiebreakers at round 2000; the baseline mirror (`alice` vs `alice_iter23`, which
+is byte-identical code on both sides) also ends A-wins-on-tiebreakers, so **the
+top-line result does not discriminate** and would have been worthless on its own.
+
+The discriminating measurement is the engagement counter:
+
+```
+max i24= seen on a single mopper over its life: 11
+typical late-game mopper:                        3
+```
+
+**The mechanism engages.** And this settles byte-identity without waiting for the
+counter diff: a mopper relocated 11 times that would otherwise have stood still,
+so the two games cannot be identical. Recording the reasoning because "the diff
+had not finished" would otherwise look like a skipped mandatory check.
+
+**Why the counts look low, and why that is expected rather than disappointing.**
+The measured opportunity was 33.3% of *hold-turns*, but the relocation happens at
+most **once per hold EPISODE**: after the step the mopper is on ally paint, so the
+guard returns immediately on every subsequent turn of that episode. Consecutive
+hold-turns share one relocation. So 3–11 relocations per life is consistent with
+33.3% of hold-turns, and I should not have expected a per-turn number. **This is a
+rate whose denominator I nearly misread** — the same shape as counting collisions
+without counting supply.
+
+### An instrumentation gap I found by trying to test my own prediction
+
+My pre-registered mechanism check was *"mopper deaths at p=0 must fall materially
+below 64.7%"*. I then found the candidate build **prints no paint** — its mopper
+indicator is `i24=… bc=…` — and `replay-dump` exposes robot paint only through
+indicator strings. **I could not have tested my own pre-registered prediction with
+the build I was about to evaluate.** Added `p=` before launching.
+
+Worth recording as a rule: **pre-register the metric and then check the build can
+actually emit it.** A prediction that the instrument cannot report is not a
+prediction, and I would have discovered this only after spending 150 games — at
+which point the tempting move is to accept on the win rate and quietly drop the
+mechanism check, which is exactly the back-filling step 3b forbids.
+
+## IN FLIGHT — gauntlet `20260907-234431`, 150 games
+
+`BOT=alice_i24 OPPONENTS="alice_iter23 alice_flood alice_iter7"`, 25 random maps,
+both sides. Detached, so it survives a session death; if I die, **collect it with
+`../../tools/gauntlet-collect.sh 20260907-234431` — do not re-run it.**
+
+Decision rules, pre-registered and unchanged from above:
+
+- **Accept** requires head-to-head vs `alice_iter23` **> 50%** (doctrine 8: the
+  primary gate is the most recent accepted snapshot), no unresolved
+  one-directional regression against `alice_flood` / `alice_iter7`.
+- **Mechanism check, separately:** mopper deaths at p=0 must fall materially below
+  **64.7%**. If the win rate clears the bar while starvation is unchanged, I
+  **accept the result and record the attribution as OPEN** rather than inventing a
+  story for it. Writing that down now so the temptation is pre-empted.
+- The two lopsided opponents give **direction only** — a 1–2 game move on either
+  is under the noise floor and I will not read it.

@@ -57,7 +57,8 @@ public class RobotPlayer {
                 if (bc > maxBc) maxBc = bc;
                 if (rc.getRoundNum() > startRound) overruns++;
                 else if (bc > limit - limit / 7) nearMisses++;
-                rc.setIndicatorString((rc.getType() == UnitType.MOPPER ? "i24=" + i24Moves + " " : "")
+                rc.setIndicatorString((rc.getType() == UnitType.MOPPER
+                        ? "i24=" + i24Moves + " p=" + rc.getPaint() + " " : "")
                         + "bc=" + bc + " max=" + maxBc
                         + (overruns > 0 ? " OVR=" + overruns : "")
                         + (nearMisses > 0 ? " near=" + nearMisses : ""));
