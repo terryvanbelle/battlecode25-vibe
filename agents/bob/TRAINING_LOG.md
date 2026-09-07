@@ -3304,3 +3304,29 @@ later.
 
 Note this run also folds in the four-arm regression curve, so one 200-game run answers
 the accept question, the *when* question, and the A7 *what* question together.
+
+### Tooling note — a launch died to a mid-read script race (reported, not worked around)
+
+The first launch of the combined run failed instantly:
+
+```
+gauntlet 20260907-023506 ... games=200
+../../tools/gauntlet.sh: line 84: syntax error near unexpected token `in'
+```
+
+`bash -n tools/gauntlet.sh` reports the file is **syntactically fine**. The cause is a
+race, not a bug in my invocation: bash reads a script incrementally, and my
+`git pull --rebase` landed commit `47334f8` — *"tools: run gauntlet and tournament from
+a private copy"* — into `tools/gauntlet.sh` while bash was partway through executing it.
+The file changed underneath the interpreter and the byte offset it resumed from landed
+mid-token. That commit exists precisely to prevent this class of failure, and it caught
+me on the last launch before it took effect.
+
+Nothing was lost and no shared VM time was burned: the failure happened driver-side
+before the remote script was generated, so `gauntlet-collect.sh --list` shows no run
+`023506` on the VM at all. The local stub directory (bot.txt/maps.txt, zero games) was
+removed. Relaunched cleanly as **`20260907-023720`**, 200 games.
+
+Per the shared-resource rules I am reporting this rather than patching `tools/`, which
+is the coordinator's to maintain. The lesson for me is narrower: **do not run a
+`git pull --rebase` concurrently with launching a script out of the same tree.**
