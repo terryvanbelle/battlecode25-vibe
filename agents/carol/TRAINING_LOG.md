@@ -3781,3 +3781,69 @@ instruments suggested — 3.8% against bob versus the ~70% my gauntlet reports.
 
 **Deliberately NOT queued: anything that raises unit production.** Iterations 5, 8 and 10
 settled that, and the tournament adds nothing to reopen it.
+
+## Iteration 12 is INERT, diagnosed mid-run — and my reachability pre-check asked the wrong question
+
+Checked the mechanism gate from live replays 15 games into run `20260907-020717`, rather than
+waiting 40 minutes for a number I could already predict.
+
+| | gridworld | DefaultMedium |
+|---|---|---|
+| i12 tower-turns | 11,016 | 16,340 |
+| chips >= 3,700 (gate affordable) | **92.5%** | **0.0%** |
+| on an upgradable paint tower (guard matches) | **2.1%** | **68.4%** |
+| **BOTH — an upgrade can actually happen** | **0.59%** | **0.00%** |
+
+`UPG` fired **once**, in 11,016 tower-turns. The two conditions the mechanism needs are almost
+perfectly **anti-correlated across maps**, so their conjunction is ~0 everywhere.
+
+**Why, mechanically.** `runTower` spawns whenever `chips >= reserve + 250`, draining the
+treasury to ~1,450 every time it can. So **chips accumulate only when spawning is blocked**, and
+spawning is blocked only when the tower has no paint. Hence:
+
+- On maps where carol holds healthy paint towers (DefaultMedium: median tower paint 110), she
+  spawns continuously and the treasury **pins at ~1,350, never once exceeding 2,530**. The
+  3,700 gate is dead code there.
+- On maps where paint is absent and chips pile to 406,170 (gridworld), spawning is blocked —
+  but there carol's tower count is frozen at 13 from round 0, meaning she builds **no** towers,
+  so `towerTypeFor()` never runs and her towers are whatever the map handed her. Only 2.1% are
+  upgradable paint towers.
+
+**The pre-check failure, stated precisely, because this is the reusable lesson.** I *did* run a
+reachability check — 146,350 tower-turns, 21.7% clearing 3,700 — and called it a PASS. That
+measured the **marginal** distribution of chips over all tower-turns. The gate's reachability
+depends on the **conditional** distribution: chips *given that the guard matches*. Those differ
+enormously here because the guard and the gate are driven by anti-correlated causes. My own
+joint analysis earlier (chip-rich AND paint-destitute, 11.1%) was the right *shape* of check on
+the wrong *pair* of variables — I checked the condition the mechanism was **motivated by**, not
+the condition it would **execute under**.
+
+> **Rule added**: a reachability check must condition on the guard the gate sits behind. "How
+> often is X above the threshold" is the wrong question whenever the branch is nested; the
+> question is "how often is X above the threshold **among the turns that reach this line**".
+
+**Decision: let the run finish, do not kill it.** Shared-VM rules forbid killing anything on
+battlecode-dev, and the run is nearly free now. Its value is as a **registered zero arm**: a
+mechanism firing once in 11,000 tower-turns should land at ~50%, and if it does, that confirms
+the diagnosis rather than teaching anything new. **Registered prediction: iteration 12 lands
+within a couple of games of 50%, with `UPG` counts near zero across the run.** If it lands
+materially above 50%, my inertness diagnosis is wrong and I must explain that instead.
+
+### Iteration 12b — the fix, and why it is a refinement rather than a new hypothesis
+
+The hypothesis (convert idle chips into paint income) is untouched and still supported by the
+gridworld trace. What failed is purely the **gate**: the treasury is drained by spawning before
+it can ever reach the upgrade price. So give the upgrade **priority over spawning** on the
+tower that would buy it — an upgradable paint tower withholds spawning until it has saved
+`CHIP_RESERVE + nextLevelCost`.
+
+This is exactly the near-miss refinement the algorithm permits (same solution, corrected dose),
+and it is well-motivated by evidence already in hand: it trades unit production for permanent
+paint income, and **iterations 5, 8 and 10 established that unit production is not carol's
+binding constraint** — 4.1x the soldiers changed nothing. Spending a resource proven not to
+bind, to buy one proven to bind, is the "capability at zero marginal cost" profile.
+
+**Counter-metric registered**: the saving tower must not stall the team. Watch tower count (it
+must not fall — iteration 6 lost DefaultSmall when the treasury was mismanaged) and the soldier
+count, and require `UPG` to actually fire this time — the mechanism gate is now
+`UPG > 0 on a majority of maps`, not merely `> 0`.
