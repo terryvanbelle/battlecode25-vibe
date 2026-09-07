@@ -3155,3 +3155,66 @@ A win-rate move without a side move means the right answer for the wrong reason.
 
 This is one run instead of three, it answers *when* and *what* together, and it cannot
 be confounded by map draw because every arm plays the same 25 maps.
+
+### RETRACTION — the side-B asymmetry is not real, and one of my readouts carries no information
+
+Before pre-registering an iteration on the side-B pattern I had claimed across four
+independent opponents, I checked the base rate. **The pattern does not survive it, and
+I am withdrawing the claim.**
+
+**1. There is no systematic side bias.** Win rate by side, computed over every game I
+have rather than over the losses I noticed:
+
+```
+tournament (271 games)     side A 132/135 = 97.8%     side B 130/136 = 95.6%
+                           gap 2.2 pts, se 2.2 pts  ->  1.01 sd
+roster run  (150 games)    side A  61/75  = 81.3%     side B  65/75  = 86.7%   (B better)
+iteration 9 (80 games)     side A  24/40  = 60.0%     side B  31/40  = 77.5%   (B better)
+iteration 7 (200 games)    side A  86/100 = 86.0%     side B  77/100 = 77.0%   (A better)
+```
+
+One standard deviation in the tournament, and the sign **flips** across my own runs.
+The "four independent opponents all exploit side B" reading was **selection bias of the
+exact kind TRAINING_ALGORITHM.md warns about in Step 1** — *"Don't sample only losses."*
+At a 95-98% win rate almost every game is a win, so the nine losses had to land
+somewhere; 3 as A and 6 as B is what a fair coin does.
+
+**2. Worse: `split-by-side` is a deterministic function of the win rate and carries no
+independent information.** If per-game outcomes were independent, the chance a map
+splits is `2p(1-p)`, so out of 25 maps:
+
+```
+vs bob_iter1          p=0.56   expected 12.3 +/- 2.5   observed 10
+vs bob_iter0          p=0.96   expected  1.9 +/- 1.3   observed  2
+vs examplefuncsplayer p=1.00   expected  0.0 +/- 0.0   observed  0
+```
+
+Every observation sits inside its expectation. **"10 of 25 split by side against
+`bob_iter1` versus 2 of 25 against `bob_iter0`" was never evidence of asymmetry — it is
+arithmetic on 56% versus 96%.** I presented it as a mechanism signature; it was a
+restatement of the win rate.
+
+**Consequences, applied rather than noted:**
+
+- The pre-registered iteration on side-B asymmetry is **cancelled before it was
+  written**. There is nothing to explain.
+- My registered "second readout: split-by-side count" on the regression run is
+  **struck**. A readout that is a function of the primary metric cannot corroborate it,
+  and keeping it would have manufactured agreement between two views of one number.
+- **A7 still runs**, but its motivation is now only what it always legitimately was:
+  iteration 7 was accepted on a 52.5% head-to-head with its own audit recording that it
+  *hurts 37 maps and helps 18*, mean −0.59 points. That is a marginal accept worth
+  ablating on its own terms. The symmetry story was decoration and is gone.
+
+**One real thing does survive.** Observed sweeps deviate from independence in the other
+direction: iteration 9 vs `bob_iter7` at p=0.625 predicts 7.8 swept wins and 2.8 swept
+losses, and I observed **5 and 0**. Fewer sweeps than chance means the two sides of a
+map are *anti-correlated* — maps genuinely have side-specific character. That is a
+statement about maps, not about a weakness of ours, and it is why the swept metric is
+still worth reading even though `split-by-side` is not.
+
+This also means **criterion 2 in my pre-registrations ("swept-win > swept-loss") is
+largely implied by criterion 1**, since `p > 0.5` implies `p² > (1-p)²`. It is not
+worthless — the deviation from `25p²` is informative — but it is not the independent
+confirmation I have been treating it as, and doctrine #10's "a real effect shows up in
+more than one place" is not satisfied by two functions of the same number.
