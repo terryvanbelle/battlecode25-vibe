@@ -3923,3 +3923,67 @@ It also puts a floor under how much effort the remaining two uncalled mechanics 
 (+3/turn to *every* tower per active pattern, ~125 paint to lay, 3-4 round payback at carol's
 observed tower counts) are queued next and are, on paper, a larger multiplier than the upgrade
 being measured right now.
+
+## Iteration 12 RESULT — 62.5%, and I am REJECTING it anyway
+
+Run `20260907-020717`, 80 games, maps pinned. `carol_i12` vs `carol_iter11` + `carol_rush`.
+
+| instrument | result |
+|---|---|
+| h2h vs `carol_iter11` | **25/40 = 62.5%** |
+| swept-win / swept-loss | **5 / 0**, 15 split-by-side |
+| vs `carol_rush` | 37/40 = 92.5% |
+| overall | 62/80 = 77.5% |
+| **mechanism gate: `UPG` on a majority of maps** | **FAILED — 3 firings in 144,823 tower-turns, ~5 of 20 maps** |
+
+**The scoreboard says accept and I am rejecting.** This is the whole reason the mechanism gate
+was pre-registered. A gate that fires 3 times in 144,823 tower-turns cannot have produced a
+12.5-point swing, and accepting on that number would baseline a feature that does essentially
+nothing into the lineage — permanently, and invisibly, since every later iteration would carry
+it. 25/40 is **1.58 SD** from 50% (binomial SD 3.16 at n=40, two-sided p ~ 0.11), i.e. inside
+the noise floor doctrine #6 requires me to distrust regardless of how good the story is.
+
+**Verification work behind that call, including a sampling error of my own.** My first pass
+measured the mechanism across the run's 18 archived replays and found 3 firings — but
+`gauntlet/<run>/losses/` contains **only losses**, so I had measured the mechanism exclusively
+on games it failed to win. Corrected by pulling won-game replays off the VM:
+
+| swept-WIN map | UPG firings |
+|---|---|
+| Fossil botA | **0** (won at r1708) |
+| Fossil botB | 1 (won at r2000, tiebreak) |
+| Parking_lot botA | 1 |
+| Gears botA | 1 |
+
+So the correction did not rescue it — **Fossil was swept with a total of one upgrade across
+both sides, one of which was zero.** And among all sampled games where `UPG` *did* fire, the
+record is 2 wins / 2 losses (gridworld and PlumberGame both fired and lost). No correlation.
+
+**What I could not explain, recorded as an open anomaly rather than smoothed over.** For
+byte-identical bots the two sides of a map are the *same* game, so every map must split and the
+h2h must be exactly 20/40. I verified `carol_iter11` is byte-identical to `src/carol` modulo the
+package line, and that iteration 12 adds no engine call on the 95,261 `upgPoor` turns (the
+`canUpgradeTower` call short-circuits behind `chips >= need`). I also checked bytecode: median
+243 (i11) vs 279 (i12), max 581 against a 20,000 limit, **zero overruns** — so silent
+mid-turn truncation is excluded. Five swept wins and zero swept losses is therefore not fully
+accounted for by 3 upgrades, and I am leaving it open rather than inventing a mechanism.
+
+**The one substantive thing that survives**: a single lv2 upgrade is a *permanent* +5 paint/turn,
+worth ~10,000 paint over a 2,000-round game — plausibly decisive in a tiebreak scored on area
+painted. So the hypothesis is not weakened; only this *implementation's* ability to fire it is.
+That is exactly what 12b changes.
+
+**DECISION: REJECT** (mechanism gate failed). Not reverted as a direction — `carol_i12b`
+launched immediately as `20260907-024050`. If 12b fires the mechanism properly and shows a
+comparable or larger gain, iteration 12's 62.5% will read retrospectively as an underpowered
+early signal; if 12b lands at 50% with the mechanism firing hundreds of times, then iteration
+12's 62.5% was noise and rejecting it was correct twice over.
+
+**Tooling note for the coordinator.** `gauntlet/20260907-020717/bot.txt` records
+`bot=carol / snapshot=carol_iter11 / label=carol_iter11`, but the run demonstrably played
+`carol_i12` (`TA=carol_i12` in the generated remote script, and results.csv lists
+`carol_iter11` as the *opponent*). Collation appears to identify `src/<workspace>` rather than
+the `BOT` that actually played, so **`bot.txt` is wrong whenever `BOT` is overridden** — which
+is precisely the mislabelling it was introduced to prevent. I did not write a
+`vs_old_bots_history.csv` row from this run; had I, it would have been attributed to
+`carol_iter11`.
