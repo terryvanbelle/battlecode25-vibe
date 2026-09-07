@@ -5263,3 +5263,63 @@ bundle cost me an uninterpretable 27.5%. Iteration 20 stays the pure ferry; **it
 the withdrawal guard** (a mopper tops up only to what attrition needs, and never from a tower
 below `TOWER_DRY`). If 20's mechanism fires and moves nothing, 21 is the reason and I will
 already have the instrumentation to show it.
+
+## Iteration 18 RESULT — ACCEPT. +7 games, the map prediction confirmed, and a zero-firing control map.
+
+Run `20260907-141533`, 20 pinned maps, null `carol_m14`.
+
+| gate | threshold | result |
+|---|---|---|
+| h2h vs `carol_iter14` | >50% | **27/40 = 67.5%** |
+| peer `WinPct` | 60% | **met** |
+| **mirror-null margin** | >0 games | **+7 games**, 9 maps up / 2 down |
+| swept-win / swept-loss | — | **9 / 2** |
+| regression vs `carol_rush` | no drop from 37/40 | **37/40 = 92.5%, identical** |
+| mechanism | `pf` fires | **33–53 per tower on the maps that moved** |
+| towers lost to the release | none | **identical max/final in all 5 paired games** |
+| bytecode | no overruns | **max 6,825/17,500, ov=0, nm=0** |
+| overall | — | 64/80 = 80.0% |
+
+**The pre-registered map prediction is confirmed — the first of the session to be.**
+
+| map | predicted | `pf` (mechanism) | result |
+|---|---|---|---|
+| Castle (83.4% pinned) | **move** | fires | **+1** |
+| DefaultLarge (79.3%) | **move** | **53 / 33** | **+1** |
+| DefaultMedium (64.4%) | **move** | **38** | **+1** |
+| Parking_lot (13.3%) | not move | **0** | **+0** |
+| gridworld (4.1%) | not move | 4 | -1 |
+
+All three predicted maps moved, in the predicted direction. **Parking_lot is a zero-firing
+control**: the treasury there sits at a median of 2,990 and never enters the dead band, the
+mechanism fires *zero* times, and the map does not move. A mechanism that provably cannot have
+acted, on a map that did not change — that is the piece iteration 17 could not produce, and it
+is why I believe this result is the mechanism rather than ambient churn.
+
+The one map against prediction, gridworld, moved -1 with 4 firings against an 87,140-chip
+treasury where releasing 1,200 chips can hardly matter — and it also moved -1 for iteration 17,
+a completely unrelated mechanism. I am recording it as a chaos-sensitive map rather than
+explaining it away.
+
+**What the change actually is.** `CHIP_RESERVE = 1200` is held unless chips are *exactly*
+unchanged for 10 turns — a condition positive income makes unreachable. Iteration 18 adds the
+condition that was missing: if the treasury sits in `[CHIP_RESERVE, CHIP_RESERVE + 250)` — has
+the money, is forbidden to spend it — for 10 consecutive turns, release the reserve. On Castle
+that band held **83.4%** of tower turns while chips fell below a soldier's raw 250 cost on
+**0.6%**. Carol was not poor; she was pinned.
+
+**Why it is safe, measured rather than argued.** A build drops chips under 1,200, the pinned
+counter resets, and the reserve re-arms. The treasury oscillates around the line instead of
+draining past it — so the 1,000-chip ruin completion the reserve exists to protect is still
+protected, and the paired tower counts confirm it: **not one tower fewer, in any game.**
+
+**DECISION: ACCEPT.** Snapshotted `carol_iter18`; `src/carol` is now iteration 18. Fresh
+mirror `carol_m18` built from the new baseline in the same commit — the i14 null is now stale
+and must not be reused, and this session already measured that two nulls one accept apart
+disagree on 12 of 40 games.
+
+**Consequence for iteration 19**, as flagged before the run: `20260907-142542` measures
+`carol_i19a` against `carol_iter14`, which is no longer the baseline. Its **dose curve**
+(`MOPPER_IN_20` 0 vs 2 vs 5, within-run, shared maps) stays valid; its **accept gate** does
+not, and any decision on the mopper share must be re-measured against `carol_iter18` with the
+`carol_m18` null.

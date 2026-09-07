@@ -1,4 +1,4 @@
-package carol;
+package carol_m18;
 
 import battlecode.common.*;
 
