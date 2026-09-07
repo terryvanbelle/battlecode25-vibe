@@ -3099,3 +3099,40 @@ stated falsifier.
 
 One caution carried forward: this is a single map and it is the map the mechanism
 was designed against, so it is the *best* case by construction. The run decides.
+
+### The iteration 14 sample's terrain, and what my own prediction implies about the headline
+
+Pulled every map header for run `20260907-021333`'s sample straight out of the
+tournament replays (one remote pass, compile once, no game slots). Saved to
+`tools/map_terrain.txt` — reusable, and the first time this lineage has had wall
+fraction and area as data rather than as an impression.
+
+| band | maps | count |
+|---|---|---|
+| high (>=14%) | gridworld 20.0, yearofthesnake 18.4, Piglets2 15.3, roads 14.4 | 4 |
+| mid (11-14%) | FourCorners 13.3, Flower 12.0, Snowman 11.5 | 3 |
+| **low (<10%)** | SandyBeach 8.7, Portal 7.8, Mirage 7.5, Justice 7.4, SaltyPepper 7.3, Bunny 7.0, starburst 6.2 | **7** |
+
+**This matters before the result, so I am writing it before the result.** My
+pre-registered prediction is that iteration 14's margin lives on high-wall maps
+and is ~zero below 10% walls. **Half the sample is below 10% walls.** So if my
+prediction is right, the headline H2H must come in *modest* — something like
+16-18 of 28 — because ten of the twenty-eight games are played on ground where I
+have already said the mechanism should do nothing.
+
+Two consequences I am binding myself to now:
+
+1. **A headline near 60% would be a success, not a near miss**, provided the
+   margin is concentrated where predicted. Judging this change by the same 75%
+   yardstick iteration 12 hit would be judging it on a sample I already know is
+   mostly irrelevant to it.
+2. **A big headline driven by the low-wall maps would be bad news**, not good.
+   It would mean the win comes from something other than surviving contact with
+   walls, and the mechanism story would be wrong even though the bot got better.
+   I would have to say so and re-diagnose.
+
+This is doctrine #4's representativeness rule applied in advance: the instrument
+resolves the question only on the part of the sample that poses it. The
+`AGENT.md` rule against hand-picking maps is why I am not fixing the sample to
+high-wall maps — the random draw is the honest instrument, and the fix is to
+analyse by band, not to choose the band.

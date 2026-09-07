@@ -1,0 +1,15 @@
+# map  dims  wall%  area(tiles)  ruins   -- from MatchHeader of tournament 20260907-0100 replays
+Flower          45x41  12.0  1845  16
+SaltyPepper     40x40   7.3  1600  24
+yearofthesnake  45x45  18.4  2025  20
+SandyBeach      30x30   8.7   900  20
+FourCorners     25x25  13.3   625  14
+Snowman         25x25  11.5   625  10
+roads           30x30  14.4   900  12
+Portal          35x35   7.8  1225  26
+Bunny           44x30   7.0  1320  20
+starburst       30x30   6.2   900  12
+Justice         21x20   7.4   420  12
+Piglets2        60x40  15.3  2400  24
+gridworld       31x31  20.0   961  25
+Mirage          40x40   7.5  1600  22
