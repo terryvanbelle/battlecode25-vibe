@@ -3182,3 +3182,71 @@ purpose next time.
 larger on maps that are bigger *and* wallier, and that sample cannot separate the
 two. Iteration 14's run can, because half its maps are under 10% walls while
 spanning 420 to 2,400 tiles.
+
+## Iteration 14 — ACCEPTED. 17/28 (60.7%), and the falsifier did not fire
+
+Run `20260907-021333`, 28 games, 14 maps x both sides, `alice_iter12` as the
+zero arm.
+
+| | |
+|---|---|
+| H2H vs `alice_iter12` | **17/28 (60.7%)** |
+| swept wins | 4 |
+| swept losses | **1 — starburst** |
+
+### The pre-registered map-class check
+
+| band | maps | candidate |
+|---|---|---|
+| **HIGH (>=14% walls)** | gridworld 20.0, yearofthesnake 18.4, Piglets2 15.3, roads 14.4 | **6/8 (75%)** |
+| mid (11-14%) | FourCorners, Flower, Snowman | 3/6 (50%) |
+| **LOW (<11% walls)** | SandyBeach, Portal, Mirage, Justice, SaltyPepper, Bunny, starburst | **8/14 (57%)** |
+
+**The falsifier I committed before building the candidate — "a margin that is flat
+across wall fraction, or larger on open maps" — did not fire.** The gradient runs
+75% on high-wall ground against 57% on open ground, in the predicted direction.
+
+**The extremes are the cleanest part of the result, and they were not chosen after
+the fact:**
+- **gridworld, the highest-wall map in the sample at 20.0%, is a swept win.**
+- **starburst, the *lowest*-wall map at 6.2%, is the single swept loss.**
+
+That the one both-sides regression lands precisely on the map where the mechanism
+is supposed to do nothing is what makes it a **resolved** regression rather than an
+unresolved one, which is the accept gate's third clause. It is also the strongest
+single piece of evidence in the run, because a mechanism that only helps against
+obstacles should be neutral-to-negative where there are none.
+
+### But I am not going to overclaim, because two things do not fit
+
+1. **The mid band is the worst (50%), not the middle.** A clean dose-response in
+   wall fraction would be monotone. It is not.
+2. **Two low-wall maps are swept wins** (Portal 7.8%, SandyBeach 8.7%). If walls
+   were the whole story those should be coin flips.
+
+And the honest statistics: 6/8 against 8/14 is a Fisher exact p of roughly 0.4.
+**The band gradient is suggestive, not established.** The headline and the
+mechanism gate carry this accept; the map-class check corroborates the direction
+and rules out the falsifier, and that is all it does.
+
+### Re-diagnosis, logged as a hypothesis for a future run and NOT as evidence here
+
+Why would open maps benefit at all? Because `canMove` returns false when the tile
+is occupied by **a robot**, not only by a wall — and this bot fields 20-45 units.
+So the blocking rate that the re-roll was destroying is driven by **wall fraction
+*and* unit density**, and wall fraction alone was always going to be a partial
+proxy for it. That predicts the benefit should track *crowding* too, which would
+explain a broad gain with a high-wall tilt — exactly the shape observed.
+
+Per the rule I applied to iteration 12's wall finding, this is **post-hoc and
+therefore a hypothesis**: it must be pre-registered against a fresh sample before
+it counts. Recorded here so it can be tested rather than assumed.
+
+### Lineage
+`iter0 → iter1 → iter2 → iter4 → iter5 → iter7 → iter12 → **iter14**`.
+`src/alice` == `src/alice_iter14`, byte-identical to the measured `alice_i14`
+apart from the package line, verified by diff.
+
+Both navigation iterations together take this lineage from a random walk to a
+persistent heading that survives contact with obstacles — the capability the
+tournament showed `bob` had and alice did not.
