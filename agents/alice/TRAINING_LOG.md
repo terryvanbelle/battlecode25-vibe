@@ -4317,3 +4317,68 @@ tiles beside a pattern it is two tiles from completing.
 into in-action-range (`in=`) and out-of-range (`out=`) and will run one match to
 confirm. If stalled samples read `in=0 out=2`, the mechanism is repositioning
 around the ruin, not a paint reserve, and it is reachable on every map.
+
+## Iteration 19 — PRE-REGISTERED: the thing stalling tower patterns is ENEMY
+## PAINT, and only a mopper can clear it
+
+The out-of-range geometry guess above is **wrong**, and the data I already had
+settled it without a new match. Taking every census sample where a soldier
+stands at a ruin with **≥20 of 24** pattern tiles already correct, and asking
+what the remaining tiles are:
+
+| map | samples | **enemy paint** | empty | wrong ally shade |
+|---|---|---|---|---|
+| gridworld | 724 | **87.2%** | 10.5% | 2.3% |
+| UnderTheSea | 1,714 | **78.2%** | 20.3% | 1.5% |
+| box | 211 | **62.1%** | 35.1% | 2.8% |
+
+**A soldier can never overwrite enemy paint.** `RULES.md`, engine-verified:
+`soldierAttack` paints a tile only if it is empty or already ally. So a tower
+pattern with one enemy tile in it is **permanently stalled for every soldier
+alive**, which is exactly the 637-samples-at-22-of-24 pile-up. The soldier then
+stands beside a tower it is two tiles from finishing and spends its remaining
+paint on ground.
+
+Only a **mopper** can remove enemy paint (splashers can overwrite it within r²≤2
+of a splash centre, but iteration 11 closed splashers at 3/14). Alice builds
+moppers — one spawn in four — and since iteration 7 they walk to the nearest
+enemy paint in vision. **They have no idea which enemy paint is holding up a
+tower.**
+
+### The change — one mechanism, and it only changes a preference
+
+`alice_i19a` (soft) and `alice_i19b` (exclusive): a mopper prefers enemy paint
+lying inside the 5×5 (r²≤8) of a ruin that has no tower on it, both when
+choosing which adjacent tile to mop and when choosing which tile to walk to.
+When nothing is blocked the behaviour is unchanged, so the cost is bounded.
+
+| arm | rule |
+|---|---|
+| zero | `alice_iter14` — nearest enemy paint, no preference |
+| A | pattern-blocking tiles sort first, then by distance |
+| B | if any pattern-blocking tile is in vision, ignore all other enemy paint |
+
+### Pre-checks, all three run BEFORE building this time
+
+- **Reachability / trigger frequency**: the blocked state is common *and
+  persistent* — 724 / 1,714 / 211 samples across three maps sit at ≥20/24 with
+  enemy paint in the pattern. Not a corner case.
+- **Generality**: holds on all three maps, at 87% / 78% / 62%. Different
+  magnitudes, same sign.
+- **History**: this refines iteration 7 (purposeful moppers, accepted) rather
+  than reverting it, and does not touch iteration 3's rejected "stop building
+  moppers" — it makes the moppers I already build worth more.
+
+### Pre-registered gates
+- **Accept**: H2H vs `alice_iter14` **> 50%** judged in games over the mirror
+  null, and a dose curve that is **not flat**.
+- **Mechanism gate**: **tower count must rise**, and the census fraction
+  "near-complete patterns blocked by enemy paint" must **fall**.
+- **Falsifier**: tower count flat means unblocking is not what limits expansion
+  and the direction closes.
+
+**Caveat recorded in advance** (Measurement doctrine #4): the census is
+self-play, so the enemy paint being measured was laid down by a bot that paints
+the way I do. Against bob — who paints far more — blocking should be worse, not
+better, so the direction should hold; but the *size* measured here is not
+transferable.
