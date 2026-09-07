@@ -4612,3 +4612,36 @@ If arm B underperforms arm A, these are the two candidate causes and they are
 distinguishable in a trace: (1) shows as moppers with near-zero mop actions and
 high movement, (2) as a fall in team unpaint actions per round with moppers
 still busy.
+
+### Iteration 19 — arm A is in at 15/24, and the decision rule is fixed HERE,
+### before arm B lands
+
+`alice_i19a` beats `alice_iter14` **15/24 (62.5%)**. Exact one-sided binomial
+against p=0.5:
+
+| record | win% | p |
+|---|---|---|
+| 14/24 | 58.3% | 0.271 |
+| **15/24** | **62.5%** | **0.154** |
+| 16/24 | 66.7% | 0.076 |
+| 17/24 | 70.8% | 0.032 |
+
+**p = 0.154 is not significant**, and it lands exactly where iteration 1's
+recorded noise floor put it: *"treat 13–15/24 as within noise of 50%."* The
+prediction I wrote down before the mechanism run — "a modest effect, expect a
+near miss rather than a clean accept" — is what happened. I am not promoting
+15/24 by forgetting my own floor.
+
+**Decision rule, fixed before arm B is visible:**
+
+- **ACCEPT** only if *all* hold: arm A ≥ 15/24; **arm B also > 12/24** (the two
+  doses of one mechanism agree in direction, which per Measurement doctrine #2
+  is stronger than either point alone); arm A's **swept wins > swept losses**
+  (swept maps are immune to spawn advantage); and no one-directional regression
+  is left unresolved.
+- **NEAR MISS → refine** if arm B is at or below the null while arm A is up. One
+  dose up and one flat is a single noisy point dressed as a curve.
+- **REJECT** if both arms are at or below the null.
+
+Pooling the two arms is *not* the test — they are different doses, not
+replicates — but for reference 30/48 would give p = 0.056 and 32/48 p = 0.015.
