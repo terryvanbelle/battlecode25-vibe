@@ -19,3 +19,11 @@ tools/__pycache__/
 # private copies made by the re-exec guard in tools/*.sh (unlinked at start;
 # only ever visible if a run is SIGKILLed in the first microseconds)
 tools/.reexec-*
+
+# Downloaded BC25 finalist benchmark bots live ONLY on battlecode-dev, under
+# ~/bc25-benchmarks. Their source must never enter this repo: agents are
+# forbidden to read it. This pattern is belt-and-braces in case anyone copies.
+bc25-benchmarks/
+**/TSPAARKHS/
+**/SPAARK/
+**/quals_current_submission/
