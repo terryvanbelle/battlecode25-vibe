@@ -557,9 +557,12 @@ map-level variance than binomial would predict.
    candidate is not "statistically indistinguishable" from the baseline — it is
    *identical in outcome on every cell measured*. That is a far harder rejection
    than a win rate near 50%, and it deserves to be reported as such.
-3. **Automate it so the wrong model cannot come back.** `tools/map-resample.py`
-   computes bootstrap + jackknife over maps from any run's `results.csv`. Quote
-   it instead of a formula.
+3. **Automate it so the wrong model cannot come back.**
+   **`../../tools/map-resample.py` — shared ground** (promoted in `eb99f33`;
+   the rule is in MULTI_AGENT.md for all three lineages). Computes bootstrap +
+   jackknife over maps from any run's `results.csv`. Quote it instead of a
+   formula, and do not keep a copy here — a duplicated tool goes stale exactly
+   the way a forked archetype does.
 
 **The general form**: *before* attaching an uncertainty to a number, ask what
 would have to be re-rolled to get a different one. If re-running the same games
