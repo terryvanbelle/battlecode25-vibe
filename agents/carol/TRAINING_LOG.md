@@ -5583,3 +5583,34 @@ This also means the mopper dose is **matchup-dependent**, which is the standing 
 self-calibrating thresholds over constants (TRAINING_ALGORITHM §5). If dose 2 wins the
 head-to-head, a follow-up worth measuring is whether the right share should be read from
 observed game state — enemy paint seen per turn is the natural signal — rather than fixed.
+
+## The `carol_m18` null — fifth confirmation, and the stale-null rule holds a third time
+
+Run `20260907-144315`: `carol_iter18` vs `carol_m18`, verified byte-identical apart from the
+package line.
+
+```
+overall 20/40 (50.0%)   swept-win 0/20   swept-loss 0   split-by-side 20/20
+```
+
+**Five independent mirror measurements, five exact 20/40 splits, zero swept maps in any of
+them.** Under this engine the null has no variance, full stop. Every margin in this log is a
+count of games the code actually flipped.
+
+And the staleness check again, now with a third data point: the i18 null and the i14 null
+disagree on **12 of 40 games** — six maps (Castle, DefaultMedium, Mirage, PlumberGame, rain,
+walalilongla) whose winning side flipped outright when iteration 18 was accepted.
+
+| null pair | games that disagree |
+|---|---|
+| i11 → i12 | 6 of 40 |
+| i12 → i14 | 12 of 40 |
+| **i14 → i18** | **12 of 40** |
+
+So roughly a quarter to a third of the null flips with every accept. Reusing a mirror across an
+accept is not a small approximation — it would misattribute a dozen games. `carol_m18` is now
+the control for `carol_i21`, `carol_i22a/b` and everything measured against iteration 18.
+
+Note also that Castle, DefaultMedium and PlumberGame appear in **both** this list and iteration
+18's own deviation list — exactly the tell the rule names, and the reason it is stated as "maps
+appearing in both lists" rather than as a vague caution.
