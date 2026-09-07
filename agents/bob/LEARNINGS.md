@@ -298,3 +298,67 @@ the constraint and go widen it.** The efficiency ceiling was real; the constrain
 movable. And the tell was visible for many iterations before I acted on it — a second
 resource accumulating unspent into the tens of thousands is the loudest possible
 signal that the *other* resource is what binds.
+
+---
+
+## 12. A candidate can WIN a game with its mechanism completely inert (2026-09-07)
+
+Iteration 10 added a 20-line neighbourhood search for SRP sites. Its first verification
+lost both maps. After one fix it *won* one and took the other to a tiebreaker — a
+tempting moment to go spend a gauntlet. The replay counters said `srpA = 0` in both
+games: the mechanism had fired **once in 2000 rounds** and completed nothing. The wins
+and losses were both about something else entirely.
+
+Had the gauntlet run then, whatever came back — accept or reject — would have been a
+number attached to the wrong cause, and it would have entered the log as evidence about
+SRP site search forever.
+
+**The rules:**
+
+1. **Read the mechanistic criterion BEFORE the win rate, every time, including — and
+   especially — when the win rate looks good.** A favourable number suppresses the
+   urge to check, which is exactly backwards.
+2. **"Did it engage?" needs a counter, not a result.** Game outcomes are a
+   many-to-one function of everything the bot does; only an instrument on the specific
+   mechanism can answer whether that mechanism did anything.
+3. **Instrument the refusal reasons, not just the successes.** A counter that only
+   counts successes cannot distinguish "never tried" from "tried and was refused", and
+   the refusal breakdown is what named all three defects here.
+
+Corollary that paid immediately: three separate defects hid inside one small change
+(a silently-truncating sense call, painting outside action radius, and a rotation that
+defeated its own visibility bound). None was visible in a win rate; all three were
+obvious in a refusal histogram.
+
+## 13. Local wins do not compose into global progress (2026-09-07)
+
+Six accepted iterations, every single one of which cleared a head-to-head against its
+immediate predecessor. Measured against the frozen `bob_iter1`, which never changes:
+
+```
+at iteration 3   34/40  85.0%
+at iteration 9   28/50  56.0%
+```
+
+The lineage went **backwards by 29 points against an old opponent while winning every
+step against itself.** The gauntlet headline over the same span looked healthy, because
+it is measured against a pool that moves with the bot.
+
+**The rules:**
+
+1. **A chain of locally-winning steps is not a globally improving path.** Beating your
+   own immediate predecessor is a *necessary* condition for progress, not a sufficient
+   one, and nothing about repeating it accumulates.
+2. **The only instrument that can catch this is one that cannot move.** This is why
+   TRAINING_ALGORITHM.md's fixed roster is never retired and never updated. Run it more
+   often than every five accepts — it costs one gauntlet and it is the only number in
+   the whole system that is not self-referential.
+3. **Marginal accepts are where the drift enters.** The prime suspect here is the one
+   feature accepted at 52.5% whose own audit recorded that it *hurts 37 maps and helps
+   18*, with a documented doubling of side asymmetry — and the roster's failure is
+   specifically side-dependent. A 52.5% h2h and a −0.59-point pool effect is not a
+   contradiction; it is what a coin-flip accept looks like from two directions.
+4. **Prefer the ablation to the invention when this fires.** The question "is the
+   feature I added five iterations ago still worth anything?" is answerable with one
+   pinned run per feature, and TRAINING_ALGORITHM.md records that this historically
+   finds more real corrections than new ideas do.
