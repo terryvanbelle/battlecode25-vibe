@@ -231,6 +231,12 @@ building a solution:
 - **History.** If a prior iteration deliberately established the behavior this
   would change, the fix must supersede that reasoning with new evidence, not
   silently revert it.
+- **Cost the price as well as the benefit.** A mechanism's case is not made by
+  what it gains; it is made by the gain *minus* what it spends. One lineage made
+  this same error twice in one session — costing a movement policy's benefit
+  without its paint, and a cheap unit's benefit without what its slot displaced
+  — and both candidates died on the price it had not computed. Write both
+  numbers down before building.
 - **Instrument the DECISION, not the outcome.** A zero at the output cannot
   distinguish "the mechanism ran and failed" from "the mechanism never ran".
   Count the decision point — how often the code *chose* the branch — not the
