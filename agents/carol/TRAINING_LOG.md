@@ -6800,3 +6800,63 @@ from reasoning.
 **Score for the session's pre-checks: four registered, four run, two designs killed before a
 build** (24a/24b by decision counters, this one by width), one direction re-costed into the
 favourable range (pre-check 3), one sizing result that corrected my own overstatement.
+
+### Pre-check 4, second branch (r²=20 navigation) — ALSO refuted, and the two together relocate the problem
+
+`gauntlet/20260907-203249`, 8 games, i27b vs `carol_iter25`. Identity check passes (4/8, all four
+maps split, zero swept). The self-limiting probe worked as designed: **zero overruns**, `fvSkip`
+= 0 on every map, peaks 68.9–87.3%.
+
+| map | decision fires | **width per fire** | chosen contested | **a less-contested option existed** |
+|---|---|---|---|---|
+| DefaultMedium | 30 | 5.73 | **0.0%** | **0.0%** |
+| Bunny | 18 | 5.89 | **0.0%** | **0.0%** |
+| Mirage | 13 | 4.69 | **0.0%** | **0.0%** |
+| Fossil | 8 | 14.50 | 37.5% | **37.5%** |
+
+**On three of four maps the nearest visible empty tile had zero enemy neighbours — it was already
+the least contested option available. There is nothing to re-rank.** And the one map with real
+signal is **Fossil**, which my own sizing pre-check showed is the map where this mechanism
+*cannot* change the result (68 unclaimed tiles against a 359-tile deficit). The two independent
+pre-checks agree, from different directions, that the signal and the payoff do not co-occur.
+
+**The contestedness direction is refuted on both branches, and I am closing it.**
+
+### What was actually wrong with my hypothesis
+
+The *trace* was real: a contiguous unpainted corner, every soldier in the contested middle band,
+on two maps with different geometry. What was wrong was the **mechanism I inferred from it** —
+that carol *chooses* contested ground over uncontested ground. She does not. When she can see
+empty ground it is almost always uncontested already, and she goes to it.
+
+The corner sits unclaimed for a different reason: **her soldiers never see it.** `frontNone` —
+nothing empty anywhere in vision — is 72–88% of idle turns, and this probe shows the complementary
+fact that when the frontier decision *does* fire it fires only 8–30 times per robot per game.
+The empty ground is beyond r²=20, and the only thing that could take a soldier there is
+`newExploreTarget()`, which samples **four uniform-random map coordinates and keeps the farthest**,
+with no memory of where the robot has been or where paint already is.
+
+**So the problem is not target selection at any radius. It is that carol has no map memory and
+therefore no way to direct a soldier at ground she has never seen.** That is a different and
+larger claim than the one I registered, and it was reached by eliminating the alternatives with
+two probes costing 16 games total — cheaper than one evaluation of the wrong design.
+
+### Closed-directions ledger
+
+- **"Rank paint/frontier targets by contestedness" — CLOSED, both branches measured.** r²=9: the
+  choice set is 2.3–5.1 wide with no better option on 85.5–100% of decisions. r²=20: no better
+  option on 100% of decisions on three of four maps; the sole exception is the map where the
+  prize is a fifth of the deficit. Re-opening would require evidence that carol's soldiers
+  routinely *see* contested and uncontested ground together and pick wrong — which is exactly
+  what these two counters measure, and both say no.
+
+**Next target, registered but not started**: map memory for exploration — some persistent record
+of where paint and terrain have been observed, so `newExploreTarget()` can aim at ground not yet
+taken rather than at a random coordinate. Pre-checks required before building, and note the
+second one is a direct consequence of tonight's bytecode findings:
+1. **Sizing** — how much of the map is never entered by any carol soldier? Free from replays.
+2. **Bytecode budget first, not last.** Peak is already 68.9–87.3% on instrumented builds and
+   37.5% on the bare baseline. Any per-turn map-memory structure competes for that headroom, and
+   an overrun truncates turns silently. Cost the bytecode before the behaviour.
+3. **Play-symmetry** — a memory keyed on absolute map coordinates is exactly the fixed-absolute-
+   order hazard Phase 0 item 7 warns about; check it cannot give one side a tempo edge.
