@@ -3898,3 +3898,56 @@ exist this morning: the mirror null, deviation attribution, and pairwise ablatio
 
 That is not a comfortable result to write down, and it is the correct one. The next
 accept has to clear iteration 12 on the frozen instrument, not just head-to-head.
+
+
+---
+
+## Ablation A3 RESULT (2026-09-07) — my prediction is REFUTED and iteration 3 is vindicated
+
+Run `20260907-042157`, `bob_abl3` = iteration 12 with iteration 3's idle-chip tower
+self-upgrade gated off, nothing else touched, against frozen `bob_iter1` on the same
+25 pinned maps.
+
+```
+                                     games     sweptW  sweptL  split     NULL: 0 / 0
+iteration 12 (upgrade ON)            41/50       16      0       9
+bob_abl3     (upgrade OFF)           32/50        8      1      16
+
+removing the upgrade costs 9 games, 8 net sweeps, and creates a swept loss
+```
+
+**The tower self-upgrade is strongly valuable, and my chip-efficiency argument for
+retiring it was wrong.** I predicted an interaction of the LEARNINGS-15 shape — a
+feature accepted under conditions a later feature removed. The measurement says the
+opposite, and the engine table says why my arithmetic was bad:
+
+```
+PAINT tower mining by level        5 / 10 / 15 paint per turn
+upgrade L1 -> L2                   2,500 chips  ->  +5 paint/turn on that tower
+one SRP                              200 chips  ->  +3 paint/turn on EVERY paint tower
+```
+
+I compared these as if they competed for the same job. **They do not: they are
+additive on the same tower.** A level-1 paint tower with three SRPs makes `5 + 9 = 14`
+paint/turn; upgrade it and the same tower makes `10 + 9 = 19`. The upgrade *doubles the
+base* that the SRP bonus is added to. Far from being obsoleted by SRPs, the upgrade is
+what makes each tower a bigger platform for them — and the upgrade also carries
+`1000 -> 1500` HP, which my income-only comparison ignored entirely.
+
+**A3 is rejected; the upgrade stays.** Recorded as a genuine correction to my model of
+the economy, which is exactly what I pre-registered a null result would be worth here.
+
+### What this says about applying LEARNINGS 15
+
+The lesson's rule 4 — *suspect an interaction wherever a payoff is multiplicative in an
+existing quantity* — correctly flagged this pair as worth testing. It was worth testing.
+But **a heuristic that nominates candidates is not evidence about them**, and I came
+close to writing "SRPs obsolete upgrades" into the ledger on arithmetic alone. The
+50-game ablation cost one run and prevented removing a feature worth 8 net sweeps.
+
+The sharper form of the rule, learned here: **"multiplicative in an existing quantity"
+identifies a pair worth measuring, but the sign is not predictable from the
+arithmetic.** The hash/SRP pair interacted *destructively* because the hash controlled
+the *variance* of the multiplier. The upgrade/SRP pair interacts *constructively*
+because the upgrade raises the *level* of the base. Same structural signature, opposite
+sign — so the pair always has to be run, never reasoned about.
