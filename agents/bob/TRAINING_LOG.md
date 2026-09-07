@@ -6208,3 +6208,36 @@ partial arm reads as a catastrophic loss rather than as incomplete. `gauntlet.sh
 summary warns about unequal game counts; the resampler does not. Not a wrong number so
 much as a missing guard, and it would be easy to misread in exactly the situation where
 someone is anxiously watching a roster run. Flagging rather than working around it.
+
+### Re-verified every quoted number against the fixed resampler (`2eefb92`)
+
+The coordinator's fix turned my one report into three bugs. Checked what each could have
+done to conclusions I have already drawn, rather than assuming none of them bit:
+
+**Bug 1, incomplete arms.** Only ever affected my mid-run peek at `examplefuncsplayer`
+(9 games of 50, printed as −4.30 sd). I read it as a partial-arm artifact at the time and
+the arm finished at 50/50, so nothing propagated.
+
+**Bug 2, opponents listed from the wins map — a shut-out opponent vanishes.** Audited all
+five of my runs today: arm counts are 3, 2, 3, 4, 4, which is exactly what I launched in
+each case, and **zero arms were shut out**, so no row could have been dropped. This is the
+worst of the three and it happens not to have touched me — but only by luck, since
+`bob_d0` came within two games of a shutout in iteration 16's RUN 2.
+
+**Bug 3, `se = 0` labelled "exact null".** This one did reach my log. The roster block I
+pasted contains the tool's line `examplefuncsplayer 50/50 ... exact null (se=0)` for an
+arm I **swept 25 of 25 maps**. Under the fix it correctly reads `+25 games vs null (se=0,
+every map identical)`. My own prose beside it said "25 swept, se = 0", so the conclusion
+was never wrong — but the pasted block was, and a future reader would have hit it.
+**Superseding in place rather than editing history**: where an earlier entry shows
+`examplefuncsplayer ... exact null (se=0)`, read `+25 games vs the null`. se = 0 is a
+statement about *spread* — every map agreed — and says nothing about *position*.
+
+Everything else is unchanged under the fixed tool. Iteration 18's decisive figures
+re-verified verbatim: `bob_f0` 19/50 [15,23] −2.81 sd, and the zero arm `bob_f15` now
+labelled `exactly the null (se=0, every map split)`, which is precisely the claim I made
+for it.
+
+Note the shape this shares with my LEARNINGS §14 and the consistency-pass rule: three
+tools gave three different answers about one run, and each was individually plausible.
+Nobody catches that by reviewing one output; it needs two outputs compared.
