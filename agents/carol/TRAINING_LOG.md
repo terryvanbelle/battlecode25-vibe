@@ -5189,3 +5189,33 @@ immediately sucked its own delivery back out of the tower it had just filled. Th
 extra state: deliver only down to half capacity, which is exactly the threshold
 `refillIfPossible` refuses to act below. One mechanism, no new flags, and the undo is
 impossible by construction rather than by a guard I would have to remember.
+
+## Iteration 18 safety check — releasing the reserve costs zero towers
+
+The reserve exists to protect a 1,000-chip ruin completion, and iteration 6's log records a
+game lost by annihilation partly to a treasury stuck above it. So the obvious risk of releasing
+it is that carol spends the money on units and then cannot finish a ruin.
+
+Measured as a **paired within-game comparison** — both builds carry BUILD tags, so the two
+sides of the same replay are the same game with the same map, spawns and opponent:
+
+| game | i18 towers max/final | iteration 14 towers max/final |
+|---|---|---|
+| DefaultLarge botA | 14 / 14 | 14 / 14 |
+| DefaultLarge botB | 12 / 12 | 12 / 12 |
+| DefaultMedium botA | 14 / 14 | 14 / 14 |
+| Parking_lot botA | 3 / 3 | 3 / 3 |
+| gridworld botA | 13 / 13 | 13 / 13 |
+
+**Identical in every game.** Not one tower fewer, on the maps where the release fires 33–53
+times per tower.
+
+**Why, and it is a property of the design rather than luck.** The release requires
+`chips >= CHIP_RESERVE` for ten consecutive turns. The moment a build fires, chips drop below
+1,200, the pinned counter resets and the reserve **re-arms itself**. The treasury oscillates
+around the reserve line instead of being drained past it, so the protection the reserve was
+bought for is still there — it is only the *dead band above it* that has been opened. That is
+what makes this a self-calibrating threshold in §5's sense and not simply a weakened constant.
+
+So the reserve was, in the pinned regime, protecting nothing at all: it was refusing to spend
+250 chips while sitting on 1,310 and completing exactly as many ruins either way.
