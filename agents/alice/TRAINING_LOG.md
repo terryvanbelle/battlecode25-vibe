@@ -8378,3 +8378,42 @@ not a measurement, and I have not run it.**
 
 Filed as the leading structural candidate for iteration 25. Not started: iteration
 24 is in flight and bundling is forbidden.
+
+### The coverage curve, both maps — bob's lead opens at round 3 and never closes
+
+| round | Piglets2 alice / bob | Fossil alice / bob |
+|---|---|---|
+| 1 | 21m / 21m | 66m / 66m |
+| 3 | 22m / **24m** | 69m / **73m** |
+| 10 | 32m / **37m** | 93m / **104m** |
+| 19–22 | 56m / **65m** | 132m / **153m** |
+
+Unit mix at round 3 is the whole story: **alice 3 soldiers + 2 moppers; bob 4
+soldiers + 0 moppers.** Same early budget, and bob converts more of it into
+painters — his `acts[p…]` runs 4–5 paint actions per round from round 3.
+
+Two honest qualifications:
+
+- The two curves are near-identical in shape because the engine is deterministic
+  and bob's opening does not depend on terrain, so this is really **one
+  observation of bob's spawn policy**, seen twice — not two independent samples.
+  It is a *policy* observation rather than a noisy measurement, which is why one
+  clean look is enough to state what the policy IS, and not enough to price it.
+- It describes bob at the 13:00 tournament and me at **iteration 14**. My mopper
+  share may have moved since; the coverage plateau has not.
+
+### A tooling note for the coordinator (not a bug — a sharp edge)
+
+`replay-dump.sh --every N` did not reduce the per-round summary output in my
+invocation; I got every round. Not a problem for me (I filtered), and I have not
+run the discriminating case to say whether `--every` is ignored for summary lines
+specifically or whether my flag combination was wrong, so I am **not** filing this
+as a defect — only noting it so the next lineage that pipes a 2000-round dump is
+not surprised by the volume. If it matters to anyone, the discriminating check is
+one dump with `--every 50` and `--quiet`, counting summary lines.
+
+Second, more useful note: `starved` in the summary line counts **all unit types**,
+and reads `turn.paint()` from the replay rather than from indicator strings — so
+it works on uninstrumented builds. Both facts are worth stating in the tool's
+header, because the name invites a mopper-specific reading and the instrumentation
+question is exactly what sent me patching my own bot unnecessarily tonight.
