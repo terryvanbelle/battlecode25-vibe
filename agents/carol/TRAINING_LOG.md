@@ -6708,3 +6708,50 @@ Pre-check 2 is therefore **partly done**: the method is established and free, an
 sized. What remains is applying it corpus-wide, which needs coverage per map and so rides along
 with the next full run rather than costing one. Pre-checks 3 (price the reallocation against the
 frontier tiles forgone) and 4 (instrument the target choice at full width) remain **not done**.
+
+### Pre-check 3 (price the reallocation) — done, no run, and it CHANGES the target
+
+The rule is to price a reallocation against what it displaces. So the question is not "what does
+a frontier paint action look like" but **what does the marginal frontier paint action actually
+buy**, since that is the thing a redirect gives up. Parsed the per-100-round aggregates of the
+DefaultMedium game (`--every 100`, counters are per-window — verified in `ReplayDump` that they
+are `Arrays.fill`-reset each sample) and converted per-mille to tiles at 1,193 passable:
+
+| phase | paint actions | net coverage gained | **value per paint action** |
+|---|---|---|---|
+| **growth**, rounds 1–300 | 516 | **+423.5 tiles** | **82.1% of face value** |
+| **plateau**, rounds 300–2000 | 423 | **+53.7 tiles** | **12.7% of face value** |
+
+**After round 300 a carol paint action nets 0.127 tiles, not 1.** She spends 423 actions across
+1,700 rounds to gain 54 tiles. Eleven of the seventeen plateau windows are flat or *negative*.
+
+**This inverts the price term I was so careful to insist on.** I registered pre-check 3 because
+I have three times costed a benefit without its price, and I expected the travel-and-upkeep cost
+of sending a soldier to a far corner to be the thing that killed the idea. Instead: in the phase
+where the mechanism would fire, **the frontier tiles forgone are worth about an eighth of face
+value**, so the displacement cost is roughly 8× smaller than the naive accounting. Travel is ~15
+turns at 1 tile/turn (soldier movement and action cooldowns are separate, so it can still paint
+en route) plus ~15 paint of neutral-ground upkeep, against forgoing ~15 actions worth 0.127 each
+≈ **1.9 net tiles**. Uncontested ground converts at near face value because nobody takes it back.
+
+**And it moves the target, which is why this pre-check was worth doing before building.** My
+registered hypothesis was about *idle* soldiers (`frontNone`, 72–88% of idle turns). The bigger
+finding is that carol's **active** soldiers are also near-worthless after round 300 — the waste
+is not confined to the idle branch. "Rank targets by contestedness" was scoped to one branch;
+the measurement says the plateau phase as a whole is where the game is lost.
+
+It also hands me a **self-calibrating trigger**, which the algorithm prefers over fixed
+constants: the growth→plateau boundary is observable in-game as "team coverage stopped rising",
+not a hardcoded round number. That matches the coverage peak I found independently on Fossil
+(~r400) and on DefaultMedium (~r300–400).
+
+**Honest limitation, stated because it bounds the claim.** Net coverage change conflates carol's
+painting with the opponent overwriting her, so 12.7% is a *net team* figure and not proof that
+individual paints are wasted: an action that holds a tile against an overwrite has real defensive
+value this metric scores as zero. For *pricing a reallocation* net is the right unit — the
+question is what the marginal action buys the team — but it would be the wrong unit for asking
+"should carol paint at all", and I am not making that claim. Separating the two needs per-tile
+repaint counts from `PaintAction`, which is a next-run measurement, not a free one.
+
+Pre-check 3: **DONE**. Pre-check 4 (instrument the target choice at full width) remains **not
+done**, and is now the only one outstanding before a build.
