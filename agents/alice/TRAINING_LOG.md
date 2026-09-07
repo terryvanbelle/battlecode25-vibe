@@ -3857,3 +3857,60 @@ by spawn or by chance. That converts a headline into an attributed set of games.
 It is tied to the build that generated it (`alice_iter14`) and must be regenerated
 whenever the accepted build changes — a stale mirror is not a null at all, which
 is exactly the state mine was in when I found it.
+
+## Iteration 16 — arm A result, and the reading it forces on me
+
+`alice_i16a` (`CHIP_RESERVE` 1450 -> **1250**) vs `alice_iter14`: **11/24 (45.8%)**.
+
+Against the measured mirror null of exactly **12/24**, that is **-1 game**.
+Lowering the reserve to its principled tight bound does **not** help; if anything
+it is marginally negative. Dose B (1000) is still playing.
+
+### I read the trace wrong, and the mirror shows how
+
+I called the treasury sitting at $650-1410 beneath a 1450 gate a "dead band" and
+matched it to the algorithm's *resource pinned in a dead band* degeneracy. The
+measurement was right; **the diagnosis was not**.
+
+A treasury pinned *just below* a spend gate is the **equilibrium signature of a
+converter that is already spending everything above the gate**. Income arrives,
+money crosses 1450, a spawn fires (-250), money falls back. The pin is what a
+*working* spend policy looks like from the outside — it is not starvation, and
+lowering the gate does not unlock spending that was blocked, it only shrinks the
+buffer that guarantees a 1000-chip tower completion.
+
+**The distinguishing test I should have applied before building**: a dead band is
+pathological only if *capacity sits idle behind it*. I had evidence of idle
+capacity — tower paint at **4,885** — and I attributed it to the wrong gate.
+
+### Where that idle paint actually points — iteration 17, pre-registered now
+
+Spawning consumes **250 chips and 200 tower paint**. If tower paint accumulates to
+4,885 while chips stay pinned, then **paint income exceeds chip income and chips
+are the binding resource** — so the lever is not the spend gate, it is the
+*production mix*.
+
+Tower type is currently chosen by **ruin parity**:
+
+```java
+UnitType wantTower = ((ruin.x + ruin.y) & 1) == 0
+        ? LEVEL_ONE_MONEY_TOWER : LEVEL_ONE_PAINT_TOWER;
+```
+
+A fixed ~50/50 split, decided by map geometry, regardless of which resource the
+bot is actually short of.
+
+**Hypothesis**: build the tower type for the **scarcer** resource, self-calibrating
+from observed stocks rather than from a constant or from geometry.
+
+**History pre-check, and it is a real constraint.** The parity rule was chosen
+deliberately: *"immune to the money-at-mark-time timing artifact that made every
+early mark a money tower."* A naive "build money if money is low right now"
+reintroduces exactly that artifact, because money is *always* low right at a mark.
+So the decision must use a **ratio of stocks that is scale-free and slow**, e.g.
+`totalTowerPaint / max(1, money)` against a threshold, never instantaneous money
+against a constant. Any version that compares money to a fixed number is
+disqualified by this pre-check before it is built.
+
+That is registered before dose B lands, so the next iteration's premise cannot be
+shaped by how iteration 16 finishes.
