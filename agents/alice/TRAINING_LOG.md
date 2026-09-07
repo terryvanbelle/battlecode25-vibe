@@ -2789,3 +2789,53 @@ each replay's `MatchHeader`, so this costs one dump per map and no VM game slots
 
 This is the "cheap unrun instrument" of doctrine #10, registered *before* it could
 be used to rationalise whatever the headline turns out to be.
+
+## Iteration 12 — arm A complete: `alice_i12a` (dose 25) beats `alice_iter7` 15/20
+
+Run `20260907-013038`, first arm complete, 10 maps x both sides.
+
+| | |
+|---|---|
+| H2H vs `alice_iter7` | **15/20 (75%)** |
+| swept wins (both sides) | **5** — BunnyGame, Circuit, boxofchocolates, galaxy, quack |
+| **swept losses** | **0** |
+| split by side | 5 — Bunny, CastleDefense, DefaultLarge, Fossil, windmill |
+
+**Every pre-registered gate clears.** H2H 75% > 50%; the mechanism gate (tower
+count at r400 rises) was verified at 15 vs 4 on gridworld; and "no unresolved
+one-directional regression" is satisfied in the strongest possible way — there is
+**not one swept loss** in the arm. Under a fair coin, 15 of 20 has p = 0.021.
+
+The diff shape is the one doctrine #7 calls a real causal effect rather than
+churn: the flips are one-directional. Nothing regressed on both sides anywhere.
+
+### The map-area check, run exactly as pre-registered
+
+Map areas via a byte-size proxy on the `.map25` files, calibrated on two maps
+whose headers I had already dumped (gridworld 31x31=961 tiles -> 2256 bytes;
+PlumberGame 60x30=1800 -> 3912; so area ~ (bytes-359)/1.974). Stated as a proxy
+because it is one: a 2-point calibration, good enough to rank maps, not to
+measure them.
+
+| outcome for `alice_i12a` | maps | mean est. area |
+|---|---|---|
+| **swept win** | quack 1013, Circuit 1235, BunnyGame 1472, galaxy 2050, boxofchocolates 3033 | **1,761 tiles** |
+| split by side | CastleDefense 333, windmill 846, Fossil 870, Bunny 1303, DefaultLarge 1506 | **972 tiles** |
+
+**The prediction holds.** Maps where the ballistic walk sweeps both sides average
+**81% more area** than maps where it only splits. The three *smallest* maps in the
+sample — CastleDefense (~18x18), windmill, Fossil — are all splits, and the two
+largest are both swept wins. CastleDefense at ~333 tiles is precisely the case I
+said should show no margin, because a random walk crosses a small map perfectly
+well; it shows none.
+
+**Honest caveats.** Ten maps, and the relation is not monotone — Bunny (1303) is a
+split while quack (1013) is a swept win. So this confirms the *direction* the
+mechanism predicts, at the extremes, and does not establish a clean curve. What
+matters is that it was registered before I looked and could have come out flat or
+inverted, which would have forced a rewrite of the mechanistic story even with a
+75% headline.
+
+Arms B (dose 100) and C (dose 400) are still playing. **The accept decision waits
+for the curve**, because the dose that goes into `src/alice` should be the one the
+curve picks, not the first one measured.
