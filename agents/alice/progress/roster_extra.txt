@@ -1,4 +1,0 @@
-# alice_iter7: the last pre-navigation build. Added 2026-09-07 because the
-# auto-derived roster (iter0, iter1) is pinned at ~100% and can no longer
-# resolve progress. Frozen, never changes -- qualifies on the same grounds.
-alice_iter7
