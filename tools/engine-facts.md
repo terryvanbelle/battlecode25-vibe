@@ -45,3 +45,26 @@ javap -c -p /tmp/iv/battlecode/world/InternalRobot.class \
 predicate, not on a proxy you believe implies it. Where the engine exposes the
 test (`getPaint(loc) == EMPTY`), use it; a paraphrase agrees with it only in the
 states you happened to have in mind.
+
+---
+
+## Coverage per-mille is over TOTAL tiles, not passable tiles
+
+`Round.teamCoverageAmounts` divides by the full map area — **walls included, and
+counted as unpainted**. Using passable area as the denominator inflates every
+figure derived from it, by exactly the wall fraction.
+
+**Verify** on any replay, with `tools/replay-dump.sh <replay> --map-at R`, which
+prints both an exact census and the engine's own per-mille:
+
+```
+census  1225 tiles = 174 painted (T1 83, T2 91) + 1019 unpainted + 32 wall
+coverage per-mille  T1 recon=68 engine=68
+```
+
+83 / 1225 = 67.8 → 68, matching. 83 / 1193 (passable) = 69.6 → 70, not matching.
+
+**Why it matters:** one lineage combined this denominator mismatch with using
+*reconstructed* rather than engine coverage and produced an unpainted-tile
+estimate ~25% too high — a number that was plausible, defensible, and computed
+correctly from the wrong referent.

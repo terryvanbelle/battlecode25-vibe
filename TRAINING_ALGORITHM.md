@@ -140,8 +140,24 @@ The accept/reject machinery lives or dies on these rules. Each one is paid for.
    not) so the sample checks itself. One lineage found its target region was 9.3x
    its losing margin on one map and 0.2x on another: worth games in a close
    matchup, worth nothing in a blowout, and a random 20-map gauntlet would have
-   mixed the two regimes and shown neither.
-5. **Rank instruments by matchup evenness, and check representativeness.**
+   mixed the two regimes and shown neither. **This is rule 6 from the other
+   direction** — there it is opponents who never pose the threat, here it is maps
+   where the mechanism cannot act; both average a fixed zero into the estimate,
+   and neither rule asks for a sample that mirrors the overall population.
+5. **Watch for the wrong-referent error: a number correctly computed against
+   the wrong thing.** Three of this project's measurement failures in a single
+   day shared one shape and none was a calculation mistake — a resampling tool
+   reporting the opponent's score under the candidate's header, an empty-tile
+   count taken from a grid where units occlude paint, and a coverage estimate
+   using passable area where the engine uses total area. Each was plausible,
+   defensible, and produced by a correct procedure applied to the wrong referent.
+   **The tell every time was two artefacts that should agree and didn't** — the
+   consistency-pass heuristic applied to numbers rather than prose. So: when two
+   figures ought to reconcile, reconcile them *exactly* and account for the
+   residual. The lineage that closed the last of these matched its census to the
+   engine's coverage to within 8 tiles, and 8 was precisely the printed
+   reconstruction gap; nothing was left unexplained.
+6. **Rank instruments by matchup evenness, and check representativeness.**
    An instrument pinned near 0% or 100% cannot resolve a few games; an even
    matchup can. But resolution is not representativeness: an even instrument
    cannot measure a defense against a behavior its opponents never perform
@@ -151,24 +167,24 @@ The accept/reject machinery lives or dies on these rules. Each one is paid for.
    threat at all. **"Representative" here means "contains the situations the
    mechanism acts in", not "mirrors the overall population"** — see rule 4, which
    is the same requirement applied to map regime rather than opponent behaviour.
-6. **Primary accept test: head-to-head against the most recent accepted
+7. **Primary accept test: head-to-head against the most recent accepted
    snapshot**, all maps, both sides. >50% means the candidate genuinely beats
    what it replaces — immune to archetype staleness and to mirror collapse.
    ~50% is a near miss, not an accept, absent a separate mechanistic argument.
-7. **Peers are the regression check; lopsided instruments give direction
+8. **Peers are the regression check; lopsided instruments give direction
    only.** Never accept or reject on a lopsided instrument alone — both
    mistakes were made and both had to be walked back. A 1–2 game move on a
    lopsided instrument is noise; compute the binomial noise floor for each
    instrument's sample size and distrust any delta under it regardless of how
    good the story is.
-8. **Diff game-by-game and read the diff's shape.** Scattered, mixed-direction
+9. **Diff game-by-game and read the diff's shape.** Scattered, mixed-direction
    flips (especially on maps known to be chaos-sensitive) are churn. Flips
    that are one-directional, or concentrated on one map/side across many
    opponents, are a real causal effect — reproduce and trace before deciding.
-9. **Normalize per round before comparing counters.** Every replay counter
+10. **Normalize per round before comparing counters.** Every replay counter
    scales with game length; a change that makes games longer reads as "worse"
    on raw counts.
-10. **Track a fixed old-bot roster for long-run progress.** Peer retirement
+11. **Track a fixed old-bot roster for long-run progress.** Peer retirement
    makes the peer rate a poor absolute yardstick (stable rate = no progress,
    or progress against a hardening roster). Every ~5 accepted iterations,
    run against a fixed, never-retired roster composed of every 5th accepted
@@ -178,7 +194,7 @@ The accept/reject machinery lives or dies on these rules. Each one is paid for.
    margins, run this *before* accepting, not after — it once caught a bad
    accept by ten games when the two pre-registered metrics had each moved by
    one.
-11. **Don't let pre-registered metrics decide when a cheap unrun instrument
+12. **Don't let pre-registered metrics decide when a cheap unrun instrument
     could reverse them.** A real effect big enough to accept on usually shows
     up in more than one place.
 
@@ -389,7 +405,7 @@ resulting retraction of a long-standing entry safe.
 4. **Near miss** (within `NearMissMargin`, no real regression): refine the same
    solution, up to `MaxNearMissRefinements` — several good ideas cleared the
    bar only after a parameter refinement of a directionally-correct mechanism.
-6. **Reject**: trace the flipped games. A specific, well-understood failure
+7. **Reject**: trace the flipped games. A specific, well-understood failure
    mode earns one targeted refinement; otherwise revert fully and select a new
    target. A rejected attempt that converts a weakly-founded belief into a
    firmly-founded one paid for its run.
