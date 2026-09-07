@@ -4614,3 +4614,70 @@ one. Here it says: rising, and by the same amount the head-to-head claimed.
 in the tournament running right now. Both are true and they measure different things; the
 roster is a regression instrument, not evidence of absolute strength. See the tournament
 section below.
+
+## Iteration 17 (dry splashers walk home) — the session's strongest trace finding
+
+**Found by following the tournament's verdict down**, not from a losing gauntlet game. The
+13:00 tournament (measuring iteration 12) has carol at **19.8%** with **224 of 298** games
+ending "the winning team painted enough of the map" and a median of **760 rounds** against
+bob. Carol loses a coverage race. So I went looking for carol's coverage throughput, and my
+own RULES.md coverage-economics table names the unit: a splasher paints up to 13 tiles per
+attack, **2.6x the sustained tiles/turn of a soldier and 23% cheaper per tile**, and is the
+only unit that converts enemy paint in bulk.
+
+**What splashers actually do, measured across the 8 complete iteration-14 games on disk:**
+
+| map | SPLASH (fired) | lowScore | noTgt | **noPaint** |
+|---|---|---|---|---|
+| **Parking_lot** | 10 | 29 | 0 | **1,987** |
+| **gridworld** | 20 | 3 | 0 | **381** |
+| walalilongla | 19 | 0 | 0 | 107 |
+| Castle | 14 | 127 | 17 | 89 |
+| PlumberGame | 15 | 0 | 0 | 54 |
+| Bunny | 10 | 0 | 0 | 54 |
+| DefaultMedium | 9 | 0 | 0 | 9 |
+| DefaultLarge | 0 | 0 | 0 | 0 |
+
+**`noPaint` dominates every other splasher state by an order of magnitude.** On Parking_lot a
+splasher spends 1,987 turns unable to act against 10 turns spent acting. A splasher costs 300
+paint and 400 chips to build and then does essentially nothing for the rest of the game.
+
+**Root cause, read from the code rather than guessed**: `refillIfPossible()` only reaches a
+tower within **r²=2**. Splashers move by `moveExploring(null)`, which walks them to a random
+far map coordinate, so after their first few splashes they are nowhere near a tower and there
+is no mechanism that ever brings them back. They run dry permanently.
+
+**This redirects the hypothesis I had queued.** Iteration 11 logged "frontier-seeking movement
+for splashers" as the next splasher item, aimed at the score-0/`lowScore` state. The
+measurement says that state is 0–127 turns per game while `noPaint` is up to 1,987. Refill
+logistics is the larger target by more than an order of magnitude, and I would have spent an
+iteration on the smaller one had I not counted first.
+
+**History pre-check, done the way iteration 15b taught me to do it.** The line I am changing
+is `moveExploring(null)` in `runSplasher`, written by **iteration 11**, whose log says
+splashers "currently inherit `moveExploring(null)`, the soldier's explorer, which has no
+notion of the coverage frontier... goes in the queue behind tower-targeting." It is an
+acknowledged gap awaiting work, not an established behaviour with an argument behind it. No
+iteration has ever argued that a dry splasher should keep wandering. Pre-check passes, and
+this time I checked the iteration that wrote the line rather than the previous one.
+
+**Change**: remember the nearest ally tower seen (`homeTower`; seeded on turn 1 because
+`buildRobot` places a robot within r²=4 of its tower [E: RULES.md item 4]), and when a
+splasher is below its 50-paint attack cost, walk to it instead of exploring. Costs no
+resource; it redirects a move that was already happening — the same "capability at zero
+marginal cost" shape as iteration 14.
+
+### Pre-registered, BEFORE the run
+
+**Decision rule**: mirror-deviation margin against `carol_m14` (primary); h2h vs
+`carol_iter14` >= 60%; one-directional flip shape; no drop vs `carol_rush` from 37/40.
+`rw`/`rh` are diagnostic only.
+
+**Map-level prediction** (the discipline I adopted after iteration 15b's came out inverted):
+the benefit must concentrate on the maps where `noPaint` is largest.
+
+- **Parking_lot (1,987) and gridworld (381) should move toward iteration 17.**
+- **DefaultMedium (9), DefaultLarge (0) and Bunny (54) should barely move.**
+
+If the gains land on the low-`noPaint` maps instead, the mechanism I have described is not the
+one doing the work and I must not accept it on the headline number, whatever that number is.
