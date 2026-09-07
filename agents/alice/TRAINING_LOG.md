@@ -3430,3 +3430,39 @@ Mechanism verified on three maps: gridworld **15 towers v 4**, boxofchocolates
 3. **Iteration 13 — the coverage plateau** (reachability already passed: ~34k idle
    soldier-turns/game; soldiers cannot overwrite enemy paint once the map
    saturates). Secondary: against bob the games end before the window opens.
+
+### The repaired rung's first point — and it corrects my own effect-size estimate downward
+
+Run `20260907-023637`, `bot.txt` label `alice_iter14`, 12 fresh maps both sides
+(including maze, gridworld, CastleDefense, DefaultLarge — a good terrain spread).
+
+| | |
+|---|---|
+| `alice_iter14` vs **`alice_iter7`** | **15/24 (62.5%)** |
+| swept wins | 4 |
+| swept losses | 1 |
+
+**The rung resolves, which is the point of adding it**: 62.5% sits in a band where
+movement is visible, against 96-100% on the two auto-derived rungs that cannot
+move at all.
+
+**And it says something I would not have got from the head-to-heads.** Composing
+them naively — iteration 12 beat `alice_iter7` at 75%, iteration 14 beat
+`alice_iter12` at 60.7% — suggests `alice_iter14` should beat `alice_iter7` by
+*more* than 75%. Measured on fresh ground, the cumulative gain is **62.5%**.
+
+The two gains do not compose. Two reasons, both of which I had already written
+down before seeing this:
+
+1. **75% was the maximum of three arms and is biased upward**, exactly as
+   registered before arm C landed. This is the correction arriving.
+2. Each run draws its own map sample, so the two head-to-heads were measured on
+   different ground; only this rung measures the *cumulative* change on ground
+   neither iteration was selected against.
+
+**So the honest statement of what this session's two accepted iterations bought
+is 62.5% against the build they replaced — not 75%, and not 75% compounded with
+61%.** That is a real gain and a smaller one than the individual gates implied,
+and it is precisely the correction a frozen yardstick exists to supply. It is also
+the first time this lineage's absolute-strength chart has had a rung capable of
+delivering such a correction.
