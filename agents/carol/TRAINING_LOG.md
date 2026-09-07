@@ -6671,3 +6671,40 @@ not a new mechanism** — `nearestVisibleEmpty()` already enumerates every empty
 returns the closest. Scoring those candidates by something other than raw distance (e.g.
 penalising proximity to enemy paint) is a one-function change inside a branch that already fires,
 which is the cheapest possible shape for a first attempt and keeps iteration 14's accept intact.
+
+### Pre-check 2 (sizing) — partly answered with NO run, and it constrains my own hypothesis
+
+The coordinator pointed out the corpus sizing might be partly answerable from `tools/mapdata/`
+without spending VM time. It is: map geometry gives the denominator, and I already have measured
+coverage from replays on disk. `passable = w*h - walls` (walls from the replay `MatchHeader`),
+`unclaimed = (1000 - T1 - T2) per-mille x passable`, `margin = |T2 - T1| x passable`.
+
+| map | passable tiles | unclaimed at the sampled round | carol's losing margin | prize ÷ margin |
+|---|---|---|---|---|
+| **DefaultMedium** (r1200) | 1,193 | **149** | **16** | **×9.3** |
+| **Fossil** (r900) | 868 | 68 | **359** | **×0.2** |
+
+**On DefaultMedium the prize is 9.3× the losing margin — taking just 11% of the unclaimed corner
+flips the game.** That is a decisive sizing result and it is what earns the direction.
+
+**On Fossil it is the opposite, and this corrects what I wrote three entries ago.** The entire
+unclaimed region is 68 tiles against a 359-tile deficit: even painting *all* of it loses by a
+distance. I described Fossil as the sharper case because carol holds a tower on the edge of the
+empty block and paints none of it — that remains true as *behavioural* evidence, and the
+generality check still passes on it. But I let "sharper evidence for the mechanism" slide into
+"stronger case for the fix", and those are different claims. **Fossil is the map where fixing
+this matters least.** Its loss has a larger, separate cause.
+
+**What that changes about the evaluation design**, before any code exists: this mechanism is
+worth games in *close* matchups and worth nothing in blowouts, so it must be evaluated on an
+instrument that can see it — doctrine #4's "resolution is not representativeness" pointing the
+other way than usual. A gauntlet drawing a random 20-map sample will mix both regimes and dilute
+a real effect into invisibility. **Pre-registering now**: the accept arm must be maps where the
+head-to-head margin is small, and the prediction is map-level — gains concentrate where
+`unclaimed > margin` and are absent where it is not. That is checkable per map from the same two
+numbers, with no extra instrumentation.
+
+Pre-check 2 is therefore **partly done**: the method is established and free, and two maps are
+sized. What remains is applying it corpus-wide, which needs coverage per map and so rides along
+with the next full run rather than costing one. Pre-checks 3 (price the reallocation against the
+frontier tiles forgone) and 4 (instrument the target choice at full width) remain **not done**.
