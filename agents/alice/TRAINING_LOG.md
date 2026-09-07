@@ -3365,3 +3365,68 @@ alice_iter7`. Run `20260907-023637` is playing the current build against it now 
 lay the first point on that rung — the last two iterations scored 75% and 61%
 against this lineage's builds, so unlike the other two rungs it sits in a band
 where movement is visible.
+
+---
+
+# CURRENT STATE v4 (supersedes v3)
+
+**Accepted lineage**: `iter0 → iter1 → iter2 → iter4 → iter5 → iter7 → iter12 →
+iter14` (current). `src/alice` == `src/alice_iter14`. Gaps are rejected attempts.
+
+## What this session established
+
+The first full round-robin gave alice its first external measurement:
+**bob 287/300 (95.7%), alice 106/300 (35.3%), carol 57/300 (19.0%)** — bob beats
+alice 143-7 and carol 144-6; alice beats carol 99-51. One bot had a capability
+that the other two lacked, and the traces named it: **directed expansion**.
+
+`runSoldier` targets ruins only inside vision (r²=20) and otherwise wandered
+**randomly**. Random-walk displacement grows as √T, so soldiers never *arrived* at
+distant ruins, and chips piled up unspent because chips buy towers and towers need
+a soldier standing on a ruin.
+
+| iter | change | result |
+|---|---|---|
+| 10 | SRPs | **REJECTED** — 13/24, 13/24, 14/24 across 72 games, all within 1sd of even |
+| 11 | splashers (both arms) | **REJECTED** — 3/14 ungated, 8/24 gated |
+| **12** | wander heading persists (`WANDER_RUN`) | **ACCEPTED** — dose curve 50→**75**→60→60, peak at 25, zero swept losses |
+| **14** | wander slides instead of re-rolling | **ACCEPTED** — 17/28 (60.7%); high-wall 75% vs open 57% |
+
+Mechanism verified on three maps: gridworld **15 towers v 4**, boxofchocolates
+**8 v 5** (iter12) and **12 v 6** (iter14).
+
+## What is NOT established, stated plainly
+
+- **Whether any of this converts against bob.** The tournament that produced
+  7-143 measured `alice_iter7`. HEAD now carries both fixes; the next tournament
+  is the first real test. A within-lineage 75% need not move a 4.7%.
+- **Absolute strength.** The frozen roster is saturated (see below) and returned
+  one game of movement. The question is *unmeasured*, not answered.
+- **Iteration 14's wall-fraction story.** 6/8 vs 8/14 is Fisher p≈0.4 —
+  suggestive, and the falsifier didn't fire, but not established.
+
+## Instrument state — read before trusting a chart
+- **The frozen roster is saturated.** `alice_iter0`/`alice_iter1` sit at 96-100%.
+  A shared-tool flaw causes it: `roster_numbers` strides over iteration *numbers*
+  (`{0,1,6,11}`), not accepted-snapshot ordinals, so every rejected iteration
+  silently deletes a roster slot. **Reported to the coordinator, not patched.**
+  Local fix: `alice_iter7` pinned in `progress/roster_extra.txt`; run
+  `20260907-023637` lays its first point.
+- **A partial gauntlet arm is a biased subsample, not a small one.** Arms play
+  maps in a fixed shared order, so a partial arm is always the same easy prefix.
+  This nearly produced a wrong conclusion; the coordinator has since made the
+  summary print an UNEQUAL SAMPLES warning.
+- `tools/map_terrain.txt` now holds wall%, area and ruin count per map — real
+  data for map-class pre-registration instead of impressions.
+
+## Next, in order
+1. **Read the next tournament.** It is the only instrument that can answer the
+   question this session opened.
+2. **Iteration 15 — crowding, pre-registered:** `canMove` also fails on tiles held
+   by **robots**, and this bot fields 20-45 units, so blocking rate depends on unit
+   density as well as walls. This explains iteration 14's broad gain with a
+   high-wall tilt. It is **post-hoc and must be pre-registered on a fresh sample**
+   before it counts as anything.
+3. **Iteration 13 — the coverage plateau** (reachability already passed: ~34k idle
+   soldier-turns/game; soldiers cannot overwrite enemy paint once the map
+   saturates). Secondary: against bob the games end before the window opens.
