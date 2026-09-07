@@ -22,7 +22,13 @@
 set -euo pipefail
 
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-KEEP_RUNS="${KEEP_RUNS:-6}"      # newest N gauntlet runs per agent keep replays
+# Newest N gauntlet runs per agent keep their replays. Four, not six: the
+# retained set IS the steady state, since all the growth happens inside the
+# protected window, and three busy agents at six runs each settle around 2.5G on
+# a 30G root already carrying an 18G sibling project. Four keeps a couple of
+# days of traceable runs and cuts the floor by a third. Results are kept forever
+# either way, so this only ever costs re-runnable detail.
+KEEP_RUNS="${KEEP_RUNS:-4}"
 MIN_AGE_MIN="${MIN_AGE_MIN:-60}" # never touch a file written in the last hour
 
 DRY=0

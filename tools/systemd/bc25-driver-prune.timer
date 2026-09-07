@@ -1,0 +1,16 @@
+[Unit]
+Description=Hourly gauntlet-replay prune on the driver
+
+[Timer]
+# Hourly, mirroring bc25-vm-prune. The driver reached 100% of its 30G root once
+# -- 261M free, which would have taken down git, collation and the tournament --
+# because every collated gauntlet run copies its replays back here and nothing
+# removed them. Offset from the VM prune so the two are not both running while a
+# tournament stages.
+OnBootSec=15min
+OnUnitActiveSec=1h
+AccuracySec=5min
+Unit=bc25-driver-prune.service
+
+[Install]
+WantedBy=timers.target
