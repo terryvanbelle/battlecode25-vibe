@@ -3914,3 +3914,59 @@ disqualified by this pre-check before it is built.
 
 That is registered before dose B lands, so the next iteration's premise cannot be
 shaped by how iteration 16 finishes.
+
+## Iteration 16 — REJECTED. Both doses land on exactly 11/24, and the mechanism gate fails
+
+Run `20260907-040318` complete, 48 games, 12 maps both sides, `alice_iter14` as
+the zero arm.
+
+| arm | `CHIP_RESERVE` | H2H vs `alice_iter14` | vs mirror null | swept (w/l) |
+|---|---|---|---|---|
+| zero | 1450 | 12/24 by definition | — | — |
+| A | 1250 | **11/24 (45.8%)** | **-1 game** | 1 / 2 |
+| B | 1000 | **11/24 (45.8%)** | **-1 game** | 1 / 2 |
+
+**The dose curve is flat and one game negative: 12 → 11 → 11.** Two very different
+doses (a 200-chip cut and a 450-chip cut) produce *identical* records. A parameter
+whose value does not change the outcome across that range is not the constraint.
+
+### The pre-registered mechanism gate fails, and the trace says why
+
+Gate: *"mean soldier count in r100-r400 must rise, and idle tower paint at r300
+must fall."* From `alice_i16a` (T1, reserve 1250) vs `alice_iter14` (T2) on
+BunnyGame:
+
+| round | i16a $ | i16a sold | i16a tw | iter14 $ | iter14 sold | iter14 tw |
+|---|---|---|---|---|---|---|
+| 100 | 2600 | 3 | 2 | 1100 | 2 | 4 |
+| 300 | 4630 | 2 | 3 | 600 | 11 | 8 |
+| 400 | 2870 | 6 | 4 | 1200 | **19** | **10** |
+
+**Soldier count did not rise — it fell**, and the *lower*-reserve build is the one
+**accumulating** money ($2,600-4,630) while the higher-reserve build runs its
+treasury down to $600 and fields three times the army. That is the exact opposite
+of the predicted direction, so the gate fails outright and iteration 16 is a
+reject rather than a near miss.
+
+### And it confirms the re-diagnosis rather than merely failing
+
+Money accumulating in the build that is *allowed* to spend sooner proves the gate
+was never what stopped it spending. What stops it is having nothing to spend on —
+too few soldiers reaching too few ruins — and once tower count diverges the
+income difference dominates everything downstream.
+
+Note also that **which** resource piles up flips with game state: in the mirror
+game both sides sat on 4,885 tower paint with chips pinned; here the losing build
+sits on $4,630 with tower paint at 205. **The stock that accumulates is a symptom
+of the tower mix, not a fixed property of the economy** — which is precisely the
+variable iteration 17 was pre-registered against, before this run finished.
+
+### Closed-directions ledger
+| direction | closed by | can re-open if |
+|---|---|---|
+| Lowering `CHIP_RESERVE` (the spend gate) | iteration 16: doses 1250 and 1000 both **11/24**, identical, one game below a zero-variance null; mechanism gate failed with soldier count *falling* | the tower mix is fixed first and chips are then shown to bind with soldiers idle for want of them. Not before — a flat response across a 450-chip range says the parameter is not live. |
+
+**Cost: one 48-game run and one replay dump.** Iterations 12 and 14 were accepted
+on this loop and 15 and 16 rejected; the two rejects together consumed less than
+one accept's evaluation, which is the ratio the pre-registered mechanism gates are
+supposed to produce.
