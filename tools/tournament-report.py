@@ -81,6 +81,41 @@ def played_commits(run):
     return out
 
 
+def activity(prev, cur):
+    """Agent commits per hour between two tournaments — a proxy for how much
+    work the delta actually covers.
+
+    A delta is only as meaningful as the working time behind it, and in this
+    project the agents are killed regularly by things outside their control
+    (usage limits, dropped sessions). Between the first two tournaments they
+    committed for about 3.5 hours of a 12-hour gap. Reporting the gap without
+    that is how a delta gets read as "a day of work barely moved anything".
+    """
+    if prev is None:
+        return None
+    import subprocess
+    from datetime import datetime, timezone
+
+    def stamp(run):
+        d = datetime.strptime(run.name, "%Y%m%d-%H%M").replace(tzinfo=timezone.utc)
+        return d.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+    try:
+        out = subprocess.run(
+            ["git", "log", f"--since={stamp(prev)}", f"--until={stamp(cur)}",
+             "--format=%aI", "--", "agents/"],
+            cwd=REPO, capture_output=True, text=True, timeout=30)
+    except (OSError, subprocess.SubprocessError):
+        return None
+    if out.returncode != 0:
+        return None
+    lines = [l for l in out.stdout.splitlines() if l.strip()]
+    hours = {l[11:13] for l in lines}
+    span = (datetime.strptime(cur.name, "%Y%m%d-%H%M")
+            - datetime.strptime(prev.name, "%Y%m%d-%H%M")).total_seconds() / 3600
+    return len(lines), len(hours), round(span)
+
+
 def arrow(d):
     if d is None:
         return "     —"
@@ -166,6 +201,29 @@ def main():
         for b in bots:
             sha, subj = commits.get(b, ("?", ""))
             L.append(f"- `{b}` @ `{sha}` {subj}")
+
+    L.append("\n## What this cannot tell you\n")
+    L.append(
+        "**These standings are relative, not absolute.** Every game has a winner\n"
+        "among the three, so wins are conserved — the three win counts always sum\n"
+        f"to {len(rows)}. If all three lineages improve by the same amount, every\n"
+        "number above stays exactly where it is. A delta therefore means *changed\n"
+        "relative to the other two*, and can never mean *got better* or *got worse*\n"
+        "on its own. Absolute strength is what each agent's frozen roster measures\n"
+        "(`progress/vs_old_bots.png`), because a frozen opponent cannot improve\n"
+        "alongside you. Read the two together: a lineage can gain real absolute\n"
+        "strength and move nowhere here, which is the normal case when all three\n"
+        "are working.\n")
+    act = activity(prev, cur)
+    if act:
+        n, hrs, span = act
+        L.append(
+            f"**And weigh the delta by the work behind it.** Between `{prev.name}` and\n"
+            f"this run — a {span}-hour gap — the agents committed {n} times across {hrs} distinct\n"
+            "hours. Commits are only a proxy, but a small delta over a mostly idle\n"
+            "interval says little about the lineages and a lot about their uptime;\n"
+            "sessions here are killed regularly by usage limits and dropped\n"
+            "connections, which is not the agents' doing.\n")
 
     L.append("\n## Reading this\n")
     if not prev:
