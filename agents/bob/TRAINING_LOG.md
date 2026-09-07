@@ -3400,3 +3400,63 @@ curve does not localise at iteration 7, this paint-hoarding gate is the next thi
 ablate, and it now has a pre-registered readout: **team paint stash relative to
 coverage**, which is a replay quantity and therefore a genuinely independent instrument
 per LEARNINGS 14.
+
+
+---
+
+## Iteration 11 ACCEPTED (2026-09-07) — and it partially reverses the regression
+
+The deferred accept is resolved by the pinned run's first arm, which is complete at
+50 games.
+
+```
+                          vs frozen bob_iter1, 25 PINNED maps x 2 sides
+bob_iter9   (accepted)         28/50   56.0%     <- measured 20260907-011346
+bob (iteration 11)             37/50   74.0%     <- measured 20260907-023720
+
+delta +18.0 pts (+9 games), se 9.4 pts  ->  1.92 sd
+```
+
+**Identical maps, identical opponent, opponent frozen since iteration 1.** This is the
+one instrument in the whole system that cannot move, and it moved 18 points in the
+candidate's favour — a cleaner result than the 1.26 sd head-to-head that made me defer.
+My pre-registered rule was "accept if not *below* `bob_iter9`'s 56.0%". It is 18 points
+above.
+
+**ACCEPTED.** Full criteria set:
+
+```
+1. h2h vs bob_iter9        24/40  60.0%   PASS (gate >50%, WinPct 60% met)
+2. swept                    5 win / 1 loss  PASS (though largely implied by 1)
+3. mechanism               Rose B: 0 -> 4 live paint towers   PASS, read first
+4. bytecode                maxbc 9,828 / 17,500               PASS
+5. roster, pre-accept      74.0% vs 56.0% on pinned maps       PASS, 1.92 sd
+   (doctrine #9, triggered by the thin margin in 1)
+```
+
+Snapshotted `src/bob_iter11`. Replay `replays/iter11_bob_denier_quack_botA.bc25`.
+`bob_denier` also improved 75.0% -> 92.5% and the overall gauntlet rate 68.8% -> 76.2%.
+
+### Deferring was the right call and it changed the evidence, not just the timing
+
+Had I accepted on the 60% head-to-head alone, iteration 11 would have entered the log
+carrying a 1.26 sd justification. It now carries a 1.92 sd result against a frozen
+opponent on pinned maps — a *different and much better* claim, obtained for one run
+that I was going to spend on the regression anyway. Doctrine #9's instruction to run
+the roster *before* accepting on a thin margin did not merely confirm the decision; it
+replaced weak evidence with strong evidence.
+
+### And it speaks to the regression
+
+`bob_iter1` was beating `bob_iter9` at 44%. Against iteration 11 it manages 26%. So
+**roughly half of the 85% -> 56% decline is recovered by a single change: letting
+soldiers remember ruins they have walked past.**
+
+That is strong evidence for the reading the instrument correction above arrived at
+independently — the lineage's problem is **expansion and paint conversion**, not the
+tower-type hash. Iteration 11 attacks expansion directly and recovers ~18 of the ~29
+lost points.
+
+The remaining arms (`bob_iter3`, `bob_iter7`, `bob_abl7`) are still playing and will say
+whether the residual ~11 points localise at iteration 7 or are diffuse. Note the accept
+decision above does not depend on them.
