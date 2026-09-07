@@ -6448,3 +6448,80 @@ fall to ~0** — a gate high enough to eliminate abandonment by preventing all c
 fix, it is iteration 24b's dead branch wearing a number. I expect 150 to be the safer drop rate
 and 90 to complete more patterns, and I do **not** have a prediction for which wins, which is
 exactly why both are in the run.
+
+## Iteration 26 — REJECT. The gate was never the binding constraint, and the dose pair proved it
+
+`gauntlet/20260907-192720`, 24 games, six maps, both doses and the baseline in one run so the
+arms share the map sample exactly.
+
+```
+i26b (gate 150) vs carol_iter25    4/12 (33%)   swept-win 0/6  swept-loss 2
+i26b (gate 150) vs i26c (gate 90)  7/12 (58%)   swept-win 1/6  swept-loss 0
+```
+
+Dose ordering is clean — **150 > 90** — and both are far below the baseline. With the incumbent
+gate of 25 scoring 37.5% in the previous run, the whole curve sits under 50%. There is no
+interior optimum to find here; the axis is wrong.
+
+### The pre-registered primary says why, and it is not what I refined
+
+I registered: *the drop rate must fall well below i26's 59–88%.* It did not.
+
+| map / side | gate 25: marks/done/drop | gate 150: marks/done/drop |
+|---|---|---|
+| DefaultMedium A | 58 / 7 / 48 (82.8%) | **58 / 7 / 48 (82.8%)** — unchanged |
+| Fossil A | 8 / 1 / 7 (87.5%) | **8 / 1 / 7 (87.5%)** — unchanged |
+| Bunny A | 1 / 0 / 1 | **1 / 0 / 1** — unchanged |
+| DefaultLarge B | 31 / **16** / 7 (22.6%) | 18 / **7** / 10 (**55.6%**) |
+
+On three of four maps the gate changed **nothing at all** — identical marks, completions and
+drops. Soldiers spawn with 200 paint, so the ones that commit clear a 25 gate and a 150 gate
+alike; the gate only ever excluded soldiers that were not committing anyway. And on the one map
+where it *did* bind, it made things **worse in both directions at once**: completions halved
+(16 → 7) while the drop rate more than doubled (22.6% → 55.6%).
+
+*(Method note: I checked replay hashes first and they differed on every map — uninformative,
+because the `BUILD` tag is in every indicator string and shifts the bytes. My own log recorded
+that trap at iteration 6b and I walked into it again. The counters are the arm-to-arm evidence
+here, not the hashes.)*
+
+### The real mechanism, now identified
+
+Abandonment is not caused by admitting under-funded soldiers. **It is caused by committed
+soldiers spending their paint on something else afterwards.** `SRPfar` — the branch where a
+committed soldier is off its pattern and steering back — fires 573 to 4,583 times per game.
+On those turns `workOnSrp` returns early, and the rest of `runSoldier` then runs normally: the
+soldier paints ordinary tiles, bleeds movement upkeep, and arrives back at its pattern below the
+5-paint release threshold. Entry funding is irrelevant when the funds are spent in transit.
+
+### What this costs the §5b partition argument, which I got half right
+
+I was careful to scope SRP work to `frontNone` so it would not compete with iteration 14's
+frontier-seeking, and I still think that was the right call at the point of entry. But **the
+partition held only at commit time.** Once `srpCenter` is set, the mechanism captures the
+soldier's *navigation* on every subsequent turn, including thousands of turns that were never
+free. The budget I promised to spend was "idle turns"; the budget I actually spent was "idle
+turns, plus the movement of every soldier that ever had one".
+
+**The generalisation, and it sharpens §5b rather than merely illustrating it: partitioning a
+budget at the ENTRY point does not partition it if the mechanism carries state that steers later
+turns.** A stateless branch spends only the turn it fires on. A commitment spends every turn
+until it is released, and those turns must be costed at the entry decision. Check whether a
+mechanism is stateless before trusting a scoping argument about when it fires.
+
+**DECISION: REJECT.** `src/carol` stays at iteration 25 — iteration 26 was never promoted, so
+there is nothing to revert. Three consecutive attempts now in the SRP/tower-econ area (24a, 24b
+rejected at pre-check; 26 rejected on evaluation), so per `MaxConsecutiveRejects` **the next
+attempt must leave this area.**
+
+### Closed-directions ledger
+
+- **"SRPs as currently designed" — CLOSED on the commitment model, not on the mechanic.** The
+  mechanic itself is *proven to work*: 88 patterns completed across the first run, on a build
+  that had never laid one in 26 iterations, and the arithmetic (+3/turn per paint tower, ~90
+  paint, ~13-round payback) is unchanged and still attractive. What is refuted is
+  **per-soldier commitment with navigation capture**. Re-opening requires a design where laying
+  an SRP does not take a soldier hostage — the obvious candidate, for whenever this area re-opens,
+  is an *opportunistic* version with no `srpCenter` at all: complete any pattern that happens to
+  be finishable from where the soldier already is, and mark only when standing somewhere the
+  soldier was going to stay anyway. That has no in-transit spend to lose.
