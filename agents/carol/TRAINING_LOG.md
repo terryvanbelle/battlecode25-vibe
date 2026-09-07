@@ -5381,3 +5381,37 @@ learned nothing about the direction.
 - **NEW candidate, opposite direction**: `MOPPER_IN_20 = 8`. One constant, a dose above the
   incumbent on a curve now measured as monotone increasing over 0→2→5. It must be measured
   against `carol_iter18` with the `carol_m18` null, not against the superseded iteration 14.
+
+## Iteration 20 (paint ferry) — mechanism DOES NOT FIRE, caught by the verification match
+
+First run of `carol_i20` against `carol_iter18` on DefaultLarge — the map with the highest
+measured donor/dry coexistence (49.0% of rounds):
+
+```
+fl (loads) = 0      fd (drops) = 0      fs (seeks) = 0        bytecode 6,713, ov=0
+```
+
+**Zero on all three counters, over a full 2,000-round game.** The mechanism is completely
+inert, and the reachability pre-check I ran did not catch it because it measured the *world*
+(do a donor and a dry tower coexist?) and not the *mopper's view of the world*.
+
+That is a distinction worth stating plainly, because I thought I had done this pre-check
+properly: **"the condition exists somewhere on the map" is not "the condition is visible to the
+robot that must act on it."** Iteration 14 taught me the conditional form — measure the gate
+*among the turns that reach it* — and I applied it to the map rather than to the unit.
+
+**Rather than redesign on a guess, I am instrumenting the conjunction.** The load needs a tower
+with `paint >= 400` in vision *and* the mopper below capacity; the drop needs a tower with
+`paint < 200` in vision *and* the mopper above half capacity. Added counters for each part
+separately — `tw2` (any ally tower in vision), `dry`, `don` (donor in vision), `full` (mopper
+at capacity) — plus the mopper's own paint in its state string, and re-ran the same game.
+
+**The leading hypothesis, to be confirmed or killed by those counters**: moppers are themselves
+broke. A mopper is built with 100 paint, its attack costs **0**, and it bleeds **−2 paint per
+turn on neutral ground and −4 on enemy ground** [E: RULES.md]. So it hits zero after ~50 turns
+and `refillIfPossible` only tops it up within r²=2 of a tower it is rarely near — the identical
+"nowhere near a tower" problem that killed iteration 17 for splashers. If that is right, the
+truck is empty and it is also *the reason moppers idle 95% of the time*: not that they have
+nothing to do, but that they are dying of paint starvation like everything else carol owns.
+
+If confirmed, the ferry is the wrong shape and the right change is upstream of it.

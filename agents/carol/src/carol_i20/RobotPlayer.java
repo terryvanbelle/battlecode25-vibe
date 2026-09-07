@@ -21,6 +21,7 @@ public class RobotPlayer {
     static int bcNearMisses = 0;    // used > 80% of limit
     static int bcMaxUsed = 0;
     static int ferryLoad = 0, ferryDrop = 0, ferrySeek = 0;   // iteration 20, diagnostic only
+    static int twSeen = 0, drySeen = 0, donorSeen = 0, mopFull = 0;   // why the ferry does/does not fire
 
     /** Chips held back from robot production so a ruin can always be completed (1000). */
     static final int CHIP_RESERVE = 1200;
@@ -142,7 +143,9 @@ public class RobotPlayer {
         else if (used * 5 > limit * 4) bcNearMisses++;
         if (used > bcMaxUsed) bcMaxUsed = used;
         rc.setIndicatorString("[" + BUILD + "] bc=" + used + "/" + limit + " max=" + bcMaxUsed
-            + " ov=" + bcOverruns + " nm=" + bcNearMisses + " | " + state);
+            + " ov=" + bcOverruns + " nm=" + bcNearMisses
+            + " fl=" + ferryLoad + " fd=" + ferryDrop + " fs=" + ferrySeek
+            + " tw2=" + twSeen + " dry=" + drySeen + " don=" + donorSeen + " full=" + mopFull + " | " + state);
         Clock.yield();
     }
 
@@ -219,7 +222,8 @@ public class RobotPlayer {
              + " tp=" + rc.getPaint() + " e=" + enemies.length
              + " rsv=" + reserve + " stag=" + stagnantTurns
              + " pin=" + pinnedTurns + " pf=" + pinFree
-             + " fl=" + ferryLoad + " fd=" + ferryDrop + " fs=" + ferrySeek + upg
+             + " fl=" + ferryLoad + " fd=" + ferryDrop + " fs=" + ferrySeek
+             + upg
              + " lv=" + rc.getType().level;
     }
 
@@ -411,9 +415,13 @@ public class RobotPlayer {
         // own cargo back out of the tower it just filled.
         int cap = rc.getType().paintCapacity;
         MapLocation dry = null;
+        boolean sawTower = false, sawDry = false, sawDonor = false;
         for (RobotInfo t : rc.senseNearbyRobots(-1, rc.getTeam())) {
             if (!t.type.isTowerType()) continue;
+            sawTower = true;
+            if (t.paintAmount >= TOWER_SPARE) sawDonor = true;
             if (t.paintAmount < TOWER_DRY) {
+                sawDry = true;
                 if (dry == null) dry = t.location;
             } else if (t.paintAmount >= TOWER_SPARE && rc.getPaint() < cap) {
                 int want = Math.min(cap - rc.getPaint(), t.paintAmount - TOWER_SPARE);
@@ -423,6 +431,11 @@ public class RobotPlayer {
                 }
             }
         }
+        if (sawTower) twSeen++;
+        if (sawDry) drySeen++;
+        if (sawDonor) donorSeen++;
+        if (rc.getPaint() >= cap) mopFull++;
+        state += " mp=" + rc.getPaint();
         int give = rc.getPaint() - cap / 2;
         if (dry != null && give > 0 && rc.canTransferPaint(dry, give)) {
             rc.transferPaint(dry, give);
