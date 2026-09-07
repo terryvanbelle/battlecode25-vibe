@@ -60,6 +60,20 @@ Corollary: **soldiers cannot overwrite enemy paint** (engine: paints only if the
 tile is empty or already ally). A soldier-only bot has no answer to erasure at
 all. Only splashers convert enemy paint, and moppers clear it to empty.
 
+**Extended 2026-09-07 by two measurements this section was missing** — see the
+theme *"the engine debits before it checks"* below, which this entry should have
+cited from the day it was written and did not:
+
+1. **The map SATURATES.** Money at round 1200: T1 432‰ + T2 545‰ = **977‰
+   painted**. The instant-win bar is 700‰. After ~round 500 there is no empty
+   ground left to claim, so the remaining ~270‰ can only be **taken off the
+   opponent** — and by the corollary above, the unit I mass-produce cannot take
+   a single tile. That is the whole explanation for my coverage curve flattening
+   at 450–530‰ for the last 1,400 rounds, in the **mirror** as well as against bob.
+2. **The refused attack is not free.** The corollary said a soldier "cannot"
+   overwrite enemy paint. It can *try*, and the engine charges it 5 paint for
+   trying. That is a cost, not a no-op, and it went unnoticed for 22 iterations.
+
 ## 3. RETRACTED — "unit population has an interior optimum set by the clumping tax"
 
 **This section previously argued that my bot's armies grow until the adjacency
@@ -640,3 +654,83 @@ the two numbers is wrong, and `alice_pbudget` — which decomposes the 200 by
 action class with upkeep as the exact residual — is built precisely to settle
 it. **Recorded as a pre-registered prediction: I expect §3e's decomposition to
 be retracted.**
+
+
+## Theme: the engine DEBITS before it CHECKS — verify the predicate, not the proxy
+
+The most valuable thing this lineage found in a day, and it was found by
+decompiling rather than by reasoning.
+
+`javap -c battlecode/world/InternalRobot.class`, `soldierAttack`:
+
+```
+ 58: invokevirtual addPaint:(I)V      <-- -5 paint, UNCONDITIONAL
+170: isPaintable(loc) ... ifeq 231    <-- bail out, after the debit
+207: teamFromPaint(mine) != there -> return   <-- ENEMY PAINT: bail, after the debit
+210: setPaint(...)                    <-- only reached for empty-or-ally
+```
+
+**A soldier attack aimed at an enemy-painted tile costs the full 5 paint and does
+nothing.** `canAttack` does not protect you: it checks range and action-readiness,
+never the tile's paint. Combined with §2's saturation finding — 97.7% of the map
+painted, so a non-ally tile is overwhelmingly an *enemy* tile — this was the
+largest paint leak in the lineage.
+
+### The generalisable rule
+
+> **When a guard is a proxy for what the engine actually tests, it is a bug
+> waiting for the distribution to shift.** `!paint.isAlly()` and
+> `paint == EMPTY` agree while the map is mostly unpainted, and diverge
+> completely once it saturates. The first is a proxy; the second is the
+> engine's own predicate. Write the engine's predicate.
+
+Iteration 22 is the demonstration, and it is unusually clean because both
+branches drew on the **same** budget in the **same** turn:
+
+| branch | guard | 2x2 price |
+|---|---|---|
+| paint the tile underfoot | `!here.getPaint().isAlly()` — a **proxy** | **−7 games** |
+| paint the nearest empty tile in range | `t.getPaint() == PaintType.EMPTY` — the **engine's predicate** | **+6 games** |
+
+Removing both scored **0/24** at zero variance: they are the only paint that ever
+reaches ground outside a tower pattern, so they are complements. **A 13-game swing
+between two branches of the same method, decided by one predicate.**
+
+### Two corrections this forces on my own reasoning
+
+- **I priced the wrong thing and got the right answer.** I costed the underfoot
+  branch as a bad *upkeep rebate* (`saved/spent` = 0.039–0.052) and that number is
+  real, but the dominant channel was the refused attack. The replay says so:
+  starvation deaths fell from 30–42 to 8–11 per 250 rounds. **Being right about
+  the sign is not being right about the mechanism**, and only the mechanism
+  transfers to the next iteration.
+- **"Cannot do X" in a spec digest must be paired with "and here is what trying
+  costs".** `RULES.md` had "Cannot overwrite enemy paint" from early on. It was
+  true and it was useless, because the expensive half was the price of the attempt.
+  I have added the debit as a TRAP beside the `transferPaint` clamping one.
+
+## Theme: an instrument that samples positions your current policy chooses cannot price a policy that chooses different positions
+
+`alice_splashcensus` counted, every soldier turn, the best 13-tile splash blast
+reachable from where the soldier stood — a proper *decision* instrument, sampled
+2,402 soldier-turns across two windows, and stable to two decimals (mean 1.37
+tiles of 13, both windows). Break-even for a splasher is 10 of 13. Read at face
+value it kills the unit by a factor of seven.
+
+**It does not, and the tell was in the column I nearly did not print**: 94–98% of
+the non-ally tiles in those blasts were **enemy** paint. The blast was empty of
+*legal soldier targets* because soldiers stand inside their own finished paint.
+The census priced "a splasher standing where a soldier chose to stand", and the
+entire case for a splasher is that it would stand somewhere else — at the border,
+where it can convert 9 enemy tiles in one action.
+
+> **Before trusting a decision census, ask who chose the sample points.** If the
+> current policy chose them, the census measures the marginal value of the new
+> capability *inside the old policy's habitat*, which is the one place a
+> capability-adding change is least likely to pay. The fix is to sample positions
+> the new policy would visit, or to state the bound honestly and leave the
+> question open.
+
+Recorded as **open, not closed**: the splasher is neither justified nor refuted.
+Putting it in the closed-directions ledger on this evidence would be exactly the
+error above.

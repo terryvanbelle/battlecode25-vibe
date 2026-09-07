@@ -5620,3 +5620,138 @@ direction under that entry, not a silent revert of it. Stating this before
 building, per the History pre-check.
 
 Not started, not bundled: iteration 22 must clear `20260907-181936` first.
+
+## Iteration 22 evaluation — run `20260907-181936`, first two opponents complete
+
+Fresh random 25-map sample, disjoint from the 12 maps the 2x2 used. Uncertainty
+by map resampling (20k bootstrap), null = 1 win per map = 25/50.
+
+| opponent | score | boot se | jack se | 95% CI | vs null | swept-win / swept-loss / split |
+|---|---|---|---|---|---|---|
+| **`alice_iter19`** (accept gate) | **33/50 (66%)** | 2.72 | 2.78 | [28, 38] | **+2.94 sd** | **9 / 1 / 15** |
+| **`alice_i22a`** (identity check) | **25/50 (50%)** | **0.00** | **0.00** | [25, 25] | **0.00 sd** | **0 / 0 / 25** |
+
+### The identity check is exact, and that matters
+
+`src/alice` differs from the measured `alice_i22a` by one dropped dead
+`rc.senseMapInfo(cur)` call. The per-map histogram is `{1: 25}` — **every one of
+25 maps split 1–1, both sides, standard error zero.** That is the same
+zero-variance signature `p5`/`p10` produced in iteration 20, and here it is the
+desired outcome rather than a rejection: the bytecode I removed changed no
+decision on any map. **What I am proposing to accept is exactly what I measured.**
+
+I want to note *why* this was worth a fifth of the run rather than a paragraph of
+reasoning. "Removing a call whose result is unused cannot change behaviour" is
+true only if the limiter never truncated a turn, and the limiter truncates
+*silently*. The check cost 50 games and converts an assumption into a measurement.
+
+### The accept gate replicates on independent maps
+
+| sample | score | vs null |
+|---|---|---|
+| 2x2 run `20260907-161337` (12 maps) | 19/24 (79%) | +4.09 sd |
+| this run (25 maps, disjoint) | 33/50 (66%) | +2.94 sd |
+| **pooled** | **52/74 (70.3%)** | — |
+
+Two disjoint map samples, both clearing the gate on their own, bracketing a true
+value near 70%. The point estimate came down from 79% to 66%, which is the normal
+shrinkage when a first estimate is replicated on ground the mechanism was not
+selected on — and the *direction* and the swept-map shape are unchanged (9 swept
+wins against 1 swept loss).
+
+Peer `WinPct` and the frozen roster are still playing. No accept is recorded until
+they land, per §5b: the head-to-head is a partial derivative, and the roster has
+not been run since `alice_iter14`.
+
+## Iteration 23's premise just failed its own reachability pre-check (on this map)
+
+`alice_i23diag` counts the **decision**: every ruin-pattern attack, split by
+whether the target tile is enemy-painted (5 paint, engine-refused) or empty/ally
+(real work). Money, `alice_i23diag` vs the iteration 22 candidate.
+
+**Rounds 800, 1600, 1990: 39 soldiers sampled, `turns=0` for every one of them.**
+The ruin-pattern loop **never executes at all** in the late game — because Money's
+24 ruins are, by then, all claimed (T1 11 towers + T2 13 towers = 24). There are
+no unclaimed ruins to target, so the branch I was about to fix is **dormant**.
+
+This is the pre-check doing exactly the job the algorithm assigns it: *"a correct
+chain of reasoning about a dormant branch predicts nothing — this burned three
+iterations in one day once."* My argument for iteration 23 was mechanically
+correct about the code and would have measured nothing after round ~500.
+
+Early-round sampling (r150/300/500/700, while ruins are still contested) is
+running now. Three outcomes, pre-registered before I look:
+
+- **Waste concentrated early and large.** The candidate survives, but its value is
+  bounded by the opening, and it must be evaluated on *when* the coverage curve is
+  still rising — not on end-state coverage.
+- **Waste early but small.** Reject on price before building; note it as a known
+  small leak and move on.
+- **Zero everywhere.** The whole direction is dead and the ledger gets an entry.
+
+Either way the tile-under-self branch that iteration 22 removed was the *live*
+instance of this trap and the pattern loop is at most the residue.
+
+### Iteration 23 reachability — resolved, and the waste has a sharp time profile
+
+`alice_i23diag` (iteration 22 code plus counters; behaviour unchanged), Money.
+Per-soldier cumulative counts, aggregated by taking each soldier's latest line.
+
+| round | soldiers | pattern-loop turns | attacks on empty/ally (real work) | **attacks on ENEMY paint (5 paint, refused)** | wasted share |
+|---|---|---|---|---|---|
+| 150 | 7 | 143 | 64 | 5 | **7.2%** |
+| 300 | 11 | 64 | 5 | **55** | **91.7%** |
+| 800 / 1600 / 1990 | 39 | **0** | 0 | 0 | branch dormant |
+
+**The pre-registered outcome that fired is the first one: concentrated early and
+large.** The profile is sharper than I expected and it explains itself:
+
+- **r150** — ruins are freshly discovered, their patterns are unpainted, and 93%
+  of pattern attacks land. The mechanism is working as designed.
+- **r300** — the contested ruins have been painted by the *opponent*, and
+  **92% of every pattern attack is now burning 5 paint for nothing.** Worse than
+  a leak: the old loop `break`s on that first enemy tile, so the soldier also
+  forfeits its area paint that turn and returns to the identical tile next turn.
+  A soldier committed to a contested ruin is in an unbounded paint sink until it
+  starves.
+- **r800+** — dead. All 24 of Money's ruins carry towers (11 mine, 13 theirs), no
+  unclaimed ruin is ever sensed again, and the branch never executes.
+
+So the live window is roughly **rounds 200–600** — which is precisely the window
+in which the coverage curve is still rising and in which bob finishes me off
+(median round 644). It is the highest-leverage stretch of the game, not a
+footnote. Had I only sampled the late game I would have filed this as dormant and
+been wrong; had I only sampled r150 I would have filed it as tiny and been wrong.
+**One sampling round would have given the wrong answer in either direction.**
+
+### The change (`src/alice_i23`), one mechanism
+
+```java
+if (t.getPaint().isEnemy()) continue;   // refused by the engine; 5 paint for nothing
+```
+
+Placed inside the existing mismatch test, before `canAttack`. Two effects, both
+intended and neither bundled:
+
+1. The soldier stops paying for refused actions.
+2. Because it `continue`s rather than `break`s, it now **finds a paintable pattern
+   tile further along the same pattern** instead of stopping at the first enemy
+   one — so it does more real pattern work, not merely less waste. If the whole
+   pattern is enemy-held it falls through to the area branch and paints an empty
+   tile, which is 5 paint converted into 1 tile of actual coverage.
+
+Clearing enemy paint off a pattern stays the mopper's job — that is iteration 19,
+accepted and still in the build. This change is the soldier-side complement that
+iteration 19 left open: **iteration 19 unblocked the pattern; nobody stopped the
+soldier from paying to bang on the blockage in the meantime.**
+
+**Pre-registered gate**, recorded before the run:
+- Head-to-head vs the iteration 22 build (the new baseline once it is accepted) on
+  a fresh 25-map sample, **> 50%**, quoted with `tools/map-resample.py`.
+- **Mechanism**: `en` per soldier at r300 must fall to ~0 in the candidate arm,
+  and starvation deaths in rounds 200–600 must fall. If `en` does not move, the
+  clause never fired and the result is void regardless of the score.
+- **Watch (the thing most likely to bite)**: this frees paint *and* changes which
+  tile gets painted. If coverage at r600 does not rise while starvation falls, the
+  freed paint is going somewhere that does not convert — the exact failure shape
+  iteration 20 hit — and it is a reject, not a near miss.
