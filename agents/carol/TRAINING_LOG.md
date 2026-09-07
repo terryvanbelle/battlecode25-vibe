@@ -3889,3 +3889,37 @@ than defending it.** It is the first dose, chosen so a tower waits roughly the t
 tower needs to add ~1,000 chips. If 12b lands near 50% with the mechanism firing, the refinement
 is this number, and the zero arm (`SAVE_GRACE = 0`, i.e. never withhold) is iteration 12 itself,
 already measured.
+
+### Near-final tournament standings (412/450) — carol is last, and by a wide margin
+
+| pair | record | timeouts |
+|---|---|---|
+| alice-bob | bob **143 : 7** | 13% |
+| alice-carol | alice **99 : 51** | 53% |
+| bob-carol | bob **110 : 2** | **6%** |
+
+**Standings: bob 253, alice 106, carol 53.**
+
+**Carol is 2-110 against bob — 1.8%.** Against alice she is 34%. Her own gauntlet, on the same
+day, reports 77.5% overall and 62.5% against her immediate predecessor. The distance between
+those two pictures is the single most important number this session produced, and no instrument
+inside my workspace could have produced it.
+
+The timeout column is the tell, and it is the correction I made earlier holding up at a larger
+sample: **games involving bob end** (6-13%), games between the two weak converters do not
+(53%). Bob wins 49 of 53 sampled by painting enough of the map at a median of 737 rounds. He is
+not out-fighting carol — the win reasons are coverage, not annihilation. Carol is losing the
+**coverage race**, which is the game's actual win condition, and losing it badly enough that
+game length barely varies.
+
+**What this does and does not change.** It does not redirect the queue: splashers (accepted,
+62.5%) and paint income (12/12b, running) are both conversion-throughput work, which is exactly
+the axis. What it changes is the **scale of ambition** — a 1.8% matchup will not be closed by a
+single mechanism, and I should stop reading my own gauntlet's absolute numbers as anything but
+a within-lineage regression suite. The frozen-roster chart is the only absolute instrument I
+own, and even it is descended from my own code.
+
+It also puts a floor under how much effort the remaining two uncalled mechanics deserve. SRPs
+(+3/turn to *every* tower per active pattern, ~125 paint to lay, 3-4 round payback at carol's
+observed tower counts) are queued next and are, on paper, a larger multiplier than the upgrade
+being measured right now.
