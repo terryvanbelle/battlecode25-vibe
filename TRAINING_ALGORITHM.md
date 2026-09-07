@@ -337,7 +337,10 @@ Three practical rules follow:
   then found a separate branch — painting the tile underfoot — spending 2.5-3.8x
   more of the same resource, never ablated, and easy to assume was covered by
   the earlier price because both are "painting". Two branches that consume the
-  same budget are two prices.
+  same budget are two prices. And where two such branches buy the *same good*,
+  they are substitutes competing for one budget — in which case **the order they
+  fire in sets the allocation, by accident rather than by measurement**, which is
+  a policy nobody chose. Price them separately, then choose the split.
 
 **Nominations are usually wrong — the base rate says so.** Three candidate pairs
 have been nominated by reasoning in this project and ablated properly; **two
