@@ -5182,3 +5182,114 @@ something real. Whatever `alice_pstay` returns, the ablation still has to be run
 to price this branch in games, exactly as iteration 21 did for its sibling:
 **two branches drawing on one budget are two prices**, and paint-arithmetic is
 not a substitute for the game result.
+
+## Iteration 22 — the 2x2 (run `20260907-161337`, 72 games, 12 maps, both sides)
+
+Session note: the session that launched this run was killed at ~16:20 UTC by an
+account-wide usage limit. The run was setsid-detached, finished, and had already
+collated. Nothing was re-run.
+
+**Design.** A full 2x2 over the two branches that draw on the same soldier paint
+budget, every arm played head-to-head against `alice_iter19` on one shared
+12-map sample, so all four cells are exact against a common reference:
+
+| arm | tile-under-self | opportunistic area | score vs `alice_iter19` |
+|---|---|---|---|
+| Z = `alice_iter19` | ON | ON | 12/24 by definition (mirror null) |
+| `alice_i22a` | **OFF** | ON | **19/24** |
+| `alice_i22b` | ON | **OFF** | **6/24** |
+| `alice_i22c` | **OFF** | **OFF** | **0/24** |
+
+### Instrument check FIRST — `i22b` re-prices a quantity already priced
+
+`i22b` is byte-for-byte iteration 21's arm A, included so the 2x2 carries its own
+calibration. Iteration 21 priced the opportunistic-area branch at **+6 games**
+for the baseline, on a different map sample. Here the baseline beats area-OFF
+`12 − 6 = +6` games. **Exact reproduction on a fresh draw of maps**, and the
+map-resample interval on this run, `6/24` with 95% CI `[3, 9]`, contains it
+comfortably. The run is not suspect; the interaction below can be read.
+
+### Uncertainty (`tools/map-resample.py`, 20k bootstrap over maps — not binomial)
+
+| arm | score | boot se | jack se | 95% CI | vs the 12/24 null |
+|---|---|---|---|---|---|
+| `alice_i22a` | 19/24 | 1.71 | 1.78 | [16, 22] | **+4.09 sd** |
+| `alice_i22b` | 6/24 | 1.72 | 1.81 | [3, 9] | −3.48 sd |
+| `alice_i22c` | 0/24 | **0.00** | 0.00 | [0, 0] | **−12 at zero variance** |
+
+### Finding 1 — the tile-under-self branch was costing 7 games
+
+Per-map, `alice_i22a` scored **2 on seven maps, 1 on five, and 0 on none**:
+
+```
+box 1  defensetower 2  DonkeyKong 1  fix 1  Brat 2  Bunny 1
+HungerGames 2  CastleDefense 2  galaxy 1  AlarmClock 2  Portal 2  Money 2
+```
+
+It swept 7 maps to 0 and **never lost a map from both sides**. Under the diff-
+shape rule this is the strictly one-directional shape, not churn: there is no map
+on which removing the branch is worse. That converts the `alice_pstay` paint
+arithmetic (`saved/spent` = 0.039 on box, 0.052 on UnderTheSea — of 7,506
+self-paints, exactly one returned its 5 paint) into a **game price of +7**.
+
+The census predicted the sign and the pre-registered reading was the first one:
+*"a net paint loss; removing it frees the largest sink in the budget."* Recorded
+before the run, and that is what happened.
+
+### Finding 2 — the two branches are COMPLEMENTS, and the sign was not predictable
+
+Additivity predicts both-OFF at `12 + 7 − 6 = 13/24`. Observed **0/24**.
+
+**Interaction = −13 games**, and that is a *lower bound on the magnitude*: 0/24 is
+the floor, so the latent cell is censored and the true interaction is at least
+this large. Zero variance across maps — every one of the 12 maps, both sides.
+
+This is the opposite of the substitution hypothesis iteration 21 tested and the
+opposite of what "two branches spending one budget" suggests. Mechanistically it
+is now obvious in hindsight and worth stating so it is not re-derived: these are
+the **only two branches that put paint on ground outside a tower pattern**, and
+map coverage is the round-2000 tiebreaker. Either one alone keeps the bot in the
+coverage game; removing both leaves patterns as the sole paint sink, and a
+soldier delivers 1.3–3.9 pattern tiles in its life. The bot stops painting and
+loses every game.
+
+**Third nomination-versus-ablation data point.** The project's ledger said two of
+three nominated pairs were refuted. This one is a genuine, very large interaction
+— found not by nominating a pair but by running the 2x2 the census forced. It is
+also the *opposite sign* to the intuition that named it ("substitutes competing
+for one budget"). Four pairs now: two refuted, one destructive, one strongly
+constructive, and **the sign was mispredicted in three of the four**. The
+standing rule holds and hardens: a heuristic nominates, it never evidences, and
+its sign is worth nothing.
+
+### What this does NOT license
+
+Removing the tile-under-self branch is *not* "ground painting is waste". It is
+"of the two ground-painting branches, the one that targets the tile underfoot is
+strictly dominated by the one that targets the nearest empty tile in range" —
+the latter converts the same 5 paint into a tile the soldier was not already
+standing on, i.e. into new coverage rather than into an upkeep rebate the soldier
+leaves behind. The area branch must be kept; the 2x2 says so at zero variance.
+
+### Candidate promoted to `src/alice`
+
+`src/alice` now carries the `i22a` change (branch deleted, not gated). It differs
+from `alice_i22a` only by also dropping the now-dead `rc.senseMapInfo(cur)` call,
+which is strictly cheaper in bytecode and cannot change a decision. To keep that
+claim from being an assumption, **`alice_i22a` is included as an opponent in the
+evaluation run as an identity check**: if the two are behaviourally identical it
+must come back 12/24 split 1–1 on every map at zero variance, exactly as `p5`
+and `p10` did in iteration 20. Any other result means the bytecode delta moved a
+decision and the promotion has to be re-examined.
+
+### Evaluation launched: run `20260907-181936` (400 games, 25 maps, 8 opponents)
+
+`alice_iter19` (accept gate, replicated on a fresh 25-map draw), `alice_i22a`
+(identity check), `alice_flood` (spender archetype peer), and the full frozen
+roster `alice_iter12 / iter7 / iter4 / iter1 / iter0`.
+
+The roster is folded in deliberately: **it has not been run since `alice_iter14`,
+so `alice_iter19`'s accept never got a lineage-drift reading.** Per §5b the
+frozen roster is the only instrument that can see a chain of individually-
+positive accepts walking downhill, and iteration 22 is a large structural removal
+— exactly when it should be checked, before accepting rather than after.
