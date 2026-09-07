@@ -2871,3 +2871,35 @@ Proceeding to staged evaluation. Note these two verification games are *not* evi
 of strength — they are both losses — and they are deliberately being read only as
 mechanism engagement, which is the discipline iteration 10 cost me an afternoon to
 learn the hard way.
+
+### What the verification also says about where this direction runs out
+
+Two details from the Rose trace bound how much per-soldier memory can be worth, and
+both point at the same follow-on.
+
+**It works late.** `ptowB` stays at 0 until round ~450 and then reaches 4 by round 750.
+Memory cannot help a soldier that has not yet *seen* a ruin, and early in the game it
+has seen almost nothing — which is exactly when expansion tempo matters most. The
+opponent had 4 paint towers by round 150.
+
+**It dies with its owner.** Statics are per-robot, and this bot's turnover is extreme —
+an earlier trace measured ~290 soldiers built against ~15 alive at any moment. Every
+death discards that soldier's entire map knowledge, and every replacement starts blind
+next to a tower.
+
+So per-soldier memory is a leaky bucket that fills slowly and empties on every death.
+That is still worth measuring on its own — it is one mechanism, and the Rose result
+says the leak is not fatal — but it names the two follow-ons precisely:
+
+1. **Share ruin knowledge over the messaging layer** (`r² = 20` unit-to-unit, `r² = 80`
+   tower relay). The bot has never sent a single message. Towers are immortal and sit
+   at the relay tier, so a tower that accumulates ruin sightings and hands them to each
+   unit it spawns would fix both the slow fill *and* the loss on death, which
+   per-soldier memory fixes neither of.
+2. **Symmetry inference.** Maps are guaranteed one of a small set of symmetries, and
+   `bob-tools/BobSym.java` already exists to identify which. A ruin seen at (x, y)
+   implies one at its mirror — knowledge available from the *first* sighting rather
+   than after walking there, which is the direct answer to "it works late".
+
+Both are recorded now, before the gauntlet reports, so that whichever way iteration 11
+lands the next step is chosen from the trace rather than from the number.
