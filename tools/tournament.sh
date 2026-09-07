@@ -63,9 +63,14 @@ RUN_ID="$(date -u +%Y%m%d-%H%M)"
 OUT="$REPO_ROOT/tournaments/$RUN_ID"
 mkdir -p "$OUT"
 
+
 # ---- stage: export each bot's last committed source into a clean src tree ----
 STAGE=$(mktemp -d)
-trap 'rm -rf "$STAGE"' EXIT
+# One EXIT trap, because bash traps REPLACE rather than accumulate. Besides the
+# staging dir, drop a run directory that never received a result: a tournament
+# killed during staging otherwise leaves a dated dir holding only bots.txt,
+# which reads later like a real tournament that lost its results.
+trap 'rm -rf "$STAGE"; [ -s "$OUT/results.txt" ] || rm -rf "$OUT"' EXIT
 cp -r "$REPO_ROOT/arena/src/examplefuncsplayer" "$STAGE/" 2>/dev/null || true
 for B in $BOTS; do
   if git -C "$REPO_ROOT" cat-file -e "HEAD:agents/$B/src/$B/RobotPlayer.java" 2>/dev/null; then
