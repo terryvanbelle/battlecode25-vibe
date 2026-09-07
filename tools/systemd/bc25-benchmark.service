@@ -1,0 +1,19 @@
+[Unit]
+Description=BC25 finalist-bot benchmark (runs after the evening tournament)
+Documentation=file:///home/terryvanbelle/projects/vibe/2025/tools/benchmark.sh
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=terryvanbelle
+Group=terryvanbelle
+WorkingDirectory=/home/terryvanbelle/projects/vibe/2025
+Environment=HOME=/home/terryvanbelle
+Environment=PATH=/usr/local/bin:/usr/bin:/bin
+# 900 games behind a five-slot semaphore on a shared VM. The runner owns its own
+# deadline; systemd must not shoot it partway through.
+TimeoutStartSec=infinity
+ExecStart=/home/terryvanbelle/projects/vibe/2025/tools/cron-benchmark.sh
+StandardOutput=append:/home/terryvanbelle/bc25-benchmark.log
+StandardError=append:/home/terryvanbelle/bc25-benchmark.log

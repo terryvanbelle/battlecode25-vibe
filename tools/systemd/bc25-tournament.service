@@ -3,6 +3,12 @@ Description=Battlecode 2025 round-robin tournament (alice vs bob vs carol)
 Documentation=file:///home/terryvanbelle/projects/vibe/2025/MULTI_AGENT.md
 Wants=network-online.target
 After=network-online.target
+# Chain the finalist benchmark to the tournament rather than to a clock. Both
+# push hundreds of games through the same five-slot semaphore on battlecode-dev,
+# so they must never overlap, and "18:00 plus however long a tournament takes" is
+# a guess that breaks the first time the VM is busy. The benchmark unit skips
+# itself after the 06:00 Pacific run; only the evening one is wanted.
+OnSuccess=bc25-benchmark.service
 
 [Service]
 Type=oneshot
