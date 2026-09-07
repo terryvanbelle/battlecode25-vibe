@@ -581,10 +581,13 @@ have built refill logistics for soldiers and addressed 8–17% of turns while be
 addressing 79%. **Measure the state distribution per unit type, never pooled** — a pooled
 "idle" counter would have averaged these two into a number describing neither.
 
-## Cost the price, not just the benefit — twice in one session, two different disguises
+## Cost the price, not just the benefit — THREE times, three different disguises
 
-Two rejected iterations, one shared error, and I did not recognize it the second time even
-though I had just written up the first.
+(Was "twice in one session, two different disguises". Extended in place; both original cases
+stand as written, and the third one below is a different shape worth separating from them.)
+
+Three iterations, one family of error, and I did not recognize it the second time even though I
+had just written up the first — nor the third, several hours after writing up both.
 
 **Iteration 17 (send dry splashers home to refill).** I measured the benefit precisely: 1,987
 turns per game in which a splasher could not act. I never measured the **price** — the walk.
@@ -597,6 +600,26 @@ games.
 **100 paint against a soldier's 200**, and `buildRobot` draws that from the tower's own stash,
 which is under 200 paint on 57–99% of tower turns. Cutting the cheap unit in a paint-starved
 economy *removes* production. Running at 32%.
+
+**Iteration 26 (build SRPs) — and this one is a different shape.** Here I *did* cost the price.
+I costed it repeatedly and correctly: 200 chips, ~90–150 paint, payback ~13 rounds, all written
+down before building. Then I set the entry gate to
+`rc.getPaint() >= MARK_PATTERN_PAINT_COST` — **25**, the cost of the *first step alone*. Placing
+an SRP is a multi-turn transaction (mark → recolour 13 tiles → complete), and a soldier admitted
+with 25 paint can perform step one and nothing else. 59–88% of marks were abandoned, burning
+1,200 paint on DefaultMedium and 2,300 on Bunny — on a build whose soldiers I had *just* measured
+as chronically paint-starved.
+
+The first two omitted a price term entirely. **This one priced every step and then gated on the
+cheapest of them**, which is why writing up the first two did not inoculate me against it.
+
+**The rule that covers all three: gate on the total cost of the transaction, not on the cost of
+entering it.** Any commitment with a non-refundable deposit has this shape — a marked pattern, a
+reserved slot, a unit sent somewhere it must then return from. And the two failure modes look
+nothing alike in the counters: an omitted price term shows up as a *disappointing benefit*, while
+a mis-placed gate shows up as a **high abandonment rate with the mechanism visibly working**.
+When a mechanism engages and still loses, check the abandonment rate before you doubt the
+mechanism.
 
 The disguise differs — one price is measured in turns, the other in the scarce resource — but
 the shape is identical: **I counted what the change would gain and never counted what it would
