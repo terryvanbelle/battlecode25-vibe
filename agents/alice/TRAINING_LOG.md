@@ -3736,3 +3736,53 @@ real contact exists.
 mine was **stale**, a fork of an early build, which would have made it an ordinary
 head-to-head against a weak opponent rather than a null, and would never have
 announced itself.
+
+## Two new rungs, and iteration 14 replicated on a fresh sample
+
+Run `20260907-033915`, 48 games, 12 fresh maps, `bot.txt` label `alice_iter14`.
+
+| rung | result | swept (win/loss) |
+|---|---|---|
+| `alice_iter4` | **22/24 (91.7%)** | 10 / 0 |
+| `alice_iter12` | **13/24 (54.2%)** | 4 / 3 |
+
+Recording needed `--stride 3`: the tool will not write history for a snapshot that
+is not currently in the roster, so the rungs had to be *bootstrapped* in. My
+cheaper-path reasoning was right about the games (48 rather than 120) but I had
+missed that the stride flag is still required at record time. **After one recorded
+run they are permanent** — the roster at the *default* stride is now
+`alice_iter0 alice_iter1 alice_iter4 alice_iter7 alice_iter12`, five rungs, exactly
+as the history-preservation rule promises.
+
+### Iteration 14 replicated — and it comes in lower
+
+| run | maps | `alice_iter14` vs `alice_iter12` | swept |
+|---|---|---|---|
+| `20260907-021333` (the accept run) | 14 | 17/28 (60.7%) | 4 / 1 |
+| `20260907-033915` (fresh) | 12 **different** | **13/24 (54.2%)** | 4 / 3 |
+| **pooled** | 26 | **30/52 (57.7%)** | **8 / 4** |
+
+**Iteration 14 stands, on a smaller effect than its gate suggested.** 57.7% pooled
+over 52 games clears the >50% bar, and 8 swept wins against 4 swept losses is a
+real effect measured against a mirror null of **0 and 0**. But the honest number
+is ~58%, not 60.7%, and the swept ratio is 2:1 rather than the 4:1 the accept run
+showed.
+
+### The pattern across both accepts, stated carefully
+
+| iteration | gate figure | replicated | why they differ |
+|---|---|---|---|
+| 12 | 75% | ~60% (cumulative rung) | 75% was the **maximum of three dose arms** — biased upward by selection, which I registered *before* seeing arm C |
+| 14 | 60.7% | 57.7% (pooled) | **one arm, no selection** — the two samples simply bracket a true value near 58% |
+
+These are two different mechanisms and I should not merge them into one law. What
+they share is the practical consequence: **an accept gate is one sample, and the
+effect size worth quoting is the pooled one after replication.** Both of this
+session's accepts were quoted high on first measurement and settled lower, and in
+both cases the correction came from measuring again on ground the candidate was
+not selected on.
+
+**Nothing here reverses an accept.** Both remain above the bar on pooled data with
+positive swept ratios against a zero-zero null. What changes is the number I would
+put in a report, which is now 57.7% for iteration 14 and ~60% cumulative for the
+pair — not 60.7% and 75%.
