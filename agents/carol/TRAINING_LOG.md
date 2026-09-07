@@ -4508,3 +4508,83 @@ the nearest never-visited cell — its benefit should concentrate on the maps wh
 So **Castle should flip toward i15 and Parking_lot should not**. If instead the gains land on
 the high-hit-rate maps, the mechanism I have described is not the mechanism doing the work,
 and I should not accept it on the headline number.
+
+## Iteration 15b RESULT — REJECT at 27.5%, and my pre-registered prediction came out exactly inverted
+
+Run `20260907-133422`, maps pinned to the i12/i13/i14 set.
+
+| instrument | result |
+|---|---|
+| h2h vs `carol_iter14` | **11/40 = 27.5%** |
+| swept-win / swept-loss | **3 / 14** |
+| mechanism (`xo`, targets falling back to least-recent) | 0 across 27,822 samples — fired every time |
+
+Swept wins: DefaultMedium, Parking_lot, defensetower. Swept losses: 14 maps including Castle,
+Bunny, DefaultLarge, gridworld, PlumberGame.
+
+**The prediction I registered before the run is refuted, and in the most useful way — it is
+inverted.** I predicted the gain would concentrate on Castle (i14 frontier hit-rate 4.0%,
+18,040 idle turns — the map with most to gain) and not on Parking_lot (hit-rate 76.9%).
+Castle was a **swept loss**; Parking_lot was a **swept win**. So whatever moved the games, it
+is not "idle soldiers now know where to go". Had I accepted on the headline number I would
+have baselined a mechanism whose stated causal account is contradicted by its own map
+distribution.
+
+### Why it failed: I silently reverted iteration 3
+
+`moveExploring` re-picks a target when the robot gets within r²=8 of it, is stuck, or after
+120 turns. Iteration 15b returns the **nearest** never-visited cell — which is, by
+construction, a few turns away. So the target is reached almost immediately and re-picked,
+over and over. **The persistent far target degenerates into a local random walk.**
+
+That is precisely the behaviour **iteration 3 was built to remove**, and its log entry says
+so in terms:
+
+> "Persistent exploration target: a soldier commits to a far map location and walks to it
+> instead of re-rolling a local random step every turn... a local random walk cannot find
+> the frontier on a 40x40+ map once home is painted." (`NOTGT` on ~57% of soldier turns.)
+
+**This is a TRAINING_ALGORITHM §3 History pre-check failure, and I recorded the pre-check as
+passing.** I checked history against *iteration 14* — "strictly extends iteration 14, reverts
+nothing" — which was true and irrelevant. The behaviour I changed was established by
+**iteration 3**, eleven iterations earlier, and its rationale was written in a comment
+directly above the function I rewrote. I read that comment; I quoted its `NOTGT` number in my
+own iteration 14 notes. I did not connect it.
+
+**The correction to the pre-check, stated so it generalizes**: the History question is not
+"does this revert my *previous* iteration?" but **"which iteration established the specific
+line I am changing, and what was its argument?"** The answer lives in the code's own comments
+and in the log, and it is cheap to look up — the version that misled me was the version that
+only looked one step back.
+
+### And it was a bundle, which is why 15c exists
+
+15b changed two things at once: *(a)* the sampling domain, from all map cells to
+never-visited cells; and *(b)* the distance policy, from "farthest of 4 random samples" to
+"nearest". §4 says never bundle, and this is what an uninterpretable bundled result looks
+like — 27.5% cannot tell me whether visit memory is worthless or whether *nearest* is.
+
+**Iteration 15c isolates (a) and restores (b) exactly.** Same 4 uniform draws over the map,
+same keep-the-farthest rule the accepted baseline has had since iteration 3; the only change
+is that a draw landing on an already-visited cell is re-rolled, up to 6 tries. When most
+cells are visited the budget runs out and it degenerates to the accepted baseline's exact
+behaviour, which is the right limit for a mechanism that should never make things worse.
+
+Mechanism verified on Castle before launching: `xn` (draw accepted on an unvisited cell) max
+36 per robot, `xo` (budget exhausted) max **1** across 21,894 samples — so the re-roll almost
+always succeeds and the mechanism is live on essentially every exploration decision. Bytecode
+max 6,397, zero overruns, zero near-misses. **And 15c won Castle, the map 15b swept away.**
+
+**DECISION on 15b: REJECT.** `src/carol` remains iteration 14. Run `20260907-135509` launched
+for 15c.
+
+### Closed-directions ledger update
+
+- **"Steer idle soldiers at the NEAREST unvisited cell" — CLOSED.** `20260907-133422`,
+  11/40 = 27.5%, swept 3-14. Cause is understood and specific: a near target is reached
+  within a few turns, so `moveExploring` re-rolls constantly and the persistent far target
+  iteration 3 established collapses back into the local random walk it replaced. Re-opening
+  requires a mechanism that keeps the *commitment* while changing the *destination*.
+- **"Remember where EMPTY ground was seen" — CLOSED (15a).** Write condition (turns the
+  vision scan already finds a target) is anti-correlated with read condition (turns it does
+  not): memHit 1,250 vs memNone 8,084 on Castle. No gauntlet spent.
