@@ -4354,7 +4354,7 @@ memHit 1,250      memNone 8,084      frontFound 557      frontNone 14,014
 an empty tile — 557 turns, 4% of idle turns on Castle — and it is *read* on the other 96%.
 Write condition and read condition are anti-correlated, so the mechanism is a no-op dressed
 up as a memory. Discarded without a gauntlet run. Kept at
-`scratchpad/i15a_empty_sighting.java` for the record.
+`notes/i15a_empty_sighting.java.txt` (kept out of `src/` so it cannot compile into a run) for the record.
 
 ### 15b — "remember where I have BEEN" — the inversion, and it is dense from turn one
 
