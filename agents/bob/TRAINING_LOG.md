@@ -3951,3 +3951,63 @@ arithmetic.** The hash/SRP pair interacted *destructively* because the hash cont
 the *variance* of the multiplier. The upgrade/SRP pair interacts *constructively*
 because the upgrade raises the *level* of the base. Same structural signature, opposite
 sign — so the pair always has to be run, never reasoned about.
+
+
+---
+
+## bob_denier RE-FORKED (2026-09-07) — it had gone stale exactly as its own README predicted
+
+Triggered by the coordinator's note that iteration 12's reverted hash has never met a
+non-lineage opponent. `bob_denier` is the closest thing I can legitimately play outside
+the tournament, so I checked it before trusting it — and it was stale.
+
+```
+                                bob_denier (old)   live bot
+iteration 3 tower upgrade             present       present
+iteration 9 SRPs                      ABSENT        present   <- 0 refs vs 7
+tower-type rule                       parity        parity
+Nav.java / G.java                     identical     identical
+```
+
+**It was competing without iteration 9's entire paint economy.** That is the algorithm's
+documented trap — *"a forked archetype going stale once masked a 62.5% as 95.0%"* — and
+its own README had written the warning down in advance and named the trigger:
+*"re-fork it from the current accepted snapshot whenever it stops being a challenge"*.
+At 92.5% (iteration 11) it had comfortably stopped being a challenge.
+
+Note the archetype was forked from `bob_iter3`, so it carried the **parity** tower rule
+all along and never had iteration 7's hash. In hindsight it was quietly sitting on the
+better half of the interaction for four iterations.
+
+**Re-forked** with a new tool, `bob-tools/refork-denier.sh`, which copies the live bot
+and re-applies *only* the paint-denial spawn policy — a single localized block in
+`Tower.java`, the archetype's entire strategic content. `--check` reports drift and
+exits non-zero, which is the "make staleness loud" half the algorithm asks for and which
+I had not previously automated. It correctly flagged `Soldier.java` before the re-fork
+and reports in-sync after.
+
+### The measurement boundary, recorded so it is never crossed
+
+Run `20260907-043355` was launched **before** the re-fork and uploaded the old source,
+so its `bob_denier` arm measures the **stale** archetype. Per the README's own
+instruction, win rates must never be compared across a re-fork:
+
+```
+vs bob_denier   iteration  9   30/40   75.0%     STALE archetype
+vs bob_denier   iteration 11   37/40   92.5%     STALE archetype
+vs bob_denier   iteration 12   (run 043355)      STALE archetype  <- last of the old series
+--------------------------------- RE-FORK BOUNDARY ---------------------------------
+vs bob_denier   iteration 12+  future runs       re-forked, carries SRPs
+```
+
+I expect the re-forked archetype to be substantially harder, and a drop across that line
+is **not** a regression. The whole point is that the old number was inflated.
+
+Also worth stating plainly: `bob_denier` is a pole, not a peer, and it is built from my
+own code. It is a weaker independent-opponent proxy than the tournament, and it is not
+a substitute for it — it can only answer "can I still handle paint denial", never "is
+the hash revert sound against a foreign lineage". **The 06:00 PDT tournament remains the
+real external check on iteration 12**, and it is a regression check rather than a
+diagnosis: bob has been winning 95%+ against both siblings, so the question is only
+whether the reverted hash holds that, and a drop would be information the frozen roster
+structurally cannot supply.

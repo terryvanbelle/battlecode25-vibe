@@ -57,9 +57,7 @@ public class Tower {
         // splasher per mopper. Soldiers CANNOT overwrite enemy paint (engine fact),
         // so once the map saturates they cannot move the score at all. This pole
         // inverts that: a short economy phase, then splashers and moppers only, to
-        // attack our territory rather than race us for neutral ground. It exists to
-        // answer "does our bot handle an opponent that erases paint", which nothing
-        // in our own lineage does.
+        // attack our territory rather than race us for neutral ground.
         UnitType want;
         if (rc.getRoundNum() <= 60) {
             want = UnitType.SOLDIER;                       // must capture some ruins first
