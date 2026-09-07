@@ -1,4 +1,4 @@
-package carol_i20;
+package carol_i21;
 
 import battlecode.common.*;
 
@@ -20,7 +20,6 @@ public class RobotPlayer {
     static int bcOverruns = 0;      // confirmed: our logic crossed a round boundary
     static int bcNearMisses = 0;    // used > 80% of limit
     static int bcMaxUsed = 0;
-    static int ferryLoad = 0, ferryDrop = 0, ferrySeek = 0;   // iteration 20, diagnostic only
 
     /** Chips held back from robot production so a ruin can always be completed (1000). */
     static final int CHIP_RESERVE = 1200;
@@ -32,7 +31,7 @@ public class RobotPlayer {
      * measurement-neutral -- it shifts the replay hash, so a dose pair must share one tag if
      * doctrine #3's byte-identity check is to work on raw hashes.
      */
-    static final String BUILD = "i20";
+    static final String BUILD = "i21";
 
     /**
      * Consecutive turns this tower has seen the team treasury EXACTLY unchanged, and the count
@@ -66,6 +65,12 @@ public class RobotPlayer {
      * paint, not chips -- a splasher is 300 paint against a soldier's 200 -- so start low.
      */
     static final int SPLASHER_IN_20 = 3;
+    // Iteration 21: mopper share ABOVE the incumbent. Run 20260907-142542 measured the curve as
+    // monotone increasing over 0 -> 2 -> 5 (dose 0 scores 14/40 and loses to dose 2 by 10-4), so
+    // the incumbent 5 may not be the peak. Moppers are the cheap unit (100 paint vs a soldier's
+    // 200) drawn from tower stashes that are under 200 on 57-99% of tower turns, and mopping is
+    // carol's ONLY route to reclaiming enemy paint since soldiers cannot overwrite it.
+    static final int MOPPER_IN_20 = 8;
 
     /** Minimum splash score worth spending 50 paint on. Named so it can be a dose. */
     static final int SPLASH_MIN_SCORE = 8;
@@ -74,11 +79,6 @@ public class RobotPlayer {
      *  a fixed CHIP_RESERVE+2500 would let a lv2->lv3 upgrade (5,000) strand the treasury
      *  below the ruin-completion reserve, which is how iteration 6 lost DefaultSmall. */
     static final int STAGNANT_ROUNDS = 10;
-    // Iteration 20. TOWER_DRY = a soldier's 200 paint: below it a tower cannot build the
-    // cheapest useful unit at all, whatever the treasury holds. TOWER_SPARE keeps a donor above
-    // that same line, so the ferry can never create the shortage it exists to relieve.
-    static final int TOWER_DRY = 200;
-    static final int TOWER_SPARE = 400;
     static int lastChips = -1;
     static int stagnantTurns = 0;
     // Iteration 18: turns the treasury has sat in the DEAD BAND -- at or above the reserve but
@@ -207,7 +207,7 @@ public class RobotPlayer {
 
         int roll = rng.nextInt(20);
         UnitType want = (roll < SPLASHER_IN_20) ? UnitType.SPLASHER
-                      : (roll < SPLASHER_IN_20 + 5) ? UnitType.MOPPER
+                      : (roll < SPLASHER_IN_20 + MOPPER_IN_20) ? UnitType.MOPPER
                       : UnitType.SOLDIER;
         if (chips >= reserve + want.moneyCost) {
             Direction dir = DIRS[rng.nextInt(8)];
@@ -218,8 +218,7 @@ public class RobotPlayer {
         return "T r=" + rc.getRoundNum() + " chips=" + chips + " tw=" + rc.getNumberTowers()
              + " tp=" + rc.getPaint() + " e=" + enemies.length
              + " rsv=" + reserve + " stag=" + stagnantTurns
-             + " pin=" + pinnedTurns + " pf=" + pinFree
-             + " fl=" + ferryLoad + " fd=" + ferryDrop + " fs=" + ferrySeek + upg
+             + " pin=" + pinnedTurns + " pf=" + pinFree + upg
              + " lv=" + rc.getType().level;
     }
 
@@ -397,40 +396,6 @@ public class RobotPlayer {
         String state = "M";
         refillIfPossible();
 
-        // Iteration 20: PAINT FERRY. buildRobot draws the new robot's paint from the TOWER's
-        // OWN stash [E: RULES.md item 4], and across 8 complete iteration-14 games that stash is
-        // below a soldier's 200 on 99.1% of tower turns on Parking_lot and 97.3% on gridworld --
-        // the same maps banking a median 76,420 idle chips. RULES.md: a money tower "goes dry
-        // until a mopper refills it", and only moppers transfer paint robot->robot. Carol's one
-        // transferPaint call is a WITHDRAWAL: her moppers have never given paint to anything,
-        // while idling on 95.1% of 78,480 turns. An idle mopper is a 100-paint truck already
-        // built and paid for -- and iteration 19 proved the unit is worth keeping.
-        //
-        // Delivery stops at half capacity deliberately: refillIfPossible() returns early once
-        // paint*2 >= cap, so a mopper that has just delivered cannot turn round and withdraw its
-        // own cargo back out of the tower it just filled.
-        int cap = rc.getType().paintCapacity;
-        MapLocation dry = null;
-        for (RobotInfo t : rc.senseNearbyRobots(-1, rc.getTeam())) {
-            if (!t.type.isTowerType()) continue;
-            if (t.paintAmount < TOWER_DRY) {
-                if (dry == null) dry = t.location;
-            } else if (t.paintAmount >= TOWER_SPARE && rc.getPaint() < cap) {
-                int want = Math.min(cap - rc.getPaint(), t.paintAmount - TOWER_SPARE);
-                if (want > 0 && rc.canTransferPaint(t.location, -want)) {
-                    rc.transferPaint(t.location, -want);
-                    ferryLoad++; state += " load";
-                }
-            }
-        }
-        int give = rc.getPaint() - cap / 2;
-        if (dry != null && give > 0 && rc.canTransferPaint(dry, give)) {
-            rc.transferPaint(dry, give);
-            ferryDrop++; state += " drop";
-        } else if (dry != null && give > 0) {
-            ferrySeek++; state += " seek";
-        }
-
         // Mop enemy paint / steal from enemy robots nearby.
         MapInfo[] tiles = rc.senseNearbyMapInfos(2);
         for (MapInfo t : tiles) {
@@ -447,8 +412,7 @@ public class RobotPlayer {
             Direction card = cardinal(d);
             if (rc.canMopSwing(card)) { rc.mopSwing(card); state += " swing"; }
         }
-        // Carry the cargo to the dry tower instead of wandering.
-        moveExploring(dry != null && rc.getPaint() > cap / 2 ? dry : null);
+        moveExploring(null);
         return state;
     }
 
