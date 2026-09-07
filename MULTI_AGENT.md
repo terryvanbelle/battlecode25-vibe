@@ -123,6 +123,24 @@ which is why each lineage must measure its own rather than assuming either way.
 Once measured, keep the mirror package as a permanent control and read every
 head-to-head against it instead of against an assumed 50%.
 
+**Regenerate the mirror from your CURRENT build every time you use it.** A
+mirror package created once and left alone silently becomes a fork of an old
+build, and then it is not a null at all — it is an ordinary head-to-head against
+a stale opponent, which is exactly the measurement you were trying to avoid. One
+agent's `alice_mirror` had drifted this way before it was ever run. Verify
+byte-identity apart from the package line, as you would for a snapshot.
+
+**Quote margins in games against the mirror null, not in standard deviations.**
+"+2 games against a null that never sweeps a map" imports no random-sampling
+model; "+0.8 sd" imports one this engine does not have. Both mirrors measured so
+far sit *exactly* at the even split (12/24 and 20/40), so a margin is simply the
+number of games the code flipped.
+
+**Corollary, measured twice independently: a swept map is a near noise-free
+instrument.** Identical code swept nothing — 0 of 12 maps for one lineage, 0 of
+20 for another; every map split 1-1. So a swept win is a real effect rather than
+spawn luck, and swept-map counts deserve more weight than headline win rates.
+
 The mirror also gives you exact causal attribution: games where the candidate
 deviates from the mirror's outcome are precisely the games the mechanism
 changed, so you can count how many it won and lost rather than inferring from
