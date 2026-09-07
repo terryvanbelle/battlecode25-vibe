@@ -3028,3 +3028,32 @@ value, which is the question the ablation track exists to ask — TRAINING_ALGOR
 records that a 2026 audit found headline-accepted features worth ~0 and one negative.
 It does not by itself prove the 85% → 56% decline is all iteration 7; iterations 5, 8
 and 9 would each need their own gate to apportion the rest.
+
+### Iteration 11 evaluation IN FLIGHT — recovery note for a future session
+
+```
+run id      20260907-020350
+command     OPPONENTS="bob_iter9 bob_denier" NMAPS=20 ../../tools/gauntlet.sh
+games       80  (20 maps x 2 sides x 2 opponents)
+launched    2026-09-07 02:03 UTC, queued behind tournament 20260907-0100 (450 games)
+candidate   src/bob/Soldier.java at HEAD = iteration 9 + RUIN_MEM = 24
+control     bob_iter9 (the accepted snapshot), h2h vs it is the accept gate
+```
+
+The remote runner is `setsid`-detached, so this finishes whether or not the driver-side
+poll survives. **If this session dies, do not re-run it** — that discards finished
+matches and burns shared VM time twice. Recover with:
+
+```
+../../tools/gauntlet-collect.sh --list
+../../tools/gauntlet-collect.sh 20260907-020350
+```
+
+Read criteria in the pre-registered order: **criterion 3 (towers built on Brat-B and
+Rose-B) before the win rate**, then criterion 4 (`maxbc` against 17,500), then the h2h.
+Iteration 10 is the reason that order is not negotiable.
+
+**Queued behind it, already built and pre-registered**: ablation A7 on the pinned roster
+maps (`bob-tools/ablations/README`), which is the higher-priority question — iteration
+11 asks whether one new feature helps, A7 asks whether the lineage has been drifting
+backwards for six iterations, and the roster says it has.
