@@ -5950,3 +5950,43 @@ towers are paint, so a soldier completing a ruin almost always sees one and the 
 inert. **The price is bounded by how often a soldier is out of sight of every ally paint tower
 on a healthy map**, which is measurable from one instrumented game — the decision counter, not
 the outcome, per the other new §3 pre-check.
+
+## Iteration 20 re-costed — the ferry's price is a slice of the ~30 points moppers are worth
+
+I deferred the ferry on its *benefit* ceiling: a mopper carries 100 paint, delivers down to
+half, so one trip moves **50 paint** against the **200 in a single stash** a soldier costs —
+four round trips per soldier, and only ~5 deliveries per mopper per game were observed. That
+was the right arithmetic and it was only half the calculation.
+
+**The half I missed**: a mopper sent hauling is a mopper *not doing the thing the iteration-19
+zero arm priced at ~30 points.* Deleting moppers costs 35% vs 65%; that value comes from
+mopping enemy paint, which is the only way carol reclaims ground because soldiers cannot
+overwrite enemy paint. And the shuttle drives moppers **toward towers**, which is away from the
+frontier where enemy paint is. So the price is not "idle turns spent walking" — moppers idle
+95% of the time and I had treated that as free — it is **positional**: hauling relocates the
+unit out of the region where its 2–5% of valuable actions occur.
+
+That reframes the measurement I already have. Iteration 20's target metric moved the *wrong*
+way (tower `tp<200` 51.6% against the baseline's 50.2%, median stash 175 vs 195). I recorded
+that as "mechanism confirmed, primary metric flat-to-worse". With the price term written down
+it is no longer a puzzle: I was spending a capability worth ~30 points to buy at most a couple
+of soldiers' worth of paint per game, and the ledger was always going to come out negative.
+
+**Benefit and price, as the two numbers §3 now requires, before any further work:**
+
+| | quantity |
+|---|---|
+| **benefit** | ~5 deliveries x 50 paint = **~250 paint/game**, about **1.25 soldiers** |
+| **price** | a fraction of the **~30 points** moppers are measured to be worth, via displacement from the frontier |
+
+**DECISION: iteration 20 CLOSED, not merely deferred.** The direction is not re-openable by
+better navigation — better navigation makes the price *worse*, because it is precisely the
+driving-to-towers that displaces the unit. Re-opening requires either a carrier whose
+alternative use is genuinely zero, or a way to move paint that does not move a unit at all.
+
+**And it sharpens what the real problem is.** Tower stashes are dry because income is
+mal-distributed at the *source* — carol builds the wrong tower types, provably so on 6 maps and
+by a fixed positional rule everywhere else. Hauling paint between towers is treating a symptom
+of the tower-mix policy with a unit that costs 30 points to misplace. The tower-mix work
+(previous section) is the same problem attacked where it is created, and it costs no unit's
+time at all.
