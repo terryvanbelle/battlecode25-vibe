@@ -40,3 +40,26 @@ avoid these four unless the single-branch case is what you are testing.
 # regenerate (needs the engine's map directory)
 cd tools/mapdata/ruinscan && javac RuinScan.java && java RuinScan <dir-of-.map25>
 ```
+
+## Ruin density — the other way this corpus is uneven
+
+Computable from the table above (`ruins / (width x height)`), and worth stating
+because it caught a second lineage-level error on the *same* map:
+
+| | map | ruins per 1000 tiles |
+|---|---|---|
+| densest | `gridworld` | **21.9** |
+| | `DefaultSmall`, `Paintball` | 20.0 |
+| median | — | 11.4 |
+| | `boxofchocolates` | 5.0 |
+| sparsest | `Gears` | **4.6** |
+
+`gridworld` is 1.9x the median and 4.8x the sparsest map. So any quantity of the
+form "how often does a unit fail to find a ruin" is systematically flattered
+there: one lineage measured 25.1% on `gridworld` against 95.6% and 94.3% on two
+other maps, which would have made a near-universal problem look like a corner
+case.
+
+`gridworld` is therefore degenerate in **two independent ways** — single-parity
+ruins *and* extreme density. It is a poor choice for sizing any ruin-related
+quantity, and a bad default just because it is small and quick to trace.

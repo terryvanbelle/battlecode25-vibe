@@ -231,6 +231,19 @@ building a solution:
 - **History.** If a prior iteration deliberately established the behavior this
   would change, the fix must supersede that reasoning with new evidence, not
   silently revert it.
+- **Instrument the DECISION, not the outcome.** A zero at the output cannot
+  distinguish "the mechanism ran and failed" from "the mechanism never ran".
+  Count the decision point — how often the code *chose* the branch — not the
+  downstream result. One lineage's census counted tower *completions* when it
+  should have counted the *decision* to want one, and read a branch that was
+  unreachable on that map as a bug in the branch. Instrumenting the decision
+  killed the follow-up design before it cost a run.
+- **Check your sizing map is not degenerate.** A quantity measured on one map
+  is a statement about that map until you check it elsewhere. The corpus has
+  real outliers — see `tools/mapdata/` — and one lineage sized the same
+  quantity at 25% on `gridworld` and 95% on two other maps, because `gridworld`
+  is simultaneously the densest map in the corpus and one of four with
+  single-parity ruins. Size on a typical map, or on several.
 
 ### 4. Implement and mechanistically verify
 
