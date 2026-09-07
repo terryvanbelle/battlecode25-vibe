@@ -8242,3 +8242,64 @@ Decision rules, pre-registered and unchanged from above:
   story for it. Writing that down now so the temptation is pre-empted.
 - The two lopsided opponents give **direction only** — a 1–2 game move on either
   is under the noise floor and I will not read it.
+
+## Mechanism check, run early and for free — it works, and the outcome proxy moved the WRONG way
+
+While the gauntlet plays I found the mechanism check was already sitting on disk.
+`tools/replay-dump.sh` prints a per-team `starved` counter, and reading its source
+first (rather than assuming its referent — the error that has cost me three
+numbers): `starved` counts **deaths whose last recorded paint was ≤ 0**, and
+`lastPaint` comes from the replay's own `turn.paint()`, **not** from indicator
+strings. So it works on *uninstrumented* builds, which makes the two step-0 arms
+directly comparable. The counters reset after each printed summary line, so
+summing them over a run gives game totals at any `--every`.
+
+Two consequences worth recording:
+
+1. **My `p=` indicator addition was unnecessary** — the engine records robot paint
+   in the replay regardless. I would have found this by reading the tool before
+   patching my bot. Cheap lesson, no harm done.
+2. **The referent is ALL unit types, not moppers.** My 64.7% is a mopper-only
+   figure and these two numbers must never be quoted as the same thing. Since my
+   realized army is ~90% moppers the two track each other, but they are different
+   measurements and I am labelling them as such.
+
+UnderTheSea, one game per arm, T1 = my bot, T2 = `alice_iter23` in both arms:
+
+| | spawned soldiers | spawned moppers | deaths | **starved** | final coverage |
+|---|---|---|---|---|---|
+| **baseline** `alice` (T1) | 520 | 195 | 662 | **323 (48.8%)** | **635m** |
+| **candidate** `alice_i24` (T1) | 572 | 156 | 673 | **209 (31.1%)** | **570m** |
+| opponent T1-arm control (T2) | 410→427 | 173→173 | 548→560 | 212→198 (38.7→35.4%) | 347→410m |
+
+**The mechanism works.** Starvation deaths fall 323 → 209, from 48.8% to 31.1% of
+all deaths — a 35% relative reduction, in the predicted direction, and far too
+large for one game's noise. The opponent control moved only 38.7 → 35.4%, so this
+is not a global drift in the counter.
+
+There is a coherent downstream story too: **mopper spawns fall 195 → 156 while
+soldier spawns rise 520 → 572.** Moppers that live longer need fewer respawns,
+which frees tower paint, and the freed paint funds the 200-cost soldier — the unit
+that actually paints. That is the absorbing state in §3c running *backwards* for
+once.
+
+### And now the part that does not fit the story
+
+**T1's final coverage went DOWN, 635m → 570m**, and the opponent's went *up*,
+347m → 410m. The candidate still won the map, but on a margin of +160 where the
+baseline won by +288. On this one map the candidate is **worse on the outcome
+proxy while being better on the mechanism.**
+
+I am recording this at the same prominence as the good number, because this is the
+single most recognisable failure shape in my own ledger and in the algorithm's:
+**metrics that improve without converting to wins** (five mechanism-verified damage
+increases converted to nothing in 2026; my own "survival bought with inactivity —
+units die doing the thing that wins"). A mopper that survives by standing on
+friendly paint is *closer* to that description than I would like.
+
+n = 1 game, so this is not a measurement and I am not treating it as one — it
+is a **flag on the interpretation**, not evidence against the candidate. The
+150-game gauntlet is the test and it is already running. What this does change:
+if the head-to-head comes back marginal, I will **not** rescue it with the
+starvation number, because the mechanism firing is exactly what is already
+established and is exactly what does not settle whether it pays.
