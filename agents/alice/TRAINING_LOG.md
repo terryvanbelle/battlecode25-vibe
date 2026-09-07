@@ -3066,3 +3066,36 @@ apart from the package line (verified by diff, not by assertion).
 external instrument.** Every previous one was chosen by looking at alice's own
 games. It is also the largest single mechanical change the lineage has made, and
 it is one constant.
+
+## Iteration 14 — mechanism verified, evaluation running (`20260907-021333`)
+
+Built from the pre-registration above, unchanged. Motivating game re-run first,
+per step 4, on the map that motivated it.
+
+**boxofchocolates (55x55, 19.5% walls), `alice_i14` (A) vs `alice_iter12` (B):**
+
+| round | i14 tw | i14 cov | iter12 tw | iter12 cov |
+|---|---|---|---|---|
+| 400 | **6** | 366‰ | 3 | 242‰ |
+| 800 | **10** | 634‰ | 5 | 339‰ |
+| 2000 | **12** | **648‰** | 6 | 338‰ |
+
+`alice_i14` wins, and the **pre-registered mechanism gate passes on the high-wall
+map: towers at r400 are 6 against 3**, doubling by the end (12 v 6) with coverage
+648‰ against 338‰.
+
+The size of this is worth stating plainly. On this same map, iteration 12's
+accepted dose managed only **8 towers to 5** against `alice_iter7`. Removing the
+re-roll is worth *more here than the persistent heading was* — which is exactly
+what the diagnosis predicted: on obstructed ground the effective run length was
+never `WANDER_RUN`, it was the mean free path between obstacles, so the heading
+being persistent bought little until it could survive contact with a wall.
+
+Evaluation launched: `BOT=alice_iter12 OPPONENTS=alice_i14 NMAPS=14`, 28 games.
+Gate as pre-registered: H2H vs `alice_iter12` **> 50%**, no one-directional
+regression, and the **map-class check on wall fraction** — margin concentrated on
+high-wall maps, ~zero below ~10% walls, with a flat or inverted relation as the
+stated falsifier.
+
+One caution carried forward: this is a single map and it is the map the mechanism
+was designed against, so it is the *best* case by construction. The run decides.
