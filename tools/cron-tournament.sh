@@ -21,8 +21,14 @@ git merge --ff-only origin/main 2>/dev/null || echo "   (no fast-forward availab
 
 tools/tournament.sh || { echo "!! tournament failed"; exit 1; }
 
-RUN=$(ls -1 tournaments | tail -1)
-git add "tournaments/$RUN"
+RUN=$(ls -1 tournaments | grep -E '^[0-9]{8}-[0-9]{4}$' | tail -1)
+
+# "How did it go?" is a question about change, which summary.txt cannot answer
+# because it only sees its own run. Generate the cross-run report before
+# committing, so every tournament leaves one whether or not anyone was watching.
+tools/tournament-report.py "$RUN" || echo "!! report generation failed (results still committed)"
+
+git add "tournaments/$RUN" tournaments/HISTORY.md
 git commit -m "tournament $RUN results" || exit 0
 
 for i in 1 2 3; do

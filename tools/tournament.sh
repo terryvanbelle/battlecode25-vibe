@@ -54,6 +54,14 @@ for B in $BOTS; do
   fi
 done
 
+# Which commit each bot actually played, recorded now rather than inferred
+# later: HEAD moves constantly (three agents commit into this repo all day), so
+# by the time anyone reads the results, "what was alice at 01:00?" is no longer
+# answerable from the log.
+for B in $BOTS; do
+  git -C "$REPO_ROOT" log -1 --format="$B %h %s" -- "agents/$B/src/$B" 2>/dev/null
+done > "$OUT/bots.txt" || true
+
 # pairs
 PAIRS=""
 set -- $BOTS
