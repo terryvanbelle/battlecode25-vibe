@@ -148,7 +148,9 @@ The accept/reject machinery lives or dies on these rules. Each one is paid for.
    (a mirror proved a defensive feature "worthless" that was in fact worth
    several games against rushers, because the lineage never rushes). For any
    defensive feature, first check whether the evaluating opponents pose the
-   threat at all.
+   threat at all. **"Representative" here means "contains the situations the
+   mechanism acts in", not "mirrors the overall population"** — see rule 4, which
+   is the same requirement applied to map regime rather than opponent behaviour.
 6. **Primary accept test: head-to-head against the most recent accepted
    snapshot**, all maps, both sides. >50% means the candidate genuinely beats
    what it replaces — immune to archetype staleness and to mirror collapse.
