@@ -7046,3 +7046,52 @@ ground. If the decision census shows that state is rare, the candidate is priced
 out before it costs a gauntlet — **and I will run that census before the run**,
 because "instrument the DECISION, not the outcome" is exactly what saved me from
 the splasher.
+
+## Iteration 24 — PRICED OUT before it cost a gauntlet, and it corrects my enumeration
+
+`alice_i24diag` (iteration 23 code plus counters, behaviour unchanged) counts the
+**decision**: how often is a soldier action-ready, holding 5–14 paint, and
+standing on an **EMPTY** tile — the one case my case analysis said iteration 22's
+deletion gave up? UnderTheSea, per-soldier cumulative counts.
+
+| round | soldiers | action-ready turns | in the 5–14 band | **would fire** | in band but underfoot not empty |
+|---|---|---|---|---|---|
+| 300 | 21 | 1,055 | 43 (4.1%) | **0** | 43 |
+| 800 | 32 | 3,276 | 11 (0.3%) | **0** | 11 |
+
+**Across 4,331 action-ready soldier turns, the targeted state occurs ZERO times.**
+The paint band itself is rare (0.3–4.1%), and in **every single** band-turn the
+tile underfoot was not empty.
+
+The reason is my own saturation finding, which I should have applied before
+building: **by round 300 the map is ~90% painted**, so a soldier standing anywhere
+is almost never standing on empty ground. The branch is dead on arrival.
+
+**`src/alice_i24a` is discarded. It never plays a gauntlet.** Fourth candidate
+killed cheaply today by a pre-check rather than by a run — after the splasher
+(deferred on a census), iteration 23's premise (nearly filed dormant on late-game
+reachability, saved only by sampling early), and the map-class hypotheses (killed
+by tournament data already on disk).
+
+### And it corrects the enumeration that produced it
+
+I wrote that row 3 was *"a real loss that iteration 22 accepted without
+noticing."* **Measured: it is zero, not small.** The correction runs in my favour,
+which is exactly why it is worth stating explicitly rather than letting it pass:
+
+| row | enumeration said | census says |
+|---|---|---|
+| EMPTY, 5 <= paint < 15 | "deletion LOSES a legitimate paint" | **the state never occurs — deletion loses nothing** |
+
+So iteration 22's deletion was not a trade of a large gain against a small loss.
+**It was a pure removal of the ENEMY-case waste, with the other three rows
+contributing exactly nothing.** The attribution I closed by enumeration is now
+*stronger* than the enumeration alone could establish — two of four rows are
+identical by construction, and the third is empirically empty.
+
+**The lesson is about the enumeration, not the result.** A case analysis tells you
+which behaviours *differ*; it says nothing about which of them ever *happen*. I
+correctly enumerated four rows and then silently assumed a non-identical row was
+frequent enough to matter. **Enumerate the cases, then count them** — the second
+half is the reachability pre-check, and I ran it here only because it was a
+candidate, not because I thought the enumeration needed it. It did.
