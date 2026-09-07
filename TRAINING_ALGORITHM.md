@@ -221,6 +221,18 @@ hypothesis. Nearly every serious root cause in ~320 combined iterations was
 found in a trace, not by reasoning about what a good bot would do — and traces
 routinely killed plausible hypotheses before they cost an iteration.
 
+**But a trace gives you the SYMPTOM; the mechanism is still an inference, and it
+needs its own test.** This rule is not "the trace settles it". One lineage
+traced a real and reproducible symptom — a contiguous unpainted corner with every
+soldier in the contested middle, on two different map geometries — and inferred
+that its soldiers were choosing contested ground. Measurement refuted that
+outright: on three of four maps the nearest visible empty tile had **zero enemy
+neighbours**, so there was nothing to re-rank. The corner sat unclaimed because
+the soldiers never *saw* it. "Chooses badly" and "never sees it" produce an
+identical trace, so enumerate the mechanisms that could produce the symptom
+before committing to one. That lineage eliminated a whole direction for 16 games
+— less than one evaluation of the wrong design.
+
 ### 3. Hypothesis, with three cheap pre-checks
 
 State the hypothesis with pre-registered variables and thresholds that would
