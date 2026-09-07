@@ -1,0 +1,14 @@
+[Unit]
+Description=Check every 10 minutes that the BC25 agents are still being worked
+
+[Timer]
+# Every 10 minutes, forever, including across reboots. systemd needs no API
+# quota, which is the whole point: it keeps retrying through a usage limit that
+# has paused the coordinator, and lands the moment the window clears.
+OnBootSec=5min
+OnUnitActiveSec=10min
+AccuracySec=30s
+Unit=bc25-agent-watchdog.service
+
+[Install]
+WantedBy=timers.target

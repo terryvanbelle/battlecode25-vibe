@@ -1,0 +1,14 @@
+[Unit]
+Description=BC25 agent watchdog — nudge the coordinator session if it stops working
+Documentation=file:///home/terryvanbelle/projects/vibe/2025/tools/agent-watchdog.sh
+
+[Service]
+Type=oneshot
+User=terryvanbelle
+Group=terryvanbelle
+WorkingDirectory=/home/terryvanbelle/projects/vibe/2025
+Environment=HOME=/home/terryvanbelle
+Environment=PATH=/home/terryvanbelle/.local/bin:/usr/local/bin:/usr/bin:/bin
+ExecStart=/home/terryvanbelle/projects/vibe/2025/tools/agent-watchdog.sh
+StandardOutput=append:/home/terryvanbelle/bc25-watchdog.log
+StandardError=append:/home/terryvanbelle/bc25-watchdog.log
