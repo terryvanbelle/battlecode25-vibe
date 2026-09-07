@@ -4464,3 +4464,38 @@ The report gained a section after I first read it, and it corrects me: wins are
 what the frozen roster measures. My roster is overdue — last extended around
 iteration 13 — and TRAINING_ALGORITHM §5b requires it on a schedule rather than
 on suspicion. Queued behind iteration 19's evaluation.
+
+## Iteration 19 — mechanism VERIFIED (class 2), evaluation running (`20260907-141653`)
+
+`alice_i19diag` (arm A plus the census) vs `alice_iter14`, gridworld and
+UnderTheSea. Both won. **Both are read against the mirror null, not raw** —
+gridworld's null with byte-identical code is T1 12 towers to T2 6, which is
+exactly the trap the iteration 17 retraction was about.
+
+| | gridworld base | gridworld cand | UnderTheSea base | UnderTheSea cand |
+|---|---|---|---|---|
+| ruin-targeted soldier turns | 22,092 | **18,604** | 6,477 | **3,130** |
+| % of them with enemy paint in the pattern | 35.8% | 36.1% | 81.2% | 81.4% |
+| **near-stall samples (≥20/24 done, at the ruin)** | 724 | **358** | 1,714 | **465** |
+| enemy share of the remaining tiles | 87.2% | **79.0%** | 78.2% | **73.2%** |
+| median soldier paint at a ruin | 18 | **35** | 29 | 26 |
+| towers built (T1) | 12 *(null)* | **13** | 12 *(null)* | **13** |
+
+**The pre-registered gate passes, and one number in it is more interesting than
+the gate.** The blocked *fraction* is dead flat on both maps (35.8→36.1,
+81.2→81.4): moppers do not reduce how often a pattern contains enemy paint,
+because it is an equilibrium — the opponent repaints as fast as we clear.
+
+What changed is **throughput through that state**. Near-stall samples fall by
+half or better (724→358, 1,714→465) and total ruin-targeted soldier turns fall
+16% and 52%. Soldiers are getting unstuck and moving on. Tower count rises by
+exactly **+1 over the null on both maps** — the right sign, and small.
+
+**Recorded before the run resolves so it cannot be rationalised afterwards**:
++1 tower per map is a modest effect and I expect a modest H2H. The honest
+prediction is a near miss rather than a clean accept.
+
+**Launched**: run `20260907-141653`, `BOT=alice_iter14 OPPONENTS="alice_i19a
+alice_i19b alice_flood" NMAPS=12`, 72 games. `alice_flood` rides along to buy
+its first roster point — `alice_iter14` vs the spender archetype has never been
+measured, and the shared map sample makes the comparison exact.
