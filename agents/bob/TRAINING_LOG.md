@@ -4011,3 +4011,288 @@ real external check on iteration 12**, and it is a regression check rather than 
 diagnosis: bob has been winning 95%+ against both siblings, so the question is only
 whether the reverted hash holds that, and a drop would be information the frozen roster
 structurally cannot supply.
+
+
+---
+
+## Session resumed 2026-09-07 ~13:10 UTC — run 20260907-043355 read, iteration 12 confirmed
+
+The session was killed at ~04:40 by an account-wide rate limit. The run survived
+(setsid) and had already been collated. Reading it now, with the timing caveat I
+recorded before the session died applied.
+
+```
+run 20260907-043355   iteration 12 (bob_iter12), fresh 25-map sample, 100 games
+                            games      sweptW  sweptL  split      NULL: 0 / 0
+vs bob_denier (STALE)      47/50 94%     22       0       3
+vs bob_iter11              28/50 56%      7       4      14
+overall                    75/100 75.0%
+```
+
+**The `bob_denier` arm is the last of the pre-re-fork series and must not be compared
+across the boundary** — the run uploaded `src/` before the re-fork, so this 94% is
+against the archetype that was missing iteration 9's SRPs entirely. Honouring that
+caveat is the whole reason it was written down; the number is retired, not carried.
+
+The `bob_iter11` arm is the load-bearing one and it replicates the roster run
+(`20260907-034757`, 29/50, swept 7-3) on a **different** 25-map draw: 28/50, swept 7-4.
+Two independent map samples agree to within one game and one sweep. Iteration 12 is
+confirmed as the accepted bot.
+
+Note what that arm is *not*: a large advance. Iteration 12 differs from `bob_iter11`
+by **removing** two things, and 56% with +3 net sweeps is what undoing damage looks
+like. The lineage's absolute position is iteration 3's, reached by a longer road.
+
+
+---
+
+## Closed-direction RE-OPEN TEST (2026-09-07) — refill: trigger NOT met, ledger stands
+
+The refill direction was closed with an unusually precise re-open trigger, and the
+honest thing to do on resuming is to *test* it rather than quote it:
+
+> **Re-open when paint stops being the binding constraint.** Concretely: when team
+> chips stop accumulating — say sustained below ~5,000 while towers still want to
+> spawn... **Iteration 9 (SRPs) is the most likely trigger** ... the chips column of
+> any replay answers it.
+
+Iteration 9 landed and is in the accepted bot, so the trigger is live. Answering it
+from `bob_denier__box__botA.bc25` (iteration 12, full 2000 rounds, a loss):
+
+```
+round    500   1000   1500   1700   1800   1900   2000
+chips   4770   5830   6420  11720  15770  18370  20720
+paint   2431   3099   2908   2482   1580   1040    486     <- summed over ~63 robots
+```
+
+**The trigger is not met.** Chips never sit sustained below 5,000; they oscillate
+4.5k–8.5k mid-game and then run away to 20,720. And the spawn gate is
+`chips >= 250 + 1200 = 1450`, which is cleared on every single row — **spawning is
+never chip-limited in this game**. Paint is still the binding constraint, exactly as
+the closed entry said.
+
+Two corrections this test produced, both worth keeping:
+
+1. **The ~5,000 floor is partly my own constant, not a fact about the economy.**
+   `UPGRADE_RESERVE = 4000` means a tower refuses to upgrade below `cost + 4000`, so
+   the treasury is *held* near 4–6.5k by construction. A future re-open test must read
+   the **spawn** gate, not the level, or it will be reading its own reserve back.
+2. **The "dying at zero is efficient" argument does not obviously cover moppers** — a
+   mopper's attack costs 0 paint, so its stash is consumed entirely by the territory
+   penalty (2x for moppers) rather than converted into tiles. I checked whether that
+   reopens it and it does not: refilling a mopper still costs the same 100 paint the
+   tower would spend spawning one, and the 300 chips it saves are worthless while
+   20,720 sit idle. The exemption I thought I had found is not one.
+
+**CLOSED (re-affirmed): "keep units alive by walking them back to a tower to refill."**
+Re-open trigger restated in the sharper form: *when a tower is observed declining to
+spawn for want of chips*, not when the chip level is low.
+
+The last row is the real finding here and it is not about refill: **486 paint across
+~63 living robots at round 2000 — under 8 each, against capacities of 100–300 —
+while 20,720 chips sit unspendable.** The bot has run out of things to buy with chips
+(3 towers, all upgraded) and cannot buy paint with them.
+
+
+---
+
+## Iteration 13 target selection (2026-09-07) — iteration 9's SRPs are close to inert
+
+Two replays of the accepted iteration 12, from `20260907-043355`, read for the
+`srpA`/`srpB` columns (engine-reported **active** SRP counts):
+
+```
+bob_denier on box, side A, 2000 rounds          bob_iter11 on DefaultHuge, side A
+round  srpA  srpB  chips  paint  ptow            round  srpA  srpB  covA  covB  soldA  soldB
+  500     0     0   4770   2431    2                200     0     1   249   360    21     36
+ 1000     0     0   5830   3099    2                400     0     7   308   647    58    143
+ 2000     0     0  20720    486    2                471     1     9   271   702    63    150
+   one SRP completion marker (r461), never activated
+```
+
+**Zero active SRPs for an entire 2000-round game**, and one completion that the
+integrity re-check evidently reset before it ever activated. On DefaultHuge, one
+active SRP against `bob_iter11`'s nine — and `bob_iter11` carries the *same* SRP code.
+
+Iteration 9's SRPs are the bot's single largest paint lever (+3 paint/turn per active
+pattern **per allied paint tower**), cost 200 chips against a treasury holding 20,720
+idle, and are the mechanism the entire iteration 7-12 regression saga was about. They
+are producing approximately nothing.
+
+### This is a recorded-open successor, not a re-open
+
+Iteration 10 closed *"build more SRPs by searching harder for sites"* on a solid
+measurement (mark saturation refuses ~128% of geometrically-valid candidates per turn),
+and wrote its own successor down:
+
+> Re-open only if tower marks stop blanketing the areas soldiers occupy — e.g. if a
+> future change ... **moves SRP construction deliberately away from ruins. That second
+> one is a real idea and is recorded here rather than attempted now**: it is a
+> different mechanism (site selection policy at the map level) from the one just
+> killed.
+
+That is the direction. But the `box` game says the story cannot be *only* mark
+saturation: box carries **three towers in 2000 rounds**, so there is almost no marked
+ground on that map, and it still produced zero SRPs. There is a second blocker, and
+the obvious candidate is structural rather than geometric — `workOnSrp()` is called
+only when `workRuin == null`, so a soldier holding a ruin target it may never reach
+never executes the SRP path at all.
+
+### PRE-REGISTERED: measure which gate before writing the fix
+
+Two candidate blockers with opposite fixes is exactly the situation where theorising
+costs an iteration. `src/bob_probe` is re-forked from the current `src/bob` (package
+line only, verified) with counters at every SRP gate and nothing else changed:
+
+```
+turns  hasRuin  reached  chips  canMark  enemyPaint  overlap  mark  starts  done  abandon
+```
+
+`hasRuin` counts turns where the SRP path is never reached; `reached` counts turns
+that entered site selection; the rest partition the refusals. Compile-checked in
+isolation. Counters add no decisions, and soldier bytecode peaks at 9,488 of 17,500,
+so the probe's games should be byte-identical to the bot's.
+
+**Pre-registered reading, written before the run:**
+
+- `hasRuin` dominant (>80% of turns) -> the blocker is **structural**: soldiers are
+  monopolised by ruin targets. Fix is a reachability change, and the "site away from
+  ruins" idea would be attacking the wrong gate.
+- `mark` dominant among refusals -> iteration 10's finding still governs and the
+  recorded successor (site away from ruins) is the right mechanism.
+- `canMark` dominant -> geometry/paint, i.e. `isValidPatternCenter` or the 25-paint
+  marking cost against a starved stash; that is a third mechanism again and would
+  point at paint, not siting.
+- `starts` >> `done` -> siting is fine and **completion** is the blocker (patience,
+  paint, or disruption), which would redirect the whole iteration.
+
+Both maps are run at the side that lost, so the trace is of a game I actually lose.
+A null result — no single dominant gate — is recorded as such and sends me to the
+`starts`/`done` ratio instead.
+
+
+---
+
+## SRP GATE PROBE RESULT (2026-09-07) — it is geometry, and my third branch was the right one
+
+`src/bob_probe`, iteration 12 plus counters only, box and gridworld, side A (the side
+that loses). Counters sum over the final per-soldier reports.
+
+```
+                turns  hasRuin  reached  canMark   (paintLow / geom)  mark  enemyPaint  starts
+box              5999      101     5898     5410      45 / 5365        457      31         0
+gridworld        4900     2826     2074     2071       0 / 2071          0       0         0
+
+mean stash at the attempt:  box 121   gridworld 188      (soldier capacity 200)
+```
+
+**`canMarkResourcePattern` refuses 92% (box) and 99.9% (gridworld) of all attempts, and
+that refusal is 99%+ GEOMETRY, not paint.** Of 7,481 refusals across both maps, 45 were
+"stash under the 25-paint marking cost". Mean stash at the moment of the attempt was
+121 of 200. Soldiers are not too poor to mark; they are standing in the wrong place.
+
+Against my pre-registration:
+
+- `hasRuin` dominant — **refuted on box** (1.7% of turns). Soldiers there almost never
+  hold a ruin target, so "monopolised by ruin work" is wrong; on gridworld it is 58%,
+  so the structural blocker is real but map-specific and secondary.
+- `mark` dominant — **refuted**. 457 and 0. Iteration 10's mark-saturation finding is
+  real but it is the *second* gate; it only bites on ground that already passed
+  geometry, and on these maps almost nothing does.
+- `canMark` dominant — **confirmed**, and it was the branch I wrote down as pointing at
+  a third mechanism again.
+- `starts >> done` — moot: **zero starts on either map.**
+
+### The ceiling, measured over all 75 maps with no games at all
+
+New tool `bob-tools/BobSites.java`. `GameWorld.isValidPatternCenter` is a pure function
+of the map file (>=2 from each edge, and none of the 25 tiles in the 5x5 a wall or a
+ruin), so the question "what fraction of tiles can host an SRP at all?" is a question
+about the maps, not about a match.
+
+```
+maps=75   mean legal-centre share of paintable tiles   20.6%
+          mean share of wall-legal centres killed by RUINS  47.6%
+          worst  gridworld  2.1%        best  Oasis  53.8%
+```
+
+**The bot tests exactly ONE candidate per turn — whichever tile a random wander left it
+on — against a ~20% base rate.** Observed pass rates are worse than the map-wide base
+rate (box 8.3%, gridworld 0.14% against 2.1%), because soldiers cluster near ruins and
+a ruin invalidates every 5x5 containing it. That is the whole mechanism, and gridworld
+at 2.1% predicted its own 99.9% refusal rate before the probe was read.
+
+This is the fourth time a question that looked like it needed a gauntlet turned out to
+be a question about the map files. The habit is holding.
+
+
+---
+
+## Iteration 13 (2026-09-07) — SRP prospecting: mechanism VERIFIED, dose too large
+
+**Change (one, in `Soldier`).** When a soldier has no ruin work and cannot mark where it
+stands, it walks to the nearest tile within r² ≤ 4 that the engine's own
+`canMarkResourcePattern` accepts, instead of calling `Nav.wander()`. Marking still
+happens only from the centre tile, per RULES.md's pattern discipline — so this does not
+re-open iteration 10's closed direction, which marked at range across 13 offsets and
+died to mark saturation. `SRP_PROSPECT_R2 = 0` is an exact zero arm.
+
+**Mechanistic verification (algorithm §4), three games, all side A:**
+
+```
+                              srpA (active SRPs)          outcome
+                       baseline iter12   candidate
+box       vs denier      0 all game        2 -> 0        r2000 tiebreak -> r828 MAJORITY  WORSE
+gridworld vs denier      0 all game        0 all game    loss -> loss                     NO-OP
+DefaultHuge vs iter11    0,0,1             1,3,2         r471 -> r728                     BETTER
+```
+
+Bytecode checked first: soldier max **8,286 of 17,500, zero overruns**, so none of this
+is a limiter artefact.
+
+**The mechanism engages** — it produces active SRPs on maps where iteration 12 produces
+none for 2,000 rounds. On gridworld it correctly does nothing, which is what `BobSites`
+predicted from the map file alone (2.1% legal centres): a mechanism that is inert
+exactly where the offline model says it must be is evidence the model is right.
+
+### Why box got worse, and it is a finding rather than an excuse
+
+```
+box, side A          r200 soldiers   towers built   r800 chips
+iteration 12              36              3            —
+iteration 13              14              1          17,844
+```
+
+Prospecting steers soldiers toward SRP-legal ground, and SRP-legal ground is
+**anti-correlated with ruins by construction** — a ruin invalidates every 5x5
+containing it, which is 47.6% of what walls would otherwise allow. So a mechanism I
+wrote to find patterns silently became a mechanism that walks soldiers away from
+ruins, and expansion is this bot's dominant loss shape (0-3 towers in losses, 10-14 in
+wins). I got iteration 10's recorded successor idea — "site SRPs away from ruins" — for
+free, and it cost more than it paid.
+
+It also fires far too often: on box the prospecting condition is available on ~98% of
+soldier turns, so it does not supplement the exploration policy, it replaces it.
+
+### Pre-registered dose-response, with the zero arm, on the pinned maps
+
+Three arms, one run, identical 25 pinned maps (`20260907-011346`), identical frozen
+opponent `bob_iter1`, both sides — so every arm is directly comparable to the whole
+regression curve already in this log with no map-draw term at all.
+
+```
+run 20260907-134632   BOT=bob_iter1   OPPONENTS = bob (share 1/1), bob_p3 (1/3), bob_iter12 (0)
+   -- reported as bob_iter1's record; each ARM's score is 50 minus that, and
+      bob_iter1's swept WINS are the arm's swept LOSSES.
+```
+
+`bob_p3` is the candidate with `rc.getID() % 3 != 0` declining to prospect: one soldier
+in three. It exists because the box failure is a *trade* — patterns against expansion —
+and a trade should be priced, not assumed. Doctrine #2's zero arm is `bob_iter12`
+itself, already measured at 41/50 on these exact maps, which makes it a live
+consistency check on the run as well as an arm.
+
+**Prediction, registered:** the full dose loses to the zero arm; 1/3 is where an
+interior optimum would sit if one exists. If the curve is monotone downward the
+mechanism is rejected outright and the finding is that SRP siting cannot be bought
+with soldier movement.
