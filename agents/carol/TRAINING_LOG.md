@@ -5554,3 +5554,32 @@ soldier while `carol_i21` — backed by a *measured dose curve* — is waiting f
 - **Or target the constraint directly**: 2/3 of carol's towers are paint towers by
   `towerTypeFor`'s `k % 3`, yet gridworld runs 97.3% dry with 76,420 idle chips. If the mix is
   wrong, no ferry can compensate — and unlike the ferry, the tower mix has never been swept.
+
+## Iteration 19 collated — and a representativeness note I would have missed
+
+Run `20260907-142542` final: `carol_i19a` (`MOPPER_IN_20 = 0`) 64/120 = 53.3% overall.
+
+```
+vs carol_iter14   14/40 (35.0%)      vs carol_i19b (dose 2)   11/40 (27.5%)      vs carol_rush  39/40 (97.5%)
+```
+
+**`carol_rush` is where the zero arm does BEST**: 39/40, against the incumbent's 37/40. So
+deleting moppers *helps* against the rusher and badly hurts against carol's own lineage.
+
+That is worth stating because it inverts the caveat I registered before the run. I wrote that
+moppers are a defensive unit and that a drop against `carol_rush` would be "the defensive cost
+appearing". The opposite happened — and it makes sense once the mechanism is right: moppers pay
+off by **reclaiming enemy paint in a long coverage war**, which is what the lineage matchup is;
+`carol_rush` ends games fast and by different means, so the mopper's slow value never accrues
+and its 300-chip price is pure drag.
+
+**Measurement doctrine #4 in action, in the direction I did not anticipate.** I checked whether
+the evaluating opponents *pose* the threat a defensive feature answers. They do — but the
+threat is posed by the *slow* opponent, not the aggressive one. "Is this opponent dangerous?"
+was the wrong question; "does this opponent create the situation the feature pays off in?" was
+the right one, and the rusher's speed is exactly what prevents it.
+
+This also means the mopper dose is **matchup-dependent**, which is the standing argument for
+self-calibrating thresholds over constants (TRAINING_ALGORITHM §5). If dose 2 wins the
+head-to-head, a follow-up worth measuring is whether the right share should be read from
+observed game state — enemy paint seen per turn is the natural signal — rather than fixed.
