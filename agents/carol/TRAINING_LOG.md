@@ -3729,3 +3729,55 @@ baseline it would measure "add upgrades **and remove splashers**" at once. Itera
 accepted, so that branch is now live and `carol_i12` is **rebuilt from i11** by
 `tools/rebuild-i12-from-current.py` before evaluation. Staging that ahead of the result is what
 made this a lookup instead of a temptation.
+
+## What the completed tournament blocks actually say — and the queue they imply
+
+`alice-carol` finished (150 games) and `bob-carol` is in progress. Computed from
+`tournaments/20260907-0100/results.txt`:
+
+| pair | record | median length | timeouts | how the winner wins |
+|---|---|---|---|---|
+| bob-alice | bob **143 : 7** | 824 | 13% | paint domination |
+| bob-carol | bob **51 : 2** | 737 | **8%** | 49/53 by paint domination |
+| alice-carol | alice **99 : 51** | **2000** | **53%** | tiebreak |
+
+**This corrects my own framing, and the correction matters.** I had been treating carol's 50%+
+timeout rate as *carol's* pathology. It is not: **games involving bob almost never time out
+(8-13%)**, because bob converts the map decisively at a median of ~750 rounds. The 53% timeout
+rate belongs to the **alice-carol pairing** — two bots that both fail to convert, stalemating
+until the round limit. So the timeout rate is a marker of *two weak converters meeting*, not a
+disease carol has on her own.
+
+The honest restatement: **carol's problem is conversion throughput**, and the stall was only
+ever a symptom visible when her opponent shared the weakness. Against a bot that does convert,
+carol does not stall — she loses, at **2 wins in 53 (3.8%)**, in games bob ends by covering the
+map. Her two wins took 1,626 and 1,813 rounds; his 51 took a median of 737.
+
+**This does not redirect the queue — it confirms it, and that is worth saying explicitly**
+rather than treating the tournament as a reason to start something new. Iteration 11
+(splashers, accepted at 62.5%) and iteration 12 (paint-tower upgrades, running) both raise
+conversion throughput, which is precisely the axis bob dominates on. The tournament's
+contribution is to tell me the axis is right and the distance is much larger than my own
+instruments suggested — 3.8% against bob versus the ~70% my gauntlet reports.
+
+### Ranked queue after iteration 12, on this evidence
+
+1. **SRPs (resource patterns) — promoted to iteration 13.** `RULES.md` [E]: each active SRP
+   adds **+3/turn to EVERY paint tower and EVERY money tower**, so its value scales with tower
+   count. At carol's observed 13 towers that is **+39/turn** from one pattern. The cost is a
+   25-tile exact pattern, ~125 paint to lay — a **payback of roughly 3-4 rounds**, after which
+   it is permanent. That is a better return than the upgrade being tested right now, and it is
+   the second of the three mechanics the API sweep found uncalled. Reachability must be checked
+   first (the pattern must be laid on ground carol actually holds, and `checkPattern` is exact
+   — *every* one of the 25 tiles, with EMPTY not acceptable for a 0 bit).
+2. **Frontier-seeking movement.** Measured, not speculative: 15.9% of soldier turns are
+   IDLE-ALLY (standing on ground already ours) and 15 of 52 ready splasher turns scored
+   **exactly 0** — nothing paintable in reach. Both units inherit `moveExploring(null)`, which
+   has no notion of the coverage frontier. This converts wasted turns rather than buying more
+   resource, so it is independent of 12 and 13 and stacks with them.
+3. **Splasher tower-targeting.** Held back from iteration 11 deliberately. Now ranked *below*
+   the two above: it is an offensive capability, and every measurement says carol loses the
+   **coverage race**, not a fight — bob wins 49 of 53 by painting, not by killing.
+
+**Deliberately NOT queued: anything that raises unit production.** Iterations 5, 8 and 10
+settled that, and the tournament adds nothing to reopen it.
