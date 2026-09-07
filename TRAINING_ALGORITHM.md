@@ -345,6 +345,19 @@ resulting retraction of a long-standing entry safe.
    built a one-keyword separating experiment as the next candidate. Note that no
    covariate structure and "swept everywhere" are often the *same* fact: a change
    that works on every map has nothing left for a map property to explain.
+
+   **"Open" means unresolved, not unexamined.** This rule forbids fitting a story
+   to a good number; it does not license leaving open a question that *reading the
+   code* answers. Before spending a run, try to close it by enumeration: the same
+   lineage then closed the attribution above at **zero game cost** by exhausting
+   the four states of one tile and showing two were byte-identical, one a small
+   loss, and one the engine trap — so the gain could only have come from the trap.
+   That is a decomposition over code plus a verified engine fact, and it is
+   falsifiable (name the case that would break the identity, and check it).
+   Prefer it to an experiment; reach for the experiment when no such
+   decomposition exists. An enumeration that closes the question also tends to
+   hand you the next candidate, since the cases that are *not* identical are
+   exactly the behaviour nobody chose.
 4. **Near miss** (within `NearMissMargin`, no real regression): refine the same
    solution, up to `MaxNearMissRefinements` — several good ideas cleared the
    bar only after a parameter refinement of a directionally-correct mechanism.
