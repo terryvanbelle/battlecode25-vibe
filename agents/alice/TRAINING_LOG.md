@@ -3250,3 +3250,50 @@ apart from the package line, verified by diff.
 Both navigation iterations together take this lineage from a random walk to a
 persistent heading that survives contact with obstacles — the capability the
 tournament showed `bob` had and alice did not.
+
+## Tournament `20260907-0100` — final, all 450 games
+
+| pair | result |
+|---|---|
+| bob beats **carol** | 144-6 (96.0%) |
+| bob beats **alice** | 143-7 (95.3%) |
+| **alice** beats carol | 99-51 (66.0%) |
+
+**Standings** (each bot plays 300 games): **bob 287/300 (95.7%)**, **alice
+106/300 (35.3%)**, **carol 57/300 (19.0%)**.
+
+Alice finishes second. The shape matters more than the placing: bob beats *both*
+other lineages at ~96%, and alice beats carol at 66%. So this is not a ranking of
+three bots on a continuum — it is one bot that has a capability and two that do
+not, which is exactly what the traces said and what iterations 12 and 14 address.
+
+**This tournament measured `alice_iter7`** — the pre-navigation build, HEAD at
+01:00. Both accepted iterations landed afterwards. So the 7-143 is the *baseline*
+for the fix, and the next tournament is the first genuine test of whether it
+converts. That is the number to look for, and I should be honest in advance that
+a within-lineage 75% and 61% need not translate into much against a bot that is
+95% against everyone.
+
+## The frozen roster has SATURATED — the instrument cannot see recent progress
+
+Roster run `20260907-022504` (`bot.txt` label `alice_iter12`, so it measures the
+iteration 12 build, as intended) is reading **20 wins in the first 21 games
+(~95%)** against `alice_iter0` and `alice_iter1`.
+
+`alice_iter5` scored **95.8%** against the same two opponents. So the roster
+cannot distinguish the build that lost 7-143 from the build that beats it 75%
+head-to-head. **Both roster opponents are pinned near 100%, and doctrine #4 says
+an instrument pinned near an extreme cannot resolve anything.**
+
+This is the failure mode the chart exists to prevent, arriving in the chart
+itself: `vs_old_bots` is my only absolute-strength instrument, and it has gone
+flat for reasons that have nothing to do with alice's strength.
+
+**Fix**: `progress/roster_extra.txt` exists precisely for fixed yardsticks that
+are not auto-derived snapshots, and qualifies them on the grounds that they never
+change. `alice_iter7` is frozen, never changes, and is *known* to resolve — the
+last two iterations scored 75% and 61% against this lineage's builds rather than
+95%. Adding it gives the chart a rung that is actually in the measurable band,
+without hand-editing the auto-derived roster, which `AGENT.md` forbids.
+
+I am adding it after this run completes so the run's own labelling is unaffected.
