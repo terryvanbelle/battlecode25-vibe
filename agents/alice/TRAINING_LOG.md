@@ -2968,3 +2968,40 @@ is wrong, and I should say so rather than quietly shipping the best arm.
 **And the honest effect size to report is the shape, not the peak**: iteration 12
 is worth "clearly positive, somewhere in the 60-75% band against `alice_iter7`,
 with the low dose better than the high one" — not "75%".
+
+### A partial arm is a BIASED subsample, not a small one — caught before it misled me
+
+Arm C at 9 of 20 games read **8/9 (89%)**, above arm A's 75% and arm B's 60%. Taken
+at face value that falsifies the interior-optimum reading I had just registered,
+and I was one step from writing that down.
+
+It is an artifact. **The arms play the maps in the same order**, so a partial arm
+is always the same *prefix* of the map list — never a random sample of it. Arm C's
+nine games are BunnyGame, Circuit, galaxy, quack and windmill, which are precisely
+the maps where every arm already does well; the maps that produced arms A and B's
+losses (CastleDefense, Fossil, Bunny, DefaultLarge, boxofchocolates) are all still
+unplayed in arm C.
+
+Restricting every arm to arm C's five maps:
+
+| arm | dose | on arm C's maps | full-arm |
+|---|---|---|---|
+| `alice_i12a` | 25 | 9/10 (90%) | 15/20 (75%) |
+| `alice_i12b` | 100 | 8/10 (80%) | 12/20 (60%) |
+| `alice_i12c` | 400 | 8/9 (89%) | *incomplete* |
+
+Matched on maps the three arms are **90 / 80 / 89** — a dead heat, and arm C is
+not evidence against the interior optimum. Every arm scores 15-25 points higher on
+this easy prefix than on the full sample, which is exactly the size of the
+distortion.
+
+**The rule this earns:** the run's guarantee is that "the map sample is drawn once
+and shared by every opponent, so opponent-vs-opponent comparisons *within* a run
+are exact" — but that guarantee only holds **once every arm has played every map**.
+Mid-run, arms are at different points in a *fixed* map order, so a cross-arm
+comparison is confounded by map difficulty in a systematic direction, not a random
+one. More games do not fix it; only completing the arms does.
+
+So: **compare partial arms only on their shared map subset, or wait.** This is the
+within-run twin of the cross-run warning in AGENT.md, and it is sharper, because
+the shared-sample guarantee makes a mid-run comparison *look* exact when it is not.
