@@ -1,4 +1,4 @@
-package carol_i24;
+package carol_i25;
 
 import battlecode.common.*;
 
@@ -20,17 +20,35 @@ public class RobotPlayer {
     static int bcOverruns = 0;      // confirmed: our logic crossed a round boundary
     static int bcNearMisses = 0;    // used > 80% of limit
     static int bcMaxUsed = 0;
-    // Iteration 24 DECISION counters (per the new section 3 pre-check: count the choice, not the
-    // outcome). mixAsk = times a ruin's key said MONEY at all; mixFlip = times we overrode it to
-    // PAINT because no ally paint tower was anywhere in vision.
-    static int mixAsk = 0, mixFlip = 0;
-    // Iteration 24b: has this robot EVER sensed an ally paint tower? Measured: "no paint tower
-    // in vision right now" fires on 41 of 41 asks on healthy DefaultMedium -- vision is r2=20
-    // and towers are spread out, so being out of sight of one is the common case, not the rare
-    // one. That made the guard a policy replacement rather than a guard. Lifetime memory is
-    // strictly rarer: a robot spawns adjacent to the tower that built it and sees every tower
-    // it walks past, so on a map that has paint towers this latches true early and stays true.
-    static boolean sawPaintTower = false;
+
+    // ---- Iteration 25: census-gated tower-mix override -------------------------------------
+    // carol decides each ruin's tower type from a coordinate modulus. tools/towerkeyscan over
+    // all 75 official maps: that key is ALL-MONEY on gridworld (21/21 ruins) and ALL-PAINT on
+    // five others, and a sweep of 11 replacement keys found no non-degenerate member of the
+    // family -- every alternative reassigns 40-65% of all ruins to half-fix 6 maps. So the fix
+    // is not a better key; it is to stop deciding from position ALONE.
+    //
+    // carol has no comms and getNumberTowers() returns a count, not a composition, so no robot
+    // can read the global tower mix. But a robot can accumulate a LOCAL SAMPLE of it: the
+    // distinct ally towers it has ever seen, by type. Two earlier predicates were bracketed and
+    // both killed by their own decision counters before costing a run:
+    //     24a "no ally paint tower in vision right now" -> fired 41/41 asks on healthy ground
+    //     24b "never sensed an ally paint tower ever"   -> fired  0/185 (RULES.md guarantees
+    //                                                       NUMBER_INITIAL_PAINT_TOWERS = 1)
+    // The census threshold below is DERIVED from the 24c instrumentation run, not guessed:
+    //     map            deciding lines   fires (no guard)   fires (census >= 3)
+    //     gridworld            5535            4962               4603
+    //     Fossil                633              44                  0
+    //     DefaultMedium         458               0                  0
+    //     Bunny                  78               0                  0
+    // Fossil's only firing state was a robot that had seen exactly ONE tower; requiring a
+    // census of >= 3 removes it and leaves the degenerate map's firing rate essentially intact.
+    static final int SEEN_CAP = 64;
+    static final int CENSUS_MIN = 3;            // smallest local sample allowed to override
+    static int[] seenLoc = new int[SEEN_CAP];   // (x<<6)|y of each distinct ally tower seen
+    static int seenN = 0;
+    static int seenPaint = 0, seenMoney = 0;
+    static int mixAsk = 0, mixFlip = 0;         // instrument the DECISION, not the outcome
 
     /** Chips held back from robot production so a ruin can always be completed (1000). */
     static final int CHIP_RESERVE = 1200;
@@ -42,7 +60,7 @@ public class RobotPlayer {
      * measurement-neutral -- it shifts the replay hash, so a dose pair must share one tag if
      * doctrine #3's byte-identity check is to work on raw hashes.
      */
-    static final String BUILD = "i24";
+    static final String BUILD = "i25";
 
     /**
      * Consecutive turns this tower has seen the team treasury EXACTLY unchanged, and the count
@@ -127,11 +145,7 @@ public class RobotPlayer {
         while (true) {
             turnCount += 1;
             int startRound = rc.getRoundNum();
-            if (!sawPaintTower) {
-                for (RobotInfo t : rc.senseNearbyRobots(-1, rc.getTeam())) {
-                    if (t.type.getBaseType() == UnitType.LEVEL_ONE_PAINT_TOWER) { sawPaintTower = true; break; }
-                }
-            }
+            censusTowers();
             String state = "";
             try {
                 switch (rc.getType()) {
@@ -161,7 +175,8 @@ public class RobotPlayer {
         if (used > bcMaxUsed) bcMaxUsed = used;
         rc.setIndicatorString("[" + BUILD + "] bc=" + used + "/" + limit + " max=" + bcMaxUsed
             + " ov=" + bcOverruns + " nm=" + bcNearMisses
-            + " ma=" + mixAsk + " mf=" + mixFlip + " | " + state);
+            + " ma=" + mixAsk + " mf=" + mixFlip
+            + " sp=" + seenPaint + " sm=" + seenMoney + " | " + state);
         Clock.yield();
     }
 
@@ -381,50 +396,44 @@ public class RobotPlayer {
      * two ruins in three are still paint towers.
      */
     /**
-     * Iteration 24: the positional key, with a one-sided guard against its own degeneracy.
-     *
-     * `k % 3` is single-branch on 6 of the 75 official maps (measured with
-     * tools/towerkeyscan): gridworld assigns MONEY to all 21 of its ruins, so carol builds
-     * ZERO new paint towers there all game -- which is what her 76,420 idle chips and 97.3%
-     * dry tower stashes on that map actually were. DefaultLarge, BatSignal, Racetrack, rain
-     * and roads are all-PAINT, so chip income never grows and the treasury pins at the
-     * reserve. A sweep of 11 replacement keys found none that is non-degenerate, and every
-     * one reassigns 40-65% of all ruins -- an enormous price on the 69 healthy maps. So the
-     * fix cannot be a better key.
-     *
-     * Instead: keep the key, and override ONLY in the direction that is unrecoverable. Paint
-     * is the binding resource and RULES.md records that losing the last paint tower is an
-     * instant unrecoverable loss, whereas zero chip income is survivable (and iteration 18
-     * already unpins the treasury). So if the key says MONEY and this soldier can see no ally
-     * paint tower anywhere in vision, build PAINT.
-     *
-     * The override is self-limiting, which is the whole point of its price: on a healthy map
-     * two thirds of towers are paint, so a soldier finishing a ruin nearly always has one in
-     * sight and this is inert. It fires exactly where paint towers are actually absent.
-     *
-     * SUPERSEDED -- BOTH HALVES OF THAT PARAGRAPH ARE MEASURED FALSE. Left in place because it
-     * is what the code below was built on; do not read it as current.
-     *   24a ("no ally paint tower in vision right now"): fired 41 of 41 asks on healthy
-     *       DefaultMedium. Vision is r2=20 on a 50x30 map, so being out of sight of every ally
-     *       paint tower is the COMMON case. Not a guard -- a wholesale replacement of the
-     *       tower-type policy with "always build paint", discarding the chip income that
-     *       iteration 18 was about.
-     *   24b (the `sawPaintTower` lifetime latch actually implemented below): fired 0 of 185
-     *       asks, including 0 of 144 on gridworld, the degenerate map it exists for.
-     *       RULES.md: NUMBER_INITIAL_PAINT_TOWERS = 1, and robots spawn adjacent to the tower
-     *       that builds them, so the flag latches true on turn 1 for every robot and never
-     *       releases. It records that a paint tower once existed -- which the rules guarantee.
-     * Always fires / never fires: the useful condition is between them, and it needs the
-     * tower MIX, not the existence of one tower. See src/carol_i24c (census instrumentation).
+     * Iteration 25. Record each DISTINCT ally tower this robot has ever seen, by type. Linear
+     * scan over <= 64 remembered locations against the few towers actually in vision; peak
+     * robot bytecode was 37.5% of 17500 before this, and the monitor already in the indicator
+     * will surface it if that changes.
      */
-    static UnitType towerTypeFor(MapLocation ruin) throws GameActionException {
+    static void censusTowers() throws GameActionException {
+        if (seenN >= SEEN_CAP) return;
+        for (RobotInfo t : rc.senseNearbyRobots(-1, rc.getTeam())) {
+            UnitType bt = t.type.getBaseType();
+            int kind;
+            if (bt == UnitType.LEVEL_ONE_PAINT_TOWER) kind = 1;
+            else if (bt == UnitType.LEVEL_ONE_MONEY_TOWER) kind = 2;
+            else continue;                       // defense tower or a mobile unit: not counted
+            MapLocation l = t.getLocation();
+            int key = (l.x << 6) | l.y;
+            boolean known = false;
+            for (int i = seenN; --i >= 0; ) if (seenLoc[i] == key) { known = true; break; }
+            if (known) continue;
+            if (seenN >= SEEN_CAP) return;
+            seenLoc[seenN++] = key;
+            if (kind == 1) seenPaint++; else seenMoney++;
+        }
+    }
+
+    static UnitType towerTypeFor(MapLocation ruin) {
         int k = Math.min(ruin.x, rc.getMapWidth() - 1 - ruin.x)
               + Math.min(ruin.y, rc.getMapHeight() - 1 - ruin.y);
         if (k % 3 != 0) return UnitType.LEVEL_ONE_PAINT_TOWER;
         mixAsk++;
-        if (sawPaintTower) return UnitType.LEVEL_ONE_MONEY_TOWER;  // paint income exists somewhere
-        mixFlip++;
-        return UnitType.LEVEL_ONE_PAINT_TOWER;                     // never seen one: build one
+        // Override ONLY toward paint, and only on a local sample big enough to mean something.
+        // Paint is the binding resource and RULES.md records losing the last paint tower as an
+        // instant unrecoverable loss; zero chip income is survivable, and iteration 18 already
+        // unpins the treasury. So the one-sided override is the cheap direction to be wrong in.
+        if (seenPaint + seenMoney >= CENSUS_MIN && seenPaint * 2 < seenMoney) {
+            mixFlip++;
+            return UnitType.LEVEL_ONE_PAINT_TOWER;
+        }
+        return UnitType.LEVEL_ONE_MONEY_TOWER;
     }
 
     static void workOnRuin(MapLocation ruin) throws GameActionException {

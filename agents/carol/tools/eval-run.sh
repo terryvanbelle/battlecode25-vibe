@@ -3,7 +3,7 @@
 #
 #   tools/eval-run.sh <run-id> [gate-opponent]
 #
-# Prints, in order: completeness, per-opponent win rate with the binomial noise floor,
+# Prints, in order: completeness, per-opponent win rate with MAP-RESAMPLED uncertainty,
 # swept-map shape, side split (symmetry audit), exception count, the bytecode check, and the
 # frozen-treasury gate. Everything the algorithm says to check every evaluation, so that none
 # of it quietly stops being checked -- which is exactly how the dead band survived four
@@ -21,11 +21,24 @@ if grep -q GAUNTLET-COMPLETE "$D/results.txt" 2>/dev/null; then echo "status: CO
 else echo "status: !! INCOMPLETE -- do not score a prefix (see LEARNINGS)"; fi
 
 echo
-echo "--- win rates (+-1sd binomial noise floor at p=0.5) ---"
+echo "--- win rates (uncertainty is over MAPS -- see resampling block below) ---"
+# NO binomial sd here, deliberately. The engine and both builds are deterministic:
+# every (map,side) cell is a fixed function of the two programs, so re-running
+# changes nothing and per-game randomness is NOT the error bar. Six carol mirrors
+# have split exactly evenly with ZERO swept maps, i.e. the null has no variance at
+# all. A binomial floor overstated the spread ~2x on an interaction estimate here,
+# under-sold one accept as "inside the noise band" when resampling put it at
+# +2.0 sd, and under-reported a rejection that was actually identical to the null
+# on every map and both sides (se = 0). The map is the unit of resampling.
 awk '$1=="RESULT"{n[$2]++; if($5==$4) w[$2]++}
-     END{for(o in n){sd=sqrt(n[o]*0.25);
-       printf "  %-22s %3d/%-3d = %5.1f%%   1sd = %.1f games (%.1f pts)\n",
-              o, w[o], n[o], 100*w[o]/n[o], sd, 100*sd/n[o]}}' "$D/results.txt" | sort
+     END{for(o in n) printf "  %-22s %3d/%-3d = %5.1f%%\n", o, w[o], n[o], 100*w[o]/n[o]}' \
+    "$D/results.txt" | sort
+
+echo
+echo "--- map-resampled uncertainty (bootstrap + jackknife over maps, 95% CI) ---"
+if [ -f "$D/results.csv" ]; then
+  "$PY" "$WS/../../tools/map-resample.py" "$D" 2>&1 | sed 's/^/  /'
+else echo "  (no results.csv -- run gauntlet-collect.sh first)"; fi
 
 echo
 echo "--- swept maps (immune to spawn advantage) ---"

@@ -1,4 +1,4 @@
-package carol_i24;
+package carol_i24c;
 
 import battlecode.common.*;
 
@@ -24,13 +24,27 @@ public class RobotPlayer {
     // outcome). mixAsk = times a ruin's key said MONEY at all; mixFlip = times we overrode it to
     // PAINT because no ally paint tower was anywhere in vision.
     static int mixAsk = 0, mixFlip = 0;
-    // Iteration 24b: has this robot EVER sensed an ally paint tower? Measured: "no paint tower
-    // in vision right now" fires on 41 of 41 asks on healthy DefaultMedium -- vision is r2=20
-    // and towers are spread out, so being out of sight of one is the common case, not the rare
-    // one. That made the guard a policy replacement rather than a guard. Lifetime memory is
-    // strictly rarer: a robot spawns adjacent to the tower that built it and sees every tower
-    // it walks past, so on a map that has paint towers this latches true early and stays true.
+    // Iteration 24b (SUPERSEDED, kept for the record): "has this robot EVER sensed an ally
+    // paint tower?" was meant to be the strictly rarer condition after 24a's "no paint tower in
+    // vision right now" fired on 41 of 41 asks. Measured: mf=0 on BOTH gridworld (ma=144) and
+    // DefaultMedium (ma=41) -- the override became DEAD everywhere. Cause is in RULES.md:
+    // NUMBER_INITIAL_PAINT_TOWERS = 1, so every team starts with a paint tower and every robot
+    // spawns adjacent to a tower, latching the flag true on turn 1 and never releasing it.
+    // 24a fired always, 24b fires never; the useful condition is between them.
     static boolean sawPaintTower = false;
+
+    // Iteration 24c: INSTRUMENTATION ONLY -- no behavioural change, so these games must come
+    // out identical to iter21's. A per-robot census of the DISTINCT ally towers this robot has
+    // ever seen, split by type. This is the locally-observable proxy for the global tower mix
+    // that carol has no comms to read directly (getNumberTowers() gives a count, not a
+    // composition). The point is to read the ACTUAL separation between a degenerate map and a
+    // healthy one off a replay, and derive the threshold from it, rather than guessing a third
+    // condition and discovering its reachability after the fact.
+    static final int SEEN_CAP = 64;
+    static int[] seenLoc = new int[SEEN_CAP];   // (x<<6)|y of each distinct ally tower seen
+    static byte[] seenKind = new byte[SEEN_CAP]; // 1 = paint, 2 = money, 3 = defense/other
+    static int seenN = 0;
+    static int seenPaint = 0, seenMoney = 0;
 
     /** Chips held back from robot production so a ruin can always be completed (1000). */
     static final int CHIP_RESERVE = 1200;
@@ -42,7 +56,7 @@ public class RobotPlayer {
      * measurement-neutral -- it shifts the replay hash, so a dose pair must share one tag if
      * doctrine #3's byte-identity check is to work on raw hashes.
      */
-    static final String BUILD = "i24";
+    static final String BUILD = "i24c";
 
     /**
      * Consecutive turns this tower has seen the team treasury EXACTLY unchanged, and the count
@@ -127,11 +141,7 @@ public class RobotPlayer {
         while (true) {
             turnCount += 1;
             int startRound = rc.getRoundNum();
-            if (!sawPaintTower) {
-                for (RobotInfo t : rc.senseNearbyRobots(-1, rc.getTeam())) {
-                    if (t.type.getBaseType() == UnitType.LEVEL_ONE_PAINT_TOWER) { sawPaintTower = true; break; }
-                }
-            }
+            censusTowers();
             String state = "";
             try {
                 switch (rc.getType()) {
@@ -161,7 +171,8 @@ public class RobotPlayer {
         if (used > bcMaxUsed) bcMaxUsed = used;
         rc.setIndicatorString("[" + BUILD + "] bc=" + used + "/" + limit + " max=" + bcMaxUsed
             + " ov=" + bcOverruns + " nm=" + bcNearMisses
-            + " ma=" + mixAsk + " mf=" + mixFlip + " | " + state);
+            + " ma=" + mixAsk + " mf=" + mixFlip
+            + " sp=" + seenPaint + " sm=" + seenMoney + " | " + state);
         Clock.yield();
     }
 
@@ -401,30 +412,44 @@ public class RobotPlayer {
      * The override is self-limiting, which is the whole point of its price: on a healthy map
      * two thirds of towers are paint, so a soldier finishing a ruin nearly always has one in
      * sight and this is inert. It fires exactly where paint towers are actually absent.
-     *
-     * SUPERSEDED -- BOTH HALVES OF THAT PARAGRAPH ARE MEASURED FALSE. Left in place because it
-     * is what the code below was built on; do not read it as current.
-     *   24a ("no ally paint tower in vision right now"): fired 41 of 41 asks on healthy
-     *       DefaultMedium. Vision is r2=20 on a 50x30 map, so being out of sight of every ally
-     *       paint tower is the COMMON case. Not a guard -- a wholesale replacement of the
-     *       tower-type policy with "always build paint", discarding the chip income that
-     *       iteration 18 was about.
-     *   24b (the `sawPaintTower` lifetime latch actually implemented below): fired 0 of 185
-     *       asks, including 0 of 144 on gridworld, the degenerate map it exists for.
-     *       RULES.md: NUMBER_INITIAL_PAINT_TOWERS = 1, and robots spawn adjacent to the tower
-     *       that builds them, so the flag latches true on turn 1 for every robot and never
-     *       releases. It records that a paint tower once existed -- which the rules guarantee.
-     * Always fires / never fires: the useful condition is between them, and it needs the
-     * tower MIX, not the existence of one tower. See src/carol_i24c (census instrumentation).
      */
+    /**
+     * Iteration 24c instrumentation. Record each DISTINCT ally tower this robot has ever seen,
+     * by type. Linear scan over <= 64 remembered locations against the few towers actually in
+     * vision on a turn; peak robot bytecode was 37.5% of 17500 before this, so the headroom is
+     * ample and the bytecode monitor already in the indicator will show it if that changes.
+     */
+    static void censusTowers() throws GameActionException {
+        if (seenN >= SEEN_CAP) return;
+        for (RobotInfo t : rc.senseNearbyRobots(-1, rc.getTeam())) {
+            UnitType bt = t.type.getBaseType();
+            byte kind;
+            if (bt == UnitType.LEVEL_ONE_PAINT_TOWER) kind = 1;
+            else if (bt == UnitType.LEVEL_ONE_MONEY_TOWER) kind = 2;
+            else if (bt == UnitType.LEVEL_ONE_DEFENSE_TOWER) kind = 3;
+            else continue;                       // not a tower at all
+            MapLocation l = t.getLocation();
+            int key = (l.x << 6) | l.y;
+            boolean known = false;
+            for (int i = seenN; --i >= 0; ) if (seenLoc[i] == key) { known = true; break; }
+            if (known) continue;
+            if (seenN >= SEEN_CAP) return;
+            seenLoc[seenN] = key; seenKind[seenN] = kind; seenN++;
+            if (kind == 1) seenPaint++; else if (kind == 2) seenMoney++;
+        }
+    }
+
     static UnitType towerTypeFor(MapLocation ruin) throws GameActionException {
         int k = Math.min(ruin.x, rc.getMapWidth() - 1 - ruin.x)
               + Math.min(ruin.y, rc.getMapHeight() - 1 - ruin.y);
         if (k % 3 != 0) return UnitType.LEVEL_ONE_PAINT_TOWER;
         mixAsk++;
-        if (sawPaintTower) return UnitType.LEVEL_ONE_MONEY_TOWER;  // paint income exists somewhere
-        mixFlip++;
-        return UnitType.LEVEL_ONE_PAINT_TOWER;                     // never seen one: build one
+        // 24c is instrumentation only: the key is obeyed exactly as in iter21, so these games
+        // must reproduce iter21's outcomes. mixFlip records what a census rule WOULD have done
+        // at each real decision point, which is the dose-free way to read the trigger frequency
+        // of a candidate condition before paying a run for it.
+        if (seenPaint * 2 < seenMoney) mixFlip++;
+        return UnitType.LEVEL_ONE_MONEY_TOWER;
     }
 
     static void workOnRuin(MapLocation ruin) throws GameActionException {

@@ -6026,3 +6026,155 @@ On gridworld, where carol builds no paint towers at all, it stays false and the 
 
 Re-verifying on the same two maps before anything else — the point of a decision counter is
 that it costs one game to check, and I have now been wrong about this class of condition twice.
+
+## Iteration 24b — the latch fires NEVER; 24a fired ALWAYS; the useful condition is between them
+
+Re-verified the `sawPaintTower` latch on the same two maps (`gauntlet/20260907-182006`, 4 games,
+i24 vs iter21, both sides). The decision counter again answered in one run — and again it
+refuted the design:
+
+| map | key | `mixAsk` | `mixFlip` | verdict |
+|---|---|---|---|---|
+| **gridworld** | all-MONEY (21/21 ruins) | 144 | **0** | override never fired *on the map it was built for* |
+| **DefaultMedium** | healthy | 41 | **0** | inert, as intended — but for the wrong reason |
+
+**Cause, and it was on disk in my own RULES.md the whole time**: `NUMBER_INITIAL_PAINT_TOWERS = 1`.
+Every team starts with exactly one paint tower, and every robot spawns adjacent to the tower that
+built it. So `sawPaintTower` latches true on turn 1 for essentially every robot ever spawned and
+never releases — including on gridworld, where carol then builds 21 money towers and zero paint
+towers behind a flag that says "paint income exists somewhere". The flag was true and useless:
+it recorded that a paint tower *had once existed*, which is guaranteed by the rules, not that
+paint income is adequate.
+
+**The pair of measurements is the finding.** Same mechanism, two candidate conditions, both
+instrumented at the decision rather than the outcome, both killed for 4 games of VM time:
+
+```
+24a  "no ally paint tower in vision RIGHT NOW"   -> fired 41 of 41 asks   (a policy replacement)
+24b  "never sensed an ally paint tower EVER"     -> fired  0 of 185 asks  (dead code)
+```
+
+I bracketed the condition from both sides without ever paying for a full evaluation. That is the
+same shape as iteration 23's mopper dose bracket, applied to a *predicate* instead of a
+parameter, and I want it recorded as a reusable move: when a guard's firing rate is the thing in
+doubt, build the two extreme predicates first and read the bracket, rather than guessing a middle
+one and evaluating it.
+
+### Reachability, level 3 — the third distinct way I have been caught this session
+
+The ledger now reads:
+
+1. **iteration 20 (ferry)**: assumed a condition existed *in the robot's view* because it existed
+   *on the map*. Over-optimistic about visibility.
+2. **iteration 24a**: assumed a condition would be *rare in the robot's view* because it is rare
+   *on the map*. Same error, opposite sign — "in vision" is far weaker and far more common than
+   map-level statistics suggest.
+3. **iteration 24b**: assumed a *lifetime* memory would be rarer than an *instantaneous* one, and
+   never checked what the RULES guarantee about the game's initial state. A latch over a
+   condition the rules guarantee at t=0 is not a rare condition; it is a constant.
+
+The generalisation worth keeping: **a predicate's firing rate is a property of the robot's
+information, not of the map** — and the rules' initial conditions are part of that information.
+Check the starting state before building any "have I ever seen X" memory.
+
+### What the census probe (24c) is for
+
+Neither extreme is useful because both throw away the actual quantity of interest: carol has no
+comms and `getNumberTowers()` returns a count, not a composition, so no robot can read the global
+tower mix directly. But a robot *can* accumulate a local sample of it. `src/carol_i24c` is
+**instrumentation only** — the key is obeyed exactly as in iter21, so its games must reproduce
+iter21's outcomes and the run doubles as an arm-to-arm identity check — and it records, per
+robot, the DISTINCT ally towers ever seen split by type (`sp=` paint, `sm=` money), plus what a
+census rule *would* have done at each real decision point (`mf=`).
+
+The point is to read the separation between a degenerate map and a healthy one off a replay and
+**derive** the threshold, rather than guess a third predicate and discover its reachability
+afterwards. Pre-registered before the run:
+
+- **Prediction**: on gridworld `sp` stays at 1 (the starting paint tower) while `sm` climbs past
+  10, so the ratio collapses; on DefaultMedium and Fossil `sp` should track roughly 2x `sm`.
+- **Kill condition**: if `sp:sm` does not separate the six maps into the degenerate and healthy
+  groups the corpus scan predicts, the whole "local proxy for the global mix" idea is refuted and
+  the tower-mix direction closes without a fourth predicate.
+
+## Iteration 24c — the census SEPARATES the maps, and hands me the threshold
+
+`gauntlet/20260907-182709`, 12 games, i24c vs iter21 on six maps chosen to span the corpus scan's
+three classes. **Arm-to-arm identity check first** (doctrine #3): 6/12, all six maps split by
+side, zero swept — and the loss set is *exactly* the `carol_m21` mirror's loss set on those maps.
+So the instrumentation is a confirmed no-op and everything below was measured under iter21's own
+dynamics, not under a perturbed build.
+
+**Census at the decision points** (`sp` = distinct ally PAINT towers this robot has ever seen,
+`sm` = money; `ma` = the key said MONEY, so a decision was actually made):
+
+| map | key class | deciding lines | modal census state at a decision |
+|---|---|---|---|
+| **gridworld** | ALL-MONEY | 5535 | `sp=1 sm=5`, `sp=1 sm=4` — paint pinned at 1, money climbing |
+| Fossil | healthy | 633 | `sp=1 sm=1`, `sp=2 sm=1`, `sp=3 sm=1` |
+| DefaultMedium | healthy | 458 | `sp=4 sm=0`, `sp=3 sm=0`, `sp=5 sm=0` |
+| Bunny | healthy | 78 | `sp=1 sm=1`, `sp=1 sm=0` |
+| DefaultLarge, rain | ALL-PAINT | **0** | the key never says MONEY, so nothing to override |
+
+`sp=1` on gridworld is the *starting* paint tower and nothing else — the same fact that made 24b's
+latch a constant, now visible as a number instead of an assumption.
+
+**The pre-registered prediction held**: gridworld's ratio collapses (`sp` stuck at 1, `sm` to 9),
+the healthy maps sit paint-heavy. The kill condition did not trigger.
+
+### The threshold is derived, not guessed
+
+The naive rule `sp*2 < sm` fires 44 times on **Fossil**, a healthy map — so the raw ratio is not
+clean. Every one of those 44 is a robot in state `sp=0 sm=1`: a census of *one*. Requiring a
+minimum local sample removes them:
+
+| map | deciding lines | fires, no guard | fires, census>=3 | fires, census>=4 |
+|---|---|---|---|---|
+| **gridworld** | 5535 | 4962 | **4603** | 4450 |
+| Fossil | 633 | 44 | **0** | 0 |
+| DefaultMedium | 458 | 0 | **0** | 0 |
+| Bunny | 78 | 0 | **0** | 0 |
+
+`CENSUS_MIN = 3` is a perfect separator on the four maps that can exercise it: 83% firing on the
+degenerate map, provably zero on all three healthy ones. I take 3 rather than 4 because at a
+census of exactly 3 the only money-heavy state is `sp=0 sm=3` — three towers seen, all money,
+which is a strong signal rather than noise — and `>=4` is a ready conservative dose arm if it
+regresses.
+
+### Benefit and price, as two numbers, before the run (TRAINING_ALGORITHM §3)
+
+Re-ran `tools/towerkeyscan` over all 75 maps for the *global* mix, not just the fully-degenerate
+ones. Maps money-heavy enough for the override to be globally right:
+
+| map | money : paint |
+|---|---|
+| gridworld | **21 : 0** |
+| MoneyTower | 8 : 2 |
+| Filter | 4 : 1 |
+| CastleDefense | 4 : 2 (exactly on the boundary) |
+
+- **Benefit: 3–4 maps of 75 (4–5% of the corpus).** In a random 20-map sample that is ~1 map,
+  worth at most 2 games in 40.
+- **Price: measured at zero.** The guard fires 0 times on all three healthy maps instrumented,
+  and the five ALL-PAINT maps never reach the branch at all (`ma=0`). Plus a bytecode cost on a
+  build whose robot peak is 37.5% of 17500.
+
+This is deliberately the profile TRAINING_ALGORITHM names as the recurring winner: **capability
+preserved at zero marginal cost.** It is not a headline mechanism and I am not pretending it is.
+
+### Therefore the accept gate must NOT be a blind 20-map gauntlet
+
+A mechanism that fires on ~1 map in 20 can move at most ~2 games of 40, which a headline win rate
+cannot resolve — doctrine #4, an instrument that cannot see the effect. Two arms instead, both
+pre-registered now:
+
+- **Arm A — does it help where it fires?** `gridworld Filter MoneyTower CastleDefense`, both
+  sides, vs `carol_iter21`. 8 games. Null is 4/8. **Gate: > 4/8, and gridworld must not be a
+  swept loss.**
+- **Arm B — is it free everywhere else?** the standing 20-map pinned sample, vs `carol_iter21`.
+  40 games. **Prediction: deviation from the mirror null on gridworld and NOWHERE ELSE** — every
+  other map must reproduce `carol_m21`'s split exactly. This is a zero-deviation prediction, so
+  any extra deviating map falsifies the "measured price is zero" claim directly.
+
+Arm B is the real test. Arm A can only ever be worth a couple of games; Arm B is what says
+whether I have bought them for free or paid for them somewhere I did not look.
