@@ -669,11 +669,13 @@ is the whole argument for TRAINING_ALGORITHM §2: **trace, don't theorize.** The
 holding a wrong theory, it is that a *well-founded* wrong theory reads exactly like a finding
 and will be written into the log as one if nothing is measured.
 
-## Reachability has three levels, and I have now been caught at each
+## Reachability has FOUR levels, and I have now been caught at each
 
-A mechanism can fail to fire for three different reasons, and I have shipped a candidate
-blocked at each level in a single session. They need different checks and only the third is the
-one the algorithm's "reachability" pre-check actually names.
+(Was "three levels". Extended, not replaced: level 4 and the level-2 inversion below were both
+measured after this entry was first written, and the original three still stand as written.)
+
+A mechanism can fail to fire for four different reasons. They need different checks and only the
+third is the one the algorithm's "reachability" pre-check actually names.
 
 1. **The condition never exists.** Iteration 16's tower-AoE guard: `runTower` attacks before it
    spawns, so "enemy in sight AND action not ready" is empty. `aoeFreed = 0`.
@@ -693,6 +695,30 @@ rounds, split the maps into "should move" and "should not", and registered a pre
 of it methodologically clean, all of it about the wrong subject. The unit of analysis for a
 reachability check is **the robot that must act**, because the gate lives in its vision, its
 action radius and its position, not in the map's global state.
+
+4. **The condition is guaranteed by the RULES' initial state, so a lifetime memory of it is a
+   constant.** Iteration 24b latched "has this robot ever sensed an ally paint tower" and fired
+   **0 of 185** asks — including 0 of 144 on the one map it was built for. `RULES.md`:
+   `NUMBER_INITIAL_PAINT_TOWERS = 1`, and a robot spawns adjacent to the tower that builds it,
+   so the flag is true on turn 1 for every robot that will ever exist. It faithfully recorded a
+   fact the rules guarantee.
+   *Check*: before building any "have I ever seen X" memory, ask what the **starting
+   configuration** guarantees. A latch over a condition true at t=0 is not a rare condition.
+
+**Level 2 has an inversion, and it is the same error with the sign flipped.** Iteration 20
+assumed a condition existed in the robot's view because it existed on the map. Iteration 24a
+assumed a condition would be *rare* in the robot's view because it is rare on the map — and its
+guard fired **41 of 41** asks on healthy ground, because vision is r²=20 on a 50×30 map and
+being out of sight of every ally paint tower is the *common* case. Both are now measured, in
+both directions, so the rule can be stated without hedging: **a predicate's firing rate is a
+property of the robot's information, not of the map.** Map-level statistics predict neither
+that a condition will be available nor that it will be rare.
+
+**The cheap way to settle it: bracket the predicate from both extremes.** 24a (fires always) and
+24b (fires never) between them cost 4 games of VM time and no evaluation at all, and the pair
+localised the useful condition far better than guessing a middle one would have. This is the
+same move as a dose bracket around a parameter, applied to a *predicate*. When a guard's firing
+rate is what is in doubt, build the two extremes first and read the bracket.
 
 The distinction sharpens for any mechanism that requires *adjacency* rather than *sight*.
 Battlecode's transfer and build actions run at r²=2 to r²=9 while vision is r²=20 — so for
@@ -735,3 +761,71 @@ A corollary on ordering: run the zero arm in the *same* run as the interior dose
 follow-up. Cross-run comparisons are confounded by the map sample; within one run, opponents
 share the sample exactly, and it is that exactness that let a 72.5%-vs-65.0% gap be read as a
 real ordering rather than noise.
+
+## Instrument the decision — but check the counter is as WIDE as the decision
+
+The standing pre-check says to count the decision rather than the outcome, because a zero at the
+output cannot separate "ran and failed" from "never ran". True, and it has paid for itself
+repeatedly. But a decision counter has its own failure mode, and I built one this session:
+
+Iteration 26a's `srpOk` counted `canMarkResourcePattern(rc.getLocation())` — the soldier's own
+tile as the pattern centre. `RESOURCE_PATTERN_RADIUS_SQUARED = 8` means the soldier may centre a
+pattern anywhere within r²=8, roughly **25 candidate centres**. So the counter asked about one
+of twenty-five options and every number it produced was a lower bound.
+
+It happened not to matter — a lower bound above zero already cleared the gate. But had it come
+back near zero I would have written "the mechanism is unreachable" on the strength of it, and a
+narrow proxy can only ever produce **false negatives**, which read exactly like refutations.
+
+**Rule: when you instrument a decision, verify the counter's condition is the same width as the
+decision the bot would actually get to make.** Ask what the API permits, not what the simplest
+expression tests. A decision counter narrower than its decision is a refutation generator.
+
+## Two consumers of one budget must partition it by an explicit decision
+
+§5b warns that where two branches buy the same good from one budget, *the order they fire in
+sets the allocation, by accident rather than by measurement*. Iteration 26 is the first time I
+had that warning in hand **before** writing the second consumer, and the fix was nearly free.
+
+carol's idle-soldier branch already splits itself for a different reason — iteration 14's
+`frontFound` (an empty tile is visible; go to it) versus `frontNone` (nothing paintable anywhere
+in vision). Measuring that existing counter cost **no VM time at all**, because it was already
+being emitted into replays I had on disk:
+
+```
+              IDLE-ALLY   frontFound   frontNone
+DefaultLarge      1032          292      740  (72%)
+DefaultMedium     3443          809     2634  (77%)
+Fossil            2947          340     2607  (88%)
+gridworld         6647         1621     5026  (76%)
+```
+
+So iteration 26's SRP work was scoped to `frontNone` *only*. The two mechanisms now partition
+the idle budget by a stated decision, and if that split is wrong it is wrong visibly and can be
+re-measured. Had I simply written "if idle, build an SRP", the allocation between frontier-
+seeking and SRP-building would have been decided by which `if` I happened to put first.
+
+**The reusable move: before adding a second consumer to a budget, look for a counter the first
+consumer already emits.** A bot instrumented per the algorithm usually already knows how its
+budget divides, and the question can be answered from replays rather than from a run.
+
+## Write a closed direction's re-opening condition as a testable predicate
+
+The closed-directions ledger says re-opening needs "a specific reason the recorded cause no
+longer applies". That is much easier to honour when the original entry stated its cause as
+something checkable. Iteration 4/5 deferred SRPs with:
+
+> it is a chip *sink*, and a sink is worth little until the chip *source* is fixed
+
+which is effectively the predicate *"chips are still scarce"*. Twenty iterations later the
+traces showed chips pinned at $1200–1700 for entire games while the binding resource ran dry —
+the predicate had flipped, plainly and without argument, and the direction re-opened in one
+paragraph instead of a debate about whether it "felt" under-explored.
+
+The neighbouring entry shows the same discipline holding a door **shut**: tower upgrades were
+closed with the condition "chips idle after both the money mix *and* SRPs are in". SRPs are not
+in yet, so that one stays closed — same session, same evidence, opposite answer, no judgement
+call required.
+
+**Rule: when closing a direction, write the cause as a condition that could later be observed to
+be false.** "Not worth it" cannot be re-opened honestly. "Worth little while X holds" can.
