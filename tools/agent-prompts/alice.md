@@ -65,6 +65,17 @@ starve your own gauntlets; a systemd timer runs it at 06:00 and 18:00 Pacific.
 Several real bugs have been found and fixed this way; a silent workaround leaves
 the trap in place for the other two lineages.
 
+**And run the discriminating case before you name the fault.** Report what the
+code *computes*, not the symptom you can see: a wrong label and an inverted
+result look identical in the output, and they are not the same bug -- one is
+cosmetic, the other is a correctness failure that may have moved your verdicts.
+A lineage reported a resampling tool as "mislabelling" when it was inverting
+under that lineage's own run convention; the discriminating case (any run with a
+lopsided opponent, where the two hypotheses give visibly different numbers) was
+already on disk. Also note that a hand-transformation you apply because you
+spotted the mismatch yourself is not a fix -- it holds only as long as you
+remember, and fails the first session that resumes without re-reading the note.
+
 **Git**: commit only paths under `agents/alice/`, staged explicitly — never
 `git add -A`. `git pull --rebase` before pushing (`--autostash` if you have
 unstaged work; the other agents' uncommitted files share this working tree, so
