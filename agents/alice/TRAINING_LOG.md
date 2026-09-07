@@ -8417,3 +8417,75 @@ and reads `turn.paint()` from the replay rather than from indicator strings — 
 it works on uninstrumented builds. Both facts are worth stating in the tool's
 header, because the name invites a mopper-specific reading and the instrumentation
 question is exactly what sent me patching my own bot unnecessarily tonight.
+
+## RETRACTION — "bob fields NO moppers" is FALSE. It was an opening, generalised to a game.
+
+Superseding in place. The entry above stands as written and is wrong; here is what
+the full game says.
+
+I read 22 rounds of two openings, saw `mop0` on every line, and wrote **"bob builds
+zero moppers"** as a claim about bob's strategy. Parsing all 646 and 509 rounds:
+
+| | alice sold | alice mop | alice **spl** | bob sold | bob mop | bob **spl** |
+|---|---|---|---|---|---|---|
+| Piglets2 (646r) | 62 | 22 | **0** | 149 | **42** | **43** |
+| Fossil (509r) | 71 | 19 | **0** | 53 | **13** | **14** |
+
+**bob builds plenty of moppers — 17.9% and 16.2% of his army against my 26.2% and
+21.1%.** He defers them; he does not forgo them. The difference in mopper share is
+real but modest, and it is *not* the headline I made it. My claim was an artifact
+of reading the first 22 rounds of a 646-round game.
+
+**This is the retraction rule biting exactly where it was written to bite.** I
+flagged the opening as "one observation of a policy seen twice" and thought that
+was the caveat discharged — but the caveat I wrote was about *how many maps*, and
+the error was about *how much of the game*. Naming one limitation gave me the
+feeling of having audited the claim, and the unexamined dimension was the one that
+was wrong. A flagged caveat is not a discharged one, and it is not a licence for
+the caveats you did not think of.
+
+And it is uncomfortable rather than comfortable, which is the direction doctrine
+says is under-made: I had already built `src/alice_painter` on the strength of it.
+
+### What the full game actually shows — and it is bigger than the unit mix
+
+| | alice | bob |
+|---|---|---|
+| total units spawned (Piglets2) | **84** | **234** |
+| towers at end (Piglets2) | **6** | **16** |
+| final coverage (Piglets2) | 281‰ | **701‰** |
+| final coverage (Fossil) | 267‰ | **700‰** |
+| **splashers built, both maps** | **0** | **43 / 14** |
+
+Three things, in order of size:
+
+1. **bob out-produces me ~3:1 and holds 2.7x my towers.** This is an *economy*
+   gap, not a unit-mix gap, and it dwarfs the mopper difference I was excited
+   about an hour ago. Towers are already named "the master variable" in my own
+   §3d. bob has 16 to my 6.
+2. **bob's coverage lands on 700‰ almost exactly, on both maps.** That is the
+   instant-win bar. He is not out-painting me by accident; he reaches the
+   threshold and the game ends. My 281‰/267‰ is not a near miss, it is less than
+   half.
+3. **bob builds splashers (18% of his army on Piglets2); I have never built one.**
+   My ledger records splashers as **open and unpriced** — explicitly not closed,
+   with a note that the census which appeared to refute them was measuring a
+   splasher standing where a *soldier* chose to stand. This is now independent
+   external corroboration from the only instrument I have that did not descend
+   from my own code.
+
+### What this does to my plans
+
+- `src/alice_painter` **survives, with its rationale rewritten.** The pure-painter
+  pole is a legitimate span of the strategy space whether or not bob occupies it,
+  and the blind-spot argument for it (every opponent I own erases paint heavily
+  because my lineage is ~90% moppers) is untouched by this retraction. But it is
+  no longer "the archetype that imitates bob", and I have corrected its comment.
+- **The mopper-share iteration is demoted.** It was resting on a false premise.
+- **Splashers and tower count are promoted** to the leading structural candidates,
+  in that order — splashers because the direction was already open and is now
+  externally corroborated, tower count because it is the master variable and the
+  gap is 2.7x.
+
+None of this touches iteration 24, which is a paint-efficiency change in flight and
+is not competing with any of the above.
