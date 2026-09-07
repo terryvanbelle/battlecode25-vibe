@@ -6638,3 +6638,36 @@ when the nearest is also the most contested.
 4. **Instrument the decision at the right width** — count the *choice* of target and how it
    ranks candidates, not the coverage outcome; and make sure the counter can see every option
    the bot could pick, not one of them.
+
+### Generality pre-check: Fossil confirms it, on inverted geometry, with a sharper detail
+
+`Fossil` at round 900, 30×30 (grid reliable: T1 gap −2, T2 −13 per-mille):
+
+- Coverage **254 vs 668 per-mille** — carol is being buried, not narrowly edged.
+- The unpainted region is a contiguous block in the **top-right**, rows ~25–29 × columns ~18–29,
+  roughly 40–50 tiles. On DefaultMedium it was the *bottom-left*. **Different corner, different
+  map geometry, same shape** — so this is not a property of one map's layout.
+- Every carol soldier on the frame sits in rows 9–22, columns 3–15: the contested middle-left.
+  **None is in the empty region.**
+
+And the detail that makes it worse than DefaultMedium's: **carol has a money tower at (26, 27),
+directly on the edge of that empty block**, and paints essentially none of it. This is not a
+navigation-range problem — she is not failing to *reach* the region, she already holds ground
+inside it. Her soldiers are choosing to be somewhere else, 15+ tiles away, in the one place the
+paint gets overwritten.
+
+**Generality: PASSED.** Two maps, two different corners, same failure. Combined with the
+tournament's 99.2%-coverage-losses figure, the direction is well founded.
+
+**Pre-checks still outstanding before building** (unchanged, and I am registering that they are
+*not* done rather than letting the momentum carry): sizing the empty region corpus-wide and its
+distance from the nearest soldier; **pricing the travel turns and the 1/turn neutral-ground
+upkeep against the frontier tiles forgone, not against zero**; and instrumenting the target
+*choice* at the full width of the options the bot could pick. The third of those is the one that
+has caught me three times, and the second is the one that has caught me three times differently.
+
+A design note to carry, not yet a commitment: the cheap version of this is a **ranking change,
+not a new mechanism** — `nearestVisibleEmpty()` already enumerates every empty tile in vision and
+returns the closest. Scoring those candidates by something other than raw distance (e.g.
+penalising proximity to enemy paint) is a one-function change inside a branch that already fires,
+which is the cheapest possible shape for a first attempt and keeps iteration 14's accept intact.
