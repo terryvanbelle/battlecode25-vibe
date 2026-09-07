@@ -3786,3 +3786,74 @@ not selected on.
 positive swept ratios against a zero-zero null. What changes is the number I would
 put in a report, which is now 57.7% for iteration 14 and ~60% cumulative for the
 pair — not 60.7% and 75%.
+
+## Iteration 16 — PRE-REGISTERED: `CHIP_RESERVE` is a dead band, measured policy-pure
+
+### The measurement, and why this one is trustworthy
+
+Run on a **mirror game** (`alice` vs `alice_mirror`, gardenworld) so both sides run
+identical code — the money curve is a property of the *policy*, not of a matchup.
+
+| round | 1 | 50 | 100 | 150 | 200 | 250 | 300 | 400 | 600 |
+|---|---|---|---|---|---|---|---|---|---|
+| T1 $ | 1980 | 1150 | 1300 | 1250 | 1250 | 250 | 1400 | 1360 | 1210 |
+| T2 $ | 2030 | 1150 | 1200 | 650 | 910 | 1360 | 1060 | 1410 | 1360 |
+| T2 tower paint | 610 | 880 | 1030 | 1655 | **3715** | 3210 | **4885** | 4020 | 1935 |
+
+**`CHIP_RESERVE = 1450`. The treasury never reaches it, in 600 rounds, on either
+side.** It oscillates in $650-1410 — pinned immediately beneath the gate.
+Meanwhile **tower paint accumulates to 4,885**, four thousand of it unusable,
+because spawning needs chips the gate will not release.
+
+**One constant is stranding both resources at once.** This is the "resource pinned
+in a dead band" degeneracy the algorithm names, measured on the current accepted
+build rather than inferred.
+
+### The change (one constant, principled rather than searched)
+
+The reserve exists so a soldier can always fund a **1000-chip** tower completion.
+The tight bound is therefore *"spawn only if 1000 chips remain afterwards"* —
+`1000 + SOLDIER.moneyCost(250) = 1250`, not 1450. The extra 200 is unexplained
+padding that costs a spawn every time income crosses it.
+
+| arm | `CHIP_RESERVE` | rationale |
+|---|---|---|
+| zero | **1450** (`alice_iter14`) | current, unexplained |
+| A | **1250** | tight bound: a tower completion still funded after the spawn |
+| B | **1000** | aggressive: reserve the tower cost only, spawn may dip below it |
+
+### History pre-check — this supersedes a prior deliberate decision
+
+The code comment records the reasoning that set it: *"spawning greedily at 250/unit
+pins money near zero and stalls tower expansion permanently."* That is a real
+failure mode and dose B deliberately probes it, which is why B is in the sweep
+rather than being assumed safe. The new evidence that supersedes the old reasoning
+is the mirror curve above: the treasury is *already* pinned — not near zero, but
+just under the gate — and 4,885 tower paint is idle behind it. The old decision
+prevented one failure by installing another.
+
+### Pre-registered gates
+- **Accept**: H2H vs `alice_iter14` **> 50%**, judged in **games over the mirror
+  null**, no unresolved one-directional regression (swept losses, against a
+  measured null of 0).
+- **Mechanism gate**: mean soldier count in r100-r400 must **rise**, and idle tower
+  paint at r300 must **fall**. If neither moves, the gate was not the constraint
+  and it is discarded on the trace.
+- **Dose-response with a zero arm**, and I expect an interior optimum: if B (1000)
+  is worse than A (1250), the old comment's failure mode is real and bounded, which
+  is a more useful result than either arm alone.
+
+**Sweep launched**: run `20260907-040318`, `BOT=alice_iter14
+OPPONENTS="alice_i16a alice_i16b" NMAPS=12`, 48 games. Rows read `LOSS` from
+`alice_iter14`'s perspective, so a `LOSS` is a **win for the candidate**.
+
+### Note on `tools/mirror_null.txt` as a standing instrument
+
+The mirror is not a one-off calibration; the per-map favoured-side table it
+produced is **reusable**. Any future evaluation pinned with
+`MAPS="$(awk '!/^#/{print $1}' tools/mirror_null.txt)"` can be diffed cell-by-cell
+against `favoured_side`, and every deviation is *caused by the change* rather than
+by spawn or by chance. That converts a headline into an attributed set of games.
+It is tied to the build that generated it (`alice_iter14`) and must be regenerated
+whenever the accepted build changes — a stale mirror is not a null at all, which
+is exactly the state mine was in when I found it.
