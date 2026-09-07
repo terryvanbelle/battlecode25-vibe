@@ -3704,3 +3704,35 @@ The reject decision still stands on its own terms — it missed the pre-register
 Quote **margin over the mirror null in games**, not standard deviations. "+2 games
 against a null that never sweeps a map" is the honest form; "+0.8 sd" imports a
 random-sampling model this engine does not have.
+
+### The mirror's second, more valuable use: per-cell causal attribution
+
+The mirror does not only give a scalar null. Because identical code produces a
+**deterministic favoured side per map**, it gives a null for every
+`(map, side)` cell. Saved as `tools/mirror_null.txt`:
+
+```
+Barcode B   BatSignal A   DefaultMedium A   DonkeyKong B
+HungerGames B   MoneyTower A   Thirds A   catface B
+gardenworld A   headphones B   sierpinski B   windmill B
+```
+
+**Method for future evaluations**: pin `MAPS="$(cat tools/mirror_null.txt | ...)"`
+to this list, and then any game whose winner differs from `favoured_side` was
+flipped **by the change** — not by spawn, not by chance. That converts an
+aggregate ("17/28") into an attributed set ("these five specific games flipped,
+here is what the mechanism did in each"), which is what the algorithm's
+"diff game-by-game and read the diff's shape" actually asks for.
+
+This is the check that would have settled iteration 15b directly. Instead of
+concluding "my instrument cannot see this feature", I could have asked: of the
+games where those 44 tower attacks occurred, how many deviated from the mirror
+null? If zero, the attacks changed nothing and the discard is proven rather than
+inferred. That is the form the re-open test should take when an instrument with
+real contact exists.
+
+**Standing caveat**: the null table is tied to the build that produced it
+(`alice_iter14`). A mirror must be regenerated from the current build every time —
+mine was **stale**, a fork of an early build, which would have made it an ordinary
+head-to-head against a weak opponent rather than a null, and would never have
+announced itself.

@@ -1,0 +1,17 @@
+# Mirror null, run 20260907-032745: alice(iter14) vs byte-identical alice_mirror.
+# 12/24 (50.0%), 0 swept wins, 0 swept losses, all 12 maps split 1-1.
+# 'favoured_side' is the side that wins under IDENTICAL code -- the per-cell null.
+# Pin MAPS to this list and any deviation from favoured_side is CAUSED by the change.
+# map            favoured_side
+Barcode          B
+BatSignal        A
+DefaultMedium    A
+DonkeyKong       B
+HungerGames      B
+MoneyTower       A
+Thirds           A
+catface          B
+gardenworld      A
+headphones       B
+sierpinski       B
+windmill         B
