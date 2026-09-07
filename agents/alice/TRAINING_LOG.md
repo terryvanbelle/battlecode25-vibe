@@ -6672,3 +6672,68 @@ re-derives it, because a claim about the engine that cannot be re-derived is a
 belief** — is the same discipline as the correction above, applied to engine facts
 instead of to counts. I will cite `tools/engine-facts.md` rather than restating
 its contents, so there is no private copy of it in this workspace to drift.
+
+## Iteration 23 price watch — the price is not there, and the master variable moved
+
+I stated before the run that **I could not find this change's price**, and named
+the two places it would hide. Both checked.
+
+**1. Bytecode.** The loop now scans up to 24 pattern tiles instead of breaking at
+the first. Across the mechanism replay: **zero `OVR=` occurrences**, soldier
+bytecode 787–824 against a 17,500 limit. **0 exceptions in 61 games** of the
+evaluation. Not a cost.
+
+**2. The shared tower-paint pool** — the §3c absorbing state, where a population
+shift starves paint income until only moppers are affordable and the game is
+unrecoverable. `alice_i23v` (T1) vs the iteration 22 build (T2), UnderTheSea:
+
+| round | coverage | | towers | | **tower paint pool** | | soldiers | |
+|---|---|---|---|---|---|---|---|---|
+| | **i23** | iter22 | **i23** | iter22 | **i23** | iter22 | **i23** | iter22 |
+| 500 | **583‰** | 397‰ | **16** | 9 | **4,130** | 585 | 30 | 19 |
+| 1000 | **671‰** | 308‰ | **18** | 9 | **2,470** | 570 | 52 | 20 |
+| 1500 | **636‰** | 332‰ | **18** | 9 | **1,990** | 750 | 41 | 21 |
+| 2000 | **634‰** | 347‰ | **18** | 9 | **1,785** | 350 | 58 | 33 |
+
+**The pool does not collapse — it is 3–7x LARGER in the candidate**, all game. The
+feared failure is not merely absent, its opposite happened.
+
+### This is much bigger than "stop wasting 5 paint occasionally"
+
+**The candidate reaches 18 towers against 9.** Tower count is the master variable
+(§3d), and this doubles it. Coverage follows: **671‰ at r1000 against 308‰** — and
+671‰ is within 30 of the **700‰ instant-win threshold**, on a map where the
+baseline plateaus at a third of the board.
+
+The causal chain is now legible end to end and every link is measured rather than
+assumed: skipping engine-refused pattern tiles lets the soldier land on a
+paintable tile further along the same pattern (53 vs 42 at r200, 28 vs 15 at
+r400) → **patterns complete instead of stalling** → 18 towers instead of 9 →
+paint income roughly doubles → the pool fills to 4,130 → more soldiers (58 vs 33)
+→ coverage 634‰ vs 347‰.
+
+### And this rescues the failed density prediction — which I must not overclaim
+
+The corrected model says the dominant channel is **converting stalled patterns
+into towers**, not reclaiming wasted paint. That channel should pay *more* where
+there are **more ruins to convert**, i.e. on **dense** maps — which is the sign
+the run actually produced (rho = +0.318, p = 0.127).
+
+So two independent readings now agree, and **both disagree with what I
+pre-registered.** I will not treat that as vindication: the density statistic is
+still a null (p = 0.127), and a post-hoc story that agrees with a non-significant
+point estimate is worth very little. What it *is* worth is a **new, sharper
+prediction to test rather than assume**: if the tower channel dominates, then
+**tower count at r1000 should rise with ruin density in the candidate arm**, which
+is a directly measurable quantity I have not measured.
+
+### Caveats, stated plainly
+
+- This table is **one game on one map**, and the two arms diverge from the first
+  changed decision, so it is a mechanism account and not an effect size. The 34/50
+  head-to-head is the effect size.
+- UnderTheSea sits at the corpus **median** ruin density, which is the right place
+  to read a mechanism, but a single map cannot establish the tower channel.
+- Starvation deaths are *higher* in absolute terms (91 vs 61 per 500 rounds) — but
+  the candidate fields and spawns far more units (169 vs 145 soldiers spawned), so
+  the rate per unit is not what this table shows and I am **not** claiming it fell.
