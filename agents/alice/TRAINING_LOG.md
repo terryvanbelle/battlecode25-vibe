@@ -3136,3 +3136,49 @@ resolves the question only on the part of the sample that poses it. The
 `AGENT.md` rule against hand-picking maps is why I am not fixing the sample to
 high-wall maps — the random draw is the honest instrument, and the fix is to
 analyse by band, not to choose the band.
+
+### Re-checking iteration 12's area finding against real numbers — it holds, with a caveat I have to report against myself
+
+I claimed the area effect from a **byte-size proxy** calibrated on two maps. Now
+that headers are data, here is the same check on true areas.
+
+| outcome for `alice_i12a` | mean area (proxy) | **mean area (real)** |
+|---|---|---|
+| swept win (5 maps) | 1,761 | **1,772** |
+| split by side (5 maps) | 972 | **1,004** |
+| ratio | +81% | **+76%** |
+
+The proxy was good and the finding stands: **maps the accepted dose sweeps are
+76% larger than maps it only splits**, on measured areas.
+
+**But now the caution, which cuts against me.** With the real headers I can also
+compute wall fraction for that same sample — and it separates the outcome too:
+
+| outcome | mean wall % |
+|---|---|
+| swept win | **13.5%** |
+| split | **8.1%** |
+
+So in iteration 12's ten maps, *two* covariates each "explain" the result. That is
+precisely the trap of having three covariates and ten maps: some split will
+separate sweeps from splits whether or not it is causal.
+
+**The rule resolves it cleanly, and I am applying it against my own preferred
+reading.** Area was **pre-registered** for iteration 12, before the run; wall
+fraction was **not**. So:
+
+- area remains the *evidence* for iteration 12's mechanism;
+- wall fraction in that sample is a **post-hoc observation**, and therefore a
+  hypothesis for the next run — **not** support for anything now.
+
+And that hypothesis is already being tested properly: iteration 14 pre-registered
+**wall fraction** as its covariate, before its candidate was even built, on a
+freshly drawn sample. A post-hoc pattern from one run becoming a pre-registered
+prediction in the next is exactly the right way round, and it happened here by
+accident of ordering rather than by design — worth noticing so it can be done on
+purpose next time.
+
+**Honest summary of what iteration 12's map analysis proves**: the margin is
+larger on maps that are bigger *and* wallier, and that sample cannot separate the
+two. Iteration 14's run can, because half its maps are under 10% walls while
+spanning 420 to 2,400 tiles.

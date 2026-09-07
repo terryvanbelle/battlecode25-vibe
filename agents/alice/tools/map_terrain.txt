@@ -13,3 +13,13 @@ Justice         21x20   7.4   420  12
 Piglets2        60x40  15.3  2400  24
 gridworld       31x31  20.0   961  25
 Mirage          40x40   7.5  1600  22
+# --- iteration 12 sweep sample (run 20260907-013038) ---
+Circuit         60x21  13.0  1260  18
+quack           30x35  11.2  1050  16
+galaxy          45x45   9.4  2025  28
+BunnyGame       30x50  14.3  1500  16
+windmill        30x30  13.3   900  12
+DefaultLarge    50x30   1.6  1500  24
+Fossil          30x30   3.6   900  18
+CastleDefense   20x20  15.0   400  10
+boxofchocolates 55x55  19.5  3025  19
