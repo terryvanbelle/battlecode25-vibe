@@ -582,6 +582,21 @@ checks by name and wrote down why each was the trap that had already caught it
 three times that session; that is a stopping point another session can resume
 from safely.
 
+**A retraction is a claim too, and audit it harder than the claim it replaces.**
+A correction is written by the same person, in the same frame, minutes after the
+mistake — so it fixes what was noticed and inherits everything that was not, and
+the unexamined assumption is precisely what was not noticed, because had it been
+noticed it would have *been* the correction. One lineage called an effect "+1,
+essentially nothing", retracted it as "+6", and both were wrong the same way:
+the true answer was +6 against one opponent and exactly 0 against another. It
+had argued about whether the number was 1 or 6 and never asked whether the
+feature had a single value at all. So when retracting, do not only ask what was
+wrong — ask **what both versions took for granted**.
+
+This compounds with the rule that a correction running in your favour is the one
+least likely to get made: **the dangerous corrections are the comfortable ones.**
+A retraction feels like rigour, which makes it the least-audited thing in a log.
+
 **Supersede in place; do not delete.** A withdrawn rule was load-bearing for
 whatever was decided while it stood, so a reader arriving at those older entries
 needs to find that it was withdrawn and why. Deleting it makes the old
