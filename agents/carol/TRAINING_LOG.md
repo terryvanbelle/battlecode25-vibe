@@ -5045,3 +5045,43 @@ Mopper idleness is **78,480 turns across 8 games at 95.1%**, on a unit taking 5 
 spawns — an order of magnitude more waste, and cutting it returns production rather than
 spending turns to reclaim it. Iteration 19 does not have to move a unit anywhere; it stops
 building one.
+
+## Iteration 18 — mechanism verified from the run's own replays, before the verdict
+
+Pulled five games off the VM from run `20260907-141533` while it was still playing:
+
+| game | `pf` max (dead-band releases) | median chips | map moved? |
+|---|---|---|---|
+| DefaultLarge botA | **53** | **1,200** | +1 |
+| DefaultLarge botB | **33** | 1,270 | +1 |
+| DefaultMedium botA | **38** | 1,310 | +1 |
+| **Parking_lot botA** | **0** | 2,990 | **+0** |
+| gridworld botA | 4 | 87,140 | -1 |
+
+Bytecode max 6,825 of 17,500, **zero overruns, zero near-misses** on all five.
+
+**Parking_lot is a perfect internal control.** The mechanism fires **zero** times there — the
+treasury sits at a median of 2,990, never pinned in `[1200, 1450)` — and the map does not move.
+A mechanism that cannot have acted, on a map that did not change. That is the cleanest possible
+demonstration that the effect elsewhere is the mechanism rather than ambient churn, and it is
+the check iteration 17 could not produce (its mechanism fired everywhere, including on the maps
+it lost).
+
+**And DefaultLarge's median treasury is exactly 1,200** — pinned at the reserve to the chip.
+The dead-band diagnosis is not an inference from aggregates; it is visible in the median.
+
+`gridworld` moved -1 with only 4 firings against an 87,140-chip treasury, where releasing a
+1,200-chip reserve can hardly matter. Noting that **gridworld also moved -1 for iteration 17**,
+i.e. it flips against two unrelated mechanisms — a chaos-sensitive map in doctrine #7's sense,
+and I will treat a single gridworld flip as churn unless a mechanism count supports it.
+
+### A methodological note I must not forget when i19 lands
+
+Iterations 18 and 19 are both being measured against `carol_iter14` **in parallel**. If 18 is
+accepted, the baseline moves, and iteration 19's head-to-head becomes a gate against a
+*superseded* baseline — the same staleness error as reusing an old mirror, one level up. The
+`20260907-142542` run still yields the thing it was built for, the **dose curve**
+(`MOPPER_IN_20` 0 vs 2 vs 5, measured within one run on shared maps, which is exact). But the
+**accept decision** for iteration 19 must be re-measured against the new baseline and a fresh
+`carol_m18` mirror. Writing this down now, while it is cheap, rather than discovering it in
+the accept.
