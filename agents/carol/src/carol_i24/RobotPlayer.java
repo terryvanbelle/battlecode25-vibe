@@ -24,6 +24,13 @@ public class RobotPlayer {
     // outcome). mixAsk = times a ruin's key said MONEY at all; mixFlip = times we overrode it to
     // PAINT because no ally paint tower was anywhere in vision.
     static int mixAsk = 0, mixFlip = 0;
+    // Iteration 24b: has this robot EVER sensed an ally paint tower? Measured: "no paint tower
+    // in vision right now" fires on 41 of 41 asks on healthy DefaultMedium -- vision is r2=20
+    // and towers are spread out, so being out of sight of one is the common case, not the rare
+    // one. That made the guard a policy replacement rather than a guard. Lifetime memory is
+    // strictly rarer: a robot spawns adjacent to the tower that built it and sees every tower
+    // it walks past, so on a map that has paint towers this latches true early and stays true.
+    static boolean sawPaintTower = false;
 
     /** Chips held back from robot production so a ruin can always be completed (1000). */
     static final int CHIP_RESERVE = 1200;
@@ -120,6 +127,11 @@ public class RobotPlayer {
         while (true) {
             turnCount += 1;
             int startRound = rc.getRoundNum();
+            if (!sawPaintTower) {
+                for (RobotInfo t : rc.senseNearbyRobots(-1, rc.getTeam())) {
+                    if (t.type.getBaseType() == UnitType.LEVEL_ONE_PAINT_TOWER) { sawPaintTower = true; break; }
+                }
+            }
             String state = "";
             try {
                 switch (rc.getType()) {
@@ -395,12 +407,9 @@ public class RobotPlayer {
               + Math.min(ruin.y, rc.getMapHeight() - 1 - ruin.y);
         if (k % 3 != 0) return UnitType.LEVEL_ONE_PAINT_TOWER;
         mixAsk++;
-        for (RobotInfo t : rc.senseNearbyRobots(-1, rc.getTeam())) {
-            if (t.type.getBaseType() == UnitType.LEVEL_ONE_PAINT_TOWER)
-                return UnitType.LEVEL_ONE_MONEY_TOWER;          // paint income exists; keep the key
-        }
+        if (sawPaintTower) return UnitType.LEVEL_ONE_MONEY_TOWER;  // paint income exists somewhere
         mixFlip++;
-        return UnitType.LEVEL_ONE_PAINT_TOWER;                   // no paint tower in sight
+        return UnitType.LEVEL_ONE_PAINT_TOWER;                     // never seen one: build one
     }
 
     static void workOnRuin(MapLocation ruin) throws GameActionException {

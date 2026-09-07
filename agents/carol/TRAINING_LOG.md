@@ -5990,3 +5990,39 @@ by a fixed positional rule everywhere else. Hauling paint between towers is trea
 of the tower-mix policy with a unit that costs 30 points to misplace. The tower-mix work
 (previous section) is the same problem attacked where it is created, and it costs no unit's
 time at all.
+
+## Iteration 24 — the decision counter refuted my "self-limiting" claim in one game
+
+I wrote that the override would be "inert on a healthy map, because two thirds of towers are
+paint so a soldier finishing a ruin nearly always has one in sight". Instrumented the
+**decision** (`mixAsk` = the key said MONEY; `mixFlip` = we overrode it), per §3's new pre-check:
+
+| map | `mixAsk` | `mixFlip` | tower `tp<200` — i24 vs iter21 | median stash |
+|---|---|---|---|---|
+| **gridworld** (all-money key) | 141 | **105** | **38.9% vs 53.9%** | **547 vs 119** |
+| **DefaultMedium** (healthy) | 41 | **41** | 11.0% vs 10.7% | 820 vs 795 |
+
+**On gridworld the mechanism does exactly what it was designed to do** — median tower stash
+119 → **547**, a 4.6x improvement, and the fraction of tower turns unable to afford a soldier
+falls from 53.9% to 38.9%. The degenerate map is repaired.
+
+**On DefaultMedium the override fired on 41 of 41 asks.** Not "rarely" — *always*. Vision is
+r²=20 and towers are spread across a 50x30 map, so **being out of sight of every ally paint
+tower is the common case, not the exception.** My guard was not a guard; it was a wholesale
+replacement of the tower-type policy with "always build paint", which throws away chip income
+everywhere — and chips are what iteration 18 was about.
+
+**This is the level-2 reachability error again, inverted.** Earlier this session I assumed a
+condition existed in the robot's view because it existed on the map (iteration 20's ferry).
+Here I assumed a condition would be *rare* in the robot's view because it is rare on the map.
+Same mistake, opposite sign: **"in vision" is a much weaker and much more common condition than
+map-level statistics suggest**, and I now have it measured in both directions.
+
+**Fix, and it is the strictly rarer condition**: latch a per-robot memory — has this robot
+**ever** sensed an ally paint tower? A robot spawns adjacent to the tower that built it and
+sees every tower it walks past, so on a map that *has* paint towers the flag latches true
+early and stays true, making the override inert by construction rather than by my assumption.
+On gridworld, where carol builds no paint towers at all, it stays false and the override fires.
+
+Re-verifying on the same two maps before anything else — the point of a decision counter is
+that it costs one game to check, and I have now been wrong about this class of condition twice.
