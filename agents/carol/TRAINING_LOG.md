@@ -3658,3 +3658,25 @@ the currently accepted snapshot. So:
 
 Writing this down now because the temptation, an hour from now with a candidate already
 compiled and a slot finally free, will be to just run the thing that exists.
+
+**Bug found in `carol_i12` by re-reading it, before it ever ran.** The gate was a constant
+`UPGRADE_MIN_CHIPS = 3700` = `CHIP_RESERVE` (1,200) + the lv2 cost (2,500). That protects the
+reserve for a **lv2** upgrade — but `getBaseType()` makes the guard match paint towers at *any*
+level, so the same constant also gated **lv3** upgrades, which cost **5,000**. A lv2 tower
+holding 6,000 chips would have passed a 3,700 gate and upgraded down to **1,000** — stranding
+the treasury *below* the ruin-completion reserve. That is precisely the state iteration 6 lost
+DefaultSmall to by annihilation at round 69, "pinned between the reserve and the build gate",
+and my own code comment in `runTower` describes it.
+
+The two pre-checks interacted: discovering that the guard laddered to lv3 unaided was good
+news, and it silently invalidated the constant that made the guard safe. **A property verified
+in isolation can break a different property that was verified earlier.** Fixed to compute the
+gate from the actual next level:
+
+```java
+int need = CHIP_RESERVE + rc.getType().getNextLevel().moneyCost;
+```
+
+guarded by `canUpgradeType()` so `getNextLevel()` is never called on a lv3 tower. Recompiled
+clean in isolation. The counter-metric I registered (chips must not drop below the reserve) is
+now satisfied **by construction** rather than needing the run to catch it.

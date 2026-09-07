@@ -65,7 +65,7 @@ public class RobotPlayer {
      * 5x5 pattern. Reachability measured over 146,350 tower-turns before writing this: 21.7%
      * clear 3,700 chips, and in the stalled games that are the actual problem, nearly all do.
      */
-    static final int UPGRADE_MIN_CHIPS = 3700;
+    static final int UPGRADE_MIN_CHIPS = 3700;   // = CHIP_RESERVE + 2500, the lv2 case; the live gate is computed per level
 
     static final int STAGNANT_ROUNDS = 10;
     static int lastChips = -1;
@@ -164,14 +164,21 @@ public class RobotPlayer {
         // canUpgradeTower() enforces every legality condition itself, so if the engine forbids
         // a tower upgrading itself this is a silent no-op that the "UPG" tag exposes in a
         // single match rather than costing a full evaluation.
+        // The gate is the NEXT LEVEL's cost plus the reserve, not a constant. A fixed 3,700
+        // protects the 1,200 reserve for a lv2 upgrade (2,500) but NOT for a lv3 upgrade
+        // (5,000): a tower holding 6,000 would upgrade down to 1,000 and strand the treasury
+        // below the ruin-completion reserve -- exactly how iteration 6 lost DefaultSmall by
+        // annihilation at round 69, pinned between the reserve and the build gate.
         String upg = "";
-        if (rc.getType().getBaseType() == UnitType.LEVEL_ONE_PAINT_TOWER) {
-            if (chips >= UPGRADE_MIN_CHIPS && rc.canUpgradeTower(rc.getLocation())) {
+        if (rc.getType().getBaseType() == UnitType.LEVEL_ONE_PAINT_TOWER
+                && rc.getType().canUpgradeType()) {
+            int need = CHIP_RESERVE + rc.getType().getNextLevel().moneyCost;
+            if (chips >= need && rc.canUpgradeTower(rc.getLocation())) {
                 rc.upgradeTower(rc.getLocation());
                 upg = " UPG";
                 chips = rc.getChips();
             } else {
-                upg = (chips < UPGRADE_MIN_CHIPS) ? " upgPoor" : " upgNo";
+                upg = (chips < need) ? " upgPoor" : " upgNo";
             }
         }
 
