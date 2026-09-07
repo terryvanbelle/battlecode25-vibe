@@ -4840,3 +4840,87 @@ units built. Those two facts are the same fact seen from both ends, one of them 
 on an opponent that shares none of my code.
 
 That is iteration 16: **denial-unit utilisation**, not movement, not economy.
+
+
+---
+
+## DENIAL PROBE (2026-09-07) — my splashers and moppers are RICH and BLIND, not poor
+
+`src/bob_probe`, iteration 12 plus counters only, vs `bob_denier` (which poses the
+denial threat, per measurement doctrine #4). Counters summed over the final per-unit
+reports.
+
+```
+SPLASHERS                     DefaultHuge         catface
+  turns                          2,908               156
+  fired                             32  ( 1.1%)        9  ( 5.8%)
+  action not ready                 243  ( 8.4%)       51
+  paint below 60                   150  ( 5.2%)       85
+  NO TARGET >= threshold         2,483  (85.4%)       11
+  mean best score on those          4.0             4.0
+  nothing in vision at all       1,650  (56.7%)        5
+  mean paint held                  205 of 300
+
+MOPPERS                       DefaultHuge         catface
+  turns                          1,942                72
+  fired                              8  ( 0.4%)       10
+  NO ENEMY PAINT IN VISION       1,895  (97.6%)       43
+  mean paint held                   74 of 100
+```
+
+Three things fall out and none of them is what I assumed.
+
+**1. They are not starved.** I had expected splashers to fire five times and then sit
+permanently under the 60-paint firing floor with no refill path. Wrong: the paint floor
+blocks 5.2% of turns and splashers hold a mean of **205 paint of 300**, moppers **74 of
+100**. This is the third time today I have had to abandon a starvation story that the
+counters refuse to support, and it is a good thing the refill direction stayed closed.
+
+**2. The splasher threshold sits exactly on top of the distribution.** `SPLASH_MIN_VALUE`
+is 5 and the **mean best available score is 4.0**. 85% of a splasher's life is spent
+ready, funded, and one point short. A constant sitting on the centre of the distribution
+it gates is the definition of a badly chosen constant — but see below before reading that
+as a fix.
+
+**3. The real cause is shared, and it is not paint or thresholds: they never reach the
+enemy.** Moppers have **no enemy paint anywhere in vision on 97.6% of their turns**.
+Splashers see nothing scoreable at all on 57%. Both types react only to what is inside
+r² = 20 and random-walk otherwise, so on a large map they spend their entire lives in
+friendly or neutral ground carrying full stashes. That is the whole of the "~1% of action
+capacity" figure from 2026-09-06, and the mechanism is not the one that note guessed
+("the navigation policy and the firing condition fight each other") — it is that there
+is no target to navigate to.
+
+### Why lowering the threshold is NOT the iteration, despite being the dominant gate
+
+A splash costs 50 paint and the score approximates tiles gained, so score 5 is 10 paint
+per tile and score 4 is 12.5 — against a **soldier's 5 paint per tile**. Splashing is
+already the worse deal at the current threshold; lowering it makes each splasher action
+worse, not better. The threshold is only worth paying when the score is high, and scores
+are high in **enemy** territory, where enemy tiles count double and soldiers cannot paint
+at all.
+
+So the dominant gate is a symptom. Cutting it would be the algorithm's "metrics that
+improve without converting to wins" for the third time in one day, and this time I can
+see it coming from the arithmetic before spending the run.
+
+### Iteration 16 (next): give denial units a destination
+
+RULES.md records that maps are **guaranteed symmetric by rotation or reflection**, and
+TRAINING_ALGORITHM.md Phase 0.8 says extrapolating the unseen half is standard practice
+to plan for rather than discover late. **This bot has no symmetry inference anywhere.**
+A robot can compute candidate enemy tower locations from its own starting towers and the
+map dimensions at spawn, for a handful of bytecodes, and a mopper with nothing in vision
+should walk toward the enemy half instead of random-walking in ours.
+
+Pre-registered instrument, from the probe above and normalised per unit per round:
+`noEnemyPaint` share for moppers (97.6% now) and `blindWander` share for splashers
+(56.7%), plus denial actions per living denial unit per round. **A dose exists and has a
+zero arm**: the fraction of the map-crossing a blind unit commits to before reverting to
+wander, with 0 = today's behaviour.
+
+Honest note on `MaxConsecutiveRejects`: iterations 13 and 15 were both soldier movement,
+so the rule says leave that area. This changes what splashers and moppers *target*, in
+the unit types and the failure mode the tournament independently flagged on `catface`
+(a sibling out-denying me 4-7x and killing both my starting towers by round 250). I am
+counting that as a different area, and recording the tension rather than hiding it.

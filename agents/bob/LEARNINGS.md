@@ -491,3 +491,54 @@ buys 1000 → 1500 HP, which an income-only comparison cannot see.
 4. **A refuted prediction from a good heuristic is a success, not a waste.** It cost one
    run, corrected my model of the economy, and left the rule stronger by bounding what
    it can and cannot tell me.
+
+
+---
+
+## 17. A verified mechanism is not a verified benefit — and "idle" has two meanings
+
+Three iterations in one day (13, 14, 15) failed, and two of them failed the *same* way:
+the mechanism did exactly what it was designed to do, at the designed magnitude, and
+changed nothing.
+
+```
+iteration 13  SRP prospecting   produced active SRPs on maps that had none for 2000 rounds   -35 games
+iteration 15  bug navigation    built 19 towers on maze where the baseline builds 4           -4 games
+```
+
+Iteration 15's verification game was as clean as evidence gets: `maze` was a **swept
+loss to an independent lineage**, the diagnosis was "they build ~20 towers, I build 4",
+and the candidate built 19. Played from both sides, `maze` splits. TRAINING_ALGORITHM.md
+already records this as a regularity ("metrics that improve without converting to
+wins"); what this pair adds is that the metric can be the *exact quantity the loss was
+diagnosed on* and still not convert.
+
+**The rules:**
+
+1. **Register the mechanism's own subset before running it, and let it be able to say
+   no.** Iteration 15's pre-registered subset — the 8 most wall-blocked maps — came back
+   1 swept win to 1 swept loss. Without it, one spectacular verification game would have
+   carried an accept.
+2. **Distinguish a RESOURCE from a CAPABILITY before spending anything you call idle.**
+   A resource accumulates when unused and can be *shown* idle by watching it pile up
+   (20,720 chips; 461,480 chips) — spending it is nearly free. A capability produces
+   value continuously and only *looks* idle because its output is on no counter you
+   print. Soldier wandering looked like spare capacity because the soldier's action was
+   already spent painting; it was in fact the bot's ruin-discovery system, and
+   redirecting it cost three of every four games.
+3. **Ask what the fix's own arithmetic says before running it.** The denial probe found
+   `SPLASH_MIN_VALUE = 5` refusing 85% of splasher turns with the mean best score at
+   4.0 — a constant sitting precisely on the centre of the distribution it gates, which
+   looks like a free win. But a splash costs 50 paint and score ~ tiles, so score 4 is
+   12.5 paint/tile against a soldier's 5. Lowering it would have been the same failure a
+   third time, visible in advance for the price of one division.
+4. **A cheap independent instrument you already have beats a careful plan.** Iteration 14
+   was built, compiled and pre-registered before the tournament report — already on disk
+   — showed that bob loses on money-heavy maps *less* often than chance (9% against a
+   15% base rate) and sweeps `gridworld`, the map the whole hypothesis rested on. It was
+   never run. That is now the fifth time this project answered a gauntlet-shaped question
+   from a file it already had.
+5. **A refinement that makes things worse is a finding about the original.** Restricting
+   bug-nav's latch to terrain (removing what I had diagnosed as a defect — latching onto
+   allies) scored *worse* than leaving the defect in. The "bug" was supplying real
+   formation cohesion, which is Phase 0.7's caution seen from the other side.
