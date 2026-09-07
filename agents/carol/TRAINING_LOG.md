@@ -6567,3 +6567,74 @@ Two things I am taking from it rather than filing it as "no harm done":
 `tools/eval-run.sh` now carries the convention in a comment at the call site, stating that rows
 read straight off for carol's launch convention and must not be inverted, and that pre-`7647afb`
 log entries were hand-transformed and audited.
+
+## New target, out of the tower-economy area: carol fights for the CONTESTED frontier and leaves whole corners unclaimed
+
+`MaxConsecutiveRejects` is reached in the tower/paint-economy area (24a, 24b, 26), so the next
+attempt must leave it. It leaves with a strong steer.
+
+### The game carol is actually playing, from the tournament
+
+Joined `results.csv` to `reasons.txt` for the 300 games carol played in `20260907-1300` (this is
+iteration-12 carol, nine accepts stale, but the *shape* is what matters):
+
+| outcome | games |
+|---|---|
+| carol LOST — opponent painted enough of the map | **194** |
+| carol LOST — tiebreak, opponent painted more | **45** |
+| carol WON — painted enough / tiebreak | 32 / 27 |
+| carol LOST — all units destroyed | **2** |
+
+**99.2% of carol's losses are coverage losses**, and 80% of them are *decisive* — the opponent
+reached the area threshold outright rather than edging a tiebreak. Combat is not the game.
+Whatever else is true, carol's outcome is a function of how much ground she paints.
+
+### The trace: the empty ground is in a corner and nobody goes there
+
+`DefaultMedium` at round 1200 (arena grid reliable here — reconstruction gap −3/−4 per-mille,
+well inside what the unmodelled splashes explain):
+
+- carol (T1) holds the left edge and the top; the opponent holds the right and the bottom.
+- **The unpainted region is a contiguous block in the bottom-left corner**, roughly rows 0–12 ×
+  columns 0–14, plus a wall-shadowed pocket around rows 4–8.
+- **Every carol soldier on the frame is in the contested middle band, rows 13–25.** Not one is in
+  the empty corner.
+- Coverage is 431 vs 444 per-mille — near-even, with ~12% of the map unclaimed by anyone.
+
+carol lost that game on area at round 2000 while an eighth of the map sat unpainted and
+undefended.
+
+### The mechanism, and it implicates a feature I accepted
+
+This is not the random-walk problem iteration 14 fixed; it is **iteration 14's fix being
+myopic**. `nearestVisibleEmpty()` returns the *nearest* empty tile in vision, and the nearest
+empty tile is almost always on the **contested** frontier, because that is where the two paint
+fronts meet and keep overwriting each other. So idle soldiers are pulled toward the one place
+where painted ground does not stay painted, while uncontested ground — worth strictly more per
+unit of paint, because nobody takes it back — is never targeted at all.
+
+`frontNone` (72–88% of idle turns) is the same failure seen from the other side: a soldier deep
+in its own territory sees no empty tile anywhere in r²=20, so it falls through to
+`newExploreTarget()`, which samples **four uniform-random map coordinates and keeps the
+farthest** — no memory of where paint already is, no notion of which half is ours, no bias
+toward the empty corner it has never visited.
+
+**History pre-check.** Iteration 14 deliberately established frontier-seeking and it was a real
+accept (+6 games, +2.93 sd). This does not revert it — `frontFound` soldiers should still go to
+the frontier. It supersedes the *target choice* on new evidence: nearest is the wrong ranking
+when the nearest is also the most contested.
+
+### Pre-checks still outstanding, to run before building anything
+
+1. **Generality** — DefaultMedium is one map, and my own LEARNINGS says a quantity measured on
+   one map is a statement about that map. Fossil is rendering now; a second map showing a large
+   uncontested empty region with no soldiers in it is required before this becomes a hypothesis.
+2. **Reachability / sizing** — how much empty ground is there at round 1000+, corpus-wide, and
+   how far is it from the nearest carol soldier? If the answer is "a few tiles behind a wall",
+   the prize is small and this dies cheaply.
+3. **Price** — sending a soldier to a far corner costs its travel turns and the paint upkeep of
+   crossing neutral ground (1/turn). That must be costed against the tiles it would have painted
+   at the frontier, **not** against zero — the mistake I have now made three times.
+4. **Instrument the decision at the right width** — count the *choice* of target and how it
+   ranks candidates, not the coverage outcome; and make sure the counter can see every option
+   the bot could pick, not one of them.
