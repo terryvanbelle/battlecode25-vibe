@@ -2869,3 +2869,73 @@ confirming it:
    separate iteration, not something to bundle into this accept.
 2. Both teams show `xfer0` and very large `starved` counts (49 and 72 per window
    late). Consistent with everything else this lineage does; noted, not acted on.
+
+## Iteration 14 — PRE-REGISTERED NOW, to fire after iteration 12 lands
+
+Written while the sweep's arm C is still playing, so the gate cannot be shaped by
+the result. This is the mechanism I explicitly refused to bundle into iteration 12.
+
+### The defect
+
+Iteration 12 makes the wander heading persistent, but `wander` still **re-rolls
+the heading to a fresh random direction whenever the next step is blocked**:
+
+```java
+} else {
+    wanderDir = directions[rnd(8)];   // <-- throws the heading away
+    wanderSteps = WANDER_RUN;
+    if (rc.canMove(wanderDir)) { rc.move(wanderDir); wanderSteps--; }
+}
+```
+
+So on obstructed ground the walk reverts to diffusive no matter how large
+`WANDER_RUN` is: the effective run length is not `WANDER_RUN`, it is the mean free
+path between obstacles. This is measured, not assumed — it is the named limitation
+I recorded from boxofchocolates (55x55, 19.5% walls), where the candidate's margin
+was only 8 towers to 5 and arrived ~1,000 rounds later than gridworld's 15 to 4.
+
+### The change (one mechanism)
+
+**Slide instead of re-rolling**: on a block, try `rotateLeft`/`rotateRight` of the
+*current* heading and keep the heading, exactly as `tryMove` already does for
+directed movement. Re-roll only when all three are blocked. `WANDER_RUN` keeps
+whatever value iteration 12 accepts; nothing else changes.
+
+Note this makes `wander` and `tryMove` use the same obstacle response, which is
+the kind of change that should have been one function all along.
+
+### Pre-registered gates
+
+- **Accept**: H2H vs the accepted `alice_iter12` snapshot **> 50%**, no
+  one-directional regression (zero unexplained swept losses).
+- **Mechanism gate**: tower count at r400 must rise again versus `alice_iter12`
+  **on the high-wall subset**. If towers do not move there, the mechanism did not
+  engage and the change is discarded without a full run, per step 4.
+
+### Map-class prediction, with its falsifier
+
+Blocking frequency scales with **wall fraction**, so the margin should be
+**concentrated on high-wall maps and ~zero on open ones**. Concretely: on maps
+below ~10% walls I expect no measurable margin; on maps above ~18% (boxofchocolates
+19.5%, gridworld 20.0%, and the 19.8%-wall maze that already broke iteration 7) I
+expect the margin.
+
+**Falsifier**: a margin that is flat across wall fraction, or larger on open maps.
+Either kills the mechanistic story even if the headline passes — the same standard
+I held iteration 12's map-area check to.
+
+This is a *different* covariate from iteration 12's (**area**, not **wall
+fraction**), which is what makes it a genuinely separate mechanism rather than
+more of the same dose. If iteration 12's margin tracks area and iteration 14's
+tracks walls, that is two independent confirmations of one model of the defect.
+
+### Known risk, recorded before building
+
+Naive wall-sliding is the classic failure case of hand-rolled navigation: a
+concave pocket can trap a slider indefinitely, which is strictly worse than a
+re-roll that at least escapes. Real bug-navigation (bug0/bug2, with a remembered
+wall-following side and an exit test) is the principled fix and is a **larger,
+separate mechanism** — the cross-year research names hybrid bug-nav as a perennial.
+So: slide first because it is one line and tests the premise; bug-nav only if
+slide engages but traps. If the trace shows trapping, that is a *success* of the
+diagnosis, not a failed iteration.
