@@ -6096,3 +6096,47 @@ against my own iteration-8 finding that dying at zero is the efficient terminal 
 - Iteration 17 is void, not closed; re-opening needs ruin memory so the choice set stops
   being a singleton.
 - The `UPGRADE_RESERVE` and money-tower-upgrade defects in `Tower.run` remain queued.
+
+---
+
+## FROZEN ROSTER RE-MEASURED (2026-09-07 20:20) — and it is flat, which matters
+
+Run `20260907-193911`, 200 games. `bot.txt` confirms `label=bob_iter12`, `dirty=0`, so the
+build that played is exactly the accepted snapshot — not a candidate, not the working tree.
+
+```
+opponent              wins/50    95% CI      per-map 0/1/2      earlier measurements
+bob_iter0              46/50    [42, 49]     0 / 4 / 21
+bob_iter1              43/50    [38, 47]     0 / 7 / 18         84.0% at 03:47
+bob_iter11             25/50    [19, 31]     4 / 17 / 4         58.0% 03:47 -> 56.0% 04:33 -> 50.0% now
+examplefuncsplayer     50/50    [50, 50]    25 swept, se = 0
+```
+
+**`bob_iter12` scores exactly the null against `bob_iter11`: 25/50, +0.00 sd.** Across
+three independent map draws the number has gone **58.0 -> 56.0 -> 50.0**.
+
+And it is *not* a degenerate "same bot" result — the per-map column is `{0:4, 1:17, 2:4}`,
+so iteration 12 sweeps four maps, is swept on four, and splits seventeen. These are two
+genuinely different programs that trade evenly. Iteration 12 was "revert the hash, remove
+the ruin memory" — a simplification accepted on sweep evidence — and on this instrument it
+**bought nothing over its predecessor**.
+
+This is precisely what §5b says only the frozen roster can see, and what the coordinator
+was right to ask about: my head-to-head gate said iteration 12 beat iteration 11, and the
+absolute instrument says the lineage did not move. A head-to-head against your predecessor
+cannot tell a rising lineage from a drifting one.
+
+**What I am doing about it, in order:**
+
+1. **Re-measure with `bob_iter18` immediately** — launched, same roster. Iteration 18 is a
+   +6-game change with 6 sweeps and 0 swept losses against a zero-variance null, so if the
+   lineage is healthy this is where it shows. If `bob_iter18` vs `bob_iter11` comes back at
+   or near 50% as well, the flatness is structural rather than a property of iteration 12,
+   and §5b's answer is a **pairwise** ablation, not a single-feature one.
+2. Only if that second point is also flat do I start nominating pairs — and per the
+   algorithm's own base rate (two of three nominated pairs refuted, the one real
+   destructive pair found by ablating *after* a roster drop rather than by prediction), I
+   will ablate on the roster's evidence and not on a story about which features look like
+   they should interact.
+
+`progress/vs_old_bots_history.csv` has the four new rows; `vs_old_bots.png` regenerated.

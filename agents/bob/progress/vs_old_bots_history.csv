@@ -16,3 +16,7 @@ date,current_snapshot,opponent,wins,total,win_pct,source
 2026-09-07T03:47:57+00:00,bob_iter12,bob_iter11,29,50,58.0,roster-run
 2026-09-07T03:47:57+00:00,bob_iter12,examplefuncsplayer,50,50,100.0,roster-run
 2026-09-07T04:33:55+00:00,bob_iter12,bob_iter11,28,50,56.0,roster-run
+2026-09-07T19:39:11+00:00,bob_iter12,bob_iter0,46,50,92.0,roster-run
+2026-09-07T19:39:11+00:00,bob_iter12,bob_iter1,43,50,86.0,roster-run
+2026-09-07T19:39:11+00:00,bob_iter12,bob_iter11,25,50,50.0,roster-run
+2026-09-07T19:39:11+00:00,bob_iter12,examplefuncsplayer,50,50,100.0,roster-run
