@@ -2967,3 +2967,64 @@ can see.
 
 Recorded before iteration 11's gauntlet reports, so the interpretation of that run
 cannot be bent by this one.
+
+### The prime suspect, and a pre-registered ablation for it
+
+Walking the accepted lineage for a feature that would show up specifically as
+*side-dependence* against an old opponent produces one obvious candidate.
+
+**Iteration 7 replaced a rule my own code called "team-symmetric" with one that is
+not.** `bob_iter1`'s `towerTypeFor` is `((ruin.x + ruin.y) & 1)`, and its comment reads
+"Deterministic, team-symmetric tower type choice". Iteration 7 swapped it for an
+avalanche hash, and my own audit at the time measured the cost:
+
+```
+                                        old parity rule    iteration 7 hash
+maps with a mismatched mirrored pair      30 (40%)            73 (97%)
+mean money%-gap between the two halves    11.0 pts            24.0 pts
+across all 75 maps                         --                 helps 18, HURTS 37
+                                                              mean gain -0.59 pts
+broad-run h2h that accepted it             --                 21/40 = 52.5%
+```
+
+I accepted it anyway, on an explicit robustness argument (it is the only rule that
+never produces a 100%-one-type map) and on a pre-registered affected-subset tiebreaker.
+That reasoning is still on the record above and I stand by having followed the rule I
+set in advance. But the roster now supplies evidence that did not exist then, and it
+points at exactly the dimension the audit flagged:
+
+```
+vs bob_iter1   swept-win 9 / swept-loss 6 / SPLIT BY SIDE 10 of 25 maps
+vs bob_iter0   swept-win 23 / swept-loss 0 / split by side 2 of 25
+```
+
+**Ten of twenty-five maps against `bob_iter1` are won from one side and lost from the
+other** — five times the side-splitting seen against `bob_iter0`. That is the
+signature of an unearned economic asymmetry between the two halves of a symmetric map,
+which is precisely what doubling the mirrored-pair mismatch rate from 40% to 97% buys.
+
+**Ablation A7, pre-registered.** `src/bob_abl7` is `bob_iter9` verbatim with iteration
+7's hash replaced by iteration 1's parity rule — one feature gated off, nothing else
+touched (`bob-tools/ablations/make-abl7.sh`, compile-checked).
+
+```
+MAPS="$(cat gauntlet/20260907-011346/maps.txt)" \
+  BOT=bob_abl7 OPPONENTS=bob_iter1 ../../tools/gauntlet.sh
+```
+
+The maps are **pinned to the roster run's exact sample**, so `bob_iter9`'s 28/50 is the
+control measured on identical ground — the map-draw objection is eliminated by
+construction, not argued away.
+
+**Pre-registered readouts:**
+1. **A7 win rate vs `bob_iter1` on those maps, against iteration 9's 28/50 (56%).**
+2. **Split-by-side count**, which is the mechanism-specific one: if the hash is the
+   cause, removing it should collapse the 10 split maps toward `bob_iter0`'s 2.
+   A win-rate move without a split-by-side move would mean I found the right answer
+   for the wrong reason, and I would keep looking.
+
+Note what this ablation can and cannot settle. It measures iteration 7's *current*
+value, which is the question the ablation track exists to ask — TRAINING_ALGORITHM.md
+records that a 2026 audit found headline-accepted features worth ~0 and one negative.
+It does not by itself prove the 85% → 56% decline is all iteration 7; iterations 5, 8
+and 9 would each need their own gate to apportion the rest.
