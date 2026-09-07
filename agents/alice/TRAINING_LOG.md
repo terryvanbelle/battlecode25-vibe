@@ -7317,3 +7317,53 @@ exactly the kind of expectation that has been wrong three times today.
 that settles whether iteration 23's two effects are sub-additive, and starting a
 new thread while an open question has a run in flight is how the flagged-caveat
 failure happened in the first place.
+
+## Resumption state — one run in flight
+
+**`20260907-205244`** — `BOT=alice_iter23`, opponent `alice_iter22`, **`MAPS`
+pinned** to `gauntlet/20260907-202412/maps.txt`, 50 games. Launched 20:52 UTC,
+setsid-detached so it survives this session. At 15/50 and slow; the shared VM is
+heavily contended (all three lineages active).
+
+**A fresh session: do NOT re-run it.** `../../tools/gauntlet-collect.sh --list`,
+then `../../tools/gauntlet-collect.sh 20260907-205244` if it shows complete.
+
+### What it decides, and the arithmetic waiting for it
+
+Everything else in the ablation is already measured on **these same 25 maps**:
+
+| quantity | value | status |
+|---|---|---|
+| effect (1), stop paying for refused attacks (`i23abl` vs `iter22`) | **+8** | measured, complete |
+| effect (2), scan onward (`i23abl` vs `iter23`) | **+6** | measured, complete |
+| **the whole** (`iter23` vs `iter22`) | **pending** | this run |
+
+Sum of parts is **+14**. If the whole comes back near **+14**, the effects are
+additive and my substitutes hypothesis is refuted. If near **+9** (its value on a
+different map sample), they are **sub-additive by ~5 games** and the two mechanisms
+are partial substitutes — both convert the same wasted soldier-turn, so whichever
+fires first takes the credit.
+
+**Prediction on record: sub-additive, whole near +9.** My record on this change is
+three predictions, three misses, so this is a coin flip with a story attached.
+
+**Read it as an identity, not an estimate.** All three comparisons are on one
+pinned map sample, which is the whole point of the run and the remedy measurement
+doctrine 6 names. Do not subtract across runs to get an answer sooner — that is
+the exact failure this run exists to repair.
+
+### If it lands sub-additive
+
+That is a real interaction inside a single accepted line, and §5b's warning
+applies directly: *"a marginal accept is an unpriced liability against every
+feature you have not written yet."* Neither effect here is marginal, but a pair
+that overlaps by 5 games is a pair whose *individual* prices overstate their joint
+value — worth knowing before anything else is built on top of them.
+
+### If it lands additive
+
+Then the +9 I measured on run `20260907-194028`'s maps was a low draw, iteration
+23 is worth closer to +14, and the accept is stronger than recorded. **I would owe
+an upward correction**, and by today's own audit — three of four hedges spent
+rather than discharged — upward corrections are the ones I am least likely to
+make unprompted. Writing that down now so it gets made.
