@@ -399,7 +399,16 @@ public class RobotPlayer {
 
     static String runMopper() throws GameActionException {
         String state = "M";
-        refillIfPossible();
+        // Iteration 20: a mopper tops up ONLY from a tower that has surplus. The unguarded
+        // refillIfPossible() takes from any adjacent tower however little it holds, and the
+        // first instrumented game showed 134 deliveries against 7 controlled loads -- i.e. the
+        // ferry was mostly redistributing paint it had taken from towers that could not spare
+        // it. Since a tower needs 200 in ONE stash to build anything, spreading paint evenly
+        // across towers can leave EVERY tower unable to build: the ferry would equalise toward
+        // mediocrity and a rejection would be uninterpretable as a test of "surplus -> deficit".
+        // Same precedent as iteration 11's splasher scoring fix: this is part of making the
+        // mechanism testable, not a second hypothesis.
+        refillFromSurplusOnly();
 
         // Iteration 20: PAINT FERRY. buildRobot draws the new robot's paint from the TOWER's
         // OWN stash [E: RULES.md item 4], and across 8 complete iteration-14 games that stash is
@@ -523,6 +532,20 @@ public class RobotPlayer {
     }
 
     // ------------------------------------------------------------------ shared
+
+    /** Mopper top-up restricted to donor towers, so the ferry never drains a needy stash. */
+    static void refillFromSurplusOnly() throws GameActionException {
+        int cap = rc.getType().paintCapacity;
+        if (rc.getPaint() * 2 >= cap) return;
+        for (RobotInfo ally : rc.senseNearbyRobots(2, rc.getTeam())) {
+            if (!ally.type.isTowerType() || ally.paintAmount < TOWER_SPARE) continue;
+            int want = Math.min(cap - rc.getPaint(), ally.paintAmount - TOWER_SPARE);
+            if (want > 0 && rc.canTransferPaint(ally.location, -want)) {
+                rc.transferPaint(ally.location, -want);
+                return;
+            }
+        }
+    }
 
     static void refillIfPossible() throws GameActionException {
         int cap = rc.getType().paintCapacity;
