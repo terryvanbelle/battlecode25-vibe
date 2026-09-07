@@ -2765,3 +2765,27 @@ become non-binding first. Note that iteration 12, by multiplying tower count
 three- to four-fold, is precisely the kind of change that could satisfy it — so
 this should be re-checked *after* iteration 12 settles, on the stated condition
 rather than on the coincidence.
+
+### Pre-registered before the sweep data lands: the map-area check
+
+The PlumberGame trace turns iteration 12's mechanism into a falsifiable
+prediction about *which* maps should move, so I am registering it now, with the
+sweep at 11/60 and only the `alice_i12a` arm partly played.
+
+**Prediction.** Diffusive search covers area as T while directed search covers it
+as T², so the deficit iteration 12 removes grows with map area. Therefore
+`alice_i12a/b/c`'s margin over `alice_iter7` should be **larger on large maps and
+smaller on small ones**, and on a small enough map it should vanish — a random
+walk crosses a 20x20 map fine.
+
+**What would falsify it.** A flat margin across map sizes, or a margin that is
+*larger* on small maps. Either would mean the win comes from something other than
+reaching distant ruins, and the mechanistic story would need rewriting even if the
+headline accepted.
+
+The sweep's 10-map sample is `Circuit quack galaxy BunnyGame windmill Bunny
+DefaultLarge Fossil CastleDefense boxofchocolates`. Map dimensions come free from
+each replay's `MatchHeader`, so this costs one dump per map and no VM game slots.
+
+This is the "cheap unrun instrument" of doctrine #10, registered *before* it could
+be used to rationalise whatever the headline turns out to be.
