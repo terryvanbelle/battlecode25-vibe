@@ -5511,3 +5511,46 @@ rather than inventing a map story. What I do predict: the gain concentrates on m
 tower paint is scarcest (Parking_lot 99.1% of tower turns under 200 paint, gridworld 97.3%),
 because that is where trading a 100-paint mopper for a 200-paint soldier bites hardest — and
 it should be near-neutral on Castle (26.5%), where stashes are comparatively healthy.
+
+## Iteration 20 — the shuttle raises firing 5x and the target metric still does not move. DEFERRED, with the arithmetic I owed it.
+
+Three verification runs on DefaultLarge against `carol_iter18`, same map, same opponent:
+
+| version | `fl` loads | `fd` drops | `fs` seeks | tower `tp<200` | median stash |
+|---|---|---|---|---|---|
+| unguarded source | 7 | **134** | 136 | 59.8% | 91 |
+| guarded to donors | 1 | **1** | 5 | 63.7% | 137 |
+| **guarded + shuttle** | 4 | **5** | 15 | **51.6%** | **175** |
+| `carol_iter18` (same games) | — | — | — | **50.2%** | **195** |
+
+The shuttle did its job on reachability — deliveries rose 1 → 5 per mopper once moppers actually
+drive to the donor and then to the dry tower. **But the metric the whole mechanism exists to
+improve is flat-to-worse**: iteration 20 leaves towers under the 200-paint build threshold
+*slightly more often* than the baseline it is trying to help, with a lower median stash. That is
+iteration 13's signature — mechanism confirmed, primary metric moving the wrong way.
+
+**And here is the arithmetic I should have done before writing a line of it.** A mopper's paint
+capacity is **100**, and it delivers only down to half capacity so that `refillIfPossible`
+cannot suck the cargo back out — so **one trip moves at most 50 paint**. A tower needs **200 in
+a single stash** to build a soldier. **Four full round trips per soldier**, each trip requiring
+the mopper to reach a donor at r²=2 and then a dry tower at r²=2.
+
+That ceiling was computable from RULES.md at design time, and it is the exact discipline I wrote
+into LEARNINGS.md two hours ago after iteration 17: *state the benefit and the price as two
+numbers before running the mechanism.* I wrote the rule and then did not apply it to the very
+next thing I built. The benefit here is real but small by construction, and no amount of
+navigation work changes the 50-paint bucket.
+
+**DECISION: DEFER, not reject.** The mechanism engages, the direction is sound (carol's binding
+constraint really is tower paint, and moppers really are the only unit that can move it), and
+doctrine is explicit that a proxy metric on one game does not decide. But with the VM shared
+three ways I will not spend 80 games on a mechanism whose ceiling is four round trips per
+soldier while `carol_i21` — backed by a *measured dose curve* — is waiting for the same slot.
+
+**What would make it worth re-opening**, recorded concretely rather than as a hope:
+- **Deliver the full load.** The half-capacity rule exists only to defeat `refillIfPossible`;
+  now that moppers refill from donors only (`refillFromSurplusOnly`), that defence may be
+  redundant and the bucket doubles to 100 paint per trip.
+- **Or target the constraint directly**: 2/3 of carol's towers are paint towers by
+  `towerTypeFor`'s `k % 3`, yet gridworld runs 97.3% dry with 76,420 idle chips. If the mix is
+  wrong, no ferry can compensate — and unlike the ferry, the tower mix has never been swept.
