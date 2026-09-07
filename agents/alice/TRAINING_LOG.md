@@ -6991,3 +6991,58 @@ against `bob` and `carol` — the only instrument here taken against lineages I 
 not produce. Last reading was alice 38.0% overall, 7.3% against `bob`, with `bob`
 sweeping 65 of 75 maps. That measurement is on `alice_iter14`; **HEAD is now nine
 accepted iterations ahead of what last played.**
+
+## Iteration 22's attribution — CLOSED by exhaustive case analysis, zero games
+
+Step 3b told me to mark it open. Before spending a run on it, I checked whether
+the code answers it, and it does. The key fact I had not noticed: the surviving
+area branch scans `senseNearbyMapInfos(9)`, which **includes the tile underfoot at
+distance 0**, and selects the *nearest* empty tile with a strict `d < paintD`
+starting from `1<<30`. So a distance-0 empty tile always wins that selection.
+
+The deleted branch had **no** `isActionReady()` and **no** `paint >= 15` guard, and
+ran first. Exhaustive over the four possible states of the tile underfoot:
+
+| tile underfoot | `alice_iter19` (deleted branch present) | iteration 22 (deleted) | net effect of deleting |
+|---|---|---|---|
+| **ALLY** | guard false, does nothing | area branch paints nearest empty | **identical** |
+| **EMPTY**, paint >= 15 | self-paints it, consumes the action; area branch then skipped | **area branch paints that same tile (d = 0)** | **identical — byte for byte** |
+| **EMPTY**, 5 <= paint < 15 | self-paints it | area branch gated off by `paint >= 15` → nothing | **deletion LOSES a legitimate paint** |
+| **ENEMY** | attacks: 5 paint, engine-refused, nothing painted | area branch paints nearest empty | **deletion GAINS 5 paint and a real tile** |
+
+**There is no third channel.** Two of four states are exactly identical between
+the two builds; one is a small loss; one is the engine trap. **The +7/+8 that
+iteration 22 measured can only have come from removing the ENEMY case**, because
+that is the only state in which deletion is a gain.
+
+That is not a story fitted to a good number — it is a case enumeration over the
+code plus one engine fact (`tools/engine-facts.md`), and it is falsifiable: if
+anyone shows the area branch can fail to select a distance-0 empty tile, row 2
+stops being identical and the argument breaks. I checked the three ways it could:
+`canAttack` on one's own tile is true (the deleted branch relied on it), the tile
+one stands on is passable, and the strict `<` means no later tile displaces a
+d = 0 hit.
+
+**Marking iteration 22's attribution CLOSED**, and noting what closed it: not the
+gauntlet, not the replay, and not the census — a decomposition that was available
+before any of them. Step 3b says do not back-fill a story; it does not say leave a
+question open that reading the code answers.
+
+### And the analysis hands me iteration 24 for free
+
+Row 3 is a **real loss that iteration 22 accepted without noticing**: a soldier
+holding 5–14 paint has enough for one attack, is standing on an empty tile, and
+now does nothing at all, because the surviving branch's `paint >= 15` gate excludes
+it. That gate exists to stop a soldier spending its last paint on distant ground;
+it was never meant to forbid painting **the tile it is already standing on**,
+which costs no movement and is the cheapest possible target.
+
+`src/alice_i24a`: restore the underfoot paint for exactly that window — tile is
+**EMPTY** (the engine's predicate, not a proxy) and the area branch has declined.
+Narrow by construction: rows 1, 2 and 4 are untouched.
+
+**Pre-registered**: this fires only on soldiers with 5–14 paint standing on empty
+ground. If the decision census shows that state is rare, the candidate is priced
+out before it costs a gauntlet — **and I will run that census before the run**,
+because "instrument the DECISION, not the outcome" is exactly what saved me from
+the splasher.
