@@ -2939,3 +2939,32 @@ separate mechanism** — the cross-year research names hybrid bug-nav as a peren
 So: slide first because it is one line and tests the premise; bug-nav only if
 slide engages but traps. If the trace shows trapping, that is a *success* of the
 diagnosis, not a failed iteration.
+
+### How the accepted dose will be chosen — written before arm C finishes
+
+With arm C at 4 of 20 games, registering the selection rule now so it is not
+chosen to suit the answer.
+
+**The dose that ships is the one the CURVE picks, not the arm with the best
+number.** These are different, and the difference matters:
+
+- A maximum taken across three arms is **biased upward**. If all three doses were
+  truly identical at 60%, the best of three at n=20 would still land near 70% by
+  chance alone. So `alice_i12a`'s 15/20 is an over-estimate of dose 25's true
+  value *because it is the maximum*, and I should not quote 75% as dose 25's
+  effect size.
+- The **shape** is what carries information, because it is not a maximum of
+  anything. The curve so far is 50% (zero arm, by definition) → **75% at dose
+  25** → **60% at dose 100**. That is concave with an interior optimum, which the
+  algorithm names as stronger evidence than any single point, and it is what I
+  predicted before the sweep: an over-long commitment sends moppers (which share
+  `wander`) out of the contested area.
+
+**So the rule is:** ship the dose at the curve's peak. If arm C at 400 comes in
+at or below arm B, the curve is single-peaked at 25 and dose 25 ships. If arm C
+comes in *above* arm B, the curve is not single-peaked, the interior-optimum story
+is wrong, and I should say so rather than quietly shipping the best arm.
+
+**And the honest effect size to report is the shape, not the peak**: iteration 12
+is worth "clearly positive, somewhere in the 60-75% band against `alice_iter7`,
+with the low dose better than the high one" — not "75%".
