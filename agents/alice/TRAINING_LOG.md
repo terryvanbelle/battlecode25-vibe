@@ -6155,3 +6155,69 @@ sparse maps (~200–1000 rounds on UnderTheSea vs ~150–400 on Money), so there
 more turns in the branch to correct. That prediction now happens to agree with
 this gradient, which is *weak* corroboration at best — two arguments pointing the
 same way, one of which I have just said I cannot explain.
+
+## Periodic RobotController API sweep — 37 of 68 methods never called, and three matter
+
+The algorithm requires this sweep on a schedule, for a stated reason: *"a whole
+game mechanic sat unused for 81 iterations once because the obvious methods were
+assumed to be the whole interface."* I found the splasher gap by accident today,
+which is exactly the signal that the sweep was overdue. Done properly now:
+`javap battlecode/common/RobotController.class`, 68 public methods, diffed against
+every call site in `src/alice/RobotPlayer.java`.
+
+**37 are never called.** Most are conveniences (`onTheMap`, `adjacentLocation`,
+`getMapWidth`), debug aids (`setIndicatorDot/Line`, `setTimelineMarker`), or
+already-closed directions (`transferPaint` — iteration 6; `markResourcePattern` /
+`completeResourcePattern` — SRPs, closed at "+5.6 points, never cleared the bar,
+re-open if chips become binding", and chips are at $290k so they have not).
+
+Three are live capability gaps, ranked:
+
+### 1. The ENTIRE communication system, unused for 22 iterations
+
+`sendMessage`, `readMessages`, `broadcastMessage`, `canSendMessage`,
+`canBroadcastMessage` — **not one call anywhere in the lineage.** From `RULES.md`:
+
+- robot↔tower, r²<=20 **and** connected by a 4-adjacent ally-paint path; 1 msg/turn
+  for robots, 20/turn for towers; 4-byte int payload; buffer holds 5 rounds.
+- **tower→tower broadcast at r²<=80 with NO paint connectivity required.**
+
+Two things make this more attractive here than the generic "comms are good":
+
+- The paint-connectivity requirement is normally the hard part of a BC25 comms
+  design. **My own saturation finding removes it**: my territory is a contiguous
+  painted mass by round 250–600, so robot↔tower connectivity is nearly free
+  exactly when I need it. A constraint I would have had to engineer around is
+  already satisfied by the board state I measured today.
+- Towers form a long-range backbone at r²<=80 unconditionally, and I field 11–14
+  of them. That is a global channel, not a local one.
+
+Comms schema design is one of the perennial mechanics the cross-year research
+names, and this lineage has none. **This is the largest unexplored capability I
+own.**
+
+### 2. `mopSwing` — the mopper's area attack, never used
+
+6 tiles (2 rows of 3 in front), **−5 paint per enemy robot hit**, cooldown **20**
+against the ordinary mop's **30**. So a swing that catches three robots drains 15
+paint on a shorter cooldown than a mop steals 10 from one.
+
+Why this is not a generic "more damage" idea — which §"metrics that improve
+without converting" says to distrust: **65–100% of all deaths in this game are
+paint starvation, not combat.** Draining an enemy robot's paint is not chip damage
+that has to be converted into something else; it is the direct cause of the way
+units actually die. The cost is real and must be priced: a swing does not clear
+ground paint, so it trades a mopper's ground work for robot attrition, and ground
+work is what iteration 19 accepted.
+
+### 3. `mark` / `removeMark` — a 1-paint durable shared-memory channel on the ground
+
+I call `markTowerPattern` (25 paint) and nothing else. `mark` places an
+ally-visible annotation for **1 paint** at r²<=2, persistent, with no gameplay
+effect beyond being readable by allies. My soldiers random-walk to find ruins and
+have no way to know a ruin is already someone's target. A 1-paint durable "taken"
+flag is the cheapest coordination primitive on the board and I have never used it.
+
+**None of these is started.** Iterations 22 and 23 are in flight and 24 is queued;
+this is the ledger of what the sweep found, dated, so that the next time the loop
+stalls the structural track has a costed menu rather than a brainstorm.
