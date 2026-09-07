@@ -3330,3 +3330,73 @@ removed. Relaunched cleanly as **`20260907-023720`**, 200 games.
 Per the shared-resource rules I am reporting this rather than patching `tools/`, which
 is the coordinator's to maintain. The lesson for me is narrower: **do not run a
 `git pull --rebase` concurrently with launching a script out of the same tree.**
+
+
+---
+
+## INSTRUMENT CORRECTION (2026-09-07) — I have been misreading two BobDump columns
+
+Reading `BobDump.java` line by line while the regression run played, to check a claim
+about `Parking_lot`, I found I had two column semantics wrong. Both misreadings appear
+in entries above and both are corrected here rather than quietly.
+
+**1. `paintA`/`paintB` is the team's TOTAL PAINT STASH, not paint delivered to the map.**
+
+```java
+paintNow[0] = 0; paintNow[1] = 0;          // reset every round
+...
+paintNow[tm] += turn.paint();              // each robot's CURRENT paint, summed
+```
+
+Every robot takes one turn per round, so this sums the paint *held* by all living
+robots. It is a **stock**, not a flow. I repeatedly described it as "paint delivered to
+the map per interval", which is wrong.
+
+**2. `ptow`/`mtow` are LIVE tower counts, not cumulative towers built.** `live[][]` is
+incremented on `SpawnAction` and decremented from `diedIds`. (The field's own comment
+says "cumulative spawns" and is itself wrong — the decrement is right there.)
+
+### What survives, what changes, and one finding that gets *stronger*
+
+The structural conclusions survive, because a standing count of 0 paint towers and a
+cumulative count of 0 are the same statement:
+
+- `Rose` side B "built zero towers in 581 rounds" -> **held zero towers, all game**.
+  Unchanged as a degeneracy signal.
+- Iteration 11 taking `Rose` B from 0 to 4 live paint towers -> unchanged, still the
+  mechanism firing.
+- "Paint delivered decayed 193 -> 147 -> 39 -> **0**" -> **the team's entire paint stash
+  fell to zero.** That is *worse* than what I claimed, not better: every living unit was
+  simultaneously empty.
+
+**And one earlier reading inverts into a much more interesting finding.** On
+`Parking_lot`, `bob_iter9` (A) loses to `bob_iter1` (B) with near-identical armies:
+
+```
+              soldiers  splashers  moppers   paint STASH   coverage
+bob_iter9         95       26        26        4,708          261
+bob_iter1         93       24        25        1,477          708
+```
+
+I had read this as "we paint more and cover less", which was incoherent. The correct
+reading is the opposite and it is coherent: **our units are sitting on three times the
+paint and converting it into a third of the coverage.** `bob_iter1` runs its units
+close to empty and paints the map; `bob_iter9` hoards.
+
+That is precisely the economics of the iteration 8 entry, pointing back at us —
+*"dying at zero is the efficient terminal state"* — and the obvious suspects are our
+own gates: `PAINT_FLOOR = 15` (refuse to paint below this) and `REFILL_BELOW = 50`
+(walk away to refill above this), neither of which `bob_iter1` has in the same form.
+A unit that will not paint below 15 and leaves to refill below 50 is idle across a
+35-point band.
+
+**This is now a stronger candidate for the `bob_iter1` regression than the tower hash**,
+because it is a mechanism that (a) `bob_iter1` demonstrably does not share, (b) shows up
+directly in the losing trace as a 3x stock difference, and (c) explains coverage loss
+without needing any symmetry story — which I have already had to retract once.
+
+The pinned run in flight measures *when* the decline happened and settles A7. If its
+curve does not localise at iteration 7, this paint-hoarding gate is the next thing to
+ablate, and it now has a pre-registered readout: **team paint stash relative to
+coverage**, which is a replay quantity and therefore a genuinely independent instrument
+per LEARNINGS 14.
