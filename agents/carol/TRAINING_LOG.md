@@ -3085,3 +3085,80 @@ full-ablation) would only refine a quantity now shown not to matter.
 inference from one measurement but the conclusion of a three-iteration series: the only way left
 to improve output is to make each soldier-turn worth more, and the largest single block of
 wasted turns — **22.5% IDLE-ENEMY** — is precisely what splashers exist to convert.
+
+---
+
+## Iteration 11 — splashers, enabled and aimed correctly (PRE-REGISTERED)
+
+Session resumed after an account-wide rate limit killed the previous one mid-sentence
+("now the scoring-radius fix and instrumentation"). The working tree held the splasher
+iteration intact; reconciled against the log and found complete. Both outstanding gauntlet
+runs recovered with `gauntlet-collect.sh` — `20260906-230220` carries iteration 10's full
+record including the `carol_rush` block I was waiting on (38/40 = 95%), so **iteration 10's
+REJECT is now closed on complete evidence** rather than pending.
+
+**Hypothesis.** Carol's soldiers are IDLE on 38.4% of their turns, and the largest single
+block is **IDLE-ENEMY at 22.5%** — soldiers stood beside enemy paint a soldier physically
+cannot convert. Splashers are the only unit that bulk-converts enemy paint, and carol has
+never built one. Enabling them converts wasted soldier-turns into coverage.
+
+**Why this and not more production.** Iterations 5, 8 and 10 raised unit production by three
+different routes; 10 fielded **4.1x** the soldier-turns and went 47.5%. Production is not the
+binding constraint. This iteration changes what a unit *does*, not how many exist.
+
+**The one change**: `SPLASHER_IN_20 = 3` — 15% of the tower spawn roll becomes splashers,
+taken out of the soldier share with the mopper share held at exactly 25%.
+
+**Bundled deliberately, and why it is not a second hypothesis**: the dead `runSplasher()`
+scored enemy paint anywhere in r²=4, but the engine converts enemy paint only within **r²=2
+of the centre**. The old scoring therefore preferred centres ringed by enemy paint it could
+not touch. Shipping splashers on top of a mis-aimed scorer would make a rejection
+uninterpretable — *did splashers fail, or did aiming fail?* — so the radius fix is part of
+making the mechanism testable.
+
+**Explicitly NOT bundled**: splasher tower-targeting (100 dmg, out-ranges paint/money towers).
+Registered as the *next* iteration. Iteration 4 died of bundling exactly these two.
+
+### Pre-registered gate
+
+| | |
+|---|---|
+| primary | h2h vs `carol_iter7` (last accepted), 20 maps x both sides = 40 games; **accept at >50%** |
+| peer/regression | `carol_rush`, same run, same maps |
+| maps | **pinned** to iteration 10's sample (`gauntlet/20260906-230220/maps.txt`) so i11 and i10 are comparable on identical ground, not just each against the baseline |
+| mechanism gate | splasher SPLASH-fire share of splasher turns > 0 — **already PASSED**, below |
+| counter-metric | splasher share must not starve soldiers: soldier `noPaint`/dry rate vs iteration 7's 12.5% |
+
+### Mechanism verification — PASSED before the run (loop step 4, case 1)
+
+Single match `carol` vs `carol_iter7` on DefaultSmall: **carol (A) wins at round 233**, by
+paint coverage. Iteration 10 lost this map from both sides (r368 and r2000).
+
+171 splasher turns, tagged in the replay (the old code returned a bare `"P"`, so splashers
+were invisible in every replay carol has ever produced):
+
+| tag | turns | share |
+|---|---|---|
+| `SPLASH` (fired) | 19 | 11.1% |
+| `dry` (cooldown or no paint) | 119 | 69.6% |
+| `lowScore` (target below threshold) | 18 | 10.5% |
+| `noTgt` | 15 | 8.8% |
+
+**Read the 11.1% against the ceiling, not against 100%.** A splasher's action cooldown is
+**+50** and cooldowns fall 10/turn, so a splasher can fire at most **1 turn in 5 — a 20%
+ceiling** set by the engine. 11.1% is **55% of action capacity**, which for a first cut is
+engagement, not failure.
+
+That ceiling also means most of the 69.6% `dry` is the cooldown carol has no say over: 19
+fires necessarily block 4 turns each = 76 turns, leaving ~43 (25%) genuinely paint-starved.
+Because reading an engine ceiling as a bot defect is exactly the misdiagnosis that would send
+the next iteration at the wrong lever, the tag is now split `cd` vs `noPaint` before the run.
+
+**Registered prediction, before the run reports.** Iteration 11 lands **above 50%**, and this
+is the first prediction I have made in that direction this session. The three preceding
+production iterations all raised a quantity whose per-unit output was near zero; this one
+raises the per-unit output itself, against the largest measured waste block. The way it most
+plausibly fails is the paint price: a splasher is **300 paint against a soldier's 200**, in an
+economy this session has repeatedly measured as paint-bound, so a 15% splasher share raises
+mean unit paint cost ~7.5%. If it fails, the `noPaint` tag and a worsened soldier dry rate are
+where that will show, and the refinement is a lower dose, not abandoning the direction.
