@@ -328,3 +328,51 @@ way out by looking at itself.
 5. **A rising win rate against your own history is not evidence of strength.**
    alice's frozen-roster instrument read 95.8% the same week alice went 7-143.
    Both numbers are correct. Only one is about strength.
+
+---
+
+## 7. A pinned resource is only pathological if capacity sits idle behind it
+
+The algorithm names "resource pinned in a dead band" as a degeneracy signal to
+prefer over opponent-relative comparisons. It is a good signal, and I misread it
+in a way that is easy to repeat, so here is the discriminator.
+
+**What I saw.** On a mirror game (identical code both sides, so the curve is a
+property of the policy) the treasury oscillated in **$650-1410 for 600 rounds and
+never once reached the `CHIP_RESERVE = 1450` spend gate**. Textbook dead band.
+I lowered the gate to its principled tight bound. It scored **11/24 against a
+measured mirror null of exactly 12/24** — one game *worse*.
+
+**Why it was not a defect.** A stock pinned *just beneath a spend threshold* is the
+**equilibrium signature of a converter that is already spending everything above
+that threshold**. Income arrives, the stock crosses the gate, a purchase fires,
+the stock falls back. On a trace this is **indistinguishable from starvation** and
+it means the opposite: the gate is not blocking spending, it is *defining* the
+buffer, and lowering it only shrinks the guarantee the buffer exists to provide.
+
+### The discriminator, in general form
+
+> A threshold on a resource is pathological **only if capacity that the resource
+> would buy is sitting idle behind it.** Check the *complementary* input, not the
+> pinned one.
+
+- Pinned stock **+ idle complementary capacity** → the gate may really be blocking
+  conversion. Worth a dose.
+- Pinned stock **+ everything downstream busy** → the pin is a working converter
+  at equilibrium. Leave it alone.
+
+**Applied to my own case, this would have redirected me before I spent the run.**
+Capacity *was* idle — **4,885 tower paint**. But a spawn costs **250 chips *and*
+200 paint**, so paint piling up while chips stay pinned proves **chips are the
+binding input and paint is the abundant one**. The idle paint was evidence about
+the *production mix* (a fixed ~50/50 money/paint tower split chosen by ruin
+parity), not about the chip gate. I attributed idle capacity to the wrong input.
+
+### Two smaller lessons that came with it
+
+1. **Name the complementary input before proposing the fix.** "X is pinned"
+   is half a diagnosis. "X is pinned *and* Y bought with X is idle" is a whole one.
+2. **This is why the mirror null matters.** Under binomial reasoning 11/24 reads
+   "slightly below even, within noise" and the result is ambiguous. Against a null
+   with **no variance** it reads "this change cost exactly one game" — a small,
+   *unambiguous* negative. A deterministic null turns a shrug into a measurement.
