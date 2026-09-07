@@ -6047,3 +6047,58 @@ Three things this needs before it is worth a run, none of them done:
 
 Queued behind iterations 22 and 23. Recorded now so the reasoning is dated before
 any result exists to flatter it.
+
+## Iteration 23 pre-registration, refined before the run (two additions)
+
+### 1. Read the result against RUIN DENSITY, not just as a headline
+
+This is a **ruin-related quantity**, and I have already measured its live window
+varying from ~150–400 rounds on Money (16.3 ruins/1000) to ~200–1000 on
+UnderTheSea (11.4, the corpus median). A 25-map random sample averages over that
+variation, so a modest headline could be hiding a large effect on the half of the
+corpus where the window is long.
+
+Pre-registered: **partition the run's 25 maps at the corpus median density (11.4)
+and report both halves.** If the sparse half shows a clearly larger effect than
+the dense half, that is a dose-response *in map space* — the strongest form of
+evidence doctrine #2 recognises — and it costs nothing extra, because the data
+arrives with the run either way. If both halves look the same, the density story
+is wrong and I should say so.
+
+Recording the prediction so it cannot be retrofitted: **I expect the sparse half
+to be larger.** If it is not, the mechanism is not what I think it is even if the
+headline clears.
+
+### 2. This change has no identifiable price, which is itself suspicious
+
+Working through the cases, the candidate never spends more paint than the baseline
+in any of them:
+
+| situation | baseline | candidate |
+|---|---|---|
+| a paintable pattern tile exists | 5 paint, tile painted | same |
+| first mismatched tile is enemy, a paintable one lies further in | **5 paint, nothing painted**, `break` | 5 paint, **tile painted** |
+| whole pattern is enemy-held | **5 paint, nothing painted**, `break` forfeits area paint | 0 there, then **5 paint on an empty area tile** |
+| nothing attackable | no attack | same |
+
+Equal paint, strictly more converted. A change with no price is the shape that
+should raise suspicion, not confidence — every candidate I have accepted so far
+had a cost I could name, and the loop's own rule is *"cost the price as well as
+the benefit"*. So the honest statement is **I have not found the price, not that
+there isn't one**, and the two places it would hide are:
+
+- **Bytecode.** Removing the early `break` makes the loop scan up to 24 tiles
+  instead of stopping at the first. Headroom is 84.5% (peak 2,713 of 17,500), so
+  this should be nothing — but "should be nothing" is what the limiter punishes
+  silently, and the `OVR=` counter is printed for exactly this reason. **Check it
+  in the run.**
+- **Second-order population effects.** Fewer starvation deaths means more soldiers
+  alive, and iteration 5 / §3c established that the soldier↔mopper mix and the
+  tower-paint pool interact badly when population shifts. **Instrument `twPaint`
+  and the alive counts**, per the rule that a change altering draws on a shared
+  capped resource must instrument the pool in its first run.
+
+If the diff comes back one-directional and positive with no `OVR` and a stable
+tower-paint pool, then it really is a free correction of an engine trap — which is
+the *"capability preserved at zero marginal cost"* profile both prior projects
+name as the recurring winner.
