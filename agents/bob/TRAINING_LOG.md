@@ -3097,3 +3097,61 @@ The side-B pattern is the thread tying all of it together: `Rose`-B, `Brat`-B,
 Four independent opponents, one recurring asymmetry — and iteration 7's own audit
 recorded that it doubled exactly that asymmetry. Ablation A7 is aimed at the right
 place.
+
+
+---
+
+## The regression investigation, designed as ONE pinned run (2026-09-07)
+
+Priority note taken from the coordinator, and it is correct: **an accepted lineage
+drifting downward invalidates the ground every later iteration is measured against**,
+so this outranks new mechanisms. It also carries a warning I had not planned for —
+the answer may be *"several accepts each cost a little"* rather than one culprit, and
+mechanism ablations cannot tell me that. Only the roster, read **by snapshot**, can.
+
+So the two questions are different and I had conflated them:
+
+- **Is the decline concentrated?** — a question about *when*, answered by snapshots.
+- **Is iteration 7's hash the cause?** — a question about *what*, answered by A7.
+
+**Both fall out of a single run, because the gauntlet's `BOT` can be the frozen
+opponent.** Make `bob_iter1` the bot and the snapshots its opponents; every pairing is
+then played on one map sample, and each opponent's win rate against `bob_iter1` is the
+complement of `bob_iter1`'s against it.
+
+```
+MAPS="$(cat gauntlet/20260907-011346/maps.txt)" \
+  BOT=bob_iter1 OPPONENTS="bob_iter3 bob_iter7 bob_abl7" ../../tools/gauntlet.sh
+```
+
+25 maps x 2 sides x 3 opponents = 150 games, and the maps are **pinned to the roster
+run's exact sample**, so `bob_iter9`'s already-measured 28/50 (56.0%) is a fourth arm
+obtained for free on identical ground. The resulting curve:
+
+```
+   bob_iter3   vs bob_iter1    ?      <- was 85.0% on a DIFFERENT map draw
+   bob_iter7   vs bob_iter1    ?      <- iteration 7 = the hash lands here
+   bob_iter9   vs bob_iter1   56.0%   <- already measured on these maps
+   bob_abl7    vs bob_iter1    ?      <- iteration 9 with the hash removed
+```
+
+**What each shape would mean, registered before the run:**
+
+- `iter3` high and `iter7` low → the decline is **concentrated at iteration 7**, and
+  `abl7` should recover most of it. One culprit, and it is the marginal 52.5% accept.
+- `iter3`, `iter7`, `iter9` stepping down gradually → **diffuse drift**, several accepts
+  each costing a little. `abl7` would then recover only its own share, and the right
+  response is not one revert but re-examining the accept bar itself.
+- `iter3` also low on *these* maps → the 85% was **a map-draw artifact** and there may
+  be no regression at all. This is the null I most need to be able to detect, and it is
+  the reason `bob_iter3` is in the run rather than assumed from the old number.
+- `abl7` ≈ `iter9` → the hash is **not** the cause regardless of where the step is, and
+  the side-split readout below decides whether I keep looking at symmetry at all.
+
+**Second readout on every arm, pre-registered: split-by-side count.** `bob_iter9` shows
+10 of 25 maps split by side against `bob_iter1`, against 2 of 25 versus `bob_iter0`. If
+symmetry is the mechanism, that count should track the win rate across the four arms.
+A win-rate move without a side move means the right answer for the wrong reason.
+
+This is one run instead of three, it answers *when* and *what* together, and it cannot
+be confounded by map draw because every arm plays the same 25 maps.
