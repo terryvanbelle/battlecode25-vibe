@@ -3970,3 +3970,67 @@ variable iteration 17 was pre-registered against, before this run finished.
 on this loop and 15 and 16 rejected; the two rejects together consumed less than
 one accept's evaluation, which is the ratio the pre-registered mechanism gates are
 supposed to produce.
+
+## Iteration 17 — a LATENT BUG found: alice has never built a paint tower, and half of every map's ruins are thrown away
+
+This started as the production-mix iteration pre-registered above. The
+mechanism-engagement check found something much larger.
+
+### The census that found it
+
+`alice_i17a` vs `alice_iter14`, gridworld, 2000 rounds. Counting **tower creations**
+(a soldier completing a pattern appears as `SOLDIER SPAWN <TOWER>`):
+
+```
+12 T1 built MONEY_TOWER      (alice_i17a)
+ 6 T2 built MONEY_TOWER      (alice_iter14)
+ 0 PAINT_TOWER built by either team, in the entire game
+```
+
+**Not one paint tower, by either side.** `alice_iter14`'s parity rule marks ~half
+of all ruins as `LEVEL_ONE_PAINT_TOWER`. Zero of them ever become towers.
+
+### The decisive diagnostic
+
+Built `alice_i17c`: identical to `alice_iter14` except it always marks **MONEY**.
+Same map, same opponent:
+
+| build | tower-marking rule | towers built |
+|---|---|---|
+| `alice_iter14` | parity (~50% money / 50% paint) | **6** |
+| `alice_i17c` | always money | **12** |
+| `alice_i17a` | money when ally towers are ≥50% paint-full | **12** |
+
+**Exactly double.** The paint-marked half of the ruins is not merely built more
+slowly — it is **completely wasted**. A soldier marks the ruin as a paint tower,
+paints toward that pattern, and the tower is never completed; the ruin is then
+occupied by a mark and produces nothing for the rest of the game.
+
+### Why this matters more than the iteration it came from
+
+Tower count is this lineage's measured master variable — every accepted iteration
+works by raising it. **This bug has been halving it since iteration 0.** It is
+also the same *shape* as the defect the tournament exposed: a cap on tower count
+that self-play could never reveal, because both sides threw away the same half.
+
+It also re-frames the whole session's economy work. The 4,885 idle tower paint,
+the pinned treasury, the "production mix" hypothesis — all of it was reasoning
+about the *balance* between two tower types when in truth **only one type has ever
+existed in an alice game.** Iteration 16's chip-gate hypothesis and iteration 17's
+mix hypothesis were both built on a premise that was never true.
+
+### What is NOT yet known, stated plainly
+
+I have proved the paint-marked ruins are wasted. I have **not** yet found *why*
+`completeTowerPattern(LEVEL_ONE_PAINT_TOWER, ...)` never succeeds — whether the
+mark is refused, the secondary-colour paint is applied wrongly, or the completion
+call is mis-ordered. That diagnosis is a separate step and I am not going to guess
+at it in the log. What is established is empirical and sufficient to act on: the
+paint branch produces nothing, and removing it doubles tower count.
+
+**Evaluation launched**: run `20260907-043612`, `BOT=alice_iter14
+OPPONENTS="alice_i17a alice_i17c" NMAPS=12`, 48 games. `alice_i17c` is the blunt
+fix (always money); `alice_i17a` is the self-calibrating rule, which on current
+evidence degenerates to nearly the same thing because the paint branch is dead.
+Gate as pre-registered: H2H > 50% judged in games over the mirror null, no
+unresolved swept losses, and the mechanism gate is **tower count must rise**.
