@@ -5301,3 +5301,92 @@ count (how often a money tower actually takes the upgrade branch — not how man
 appear, which cannot distinguish "money tower upgraded" from "paint tower upgraded"), and
 the price (whether any game is ever chip-limited at the spawn gate, which the table above
 suggests is never but which I have measured only at end-of-game, not per-round).
+
+---
+
+## CORRECTION (2026-09-07 19:30) — adopting `tools/replay-dump.sh`, and a figure it retracts
+
+The coordinator replaced the per-agent dumpers with one shared tool
+(`tools/replay-dump.sh` + `tools/replaydump/ReplayDump.java`, `152ad05`) and asked me to
+retire `bob-tools/BobDump.java` and `bob-tools/dump-replay.sh`. Done — both deleted, and
+`bob-tools/mop-trace.sh` repointed. My focused analyses (`BobSites`, `BobSym`, `BobRuins`,
+`BobMop`) are unaffected.
+
+**It immediately retracted a number I published an hour ago, exactly where the coordinator
+warned it would.** `BobDump`'s `sold/spl/mop` columns were *cumulative spawns*, and its
+death accounting trusted `Round.diedIds`, which this engine does not populate — deaths
+arrive as `Action.DieAction` inside a Turn. So the counts never decremented.
+
+```
+Jail r400        BobDump (wrong)                 shared tool (right)
+  my army        "27 living units"               sold3 spl1 mop1  = FIVE living units
+  my deaths      died 0 all game                 died6 in that interval alone, starved6
+```
+
+**Retract: "Mode 2 — coverage stall at full health ... 27 living units and a healthy
+stash, and 384 rounds of net-zero painting."** That is wrong, and wrong in a way that
+flattered me. I did not have a large healthy army painting nothing. I had **three to five
+living units**, dying and starving continuously, painting 4 tiles per 100 rounds
+(`acts[p4 ...]` at r400) against alice's 144. Superseded in place; the sentence above
+stands as written so the reasoning that followed it stays readable.
+
+**Modes 1 and 2 were never two failures.** With correct alive-counts they are one:
+
+```
+CastleDefense (bob=T2)     r50    r100   r150   r200   r250   r300
+  my towers                  2      2      2      1      1      1      <- I LOSE one
+  my tower paint pool      150    250    150     50     50     50
+  my living units            6      3      3      3      0      0      <- extinct by r250
+  my chips                2200   3200   3750   5000   6500   8000
+  opponent towers            4      5      6      6      6      6
+  opponent tower paint    1075   1745   1411    455    304    528
+
+Rose (bob=T2)              r50    r150   r250   r350   r400
+  my towers                  2      2      2      2      2      <- never builds one
+  my tower paint pool      150    110    110    230    260      <- never affords a soldier
+  my living units            7      4      3      2      2
+  my chips                2200   4300   5850   7800   4300
+  opponent towers            3      5      9     13     18      <- +15
+  opponent tower paint     500    995   2945   1925   3360
+```
+
+The single variable is **towers**. My tower paint pool hovers at 110–260 against a
+soldier's 200-paint spawn cost, so I spawn roughly one unit per fifty rounds and my
+standing army never exceeds seven. Coverage is entirely downstream of that. The chips
+column is the same dead resource as ever.
+
+### An independent lineage confirms the refill closure
+
+The shared tool prints paint transfers, and this is the cleanest evidence I have for a
+decision I made on my own economics three days ago:
+
+```
+paint transfers per 50-round interval, Rose
+  bob     1  2  1  0  0  1  1  4
+  alice   0  0  0  0  0  0  0  0
+```
+
+**Alice never refills a unit, all game, and beats me 701–49.** She also starves *more*
+units than I do in absolute terms (15 in one interval against my 2), because she has more
+of them. A lineage that shares none of my code independently arrived at "let them starve
+and build another", which is precisely the economics that closed my iteration 8. That is
+the sanctioned cross-agent channel doing the job MULTI_AGENT.md claims for it.
+
+### What this does and does not change
+
+It does **not** change iteration 16, which is running: the arms and thresholds were
+pre-registered and I am not touching them.
+
+It **sharpens** iteration 17 and demotes my "upgrade" framing. Upgrading the level-2 paint
+tower buys +5 paint/turn for 5,000 chips; building a level-1 paint tower buys the same +5
+for **1,000**. Alice built fifteen of them on Rose while I built none. So the first
+question is not how to spend dead chips more cleverly on the two towers I have — it is why
+I build no towers on maps where an opponent builds fifteen. My iteration-13 note says
+construction is refused by geometry on 99% of attempts; alice's fifteen towers on the same
+map, same symmetry, are a direct refutation of that being a property of the *map*.
+
+Iteration 17 is therefore re-aimed at **tower construction**, and its first step is a
+decision-level instrument (§3: instrument the decision, not the outcome): count how often
+a soldier *wants* a ruin and what refuses it, on Rose specifically, where the opponent
+proves 15 sites exist. The upgrade-reserve and money-tower-upgrade defects are real and
+stay queued behind it, but they are second-order against a 15-tower gap.
