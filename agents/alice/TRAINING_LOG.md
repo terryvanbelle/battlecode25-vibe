@@ -2549,3 +2549,52 @@ the games *end* at r335-r800 because bob reaches 70% outright; the decisive phas
 there is r0-r400, which is precisely the phase iteration 12 addresses. The idle
 post-saturation window only exists in games alice is not already losing. Fix the
 expansion race first; harvest the idle turns second.
+
+### The tournament's other half: alice is not weak, alice is missing one capability
+
+Partial standings at 323 of 450 games, once the alice-carol pair began:
+
+| pair | record |
+|---|---|
+| bob beats alice | **143 - 7** (4.7%) |
+| alice beats carol | **10 - 1** (90.9%) |
+
+This materially changes the reading. Alice is not a weak bot in absolute terms —
+against the *other* independent lineage it wins nine games in ten. The 4.7% is
+one specific capability that bob has and that **both** alice and carol lack, which
+is exactly what the traces say it is: directed expansion.
+
+Two consequences for the method:
+1. Per the opponent-pool classification, `bob` is a **benchmark** (<30%), not a
+   peer: a target to close on, and it must never gate acceptance. `carol` is a
+   peer that alice currently dominates and is close to the 80%-retire rule — but
+   these are tournament opponents, not gauntlet opponents, so neither rule
+   applies mechanically. Recorded so a later session does not misapply them.
+2. Two of three independent lineages converged on the same blind spot. That is
+   worth more than a single lineage's failure: it suggests the diffusive-expansion
+   trap is what a bot naturally grows into from a reactive `senseNearbyRuins`
+   soldier, and that escaping it is a deliberate act. It also means the tournament
+   would have been a *weak* instrument if only alice and carol existed — the
+   sanctioned channel is only as good as the most different bot in it.
+
+### Iteration 12 — the remaining two pre-checks, for the record
+
+**History.** `wander`'s `5 + rnd(8)` run length is iteration 0's arbitrary choice.
+No iteration ever established it on evidence, so changing it supersedes nothing.
+Better: the functional-area map has carried "wander + slide; soldiers walk into
+map corners and die there | iter0" as a known defect since the beginning, and the
+vision/action table already listed *random wander* as the fallback for soldier,
+mopper and splasher alike. Iteration 7 fixed exactly this for moppers by giving
+them a destination (accepted, 20/23). Iteration 12 is the same idea applied to
+the fallback itself, for the units iteration 7 did not cover.
+
+**Trigger frequency.** The branch is not rare — it is the soldier's *default*.
+A soldier reaches `wander` on every turn with no unbuilt ruin inside r²=20, which
+after the first ~80 rounds is nearly every turn for nearly every soldier: on
+gridworld `alice_iter7` built no tower at all between r80 and r240 while holding
+$3,240, so essentially the whole army was in the wander branch the whole time.
+
+One risk this raises, registered before the sweep: the same "walks into a corner
+and dies" defect gets *longer* commitment at dose 400. The re-roll-on-block should
+catch it (a map edge fails `canMove`, forcing a fresh heading), which is why the
+zero/25/100/400 curve is worth having rather than a single point.
