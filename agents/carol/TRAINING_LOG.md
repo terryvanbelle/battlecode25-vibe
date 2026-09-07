@@ -5656,3 +5656,55 @@ losing badly to the lineage). Given moppers pay off in long coverage wars and `c
 games fast, I expect dose 2 to do slightly *better* than the incumbent against the rusher; if
 it instead drops materially, that is new information and I will treat it as such rather than
 waving it through on a good head-to-head.
+
+## Iteration 21 RESULT — ACCEPT. Dose 2 beats the incumbent 5 by +6 games.
+
+Run `20260907-145635`, 20 pinned maps, null `carol_m18`.
+
+| gate | threshold | result |
+|---|---|---|
+| h2h vs `carol_iter18` | >50% | **26/40 = 65.0%** |
+| peer `WinPct` | 60% | **met** |
+| **margin vs the `carol_m18` null** | >0 | **+6 games**, 9 maps up / 3 down |
+| swept-win / swept-loss | — | **9 / 3** |
+| regression vs `carol_rush` | no drop from 37/40 | **37/40 = 92.5%, identical** |
+| map prediction | gains where tower paint is scarce | **confirmed as a gradient** |
+| overall | — | 63/80 = 78.8% |
+
+**The gradient is the strongest part.** Every map that moved up sits above 74% tower-paint
+starvation (walalilongla 93.8%, PlumberGame 83.7%, Bunny 74.7%); both maps with data that moved
+down sit below 60% (DefaultLarge 59.4%, Castle 26.5%). The *dose of the underlying condition*
+predicts the *sign* of the outcome across five independently-measured maps. A unit-mix change
+has no map-local mechanism to instrument, so this gradient is the closest thing to a firing
+counter available — and it behaves exactly as the price argument says it must.
+
+**How this iteration was actually found — worth recording as method, not just result.** It came
+out of a *rejected* iteration. I proposed cutting moppers because they idle on 95.1% of 78,480
+turns; the mandatory **zero arm** refuted that at 35%, and the same run's dose-2 arm beat dose 0
+by more than dose 5 did (72.5% vs 65.0% against a shared opponent on identical maps), exposing
+a **concave curve with the incumbent past its peak**. Neither of my framings survived — "cut
+them" and, after a partial read, "add more". The truth was the third option I had not
+considered: **moppers are valuable and there are too many of them.**
+
+Without the zero arm I would have had a single 2-vs-5 comparison and no way to tell a slope
+from a peak. Doctrine #2 requires it for exactly this reason and it paid for its 40 games twice
+over — once by killing my hypothesis, once by pointing at the accept.
+
+**DECISION: ACCEPT.** Snapshotted `carol_iter21`; `src/carol` is now iteration 21. Fresh mirror
+`carol_m21` built from the new baseline in the same commit.
+
+**Consequence for iteration 22**, flagged before it lands: run `20260907-150922` measures the
+splasher dose arms against `carol_iter18`, which is no longer the baseline. Its **dose curve**
+(`SPLASHER_IN_20` 0 vs 3 vs 6, within-run, shared maps) stays valid; its **accept gate** must be
+re-measured against `carol_iter21` with the `carol_m21` null. Third time this session; it is a
+standing cost of running candidates in parallel and worth paying for the throughput.
+
+### Where the mopper thread now stands
+
+Three points measured on the curve: 0 → 35%, 2 → accepted at 65% over 5, 5 → the old incumbent.
+The peak is at or below 2 and is **not yet bracketed from below** — dose 1 is untested and dose
+0 is bad, so the optimum lies in `{1, 2}` unless the curve is flat there. That is one constant
+and one run, and it is the natural next dose. Iteration 19's finding that the right share is
+*matchup-dependent* (the zero arm scored 39/40 against `carol_rush` while losing 35% to the
+lineage) argues that the real answer is a threshold read from game state — enemy paint seen per
+turn — rather than any constant at all.
