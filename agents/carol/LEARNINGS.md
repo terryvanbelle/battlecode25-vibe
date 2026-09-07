@@ -402,3 +402,25 @@ Two corollaries earned the same day:
   it existed to prevent completely unmitigated, inside the fix for an inert mechanism. Replaced
   with one whose tripping is observable in the trace (`upgSave` vs `upgGiveUp`), and its firing
   is now a **registered gate**, not an assumption.
+
+## "More X doesn't help" does not license "less X is free"
+
+Three iterations (5, 8, 10) raised carol's unit production by three different routes; iteration
+10 fielded **4.1x the soldier-turns** and the head-to-head moved from 50.0% to 47.5%. I
+summarised that, correctly, as "unit production is not the binding constraint" — and then used
+it to justify iteration 12b, which **withheld** spawning to fund tower upgrades. It lost 32
+points (62.5% -> 30.0%), with 12 swept-losses to 4 swept-wins.
+
+Those three iterations measured the **upward** direction only. A plateau in one direction says
+nothing about the gradient in the other, and a bot sitting at the *edge* of a plateau looks
+identical, in that data, to one sitting in the middle of a flat region. The two differ entirely
+in what a *reduction* costs.
+
+**The rule**: before spending a resource on the grounds that more of it was worthless, check
+that *less* of it is also cheap — that is a separate measurement, and the zero arm of the new
+mechanism is not the same experiment as the old one's upper arm.
+
+This rejection was worth its run precisely because both pre-registered gates passed: `UPG` fired
+22 times on 10/10 maps and the guard tripped 152 times on 10/10, so the mechanism demonstrably
+did what it was designed to do and the result is about the *trade*, not the implementation. The
+strongest rejections are the ones where the mechanism worked.
