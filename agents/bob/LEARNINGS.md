@@ -453,3 +453,41 @@ everything else".
    iterations and then cost 20 points the moment a multiplicative mechanism arrived.
    A coin-flip accept is not "free to keep" — it is an unpriced liability against every
    future feature.
+
+## 16. A heuristic that nominates a candidate is not evidence about it (2026-09-07)
+
+LEARNINGS 15 rule 4 says to suspect an interaction wherever a new mechanism's payoff is
+multiplicative in an existing quantity. Applied to my own lineage it immediately
+nominated a second pair: iteration 3's tower self-upgrade (2,500 chips for +5 paint/turn
+on one tower) versus SRPs (200 chips for +3/turn on *every* paint tower). The
+arithmetic looked overwhelming — an order of magnitude better per chip — and iteration 3
+had been accepted back when chips were a dead resource piling to 70,000 unspent, a
+condition SRPs had since removed. Textbook shape.
+
+I ran it anyway. **Removing the upgrade cost 9 games and 8 net sweeps.** The prediction
+was backwards.
+
+The arithmetic was wrong because it treated the two as competing for one job.
+They are **additive on the same tower**: a level-1 paint tower mines 5/turn and each
+SRP adds 3, so three SRPs give 14; upgrading doubles the *base* and the same tower gives
+19. The upgrade is what makes each tower a *bigger platform* for the SRPs — and it also
+buys 1000 → 1500 HP, which an income-only comparison cannot see.
+
+**The rules:**
+
+1. **A structural heuristic selects what to measure; it never substitutes for the
+   measurement.** I was one paragraph from writing "SRPs obsolete upgrades" into the
+   closed-directions ledger on arithmetic alone. One 50-game run stopped it.
+2. **The sign of an interaction is not predictable from its shape.** Both pairs I found
+   have the identical signature "payoff multiplicative in an existing quantity". The
+   hash/SRP pair was **destructive**, because the hash controlled the *variance* of the
+   multiplier. The upgrade/SRP pair is **constructive**, because the upgrade raises the
+   *level* of the base. Structure tells you a pair is coupled; only a run tells you
+   which way.
+3. **When comparing two mechanisms, first ask whether they are substitutes or
+   complements.** "Cost per unit of X" comparisons silently assume substitutes. If both
+   effects land on the same object and add, the cheaper one does not retire the dearer
+   one — it makes it *more* valuable, and cost-efficiency ratios actively mislead.
+4. **A refuted prediction from a good heuristic is a success, not a waste.** It cost one
+   run, corrected my model of the economy, and left the rule stronger by bounding what
+   it can and cannot tell me.
