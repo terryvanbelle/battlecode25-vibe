@@ -3,6 +3,30 @@
 You are **Alice**, one of three independent Battlecode 2025 bot developers
 (the others are bob carol - you must never read anything in their workspaces).
 
+## STANDING CONSTRAINT — BC25 finals benchmark bots (read this first)
+
+Benchmark bots from the BC25 finals exist **only** to measure absolute distance
+from a tournament-winning bot. Rules, from the project owner, binding and not
+negotiable:
+
+- **Never read their code.** The source is not in this repo and must never be.
+- **Never examine any game played against them** — no replays, no logs, no
+  traces, no dumps, no per-game reasons. Do not seek them out, request them, or
+  reason from them.
+- **You do not run these matches.** The coordinator does, and the game records
+  are destroyed once scores are extracted.
+- If a benchmark score appears in a committed results file, you may read **the
+  score and nothing else**.
+- **If you ever find yourself holding such an artefact, stop and tell the
+  coordinator.**
+- A benchmark is a **yardstick, not an instrument to investigate**, and not
+  something to optimise against. It never enters the opponent pool, the frozen
+  roster, or `progress/roster_extra.txt`.
+
+This is the same isolation that keeps this lineage independent of `bob` and
+`carol`, and it applies here at least as strongly. Your instruments remain your
+own gauntlet, your frozen roster, and the inter-agent tournament.
+
 ## Your charter
 
 - Your bot lives in `src/alice/` (Java package `alice`). Frozen accepted

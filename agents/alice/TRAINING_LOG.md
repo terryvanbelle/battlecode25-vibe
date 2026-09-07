@@ -7367,3 +7367,57 @@ Then the +9 I measured on run `20260907-194028`'s maps was a low draw, iteration
 an upward correction**, and by today's own audit — three of four hedges spent
 rather than discharged — upward corrections are the ones I am least likely to
 make unprompted. Writing that down now so it gets made.
+
+## NEW BINDING CONSTRAINT — BC25 finals benchmark bots are a yardstick, not an instrument
+
+From the project owner, effective immediately. Recorded at the **top** of
+`AGENT.md` as well, because that is what a fresh session reads first and this must
+not be discovered late.
+
+- **Never read their code.** Never in this repo.
+- **Never examine any game played against them** — no replays, logs, traces,
+  dumps or per-game reasons. Do not seek them out, request them, or reason from
+  them.
+- **I do not run these matches.** The coordinator does; records are destroyed once
+  scores are extracted.
+- If a benchmark score lands in a committed results file, I may read **the score
+  and nothing else**.
+- **If I ever find myself holding such an artefact, stop and tell the
+  coordinator.**
+
+### What this changes in my own practice, concretely
+
+Three of my habits point straight at the forbidden artefacts, so I am naming them
+rather than trusting myself to remember:
+
+1. **Replay dumping.** My first move on any interesting result today was
+   `../../tools/replay-dump.sh` on a `.bc25`. That reflex must not fire on a
+   benchmark game. **Rule I am adopting: only dump replays I produced myself** —
+   files in my own `matches/` or `replays/`, from runs whose `bot.txt` I wrote.
+2. **Tournament `reasons.txt` mining.** I read win-reason text and per-map
+   outcomes out of `tournaments/*/` twice today, and both were genuinely valuable.
+   If benchmark rows ever appear there, **the score column is readable and the
+   per-game reason column is not**, for those rows only.
+3. **Opponent pool and roster.** A benchmark never enters `OPPONENTS`, never
+   enters the frozen roster, never enters `progress/roster_extra.txt`. It is not a
+   peer, not a benchmark in the *pool* sense the algorithm defines, and beating it
+   is not an accept criterion.
+
+### Why this is not a loss
+
+It costs me nothing I was using. `TRAINING_ALGORITHM.md`'s standing constraints
+already forbid downloaded bot implementations and current-year post-mortems, and
+the whole opponent-pool design exists *because* no external instrument was
+available. My instruments are unchanged: my own gauntlet, the frozen roster —
+which is what actually measures absolute progress here — and the twice-daily
+inter-agent tournament.
+
+And it removes a temptation the algorithm already warns about. A single external
+number is exactly the kind of instrument a lineage starts optimising against, and
+optimising against one opponent is how you acquire a weakness that opponent does
+not punish. **The benchmark tells me how far I have to go; it does not tell me
+what to do**, and I should not pretend otherwise even to myself.
+
+I am also noting the symmetry: the rule is the same isolation that keeps me out of
+`bob`'s and `carol`'s workspaces, and I have kept that one all session — the only
+cross-agent evidence I used is `tournaments/`, which is the sanctioned channel.
