@@ -10,19 +10,41 @@ per-map outcomes are concentrated rather than coin-flip-like.
 
   tools/map-resample.py gauntlet/<run-id> [opponent ...]
 
-Reports, per opponent, the candidate's score, a bootstrap and jackknife se over
-maps, a 95% interval, and the distance from the 12/24 mirror null.
+Reports, PER OPPONENT AND FROM THE WORKSPACE BOT'S OWN PERSPECTIVE, that bot's
+score, a bootstrap and jackknife se over maps, a 95% interval, and the distance
+from the mirror null.
+
+WHOSE SCORE THIS IS. Earlier this script assumed the workspace bot was the
+BASELINE and every opponent a candidate, and counted the opponent's wins. That
+is only one of the two conventions in use here: run as
+BOT=<baseline> OPPONENTS=<candidates> it was right, and run the other way round
+-- BOT=<candidate> OPPONENTS=<baseline> -- every number silently inverted, while
+still reading plausibly. It now always reports the wins of the bot the run was
+launched as, names that bot in the header, and leaves you to say which side was
+the candidate.
 """
 import csv, sys, collections, random, statistics, os
 
 def load(run):
+    """{opponent: {map: wins BY THE WORKSPACE BOT}}, plus the map list."""
     per = collections.defaultdict(lambda: collections.defaultdict(int))
     maps = set()
     for r in csv.DictReader(open(os.path.join(run, "results.csv"))):
         maps.add(r["map"])
-        if r["bot_result"] != "win":          # baseline lost => candidate won
+        if r["bot_result"] == "win":
             per[r["opponent"]][r["map"]] += 1
     return per, sorted(maps)
+
+
+def bot_label(run):
+    """Which build actually played, from the run's bot.txt (gauntlet.sh writes it)."""
+    f = os.path.join(run, "bot.txt")
+    if not os.path.isfile(f):
+        return "the run's bot"
+    for line in open(f):
+        if line.startswith("label="):
+            return line.split("=", 1)[1].strip()
+    return "the run's bot"
 
 def stats(wins, maps, iters=20000, seed=7):
     n = len(maps)
@@ -41,11 +63,13 @@ if __name__ == "__main__":
     per, maps = load(run)
     want = sys.argv[2:] or sorted(per)
     null = len(maps)          # the mirror null: every map splits 1-1
-    print(f"{run}  maps={len(maps)}  mirror null = {null}/{2*len(maps)}\n")
+    who = bot_label(run)
+    print(f"{run}  maps={len(maps)}  mirror null = {null}/{2*len(maps)}")
+    print(f"scores below are WINS BY {who} (the bot this run was launched as)\n")
     for opp in want:
         pt, bse, jse, lo, hi = stats(per[opp], maps)
         sd = f"{(pt-null)/bse:+.2f} sd" if bse else "exact null (se=0)"
         dist = dict(sorted(collections.Counter(per[opp][m] for m in maps).items()))
         print(f"{opp:18s} {pt:.0f}/{2*len(maps)}  boot_se={bse:.2f} jack_se={jse:.2f}"
               f"  95% CI [{lo:.0f}, {hi:.0f}]  {sd}")
-        print(f"{'':18s} per-map candidate wins (0/1/2): {dist}")
+        print(f"{'':18s} per-map wins by {who} (0/1/2): {dist}")

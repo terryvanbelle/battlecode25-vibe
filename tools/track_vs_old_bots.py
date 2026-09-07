@@ -172,6 +172,22 @@ def main():
             continue
         tally = tally_run(results_csv, set(roster))
 
+        # Refuse a PREFIX as a roster point. collate.sh already prints
+        # "!! UNEQUAL SAMPLES ... NOT comparable" for these, and this recorder
+        # used to write them into the history anyway -- two tools in one project
+        # disagreeing about the same run, which is the failure mode a per-tool
+        # review never catches. An opponent that played fewer games than the
+        # leader played an easy-or-hard PREFIX of the map list, so its win rate
+        # is not a measurement of absolute strength.
+        counts = {o: t for o, (w, t) in tally.items()}
+        if counts:
+            full = max(counts.values())
+            short = sorted(o for o, n in counts.items() if n < full)
+            for o in short:
+                print(f"  skip {rundir.name} vs {o}: {counts[o]} of {full} games"
+                      f" -- a prefix, not a sample; not recorded")
+                tally.pop(o, None)
+
         # A run can contain an old snapshot that the CURRENT stride does not
         # select, and silently dropping it is a trap: bootstrapping a new rung
         # means playing it deliberately, and the rung only becomes permanent
