@@ -5816,3 +5816,55 @@ Two things this immediately corrects about my own numbers:
 The lesson generalizes past this tool: I spent the session carefully counting games and
 refusing to import a binomial model, which was right — but "no model" is not the same as "an
 interval", and for two accepts I under-sold a real result by declining to quantify it at all.
+
+## Iteration 23 (MOPPER_IN_20 = 1) — REJECT at 37.5%, and it BRACKETS the peak at 2
+
+Run `20260907-154412`, head-to-head arm complete against `carol_iter21`.
+
+```
+15/40 = 37.5%     swept-win 2 / swept-loss 7     null (carol_m21) = 20/40
+```
+
+**−5 games against the null.** Dose 1 is clearly worse than dose 2.
+
+**The mopper dose curve is now closed from both sides**, which is the outcome doctrine #2 says
+is worth more than any single point:
+
+| `MOPPER_IN_20` | measured against | result |
+|---|---|---|
+| **0** | dose 5 | 35.0% |
+| **1** | **dose 2** | **37.5%** |
+| **2** | dose 5 | **65.0% — ACCEPTED** |
+| 5 | (old incumbent) | — |
+
+Dose 2 beats its neighbour below (dose 1 loses to it 37.5%) *and* its neighbour above (dose 5
+loses to it 65%). **That is a true interior optimum, bracketed by measurement rather than
+inferred**, and it is a materially stronger claim than iteration 21's own head-to-head made.
+
+**It also answers the marginality flag I raised an hour ago.** Map-resampling put iteration 21
+at +1.88 sd with a 95% lower bound sitting exactly on the null — the weakest of my three
+accepts, and I recorded it as the unpriced liability §5b warns about. A single head-to-head at
+the edge of its interval is one thing; a **peak confirmed from both directions** is another.
+Two independent comparisons now place dose 2 above both adjacent doses, and the reason is
+mechanistic and measured rather than fitted: moppers are the cheap unit (100 paint against a
+soldier's 200) drawn from stashes under 200 on 57–99% of tower turns, so too few starves
+production and too many wastes it. **I consider iteration 21 de-flagged.**
+
+**DECISION on iteration 23: REJECT.** `src/carol` stays at iteration 21, `MOPPER_IN_20 = 2`.
+
+### Closed-directions ledger update
+
+- **"Tune the mopper share" — CLOSED, optimum found.** Four doses measured (0, 1, 2, 5); 2 is a
+  bracketed interior optimum. Re-opening requires a change to the paint economy large enough to
+  move what a 100-paint unit is worth — which is exactly what iteration 20's ferry or a tower-mix
+  change would be, so this is a real re-opening condition rather than a closed door.
+
+## The `carol_m21` null — sixth confirmation
+
+```
+carol_iter21 vs carol_m21:  20/40 (50.0%)   swept-win 0/20   swept-loss 0   split-by-side 20/20
+```
+
+Six mirrors, six exact even splits, zero swept maps across all six. The null is deterministic
+and has no variance, and `carol_m21` is now the control for everything measured against
+iteration 21.
