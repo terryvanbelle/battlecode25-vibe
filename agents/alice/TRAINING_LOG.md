@@ -7421,3 +7421,98 @@ what to do**, and I should not pretend otherwise even to myself.
 I am also noting the symmetry: the rule is the same isolation that keeps me out of
 `bob`'s and `carol`'s workspaces, and I have kept that one all session — the only
 cross-agent evidence I used is `tournaments/`, which is the sanctioned channel.
+
+# ADDITIVITY IDENTITY CLOSED — and it is a measured non-transitivity
+
+Run `20260907-205244` complete. All three comparisons now sit on **one pinned
+25-map sample**, so the arithmetic below is an **identity, not an estimate**.
+
+| comparison | score | se | 95% CI | swept W/L | value |
+|---|---|---|---|---|---|
+| `i23abl` vs `iter22` — **effect (1)**, stop paying | 33/50 | 2.72 | [28, 38] | 9 / 1 | **+8** |
+| `iter23` vs `i23abl` — **effect (2)**, scan onward | 31/50 | 2.55 | [26, 36] | 7 / 1 | **+6** |
+| `iter23` vs `iter22` — **the WHOLE** | **33/50** | 2.74 | [28, 38] | **9 / 1** | **+8** |
+
+```
+effect (1) + effect (2)  =  +8 + 6  =  +14
+the whole                            =   +8
+                  ADDITIVITY GAP     =   +6      STRONGLY SUB-ADDITIVE
+```
+
+**My prediction was right** — sub-additive, whole near the +8/+9 range, not +14.
+First correct prediction I have made about this change after three consecutive
+misses. I am recording that it was *one* correct call inside a run of four, not a
+recovery of calibration.
+
+### The whole is not merely close to effect (1) — it is INDISTINGUISHABLE from it
+
+`iter23` vs `iter22` scores **33/50, swept 9/1**. `i23abl` vs `iter22` scores
+**33/50, swept 9/1**. Identical on every summary statistic. Aggregates can
+coincide by accident, so I ran the deterministic cell check this project's own
+§4 prescribes — counting the `(map, side)` cells on which two builds disagree:
+
+```
+50 cells compared.  6 disagree (12%).
+  iter23 wins where i23abl loses:  Oasis B, Racetrack A, headphones A   (3)
+  i23abl wins where iter23 loses:  Barcode A, SMILE B, mit B            (3)
+```
+
+**Six scattered, mixed-direction flips, split exactly 3–3 across six different
+maps.** That is the churn signature doctrine #10 defines, not a causal effect.
+**Against `alice_iter22`, the `continue` is not "worth a little" — it is worth
+nothing, and the diff shape proves it rather than the aggregate merely failing to
+detect it.**
+
+Yet against `i23abl` the same clause scores 31/50 while sweeping **7 maps to 1** —
+concentrated and one-directional, which is exactly what a real effect looks like.
+
+### So this is a genuine, measured non-transitivity
+
+```
+i23abl  beats  iter22   by +8
+iter23  beats  i23abl   by +6
+iter23  beats  iter22   by +8     (not +14)
+```
+
+Not a contradiction and not noise — **matchup structure**. Effect (2) helps
+specifically against an opponent that has *already* fixed the engine trap, and
+buys nothing against one that has not. Mechanistically that is coherent: scanning
+onward to a paintable pattern tile only matters when your opponent is also
+converting patterns efficiently and the race is tight; against a bot bleeding
+5 paint per refused attack, the race is not close enough for the refinement to
+change an outcome.
+
+### This is §5b's "partial derivative" made concrete, and it is worth more than the accept
+
+§5b warns that the head-to-head accept gate *"measures a candidate's marginal
+value conditional on everything the baseline already carries"* and that a chain of
+individually-positive accepts can therefore walk downhill. **Here is that
+conditionality measured directly, at cell level, in a single line of code**: a
+feature worth +6 against my immediate predecessor is worth **exactly 0** against
+the generation before it.
+
+The transferable rule: **head-to-head margins do not chain.** "A beat B by 8" and
+"C beat A by 6" does not license "C beats B by 14", and the only way to know is to
+play C against B on the same maps. This is precisely why the **frozen roster**
+exists and why a head-to-head chain cannot substitute for it.
+
+### Decisions
+
+1. **Iteration 23's accept STANDS.** +8 over `iter22` on the pinned sample,
+   consistent with the 34/50 (+9) that accepted it on an independent sample.
+   Nothing here weakens the accept; what it revises is the *attribution*.
+2. **Attribution, final**: iteration 23's value over `alice_iter22` is
+   **entirely effect (1)** — declining to pay 5 paint for an engine-refused
+   action. The engine-trap framing in `tools/engine-facts.md` is not just the
+   larger half, it is the whole of the improvement against the previous build.
+3. **The `continue` stays in the shipping bot**, and I want the reason on record
+   rather than assumed: it beats `i23abl` head-to-head 31/50 sweeping 7 maps, the
+   accept gate is a head-to-head against the most recent accepted snapshot, and it
+   costs nothing measurable in bytecode. It is carried as **insurance against
+   opponents who fix their own trap**, not as a contributor to today's margin.
+4. **Superseding my "essentially nothing" retraction, again, and more precisely.**
+   Effect (2) is +6 against a trap-fixed opponent and **0 against `iter22`**. My
+   original "+1, essentially nothing" was wrong about the mechanism and
+   accidentally close about the number *in the matchup that produced it*. Neither
+   the claim nor its retraction was right; the truth is matchup-dependent, which
+   is a thing neither version of me had considered.
