@@ -47,26 +47,31 @@ public class RobotPlayer {
      * replays never reach 5. So this fires almost only in the terminal case.
      */
     /**
-     * Chips a paint tower must hold before spending 2,500 on a lv2 upgrade. Iteration 12.
+     * Splasher share of the tower spawn roll, in twentieths. Iteration 11.
      *
-     * 3,700 = CHIP_RESERVE (1,200) + the 2,500 upgrade cost, so an upgrade can never eat the
-     * ruin-completion reserve that iteration 2 established and iteration 6 was punished for
-     * mishandling.
+     * Why now, after three iterations that raised unit production and converted nothing
+     * (5 accepted on other grounds, 8 at 50.0%, 10 at 47.5% while fielding 4.1x the soldiers):
+     * carol's soldiers are IDLE on 38.4% of their turns and paint on only 12.4%, and the single
+     * largest block is IDLE-ENEMY at 22.5% -- soldiers stood beside enemy paint they physically
+     * cannot convert, because a soldier paints only EMPTY or ally tiles. Splashers are the ONLY
+     * unit that bulk-converts enemy paint. Carol has never built one.
      *
-     * WHY THIS IS THE LEVER. Traced gridworld r2000 (a map where alice-bob time out 0% of the
-     * time and carol 100%): carol's towers end the game holding a MEDIAN OF 0 PAINT and
-     * 406,170 CHIPS, with the tower count frozen at 13 from round 0. Paint utilisation ~100%,
-     * chip utilisation ~0%. A 0-paint tower cannot spawn at any treasury, so the army stops
-     * growing and the game is settled on tiebreak.
+     * Reachability measured before writing this: a splasher costs 400 chips so the gate is
+     * CHIP_RESERVE + 400 = 1600, which is met on 61.6% of tower-turns against a median treasury
+     * of 2,260. Iteration 4 bundled splashers precisely because that gate then failed nearly
+     * always at a 1200-1400 treasury; iteration 5's income fix removed that condition.
      *
-     * Upgrading is the ONLY mechanism in the game that converts chips into paint INCOME
-     * (engine-probed: lv1 5/turn -> lv2 10/turn, an exact doubling, +500 HP), and unlike
-     * building a new paint tower (iteration 8, rejected) it costs ZERO paint -- no ruin, no
-     * 5x5 pattern. Reachability measured over 146,350 tower-turns before writing this: 21.7%
-     * clear 3,700 chips, and in the stalled games that are the actual problem, nearly all do.
+     * Dose: 0 (zero arm) / 3 (15%) / 6 (30%, iteration 4's untested value). The real cost is
+     * paint, not chips -- a splasher is 300 paint against a soldier's 200 -- so start low.
      */
-    static final int UPGRADE_MIN_CHIPS = 3700;   // = CHIP_RESERVE + 2500, the lv2 case; the live gate is computed per level
+    static final int SPLASHER_IN_20 = 3;
 
+    /** Minimum splash score worth spending 50 paint on. Named so it can be a dose. */
+    static final int SPLASH_MIN_SCORE = 8;
+
+    /** Iteration 12: see TRAINING_LOG.md. Gate is computed per level, never a constant --
+     *  a fixed CHIP_RESERVE+2500 would let a lv2->lv3 upgrade (5,000) strand the treasury
+     *  below the ruin-completion reserve, which is how iteration 6 lost DefaultSmall. */
     static final int STAGNANT_ROUNDS = 10;
     static int lastChips = -1;
     static int stagnantTurns = 0;
@@ -158,17 +163,9 @@ public class RobotPlayer {
         lastChips = chips;
         int reserve = (stagnantTurns >= STAGNANT_ROUNDS) ? 0 : CHIP_RESERVE;
 
+        // Mopper share held at 25% exactly as before; the splasher share comes out of soldiers,
+        // so this is one change (add splashers), not two.
         // ---- Iteration 12: upgrade THIS paint tower when chips are abundant. ----
-        // Paint towers only. A money-tower upgrade buys +10 chips/turn, i.e. more of the
-        // resource already being discarded at 406,170; excluding it keeps this one mechanism.
-        // canUpgradeTower() enforces every legality condition itself, so if the engine forbids
-        // a tower upgrading itself this is a silent no-op that the "UPG" tag exposes in a
-        // single match rather than costing a full evaluation.
-        // The gate is the NEXT LEVEL's cost plus the reserve, not a constant. A fixed 3,700
-        // protects the 1,200 reserve for a lv2 upgrade (2,500) but NOT for a lv3 upgrade
-        // (5,000): a tower holding 6,000 would upgrade down to 1,000 and strand the treasury
-        // below the ruin-completion reserve -- exactly how iteration 6 lost DefaultSmall by
-        // annihilation at round 69, pinned between the reserve and the build gate.
         String upg = "";
         if (rc.getType().getBaseType() == UnitType.LEVEL_ONE_PAINT_TOWER
                 && rc.getType().canUpgradeType()) {
@@ -182,7 +179,10 @@ public class RobotPlayer {
             }
         }
 
-        UnitType want = (rng.nextInt(4) == 0) ? UnitType.MOPPER : UnitType.SOLDIER;
+        int roll = rng.nextInt(20);
+        UnitType want = (roll < SPLASHER_IN_20) ? UnitType.SPLASHER
+                      : (roll < SPLASHER_IN_20 + 5) ? UnitType.MOPPER
+                      : UnitType.SOLDIER;
         if (chips >= reserve + want.moneyCost) {
             Direction dir = DIRS[rng.nextInt(8)];
             MapLocation loc = rc.getLocation().add(dir);
@@ -377,25 +377,49 @@ public class RobotPlayer {
 
     static String runSplasher() throws GameActionException {
         refillIfPossible();
+        String tag = "";
+        int bestScore = 0;
         // Splash toward the most enemy/empty paint within reach.
-        if (rc.isActionReady() && rc.getPaint() >= UnitType.SPLASHER.attackCost) {
+        boolean ready = rc.isActionReady();
+        boolean fueled = rc.getPaint() >= UnitType.SPLASHER.attackCost;
+        if (ready && fueled) {
             MapLocation me = rc.getLocation();
             MapLocation best = null;
-            int bestScore = 0;
             for (MapLocation c : rc.getAllLocationsWithinRadiusSquared(me, 4)) {
                 if (!rc.canAttack(c)) continue;
                 int score = 0;
                 for (MapInfo t : rc.senseNearbyMapInfos(c, 4)) {
                     PaintType p = t.getPaint();
-                    if (p == PaintType.EMPTY && t.isPassable()) score += 2;
-                    else if (p.isEnemy()) score += 3;
+                    if (p.isEnemy()) {
+                        // BUG FIX (this iteration): enemy paint is overwritten ONLY within
+                        // r2=2 of the centre [E: RULES.md splasher attack]. The original scored
+                        // enemy tiles anywhere in r2=4, so it preferred centres ringed by enemy
+                        // paint it could not actually convert. Scoring a target the mechanism
+                        // cannot hit would make a rejection uninterpretable, so this is part of
+                        // making the mechanism testable, not a second hypothesis.
+                        if (c.distanceSquaredTo(t.getMapLocation()) <= 2) score += 3;
+                    } else if (p == PaintType.EMPTY && t.isPassable()) {
+                        score += 2;
+                    }
                 }
                 if (score > bestScore) { bestScore = score; best = c; }
             }
-            if (best != null && bestScore >= 8) rc.attack(best);
+            if (best != null && bestScore >= SPLASH_MIN_SCORE) {
+                rc.attack(best);
+                tag = " SPLASH";
+            } else {
+                tag = (best == null) ? " noTgt" : " lowScore";
+            }
+        } else {
+            // Splasher action cooldown is +50 and cooldowns fall 10/turn, so 4 turns in 5
+            // after a fire are necessarily blocked -- an engine ceiling, not a bot defect.
+            // Conflating that with paint starvation would misread the ceiling as a fault.
+            tag = !ready ? " cd" : " noPaint";
         }
         moveExploring(null);
-        return "P";
+        // Instrumented: the old version returned a bare "P", so a splasher was invisible in
+        // every replay and its mechanism gate could not be checked at all.
+        return "P" + tag + " s=" + bestScore + " p=" + rc.getPaint();
     }
 
     // ------------------------------------------------------------------ shared
