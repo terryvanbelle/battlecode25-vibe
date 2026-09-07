@@ -6547,3 +6547,71 @@ reject, 22 accept, 23 pending. `MaxConsecutiveRejects` is 3 and there is no reje
 streak, so the area is not closed. But four consecutive iterations in one area is
 worth noticing on its own: **if 23 rejects, the next attempt should leave this
 area** even though the formal rule would not yet require it.
+
+## Iteration 23 accept gate — 34/50, and my pre-registered prediction is WRONG
+
+The `alice_iter22` arm of run `20260907-194028` is complete (50/50 games).
+
+| | value |
+|---|---|
+| score vs `alice_iter22` | **34/50 (68.0%)** |
+| boot se / jack se | 2.39 / 2.45 |
+| 95% CI | **[30, 39]**, null 25 |
+| distance from null | **+3.77 sd** |
+| per-map histogram | **`{1: 16, 2: 9}`** |
+| swept-win / swept-loss | **9 / 0** |
+
+**The diff shape is as clean as this instrument can produce: the candidate does
+not lose a single map from both sides.** Nine maps swept, sixteen split by side,
+zero swept losses. Under doctrine #7 that is maximally one-directional — there is
+no map on which the change is worse.
+
+### And the pre-registered density prediction FAILED
+
+I wrote, before the run: *"I expect the sparse half to be larger. If it is not,
+the mechanism is not what I think it is even if the headline clears."*
+
+**Spearman rho = +0.318, permutation p = 0.127.** Two things are true:
+
+1. **p = 0.127 means there is no density trend to speak of at all** — this is not
+   "a trend in the other direction", it is a null with a point estimate that
+   happens to sit on the wrong side of zero.
+2. **My directional prediction is nevertheless not supported**, and I said in
+   advance what that would mean. Honouring it.
+
+### Reconciling it — and flagging that this reconciliation is POST-HOC
+
+My prediction was derived from **effect (1)**: the live window is longer on sparse
+maps, so there is more refused-attack waste to remove there. But I had **already
+measured that effect (2) dominates** — the `continue` finding a paintable tile
+further along the same pattern, where 11 of 14 refused attacks at r200 became
+landed ones and the candidate landed 53 against 42. Effect (2)'s frequency does
+not scale with how long unclaimed ruins persist; it scales with **how often a
+pattern holds a mix of enemy and paintable tiles**, which if anything is higher
+where ruins are dense and contested.
+
+So the honest account is: **I pre-registered a prediction derived from the effect
+my own mechanism check had already shown to be the smaller one.** The prediction
+failing is a defect in my reasoning, not a surprise in the data.
+
+**This explanation is post-hoc and I am not entitled to believe it.** It is
+written down as a hypothesis for a future test, not as a rescue. What the
+pre-registration buys me is precisely that I cannot now quietly claim the density
+result "supports" anything.
+
+### What this does and does not change
+
+It does **not** invalidate the score. 34/50 at +3.77 sd with zero swept losses is
+a fact about game outcomes, independent of which of two co-occurring effects
+drives it, and both effects are consequences of the same one-line change.
+
+It **does** mean the mechanism attribution stays open, and it sharpens what to ask
+next: the two effects are separable (a variant that skips enemy tiles but still
+`break`s would isolate effect 1). That is the ablation this iteration earns if it
+accepts — and per §5b's "an ablation prices a CODE PATH, not a concept", these are
+two paths in one line and I should not assume the price divides the way the story
+does.
+
+**No accept recorded yet**: `alice_flood` is at 4/6 and `alice_iter7` has not
+started, so the peer gate is unmeasured. The price watch I owe — `OVR=` and the
+tower-paint/population check — is running next.
