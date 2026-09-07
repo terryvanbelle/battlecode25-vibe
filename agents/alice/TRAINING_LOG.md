@@ -7151,3 +7151,69 @@ disappears, and no trace line records a non-event. **I kept betting on the
 mechanism that produces observable events over the one that produces absences**,
 and the absence was worth eight times more. That is the same reason the trap
 survived 22 iterations in the first place.
+
+## Ablation COMPLETE — and I have to correct the entry I wrote an hour ago
+
+Run `20260907-202412`, both arms, **same 25 maps**, so the two comparisons are
+exact against each other.
+
+| arm | score | se | 95% CI | vs null | swept W/L | per-map |
+|---|---|---|---|---|---|---|
+| `i23abl` vs `iter22` = **effect (1) alone** | **33/50 (66%)** | 2.72 | [28, 38] | **+2.94 sd** | 9 / 1 | `{0:1, 1:15, 2:9}` |
+| `i23abl` vs `iter23` = **inverse of effect (2)** | **19/50 (38%)** | 2.55 | [14, 24] | **−2.35 sd** | 1 / 7 | `{0:7, 1:17, 2:1}` |
+
+### CORRECTION: effect (2) is +6, not "+1, essentially nothing"
+
+An hour ago, with only the first arm complete, I wrote that effect (2) was *"worth
+about +1 game — essentially nothing"* and headlined a commit *"effect (1) is +8 of
+the +9."* **That was derived by subtracting a +8 measured on one map sample from a
++9 measured on a different one — the exact cross-run subtraction I flagged as
+unreliable in the same entry, and then reasoned past anyway.**
+
+Measured within-run, `iter23` beats `i23abl` **31/50, sweeping 7 maps to 1**:
+
+| | within-run value |
+|---|---|
+| effect (1) — stop paying for engine-refused attacks | **+8** |
+| effect (2) — scan onward to a paintable tile | **+6** |
+
+My *prediction* is still wrong — I said effect (2) was the larger and it is not
+(6 < 8) — but "essentially nothing" was wrong by six games, and it was wrong for a
+reason I had already written down. **This is the density-gradient failure again in
+a new costume: I flagged the uncertainty and then used the number anyway**, when
+the instrument that resolved it was already running.
+
+Superseding the earlier entry in place: **both effects are real and comparable in
+size.** The engine-trap framing remains the larger half and `tools/engine-facts.md`
+stands, but "the `continue`-versus-`break` refinement is a rounding error" is
+retracted.
+
+### The pre-registered additivity check FAILS, which is the outcome I said was more valuable
+
+```
+effect (1) + effect (2)  =  +8 + 6  =  +14
+observed whole (iter23 vs iter22)   =   +9
+                    additivity gap  =   +5 games, sub-additive
+```
+
+I pre-registered: *"If they do not sum, something is interacting that I have not
+named — which is the more valuable outcome of the two."* They do not sum.
+
+**But I am not calling it established, for the reason that just bit me.** The
++14 is measured on run `20260907-202412`'s maps; the +9 comes from run
+`20260907-194028`'s different sample. Combining the standard errors
+(2.72, 2.55, 2.39) puts the gap at roughly **1.1 sd — suggestive, not significant.**
+I refuse to make the same cross-run mistake twice in one evening.
+
+**So I am measuring the whole on the parts' own maps.** Run `20260907-205244`
+launched: `alice_iter23` vs `alice_iter22`, **`MAPS` pinned to
+`gauntlet/20260907-202412/maps.txt`**, 50 games. That makes all three comparisons
+exact within one map sample and turns the additivity check from an estimate into
+an arithmetic identity.
+
+**Mechanistic prediction, recorded before it lands**: I expect the gap to survive,
+because the two effects are **partial substitutes** — both convert the same wasted
+soldier-turn into a productive one, so whichever fires first takes the credit and
+the second has less left to fix. If that is right, the whole should land near +9
+on the pinned maps rather than near +14. Given my record on this change (three
+predictions, three wrong), that is worth exactly nothing until measured.
