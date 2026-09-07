@@ -242,6 +242,16 @@ building a solution:
   a singleton and every dose was byte-identical. It had run reachability on the
   guard and never on the set the guard ranks. A ranking over one option is not a
   ranking.
+
+  **And check the SCALE: is the property you are optimising for even visible
+  inside the decision you are changing?** A different lineage was about to re-rank
+  a choice made within the action radius (r²=9, a couple of tiles) on a property
+  that exists at map scale — whether ground is contested, decided by a region
+  fifteen tiles away. Measured, the choice set was 2.3–5.1 wide and on 85.5–100%
+  of decisions **no strictly better candidate existed at all**. The distinction it
+  had traced does not exist inside the decision it meant to change. Three
+  questions, all cheap, all separate: does the branch fire, is there more than
+  one option once it does, and does the option set carry the signal.
 - **Trigger frequency.** Check how often the triggering condition fires across
   *other* recent games, not just the diagnosed one. "Helps the diagnosed case,
   hurts broadly" is a recognizable failure shape: conditions that look narrow
@@ -270,6 +280,12 @@ building a solution:
   without its paint, and a cheap unit's benefit without what its slot displaced
   — and both candidates died on the price it had not computed. Write both
   numbers down before building.
+- **An instrumented build can approach the bytecode limiter even when the
+  shipping build would not** — one probe took peak bytecode from 37.5% to 88.5%
+  with near-misses. An overrun silently truncates a turn, so a measurement taken
+  at the edge is only trustworthy if behaviour is verifiably unchanged: run the
+  arm-to-arm identity check on the instrumented build itself before believing
+  what it reports.
 - **Instrument the DECISION, not the outcome.** A zero at the output cannot
   distinguish "the mechanism ran and failed" from "the mechanism never ran".
   Count the decision point — how often the code *chose* the branch — not the
