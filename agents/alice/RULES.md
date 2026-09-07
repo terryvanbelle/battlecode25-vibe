@@ -149,6 +149,10 @@ paint fails.
   that mismatches" loop must not treat that tile as actionable.
 
 ### Ruin parity is NOT uniform — and three maps are a tracing trap
+**Canonical copy is shared ground: `../../tools/mapdata/`** (promoted from my
+scan in `11c664f`). Do not keep a second copy here — a duplicated data file goes
+stale exactly the way a forked archetype does. The summary below is for reading
+convenience; `tools/mapdata/ruin_parity.txt` is the authority.
 Ruin coordinates in the 75 official maps: **732 even `(x+y)`, 642 odd**. But the
 split is per-map, and **`gridworld`, `Filter` and `Snowman` have ruins on
 even-parity tiles ONLY** (21/21, 5/5, 6/6). Any policy keyed on `(x+y)&1`
