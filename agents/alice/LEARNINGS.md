@@ -132,7 +132,28 @@ The fix (iteration 5) is one line and carries no tuned constant: build a mopper
 only if the tower could have afforded a soldier instead —
 `rc.getPaint() < UnitType.SOLDIER.paintCost`.
 
-## 3d. Towers are the master variable, and ruin SUPPLY caps them
+## 3d. PARTLY RETRACTED — towers are the master variable, but ruin supply does NOT cap them
+
+> **Retracted 2026-09-07 by the first round-robin tournament.** The
+> master-variable half stands and is stronger than ever. The "supply, not
+> discovery" half is **wrong**, and it was wrong in the specific way this
+> three-agent project exists to catch: it was inferred entirely from self-play,
+> where both sides shared the defect, so ruins ran out late and evenly and the
+> ceiling *looked* like supply.
+>
+> The independent lineage `bob` beat alice **143-7 (4.7%)**. On gridworld —
+> 25 ruins — bob claims **14 towers by round 160** while alice stalls at **5**
+> holding $3,240 it never spends. Same map, same ruin supply. Changing **one
+> constant** in alice's wander (iteration 12) took it from **4 towers / 233‰** to
+> **15 towers / 620‰** against `alice_iter7` on that map.
+>
+> So the corrected law is: **ruin supply saturates eventually, but the RATE of
+> claiming decides the split, and the split decides the game.** Everything the
+> paragraph below retires — remembering ruins, sharing them over comms,
+> exploration heuristics — is **re-opened**.
+
+*Original text, kept for the record:*
+
 
 Across every trace, the tower column decides the game (16 v 2 on Mirage;
 8 v 6 twice). Towers produce the binding resource, so everything else is
@@ -254,3 +275,56 @@ accepted bot works. That is a better return than most accepts.
   over a full 2000-round game, peak 1638/17500 (9%) for soldiers, 534/20000 (3%)
   for towers. Expensive logic — BFS navigation, symmetry inference, per-tile
   scoring — is affordable and should not be avoided on cost grounds.
+
+---
+
+## 6. The self-referential blind spot, caught in the act
+
+This is the most important thing this lineage has learned, and it cost eleven
+iterations and a 95.8% self-measured win rate to learn.
+
+**What happened.** Iteration 9 tested "remember unbuilt ruins", saw tower count
+fail to rise (10 v 11 on Mirage), and closed *the entire family* of
+find-more-ruins ideas — memory, comms-shared ruin locations, exploration
+heuristics — with the conclusion "ruin supply, not discovery, caps tower count".
+The evidence was real. The measurement was correct. The conclusion was wrong.
+
+**Why it was wrong.** Every opponent in that measurement descended from alice, so
+every opponent shared alice's defect: soldiers that only react to ruins inside
+vision (r²=20) and random-walk otherwise. Both sides were equally bad at
+*arriving*, so ruins were consumed slowly and evenly, and the map saturating late
+looked exactly like a supply ceiling. **A defect the whole pool shares is
+invisible to the whole pool.** It does not show up as a loss, or a bad metric, or
+a suspicious trace. It shows up as nothing at all.
+
+**What broke it open.** One tournament against two independently-developed bots.
+`bob` beat alice 143-7 while alice beat `carol` 55-26 — alice was not weak, it was
+missing one capability. Two of the three lineages had converged on the same trap,
+which is itself the lesson: the trap is what a bot *naturally grows into* from a
+reactive `senseNearbyRuins` soldier, so a lineage cannot be expected to find its
+way out by looking at itself.
+
+### The transferable rules
+
+1. **A conclusion of the form "X does not matter" is only as strong as the
+   *diversity* of the pool that produced it.** "Our opponents don't punish X" and
+   "X doesn't matter" are different claims, and a self-descended pool cannot tell
+   them apart. Write down which one you actually measured.
+2. **Retiring a whole family of ideas is a much bigger claim than rejecting one
+   implementation.** Iteration 9 tested *one* mechanism (memory) and retired
+   *four* (memory, comms, exploration, sharing). One mechanism failing its gate is
+   evidence about that mechanism.
+3. **A ledger entry needs a re-open condition, and the condition must be checkable
+   by someone who does not already believe the entry is wrong.** Iteration 9's
+   was: "a map class exists where ruins are not saturated by mid-game — check the
+   ruin count against final tower totals before believing it." That condition is
+   exactly what the tournament satisfied, and it is the reason re-opening was
+   disciplined rather than a hunch. **Write the re-open condition when you close
+   the direction, not when you want to re-open it.**
+4. **When an external instrument finally arrives, spend it on your oldest
+   confident beliefs, not your newest uncertain ones.** The 4.7% did not point at
+   the iteration I was working on (SRPs); it pointed at a conclusion I had been
+   treating as settled fact for three iterations.
+5. **A rising win rate against your own history is not evidence of strength.**
+   alice's frozen-roster instrument read 95.8% the same week alice went 7-143.
+   Both numbers are correct. Only one is about strength.
