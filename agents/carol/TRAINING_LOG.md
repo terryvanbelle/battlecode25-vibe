@@ -5085,3 +5085,58 @@ accepted, the baseline moves, and iteration 19's head-to-head becomes a gate aga
 **accept decision** for iteration 19 must be re-measured against the new baseline and a fresh
 `carol_m18` mirror. Writing this down now, while it is cheap, rather than discovering it in
 the accept.
+
+## THE finding: carol's towers are paint-dry, and the unit that fixes that is the one doing nothing
+
+`buildRobot` costs "robot's paint **from the TOWER's own stash** + team chips" [E: RULES.md
+item 4]. So a tower with fewer than 200 paint cannot build a soldier however rich the treasury
+is. Measured across the 8 complete iteration-14 games:
+
+| map | tower turns | **tp < 200: cannot build a soldier** | tp < 50 | median tp | median chips |
+|---|---|---|---|---|---|
+| **Parking_lot** | 4,097 | **99.1%** | 92.1% | 38 | 3,940 |
+| **gridworld** | 6,291 | **97.3%** | 56.7% | 37 | **76,420** |
+| walalilongla | 5,165 | 93.8% | 46.2% | 58 | 2,180 |
+| PlumberGame | 7,002 | 83.7% | 45.6% | 60 | 1,470 |
+| Bunny | 6,534 | 74.7% | 61.2% | 13 | 1,460 |
+| DefaultLarge | 3,856 | 59.4% | 51.5% | **0** | 1,320 |
+| DefaultMedium | 4,642 | 57.1% | 15.7% | 160 | 1,350 |
+| Castle | 4,354 | 26.5% | 6.1% | 426 | 1,310 |
+
+**The two pathologies now fit together, and the chip surplus is explained.** On gridworld carol
+banks 76,420 chips while her towers hold a median of 37 paint. She is not choosing not to
+spend; she *cannot* — every build needs 200 paint out of a stash that is empty on 97.3% of
+turns. The idle treasury is a *symptom* of paint starvation, not a separate problem, and my
+earlier note that the surplus maps "have run out of things to buy" was wrong in an interesting
+way: they have run out of paint, not of sinks.
+
+**And RULES.md already contained the answer, in a sentence I wrote myself:**
+
+> "Money towers generate no paint, so a money tower can spawn ~2 robots from its 500 starting
+> stash and then goes dry **until a mopper refills it**."
+
+> "Mopper transfer: give/take paint with ally robots AND towers (withdraw = negative amount),
+> r²=2... **only moppers transfer robot→robot**." [E]
+
+**Carol's moppers never give paint to anything.** `refillIfPossible` calls
+`rc.transferPaint(ally.location, -want)` — a *withdrawal*, and it is the only transfer call in
+the bot. Moppers take paint from towers and never return any. So money towers spawn twice and
+are dry for the rest of the game, chips pile up unusable, and the unit whose defining ability
+is moving paint around spends **95.1% of 78,480 turns doing nothing**.
+
+This is exactly the failure Phase 0 item 2 warns about — "a whole game mechanic sat unused for
+81 iterations once because the obvious methods were assumed to be the whole interface" — and it
+took an API sweep plus three separate free measurements to surface.
+
+**It reframes iteration 19 rather than cancelling it.** The cut arm is still worth its run and
+still answers a real question: if `MOPPER_IN_20 = 0` beats the incumbent, the mopper **as
+currently programmed** is negative-value at 300 chips apiece (more than a soldier's 250), which
+is a fact I want either way. What it must not be read as is "moppers are useless" — the
+measurement above says the opposite, that they are the only unit that can unblock the binding
+constraint and have never been asked to.
+
+**Iteration 20, queued and specified**: an idle mopper carrying paint from a tower with surplus
+to a tower below the build threshold. Mopper paint capacity is only 100 against a soldier's
+200, so one trip is half a soldier — but moppers are the most numerous unit carol has and are
+idle 95% of the time, so the carrying capacity is already built and paid for. The 95% idle
+figure stops being an argument for deletion and becomes the *resource* the fix spends.
