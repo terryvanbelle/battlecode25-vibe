@@ -5708,3 +5708,36 @@ and one run, and it is the natural next dose. Iteration 19's finding that the ri
 *matchup-dependent* (the zero arm scored 39/40 against `carol_rush` while losing 35% to the
 lineage) argues that the real answer is a threshold read from game state — enemy paint seen per
 turn — rather than any constant at all.
+
+## Iteration 22a (SPLASHER_IN_20 = 0) — 12.5%, and it vindicates iteration 11 by an enormous margin
+
+Run `20260907-150922`, first arm complete: `carol_i22a` vs `carol_iter18` = **5/40 = 12.5%**.
+
+Deleting splashers costs carol roughly **fifty points of win rate** against its own baseline.
+Yet a splasher *fires* only 10–20 times in a 2,000-round game (measured across the 8 complete
+iteration-14 games: SPLASH 0–20 per game, against hundreds of idle turns). That is the third
+independent instance this session of the same pattern:
+
+| mechanism | firing rate | measured worth |
+|---|---|---|
+| iteration 12's paint-tower upgrade | 3 firings in 144,823 tower-turns | +5 games |
+| moppers (iteration 19 zero arm) | act on 2–5% of turns | −30 points to delete |
+| **splashers (iteration 22 zero arm)** | **10–20 splashes per game** | **−50 points to delete** |
+
+**Frequency is not value, and this project keeps proving it in both directions.** Every time I
+have reached for an idleness or firing statistic as a reason to remove or distrust something,
+the zero arm has contradicted me. The correct instrument is always the counterfactual — take
+the thing away and measure — and it is cheap: one arm in a run I was making anyway.
+
+It also retroactively prices **iteration 11** (splashers, accepted at 62.5% and never
+re-measured since). A feature accepted ten iterations ago on a 62.5% head-to-head turns out to
+be carrying roughly half of carol's current win rate against her own lineage. That is a far
+larger contribution than its accept margin suggested, and it is a second instance of the
+LEARNINGS entry "price the features you already carry" — the ablation that prices a feature is
+almost always available inside a run you are running for another reason.
+
+**Still to come in the same run**: `carol_i22b` (dose 6) against dose 0, which fixes the shape
+of the curve. Early indication is that dose 0 does *better* against dose 6 than against the
+incumbent 3, which would put the peak at or below 3 — structurally the same finding as the
+mopper curve, and the reason the run carried a zero arm and a high arm rather than one new
+constant.
