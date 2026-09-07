@@ -3236,3 +3236,71 @@ With `split-by-side` struck, the regression run's readouts are:
 
 No metric that is an arithmetic transform of the primary is being carried, which is the
 whole content of the retraction above.
+
+
+---
+
+## Iteration 11 GAUNTLET RESULT (2026-09-07) — all criteria pass, accept DEFERRED on a thin margin
+
+Run `20260907-020350`, 20 maps x 2 sides. Criteria read in the pre-registered order.
+
+**Criterion 3 (mechanism) — passed, and read first.** Verified before the run:
+`Rose` side B went from 0 towers built in 581 rounds to 5 (four of them paint towers);
+`Brat` side B from 3 to 5, including the first paint tower ever built on that side.
+
+**Criterion 4 (bytecode) — passed.** `maxbc` 9,828 of a soldier's 17,500.
+
+**Criteria 1 and 2 (the numbers):**
+
+```
+vs bob_iter9 (accept gate)   24/40  60.0%    swept-win  5   swept-loss 1
+vs bob_denier                37/40  92.5%    swept-win 17   swept-loss 0
+overall                      61/80  76.2%    (iteration 9 was 68.8%)
+```
+
+The gate is cleared and `WinPct` = 60% is met exactly. `bob_denier` improved from
+75.0% to 92.5%, and the overall rate rose 68.8% -> 76.2%.
+
+### Why I am not accepting yet
+
+```
+h2h 24/40      excess over even = 4 games,  binomial sd 3.16  ->  1.26 sd
+denier +7/40   delta over iteration 9,      sd ~4.47          ->  1.57 sd
+```
+
+**Neither instrument clears its own noise floor.** Doctrine #6 says to compute that
+floor and distrust deltas beneath it *regardless of how good the story is*, and the
+story here is good — which is exactly when the rule is worth having. Doctrine #9 is
+more specific still: **on thin accept margins, run the fixed roster BEFORE accepting,
+not after.** It records that this once caught a bad accept by ten games when the
+pre-registered metrics had each moved by one.
+
+That instruction and the regression investigation want the same run, so they are now
+one run:
+
+```
+MAPS="$(cat gauntlet/20260907-011346/maps.txt)" \
+  BOT=bob_iter1 OPPONENTS="bob bob_iter3 bob_iter7 bob_abl7" ../../tools/gauntlet.sh
+```
+
+Run `20260907-<t>`, 25 pinned maps x 2 sides x 4 opponents = **200 games**, launched
+with the tournament finished so the VM is free. `bob_iter1` is the *bot* and everything
+else is an opponent, so each arm's rate against the frozen bot is the complement of the
+reported number, and all arms play identical ground.
+
+```
+  bob (iteration 11)  vs bob_iter1    ?    <- doctrine #9 pre-accept check
+  bob_iter3           vs bob_iter1    ?    <- was 85.0% on a DIFFERENT map draw
+  bob_iter7           vs bob_iter1    ?    <- where iteration 7's hash lands
+  bob_abl7            vs bob_iter1    ?    <- iteration 9 minus the hash
+  bob_iter9           vs bob_iter1  56.0%  <- already measured on these very maps
+```
+
+**Decision rule, fixed now.** Accept iteration 11 if it is **not below `bob_iter9`'s
+56.0%** on these pinned maps. A candidate that clears a thin head-to-head against its
+predecessor while dropping further against the frozen bot is the precise failure this
+whole detour exists to catch, and I would rather find it here than five iterations
+later.
+
+Note this run also folds in the four-arm regression curve, so one 200-game run answers
+the accept question, the *when* question, and the A7 *what* question together.
