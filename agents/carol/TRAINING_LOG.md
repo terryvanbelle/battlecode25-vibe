@@ -6390,3 +6390,61 @@ inside saturated ally territory, which is where a pattern can survive its 50-rou
 delay and where most of its 25 tiles are already the correct colour. `RESOURCE_PATTERN` has 13
 of 25 bits set, so in ally-primary territory only 13 tiles need recolouring: 25 + 13×5 = **90
 paint**, not the 150 I costed on virgin ground.
+
+## Iteration 26 — the mechanism WORKS and my commit gate is wrong; the same error, third disguise
+
+`gauntlet/20260907-191952`, 8 games, i26 vs `carol_iter25` on four maps. **3/8, with Bunny a
+swept loss.** Before reading that as a verdict, the §4 mechanistic classification:
+
+| map | `SRPmark` | `SRPdone` | `SRPdrop` | drop rate | paint burned on dropped marks |
+|---|---|---|---|---|---|
+| Bunny B | 156 | **64** | 92 | 59.0% | **2,300** |
+| DefaultMedium A | 58 | 7 | 48 | **82.8%** | **1,200** |
+| DefaultLarge B | 31 | **16** | 7 | 22.6% | 175 |
+| Fossil A | 8 | 1 | 7 | 87.5% | 175 |
+
+**The mechanism is real.** Soldiers marked patterns, painted them, and completed 88 SRPs across
+the sample — a mechanic this lineage has never used in 26 iterations now demonstrably runs. This
+is §4 classification 2, not 3: engagement is evidenced, and the reason the games did not flip is
+specific and measured rather than hand-waved.
+
+**And the reason is my own error, in its third disguise this session.** The commit gate reads:
+
+```java
+&& rc.getPaint() >= GameConstants.MARK_PATTERN_PAINT_COST   // 25
+```
+
+25 is the cost of *marking*. It is exactly enough to place the marks and have nothing left to
+finish them with. The soldier then paints a few tiles, hits the `< 5 paint` release, and drops —
+so the 25 is written off. I priced **the action I was about to take** instead of **the
+transaction I was entering**, on a build whose soldiers I had *just finished measuring* as
+chronically paint-starved.
+
+LEARNINGS already carries "Cost the price, not just the benefit — twice in one session, two
+different disguises". This is the third, and it is worth distinguishing from the first two: those
+two omitted a price term entirely. This one **priced the wrong step of a multi-step transaction**
+— every individual step was costed, and the entry gate was set to the cheapest of them.
+
+The generalisation: **when a mechanism takes more than one turn to pay off, the gate belongs on
+the total, not on the first instalment.** Any commitment with a non-refundable deposit has this
+shape, and the tell is a high abandonment rate rather than a low firing rate.
+
+### Refinement, as a dose pair rather than a guess (§5.5, one targeted refinement)
+
+`RESOURCE_PATTERN` has **13 of 25 bits set**, so completing one costs 25 to mark plus the
+recolouring: **90** where the other 12 tiles are already ally primary (which `frontNone` territory
+mostly is), up to **150** where the ground still needs painting outright. Rather than pick one:
+
+- **`carol_i26b`**: `SRP_COMMIT_PAINT = 150` (full worst case — only well-supplied soldiers commit)
+- **`carol_i26c`**: `SRP_COMMIT_PAINT = 90` (typical case in already-ally territory)
+
+Both against `carol_iter25` in **one run** on six maps, so the two doses share the map sample
+exactly and the incumbent gate (25) is the third point on the curve from the run above.
+
+**Pre-registered.** Primary: the drop rate must fall well below i26's 59–88%; if it does not, the
+gate is not what limits completion and the direction needs a different fix, not a third dose.
+Secondary, and this is the one that decides the iteration: **completed SRPs per game must not
+fall to ~0** — a gate high enough to eliminate abandonment by preventing all commitment is not a
+fix, it is iteration 24b's dead branch wearing a number. I expect 150 to be the safer drop rate
+and 90 to complete more patterns, and I do **not** have a prediction for which wins, which is
+exactly why both are in the run.
