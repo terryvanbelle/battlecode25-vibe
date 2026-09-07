@@ -486,3 +486,49 @@ The general rule: for any proposed memory, state its **write condition** and che
 the **read condition** before implementing. If the two are correlated, the memory is a
 no-op dressed as a mechanism. Two minutes of measurement caught this one; it would have cost a
 40-minute run and probably a rejected iteration.
+
+## The History pre-check must name the iteration that wrote the LINE, not the previous one
+
+TRAINING_ALGORITHM §3 asks: "If a prior iteration deliberately established the behavior this
+would change, the fix must supersede that reasoning with new evidence, not silently revert
+it." I recorded that pre-check as **passing** for iteration 15 — "strictly extends iteration
+14, reverts nothing" — and it was true, and it was the wrong question.
+
+The line I rewrote was `newExploreTarget()`. That was established by **iteration 3**, eleven
+iterations earlier, with an explicit argument: a soldier must commit to a *far* target rather
+than re-roll a local step every turn, because "a local random walk cannot find the frontier on
+a 40x40+ map once home is painted" (`NOTGT` on ~57% of soldier turns). Iteration 15b returned
+the **nearest** unvisited cell — a few turns away, so `moveExploring` re-rolled it constantly
+and the persistent target collapsed straight back into the random walk iteration 3 deleted.
+11/40, swept 3-14.
+
+The rationale was in a comment **directly above the function I was editing**. I had read that
+comment. I had quoted its 57% figure in my own notes one iteration earlier. I still missed it,
+because I asked the pre-check about the wrong iteration.
+
+- **Ask "which iteration established this line, and what was its argument?"** — not "does this
+  revert my previous iteration?". Recency is not the relevant relation; authorship is.
+- **`git log -L` or a grep of the log for the function name answers it in seconds.** The cost
+  of the check is far below the cost of one rejected run.
+- **A code comment explaining why something is the way it is IS the History pre-check**, and
+  the moment to read it is when you delete it. I replaced that comment with my own, which
+  confidently asserted the opposite ("Nearest rather than farthest is deliberate"), and wrote
+  no evidence for the assertion.
+
+## Pre-register a MAP-LEVEL prediction, not just a threshold
+
+Iteration 15b's headline was 27.5%, so it was never going to be accepted. But the genuinely
+useful output was a prediction I had written down before the run: the gain should concentrate
+on the maps with most to gain — Castle (frontier hit-rate 4.0%, 18,040 idle turns) — and not
+on Parking_lot (76.9%).
+
+**Castle was a swept loss; Parking_lot was a swept win. Exactly inverted.**
+
+A threshold ("h2h > 50%") can only tell me whether to accept. A map-level prediction tells me
+whether the *mechanism I described* is the mechanism doing the work — and it is checkable even
+on a run that lands near 50%, which is exactly where the threshold is least informative and
+the temptation to accept on a story is highest. Under a deterministic engine with a
+zero-variance mirror null, per-map outcomes are real signal, not noise, so this costs nothing
+to register and can reverse a decision the headline would have gotten wrong.
+
+Register one on every iteration from here: *which maps should move, and why*.
