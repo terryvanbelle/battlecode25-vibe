@@ -2206,3 +2206,129 @@ Note what criterion 4 is doing: iteration 8's rejection was not just a discarded
 iteration, it produced a *quantitative condition* under which its conclusion flips.
 That condition is now a pre-registered readout on the next run rather than a note
 someone might revisit.
+
+
+---
+
+## Iteration 9 RESULT (2026-09-07) — ACCEPTED (SRPs)
+
+The run (`gauntlet/20260906-230658`, 20 maps x 2 sides) finished on the VM before my
+session was killed by the account-wide rate limit at ~00:55; only the collation was
+lost. Recovered with `gauntlet-collect.sh 20260906-230658` — no games re-played.
+
+```
+vs bob_iter7 (accept gate)   25/40 (62.5%)   swept-win  5   swept-loss 0
+vs bob_denier                30/40 (75.0%)   swept-win 12   swept-loss 2
+overall                      55/80 (68.8%)
+```
+
+Gate >50%: passed. Peer `WinPct` 60%: passed on both peers. Swept 5-0 against the
+baseline with **zero swept losses** — the flips are one-directional in our favour,
+which is the shape doctrine #7 calls a real causal effect rather than churn.
+
+### Criterion 3 (mechanism) — passes, with a magnitude caveat worth keeping
+
+`srpA` by map (side A, opponent `bob_iter7`, which has `srpB == 0` throughout — the
+arm-to-arm identity check is trivially satisfied, the mechanic is ours alone):
+
+```
+map      srpA trajectory                        result
+Castle   1 from r200, held to the end            win r727
+quack    1 -> 2 by r300, held 1080 rounds        win r1380
+Oasis    2 -> 5 -> 8 -> 10, oscillating 7-10     win r804
+```
+
+The pre-registered failure mode — SRPs built and collapsing to 0 because our own
+splashers clip the pattern and restart the 50-round clock — **did not occur**. Oasis
+dips 8->7 and recovers, so clipping happens and is survivable; the population is
+maintained rather than reset. No splasher exclusion zone is needed.
+
+What did not pass is the magnitude: I pre-registered "reaches >=3 and stays", and two
+of three maps hold only 1-2. **The binding constraint is `SRP_MIN_CHIPS = 500`**, and
+the reason is visible in the same trace (below): the accepted bot's treasury now
+*hovers around 1,300 chips*, so a 500-chip gate plus a 200-chip completion competes
+directly with spawning for a treasury that is no longer idle. That is the refinement
+this iteration hands to the next one, and it is a dose question, not a mechanism one.
+
+### The causal chain, measured end to end (quack, r1380)
+
+This is the trace that makes the accept mechanistic rather than statistical. A = the
+candidate, B = `bob_iter7`:
+
+```
+round    moneyA   moneyB    soldA  soldB   splA splB   covA  covB
+ 100        360    1,050       8     13      0    0     306   383
+ 400      1,226    8,460      37     32      8    6     512   458
+ 800      1,256   39,980      98     69     29   17     605   377
+1380      3,826   73,750     192    110     59   31     703   271
+```
+
+**The baseline hoards 73,750 chips; the candidate never exceeds 3,826.** The
+difference is not the SRPs' own cost — 2 SRPs is 400 chips — it is what the SRPs
+*unlock*. Units cost paint **and** chips (soldier 200/250, splasher 300/400, mopper
+100/300). When paint is the binding input, chips accumulate unspent; every unit of
+paint income converts one waiting chip pile into a body.
+
+Order-of-magnitude check, and it lands: 2 SRPs x 6 paint towers x 3 = **+36
+paint/turn**, which over 1380 rounds is ~49,700 extra paint. The realised unit
+surplus is +82 soldiers, +28 splashers, +28 moppers = 82(200) + 28(300) + 28(100) =
+**~27,600 paint**, plus the tower surplus and the paint those extra bodies spend
+being alive. Same order, right sign, and the chip side matches too: that unit surplus
+costs 82(250)+28(400)+28(300) = ~40,100 chips, against a 70,000-chip divergence in
+treasuries. The mechanism explains the win rather than merely accompanying it.
+
+Coverage is the consequence, not a separate effect: more bodies paint more, covA
+climbs 306 -> 703 while covB falls 383 -> 271, and every win here is
+`MAJORITY_PAINTED`.
+
+Bytecode: `maxbcA` peaks at 10,038 (Oasis) against a 17,500 soldier limit. Headroom
+intact; criterion 3's bytecode clause satisfied.
+
+**ACCEPTED.** Snapshotted as `src/bob_iter9/`. Replay archived as
+`replays/iter09_bob_iter7_Oasis_botA.bc25` (the most informative win: 10 concurrent
+SRPs, 310 soldiers to 89).
+
+### Criterion 4 — the iteration 8 re-open test fires on its letter and fails on its intent
+
+Pre-registered condition: *"if team chips stop accumulating — sustained below ~5,000
+while towers still want to spawn — then spawning has become chip-limited, paint is no
+longer convertible into bodies, and refilling stops being dominated."*
+
+Literally, that condition is met. `moneyA` is sustained at 360-4,343 across all three
+traces, for 1,380 rounds on quack, while unit counts climb monotonically — towers
+plainly still want to spawn. By the wording I registered, iteration 8 re-opens.
+
+**It does not, and the reason is that I registered a proxy instead of the quantity.**
+The thing that would actually make refilling non-dominated is *paint stranded in a
+tower that chips prevent from being spawned*. Team chips sitting at 1,300 does not
+show that: a soldier costs 250 chips, so 1,300 chips is **five soldiers already
+affordable, right now**, and chips are team-global while paint is per-tower — so no
+tower in that state is chip-blocked. A genuinely chip-limited economy pins the
+treasury below one unit's cost (<250) and holds it there. Mine oscillates at 5-16x
+that, which is the signature of income being *spent at the rate it arrives* — a
+healthy equilibrium, not a shortage.
+
+So the correct reading is: **iteration 9 moved chips from "dead resource" (73,750
+unspent on the baseline) to "in balance" (~1,300, turning over), and stopped short of
+"binding".** Paint remains the binding input. **Iteration 8 stays CLOSED.**
+
+One real exception, recorded because it is the seed of the next re-open: on Oasis the
+treasury hits **71 chips at round 200** — genuinely below a single soldier — before
+recovering. Chip scarcity is real but *transient and early*, not a steady state. If a
+future change pushes that transient into the steady state, the re-open trigger is
+now sharpened to the right quantity: **team chips pinned under ~250 while any allied
+tower holds >=200 paint**, not "chips under 5,000".
+
+### What this episode is worth, methodologically
+
+The pre-registration did its job in a way I did not anticipate: it did not confirm or
+reverse iteration 8, it **exposed that my re-open condition was the wrong variable**.
+Had I not written the number down in advance, I would have looked at "chips fell from
+55,630 to 1,300" and re-opened a closed direction on a proxy, spending a full gauntlet
+to rediscover that paint still binds. The cost of finding this was reading one column.
+
+Generalisation for LEARNINGS: *a pre-registered trigger is only as good as the link
+between its proxy and the mechanism it stands for. Register the mechanism's own
+quantity where you can, and when you must use a proxy, write down what would make the
+proxy lie.* Here the proxy lied because it collapsed a team-global stock (chips) and a
+per-tower stock (paint) into one threshold, and only the second one gates a spawn.
