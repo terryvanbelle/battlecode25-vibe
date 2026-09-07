@@ -3573,3 +3573,68 @@ them.
 **Prediction, registered:** ~82-88%. If it lands at ~82% (no better than `abl7`), the
 memory contributes nothing once the mix is fixed and the two effects were the same
 effect wearing different clothes.
+
+## Iteration 12 RESULT — 78.0%, gate FAILED, and my composition hypothesis is refuted
+
+```
+                                       vs frozen bob_iter1, same 25 pinned maps
+bob_iter9   (hash + SRP)                  28/50   56.0%
+bob iteration 11 (hash + SRP + memory)    37/50   74.0%
+bob_abl7    (parity + SRP, NO memory)     41/50   82.0%
+bob iteration 12 (parity + SRP + memory)  39/50   78.0%
+
+iter12 vs iter11   +4.0 pts   +0.47 sd
+iter12 vs abl7     -4.0 pts   -0.50 sd
+iter12 vs iter9   +22.0 pts   +2.41 sd
+```
+
+The registered gate was **"must exceed BOTH iteration 11's 74.0% AND `abl7`'s 82.0%"**.
+It cleared the first and missed the second. **Gate failed; iteration 12 is not
+accepted.**
+
+### The hypothesis was that the two fixes compose. They do not — they substitute.
+
+```
+                      without ruin memory     with ruin memory
+hash (high mix variance)     56.0%                 74.0%      +18.0
+parity (low mix variance)    82.0%                 78.0%       -4.0
+```
+
+**Ruin memory is worth +18 points when the tower mix is noisy and roughly zero — very
+slightly negative — once the mix is clean.** That is an interaction of the same kind
+that caused the original regression, running the other way, and it is coherent: memory
+improves expansion tempo, and expansion tempo matters most when your economy is
+handicapped. Fix the economy and the compensating mechanism stops earning its keep.
+
+My registered prediction was 82-88% and I wrote down in advance what a ~82% result
+would mean: *"the memory contributes nothing once the mix is fixed and the two effects
+were the same effect wearing different clothes."* That is what happened, at 78%.
+
+### What is firm and what is not
+
+- **Firm: the hash must go.** 56.0% -> 82.0% at +2.93 sd, and 56.0% -> 78.0% at
+  +2.41 sd through the other path. Both routes that remove it gain ~20+ points.
+- **Not firm: whether to keep the ruin memory.** `abl7` 82.0% versus iteration 12 78.0%
+  is **0.50 sd** — I cannot separate them by comparing their rates against a third
+  party, and I will not pick on a 4-game difference. Iteration 11's accept (+18 at
+  1.92 sd) was measured in the *hash* world that no longer exists, so it does not
+  settle this either.
+
+### Deciding it properly, and cheaply
+
+Comparing two builds through their records against a common opponent throws away most
+of the information. **A direct head-to-head is far more sensitive**, so that is the run:
+
+```
+MAPS="$(cat gauntlet/20260907-011346/maps.txt)" BOT=bob OPPONENTS=bob_abl7
+```
+
+50 games, same pinned maps, iteration 12 against `bob_abl7` directly — the two builds
+differ by exactly one feature, the ruin memory. **>50% keeps the memory and accepts
+iteration 12; <50% drops the memory and makes `abl7` the bot**, which would mean
+un-accepting iteration 11's mechanism on better evidence than accepted it.
+
+Recording that possibility plainly: iteration 11 was accepted honestly on the evidence
+available, and the evidence has since changed underneath it. Reverting an accept
+because a later measurement invalidated its premise is a normal outcome, not a failure
+of the earlier decision.
