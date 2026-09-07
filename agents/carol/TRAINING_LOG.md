@@ -4943,3 +4943,55 @@ That is a single, cheap, well-localized fix, and it is iteration 18.
 This also retires a direction I would otherwise have queued: chasing a bigger chip sink
 (lv3 everywhere, a fourth tower type) would spend iterations optimizing the regime carol
 already handles.
+
+## Trace: moppers are 25% of every spawn and do NOTHING on 95.1% of their turns
+
+The largest single block of waste I have measured in this bot. Counted from the mopper
+indicator across the same 8 complete iteration-14 games — no VM time.
+
+| map | mopper turns | mop | swing | **idle (neither)** |
+|---|---|---|---|---|
+| **Parking_lot** | 15,155 | 0.3% | 0.0% | **99.7%** |
+| **Castle** | 352 | 2.6% | 0.0% | **97.4%** |
+| gridworld | 17,103 | 2.3% | 0.7% | 97.1% |
+| walalilongla | 26,977 | 4.2% | 1.7% | 94.1% |
+| PlumberGame | 15,733 | 5.0% | 2.0% | 93.0% |
+| DefaultLarge | 21 | 9.5% | 4.8% | 85.7% |
+| DefaultMedium | 480 | 13.8% | 2.1% | 84.2% |
+| Bunny | 2,659 | 16.6% | 1.9% | 81.5% |
+| **TOTAL** | **78,480** | — | — | **95.1%** |
+
+`runMopper` mops enemy paint within **r²=2** and mop-swings at adjacent enemies. Both
+conditions are rare deep in our own half, which is where carol's units spend their lives, so
+the unit wanders. And moppers are the **most numerous** unit in the replays — they burn no
+paint painting, so they accumulate and persist while soldiers and splashers die or go dry.
+
+**Why this is the biggest target on the board.** Splasher `noPaint` was ~2,000 wasted turns per
+game and soldier idleness 8–17%; this is 78,480 turns across 8 games at 95% waste, on a unit
+taking **5 of every 20 spawns** — chips and tower paint that could have become soldiers (1.00
+tiles/turn) or splashers (up to 2.60). Against a bot that beats carol by painting the map at a
+median of 771 rounds, spending a quarter of production on a unit that acts 5% of the time is
+the definition of "removing pure waste", the third of TRAINING_ALGORITHM's recurring
+winner-profile shapes.
+
+**Iteration 19 is a dose sweep with a zero arm**, per measurement doctrine #2:
+
+| arm | `MOPPER_IN_20` | built |
+|---|---|---|
+| incumbent | 5 | `carol_iter14` (baseline, no run needed) |
+| `carol_i19b` | 2 | interior dose |
+| `carol_i19a` | **0** | **zero arm** |
+
+The zero arm is mandatory here rather than optional: doctrine records a case where a negative
+slope between two nonzero doses wrongly condemned a low dose that beat zero handily.
+
+**Representativeness caveat, registered now** (doctrine #4): moppers are a *defensive* unit —
+they convert enemy paint. An ablation measured only against opponents that do not press carol
+with paint would prove nothing about the matchup that matters. Two things make me willing to
+run it anyway, and I am writing them down before the result: the 95% figure is measured in
+games *against `carol_iter12`*, an opponent that paints hard and wins on coverage; and the
+gauntlet carries `carol_rush`, so a defensive regression has somewhere to show up. If the zero
+arm wins the h2h but drops materially against `carol_rush`, that is the defensive cost
+appearing and I will read it as a dose question, not a win.
+
+**Held, not launched**: iterations 17 and 18 are already using the VM. Queued behind them.
