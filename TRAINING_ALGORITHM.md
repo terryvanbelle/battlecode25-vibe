@@ -131,7 +131,17 @@ The accept/reject machinery lives or dies on these rules. Each one is paid for.
    many `(opponent, map, side)` games are byte-identical between the two arms.
    All-identical means the change never executed — this caught three "results"
    in one project that were the same bot measured twice.
-4. **Rank instruments by matchup evenness, and check representativeness.**
+4. **A regime-dependent mechanism needs a regime-matched sample.** If a change
+   can only pay where some condition holds, a random sample over all conditions
+   dilutes a real effect toward invisibility — the games where it cannot help
+   are not noise, they are a fixed zero averaged into the estimate. Size the
+   condition first, pre-register the arm that satisfies it, and state a
+   *map-level* prediction (gains where the condition holds, absent where it does
+   not) so the sample checks itself. One lineage found its target region was 9.3x
+   its losing margin on one map and 0.2x on another: worth games in a close
+   matchup, worth nothing in a blowout, and a random 20-map gauntlet would have
+   mixed the two regimes and shown neither.
+5. **Rank instruments by matchup evenness, and check representativeness.**
    An instrument pinned near 0% or 100% cannot resolve a few games; an even
    matchup can. But resolution is not representativeness: an even instrument
    cannot measure a defense against a behavior its opponents never perform
@@ -139,24 +149,24 @@ The accept/reject machinery lives or dies on these rules. Each one is paid for.
    several games against rushers, because the lineage never rushes). For any
    defensive feature, first check whether the evaluating opponents pose the
    threat at all.
-5. **Primary accept test: head-to-head against the most recent accepted
+6. **Primary accept test: head-to-head against the most recent accepted
    snapshot**, all maps, both sides. >50% means the candidate genuinely beats
    what it replaces — immune to archetype staleness and to mirror collapse.
    ~50% is a near miss, not an accept, absent a separate mechanistic argument.
-6. **Peers are the regression check; lopsided instruments give direction
+7. **Peers are the regression check; lopsided instruments give direction
    only.** Never accept or reject on a lopsided instrument alone — both
    mistakes were made and both had to be walked back. A 1–2 game move on a
    lopsided instrument is noise; compute the binomial noise floor for each
    instrument's sample size and distrust any delta under it regardless of how
    good the story is.
-7. **Diff game-by-game and read the diff's shape.** Scattered, mixed-direction
+8. **Diff game-by-game and read the diff's shape.** Scattered, mixed-direction
    flips (especially on maps known to be chaos-sensitive) are churn. Flips
    that are one-directional, or concentrated on one map/side across many
    opponents, are a real causal effect — reproduce and trace before deciding.
-8. **Normalize per round before comparing counters.** Every replay counter
+9. **Normalize per round before comparing counters.** Every replay counter
    scales with game length; a change that makes games longer reads as "worse"
    on raw counts.
-9. **Track a fixed old-bot roster for long-run progress.** Peer retirement
+10. **Track a fixed old-bot roster for long-run progress.** Peer retirement
    makes the peer rate a poor absolute yardstick (stable rate = no progress,
    or progress against a hardening roster). Every ~5 accepted iterations,
    run against a fixed, never-retired roster composed of every 5th accepted
@@ -166,7 +176,7 @@ The accept/reject machinery lives or dies on these rules. Each one is paid for.
    margins, run this *before* accepting, not after — it once caught a bad
    accept by ten games when the two pre-registered metrics had each moved by
    one.
-10. **Don't let pre-registered metrics decide when a cheap unrun instrument
+11. **Don't let pre-registered metrics decide when a cheap unrun instrument
     could reverse them.** A real effect big enough to accept on usually shows
     up in more than one place.
 
@@ -317,7 +327,7 @@ resulting retraction of a long-standing entry safe.
 4. **Near miss** (within `NearMissMargin`, no real regression): refine the same
    solution, up to `MaxNearMissRefinements` — several good ideas cleared the
    bar only after a parameter refinement of a directionally-correct mechanism.
-5. **Reject**: trace the flipped games. A specific, well-understood failure
+6. **Reject**: trace the flipped games. A specific, well-understood failure
    mode earns one targeted refinement; otherwise revert fully and select a new
    target. A rejected attempt that converts a weakly-founded belief into a
    firmly-founded one paid for its run.
