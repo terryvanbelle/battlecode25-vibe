@@ -5461,3 +5461,186 @@ recorded design preference — **a self-calibrating threshold**: spawn denial un
 proportion to observed enemy paint, rather than at a fixed 2-in-5 chosen in iteration 0.
 If `bob_d0` is merely level on the lineage, there is no premium to reclaim and the fixed
 mix stands.
+
+---
+
+## Iteration 17 PRE-REGISTERED (2026-09-07 20:05) — why do I build zero towers where an opponent builds nineteen?
+
+**Functional area: tower construction.** New area — iterations 13 and 15 were soldier
+movement (both rejected) and 16 was spawn policy (rejected), so `MaxConsecutiveRejects`
+is satisfied without strain.
+
+**The observation, from the shared dumper, not from theory.**
+
+```
+Rose  40x40, walls 5.5%, ruins=30, symmetry=0
+  alice  towers  2 -> 19    first at r31, then r77, r84, r160, r191, r208, r235, ...
+  bob    towers  2 ->  2    zero, in 426 rounds, on a map with 30 ruins
+  bob    tower paint pool   110-260 all game, against a soldier's 200-paint spawn cost
+  bob    chips               2,200 -> 7,800 unspent
+```
+
+Everything else I traced today is downstream of this line. With two towers my paint income
+is one LEVEL_TWO paint tower — 10 paint/turn — so I spawn roughly one unit per fifty
+rounds, my standing army never exceeds seven, and coverage decays. Alice, from the same
+two starting towers on the same map, reaches nineteen.
+
+**This refutes the map-geometry story I have been carrying.** My iteration-13 note says
+construction is refused by geometry on 99% of attempts. That measurement was about
+**SRPs** (`canMarkResourcePattern`), and I have been quoting it at **ruins**
+(`canMarkTowerPattern`), which is a different call with a different validity rule. Alice's
+nineteen towers on Rose are proof that the ruins there are buildable. Superseding that
+misapplication in place rather than deleting it: the SRP measurement stands for SRPs.
+
+**Candidate mechanism, from reading `Soldier.workOnRuin`.** The ruin path has **no
+patience rule**, while the SRP path beside it has `SRP_PATIENCE = 120`:
+
+```java
+static final int SRP_PATIENCE = 120;   // SRP: abandon a site after 120 turns
+// workRuin: no equivalent. A soldier holds its ruin until a tower APPEARS on it.
+```
+
+A soldier paints exactly one pattern tile per turn and only if `canAttack(l)`. **Soldiers
+cannot overwrite enemy paint.** So if any of the 24 pattern tiles is enemy-painted, the
+soldier can never finish, `canCompleteTowerPattern` stays false, no tower ever appears, and
+`chooseRuin`'s only release condition — *a robot is now standing on the ruin* — never
+fires. The soldier is deadlocked on that ruin for the rest of the game, and step 3 keeps
+navigating it back there. That is a mechanism which produces exactly the observed
+"0 towers, 2-4 living soldiers, coverage decays" shape, and it gets worse as the opponent
+paints more, which is why it bites hardest in the games I lose.
+
+**Instrument first, per §3 — the DECISION, not the outcome.** `src/bob_rprobe` is forked
+from `src/bob` (verified identical except counters in `Soldier` and the reporter in
+`RobotPlayer`), compile-checked in isolation, and partitions every turn a soldier holds a
+ruin:
+
+```
+turns hasRuin adjacent markOK markRefused tilePainted blockedEnemy blockedOther
+      nothingToDo lowPaint completed switched heldMax
+```
+
+`heldMax` is the direct test of the deadlock: the longest unbroken run of turns one
+soldier spent on one ruin.
+
+**First probe run is against `examplefuncsplayer` on Rose**, deliberately. If I build ~0
+towers on Rose even against an opponent that applies no pressure and paints almost
+nothing, the blocker is structural and mine; if I build plenty, the blocker is enemy paint
+and the deadlock story is the right one. Either answer is decisive, and the run costs two
+games. (I cannot reproduce the alice matchup directly — reading or running another agent's
+bot is forbidden — so this substitution *is* the experiment, not a compromise of it.)
+
+**Pre-registered reading, written before the numbers exist:**
+
+- `heldMax` in the hundreds with `blockedEnemy` dominant -> deadlock confirmed; the fix is
+  a patience/abandon rule on `workRuin`, mirroring `SRP_PATIENCE`. Dose with a zero arm:
+  patience in turns, 0 = never abandon = today.
+- `heldMax` in the hundreds with `nothingToDo` dominant -> the soldier believes the
+  pattern is complete but `canCompleteTowerPattern` disagrees; that is a marking bug, a
+  different fix entirely.
+- `markRefused` dominant -> `canMarkTowerPattern` really is refusing, and the geometry
+  story survives after all, now measured on the right call.
+- `hasRuin` low and towers still ~0 -> soldiers never even find the ruins, and the target
+  is `chooseRuin`'s vision-only search, not patience.
+- Towers built ~19 against `examplefuncsplayer` -> the blocker is enemy paint pressure
+  rather than anything structural, which points at the same patience rule but prices it
+  only in contested games.
+
+**Price, computed before building anything** (§3, and my own iteration-13 doctrine): a
+patience rule spends nothing — no paint, no chips, no action. It releases a soldier that
+is by construction doing nothing. The only cost is the paint already sunk into a partial
+pattern on the abandoned ruin, which is at most the ~24 tiles x 5 paint = 120 paint the
+soldier had already spent, and which it spends *whether or not* it later gives up. So the
+worst case is a wasted 120 paint that was already wasted, and the best case is a soldier
+returned to painting. That asymmetry is why this is worth a run.
+
+## RUIN PROBE RESULT (2026-09-07 20:15) — the deadlock is real, and my named cause was wrong
+
+`src/bob_rprobe` vs `examplefuncsplayer` on Rose, side A. Won at r446. Per-soldier
+counters at the r250 report, the four long-lived soldiers plus four young ones:
+
+```
+id       turns hasRuin adjacent markOK markRef tilePainted blockEnemy nothingToDo lowPaint completed switched heldMax
+13761      249     202      185      1      34         108          8          35       30         0        0     171
+10351      249     235      229      2       6          44          0          24      151         1        0     183
+11019      248     247      245      1       4          26          0           5      210         0        0     247
+13417      220     182      165      0       5         136         13           6       10         1        0     154
+(4 young)  119      54       49      0       0          50          0           0        0         0        0      26
+TOTAL     1085     920      873      4      49         364         21          70      401         2        0     247
+```
+
+**Against my pre-registration, one confirmation and two refutations.**
+
+- **CONFIRMED — the deadlock.** `heldMax` = 171, 183, **247**, 154. Soldier 11019 held one
+  ruin for 247 of its 248 turns of life. And `switched = 0` **for every soldier in the
+  game**: not one ever changed ruin. `chooseRuin`'s only release condition is a robot
+  appearing on the ruin, so a claim is effectively permanent.
+- **REFUTED — enemy paint is not the cause.** `blockedEnemy` is 21 of 920 ruin-turns,
+  **2%**. My story ("soldiers cannot overwrite enemy paint, so a contested pattern can
+  never finish") is not what these games show.
+- **REFUTED — and this is the important one — the blocker is not the opponent at all.** I
+  pre-registered "towers built ~19 against `examplefuncsplayer` -> the blocker is enemy
+  paint pressure". Unopposed, on a 30-ruin map, against an opponent that applies no
+  pressure whatsoever, **I completed 2 towers in 250 rounds.** Alice had 8 by r250 on the
+  same map against a real opponent. The gap is structural and it is mine.
+
+**The dominant gate is `lowPaint`: 401 of 920 ruin-turns, 44%.** Soldier 11019 spent
+**210 of its 248 turns** standing on a ruin at or below `PAINT_FLOOR`, unable to paint,
+unable to leave, and — below the engine's move threshold — eventually unable to move.
+
+### The arithmetic nobody had written down
+
+A soldier spawns with a full 200 stash and that is every drop it will ever have: my tower
+paint pool sits at 110-260, so there is nothing to refill from even if it walked back.
+Against that fixed 200:
+
+```
+tower pattern      5x5 minus the ruin = 24 tiles x 5 paint            = 120 paint
+travel + upkeep    -1/turn neutral, -2/turn enemy, +1 per adjacent ally
+                   over the ~40-80 turns to reach and work a ruin      = 40-160 paint
+                                                                        -----------
+                                                                        160-280
+```
+
+**One soldier's entire life is roughly one tower pattern, and the margin is negative on
+the wrong side of the range.** Soldier 11019 painted 26 tiles — about one pattern's worth
+— and finished nothing. That is the whole story of "0 towers on Rose".
+
+And completion is a **threshold good, not a linear one**: 119 paint of a 120-paint pattern
+buys exactly zero towers, while 120 buys +5 paint/turn for the rest of the game. Every
+metric I have used to reason about paint until now has treated paint→tiles as linear.
+
+### This re-opens iteration 8's closure, narrowly, and I am recording why
+
+The ledger requires a specific reason the recorded cause no longer applies, not a feeling.
+Iteration 8 was closed on: *"spawning converts 200 paint into 200 paint plus a body;
+refilling converts 200 paint into 200 paint"* — an argument that is **only valid where
+paint converts to value linearly.** It does not hold across a completion threshold. A
+soldier that dies at 119/120 of a pattern has converted its stash into **nothing**, not
+into 119 tiles' worth of value.
+
+That said, I am **not** re-opening general refill, and the run I just did says why: these
+soldiers are stalled at ruins with no tower in reach and a team pool of 110-260 paint —
+there is nothing to refill *from*. Alice, who builds 19 towers, performs **zero** paint
+transfers all game. Refill is not how she does it.
+
+### What iteration 17 actually becomes
+
+Three candidate mechanisms now, and they are cheap to separate. Recording all three, then
+picking one, because bundling makes a result uninterpretable:
+
+1. **Affordability gate on claiming.** Do not claim a ruin unless the stash can plausibly
+   finish it; release it when it cannot. Spends nothing. But the probe warns this may be
+   near-worthless on its own: a released soldier at 15 paint has almost nothing left to do.
+2. **Concurrency.** `switched = 0` and each soldier independently picks its *nearest*
+   ruin, so four soldiers work four separate patterns and finish none, when the same four
+   on one ruin would finish it in a quarter of the turns. Completion being a threshold
+   good makes concentration strictly better than spreading — this is the mechanism the
+   threshold insight actually implies, and no iteration of mine has ever touched it.
+3. **Don't start what a fresh soldier cannot finish**, i.e. bias the *first* soldiers off
+   ruins entirely until income supports it.
+
+**(2) is the pre-registered choice for iteration 17.** It follows directly from the one
+finding that survived the probe, it is in a functional area I have never touched, it
+spends no paint and no chips, and it has a clean dose with a zero arm (how many soldiers
+may hold the same ruin; 1 = today's behaviour by accident rather than by design). Writing
+the pre-registration and the price before any code, as §3 requires — next entry.
