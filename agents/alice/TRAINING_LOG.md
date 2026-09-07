@@ -5833,3 +5833,99 @@ name, and I only escaped it because the rule made me check a second map at all.
 
 Two maps, both showing the same monotone shape, one at the corpus median.
 **Iteration 23's premise is established.** It waits on iteration 22's accept.
+
+## Closed-directions ledger — current as of iteration 22
+
+Superseding in place, not replacing: the iteration-20 entries below stood when
+iterations 21 and 22 were designed and stay readable as written.
+
+| direction | closed by | can re-open if |
+|---|---|---|
+| Making soldiers spend fewer **turns** on unfinishable ruins | iteration 20: doses 5/10/25 scoring 12, 12, 13 of 24 — `p5` and `p10` splitting **every** map 1–1 at zero standard error | soldier paint stops binding first. Turn-efficiency is worthless while the tank is the constraint. **Still closed after iteration 22** — 22 attacked the tank, not the turn, and that is a different resource. |
+| "Wasted soldier turns cap tower count" | same — the waste was removed and tower count did not move | — |
+| The two ground-paint branches are **substitutes** competing for one paint budget | iteration 22's 2x2: both-OFF scores **0/24 at zero variance** against an additive prediction of 13/24. Interaction **−13 games**, censored at the floor. They are **complements** — the only paint that reaches ground outside a tower pattern. | nothing foreseeable. A saturating map makes ground paint the win condition; removing all of it cannot be right. |
+| Refuelling soldiers from towers (`transferPaint` withdraw) | iteration 6: a refill costs the same 200 tower paint as a fresh soldier and saves only 250 chips, which are not binding; measured near break-even | tower paint stops being the spawn bottleneck, **or** the walk back becomes free (a soldier already standing at a tower it just completed). The pre-registered near-miss refinement — refuel only when the tower is within a few tiles — was never run and remains the honest way to re-open this. |
+
+### Explicitly NOT closed, recorded so it is not mistaken for closed
+
+**Splashers.** `alice_splashcensus` returned a mean best blast of 1.37 tiles of 13
+against a break-even of 10, over 2,402 soldier-turns, stable across two windows.
+That number is real and it is **not** a refutation: it prices a splasher standing
+where a *soldier* chose to stand, and 94–98% of what those blasts contain is enemy
+paint — the tiles a soldier cannot take and a splasher can. Filing this in the
+ledger would be the exact error the census itself exposed. It stays **open and
+unpriced**, and pricing it needs an instrument that samples frontier positions.
+
+### Standing structural gap (not a closed direction — an unattempted one)
+
+**After the map saturates, this lineage has almost no way to take ground.**
+Measured today: 977‰ of Money is painted by round 1200; the instant-win bar is
+700‰; soldiers cannot overwrite enemy paint at all and are charged 5 paint for
+trying. My entire ground-taking capability is the mopper's one-tile, r²<=2 mop.
+Both prior projects record that the highest-value accepts came from the
+**high-risk structural track**, and this is the gap that track should attack. It
+is named here rather than attempted, because iterations 22 and 23 are in flight
+and bundling is forbidden.
+
+## Standing bytecode + exception check (required on every full evaluation)
+
+Run `20260907-181936`, 199 games scored at the time of writing: **0 exceptions,
+total, across every opponent and both sides.**
+
+Soldier bytecode in the *shipping* iteration 22 build (replay `alice` vs
+`alice_iter19` on Money, round 1500, worst five soldiers):
+
+```
+bc=1982 max=2307   bc=2314 max=2365   bc=2414 max=2501
+bc=2476 max=2657   bc=2532 max=2713
+```
+
+**Peak 2,713 of the 17,500 soldier limit — 15.5%, so 84.5% headroom**, and no
+`OVR=` or `near=` suffix appears on any indicator string. Iteration 23 adds one
+`isEnemy()` test inside a loop that already runs; it is free at this margin.
+
+**Caveat I want on the record about my own instruments, not the bot.**
+`alice_splashcensus` peaked at **14,327**, against a near-miss threshold of
+`17500 − 17500/7 = 15,000`. It never overran — no `OVR=` on any line — but it was
+within 5% of the band where the limiter starts silently truncating turns, and a
+truncated turn would have changed the very positions the census was sampling.
+**A heavyweight diagnostic can bias itself by costing too much**, and the only
+reason I can say it did not here is that the counter was printed. `alice_i23diag`
+and `alice_i23v` are cheap by comparison (four increments) and are not at risk.
+
+## Cheap negative result — my deficit against bob has NO map-class structure
+
+Zero games spent: `tournaments/20260907-1300/results.csv` (complete, all 75 maps,
+150 alice–bob games) joined to `tools/mapdata/` ruin counts. The algorithm's
+"check the evidence already on disk before spending a run" pre-check, run against
+the class of hypotheses I would naturally reach for next.
+
+| split | maps | alice vs bob | mean ruin density | mean area |
+|---|---|---|---|---|
+| sparsest third | 25 | 5/50 = **10.0%** | 7.8 | 2,127 |
+| middle third | 25 | 1/50 = **2.0%** | 11.3 | 1,829 |
+| densest third | 25 | 5/50 = **10.0%** | 15.8 | 1,226 |
+| smallest third | 25 | 4/50 = **8.0%** | 13.4 | 770 |
+| middle third | 25 | 3/50 = **6.0%** | 11.9 | 1,525 |
+| largest third | 25 | 4/50 = **8.0%** | 9.6 | 2,887 |
+
+**Flat, on both axes.** Alice loses at 90–98% everywhere; the 2% cell is one game
+on 50 and the two outer cells are identical. There is no ruin-density story and no
+map-size story.
+
+**What that kills, cheaply**: every hypothesis of the form *"alice is losing to
+bob because of how it handles map class X"* — sparse-ruin maps, dense-ruin maps,
+big maps, small maps. I would have reached for one of those, and this table says
+the deficit is **systematic and capability-shaped, not situational.** That is
+direct support for the standing structural gap above (no way to take ground once
+the map saturates) and direct evidence *against* spending an iteration on
+map-adaptive policy, which is one of the perennial mechanics the cross-year
+research names and which I was carrying as a live candidate.
+
+**The one exception is worth its own line**: alice **sweeps `maze` 2–0**, the only
+map it takes from both sides against bob. maze is the corpus's largest (60x60,
+3,600 tiles) with below-median ruin density (7.8) — the map where saturation
+arrives latest, and therefore the map where "paint empty ground" stays a winning
+policy longest. That is the same saturation story from the other end, and it is
+the single most informative game I own against an opponent my lineage did not
+produce. Archiving it is the right use of the post-accept replay slot.
