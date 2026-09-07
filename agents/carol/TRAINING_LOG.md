@@ -6975,3 +6975,237 @@ algorithm warns about, and a third-party number is the only thing that can size 
 aggregates, decision counters, mirror nulls, map-resampling — all remain available for my
 gauntlets, my synthetics, my frozen roster and the inter-agent tournament. Only benchmark games
 are off-limits.
+
+---
+
+## Session resume (2026-09-07, later): recovering the i28p probe, and what it found instead
+
+A session death left `src/carol_i28p/` uncommitted and **two completed, collated gauntlet runs
+never analysed** (`gauntlet/20260907-214045` and `20260907-214645`, 8 games each, i28p vs
+`carol_iter25` on the same 4 pinned maps). Neither had reached the log. Recovering them cost no
+VM time — the games were already on disk.
+
+### The registered design is REFUTED by its own pre-registered criterion
+
+i28p is a **no-op probe** for the map-memory candidate I registered last session: mark the coarse
+6x6 map cell underfoot as EXHAUSTED whenever the `frontNone` branch fires, then aim exploration at
+the nearest non-exhausted cell instead of a uniform-random coordinate. It computes every quantity
+the mechanism would use and throws it away, so play is unchanged.
+
+**Identity check passes** on both runs: 4/8, all four maps split by side, zero swept — the mirror-null
+shape. So the counters describe iteration 25's own behaviour.
+
+Registered kill criterion, written before the run: *"exB = fires where the RANDOM target lands in a
+cell this robot already exhausted (the waste the mechanism removes — **if this is ~0 the design is
+dead**)."*
+
+| map | soldiers | exF (explore draws) | **exB (the waste)** | choice-set width | exX (cells marked) |
+|---|---|---|---|---|---|
+| DefaultMedium | 218 | 439 | **2 (0.5%)** | 35.3 / 36 | mean 1.43, max 10 |
+| Bunny | 66 | 119 | **0 (0.0%)** | 39.9 / 40 | mean 0.39, max 2 |
+| Fossil | 101 | 150 | **0 (0.0%)** | 24.8 / 25 | mean 0.60, max 3 |
+| Mirage | 88 | 147 | **0 (0.0%)** | 48.9 / 49 | mean 1.12, max 5 |
+
+**exB = 2 of 855 draws = 0.2%. The design is dead by the criterion I registered for it.**
+
+The cause is visible in exX and it is structural, not a tuning matter: a soldier marks a mean of
+**0.4–1.4 cells out of 25–49** in its entire life. Per-robot exhausted-cell memory never accumulates
+enough to constrain anything — the choice set stays 99% of the map (35.3/36, 39.9/40, 48.9/49), so a
+random draw essentially cannot land in an exhausted cell. This is a *third* independent way the
+same family of designs has died: not "the ranking is wrong" (r²=9, refuted), not "the signal isn't
+there" (r²=20, refuted), but **the memory is empty**.
+
+`exD` = 100% on every fire is uninformative and I am flagging it rather than quoting it: "the
+nearest non-exhausted cell differs from the random target's cell" is trivially true because
+`newExploreTarget()` keeps the *farthest* of four samples while the probe's candidate is the
+*nearest* cell. It measures "near != far", not a decision quality. Recording that because a 100%
+counter looks like a strong result and is not one.
+
+### What the probe found instead — and it is much larger than what it was built to test
+
+The same indicator stream carries a per-turn soldier state histogram I had never tabulated.
+
+| map | soldier turns | **in the ruin branch** | painted a tile (slf/pnt) | at paint < 5 |
+|---|---|---|---|---|
+| DefaultMedium | 11,519 | **71.5%** | 5.2% | 22.6% |
+| Bunny | 3,772 | **58.0%** | 9.4% | 19.8% |
+| Fossil | 4,920 | **68.9%** | 6.4% | 22.1% |
+| Mirage | 4,634 | **68.3%** | 6.9% | 23.9% |
+
+And then the lifespan, which is the number that reframes everything:
+
+| map | soldiers spawned | **median life** | ruin-branch turns per soldier | **died with paint < 5** |
+|---|---|---|---|---|
+| DefaultMedium | 218 | **50 rounds** | 37.8 | **206/218 = 94%** |
+| Bunny | 66 | **56 rounds** | 33.2 | **51/66 = 77%** |
+| Fossil | 101 | **49 rounds** | 33.6 | **85/101 = 84%** |
+| Mirage | 88 | **50 rounds** | 36.0 | **81/88 = 92%** |
+
+**A carol soldier costs 200 paint and 250 chips, lives about 50 rounds, spends ~70% of them walking
+to a single ruin, and 77–94% of the time dies of paint starvation.** Steady-state soldier population
+is 4–7 (range 1–14) on maps of 868–1,193 passable tiles.
+
+That is an absolute degeneracy signal, not an opponent-relative one — it needs no opponent to be
+wrong — which is exactly the kind of target Step 1 of the algorithm says to prefer.
+
+### One hypothesis of mine died here too, cheaply and before it cost anything
+
+I suspected the single-slot `ruinBanned` (one `MapLocation`, replaced whenever a new ban is set)
+would make soldiers ping-pong between two unfinishable ruins. **Refuted from data already on disk:
+zero re-targets of an already-chased ruin across all four maps, and 0.94–1.08 distinct ruins per
+soldier.** Soldiers do not oscillate. They chase one ruin, once — they simply do not live long
+enough to chase a second. The single-slot ban is harmless because the bug it could cause needs a
+lifespan carol's soldiers never reach.
+
+### The paint accounting, closed — and it relocates the problem a second time
+
+All of the following is computed **offline from replays already on disk**: zero VM game time. The
+four games are i28p (= iteration 25, no-op probe) as bot A on DefaultMedium, Fossil, Bunny, Mirage.
+Because the probe is a verified no-op, **T2 in these games is byte-identical carol on the winning
+side** — which gives me a within-game control on identical code, and that control turns out to be
+the load-bearing part.
+
+#### Soldier paint conversion: 9–23%, and the SAME on both sides
+
+A soldier is built for 200 paint drawn from a tower's stash. Counting its actual `PAINT` and
+`markTowerPattern` actions in the replay (1 PAINT = 1 attack = 5 paint; marks come in blocks of
+exactly 24 tiles = one 25-paint call):
+
+| map | side | soldiers built | paint budget | spent on painting | **conversion** |
+|---|---|---|---|---|---|
+| DefaultMedium | T1 (lost) | 218 | 43,600 | 4,455 | **10.2%** |
+| DefaultMedium | T2 (won) | 268 | 53,600 | 4,950 | **9.2%** |
+| Bunny | T1 (lost) | 66 | 13,200 | 2,420 | **18.3%** |
+| Bunny | T2 (won) | 116 | 23,200 | 5,255 | **22.7%** |
+| Fossil | T1 (lost) | 101 | 20,200 | 2,470 | **12.2%** |
+| Fossil | T2 (won) | 138 | 27,600 | 3,645 | **13.2%** |
+| Mirage | T1 (lost) | 88 | 17,600 | 2,520 | **14.3%** |
+| Mirage | T2 (won) | 125 | 25,000 | 5,140 | **20.6%** |
+
+**77–91% of every soldier's paint budget never becomes a painted tile, and the winning side is no
+better at it than the losing side** — on DefaultMedium the *loser* converts marginally better
+(10.2% vs 9.2%). So this is **structural to carol's design, not a symptom of losing**. That
+distinction is the whole reason the control was worth computing: without it I would have read
+T1's low numbers as the cause of T1's defeat, which is the wrong referent.
+
+#### The exchange rate — and a 6x claim of mine that measurement killed
+
+Per RESEARCH.md §8 ("build an exchange rate, even a crude one"), tiles painted per 100 paint
+*spent on attacking*:
+
+| unit | tiles per attack | **tiles per 100 paint spent attacking** |
+|---|---|---|
+| soldier | 1.00 | **20.0** (every map, every side — it is 1 tile / 5 paint by definition) |
+| splasher | 10.0–12.6 | **20.0–25.2** |
+
+I had reasoned my way to "splashers are ~6x more paint-efficient than soldiers" by dividing tiles
+by *build cost*. **That is the wrong referent and the measurement refutes it: per paint actually
+spent attacking, the two are within 10% of each other.** Recording the wrong number and its
+correction rather than quietly replacing it.
+
+The real difference is upstream of the exchange rate — what fraction of the unit's budget ever
+reaches an attack at all:
+
+| unit | build paint | paint reaching attacks | **share of budget converted** |
+|---|---|---|---|
+| soldier (T2, DefaultMedium) | 53,600 | 4,600 | **8.6%** |
+| splasher (T2, DefaultMedium) | 4,500 | 3,150 | **70%** |
+| splasher (T2, Bunny) | 2,400 | 2,300 | **96%** |
+
+A splasher's attack costs 50 paint against a soldier's 5, while both lose the same ~1–3/turn to
+drain while walking. **The soldier is drain-dominated and the splasher is attack-dominated**, and
+that — not per-attack efficiency — is where the 8x sits.
+
+#### The build mix carol *intends* is not the build mix she *gets*
+
+Constants: `SPLASHER_IN_20 = 3`, `MOPPER_IN_20 = 2` → **intended 75% soldier / 15% splasher /
+10% mopper**. Realized, counting every unit actually built:
+
+| map | side | soldier | splasher | mopper | realized splasher% |
+|---|---|---|---|---|---|
+| DefaultMedium | T1 | 218 | 3 | 220 | **0.7%** |
+| DefaultMedium | T2 | 268 | 15 | 39 | 4.7% |
+| Bunny | T1 | 66 | 1 | 67 | **0.7%** |
+| Bunny | T2 | 116 | 8 | 29 | 5.2% |
+| Fossil | T1 | 101 | 4 | 55 | **2.5%** |
+| Fossil | T2 | 138 | 8 | 61 | 3.9% |
+| Mirage | T1 | 88 | 2 | 31 | **1.7%** |
+| Mirage | T2 | 125 | 11 | 16 | 7.9% |
+
+On the losing side the realized mopper share is **50%** against an intended 10%, and the splasher
+share is **0.7%** against an intended 15%.
+
+**The cause is an affordability filter nobody designed.** The tower rolls a type, then
+`canBuildRobot` silently fails if the tower's own stash cannot pay: mopper 100, soldier 200,
+splasher 300. So `P(build type) = P(roll type) x P(afford type)`, and the stash distribution
+decides the mix:
+
+| map | paint-tower turns | tp < 100 | **tp in [100,200) — mopper only** | tp >= 200 | **tp >= 300 — splasher possible** |
+|---|---|---|---|---|---|
+| Bunny | 1,444 | 49.0% | **48.6%** | 2.4% | **0.3%** |
+| DefaultMedium | 10,744 | 41.7% | **43.0%** | 15.3% | **9.6%** |
+| Mirage | 3,000 | 28.5% | **36.9%** | 34.6% | 21.2% |
+| Fossil | 4,097 | 24.8% | **26.5%** | 48.7% | 40.7% |
+
+**The paint tower spends a quarter to a half of its life holding exactly enough for a mopper and
+never enough for a soldier.** That is the "resource pinned in a dead band" degeneracy shape
+verbatim. Money towers are irrelevant here: their median stash is **0** (84–98% of their turns
+below 100) because `paintPerTurn == 0` for a money tower, so essentially every unit carol fields
+comes out of a paint tower.
+
+**This retrodicts a result I could not explain before.** My earlier `SPLASHER_IN_20` dose sweep
+found the shape "concave, incumbent exactly at the peak, both arms rejected" — puzzling at the
+time. It is explained now: on Bunny the tower can afford a splasher on **0.3%** of its turns, so
+the roll probability is saturated by affordability and moving the knob cannot move the realized
+share. **The constant was tuned; the thing the constant controls was not.** A retrodiction of an
+old anomaly is worth more than a fresh story, so I am flagging this as the strongest single piece
+of support for the direction.
+
+#### The price of a mopper, measured rather than assumed
+
+Before treating moppers as waste — the pre-check that has caught me three times. Mopper state
+histogram, same games:
+
+| map | mopper turns | mopped | swung | **idle** |
+|---|---|---|---|---|
+| Bunny | 2,498 | 20% | 0% | **78%** |
+| DefaultMedium | 4,932 | 14% | 1% | **84%** |
+| Fossil | 1,067 | 24% | 1% | **73%** |
+| Mirage | 1,025 | 18% | 0% | **80%** |
+
+**Moppers are not idle waste at this iteration.** 517 mop actions on Bunny is real work, and it
+supersedes nothing: iteration 19a (delete moppers outright) was rejected at 32% and that rejection
+stands. Any candidate here must be conditional on the tower's stash, not a removal — a different
+mechanism from 19a, not a silent revert of it.
+
+#### Soldier drain, decomposed — and the discriminating case is running
+
+Two independent artefacts agree, which is what licenses reading anything off this. From the
+lifetime budget: 200 paint − 19 on attacks − 1.5 on marks over 52.8 turns = **3.40/turn** on
+DefaultMedium. From differencing the per-turn `p=` in the indicator stream and subtracting that
+turn's logged attacks: **3.46/turn**. Agreement to 2%.
+
+Terrain drain is capped at 2/turn by the rules (−1 neutral, −2 enemy, 0 ally), so **at least 1.4 of
+the 3.46 cannot be terrain.** The per-turn distribution is sharply bimodal:
+
+| map | mean | 0 | 1 | 2 | 5 | 6 | 7 | 9 | 11 |
+|---|---|---|---|---|---|---|---|---|---|
+| Bunny | 2.65 | 36% | 13% | 17% | 9% | 8% | 12% | 3% | – |
+| DefaultMedium | 3.46 | 38% | 10% | 5% | 8% | 11% | 13% | 8% | 3% |
+| Fossil | 3.52 | 32% | 9% | 11% | 7% | 11% | 18% | 6% | 1% |
+| Mirage | 3.22 | 41% | 8% | 9% | 7% | 8% | 13% | 8% | 2% |
+
+Half the turns are free (0–1) and **about a third cost 5–11 paint each**. Two mechanisms can
+produce that tail and they need **opposite** fixes:
+
+- **Ally clumping** (−1 per adjacent ally, −2 on enemy ground) → the fix is a local repulsion rule,
+  which is a movement change costing nothing, the "capability at zero marginal cost" shape.
+- **Enemy mopper theft** (mop-steal −10, mop-swing −5 to each of up to 6) → a completely different
+  fix, and nothing to do with our own movement.
+
+I am explicitly **not naming the fault yet**. The two hypotheses look identical in the drain total
+and the observed values are suggestive both ways: 5, 6, 7, 10, 11 are exactly {swing 5, steal 10} +
+{ally 0, neutral 1, enemy 2}, which favours theft; but a gap at 3 and 8 argues against smooth
+clumping too. Enemy mopper attacks on our soldiers are logged individually as `ATTACK -> <id>`, so
+the discriminating case is free and is running now: split the same drain distribution by whether an
+enemy attacked that soldier that round.
