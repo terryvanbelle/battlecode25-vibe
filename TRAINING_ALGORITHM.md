@@ -443,6 +443,26 @@ that are fine alone and destructive together — 76% and 82% separately, 56%
 combined — and the accept gate could not have caught it, because the candidate
 was measured against a baseline that already carried the other half.
 
+**This has now been measured directly, not just argued.** One lineage ran all
+three comparisons of a two-part change on a single pinned 25-map sample, making
+the arithmetic exact rather than estimated:
+
+```
+part 1 beats generation N-1 by +8
+part 2 beats (N-1 + part 1) by +6
+whole beats generation N-1 by +8    <- not +14
+```
+
+Sub-additive by 6 — and the whole is not merely *close* to the first leg but
+**indistinguishable from it**: of 50 (map, side) cells, 6 disagreed, split
+exactly 3–3 across six different maps, which is the churn signature rather than
+an effect. So **a feature worth +6 against the immediate predecessor is worth
+exactly 0 against the generation before it.** Head-to-head margins do not chain.
+
+That is the whole case for the frozen roster in one line: no sequence of
+head-to-heads can reconstruct a level when the links are not additive, so a
+lineage that only ever measures adjacent generations cannot know where it stands.
+
 Three practical rules follow:
 
 - **The frozen roster is the only instrument that sees this.** Run it on a
