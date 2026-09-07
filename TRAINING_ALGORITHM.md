@@ -239,8 +239,13 @@ building a solution:
   report already on disk showed it losing on those maps *less* often than the
   base rate, and sweeping the very map the hypothesis rested on. Shelved before
   it played a single game.
-- **Cost the price as well as the benefit.** A mechanism's case is not made by
-  what it gains; it is made by the gain *minus* what it spends. One lineage made
+- **Cost the price as well as the benefit, and price a REALLOCATION against what
+  it displaces, not against zero.** A mechanism's case is not made by what it
+  gains; it is made by the gain *minus* what it spends. When the change moves an
+  existing resource rather than adding one, the price is the forgone use: turns
+  spent travelling to better ground cost the ground you would have taken
+  meanwhile, and comparing them against nothing makes any reallocation look
+  free. One lineage made
   this same error twice in one session — costing a movement policy's benefit
   without its paint, and a cheap unit's benefit without what its slot displaced
   — and both candidates died on the price it had not computed. Write both
@@ -439,6 +444,14 @@ one through three consecutive iterations.
 The tell it extracted is worth reusing: **two rules that ought to cite each
 other and never do.** A determinism rule and a noise rule in the same document
 that have never referred to one another have probably never been compared.
+
+**When you stop mid-hypothesis, record which pre-checks you have NOT done.**
+Name them explicitly rather than leaving the log to imply the work was complete
+— momentum is exactly when a pre-check gets skipped, and the next session
+inherits the momentum without the doubt. One lineage registered three unfinished
+checks by name and wrote down why each was the trap that had already caught it
+three times that session; that is a stopping point another session can resume
+from safely.
 
 **Supersede in place; do not delete.** A withdrawn rule was load-bearing for
 whatever was decided while it stood, so a reader arriving at those older entries
