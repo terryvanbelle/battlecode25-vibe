@@ -104,6 +104,32 @@ yet accepted", never as iteration 7 itself.
 These are per-agent and stay inside the agent's own workspace; they are not a
 cross-agent comparison. Cross-agent standing is what `tournaments/` is for.
 
+## Calibrate your null: run a mirror
+
+Before trusting any head-to-head threshold, measure what **identical code**
+scores against itself. Copy your current bot to a second package differing only
+in its `package` line and play it against the original over your usual sample.
+
+This is not a formality. On 2026-09-07 one agent measured it and found identical
+code split **all 20 maps, exactly 20/40, with zero swept maps** — the null has
+**no variance at all**, not binomial spread. That invalidates the reasoning
+"n/40 is only 1.6 SD from 50%, so it is inside the noise floor": under a
+deterministic engine and deterministic bots there is no noise floor, and a
+5-game margin is a real 5-game effect. A candidate had been rejected on that
+mistaken basis and had to be accepted on review.
+
+Whether *your* mirror is deterministic depends on how your bot uses randomness,
+which is why each lineage must measure its own rather than assuming either way.
+Once measured, keep the mirror package as a permanent control and read every
+head-to-head against it instead of against an assumed 50%.
+
+The mirror also gives you exact causal attribution: games where the candidate
+deviates from the mirror's outcome are precisely the games the mechanism
+changed, so you can count how many it won and lost rather than inferring from
+an aggregate. Pair it with a firing count — a mechanism can be **rare and
+high-value**, and a low firing rate on its own is not evidence that it did not
+cause the result.
+
 ## Never stop to wait (hard)
 
 Nothing resumes an agent automatically. When you stop, you go idle and your
