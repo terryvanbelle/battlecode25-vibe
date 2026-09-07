@@ -5463,3 +5463,51 @@ exactly what the iteration 21 withdrawal guard was queued to fix.
 mechanism is live and heavily exercised; whether uncontrolled redistribution is net-positive is
 precisely the question a gauntlet answers, and the `fl`/`fd`/`don` counters will tell me
 afterwards whether a controlled source would have done better.
+
+## CORRECTION to the mopper dose curve: it is CONCAVE, and the incumbent is on the wrong side of the peak
+
+Run `20260907-142542` completed its dose arm. I called the curve "monotone increasing" from
+partial data (`i19a` was 4–10 down to `i19b` at the time). The full numbers say otherwise:
+
+| comparison | result | dose 0's opponent scores |
+|---|---|---|
+| `carol_i19a` (0) vs `carol_iter14` (**5**) | 14/40 = 35.0% | **65.0%** |
+| `carol_i19a` (0) vs `carol_i19b` (**2**) | 11/40 = 27.5%, swept **2–11** | **72.5%** |
+
+Both are measured against the *same* opponent (dose 0) on the *same* pinned maps in the *same*
+run, so the comparison between them is as clean as a cross-arm comparison gets. **Dose 2 beats
+dose 0 by more than dose 5 does** — 72.5% against 65.0%, and it sweeps 11 maps to 2.
+
+So the curve over 0 → 2 → 5 is **concave with an interior optimum near 2**, and the incumbent
+sits past the peak. This is measurement doctrine #2 in its exact predicted form:
+
+> "Always measure the zero arm: a negative slope between two nonzero doses once wrongly
+> condemned a low dose that beat zero handily; the curve was concave with an interior optimum.
+> A curve that peaks in the middle is stronger evidence than any single point."
+
+I had reached for `MOPPER_IN_20 = 8` on the strength of the partial read. The completed run
+points the other way, and **the zero arm is what made the shape legible** — without it I would
+have had one number (5 beats 2, or 2 beats 5) and no idea whether I was on a slope or near a
+peak. It was mandatory for exactly this reason and it earned its 40 games.
+
+**Both of my successive framings were wrong and the measurement corrected each in turn:**
+"moppers are waste, cut them" → refuted by the zero arm at 35%; "moppers are undervalued, add
+more" → refuted by the completed curve. The truth is neither: **moppers are valuable and there
+are too many of them.**
+
+**Iteration 21 rebuilt as `MOPPER_IN_20 = 2` on the iteration-18 baseline.** One constant. The
+transitive evidence (dose 2 > dose 5 via a shared dose-0 opponent) is strong but indirect, so
+the direct head-to-head against `carol_iter18` with the `carol_m18` null is the test that
+decides it.
+
+### Pre-registered for iteration 21
+
+**Decision rule**: margin against the `carol_m18` null (primary); h2h vs `carol_iter18` >= 60%;
+one-directional flip shape; no drop vs `carol_rush`.
+
+**Map-level prediction**: a *unit-mix* change has no map-local mechanism to key on, so unlike
+iterations 18 and 20 I can predict only the aggregate here — and I am recording that limitation
+rather than inventing a map story. What I do predict: the gain concentrates on maps where
+tower paint is scarcest (Parking_lot 99.1% of tower turns under 200 paint, gridworld 97.3%),
+because that is where trading a 100-paint mopper for a 200-paint soldier bites hardest — and
+it should be near-neutral on Castle (26.5%), where stashes are comparatively healthy.

@@ -65,12 +65,14 @@ public class RobotPlayer {
      * paint, not chips -- a splasher is 300 paint against a soldier's 200 -- so start low.
      */
     static final int SPLASHER_IN_20 = 3;
-    // Iteration 21: mopper share ABOVE the incumbent. Run 20260907-142542 measured the curve as
-    // monotone increasing over 0 -> 2 -> 5 (dose 0 scores 14/40 and loses to dose 2 by 10-4), so
-    // the incumbent 5 may not be the peak. Moppers are the cheap unit (100 paint vs a soldier's
-    // 200) drawn from tower stashes that are under 200 on 57-99% of tower turns, and mopping is
-    // carol's ONLY route to reclaiming enemy paint since soldiers cannot overwrite it.
-    static final int MOPPER_IN_20 = 8;
+    // Iteration 21: mopper share BELOW the incumbent 5. Run 20260907-142542 measured the dose
+    // curve against a common dose-0 opponent on identical maps: dose 2 beats dose 0 by 29-11
+    // (72.5%), dose 5 beats dose 0 by 26-14 (65.0%). So the curve is CONCAVE with an interior
+    // optimum near 2, not monotone -- measurement doctrine #2's exact warning shape. Moppers
+    // are still worth having (the zero arm loses badly: they are the cheap unit at 100 paint
+    // against a soldier's 200, and mopping is carol's only way to reclaim enemy paint since
+    // soldiers cannot overwrite it) -- there are simply too many of them at 5.
+    static final int MOPPER_IN_20 = 2;
 
     /** Minimum splash score worth spending 50 paint on. Named so it can be a dose. */
     static final int SPLASH_MIN_SCORE = 8;
