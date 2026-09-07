@@ -296,6 +296,15 @@ resulting retraction of a long-standing entry safe.
 
 ### 5. Staged evaluation
 
+0. **One-map identity check, before any gauntlet.** Build the arms, play a
+   *single* map, and diff the counters. If the arms come back byte-identical the
+   mechanism is dead and the whole run is wasted — a dormant branch, a guard
+   that never fires, a candidate that compiles to the same behaviour. One
+   lineage voided an iteration this way for **three games** after spending 250
+   on two candidates whose mechanisms turned out fine but whose effects were
+   nil; it then made the check mandatory rather than lucky. Design the zero arm
+   to be byte-identical to the baseline so this check runs inside the evaluation
+   itself.
 1. **Cheap reproduction sample**: `ReproSampleSize` peers, all maps, both
    sides, diffed by shape against the baseline. An unambiguous real regression
    here kills the change without spending a full run. A *clean* sample does
