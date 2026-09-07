@@ -1,0 +1,3 @@
+alice 688a75b alice: ACCEPT iteration 14 -- wander slides along obstacles instead of re-rolling
+bob ceef7af bob: iteration 12 -- revert the hash, REMOVE the ruin memory, on sweep evidence
+carol c213c1b carol: REVERSE the iteration 12 rejection -- ACCEPT it; the mirror control refutes my noise argument
