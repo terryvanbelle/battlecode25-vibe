@@ -2654,3 +2654,56 @@ that this bot has never once used.
 give each soldier a memory of unoccupied ruin locations it has seen, and navigate to
 the nearest remembered one when none is visible. Purely local memory, one mechanism,
 no comms yet — comms is the larger follow-on if memory alone proves the direction.
+
+## Iteration 10 — three defects found in mechanistic verification, before any gauntlet
+
+Step 4 of the algorithm (re-run the motivating game, classify engagement) earned its
+keep here. The candidate was never evaluated, because it never worked, and each defect
+was found by measurement rather than by reading alone.
+
+**Defect 1 — the site check could not see what it was checking.**
+First verification: lost Castle r775 and quack r627 to `bob_iter9`, with `srpA = 0`
+against iteration 9's 1. `javap` on `senseNearbyMapInfos(MapLocation, int)` shows it
+calls `getAllLocationsWithinRadiusSquared` and then filters by `canSenseLocation` —
+it does **not throw** for tiles outside vision, it silently returns fewer. So
+`srpSiteSafe` was approving remote candidates whose 5×5 it had only partly inspected,
+letting soldiers mark overlapping patterns that can never complete.
+*Fix*: require `area.length == 25`. `isValidPatternCenter` already guarantees all 25
+tiles are on the map, so anything short of 25 means "I cannot see this pattern".
+*Effect*: Castle r775 loss → r2000 tiebreaker loss; quack r627 loss → **win**.
+
+**Defect 2 — searching at range and painting at range are different things.**
+Despite that improvement, `srpA` was still **0 in both games**, so the wins were not
+coming from the mechanism at all — algorithm step 4 case 3, "no evidence of
+engagement: discard or fix, don't evaluate further". Cause, from the unit table: a
+soldier's **action radius is r² = 9**, and the 5×5 around its *own* tile tops out at
+r² = 8 — which is exactly why iteration 9's comment could claim the whole pattern was
+attackable. Iteration 10 let the centre sit up to r² = 8 away, putting the far corner
+of a remote pattern at r² = 32, and the "wandered off" guard only walked the soldier
+back when it was **more** than 8 away. So a soldier marked a site it could never
+paint, stood still for its 120-turn patience, and abandoned it — 25 paint burned and
+the site poisoned with marks for everyone else.
+The probe measured exactly that over a whole 2000-round game: **`start = 1`,
+`done = 0`, `aband = 1`.**
+*Fix*: navigate to the centre and paint only while standing on it (`!me.equals(srp)`).
+
+**Defect 3 — the rotation defeated the very bound it was supposed to respect.**
+I capped `SRP_SCAN` at 13 on the argument that exactly 13 offsets (dx²+dy² ≤ 4) have
+their whole 5×5 inside vision r² = 20 — (2,0) lands on 20, (2,1) on 25. But the
+ID-rotation indexed over all 24 tail offsets, so most scan slots landed on the r² = 5
+and 8 candidates that can never pass. Measured: **the visibility guard refused 70% of
+all attempts**, and `mark` overlap refused another 52%.
+*Fix*: rotate within indices 1..12 only, so every scanned candidate is one the soldier
+can actually inspect.
+
+### What this sequence is worth
+
+Three defects, all in one 20-line change, none of which a win rate would have
+diagnosed — and the second one is the sharpest: **the candidate won a verification
+game while its mechanism was completely inert.** Had I gone straight to the gauntlet
+after the encouraging Castle/quack flip, I would have measured a 20-line change whose
+stated mechanism fired once in 2000 rounds, and whatever number came back — accept or
+reject — would have been about something else entirely.
+
+That is the concrete argument for criterion 3 being a *mechanistic* criterion checked
+*before* the win rate, and for reading it even when the win rate looks good.
