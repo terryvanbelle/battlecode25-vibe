@@ -5868,3 +5868,85 @@ carol_iter21 vs carol_m21:  20/40 (50.0%)   swept-win 0/20   swept-loss 0   spli
 Six mirrors, six exact even splits, zero swept maps across all six. The null is deterministic
 and has no variance, and `carol_m21` is now the control for everything measured against
 iteration 21.
+
+## Corpus check: carol's `towerTypeFor` key is SINGLE-BRANCH on 6 of 75 maps — including one in my pinned sample
+
+`tools/mapdata/` arrived as shared ground while I was running, recording that any `(x+y)&1`
+policy is single-branch on four maps. **Carol's tower-type policy is the same shape with a
+different modulus**, so the shared table could not answer it:
+
+```java
+int k = Math.min(ruin.x, w-1-ruin.x) + Math.min(ruin.y, h-1-ruin.y);
+return (k % 3 == 0) ? LEVEL_ONE_MONEY_TOWER : LEVEL_ONE_PAINT_TOWER;
+```
+
+I adapted the shared `RuinScan` into `tools/towerkeyscan/TowerKeyScan.java` (carol-private) and
+ran it over all 75 official maps:
+
+| map | ruins | money | paint | consequence |
+|---|---|---|---|---|
+| **gridworld** | 21 | **21** | **0** | every new tower is MONEY — **no new paint income all game** |
+| **DefaultLarge** | 20 | **0** | 20 | every new tower is PAINT — **no new chip income all game** |
+| BatSignal | 10 | 0 | 10 | no new chip income |
+| Racetrack | 10 | 0 | 10 | no new chip income |
+| rain | 12 | 0 | 12 | no new chip income |
+| roads | 8 | 0 | 8 | no new chip income |
+
+Corpus-wide the split is 447 money : 927 paint, so a trace on a typical map shows both branches
+healthy and nothing looks wrong — exactly the trap the shared README describes.
+
+**This retroactively explains two things I had measured and mis-attributed.**
+
+1. **gridworld's 76,420 idle chips and 97.3% dry towers are my own policy, not the map.** I
+   wrote that gridworld "has a paint *income* problem" and that the chip surplus is "a symptom
+   of paint starvation". Both true — and the *cause* is that carol builds 21 money towers and
+   zero paint towers there. I had been treating a self-inflicted degeneracy as a property of
+   the terrain.
+2. **DefaultLarge's median treasury of exactly 1,200** — pinned at the reserve to the chip —
+   now has a mechanism: with every new tower a paint tower, chip income never grows past the
+   starting money tower, so the treasury *cannot* climb to 1,450 and the reserve is permanent.
+   **That is why iteration 18's release fired hardest there (`pf` 53 and 33) and why
+   DefaultLarge was one of its three predicted wins.** The accept is unaffected and better
+   explained.
+
+**And it vindicates treating gridworld's anomalies as untrustworthy.** gridworld moved against
+*both* iteration 17 and iteration 18 and I recorded it as chaos-sensitive on that evidence
+alone. It is now degenerate in **three independent ways**: single-parity ruins, densest map in
+the corpus (1.9x median), and all-money under carol's own key.
+
+### Costing the fix before building it (TRAINING_ALGORITHM §3, new pre-check)
+
+I swept 11 candidate replacement keys over the corpus. All are functions of
+`(mx, my) = (min(x,w-1-x), min(y,h-1-y))` only, so all preserve the play-symmetry property the
+current key was chosen for — both teams assign the same type to mirrored ruins.
+
+| key | degenerate maps | money:paint | **churn vs current** |
+|---|---|---|---|
+| **CURRENT** `(mx+my)%3==0` | **6** | 447:927 | — |
+| `(mx+my)%2==0` | 4 | 764:610 | **50.6%** |
+| `(mx*my)%3==0` | 5 | 714:660 | 65.0% |
+| `(mx*3+my)%4==0` | 5 | 402:972 | 44.0% |
+| `(mx+my)%5<2` | 6 | 543:831 | 46.4% |
+| `(mx+my)%4==0` | 7 | 373:1001 | 40.8% |
+| `mx%3==0` | 8 | 447:927 | 45.6% |
+| `(mx%3==0)&&(my%3==0)` | 36 | 134:1240 | 22.8% |
+
+**No positional key escapes.** The best candidate still breaks 4 maps, and every one of them
+reassigns **40–65% of all ruins** — an enormous price paid on the 69 maps that are not broken,
+to half-fix the 6 that are. The whole *family* of coordinate-keyed policies is degenerate on
+this corpus, because ruin layouts are structured (grids, lattices, symmetric motifs) and any
+modulus can align with the structure.
+
+**So the answer is not a better key; it is to stop deciding tower type from position alone.**
+That is a genuinely different design and it needs a global signal carol does not have — she has
+no comms, and `getNumberTowers()` returns a count, not a composition. Registering the constraint
+rather than rushing a bundled fix while the roster run is in flight.
+
+**Leading design, with its price stated**: keep the key as the default, and override *only* in
+the degenerate direction — if the key says MONEY and the soldier can sense **no ally paint
+tower** anywhere in vision, build PAINT instead. On gridworld paint towers are absent by
+construction, so the override fires and the mix is restored; on a normal map two thirds of
+towers are paint, so a soldier completing a ruin almost always sees one and the override is
+inert. **The price is bounded by how often a soldier is out of sight of every ally paint tower
+on a healthy map**, which is measurable from one instrumented game — the decision counter, not
+the outcome, per the other new §3 pre-check.
