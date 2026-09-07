@@ -146,19 +146,22 @@ public class RobotPlayer {
         MapLocation me = rc.getLocation();
         // Iteration 20: penalise a ruin whose pattern currently holds enemy paint.
         // A soldier can never overwrite enemy paint, so such a pattern cannot be
-        // finished until a mopper arrives -- and measured on alice_iter14 self-play,
-        // 35.8% / 77.8% / 81.2% of ALL ruin-targeted soldier turns (gridworld /
-        // box / UnderTheSea) are spent on exactly such a ruin. This is waste
-        // removal, not a new capability: the soldier goes to a ruin it can
-        // actually finish. Ruins are sensed within vision (r^2 <= 20), so a
-        // penalty of 25 strictly prefers any unblocked ruin over any blocked one.
-        // BLOCK_PENALTY = 0 never calls patternBlocked and is byte-identical to
-        // alice_iter14.
-        // KNOWN BIAS, recorded rather than hidden: a distant ruin whose 5x5 lies
-        // partly outside vision cannot be tested, so it reads as unblocked. Large
-        // penalties therefore bias toward ruins we simply cannot see yet, which is
-        // why the dose ladder is small and the exclusive end is included as the
-        // top rung rather than assumed safe.
+        // finished until a mopper arrives. Measured on alice_iter14 self-play,
+        // 35.8%/77.8%/81.2% of ALL ruin-targeted soldier turns (gridworld/box/
+        // UnderTheSea) are spent on exactly such a ruin. Iteration 19 attacked the
+        // same waste from the mopper side and raised THROUGHPUT through the blocked
+        // state while leaving the blocked FRACTION untouched (35.8->36.1) -- because
+        // that fraction is an equilibrium the opponent replenishes. This stops
+        // paying for the equilibrium instead of fighting it, so it is a different
+        // mechanism, not a refinement, and it is measured on top of iteration 19.
+        // Ruins are sensed within vision (r^2 <= 20), so a penalty of 25 strictly
+        // prefers any unblocked ruin. BLOCK_PENALTY = 0 never calls patternBlocked
+        // and is byte-identical to alice_iter19.
+        // KNOWN BIAS, recorded rather than discovered later: a distant ruin whose
+        // 5x5 lies partly outside vision cannot be tested and so reads as
+        // unblocked. Large penalties therefore bias toward ruins we merely cannot
+        // see yet, which is why the ladder is small and the exclusive rung is
+        // measured rather than assumed safe.
         final int BLOCK_PENALTY = 10;
         int bestD = 1 << 30;
         for (MapLocation r : ruins) {
@@ -253,14 +256,32 @@ public class RobotPlayer {
 
     // ----------------------------------------------------------------- mopper
     static void runMopper(RobotController rc) throws GameActionException {
-        // Mop adjacent enemy paint (prefer tiles with enemy robots on them).
+        // Iteration 19: a mopper prefers enemy paint that BLOCKS a tower pattern.
+        // Census over alice_iter14 self-play, samples where a soldier stands at a
+        // ruin with >=20 of the 24 pattern tiles already correct: the remaining
+        // tiles are ENEMY paint 87% (gridworld), 78% (UnderTheSea), 62% (box)
+        // of the time. A soldier can NEVER overwrite enemy paint (engine:
+        // soldierAttack paints only empty or already-ally tiles), so those
+        // patterns are permanently stalled -- 637 samples sat at 22 of 24 tiles
+        // against 15 that ever reached 24. Only a mopper can unblock them, and
+        // today a mopper walks to the nearest enemy paint without caring whether
+        // it is holding up a tower. This changes WHICH enemy paint it prefers and
+        // nothing else, so it costs nothing when no pattern is blocked.
+        MapLocation[] openRuins = rc.senseNearbyRuins(-1);
+        int nOpen = 0;
+        for (int i = 0; i < openRuins.length; i++) {
+            if (!rc.canSenseRobotAtLocation(openRuins[i])) openRuins[nOpen++] = openRuins[i];
+        }
+        // Mop adjacent enemy paint (prefer pattern-blocking tiles, then robots).
         if (rc.isActionReady()) {
             MapLocation best = null;
+            int bestPri = 3;
             for (MapInfo t : rc.senseNearbyMapInfos(2)) {
-                if (t.getPaint().isEnemy() && rc.canAttack(t.getMapLocation())) {
-                    best = t.getMapLocation();
-                    if (rc.canSenseRobotAtLocation(best)) break; // robot on it: steal paint
-                }
+                MapLocation l = t.getMapLocation();
+                if (!t.getPaint().isEnemy() || !rc.canAttack(l)) continue;
+                int pri = blocksPattern(openRuins, nOpen, l) ? 0 : 2;
+                if (pri == 2 && rc.canSenseRobotAtLocation(l)) pri = 1; // robot on it: steal paint
+                if (pri < bestPri) { bestPri = pri; best = l; if (pri == 0) break; }
             }
             if (best != null) rc.attack(best);
         }
@@ -273,10 +294,13 @@ public class RobotPlayer {
         MapLocation me = rc.getLocation();
         MapLocation target = null;
         int bd = 1 << 30;
+        int bestPri = 1;
         for (MapInfo t : rc.senseNearbyMapInfos(-1)) {
             if (!t.getPaint().isEnemy()) continue;
-            int d = me.distanceSquaredTo(t.getMapLocation());
-            if (d < bd) { bd = d; target = t.getMapLocation(); }
+            MapLocation l = t.getMapLocation();
+            int pri = blocksPattern(openRuins, nOpen, l) ? 0 : 1;
+            int d = me.distanceSquaredTo(l);
+            if (pri < bestPri || (pri == bestPri && d < bd)) { bestPri = pri; bd = d; target = l; }
         }
         if (target == null) wander(rc);
         else if (bd > 2) tryMove(rc, me.directionTo(target));
@@ -325,9 +349,18 @@ public class RobotPlayer {
         if (rc.canMove(r)) { rc.move(r); return; }
     }
 
+    /** Is `l` inside the 5x5 tower pattern of any ruin that has no tower on it?
+     *  Pattern radius is r^2 <= 8 around the ruin centre (the 5x5 box corners). */
+    static boolean blocksPattern(MapLocation[] ruins, int n, MapLocation l) {
+        for (int i = 0; i < n; i++) {
+            if (ruins[i].distanceSquaredTo(l) <= 8) return true;
+        }
+        return false;
+    }
+
     /** Does this ruin's 5x5 tower pattern currently hold any enemy paint?
      *  Enemy paint cannot be overwritten by a soldier (engine: soldierAttack
-     *  paints only empty or already-ally tiles), so such a pattern is unfinishable
+     *  paints only empty or already-ally tiles), so the pattern is unfinishable
      *  until a mopper clears it. Tiles outside vision are not counted -- see the
      *  bias note at the call site. */
     static boolean patternBlocked(RobotController rc, MapLocation ruin) throws GameActionException {
