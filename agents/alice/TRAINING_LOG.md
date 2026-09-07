@@ -6835,3 +6835,76 @@ exactly what the last two were until it is measured.
 **This does not run yet.** Iteration 23's peer gate is still playing, and running
 an ablation on a candidate that has not been accepted would be spending shared VM
 time on a question that might not arise.
+
+# ITERATION 23 — ACCEPTED
+
+Run `20260907-194028` complete: **118/150 (78.7%)**, 25 maps, both sides.
+Baseline is the accepted `alice_iter22`. Uncertainty by map resampling.
+
+| opponent | role | score | se | 95% CI | vs null | swept W/L | per-map histogram |
+|---|---|---|---|---|---|---|---|
+| **`alice_iter22`** | **accept gate** | **34/50 (68%)** | 2.39 | **[30, 39]** | **+3.77 sd** | **9 / 0** | `{1:16, 2:9}` |
+| `alice_flood` | peer | **44/50 (88%)** | 2.54 | [39, 48] | +7.47 sd | 20 / 1 | `{0:1, 1:4, 2:20}` |
+| `alice_iter7` | peer | **40/50 (80%)** | 2.84 | [34, 45] | +5.29 sd | 16 / 1 | `{0:1, 1:8, 2:16}` |
+
+### Every gate
+
+1. **Head-to-head > 50%** — 68%, **+3.77 sd**, lower CI bound 30 > null 25.
+2. **Peer `WinPct` >= 60%** — 88% and 80%. Both peers also **rose** against
+   iteration 22's readings (76% → 88%, 74% → 80%), which is a second, independent
+   sign the change is real rather than a baseline artifact.
+3. **Diff shape** — **zero swept losses against the baseline**: the per-map
+   histogram `{1:16, 2:9}` has no `0` entry at all, so **there is no map on which
+   this change loses from both sides.** The two swept losses in the whole run
+   (`yearofthesnake` vs `flood`, `starburst` vs `iter7`) are on different maps
+   against different opponents, unrepeated — churn, not regression.
+4. **Mechanism** — refused pattern attacks 0 by construction; **landed** attacks
+   up (53 vs 42 at r200, 28 vs 15 at r400, 1 vs 0 at r700). Gate met.
+5. **Price watch** — **0 exceptions in 150 games**, no `OVR=` anywhere, bytecode
+   787–824 of 17,500. The shared tower-paint pool did not collapse; it ran
+   **3–7x larger** than the baseline's all game.
+6. **Frozen roster** — run one hour ago at accept #10 and up on every point.
+   Iteration 23 is accept #11; the every-~5 schedule does not call for another,
+   and the margin here (+3.77 sd) is not the thin one doctrine #9 reserves the
+   pre-accept roster run for.
+
+### What was accepted
+
+One clause: `if (t.getPaint().isEnemy()) continue;` in the ruin-pattern loop. The
+engine debits 5 paint at `soldierAttack` offset 58 before it looks at the target
+and refuses enemy-painted tiles at 207, so the old code paid for a no-op, `break`ed
+(forfeiting that turn's area paint too), and returned to the identical tile next
+turn until the soldier starved. Per the whole-build audit, **this was the last
+instance of that trap in the shipping code.**
+
+### What I got WRONG along the way, kept in the record
+
+- **Pre-registered density prediction: failed.** I predicted a negative rho on the
+  argument that sparse maps give the branch a longer live window. Observed
+  **+0.318, p = 0.127** — wrong sign, and a null.
+- **The post-hoc replacement also failed.** The tower-conversion story predicted
+  absolute ruin *count* should be the better predictor; it scored **+0.104,
+  p = 0.640**, worse than the variable it replaced. Map area: −0.116, p = 0.606.
+- **There is no map-level covariate structure in this result at all**, which is
+  the same fact as "swept 9, lost 0": it works everywhere, uniformly.
+
+The mechanism attribution therefore remains **open**, and the separating
+experiment is built and pre-registered: `src/alice_i23abl`, one keyword different
+(`break` vs `continue`), isolating "stop paying" from "scan onward".
+
+### Post-accept routine (this commit)
+
+Snapshot `src/alice_iter23/`, compile-verified by a real match;
+`progress/cumulative_iterations.png` redrawn (**11 accepted iterations,
+iter0..iter23**); replay archived as
+`replays/iter23_alice_iter22_UnderTheSea_A.bc25` — the game carrying 18 towers vs
+9 and the 3–7x tower-paint pool. The vs-old-bots history is unchanged because no
+roster opponent played this run; that is correct, not an omission.
+
+### Pool classification
+
+Peers: `alice_iter23` (new baseline), `alice_iter7` (80%), `alice_flood` (88%).
+**`alice_flood` is now within 2 points of the 90% peer ceiling** — but it is in
+`progress/roster_extra.txt` as a permanent yardstick and is never retired. If it
+crosses 90% its value becomes trend-tracking rather than gating, and the peer pool
+will need a new archetype. Flagging that now, before it happens.
