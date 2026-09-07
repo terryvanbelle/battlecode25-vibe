@@ -3838,3 +3838,63 @@ compile-checked. It is queued behind the roster run; one gauntlet per workspace.
    have no roster drop pointing at this feature — I am testing a *prediction* from the
    lesson rather than diagnosing a known failure, and "the upgrade still pays despite
    the arithmetic" would be a genuine correction to my model of the economy.
+
+
+---
+
+## Fixed-roster re-measurement from the iteration 12 baseline (2026-09-07)
+
+Run `20260907-034757`, 200 games, fresh 25-map sample, `bot.txt` label **`bob_iter12`**,
+`dirty=0`. This is the companion point the 41/50 needed.
+
+```
+                      games        sweptW  sweptL  split      MIRROR NULL: 0 / 0
+vs bob_iter0         46/50  92%      21      0       4
+vs bob_iter1         42/50  84%      17      0       8
+vs bob_iter11        29/50  58%       7      3      15
+vs examplefuncsplayer 50/50 100%     25      0       0
+overall             167/200 83.5%
+```
+
+### The regression is repaired, and the sweep view says it cleanly
+
+```
+vs frozen bob_iter1        games     sweptW   sweptL
+bob_iter3  (2026-09-06)    34/40  85%    —       —
+bob_iter9  (2026-09-07)    28/50  56%    9       6      <- the regression
+bob_iter12 (2026-09-07)    42/50  84%   17       0      <- repaired
+```
+
+**Six swept losses to zero.** Against a measured null of zero sweeps, that is the whole
+finding in one line: iteration 9 was losing six maps from *both* sides to a bot frozen
+eleven iterations ago, and iteration 12 loses none. The win rate is back to iteration
+3's level (84% against 85%) while the lineage has kept everything else it learned.
+
+`bob_iter0` (21-0) and `examplefuncsplayer` (25-0) also show zero swept losses. **The
+only opponent that takes a swept map off the current bot is `bob_iter11`** — the
+immediately preceding snapshot, which is exactly where the remaining contest should be.
+
+### Reading the `bob_iter11` arm honestly
+
+58% (29/50), swept 7-3. Iteration 12 beats the build it replaced, but this is the
+narrowest margin on the board, and it should be: iteration 12 differs from
+`bob_iter11` by *removing* two things (the hash and the ruin memory) rather than adding
+anything. Getting 58% and +4 net sweeps by deleting code is a good trade, but it is not
+a claim of a large advance — the advance was undoing damage.
+
+The 15 split maps mean the two builds genuinely diverge on most of the pool while
+netting out close, which is the same high-variance signature the ruin memory showed in
+its own attribution. That is consistent and expected.
+
+### Where this leaves the lineage
+
+Seven accepted snapshots, and the honest summary of absolute progress is that
+**iterations 7 through 11 netted approximately zero** — iteration 7 was a coin-flip
+accept that became a liability, iteration 9 was a genuine mechanism that the liability
+poisoned, and iteration 11 was a compensating fix that stopped paying once the
+liability was removed. The bot is now roughly where iteration 3 stood against the frozen
+opponent, but with SRPs actually working and with three durable instruments that did not
+exist this morning: the mirror null, deviation attribution, and pairwise ablation.
+
+That is not a comfortable result to write down, and it is the correct one. The next
+accept has to clear iteration 12 on the frozen instrument, not just head-to-head.
