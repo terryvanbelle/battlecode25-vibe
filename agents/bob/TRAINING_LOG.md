@@ -5644,3 +5644,65 @@ finding that survived the probe, it is in a functional area I have never touched
 spends no paint and no chips, and it has a clean dose with a zero arm (how many soldiers
 may hold the same ruin; 1 = today's behaviour by accident rather than by design). Writing
 the pre-registration and the price before any code, as §3 requires — next entry.
+
+---
+
+## Iteration 17 PRE-REGISTERED (2026-09-07 20:25) — anchor ruin choice to the spawn tower
+
+**Hypothesis.** My soldiers each pick the ruin nearest *themselves*, after they have
+already wandered. Because they wander independently, they pick different ruins, and
+because a tower pattern is a **threshold good costing roughly one soldier's entire stash**,
+four soldiers each 60% of the way through four patterns build **nothing**, while the same
+four on one pattern build a tower and double the team's paint income for the rest of the
+game.
+
+Scoring a ruin by its distance from the soldier's **birth location** instead makes every
+soldier spawned by the same tower agree on the same ruin, without any communication. It
+buys concentration and short travel from one change.
+
+**Supporting observation from the tournament, and it is what suggested this.** Alice's
+first tower on Rose completes at **round 31** — with her opening soldiers, right next to
+where they spawned. My first completes at r250-never. Round 31 is not a pathing or a
+targeting advantage; it is a *siting* one.
+
+**Change (one mechanism).** `G` records `birth`, the robot's location on its first turn
+(free; it is already in `G.init`'s reach). `Soldier.chooseRuin` scores candidate ruins
+
+```java
+score = me.distanceSquaredTo(r) + ANCHOR * birth.distanceSquaredTo(r)
+```
+
+instead of `me.distanceSquaredTo(r)`. **`ANCHOR = 0` is exactly today's behaviour**, which
+is the zero arm; arms at 1 and 3 give a dose. Nothing else changes — no patience rule, no
+affordability gate, no refill. Those stay unbuilt so this result stays interpretable.
+
+**Pre-registered variables**, from `src/bob_rprobe`'s counters re-run on each arm:
+
+```
+completed     tower patterns finished per game        (the target; 2 today on Rose)
+distinctRuins number of distinct ruins claimed team-wide  (concentration; falls if it works)
+lowPaint      ruin-turns at or below PAINT_FLOOR      (401 of 920 today; should fall)
+heldMax       longest tenure on one ruin              (247 today)
+```
+
+**The price, written before the code** (§3, and my own iteration-13 doctrine):
+
+- Paint: **zero.** No new action, no new attack, no travel that was not already happening.
+- Bytecode: one extra `distanceSquaredTo` per visible ruin per turn, ~10 bytecodes against
+  a measured soldier peak of 9,488 of 17,500. Not a constraint.
+- The real price is **map coverage**: anchoring soldiers near their spawn tower concentrates
+  my painting into my own half. Since 298 of 300 games are decided by coverage
+  (LEARNINGS §18) that is a genuine cost, not a rounding error, and it is the reason
+  `ANCHOR` needs a dose sweep rather than a single value — a large `ANCHOR` turtles.
+- Second-order risk I am naming now so I do not "discover" it later: soldiers piling on one
+  ruin sit adjacent to each other, and the territory penalty adds **+1 paint/turn per
+  adjacent ally**. Concentration is not free in paint even though the mechanism is. If the
+  arms come back flat, this is the first thing to instrument.
+
+**Accept gate**, unchanged from the algorithm: head-to-head against `bob_iter12` over a
+fresh 25-map sample, both sides, read against the mirror null and with the interval from
+`tools/map-resample.py`. Peer `WinPct` on the wider pool. Diff read for one-directional
+regressions.
+
+**Sequencing.** RUN 2 of iteration 16 is still in flight and owns the VM budget; this gets
+built and compile-checked now, and evaluated when that lands.
