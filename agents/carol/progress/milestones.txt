@@ -3,3 +3,7 @@
 f94ca2c|mirror-sync instrument (verified byte-identical copy for symmetry audits)
 553ddef|score only after GAUNTLET-COMPLETE (iter2 was scored from a prefix)
 c9c6a9d|gauntlet draws a fresh random 25-map sample each run
+a59bae9|pre-register a MAP-LEVEL prediction, not just an accept threshold
+a59bae9|History pre-check asks which iteration wrote the LINE, not the previous one
+e6ad3ae|split a losing bundle to ablate the baseline for free
+6995c61|state benefit AND price as two numbers before running a mechanism
