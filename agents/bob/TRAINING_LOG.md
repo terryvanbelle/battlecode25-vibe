@@ -2774,3 +2774,65 @@ Fact 3 is the one with legs: it reframes SRPs as competing with expansion for gr
 which is a much better model than "SRPs are free paint income" — and it means
 iteration 9's accept was buying its +3/turn on maps *open enough* to have spare
 unmarked ground, which is exactly the Oasis-versus-Castle split it showed.
+
+
+---
+
+## Iteration 11 (2026-09-07) — PRE-REGISTERED: soldiers remember ruins they walk past
+
+**Target selection.** Not a single losing game but the shape shared by all of them,
+which is the algorithm's preferred absolute-degeneracy signal: **losses build 0–3
+towers, wins build 10–14**, on maps carrying 8–28 ruins. Two independent opponents
+(alice on `Rose`-B and `Brat`-B, `bob_iter7` on `Brat`-B, `Snowman`, `fix`) produce
+the same picture, so the cause is ours, not a matchup.
+
+**Root cause, read from the source.** `chooseRuin()` targets only
+`rc.senseNearbyRuins(-1)` — ruins inside the soldier's **current** vision, r² = 20. A
+soldier keeps a ruin it has already claimed (`workRuin` persists), but it has no
+memory of any *other* ruin it has seen, and none at all if it has never had one. When
+nothing is visible it falls straight through to `Nav.wander()`.
+
+**Trigger frequency — already measured, no new games.** From the iteration-9 probe,
+counting soldier-turns by whether a ruin target existed:
+
+```
+            with a ruin target     without one
+Castle          233  (21%)          862  (79%)
+quack         1,161  (11%)        9,250  (89%)
+```
+
+**79–89% of soldier-turns have no expansion target.** On 26-ruin `Rose` that is not a
+shortage of ruins, it is a shortage of knowing where they are.
+
+**Mechanism (one change).** Each soldier records unoccupied ruins it sees into a small
+per-robot array, drops one as soon as it can see a tower standing there, and — *only
+in the branch that would otherwise call `Nav.wander()`* — walks toward the nearest
+remembered one. It consumes a move the bot was going to spend wandering anyway, which
+is TRAINING_ALGORITHM.md's recurring winner's profile: **capability preserved at zero
+marginal cost.** Statics are per-robot in this engine (the bot already relies on that
+for `workRuin` and `srp`), so this is per-soldier memory; sharing it over the unused
+messaging layer is the deliberate follow-on, not bundled here.
+
+**Dose, with a zero arm.** `RUIN_MEM ∈ {0, 8, 24}`. **`RUIN_MEM = 0` is
+byte-identical to iteration 9** — `seekRememberedRuin` returns false immediately and
+the wander branch runs unchanged — so the zero arm is the accepted bot and is already
+measured.
+
+**Pre-registered accept criteria.**
+1. **h2h vs `bob_iter9` > 50%**, 20 maps × 2 sides — accept gate.
+2. Swept-win > swept-loss.
+3. **Mechanistic, and checked before the win rate** (the lesson iteration 10 just
+   taught): **cumulative towers built (`ptow + mtow`) must rise versus iteration 9 on
+   the maps where expansion currently stalls.** `Brat` side B is the pinned case —
+   zero paint towers against two independent opponents. If tower count does not move
+   there, the mechanism is inert and the win rate is measuring something else,
+   regardless of what it says.
+4. Bytecode: the memory scan is O(24) per idle turn against a peak of ~10,000 of
+   17,500, so no veto is expected — but `maxbc` is read, not assumed.
+
+**Reachability pre-check.** The branch is live by construction: it replaces
+`Nav.wander()`, which the probe measured as the path taken on 79–89% of soldier-turns.
+The risk is not that it never fires but that it fires *too* readily — a soldier that
+walks 30 tiles to a remembered ruin someone else has already claimed has traded
+painting for travel, which is the "survival bought with inactivity" failure in a new
+costume. Criterion 3 is what would catch that: towers built must actually rise.

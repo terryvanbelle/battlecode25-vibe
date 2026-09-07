@@ -22,6 +22,10 @@ public class Soldier {
     static MapLocation srp = null;           // centre this soldier is building
     static int srpTurns = 0;
     static final int REFILL_BELOW = 50;      // start seeking refill when paint below this
+    // ---- ruin memory (iteration 11) ----
+    static final int RUIN_MEM = 24;          // remembered ruin sites (0 = pre-iter11)
+    static final MapLocation[] ruinMem = new MapLocation[RUIN_MEM];
+    static int nRuinMem = 0;
     static final int PAINT_FLOOR = 15;       // don't paint below this stash level
 
     static MapLocation workRuin = null;
@@ -58,7 +62,7 @@ public class Soldier {
         // 3. Movement: toward ruin if working one, else wander.
         if (workRuin != null) {
             Nav.navTo(workRuin);
-        } else {
+        } else if (!seekRememberedRuin()) {
             Nav.wander();
         }
 
@@ -102,7 +106,8 @@ public class Soldier {
             MapLocation[] ruins = rc.senseNearbyRuins(-1);
             int best = Integer.MAX_VALUE;
             for (MapLocation r : ruins) {
-                if (rc.senseRobotAtLocation(r) != null) continue; // tower already there
+                if (rc.senseRobotAtLocation(r) != null) { forgetRuin(r); continue; }
+                rememberRuin(r);
                 int d = me.distanceSquaredTo(r);
                 if (d < best) { best = d; workRuin = r; }
             }
@@ -271,6 +276,39 @@ public class Soldier {
             if (t.getMark() != PaintType.EMPTY) return false; // overlaps a pattern already
                                                              // being built (SRP or tower)
         }
+        return true;
+    }
+
+    /** Record an unoccupied ruin we can see, if it is new and there is room. */
+    static void rememberRuin(MapLocation r) {
+        for (int i = nRuinMem; --i >= 0; ) if (ruinMem[i].equals(r)) return;
+        if (nRuinMem < RUIN_MEM) ruinMem[nRuinMem++] = r;
+    }
+
+    /** Drop a remembered ruin once we can see a tower standing on it. */
+    static void forgetRuin(MapLocation r) {
+        for (int i = nRuinMem; --i >= 0; ) {
+            if (ruinMem[i].equals(r)) { ruinMem[i] = ruinMem[--nRuinMem]; return; }
+        }
+    }
+
+    /**
+     * Walk toward the nearest remembered unoccupied ruin. Only called when nothing is
+     * visible to work on, so it costs a move the bot was going to spend wandering
+     * anyway -- capability at zero marginal cost, which is the recurring winner's
+     * profile in TRAINING_ALGORITHM.md.
+     */
+    static boolean seekRememberedRuin() throws GameActionException {
+        if (nRuinMem == 0) return false;
+        MapLocation me = G.rc.getLocation();
+        MapLocation best = null;
+        int bestD = Integer.MAX_VALUE;
+        for (int i = nRuinMem; --i >= 0; ) {
+            int d = me.distanceSquaredTo(ruinMem[i]);
+            if (d < bestD) { bestD = d; best = ruinMem[i]; }
+        }
+        if (best == null) return false;
+        Nav.navTo(best);
         return true;
     }
 }
