@@ -376,3 +376,50 @@ parity), not about the chip gate. I attributed idle capacity to the wrong input.
    "slightly below even, within noise" and the result is ambiguous. Against a null
    with **no variance** it reads "this change cost exactly one game" — a small,
    *unambiguous* negative. A deterministic null turns a shrug into a measurement.
+
+## Theme: a policy keyed on map geometry needs a map that exercises both branches
+
+I spent an iteration on a "latent bug" that did not exist. The whole thing
+collapses to one sentence:
+
+> **`gridworld` has no odd-parity ruins, and my tower-type rule keys on
+> `(x+y)&1`.** So on the only map I traced, the paint branch was dead code —
+> and I read "the paint branch produces nothing" off it.
+
+The generalisation is not about parity or about ruins.
+
+> **Before tracing a branch on a map, confirm that map actually produces the
+> input that takes the branch.** A conditional keyed on map geometry —
+> coordinates, symmetry, ruin/wall placement, distances, counts — has a
+> *reachability* precondition that varies **per map**, not just per game state.
+> §3's reachability pre-check asks "is this branch ever taken"; the sharper
+> question is "**is it taken on the map I am about to measure it on**".
+
+Three concrete tells I now check:
+
+1. **Census the branch, not the outcome.** My census counted tower *completions*
+   by type and found zero paint towers. Had it counted `wantTower` *decisions*
+   it would have shown 22,092 MONEY / 0 PAINT and the answer would have been
+   immediate. **Instrument the decision upstream of the effect** — a zero at the
+   output cannot distinguish "the mechanism failed" from "the mechanism never
+   ran". This is the same distinction as §4's classification 2 vs 3, applied to
+   diagnosis rather than to a candidate.
+2. **A corpus statistic hides per-map degeneracy.** Across the 75 maps the ruin
+   parity split is 732/642 — near-perfectly balanced, which is exactly why I
+   never thought to check it. Three individual maps are 100% even. **The mean of
+   a map property tells you nothing about the map in front of you.**
+3. **Two arms on two *sides* of one map is not a comparison.** I read 12-v-6
+   tower counts as a code effect. Re-running with byte-identical code on both
+   sides reproduced 12-v-6 exactly: it was positional. Phase 0 §7 says a
+   persistent lopsided split in a mirror is a real bug; the corollary I missed is
+   that **any cross-team count on a single map must be quoted against the mirror
+   before it can be read as an effect of the code.** I had the mirror null
+   already computed and did not consult it.
+
+### The retraction was worth more than the iteration would have been
+
+Refuting my own claim produced a firmer result than the claim would have: forcing
+all-MONEY loses **5/20 (25%)** on the maps where the branch is live. I nearly
+deleted a feature worth 75-25 because the map I chose could not see it. The
+ledger entry that says "this direction is closed, and here is the number" is the
+asset — not the iteration I thought I was running.

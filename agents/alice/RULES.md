@@ -115,6 +115,48 @@ line refs below are to `engine/src/main/battlecode/world/*.java`.
   Tower cap: 25/team. New towers spawn with 500 paint.
 - Spawn: tower builds robots within r^2 <= 4, costs paint (from tower stash) + chips; CD 10.
 
+### Tower patterns (engine-verified, jar 3.1.0)
+`GameConstants` pattern ints, decoded with `GameWorld.getPatternBit(pat, dx, dy)`
+= `(pat >> (5*(dx+2) + dy+2)) & 1`; bit 1 = **secondary**, bit 0 = **primary**:
+
+```
+ PAINT 18157905    MONEY 15583086    DEFENSE 4685252    RESOURCE 28873275
+   S...S             .SSS.             ..S..              SS.SS
+   .S.S.             SS.SS             .SSS.              S...S
+   ..S..             S...S             SSSSS              ..S..
+   .S.S.             SS.SS             .SSS.              S...S
+   S...S             .SSS.             ..S..              SS.SS
+```
+Paint = an X (8 secondary + 16 primary off-centre); Money = the outer ring
+(16 secondary + 8 primary). `checkPattern` **skips the centre** for tower
+patterns and requires every other tile to match **exactly** — empty or enemy
+paint fails.
+
+- **The two L1 tower types are identical in every cost.** `UnitType` fields for
+  `LEVEL_ONE_PAINT_TOWER` and `LEVEL_ONE_MONEY_TOWER` differ **only** in
+  `paintPerTurn` (5 vs 0) and `moneyPerTurn` (0 vs 20). Both are
+  paintCost 0, moneyCost 1000, health 1000, paintCapacity 1000, cooldown 10,
+  actionRadius^2 9, attack 20, AoE 10. There is **no engine asymmetry** that
+  makes one type harder to build than the other.
+- `assertCanCompleteTowerPattern` gates, in order: caller is a robot; type is a
+  tower; `assertCanActLocation(ruin, 2)` (so **action-ready and within r^2 2**);
+  no tower already there; `hasRuin`; `getMoney() >= 1000`; `isValidPatternCenter`;
+  no robot standing on the ruin tile; `checkTowerPattern`; team tower count < 25.
+- `markTowerPattern` costs 25 of the **robot's own** paint, needs r^2 <= 2 and
+  action-readiness, and writes a marker to **all 25 tiles including the ruin
+  centre** (`markPattern` loops dx,dy in -2..2 with no centre skip). So the ruin
+  tile always carries a mark it can never satisfy — a "paint every marked tile
+  that mismatches" loop must not treat that tile as actionable.
+
+### Ruin parity is NOT uniform — and three maps are a tracing trap
+Ruin coordinates in the 75 official maps: **732 even `(x+y)`, 642 odd**. But the
+split is per-map, and **`gridworld`, `Filter` and `Snowman` have ruins on
+even-parity tiles ONLY** (21/21, 5/5, 6/6). Any policy keyed on `(x+y)&1`
+degenerates to a single branch on those three maps. `DefaultMedium` (14 even /
+5 odd) and `DefaultHuge` (34/15) are strongly skewed too. Verify a
+geometry-keyed branch is actually exercised before tracing it on one map.
+
+
 ## Radius asymmetries (exploitable)
 - **Splasher outranges paint/money towers**: splasher damages a tower at up to dist^2 16
   (center at 4, tower 2 beyond) vs tower attack r^2 9. A splasher can siege paint/money

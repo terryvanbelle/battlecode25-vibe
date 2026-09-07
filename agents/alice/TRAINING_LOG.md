@@ -4034,3 +4034,99 @@ fix (always money); `alice_i17a` is the self-calibrating rule, which on current
 evidence degenerates to nearly the same thing because the paint branch is dead.
 Gate as pre-registered: H2H > 50% judged in games over the mirror null, no
 unresolved swept losses, and the mechanism gate is **tower count must rise**.
+
+## Iteration 17 — RETRACTED. There was no latent bug; the "census" was a
+## single-map artifact, and the retraction produces a real result in its place
+
+The previous entry claimed alice had never built a paint tower, that the parity
+rule wasted half of every map's ruins, and that forcing MONEY doubled tower
+count. **All three claims are false.** Here is the diagnosis I said I would not
+guess at.
+
+### 1. The engine does not block paint towers (verified against jar 3.1.0)
+
+`LEVEL_ONE_PAINT_TOWER` and `LEVEL_ONE_MONEY_TOWER` differ in **exactly two
+fields**: `paintPerTurn` 5 vs 0 and `moneyPerTurn` 0 vs 20. Both are moneyCost
+1000, paintCost 0, health 1000, capacity 1000, cooldown 10, actionRadius^2 9,
+attack 20/AoE 10. `assertCanCompleteTowerPattern` and `markTowerPattern` apply
+identical gates to both, and `markPattern` writes markers to all 25 tiles for
+either type. **No engine asymmetry exists.** Full decode of all four patterns
+and the complete gate list are now in `RULES.md`.
+
+### 2. The bug was in my *measurement*, not my code: gridworld has no odd ruins
+
+I scanned the ruin coordinates of all 75 official maps out of the engine jar's
+`.map25` resources. Across the corpus: **732 even-parity ruins, 642 odd**. But
+per map the split varies, and **exactly three maps have no odd-parity ruin at
+all: `gridworld` (21/21), `Filter` (5/5), `Snowman` (6/6)**.
+
+`alice_iter14`'s rule is `((ruin.x+ruin.y)&1)==0 ? MONEY : PAINT`. **On
+gridworld it selects MONEY for every ruin on the map.** "Alice never built a
+paint tower" was a tautology on the one map I measured it on. The instrumented
+build `alice_pdiag` emitted 22,092 census lines on gridworld and **not one had
+`want=PAINT`** — the paint branch was never *reached*, so of course it never
+completed anything.
+
+### 3. The "doubling" was a side asymmetry, reproduced with identical code
+
+`alice_pdiag` vs `alice_iter14` on gridworld — `alice_pdiag` is `alice` plus an
+indicator string, so on this map the two builds are behaviourally identical:
+
+```
+12 SPAWN (T1,MONEY_TOWER)
+ 6 SPAWN (T2,MONEY_TOWER)
+```
+
+**The exact 12-v-6 I attributed to forcing MONEY, reproduced by byte-equivalent
+code on both sides.** It is positional. I compared two arms across teams on one
+map with no mirror control — the precise failure the mirror-null discipline
+exists to prevent, and I had the tool sitting in `tools/mirror_null.txt`.
+
+The pattern machinery works fine, incidentally: close-range census lines read
+`mk=24 mkbad=0` (all 24 non-centre tiles marked, none mis-marked) with `ok`
+climbing one tile per turn. Nothing was ever broken.
+
+### 4. Paint towers get built normally wherever the branch is live
+
+Mirror `alice_pdiag` vs `alice_pdiag` on two odd-ruin maps:
+
+| map | odd ruins | T1 money / paint | T2 money / paint |
+|---|---|---|---|
+| `box` | 6 of 8 | 1 / **4** | 1 / **2** |
+| `UnderTheSea` | 16 of 23 | 4 / **8** | 3 / **8** |
+
+### 5. The evaluation was right, and splitting it by parity makes it decisive
+
+Run `20260907-043612` (48 games, baseline `alice_iter14`) finished before the
+session died. `alice_iter14` beat `alice_i17a` **13/24** and `alice_i17c`
+**17/24** — the "blunt fix" scored **29%**. Both candidates rejected.
+
+`alice_i17c` (always MONEY) differs from `alice_iter14` *only at odd-parity
+ruins*, so the run contains its own arm-to-arm identity check. On the two
+all-even maps in the sample the two builds are the same program:
+
+| map | odd ruins | iter14 record vs i17c |
+|---|---|---|
+| `Filter` | 0 of 5 | 1/2 — one win per side (self-mirror) |
+| `Snowman` | 0 of 6 | 1/2 — one win per side (self-mirror) |
+
+Exactly the mirror null, which validates the split. Dropping those four
+degenerate games, on the **10 maps where the change is live**:
+
+**`alice_iter14` 15/20 (75%) vs `alice_i17c` 5/20 (25%).**
+
+So the conclusion inverts. The paint branch is not waste — **it is load-bearing,
+and deleting it costs 75–25.** Money-only starves the paint economy that every
+soldier's 200-paint output depends on, which is consistent with iteration 5's
+absorbing-state finding.
+
+### Closed-directions ledger
+| direction | closed by | can re-open if |
+|---|---|---|
+| Forcing all ruins to MONEY (drop the paint branch) | iteration 17 retraction: **5/20 (25%)** on the 10 maps where the branch is live, with the 4 all-even-map games discarded as a verified self-mirror | never on this evidence. A *mix* rule that still builds paint towers is a different question and remains open. |
+| "alice has never built a paint tower" as a premise | refuted: 4/8 and 8/8 paint towers built in mirrors on `box` and `UnderTheSea` | — |
+
+**Cost of the error: one 48-game run, three debug matches.** What it bought is
+larger than the iteration: a corpus-wide map fact, the complete engine decode of
+all four patterns, and a demonstrated 75–25 value for a feature I was about to
+delete.
