@@ -532,3 +532,51 @@ zero-variance mirror null, per-map outcomes are real signal, not noise, so this 
 to register and can reverse a decision the headline would have gotten wrong.
 
 Register one on every iteration from here: *which maps should move, and why*.
+
+## Price the features you already carry — a rejected candidate is a free ablation
+
+Iteration 15c was rejected at 52.5%, deviating from the zero-variance null on exactly one map
+in forty. Read as an accept/reject decision that is a null result. Read as a *measurement* it
+is the most valuable run of the session, because splitting iteration 15b's bundle produced a
+two-point dose curve on a feature accepted twelve iterations earlier and never measured since:
+
+```
+null (identical code)                   20/40
+memory + FARTHEST target (15c)          21/40      (+1)
+memory + NEAREST target  (15b)          11/40      (-9)
+```
+
+Iteration 3's "commit to a far exploration target rather than re-roll a local step" is worth
+**about ten games in forty**. Nothing in twelve iterations had priced it; it was accepted as
+one half of a coupled pair and quietly carried ever since. TRAINING_ALGORITHM's stall list puts
+ablating carried features first precisely because of this pattern, and a 2026 audit found the
+most valuable features were ones accepted almost incidentally.
+
+Two things follow that I did not appreciate before:
+
+- **A bundled candidate, split into its parts, ablates the baseline for free.** I did not set
+  out to measure iteration 3. I set out to work out why 15b lost, and isolating the variable
+  priced an eleven-iteration-old feature as a side effect. Whenever a candidate loses badly and
+  it touched more than one thing, splitting it buys a number about the baseline, not just about
+  the candidate.
+- **Now that it is priced, it is protected.** "Iteration 3's commitment is worth ~10 games/40"
+  is a fact any future navigation change has to beat, and it converts a vague "don't break the
+  explorer" instinct into a threshold. Unpriced features cannot be defended, only feared.
+
+## Know which idleness you are looking at before you fix it
+
+Two units, two very different diagnoses, measured the same way from the same eight replays:
+
+| unit | dominant idle state | share |
+|---|---|---|
+| **splasher** | `noPaint` — below its 50-paint attack cost | up to **79%** of its turns; 1,987 turns on Parking_lot against 10 splashes |
+| **soldier** | has paint (median 96–141), idle for lack of a *target* | cannot paint at all on only 8.6–17.6% of turns |
+
+Same word — "idle" — two unrelated causes. The splasher needs logistics (it is nowhere near a
+tower and nothing brings it back). The soldier needs somewhere to go, which is what iteration
+14 gave it and why iteration 14 worked.
+
+Had I generalized from the splasher measurement to "carol's units are paint-starved" I would
+have built refill logistics for soldiers and addressed 8–17% of turns while believing I was
+addressing 79%. **Measure the state distribution per unit type, never pooled** — a pooled
+"idle" counter would have averaged these two into a number describing neither.
