@@ -7,3 +7,6 @@ a59bae9|pre-register a MAP-LEVEL prediction, not just an accept threshold
 a59bae9|History pre-check asks which iteration wrote the LINE, not the previous one
 e6ad3ae|split a losing bundle to ablate the baseline for free
 6995c61|state benefit AND price as two numbers before running a mechanism
+9376e6d|eval-run.sh drops the binomial floor for map-resampling (7 zero-variance mirrors)
+4af02c2|resampling sign convention pinned in the tool, not in a note the reader must recall
+1eb2e1f|probes self-limit on Clock.getBytecodesLeft() -- an overrun makes numbers unreadable
