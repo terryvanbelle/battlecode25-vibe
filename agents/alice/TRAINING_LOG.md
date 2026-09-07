@@ -5790,3 +5790,46 @@ its live window, the effect is a property of contested ruins rather than of Mone
 and the candidate is worth a full evaluation. If UnderTheSea shows little waste,
 the quantity is map-specific and the candidate is not worth a run on the strength
 of one map.
+
+### Sizing result — it reproduces, and Money was the FLATTERING map, not the alarming one
+
+`alice_i23diag` vs the iteration 22 build on **UnderTheSea** (45x45, 23 ruins).
+Ruin density from `tools/mapdata/`, which is the right denominator here:
+
+| map | size | ruins | ruins / 1000 tiles | |
+|---|---|---|---|---|
+| `gridworld` | 31x31 | 21 | **21.9** | corpus densest — flagged degenerate |
+| `Paintball`, `DefaultSmall` | 20x20 | 8 | 20.0 | |
+| **`Money`** | 35x35 | 20 | **16.3** | **my first sizing map — well above median** |
+| **`UnderTheSea`** | 45x45 | 23 | **11.4** | **exactly the corpus median** |
+| `boxofchocolates` | 55x55 | 15 | 5.0 | |
+| `Gears` | 55x55 | 14 | 4.6 | corpus sparsest |
+
+| round | soldiers | pattern-loop turns | landed | **refused (5 paint each)** | wasted share |
+|---|---|---|---|---|---|
+| 200 | 9 | 123 | 42 | 14 | 25.0% |
+| 400 | 20 | 79 | 15 | 21 | 58.3% |
+| **700** | 36 | 47 | **0** | **29** | **100.0%** |
+| 1200 | 41 | 0 | 0 | 0 | dormant |
+
+**Pre-registered threshold was >80% during the live window. It hits 100.0%.**
+
+At round 700 on the median-density map, the ruin-pattern branch executes 47 times
+and **every single attack it makes is refused by the engine.** Not "mostly
+wasted" — the landed count is exactly zero while the refused count is 29. A branch
+that has become pure loss, and one that also consumes the turn's `break` and so
+forfeits the area paint that would have been real coverage.
+
+**And the correction runs the other way from the one I made an hour ago.** I
+corrected Money's window down from "200–600" to "150–400" and called that honest.
+It was, *about Money*. But Money is 43% above the corpus median in ruin density,
+so its ruins are exhausted early and its window is **short**. On the median map
+the window runs from ~200 to ~1000 and the wasted share climbs monotonically to
+100%. **I sized a ruin quantity on a ruin-dense map and understated it** — which
+is the exact error `tools/mapdata/README.md` documents for `gridworld`, committed
+one map further down the density table. The README says "a poor choice for sizing
+any ruin-related quantity"; the rule is about density, not about that one map's
+name, and I only escaped it because the rule made me check a second map at all.
+
+Two maps, both showing the same monotone shape, one at the corpus median.
+**Iteration 23's premise is established.** It waits on iteration 22's accept.
