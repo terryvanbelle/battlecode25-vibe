@@ -3378,3 +3378,24 @@ tournament supplies the missing arm for free:
 This is the first thing in this project that can distinguish "carol is slow to convert the
 map" from "self-play deadlocks" — precisely the self-referential blind spot MULTI_AGENT.md
 says the tournament exists to attack, and it needs no run of my own to settle.
+
+#### Map difficulty is ruled out: the stall gap survives map-matching
+
+Restricted both datasets to the **same 20 maps** (every map in carol's run 20260906-230220
+also appears in the tournament's alice-bob block):
+
+```
+TOTAL over the identical 20 maps:   alice-bob  5/40 = 12% reach r2000
+                                    carol-carol 29/40 = 72% reach r2000
+```
+
+Ten of the twenty maps split perfectly — DefaultLarge, DefaultMedium, HungerGames, Mirage,
+Parking_lot, PlumberGame, boxofchocolates, gridworld, rain, walalilongla are **0% timeout for
+alice-bob and 100% timeout for carol**. Where alice-bob do stall (Gears 100%, Bunny/Dominoes/
+sayhi 50%) carol stalls too, so those maps carry real intrinsic stall tendency and the
+instrument is behaving sensibly.
+
+So the gap is **not** map difficulty. Exactly one confound is left — mirror versus
+cross-lineage — and carol's own tournament blocks settle it without any run of mine. The
+prediction registered above stands unchanged and is now sharper: **12% is the cross-lineage
+baseline on this very map set.**
