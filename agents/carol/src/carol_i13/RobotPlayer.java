@@ -1,4 +1,4 @@
-package carol;
+package carol_i13;
 
 import battlecode.common.*;
 
@@ -31,7 +31,7 @@ public class RobotPlayer {
      * measurement-neutral -- it shifts the replay hash, so a dose pair must share one tag if
      * doctrine #3's byte-identity check is to work on raw hashes.
      */
-    static final String BUILD = "i12";
+    static final String BUILD = "i13";
 
     /**
      * Consecutive turns this tower has seen the team treasury EXACTLY unchanged, and the count
@@ -248,6 +248,11 @@ public class RobotPlayer {
                         PaintType p = t.getPaint();
                         if (p.isAlly()) ally++; else if (p.isEnemy()) foe++;
                     }
+                    // IDLE-ALLY: action ready, paint in hand, standing on ground already
+                    // ours, nothing in reach worth painting -- 15.9% of soldier turns. Spend
+                    // them laying an SRP instead of nothing. Gated on ruin == null so SRP marks
+                    // never contend with tower-pattern marks for the same shared per-tile mark.
+                    if (foe == 0 && ruin == null) state += workOnSRP();
                     state += (foe > 0 ? " IDLE-ENEMY" : " IDLE-ALLY") + ally + "/" + foe;
                 }
             }
@@ -315,6 +320,50 @@ public class RobotPlayer {
               + Math.min(ruin.y, rc.getMapHeight() - 1 - ruin.y);
         return (k % 3 == 0) ? UnitType.LEVEL_ONE_MONEY_TOWER
                             : UnitType.LEVEL_ONE_PAINT_TOWER;
+    }
+
+    /**
+     * Iteration 13. Each ACTIVE SRP adds +3/turn to EVERY paint tower and EVERY money tower
+     * [E: RULES.md], so its value scales with tower count -- at carol's observed 13 towers one
+     * pattern is worth ~+39/turn, against ~125 paint to lay. That is a payback of a few rounds
+     * on the resource every trace this session says is binding.
+     *
+     * Two engine facts make this harder than the tower pattern and are why the instrumentation
+     * below is deliberately heavy: all 25 tiles must match EXACTLY (no exempt centre, and EMPTY
+     * is not acceptable for a 0 bit), and the pattern must then stay exact for 50 CONSECUTIVE
+     * rounds before it pays out. Carol's soldiers repaint opportunistically, so "can carol hold
+     * 25 tiles still for 50 rounds" is a real question no measurement of mine has answered.
+     *
+     * `srpElig` therefore records the CONDITIONAL reachability this session's main methodological
+     * finding demands: how often the pattern is placeable among the turns that actually reach
+     * this line -- not how much ally paint exists in aggregate. It is read from live replays a
+     * few games in, so an unreachable mechanism costs ten minutes rather than a full run.
+     */
+    static String workOnSRP() throws GameActionException {
+        MapLocation me = rc.getLocation();
+        String t = "";
+        if (rc.canMarkResourcePattern(me)) {
+            t += " srpElig";
+            if (rc.senseMapInfo(me).getMark() == PaintType.EMPTY) {
+                rc.markResourcePattern(me);
+                t += " srpMark";
+            }
+        }
+        // Repaint one mismatched marked tile per turn, secondary where the mark says so.
+        for (MapInfo tile : rc.senseNearbyMapInfos(me, 8)) {
+            PaintType mark = tile.getMark();
+            if (mark != PaintType.EMPTY && mark != tile.getPaint()
+                    && rc.canAttack(tile.getMapLocation())) {
+                rc.attack(tile.getMapLocation(), mark == PaintType.ALLY_SECONDARY);
+                t += " srpPaint";
+                break;
+            }
+        }
+        if (rc.canCompleteResourcePattern(me)) {
+            rc.completeResourcePattern(me);
+            t += " SRPDONE";
+        }
+        return t;
     }
 
     static void workOnRuin(MapLocation ruin) throws GameActionException {

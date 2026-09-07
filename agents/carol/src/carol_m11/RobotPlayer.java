@@ -1,4 +1,4 @@
-package carol;
+package carol_m11;
 
 import battlecode.common.*;
 
@@ -31,7 +31,7 @@ public class RobotPlayer {
      * measurement-neutral -- it shifts the replay hash, so a dose pair must share one tag if
      * doctrine #3's byte-identity check is to work on raw hashes.
      */
-    static final String BUILD = "i12";
+    static final String BUILD = "i11";
 
     /**
      * Consecutive turns this tower has seen the team treasury EXACTLY unchanged, and the count
@@ -69,9 +69,6 @@ public class RobotPlayer {
     /** Minimum splash score worth spending 50 paint on. Named so it can be a dose. */
     static final int SPLASH_MIN_SCORE = 8;
 
-    /** Iteration 12: see TRAINING_LOG.md. Gate is computed per level, never a constant --
-     *  a fixed CHIP_RESERVE+2500 would let a lv2->lv3 upgrade (5,000) strand the treasury
-     *  below the ruin-completion reserve, which is how iteration 6 lost DefaultSmall. */
     static final int STAGNANT_ROUNDS = 10;
     static int lastChips = -1;
     static int stagnantTurns = 0;
@@ -165,20 +162,6 @@ public class RobotPlayer {
 
         // Mopper share held at 25% exactly as before; the splasher share comes out of soldiers,
         // so this is one change (add splashers), not two.
-        // ---- Iteration 12: upgrade THIS paint tower when chips are abundant. ----
-        String upg = "";
-        if (rc.getType().getBaseType() == UnitType.LEVEL_ONE_PAINT_TOWER
-                && rc.getType().canUpgradeType()) {
-            int need = CHIP_RESERVE + rc.getType().getNextLevel().moneyCost;
-            if (chips >= need && rc.canUpgradeTower(rc.getLocation())) {
-                rc.upgradeTower(rc.getLocation());
-                upg = " UPG";
-                chips = rc.getChips();
-            } else {
-                upg = (chips < need) ? " upgPoor" : " upgNo";
-            }
-        }
-
         int roll = rng.nextInt(20);
         UnitType want = (roll < SPLASHER_IN_20) ? UnitType.SPLASHER
                       : (roll < SPLASHER_IN_20 + 5) ? UnitType.MOPPER
@@ -191,8 +174,7 @@ public class RobotPlayer {
         // Team-level econ trace (towers see chips + tower count; paint is per-tower).
         return "T r=" + rc.getRoundNum() + " chips=" + chips + " tw=" + rc.getNumberTowers()
              + " tp=" + rc.getPaint() + " e=" + enemies.length
-             + " rsv=" + reserve + " stag=" + stagnantTurns + upg
-             + " lv=" + rc.getType().level;
+             + " rsv=" + reserve + " stag=" + stagnantTurns;
     }
 
     // ----------------------------------------------------------------- soldier
