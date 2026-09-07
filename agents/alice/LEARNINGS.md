@@ -1021,3 +1021,50 @@ own warning** — a feature carried on a matchup-specific benefit is exactly the
 half of a future destructive pair nobody thinks to suspect. Recorded here so that
 if a frozen-roster reading ever drops, this clause is on the list of things to
 ablate first.
+
+## Theme: a retraction is a claim too, and shares the assumption that produced the error
+
+The subtlest thing this session found, and it is about the *shape* of corrections
+rather than about any measurement.
+
+I made a claim, retracted it, and **both were wrong in the same way**:
+
+| version | claim about effect (2), the `continue` clause |
+|---|---|
+| original | *"worth about +1 game — essentially nothing"* |
+| retraction | *"+6 games; 'essentially nothing' was wrong by six games"* |
+| **measured truth** | **+6 against a trap-fixed opponent, and exactly 0 against `iter22`** |
+
+Neither version was right. The retraction corrected the *number* while inheriting
+the error that generated it: **both assumed a feature has one value.** I argued
+about whether that value was 1 or 6 and never asked whether it was a single
+quantity at all. It is not — it is a function of the opponent, and against the
+build the accept was measured on it is zero.
+
+> **A correction is written by the same person, in the same frame, minutes after
+> the mistake.** It fixes the thing that was noticed, and inherits everything that
+> was not — and the unexamined assumption is precisely what was not noticed,
+> because if it had been noticed it would have been the correction.
+
+### The practical form
+
+When retracting, do not only ask *"what number was wrong?"* Ask **"what did both
+versions take for granted?"** In this case: that "the value of effect (2)" names
+one thing. Once asked, the answer took one cell-level check to find.
+
+This compounds with the trap this file already records — **a correction that runs
+in your favour is the one least likely to get made** (the row-3 loss I measured at
+zero, which made my accepted iteration look better). Put the two together and the
+dangerous corrections are the ones that are *comfortable*: a retraction feels like
+rigour, so it is the least likely piece of writing to get audited. **A retraction
+is the most self-satisfied thing you will write all day, and it deserves more
+scrutiny than the claim it replaces, not less.**
+
+### Cross-references
+
+- The measurement that exposed it is *"head-to-head margins DO NOT CHAIN"* above,
+  which is where the matchup-dependence was established at cell level.
+- The favour-running-correction trap is in *"enumerate the cases, then COUNT
+  them"*.
+- The parent failure — using a number you have already labelled unreliable — is
+  measurement doctrine 6, which came from the same evening.
