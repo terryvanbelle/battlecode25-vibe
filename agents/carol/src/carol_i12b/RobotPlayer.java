@@ -84,6 +84,12 @@ public class RobotPlayer {
      * 4.1x the soldier-turns) and converted nothing, while paint has been the binding resource
      * in every trace this session.
      */
+    /** Rounds an upgradable paint tower will withhold spawning before demanding evidence
+     *  that the treasury is climbing. Registered as a dose, not a magic constant. */
+    static final int SAVE_GRACE = 25;
+    static int savingRounds = 0;
+    static int chipsAtSaveStart = -1;
+
     static final int STAGNANT_ROUNDS = 10;
     static int lastChips = -1;
     static int stagnantTurns = 0;
@@ -189,15 +195,29 @@ public class RobotPlayer {
             if (chips >= need && rc.canUpgradeTower(rc.getLocation())) {
                 rc.upgradeTower(rc.getLocation());
                 upg = " UPG";
+                savingRounds = 0;
                 chips = rc.getChips();
             } else if (chips < need) {
                 // Only save while the treasury is actually GROWING. If income has stopped,
                 // saving is futile and would cost this tower its spawning forever -- the
                 // "survival bought with inactivity" failure TRAINING_ALGORITHM.md warns about,
-                // and a permanent production loss on any map where carol holds no money tower.
-                // Reuses iteration 2's already-validated stagnation detector rather than adding
-                // a second notion of "income has stopped".
-                saving = (stagnantTurns < STAGNANT_ROUNDS);
+                // and a permanent production loss on any map holding no money tower.
+                //
+                // My first attempt reused iteration 2's `stagnantTurns` detector. MEASURED, and
+                // it is dead code for this purpose: stag == 0 on ALL 27,356 tower-turns sampled
+                // across gridworld and DefaultMedium (max 0), because chips change almost every
+                // turn so the exact-equality counter never accumulates. A guard that never
+                // trips is exactly as inert as the mechanism iteration 12 just failed on, so it
+                // is replaced with one whose tripping is directly observable in the trace.
+                //
+                // This tower saves for a SAVE_GRACE window; it keeps saving past the window
+                // only if the treasury actually grew while it waited. Otherwise it gives up and
+                // resets, so it spawns again and retries later rather than stalling forever.
+                if (savingRounds == 0) chipsAtSaveStart = chips;
+                savingRounds++;
+                boolean climbing = chips > chipsAtSaveStart;
+                saving = climbing || savingRounds <= SAVE_GRACE;
+                if (!saving) savingRounds = 0;      // give up, spawn, retry later
                 upg = saving ? " upgSave" : " upgGiveUp";
             } else {
                 upg = " upgNo";     // affordable but engine refused (e.g. cooldown)

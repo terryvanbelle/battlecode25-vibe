@@ -360,3 +360,45 @@ Three things follow:
 The general lesson underneath: look for states the rules make *absorbing*. A disadvantage you
 can trade out of is a tuning problem; a state with no legal path out is a correctness problem,
 and it deserves a guard rather than a better heuristic.
+
+## Condition a reachability check on the guard the gate sits behind
+
+The standing pre-check "is this branch ever taken?" has a failure mode that passes review:
+checking the **marginal** distribution of the gated quantity instead of its **conditional**
+distribution given the guard.
+
+Iteration 12 gated a paint-tower upgrade on `chips >= 3,700`. The pre-check measured 146,350
+tower-turns and found **21.7% clear 3,700** — a comfortable PASS. In the run the mechanism
+fired **once in 11,016 tower-turns**, because the gate sits inside a guard (`is this an
+upgradable paint tower?`) and the two are anti-correlated:
+
+| | chips >= 3,700 | guard matches | both |
+|---|---|---|---|
+| gridworld | 92.5% | 2.1% | **0.59%** |
+| DefaultMedium | 0.0% | 68.4% | **0.00%** |
+
+Neither marginal is alarming; the conjunction is ~0 everywhere. The anti-correlation had a
+mechanical cause that was visible in the code all along: the treasury is drained to ~1,450 by
+spawning, so chips accumulate **only** when spawning is already blocked by zero tower paint —
+and on the maps where that happens, carol builds no towers, so almost none of hers are
+upgradable paint towers.
+
+**The rule**: measure the gated quantity **among the turns that actually reach that line**, not
+across all turns. And when you do a joint analysis, do it on the pair the mechanism will
+**execute** under, not the pair that **motivated** it. I had run a joint check — chip-rich AND
+paint-destitute, 11.1% — and it was the right *shape* of analysis on the wrong *pair*; it
+described the problem the feature was aimed at, never the conditions the feature needed to run.
+
+Two corollaries earned the same day:
+
+- **Read the mechanism gate from live replays a few games in, not from the final win rate.** A
+  mechanism firing once in 11,000 opportunities returns a clean ~50% that reads as "this
+  doesn't help", when the truth is it never ran. Those are opposite conclusions and the
+  scoreboard cannot distinguish them. Cost: one replay pull, 15 games in.
+- **A guard is a mechanism and needs its own reachability check.** The fix for the inert
+  upgrade added a deadlock guard reusing `stagnantTurns >= 10`. Measured before shipping:
+  `stag == 0` on **all 27,356** tower-turns sampled, max 0 — the counter resets whenever chips
+  change, which is nearly every turn. The guard would never have tripped, leaving the deadlock
+  it existed to prevent completely unmitigated, inside the fix for an inert mechanism. Replaced
+  with one whose tripping is observable in the trace (`upgSave` vs `upgGiveUp`), and its firing
+  is now a **registered gate**, not an assumption.
