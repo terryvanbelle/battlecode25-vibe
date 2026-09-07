@@ -3399,3 +3399,70 @@ So the gap is **not** map difficulty. Exactly one confound is left — mirror ve
 cross-lineage — and carol's own tournament blocks settle it without any run of mine. The
 prediction registered above stands unchanged and is now sharper: **12% is the cross-lineage
 baseline on this very map set.**
+
+### Tracing an actual stalled game — carol's binding constraint, located exactly
+
+Picked **gridworld** because the map-matched table above makes it maximally diagnostic:
+alice-bob time out there **0%** of the time, carol **100%**. Traced the r2000 game
+`carol_iter7__gridworld__botA` (36,513 tower-turns, both builds tagged in the one replay).
+
+**Team tower count and treasury, every 200 rounds:**
+
+| round | i10 towers | i10 chips | i7 towers | i7 chips |
+|---|---|---|---|---|
+| 0 | 5 | 2,986 | 13 | 2,528 |
+| 400 | 5 | 25,727 | 13 | 74,270 |
+| 800 | 5 | 51,085 | 13 | 162,725 |
+| 1200 | 7 | 79,920 | 13 | 250,815 |
+| 1600 | 7 | 120,605 | 13 | 339,149 |
+| **2000** | **7** | **151,090** | **13** | **406,170** |
+
+**Tower paint over the same game:**
+
+| round | i10 % of tower-turns with tp<50 | i10 median tp | i7 % tp<50 | i7 median tp |
+|---|---|---|---|---|
+| 0 | 75% | 0 | 68% | 13 |
+| 400 | 86% | **0** | 79% | **0** |
+| 1200 | 90% | **0** | 79% | **0** |
+| 2000 | 86% | **0** | 85% | **0** |
+
+**Carol's towers spend this entire game holding ZERO paint and 406,170 chips.** The tower
+count is frozen from round 0 — 13 towers, never 14 — while the treasury climbs past four
+hundred thousand. A tower with 0 paint cannot spawn anything (a soldier needs 200 paint out
+of the tower stash, and `canBuildRobot` fails on paint regardless of chips), so the army stops
+growing, the map stops being converted, and the game runs to the round limit to be settled on
+tiebreak. **That is the stall, and it is not subtle.**
+
+Paint utilisation is effectively **100%** (median 0 all game — every point mined is spent the
+moment it arrives) while chip utilisation is effectively **0%**. This is the cleanest possible
+statement of "price the sink in the resource that binds": carol is simultaneously at a hard
+ceiling on one resource and drowning in another, and the game contains exactly one mechanism
+that converts the second into the first — **upgrading a paint tower, 5 -> 10 -> 15 paint/turn
+for 2,500 / 5,000 chips.** At 406,170 chips carol could take every paint tower she owns to
+level 3 many times over and never notice the cost.
+
+**Why this is NOT a fourth "more production" iteration**, which is the objection my own
+three-iteration series (5, 8, 10) has earned the right to raise:
+
+| iteration | what it raised | why it did not touch this |
+|---|---|---|
+| 5 (accepted) | chip income, via money towers | *created* this problem — the 406,170 is largely its doing |
+| 8 (rejected) | paint income, by building more paint towers early | closest prior, but a new tower costs a ruin **and** a 5x5 painted pattern — paid in the binding resource |
+| 10 (rejected) | soldier *turns*, by plugging a refill leak | left mining rate untouched; this trace is i10 and it is just as paint-destitute |
+
+**None of the three raised paint income per tower.** An upgrade is the only mechanism that
+does, it costs **zero paint**, and it is paid for in the resource sitting at 406,170. That is
+the "capability preserved at zero marginal cost" profile that TRAINING_ALGORITHM.md names as
+the recurring winner's shape — and iteration 8's rejection, far from arguing against it,
+localises exactly why: the paint *pattern* was the price, and the upgrade does not pay it.
+
+**Consequence for the queue.** Iteration 12 (tower upgrades) now rests on materially stronger
+evidence than iteration 11 (splashers) did when I launched it, and — importantly — its case is
+built entirely on the **accepted i7 build**, so it stands whatever iteration 11 reports. If
+iteration 11 is rejected, iteration 12 is unaffected and goes next regardless.
+
+One honest caveat on the reachability figure I logged earlier: 21.7% of tower-turns clearing
+3,700 chips was averaged over 12 replays. In *this* game the gate is clear essentially from
+round 200 onward. The 21.7% is the conservative number and I will keep quoting it, but the
+distribution behind it is "hand-to-mouth in short decisive games, absurdly rich in exactly the
+stalled games that are the problem" — which is the best possible shape for this intervention.
