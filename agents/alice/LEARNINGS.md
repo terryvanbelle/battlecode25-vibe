@@ -958,3 +958,66 @@ was checked when written, and each was individually correct. A per-entry review
 passes all four. **Only comparing them fails** — which is precisely what this
 document's earlier pass predicted would happen, and it happened within hours of
 that prediction being recorded.
+
+## Theme: head-to-head margins DO NOT CHAIN — measured, at cell level, in one line of code
+
+The cleanest measurement this lineage has made, and the one with the widest reach.
+Three builds differing by **one keyword**, all played on **one pinned 25-map
+sample**, so the numbers below are an identity rather than an estimate:
+
+```
+  i23abl  beats  iter22   by +8      (33/50, swept 9/1)
+  iter23  beats  i23abl   by +6      (31/50, swept 7/1)
+  iter23  beats  iter22   by +8      (33/50, swept 9/1)   -- NOT +14
+```
+
+Parts sum to **+14** against a whole of **+8**. And the whole is not merely
+*close* to the first leg — it is **indistinguishable** from it. Aggregates can
+coincide by luck, so the deterministic cell check settles it: of the 50
+`(map, side)` cells, **6 disagree, split exactly 3–3 across six different maps**.
+That is the churn signature, not a causal effect. Against `iter22`, the second
+keyword is worth **zero**, with the diff shape proving it rather than an aggregate
+merely failing to detect it. Against `i23abl` the *same* keyword sweeps 7 maps
+to 1.
+
+> **"A beat B by 8" and "C beat A by 6" does not license "C beats B by 14".**
+> A feature's value is a property of the **matchup**, not of the feature. The only
+> way to know what C is worth against B is to play C against B, on the same maps.
+
+### Why it happens here, and why the shape is general
+
+Effect (2) — scanning past an engine-refused tile to a paintable one — only pays
+against an opponent that has *already* stopped bleeding paint on refused actions.
+Against one that is still bleeding, the race is not close enough for the
+refinement to flip an outcome. **A refinement is worth something only when the
+game is tight enough for refinements to matter**, and how tight the game is
+depends on who you are playing.
+
+### This is §5b's "partial derivative" measured rather than argued
+
+§5b warns that the accept gate measures *"marginal value conditional on everything
+the baseline already carries"*, and that a chain of individually-positive accepts
+can walk downhill. That has been an argument in this project. **It is now a
+measurement**: a feature worth +6 against my immediate predecessor is worth
+exactly 0 against the generation before it, established at cell level in one line
+of code.
+
+Two consequences I am adopting:
+
+1. **The frozen roster is not a nice-to-have; the arithmetic above is why it
+   exists.** No chain of head-to-heads can reconstruct a level, because the links
+   are not additive. Only a fixed opponent measures a level.
+2. **When an ablation's parts do not sum, do not average them and move on.** The
+   gap *is* the finding. Run the cell-disagreement check on the two arms that look
+   equal — if they agree on ~90% of cells with the remainder split evenly, they
+   are the same bot in that matchup, whatever the aggregate suggests.
+
+### And a note on carrying a feature that measures zero
+
+`iter23` keeps the clause even though it contributes nothing to today's margin,
+because it wins the head-to-head that *is* the accept gate and costs nothing in
+bytecode. That is a defensible call, but it is **an unpriced liability under §5b's
+own warning** — a feature carried on a matchup-specific benefit is exactly the
+half of a future destructive pair nobody thinks to suspect. Recorded here so that
+if a frozen-roster reading ever drops, this clause is on the list of things to
+ablate first.
