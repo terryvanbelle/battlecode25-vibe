@@ -5415,3 +5415,51 @@ truck is empty and it is also *the reason moppers idle 95% of the time*: not tha
 nothing to do, but that they are dying of paint starvation like everything else carol owns.
 
 If confirmed, the ferry is the wrong shape and the right change is upstream of it.
+
+## CORRECTION: iteration 20's "inert mechanism" was a measurement artifact, and the broke-mopper hypothesis is refuted
+
+Re-ran the same game with the counters actually emitted into the indicator string:
+
+```
+fl (loads from a donor) 7     fd (drops into a dry tower) 134     fs (seeks) 136
+tw2 (ally tower in vision) 275   dry 270   don (donor in vision) 31   full 130
+mopper paint over 1,867 turns:  median 94 / 100   at zero 1.0%   below 50 18.1%   above 50 78.4%
+```
+
+**The mechanism fires hard — 134 deliveries per mopper.** My previous entry reported
+`fl=fd=fs=0` and concluded the ferry was inert. That was **wrong, and the error was mine, not
+the bot's**: in rebasing iteration 20 onto iteration 18 I appended the ferry counters to the
+*tower* return string and then removed them, so they never reached
+`rc.setIndicatorString`. My extraction helper returns `max(v) if v else 0` — so "no samples
+matched the regex" and "the counter is genuinely zero" render **identically as 0**.
+
+**The lesson, and it is a sharp one for a session built on counters:** a counter that reads
+zero and a counter that is *absent* are different facts, and code that collapses them will
+manufacture false negatives on demand. I have spent this session correctly refusing to accept
+mechanisms on low firing counts; I very nearly *rejected* one on a firing count that did not
+exist. Every extraction should assert that the sample count is non-zero before reporting the
+value — the fix is one line and I have applied it to my reading habit, not just this script.
+
+**And the hypothesis I had reasoned my way into is refuted by the same data.** I argued from
+RULES.md that moppers bleed 2–4 paint/turn, freeze at zero ("cannot move/act until refilled",
+−20 HP/turn against 50 HP), and so die broke — a tidy mechanistic story for the 95% idleness.
+**Median mopper paint is 94 of 100, and only 1.0% of turns are at zero.** Moppers are not
+broke. The low-paint cooldown penalty (below 50) applies on 18.1% of turns, nowhere near
+enough to explain 95% idleness either.
+
+So the original reading stands: moppers idle because there is no enemy paint within their r²=2
+action radius, being deep in friendly territory — not because they are starved. Two plausible
+mechanistic stories, both mine, both killed by one instrumented game. Cheap.
+
+**What the numbers say about the ferry's design.** Deliveries (134) vastly outnumber loads from
+a designated donor (7), and a donor is in vision on only 31 turns against 270 with a dry tower.
+So the paint being delivered is mostly coming from `refillIfPossible`, which withdraws from
+*any* adjacent tower regardless of how little it holds. The ferry is therefore redistributing,
+but **without control over the source** — it may be draining a tower at 250 to top up one at
+190. That is a real design weakness, it is now measured rather than suspected, and it is
+exactly what the iteration 21 withdrawal guard was queued to fix.
+
+**Next**: run iteration 20 as it stands against `carol_iter18` with the `carol_m18` null. The
+mechanism is live and heavily exercised; whether uncontrolled redistribution is net-positive is
+precisely the question a gauntlet answers, and the `fl`/`fd`/`don` counters will tell me
+afterwards whether a controlled source would have done better.
