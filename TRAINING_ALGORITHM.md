@@ -334,6 +334,17 @@ resulting retraction of a long-standing entry safe.
 3. **Accept** if the head-to-head clears 50%, peer `WinPct` is met, and the
    diff shows no unresolved one-directional regression. Snapshot; this run
    becomes the new baseline.
+3b. **If the result holds but your explanation of it fails, accept the result and
+   record the attribution as OPEN.** Do not back-fill a mechanism story because
+   the number came out well — a plausible account that survives only because
+   nobody tested it is worse than an admitted gap, since every later iteration
+   will be built on it. One lineage accepted a change on 34/50 with nine swept
+   wins and zero swept losses while its pre-registered map-level prediction came
+   out the wrong sign (rho +0.318, p = 0.127) and its post-hoc replacement did
+   worse (p = 0.640); it logged "no covariate structure, attribution open" and
+   built a one-keyword separating experiment as the next candidate. Note that no
+   covariate structure and "swept everywhere" are often the *same* fact: a change
+   that works on every map has nothing left for a map property to explain.
 4. **Near miss** (within `NearMissMargin`, no real regression): refine the same
    solution, up to `MaxNearMissRefinements` — several good ideas cleared the
    bar only after a parameter refinement of a directionally-correct mechanism.
