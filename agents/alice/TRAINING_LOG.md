@@ -6392,3 +6392,46 @@ at 207). Deleting it cut starvation deaths roughly fourfold and raised coverage.
 **Next: iteration 23**, built, mechanism-verified, sized on two maps, and
 pre-registered (including a ruin-density split and a written admission that I have
 not found its price). Its baseline is now `alice_iter22`.
+
+## Engine-predicate audit, applied to the WHOLE build (the new pre-check, run once properly)
+
+Iteration 22's milestone was a process change: **before trusting any guard, check
+it against the engine's own predicate by decompilation.** Applying it to every
+action path rather than only the one that bit me.
+
+`javap` of `InternalRobot`, every method that calls `addPaint`:
+
+```
+mopSwing      mopperAttack      processBeginningOfRound
+processEndOfTurn      soldierAttack      splasherAttack
+```
+
+**`towerAttack` is absent from that list — tower attacks cost ZERO paint**, and
+the method ends in `TeamInfo.addMoney(...)`, the defence-tower attack bonus. A
+tower attacking is pure upside with no resource cost at all.
+
+Call-site by call-site, in `src/alice`:
+
+| call site | guard | engine predicate | verdict |
+|---|---|---|---|
+| soldier, area branch | `t.getPaint() == PaintType.EMPTY && isPassable` | paints if empty-or-ally | **correct** (strictly conservative) |
+| soldier, **ruin-pattern loop** | `mark != EMPTY && mark != t.getPaint()` | refuses enemy paint, **debits anyway** | **THE BUG — iteration 23** |
+| mopper, mop | `t.getPaint().isEnemy() && canAttack` | mop targets enemy paint | **correct**; and `addPaint` here is a **gain** (+5 stealing from a robot), not a cost |
+| tower, single + AoE | `enemies.length > 0`, then `canAttack(null)` | **no paint cost, plus a money bonus** | **correct**, and cheaper than I knew |
+| splasher | dead — `bestScore = 3` initialised above the max achievable score of 2 | debits 50 unconditionally at offset 70 | unreachable; must be fixed before any splasher work |
+
+**Conclusion: the ruin-pattern loop is the only remaining instance of the trap in
+the shipping build**, which is exactly what iteration 23 changes and nothing else.
+That is a genuinely useful audit outcome — it says iteration 23 closes the class,
+rather than being the second of an unknown number.
+
+Two incidental corrections to my own mental model, both worth having:
+
+- I had assumed tower attacks drew on the tower's paint, which is why the tower
+  code guards them behind `enemies.length > 0`. They are free **and** they earn
+  chips. The guard is still right (AoE needs something in range), but "towers
+  should attack whenever they can" is now a fact rather than a hope.
+- `mopperAttack` calling `addPaint` looked alarming for about a minute. It is the
+  **+5 steal**, not a cost. **A method appearing on a "calls addPaint" list is not
+  evidence of a debit** — the sign matters, and I checked it rather than assuming
+  the pattern I had just found was everywhere.
