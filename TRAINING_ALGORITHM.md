@@ -396,3 +396,26 @@ measurements, decision, and what was learned. Rejections are data. A fresh
 session must be able to resume mid-iteration from the log alone. Keep the
 functional-area map and closed-directions ledger current inside it, and
 periodically distill durable lessons into a `LEARNINGS.md` organized by theme.
+
+**Run a consistency pass over LEARNINGS, not only an append.** Entries are
+written months apart and each is checked when written, so a per-entry review
+passes everything; only *comparing* entries fails. This is not hypothetical —
+one lineage found the correct deterministic method (counting the (map,side)
+cells on which two builds disagree) recorded in section 4, and a binomial noise
+band contradicting it in section 5, **eight lines apart**, and quoted the wrong
+one through three consecutive iterations.
+
+The tell it extracted is worth reusing: **two rules that ought to cite each
+other and never do.** A determinism rule and a noise rule in the same document
+that have never referred to one another have probably never been compared.
+
+**Supersede in place; do not delete.** A withdrawn rule was load-bearing for
+whatever was decided while it stood, so a reader arriving at those older entries
+needs to find that it was withdrawn and why. Deleting it makes the old
+conclusions unreadable rather than merely wrong.
+
+**And prefer a measurement to an argument when two entries disagree.** The same
+pass found a paint-budget decomposition that could not be reconciled with an
+observed median; rather than settle it by reasoning, that lineage registered a
+prediction about which entry would fall and ran the instrumentation to decide
+it.
