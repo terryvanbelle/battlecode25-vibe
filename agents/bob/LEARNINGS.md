@@ -362,3 +362,42 @@ it is measured against a pool that moves with the bot.
    feature I added five iterations ago still worth anything?" is answerable with one
    pinned run per feature, and TRAINING_ALGORITHM.md records that this historically
    finds more real corrections than new ideas do.
+
+## 14. Check whether your second metric is a function of your first (2026-09-07)
+
+I built a confident story — "four independent opponents all beat us from side B" —
+supported by a second statistic, `split-by-side` map counts: 10 of 25 against
+`bob_iter1` versus 2 of 25 against `bob_iter0`. Two metrics, same conclusion, different
+opponents. It felt like doctrine #10's "a real effect shows up in more than one place".
+
+Both halves were wrong, in different ways:
+
+- The side pattern came from **looking only at losses**. At a 95-98% win rate nearly
+  every game is a win, so the handful of losses lands wherever chance puts it. Measured
+  over all 271 tournament games the side gap is 2.2 points, **1.01 sd**, and the sign
+  flips across my own gauntlets.
+- `split-by-side` is **`2p(1-p)` by construction**. Out of 25 maps: p=0.56 predicts
+  12.3±2.5 (observed 10), p=0.96 predicts 1.9±1.3 (observed 2), p=1.00 predicts 0
+  (observed 0). Every value sat on its expectation. The "second metric" was the first
+  metric wearing a hat.
+
+**The rules:**
+
+1. **Before treating two metrics as corroborating, ask whether one is a deterministic
+   function of the other.** Derived counts — sweeps, splits, streaks, per-map tallies —
+   usually are. Write down the null formula (`2p(1-p)`, `p²`, `(1-p)²`) and compare the
+   observation to *it*, not to zero or to another opponent.
+2. **A rate needs its denominator.** "Most of our losses are side B" and "we are worse
+   on side B" are different claims, and only the second one needs measuring. The first
+   is nearly content-free when the win rate is high.
+3. **Genuinely independent confirmation comes from a different KIND of instrument** —
+   a mechanism counter or a replay-derived quantity like towers built or paint delivered
+   — not from another arithmetic view of the same win/loss vector. This is why the
+   mechanistic criterion is the one that earns its place in a pre-registration, and why
+   "swept-win > swept-loss" is nearly implied by "h2h > 50%" and should not be counted
+   as a second source.
+4. **Deviation from the null formula is where the real information lives.** The same
+   arithmetic that killed `split-by-side` produced a genuine finding: observed sweeps
+   were *fewer* than `25p²` predicts (5 and 0 against 7.8 and 2.8), so the two sides of
+   a map are anti-correlated — maps have side-specific character. The metric was not
+   useless; comparing it to the wrong baseline was.
