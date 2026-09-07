@@ -236,3 +236,65 @@ the opponent's 45, coverage 267 against 703, dead by round 889.
    below ~5,000" — which is now a pre-registered readout on the next run rather
    than a note that might get revisited. A closed direction with a numeric trigger
    is worth far more than one closed with a paragraph.
+
+---
+
+## 10. A pre-registered trigger is only as good as its proxy (2026-09-07)
+
+Section 9 ended by praising itself for closing a direction with a *numeric* re-open
+trigger: "re-open refilling when team chips stop accumulating — sustained below
+~5,000 while towers still want to spawn." Iteration 9 ran that readout. Chips came in
+at 360–4,343, sustained for 1,380 rounds, with unit counts climbing the whole time.
+The trigger fired.
+
+**And it was wrong.** The mechanism it stood for is *paint stranded in a tower that
+chips prevent from being spawned*. Team chips at ~1,300 do not show that: a soldier
+costs 250 chips, so that is five soldiers already affordable at that instant. Worse,
+the threshold silently collapsed two different stocks — chips are **team-global**,
+paint is **per-tower**, and only the per-tower one gates any individual spawn. A
+genuinely chip-limited economy pins the treasury below one unit's cost and holds it
+there; mine was oscillating at 5–16x that, which is the signature of income being
+spent as fast as it arrives.
+
+So iteration 9 did not move chips from "dead" to "binding". It moved them from
+**dead** (73,750 unspent on the baseline in the same game) to **in balance**. Paint
+still binds. Iteration 8 stays closed, and the trigger is restated as the quantity
+that actually gates the decision: *team chips pinned under ~250 while any allied
+tower holds ≥200 paint.*
+
+**The transferable rules:**
+
+1. **Register the mechanism's own quantity, not a correlate of it.** "Chips stopped
+   accumulating" is a symptom of several different worlds; "a tower has paint it
+   cannot spawn" is the one world that matters.
+2. **When you must use a proxy, write down in advance what would make it lie.** Had
+   I written "this proxy fails if the treasury is merely turning over rather than
+   empty", I would have read the column correctly on sight.
+3. **Beware thresholds that span two stocks with different scopes.** A team-global
+   total and a per-entity stock do not share a threshold; the aggregate can look
+   comfortable while every individual is starved, and vice versa.
+4. **A trigger that fires and is then correctly refused is still a win.** It cost one
+   column of one replay to learn this, against the full gauntlet I would have spent
+   re-opening a closed direction on a symptom.
+
+## 11. Relaxing the binding constraint pays where optimising around it does not
+
+Iterations 5–8 all tried to spend the *existing* paint better — waste less to
+adjacency, keep units alive longer, stop wandering. Every one was rejected or closed,
+and section 9 explains why: the paint was already being spent about as well as it
+could be.
+
+Iteration 9 did not improve paint *use* at all. It raised paint *income* — +3
+paint/turn on every allied paint tower per Special Resource Pattern, for 200 chips
+out of a treasury that was sitting on 73,750 unspent. h2h 62.5%, swept 5–0.
+
+The measured chain: more paint income → more units spawnable → the idle chip pile
+converts into bodies (+82 soldiers, +28 splashers, +28 moppers on one map) → more
+tiles painted → coverage 703 vs 271. Every step is in the replay dump, and the
+arithmetic closes to the right order of magnitude on both the paint and the chip side.
+
+**The rule: when several careful efficiency plays in a row all fail, stop optimising
+the constraint and go widen it.** The efficiency ceiling was real; the constraint was
+movable. And the tell was visible for many iterations before I acted on it — a second
+resource accumulating unspent into the tens of thousands is the loudest possible
+signal that the *other* resource is what binds.
