@@ -6908,3 +6908,38 @@ Peers: `alice_iter23` (new baseline), `alice_iter7` (80%), `alice_flood` (88%).
 `progress/roster_extra.txt` as a permanent yardstick and is never retired. If it
 crosses 90% its value becomes trend-tracking rather than gating, and the peer pool
 will need a new archetype. Flagging that now, before it happens.
+
+## Iteration 23 ablation LAUNCHED — run `20260907-202412`, 100 games
+
+Earned by the accept, and pre-registered before it started. `BOT=alice_i23abl`
+(the `break` variant), opponents `alice_iter22` and `alice_iter23`, 25 maps, both
+sides.
+
+Three arms differing by **one keyword**, so there is no question what was gated:
+
+| arm | clause | effects carried |
+|---|---|---|
+| `alice_iter22` | *(absent)* — pays 5 for a refused attack, then `break`s | neither |
+| `alice_i23abl` | `if (isEnemy()) break;` | (1) stop paying |
+| `alice_iter23` | `if (isEnemy()) continue;` | (1) + (2) scan onward |
+
+**Readings, fixed now:**
+- `i23abl` vs `iter22` → the price of **effect (1)**, stopping the refused payment.
+- `i23abl` vs `iter23` → **inverse** of effect (2). `iter23` should win it if
+  scanning onward is worth anything; a 25/50 split means effect (2) is worth zero.
+- **Additivity check**: effect(1) + effect(2), measured as deviations from the
+  25/50 null, should reconstruct iteration 23's observed **+9** (34/50 vs
+  `iter22`). **If they do not sum, something is interacting that I have not
+  named** — which per the 2x2 experience is the more valuable outcome of the two.
+
+**Prediction on record: effect (2) is the larger.** I have been wrong twice today
+about what drives this change, so this is worth what those were until measured.
+
+**Why this is the right spend rather than a new iteration.** §5b: *"an ablation
+prices a CODE PATH, not a concept"*, and *"two branches that consume the same
+budget are two prices"*. Iteration 23 is a single accepted line carrying two
+mechanisms, and I have already failed twice to separate them by correlation. If
+effect (1) turns out to be worth ~0, then what I actually accepted is a
+scan-onward policy and the engine-trap framing — which is currently the headline
+of two commits and a shared `tools/engine-facts.md` entry — is the smaller half of
+the story. That is worth 100 games to know.
