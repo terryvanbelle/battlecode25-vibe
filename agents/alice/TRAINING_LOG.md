@@ -4382,3 +4382,29 @@ self-play, so the enemy paint being measured was laid down by a bot that paints
 the way I do. Against bob — who paints far more — blocking should be worse, not
 better, so the direction should hold; but the *size* measured here is not
 transferable.
+
+### Sizing the prize — and it is much larger than the stall count suggested
+
+The pile-up at 22-of-24 is only the visible tip. Counting **every** soldier turn
+spent on a ruin, and asking whether that ruin's pattern contains any enemy paint
+at that moment:
+
+| map | ruin-targeted soldier turns | **with enemy paint in the pattern** |
+|---|---|---|
+| gridworld | 22,092 | **7,915 (35.8%)** |
+| box | 2,048 | **1,594 (77.8%)** |
+| UnderTheSea | 6,477 | **5,258 (81.2%)** |
+
+On two of three maps, **four out of five soldier-turns aimed at a ruin are aimed
+at a ruin no soldier can finish.** The soldier walks there, paints what it can,
+and then stands beside an unfinishable pattern burning its remaining paint on
+ground tiles — which is also why the median soldier at a ruin holds only 18–29
+paint. The paint-budget symptom and the tower-count symptom are the same defect
+seen from two sides.
+
+This does two things. It raises the expected value of iteration 19 (moppers
+unblock) considerably. And it names **iteration 20** precisely and separately:
+a soldier should *deprioritise a ruin whose pattern it cannot finish* and go
+find one it can — pure waste removal, the "capability preserved at zero marginal
+cost" profile, and a different mechanism from iteration 19 so the two must not
+be bundled.
