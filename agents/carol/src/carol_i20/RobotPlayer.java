@@ -425,10 +425,11 @@ public class RobotPlayer {
         int cap = rc.getType().paintCapacity;
         MapLocation dry = null;
         boolean sawTower = false, sawDry = false, sawDonor = false;
+        MapLocation donor = null;
         for (RobotInfo t : rc.senseNearbyRobots(-1, rc.getTeam())) {
             if (!t.type.isTowerType()) continue;
             sawTower = true;
-            if (t.paintAmount >= TOWER_SPARE) sawDonor = true;
+            if (t.paintAmount >= TOWER_SPARE) { sawDonor = true; if (donor == null) donor = t.location; }
             if (t.paintAmount < TOWER_DRY) {
                 sawDry = true;
                 if (dry == null) dry = t.location;
@@ -469,8 +470,21 @@ public class RobotPlayer {
             Direction card = cardinal(d);
             if (rc.canMopSwing(card)) { rc.mopSwing(card); state += " swing"; }
         }
-        // Carry the cargo to the dry tower instead of wandering.
-        moveExploring(dry != null && rc.getPaint() > cap / 2 ? dry : null);
+        // Iteration 20 SHUTTLE. Transfers need r2=2, and a wandering mopper is essentially
+        // never that close to a tower: with the source guarded to donors only, the ferry fired
+        // once per mopper per game (fd max 1) even though a donor was in VISION on up to 19
+        // turns. Seeing a donor is not standing next to one. So drive the round trip -- go to
+        // the donor when empty, go to the dry tower when loaded.
+        //
+        // This is the one unit for which iteration 17's verdict does not transfer. There, a
+        // splasher's walk cost frontier time and the round trip cancelled its own gain. A
+        // mopper does nothing on 95.1% of its turns, so its walk costs *nothing it would
+        // otherwise have done* -- the price term really is zero, which is the profile both of
+        // this session's accepts share.
+        MapLocation errand = null;
+        if (rc.getPaint() > cap / 2 && dry != null) errand = dry;          // loaded -> deliver
+        else if (rc.getPaint() <= cap / 2 && donor != null) errand = donor; // empty -> fetch
+        moveExploring(errand);
         return state;
     }
 
