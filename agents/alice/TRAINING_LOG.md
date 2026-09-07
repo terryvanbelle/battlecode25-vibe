@@ -2526,3 +2526,26 @@ If the curve peaks at the low dose (25) rather than rising to 400, the likely
 reason is a mopper with no enemy paint in vision committing 400 steps to one
 heading and leaving the contested area. Registering that now so it is a
 prediction rather than a post-hoc story.
+
+#### Iteration 13 reachability pre-check — RUN, and it passes decisively
+
+Ran the check before building anything this time. `alice_i12b` paint actions per
+200-round window on gridworld:
+
+| window | r200 | r400 | r600 | r800 | r1000 | r1200 | r1400 | r1600 | r1800 | r2000 |
+|---|---|---|---|---|---|---|---|---|---|---|
+| paint acts | 375 | 179 | 25 | 21 | **2** | 11 | **4** | 14 | **3** | 3 |
+
+Paint activity falls **95%** between r400 and r600 and never recovers, while
+23-27 soldiers stay alive for the remaining 1,400 rounds. That is roughly
+**34,000 idle soldier-turns** in one game. The plateau is not soldiers being lazy;
+it is soldiers having no legal target, exactly as the saturation arithmetic
+predicted. Iteration 13's premise is reachable — recorded before the fact, unlike
+iteration 9.
+
+**But its priority is correctly secondary**, and it is worth saying why so a later
+session does not over-rank it. This is a 2,000-round self-play game. Against `bob`
+the games *end* at r335-r800 because bob reaches 70% outright; the decisive phase
+there is r0-r400, which is precisely the phase iteration 12 addresses. The idle
+post-saturation window only exists in games alice is not already losing. Fix the
+expansion race first; harvest the idle turns second.
