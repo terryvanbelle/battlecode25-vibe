@@ -4924,3 +4924,171 @@ so the rule says leave that area. This changes what splashers and moppers *targe
 the unit types and the failure mode the tournament independently flagged on `catface`
 (a sibling out-denying me 4-7x and killing both my starting towers by round 250). I am
 counting that as a different area, and recording the tension rather than hiding it.
+
+
+---
+
+## Iteration 16 RE-AIMED (2026-09-07) — applying the new §3 pre-checks to my own plan
+
+TRAINING_ALGORITHM.md §3 gained two pre-checks that land directly on what I was about to
+build, one of them from my own iteration 14. Running them before writing code.
+
+**Pre-check: evidence already on disk.** I justified "denial-unit utilisation" partly on
+the `catface` swept loss. Checked against the whole report: bob has exactly **two** swept
+losses in 450 games — `maze` (alice) and `catface` (carol) — so denial costs me **one map
+of seventy-five**, while I sweep 64/75 against the very lineage that out-denies me there.
+**A broad denial weakness is not supported.** The probe's numbers are real; their price
+tag is one map.
+
+**Pre-check: cost the price as well as the benefit.** My plan was to send blind moppers
+and splashers toward the enemy. The price, which I had not written down:
+
+```
+mopper  100 paint cap, pays 2x territory penalty = -4/turn inside enemy paint
+        -> ~25 turns of life once it arrives, and its action cooldown is 30
+        -> roughly 5-8 mops per unit before starving, plus the low-paint cooldown tax
+splasher 300 paint, 50/attack; a splasher sent to the enemy stops painting empty
+        tiles in our own half, which is real coverage foregone
+```
+
+That is exactly the error §3 now names — "costing a movement policy's benefit without its
+paint" — and it is my own iteration 13 recorded as doctrine. So I am not building it yet.
+
+**Pre-check: sizing map not degenerate.** My headline 97.6% came from `DefaultHuge`,
+which is 59x59 and the *least* wall-blocked map in the pool (3.1%) — an outlier. On
+`catface` (30x30) the same counter is 60%. Both are high, but **97.6% is a big-map
+number, not a pool number**, and quoting it alone would have oversold the case. Corrected
+in the record.
+
+### The question that must be answered first
+
+The probe says splashers act on **1.1%** of their turns and moppers on **0.4%**, while
+those two types are **2 of every 5 units built** — 400 paint and 700 chips per five
+units, against 600 paint for the three soldiers. So ~40% of unit paint goes to types that
+do essentially nothing.
+
+Before making them work, the cheaper and more fundamental question is whether they are
+worth their slot at all. That is a true dose with a zero arm, it is a **spawn-policy**
+change rather than a movement change (so it leaves the area iterations 13 and 15 closed),
+and both of its numbers are computable in advance:
+
+```
+benefit of removing a denial slot   +1 soldier per 5 units (200 paint) -> ~40 painted tiles
+price of removing a denial slot     soldiers CANNOT overwrite enemy paint; splashers and
+                                    moppers are the only units that can. My own log:
+                                    "one enemy splasher beat thirteen of my soldiers"
+```
+
+**Doctrine #4 makes the design non-optional.** An ablation of a defensive capability, run
+only against my own lineage — which never denies paint — would prove nothing; that is the
+recorded case of a mirror calling a feature worthless when it was worth several games
+against rushers. So the zero arm must be measured against `bob_denier`, which is
+re-forked, current, and freshly baselined today at 86% (19 swept wins, 1 swept loss).
+
+```
+ARMS   bob_iter12  3 soldier : 1 splasher : 1 mopper   (today, the zero arm)
+       bob_d1      4 soldier : 0 splasher : 1 mopper   (drop the 300-paint slot first)
+       bob_d0      5 soldier : 0 splasher : 0 mopper   (no denial capability at all)
+
+RUN 1  BOT=bob_denier  OPPONENTS="bob_iter12 bob_d1 bob_d0"   representativeness FIRST,
+       because it is the measurement that can refute, and iteration 12's 86% is a live
+       consistency check on the run in the same way the zero arm was for iteration 13.
+RUN 2  BOT=bob_iter12  OPPONENTS="bob_d1 bob_d0"              the accept gate.
+```
+
+**Pre-registered reading.** If denial units are worth their slot, `bob_d0` collapses
+against `bob_denier` while doing fine against the lineage — and the gap between those two
+numbers *is* the value of the capability, which no single instrument can report. If
+`bob_d0` holds against both, then 40% of my unit paint has been buying nothing and the
+correct iteration is to delete it, not to fix its targeting.
+
+---
+
+## Iteration 16 PRE-REGISTERED (2026-09-07 18:17) — is the denial slot worth its paint?
+
+Session was killed at ~16:20 by an account-wide usage limit (nothing I did); resumed
+18:20. State reconciled: run `20260907-153729` was already collated locally, `src/bob` is
+byte-identical to `bob_iter12` on all seven files, nothing was lost.
+
+**The question.** Not "how do I make splashers and moppers work" (the §3 pre-checks
+above shelved that: one swept loss in 450 tournament games does not support a broad
+denial weakness, and I had not costed the paint). The prior question is whether the two
+denial slots earn the 40% of unit paint they consume, given they act on 1.1% and 0.4% of
+their turns.
+
+**Arms built** (`src/bob_d1`, `src/bob_d0`), verified byte-identical to `src/bob` on all
+seven files except `Tower.java`, whose only change is the spawn ternary:
+
+```
+bob_iter12  3 soldier : 1 splasher : 1 mopper   zero arm (today's bot)
+bob_d1      4 soldier : 0 splasher : 1 mopper   drop the 300-paint splasher slot
+bob_d0      5 soldier : 0 splasher : 0 mopper   no denial capability at all
+```
+
+**RUN 1 (launched, `20260907-181731`, 150 games): `BOT=bob_denier`, opponents
+`bob_iter12 bob_d1 bob_d0`.** Representativeness first, per measurement doctrine #4: an
+ablation of a *defensive* capability run only against my own lineage — which never denies
+paint — proves nothing. `bob_denier` is the only opponent that poses the threat. All
+three arms share one map sample, so the arm-to-arm comparison inside this run is exact.
+
+**RUN 2 (to launch when RUN 1 finishes): `BOT=bob_iter12`, opponents `bob_d1 bob_d0`.**
+The accept gate, on the lineage.
+
+**Pre-registered variables and thresholds.** Reported win% is `bob_denier`'s.
+`bob_iter12` was baselined against `bob_denier` today at 86% from my side, so I expect
+denier ≈ 14% against the zero arm; that number is a live consistency check on the run.
+
+```
+D_denial = (denier win% vs bob_d0) - (denier win% vs bob_iter12)      value of the whole
+D_splash = (denier win% vs bob_d1) - (denier win% vs bob_iter12)      value of the splasher slot
+```
+
+Uncertainty on every margin is quoted from `tools/map-resample.py` over MAPS, never a
+binomial formula — the engine is deterministic, so the only thing that re-rolls is which
+maps were drawn. Swept maps get more weight than headline win%: identical code sweeps
+nothing.
+
+Decision rule, registered before the numbers exist:
+
+- `D_denial >= 10 pts` (>=5 of 50 games): the capability is load-bearing against a
+  denier. Do **not** delete it. Iteration 16 becomes targeting — and I then owe it the
+  paint price I have not yet computed.
+- `D_denial < 10 pts` **and** RUN 2 puts `bob_d1` or `bob_d0` at >50% head-to-head vs
+  `bob_iter12`: accept the slot deletion (the better of the two arms).
+- `D_denial` large but `D_splash` ~0: the mopper is the load-bearing half and the
+  splasher slot is free to reclaim — `bob_d1` is then the candidate.
+- Both arms below 50% on RUN 2 with `D_denial` small: 40% of unit paint buys nothing
+  *and* removing it helps nothing, which points the next iteration at what the extra
+  soldiers do with their turns rather than at the spawn mix.
+
+### While RUN 1 plays: the win-condition census (2026-09-07 18:30)
+
+Non-blocking work on evidence already on disk. Joined `tournaments/20260907-1300/results.csv`
+against its `reasons.txt` for all 300 of my games:
+
+```
+BOB_WIN   painted enough of the map                259
+BOB_WIN   tiebreak, painted more                    16
+bob_loss  painted enough of the map                 16
+bob_loss  tiebreak, painted more                     7
+BOB_WIN   destroyed all of the enemy team's units     2
+```
+
+**298 of 300 decided on paint. Not one of my 23 losses was an elimination.** My losses
+split into a fast group (CastleDefense r308, Rose r426, Jail r434, starburst r471,
+walalilongla r519, Filter r537, SandyBeach r544, Brat r605, Dominoes r636, DefaultSmall
+r772, Bread r828 — out-painted to the 70% threshold early) and a slow group (six
+1400–1900 and seven round-2000 tiebreaks). Written up as LEARNINGS §18, with a
+cross-reference added into §5.
+
+This does not change iteration 16's design — the ablation and its thresholds were
+pre-registered above before I ran the census, and I am not editing them now — but it
+sharpens what the answer will mean. The unit of value is **net painted tiles per chip**:
+tiles my unit paints, plus enemy tiles it removes (which moves the differential twice
+under a tiebreak decided by "painted more"), minus the paint it burns standing on hostile
+ground. RUN 1 and RUN 2 measure exactly that trade at the spawn-slot level.
+
+It also retires the framing I carried into this session: `catface` is not a defensive
+hole. Both my towers dying by r250 is real, but the game was lost on **paint** at r1431
+and on the r2000 tiebreak. I was one step from building a defensive iteration against a
+verdict that never occurs.

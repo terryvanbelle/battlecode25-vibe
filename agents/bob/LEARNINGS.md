@@ -109,6 +109,13 @@ Swept-win/swept-loss counts, and the *fall* in split-by-side (10 → 3 at iterat
 - The winner's profile from the algorithm — *capability preserved at zero marginal
   cost: standing defenses, spending idle resources, removing pure waste* — paid
   out first try (iteration 3) after two clever-mechanism attempts failed.
+- **Coverage decides the game, not combat — see §18 for the 300-game census.**
+  298 of 300 tournament games ended on a paint condition and only 2 on
+  elimination. Read the two bullets above through that: "the endgame is zero-sum"
+  is not merely a late-game fact, it is the *entire* win condition, and the
+  territory-penalty paint sink is a direct debit against the only scored quantity.
+  Any hypothesis about killing, surviving, or defending owes an explicit account
+  of how it converts into painted tiles.
 
 ## 6. Process
 
@@ -542,3 +549,50 @@ diagnosed on* and still not convert.
    bug-nav's latch to terrain (removing what I had diagnosed as a defect — latching onto
    allies) scored *worse* than leaving the defect in. The "bug" was supplying real
    formation cohesion, which is Phase 0.7's caution seen from the other side.
+
+## 18. Every game is decided by paint coverage; elimination essentially never happens (2026-09-07)
+
+Census of all 300 of my games in tournament `20260907-1300`, joining `results.csv`
+against `reasons.txt` — three independent lineages, 75 maps, both sides:
+
+```
+BOB_WIN   painted enough of the map                259
+BOB_WIN   tiebreak, painted more                    16
+bob_loss  painted enough of the map                 16
+bob_loss  tiebreak, painted more                     7
+BOB_WIN   destroyed all of the enemy team's units     2
+                                                   ---
+                                                    300
+```
+
+**298 of 300 games were decided by paint coverage. Two by elimination, both wins.
+Not one of my 23 losses was a loss by being killed.** Every single one was
+out-painted, whether at round 308 or on the round-2000 tiebreak.
+
+Three things follow, and they retro-fit several of my own iterations:
+
+1. **The victory condition is a coverage race, not a fight.** Tower HP, unit
+   survival and army strength are only instrumental, and only to the extent they
+   convert into painted tiles. This is the sharpest form of the algorithm's
+   recorded regularity *"metrics that improve without converting to wins"* — I met
+   it three times in one day (iterations 13, 15, and the splasher-threshold
+   arithmetic), and this census says why: almost any military metric I could
+   improve is two steps removed from the only quantity that is ever scored.
+
+2. **It reframes my `catface` and `maze` swept losses.** I had read `catface` as
+   "a sibling destroys both my starting towers by round 250, so I have a defensive
+   hole". The tower kills are real, but the *game* was lost on paint at round 1431
+   and on the tiebreak at 2000. The towers are a mechanism, not the verdict, and I
+   was about to build a defensive iteration against a verdict that never occurred.
+
+3. **It sets the exchange rate for iteration 16.** If coverage decides everything,
+   then a production slot's worth is exactly the net painted tiles per chip it
+   returns — soldier paint gained, plus enemy paint removed (which moves the
+   differential twice), minus the paint the unit burns standing on hostile ground.
+   That is a computable price, and §3 of the algorithm requires me to compute it
+   before building. It is what iteration 16's ablation is measuring.
+
+**The tell for reuse:** I had this file on disk for hours and read only the
+standings and the swept-map table off it. The *reason* column was one `awk` away
+and is a stronger fact than either. When a report has a column you have never
+aggregated, aggregate it before spending a run.
