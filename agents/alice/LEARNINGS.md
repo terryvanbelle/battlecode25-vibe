@@ -904,3 +904,57 @@ That is precisely the kind of correction that never gets made, because nothing
 prompts it. It got made here only because the row had been promoted to a candidate
 and candidates get pre-checked. **Findings that flatter you need the same
 pre-checks as findings that do not** — and they will not ask for them.
+
+## CONSISTENCY PASS — three of today's themes are one theme, and none cited the others
+
+Run as the algorithm's Logging section requires: *compare* entries rather than
+re-read them, and treat **two rules that ought to cite each other and never do**
+as the tell. Four themes were added to this file today. **None of them referenced
+any of the others.** Comparing them, three are the same failure wearing different
+clothes:
+
+| theme | the analysis was | what it never asked |
+|---|---|---|
+| *"an instrument that samples positions your current policy chooses…"* | a correct decision census, 2,402 turns, stable to two decimals | **from which positions?** — the old policy's, which is where a new capability is least likely to pay |
+| *"enumerate the cases, then COUNT them"* | a correct, exhaustive, falsifiable four-row case analysis | **how often is each row taken?** — one row turned out to occur **0 times in 4,331 turns** |
+| *"when a covariate analysis fails twice…"* | a correct rank correlation with permutation p-values | **do the two mechanisms occur at different rates across maps?** — they do not, so no covariate could ever separate them |
+
+### The unifying rule
+
+> **Every one of these was a valid analysis that was silent about FREQUENCY.**
+> Logic tells you which cases differ; statistics tells you whether a difference is
+> real; **neither tells you how often the case arises**, and that is a separate,
+> empirical, usually cheap measurement. When an argument turns on "this situation
+> matters", the sentence after it must be a count.
+
+Which is the project's existing **reachability pre-check**, generalised. That rule
+was written for dead code branches — *"is the branch this reasoning lives in ever
+taken?"* — and I applied it faithfully to branches all day. **What I did not do is
+apply it to my own analyses**, which are just as capable of describing situations
+that never arise. A census, an enumeration and a correlation are all reasoning
+that lives in a branch.
+
+### And it explains the fourth theme rather than sitting beside it
+
+*"Never dichotomise a continuous covariate"* looks like a separate statistical
+point, and it is — but its damage came the same way. A median split reports a
+difference between two bins **without reporting how the observations are
+distributed within them**, so it hides the frequency information that would have
+shown there was no trend. Same failure: a summary that suppresses the count.
+
+### Cross-references added, in both directions
+
+- *"samples positions"*, *"enumerate then count"*, and *"covariate analysis fails
+  twice"* now name each other as the same failure class, and all three name the
+  **reachability pre-check** as their parent rule.
+- *"never dichotomise"* names *"covariate analysis fails twice"*, which is the
+  entry that produced its evidence.
+- *"the engine DEBITS before it CHECKS"* is the odd one out and stays separate: it
+  is a fact about the engine, not a failure of my reasoning about frequency, and
+  conflating the two would blur the one entry that is verified by decompilation.
+
+**Process note on the pass itself.** All four entries were written today, each
+was checked when written, and each was individually correct. A per-entry review
+passes all four. **Only comparing them fails** — which is precisely what this
+document's earlier pass predicted would happen, and it happened within hours of
+that prediction being recorded.
