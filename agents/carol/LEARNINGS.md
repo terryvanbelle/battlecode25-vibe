@@ -668,3 +668,35 @@ review. What killed them was one instrumented game each, costing about two minut
 is the whole argument for TRAINING_ALGORITHM §2: **trace, don't theorize.** The danger is not
 holding a wrong theory, it is that a *well-founded* wrong theory reads exactly like a finding
 and will be written into the log as one if nothing is measured.
+
+## Reachability has three levels, and I have now been caught at each
+
+A mechanism can fail to fire for three different reasons, and I have shipped a candidate
+blocked at each level in a single session. They need different checks and only the third is the
+one the algorithm's "reachability" pre-check actually names.
+
+1. **The condition never exists.** Iteration 16's tower-AoE guard: `runTower` attacks before it
+   spawns, so "enemy in sight AND action not ready" is empty. `aoeFreed = 0`.
+   *Check*: read the guard you are nesting inside, and the statement order around it.
+2. **The condition exists in the world but not in the robot's view.** Iteration 20's ferry: a
+   donor tower and a dry tower coexist on 49% of rounds on DefaultLarge — I measured that and
+   called the pre-check passed — but the *mopper* saw a donor on only 19 turns and had to be
+   within r²=2 to act. **Seeing a donor is not standing next to one.** `fd` max 1 per game.
+   *Check*: measure the condition **from the acting unit's indicator**, never from a global
+   count over the map.
+3. **The condition is visible and actionable but rare.** Iteration 12's tower upgrade: 3 firings
+   in 144,823 tower-turns — and it was worth +5 games anyway.
+   *Check*: none needed. Rarity is not a verdict; measure the outcome, not the frequency.
+
+The trap is that level 2 *looks* like a completed reachability check. I wrote a table, counted
+rounds, split the maps into "should move" and "should not", and registered a prediction — all
+of it methodologically clean, all of it about the wrong subject. The unit of analysis for a
+reachability check is **the robot that must act**, because the gate lives in its vision, its
+action radius and its position, not in the map's global state.
+
+The distinction sharpens for any mechanism that requires *adjacency* rather than *sight*.
+Battlecode's transfer and build actions run at r²=2 to r²=9 while vision is r²=20 — so for
+those, the world can be full of opportunity that no unit is ever positioned to take. Two
+iterations died on exactly that geometry this session (17's splasher refill, 20's ferry), and
+in both cases the fix is navigation, not a better threshold. **When the mechanism needs
+adjacency, ask who drives the unit there before asking whether the opportunity exists.**
