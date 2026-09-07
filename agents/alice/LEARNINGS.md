@@ -516,3 +516,52 @@ turns cap tower count" — into a measured falsehood, while promoting its
 pre-registered falsifier into the next target. **Soldier paint is the binding
 constraint, and I now know that rather than suspect it.** A 13/24 accepted on
 enthusiasm would have bought a marginal feature and left the belief intact.
+
+## Theme: in a deterministic game, the MAP is the unit of uncertainty — never the game
+
+I quoted an interaction's noise as `sqrt(4 × 24 × 0.25) = 4.9` games. That is a
+binomial sd, and **binomial assumes per-game randomness that this project
+established does not exist.** The engine is deterministic and so are both
+builds, so every `(map, side)` cell is a fixed function of the two programs.
+Re-running is worthless (Measurement doctrine #1 already says so) precisely
+*because* nothing is random per game.
+
+> **The only thing that varies between two estimates is which maps were drawn.
+> So the map is the observation, and uncertainty comes from resampling maps —
+> bootstrap or jackknife over the run's own per-map results.**
+
+Doctrine #1 and the binomial noise floor were quietly contradicting each other,
+and I had been using both for a whole session without noticing.
+
+### It is not a conservative approximation — it is wrong in both directions
+
+| quantity | binomial sd | map-resample sd | effect |
+|---|---|---|---|
+| iteration 21 interaction (−2 games) | 4.9 → 0.41 sd | **2.4** → **0.84 sd** | binomial **overstated** spread ~2×, so I called a result "comfortably" inside noise when it is 0.84 sd |
+| iteration 19 arm A (15/24) | "p = 0.154, inside the 13–15 noise band" | **1.5** → **+2.00 sd**, CI [12, 18] | binomial **under-sold a real accept**; I hedged a 2-sd result |
+| iteration 20 `p5`, `p10` (12/24) | "≈ 50%, indistinguishable" | **se = 0.00**, CI [12, 12] | every map split 1–1: **identical to the null on every map, both sides** |
+
+Deterministic per-map outcomes are *concentrated*, not coin-flip-like — eight of
+twelve maps contributed exactly 0 to the interaction. Structure has lower
+variance than independence, which is why binomial ran wide here. But it can also
+run narrow: a change that flips whole maps one-directionally has *more*
+map-level variance than binomial would predict.
+
+### Three consequences I am adopting
+
+1. **Swept maps were accidentally the right statistic all along.** A swept map is
+   the map-level unit that resampling treats as the observation, which is why
+   "swept 3–0 against a zero-variance null" carried iteration 19 correctly even
+   while my stated reasoning about it was wrong. Prefer map-level statistics.
+2. **`se = 0` is a real and very strong reading.** When every map splits 1–1 the
+   candidate is not "statistically indistinguishable" from the baseline — it is
+   *identical in outcome on every cell measured*. That is a far harder rejection
+   than a win rate near 50%, and it deserves to be reported as such.
+3. **Automate it so the wrong model cannot come back.** `tools/map-resample.py`
+   computes bootstrap + jackknife over maps from any run's `results.csv`. Quote
+   it instead of a formula.
+
+**The general form**: *before* attaching an uncertainty to a number, ask what
+would have to be re-rolled to get a different one. If re-running the same games
+cannot change the answer, per-game randomness is not the source of your error
+bars, and any formula that assumes it is describing a different experiment.

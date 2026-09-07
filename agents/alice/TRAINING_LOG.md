@@ -5012,3 +5012,76 @@ one — and here it was not.
 already logged (soldiers blind 94–96% of turns on normal-density maps), but the
 paint tank is now the better-evidenced target, and it needs its own
 instrumentation first — where the 200 paint actually goes, per action class.
+
+## CORRECTION — I quoted a BINOMIAL noise sd in a deterministic project. The
+## right model is map resampling, and it changes readings I have already made
+
+The coordinator caught this and is right. I wrote the interaction's uncertainty
+as `sqrt(4 × 24 × 0.25) = 4.9` games. **That is a binomial sd, and binomial
+assumes per-game randomness — which this project established does not exist.**
+The engine and both builds are deterministic, so every `(map, side)` cell is a
+fixed function of the two programs. The only thing that varies between one
+estimate and another is **which maps were drawn**.
+
+I derived 4.9 from the binomial formula, not by resampling. Correcting it.
+
+### The correct uncertainty, by resampling the 12 maps
+
+| quantity | binomial (wrong) | **map resample (bootstrap, 20k)** | jackknife |
+|---|---|---|---|
+| iteration 21 interaction | sd 4.9 → 0.41 sd | **sd 2.4**, 95% CI [−7.0, +3.0] → **0.84 sd** | sd 2.5 |
+
+**The binomial model overstated the spread by roughly 2×**, because the per-map
+contributions are concentrated rather than coin-flip-like: eight of twelve maps
+contribute exactly 0 to the interaction and four contribute ±1. Determinism
+makes results *structured*, and structure is lower-variance than independence.
+
+**My "comfortably inside noise" was wrong by a factor of two.** The honest
+statement is **−2 games at 0.84 sd, 95% CI [−7, +3]**.
+
+**The verdict does not change**, and I want to be precise about why rather than
+waving at it: my hypothesis was that the two features are *substitutes* — that I
+pay for the same thing twice — which requires a **positive** interaction. The
+interval runs from −7 to +3 and is centred at −2. It excludes nothing on the
+negative side and barely reaches +3 on the positive. **No destructive pair is
+supported under any point in that interval**, and if the data leans anywhere it
+leans toward mild complementarity, i.e. the opposite of my nomination.
+
+### The knock-on I have to own: this invalidates my accept-gate noise floor too
+
+Iteration 1 recorded *"24-game H2H — 16/24 ≈ 92% confidence, 17/24 ≈ 97%; treat
+13–15/24 as within noise of 50%."* **That is binomial as well**, and I used it to
+hedge iteration 19's accept and to set iteration 20's ≥16/24 bar. Recomputed by
+map resampling:
+
+| result | point | map-resample se | 95% CI | vs the null of 12 |
+|---|---|---|---|---|
+| **iteration 19 arm A (accepted)** | 15/24 | **1.5** | [12, 18] | **+2.00 sd** |
+| iteration 19 arm B | 15/24 | 1.5 | [12, 18] | +2.00 sd |
+| iteration 20 `p25` | 13/24 | 1.0 | [12, 15] | +1.04 sd |
+| iteration 20 `p10` | 12/24 | **0.00** | [12, 12] | **0.00 sd** |
+| iteration 20 `p5` | 12/24 | **0.00** | [12, 12] | **0.00 sd** |
+
+Three things follow, and two of them are corrections against me:
+
+1. **Iteration 19's accept is STRONGER than I claimed.** I called 15/24
+   "p = 0.154, inside my own noise band" and leaned on the swept count to carry
+   it. Under the model that applies it is **+2.0 sd** and the 95% interval
+   excludes the null at its lower edge. The binomial floor was too conservative,
+   and I under-sold a real result.
+2. **My instinct to lean on swept maps was accidentally the correct model.** A
+   swept map is exactly the *map-level* unit that resampling treats as the
+   observation. Reporting "swept 3–0 against a zero-variance null" was already
+   the right statistic; I just did not know why.
+3. **Iteration 20's rejection is far more decisive than "12/24".** `p5` and
+   `p10` split **every one of the twelve maps 1–1**. Standard error **zero**.
+   That is not "indistinguishable from the null on average" — it is *identical
+   to the null on every map, both sides*, which is the signature of a change
+   that alters behaviour without altering any outcome.
+
+### Ledger corrections
+| where | said | should say |
+|---|---|---|
+| iteration 21 entry | "interaction −2, noise sd ≈ 4.9, 0.41 sd, comfortably inside noise" | **"interaction −2, map-resample sd 2.4, 0.84 sd, 95% CI [−7, +3]; no destructive pair supported, leans mildly complementary"** |
+| iteration 19 entry | "15/24 is p = 0.154, inside my recorded noise band" | **"15/24 is +2.0 sd by map resampling, 95% CI [12, 18]; the binomial floor understated it"** |
+| iteration 1 noise floor | "treat 13–15/24 as within noise" | **superseded — binomial. Use map resampling on the run's own per-map results.** |
