@@ -3523,3 +3523,53 @@ and it printed a sibling agent's commit *subject line*, which is their prose and
 the sanctioned `tournaments/` channel. I did not open their files and I have not used what it
 said — the table above is computed by me from `results.txt` directly. Scoping every future
 `git log` with `-- agents/carol` so this cannot recur.
+
+### A 28-minute failure I misdiagnosed as semaphore starvation — and the check that would have caught it in one minute
+
+Iteration 11's run `20260907-010913` reported **0 games for 28 minutes**. I attributed that to
+the tournament holding the semaphore, wrote it up twice as "the system working as documented",
+and went off to do non-blocking work. **It was dead the whole time.** The generated remote
+script failed at launch:
+
+```
+gauntlet-20260907-010913.sh: line 76: syntax error near unexpected token `DefaultMedium'
+  for MAP in DefaultSmall
+DefaultMedium
+Fossil
+```
+
+**Root cause.** `gauntlet/<run>/maps.txt` stores **one map per line**. `gauntlet.sh` interpolates
+`$MAPS` verbatim into a generated remote script's `for MAP in ...` line, so the embedded
+newlines terminated the statement. The idiom I used is the one **AGENT.md documents verbatim**
+— `MAPS="$(cat gauntlet/<run-id>/maps.txt)"` — so this is a latent trap in the documented
+workflow, not a typo of mine. The fix on my side is `MAPS="$(tr '\n' ' ' < .../maps.txt)"`;
+relaunched as **`20260907-013714`**, which is playing.
+
+**Why the misdiagnosis was so comfortable, which is the part worth keeping.** Every signal I
+looked at is *identical* between "queued behind the semaphore" and "died at launch":
+
+| signal | starved | dead | distinguishes? |
+|---|---|---|---|
+| driver poll loop | "polling every 45s" | "polling every 45s" | no |
+| `gauntlet-collect.sh --list` | `0 games INCOMPLETE` | `0 games INCOMPLETE` | no |
+| remote `results.txt` | exists, empty | exists, empty | no |
+| VM game count | others' games running | others' games running | no |
+| **remote `~/gauntlet-<id>.log`** | quiet | **syntax error** | **yes** |
+
+I had a *prior* — MULTI_AGENT.md explicitly warns that runs are slow when all three agents
+evaluate, and a 450-game tournament was genuinely running — and the prior explained the
+observation perfectly, so I never sought a signal that could discriminate. Confirmation of a
+plausible story is not evidence when the story predicts the same observation as the failure.
+
+**Standing rule from here**: a run showing **zero** games is never "starved" until
+`~/gauntlet-<run-id>.log` on the VM has been read. Zero is qualitatively different from slow —
+slow means some games finished, zero means nothing ever started, and only the latter is
+consistent with a launch failure. Checking cost one ssh; not checking cost 28 minutes.
+
+**Correcting the concurrency report I was about to file.** I saw `pgrep -fc battlecode.server.Main`
+return **8 against a HARD_CAP of 7**, and a later sample return 6 (3 arena + 2 bob + 2 alice,
+**0 carol**). I was reading the 0-carol as evidence of unfair flock starvation. With the launch
+failure known, the 0 is fully explained by my run being dead, and no starvation claim is
+warranted. **The transient 8 > 7 still stands as an observation** and is reported to the
+coordinator as-is, unexplained — it is a brief overshoot, not a sustained breach, and I have
+not worked around it.
