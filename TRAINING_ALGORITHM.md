@@ -333,6 +333,12 @@ building a solution:
   should have counted the *decision* to want one, and read a branch that was
   unreachable on that map as a bug in the branch. Instrumenting the decision
   killed the follow-up design before it cost a run.
+  **And never instrument something the bot cannot observe in play.** If the
+  quantity needs information a robot does not have at runtime — what another
+  unit is targeting, the global state of the board — compute it OFFLINE from the
+  replay across units. An in-bot instrument that reaches for unavailable
+  information fabricates the very thing being measured, and its number could not
+  inform any decision the bot is actually able to make.
 - **Check your sizing map is not degenerate.** A quantity measured on one map
   is a statement about that map until you check it elsewhere. The corpus has
   real outliers — see `tools/mapdata/` — and one lineage sized the same
