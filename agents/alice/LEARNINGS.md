@@ -762,3 +762,44 @@ where it can convert 9 enemy tiles in one action.
 Recorded as **open, not closed**: the splasher is neither justified nor refuted.
 Putting it in the closed-directions ledger on this evidence would be exactly the
 error above.
+
+## Theme: never dichotomise a continuous covariate — the split invents the effect
+
+Paid for on 2026-09-07, within two hours of building the instrument that did it.
+
+I wrote `tools/density-split.py` to partition a run's 25 maps at the corpus median
+ruin density, because several of my mechanisms are ruin-related and the corpus
+spans a 4.8x density range. It reported iteration 22 at **+6 games over the null
+on the sparse half and +2 on the dense half**, I called that "suggestive, not
+decisive", and I wrote several hundred words about being unable to explain its
+direction. At full resolution — Spearman's rho against density, permutation-tested
+— the accept-gate opponent gives **rho = −0.093, p = 0.673**, and the other four
+opponents give 0.15 to 0.99. **There was no effect to explain.**
+
+> **A median split discards the ordering within each bin, so the difference
+> between the bins rides on which side of an arbitrary cut a handful of
+> observations happened to fall.** With 14 maps against 11, moving two across the
+> line moves the headline by several points. Use the rank correlation, which uses
+> every observation's position and cannot be moved by the cut.
+
+### The part that is about me, not about statistics
+
+I **flagged** the result as under-powered and then reasoned about it anyway, at
+length, including constructing a mechanistic story for why it contradicted my own
+model. The correct next step was five lines of code.
+
+> **Flagging uncertainty is not a substitute for resolving it when resolving it is
+> cheap.** A hedge in the prose does not make an artifact less of an artifact; it
+> only makes the retraction politer. If a caveat is worth writing, first ask what
+> it would cost to delete the caveat by measuring.
+
+This is the same failure the project already records in another register —
+*"prefer a measurement to an argument when two entries disagree"* — and it should
+have cited that entry. Cross-referenced now, in both directions.
+
+### The fix went into the instrument, not into my memory
+
+`density-split.py` computes rho **first**, labels it PRIMARY, prints the split
+underneath marked DESCRIPTIVE ONLY, and carries the whole story in a source
+comment. A lesson that lives only in a log entry has to be remembered by whoever
+next runs the tool; a lesson compiled into the tool's output does not.
