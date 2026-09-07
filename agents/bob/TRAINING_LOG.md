@@ -3057,3 +3057,43 @@ Iteration 10 is the reason that order is not negotiable.
 maps (`bob-tools/ablations/README`), which is the higher-priority question — iteration
 11 asks whether one new feature helps, A7 asks whether the lineage has been drifting
 backwards for six iterations, and the roster says it has.
+
+### Tournament, bob-carol opens: 91-2, and what that does to the roster finding
+
+```
+bob   beat alice   143 / 150   95.3%   (pairing complete)
+bob   beat carol    91 /  93   97.8%   (in progress)
+alice beat carol    99 / 150   66.0%   (pairing complete)
+```
+
+Both independent lineages lose to `bob_iter7` at 95%+. My two losses to carol are
+`PlumberGame` (side B, r2000 tiebreaker) and `Thirds` (side B, r1626) — both as side B
+again, which is now the third opponent to beat us disproportionately from that side.
+
+**This complicates the `bob_iter1` regression rather than dismissing it, and the
+distinction is worth being precise about.** Two readings compete:
+
+1. The weakness `bob_iter1` exposes is *idiosyncratic to our own old shape* — iter1
+   plays a way neither sibling plays, so no real opponent exploits it, and the 85% → 56%
+   decline is a curiosity about a lineage-internal matchup.
+2. It is a genuine capability loss that alice and carol are not yet strong enough to
+   punish, and it will start costing games as they improve.
+
+The tournament cannot distinguish these, because a 95-98% win rate has no resolution —
+doctrine #4 exactly: an instrument pinned near 100% cannot resolve a few games, and
+both siblings are pinned. `bob_iter1` at 56% is the only *even* instrument I currently
+possess, and evenness is precisely what makes it able to resolve small effects.
+
+So the ablation stays worth its one run, but its framing changes: it is no longer
+"diagnose a regression that is costing me the tournament" — plainly it is not — it is
+**"find out what capability the lineage traded away while its scoreboard was pinned at
+the ceiling"**, which is the self-referential blind spot in TRAINING_ALGORITHM.md
+stated from the other direction. A weakness invisible at 97.8% is exactly the kind that
+surfaces later against a stronger field.
+
+The side-B pattern is the thread tying all of it together: `Rose`-B, `Brat`-B,
+`UglySweater`-B and `mit`-B against alice, `PlumberGame`-B and `Thirds`-B against carol,
+`Brat`-B against `bob_iter7`, and 10-of-25 maps split by side against `bob_iter1`.
+Four independent opponents, one recurring asymmetry — and iteration 7's own audit
+recorded that it doubled exactly that asymmetry. Ablation A7 is aimed at the right
+place.
