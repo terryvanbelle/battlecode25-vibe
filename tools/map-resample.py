@@ -26,14 +26,24 @@ the candidate.
 import csv, sys, collections, random, statistics, os
 
 def load(run):
-    """{opponent: {map: wins BY THE WORKSPACE BOT}}, plus the map list."""
+    """{opponent: {map: wins BY THE WORKSPACE BOT}}, the map list, and per-opponent
+    games actually played.
+
+    The played count matters: an opponent still mid-run has played a PREFIX of the
+    map list, not a sample of it, and scoring it against the full maps*2
+    denominator prints a catastrophic-looking number for a run that is merely
+    incomplete (an arm at 9/50 and -4.30 sd finished at 50/50). collate.sh warns
+    about unequal counts and track_vs_old_bots.py refuses to record them; this
+    script used to do neither."""
     per = collections.defaultdict(lambda: collections.defaultdict(int))
+    played = collections.Counter()
     maps = set()
     for r in csv.DictReader(open(os.path.join(run, "results.csv"))):
         maps.add(r["map"])
+        played[r["opponent"]] += 1
         if r["bot_result"] == "win":
             per[r["opponent"]][r["map"]] += 1
-    return per, sorted(maps)
+    return per, sorted(maps), played
 
 
 def bot_label(run):
@@ -60,15 +70,32 @@ def stats(wins, maps, iters=20000, seed=7):
 
 if __name__ == "__main__":
     run = sys.argv[1]
-    per, maps = load(run)
-    want = sys.argv[2:] or sorted(per)
+    per, maps, played = load(run)
+    # List opponents from what was PLAYED, not from what was won: `per` only gains
+    # a key when the bot wins a game, so an opponent that shut the bot out would
+    # silently vanish from the report -- the worst possible one to omit.
+    want = sys.argv[2:] or sorted(played)
     null = len(maps)          # the mirror null: every map splits 1-1
     who = bot_label(run)
-    print(f"{run}  maps={len(maps)}  mirror null = {null}/{2*len(maps)}")
+    full = 2 * len(maps)
+    print(f"{run}  maps={len(maps)}  mirror null = {null}/{full}")
     print(f"scores below are WINS BY {who} (the bot this run was launched as)\n")
     for opp in want:
+        if played[opp] < full:
+            print(f"{opp:18s} INCOMPLETE: {played[opp]} of {full} games played."
+                  f" Maps run in a fixed order, so this is a PREFIX, not a sample --")
+            print(f"{'':18s} no score printed. Re-run when the arm finishes.")
+            continue
         pt, bse, jse, lo, hi = stats(per[opp], maps)
-        sd = f"{(pt-null)/bse:+.2f} sd" if bse else "exact null (se=0)"
+        # se=0 means every map gave the same result, which is a statement about
+        # spread, NOT about where the score sits. Labelling a 0/6 shutout "exact
+        # null" would be exactly backwards, so separate the two cases.
+        if bse:
+            sd = f"{(pt-null)/bse:+.2f} sd"
+        elif pt == null:
+            sd = "exactly the null (se=0, every map split)"
+        else:
+            sd = f"{pt-null:+.0f} games vs null (se=0, every map identical)"
         dist = dict(sorted(collections.Counter(per[opp][m] for m in maps).items()))
         print(f"{opp:18s} {pt:.0f}/{2*len(maps)}  boot_se={bse:.2f} jack_se={jse:.2f}"
               f"  95% CI [{lo:.0f}, {hi:.0f}]  {sd}")
