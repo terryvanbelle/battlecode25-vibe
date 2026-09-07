@@ -5140,3 +5140,52 @@ to a tower below the build threshold. Mopper paint capacity is only 100 against 
 200, so one trip is half a soldier — but moppers are the most numerous unit carol has and are
 idle 95% of the time, so the carrying capacity is already built and paid for. The 95% idle
 figure stops being an argument for deletion and becomes the *resource* the fix spends.
+
+## Iteration 20 (mopper paint ferry) — reachability pre-check, and it splits the maps cleanly
+
+Before spending a run, the question the ferry lives or dies on: **does a donor tower
+(`tp >= TOWER_SPARE = 400`) ever coexist with a dry one (`tp < TOWER_DRY = 200`)?** Counted per
+round across the 8 complete iteration-14 games:
+
+| map | donors (tp≥400) | dry (tp<200) | **rounds where BOTH exist** |
+|---|---|---|---|
+| DefaultLarge | 33.9% | 59.4% | **49.0%** |
+| Bunny | 18.9% | 74.7% | **44.8%** |
+| DefaultMedium | 30.1% | 57.1% | **36.4%** |
+| Castle | 51.9% | 26.5% | **34.2%** |
+| PlumberGame | 7.0% | 83.7% | 21.6% |
+| walalilongla | 1.5% | 93.8% | **3.4%** |
+| gridworld | 0.4% | 97.3% | **1.1%** |
+| Parking_lot | 0.0% | 99.1% | **0.1%** |
+
+**The maps with the worst paint starvation are exactly the ones the ferry cannot help.** On
+Parking_lot and gridworld *every* tower is dry — there is no surplus anywhere, so redistribution
+has nothing to redistribute. Those maps do not have a distribution problem, they have a total
+paint *income* problem, and no amount of trucking fixes it.
+
+That is a real limit on the mechanism and I would rather know it now than infer it from a
+disappointing headline. It does not kill the iteration: on four maps a donor and a dry tower
+coexist on 34–49% of rounds, which is abundant reachability.
+
+### Pre-registered, BEFORE the run
+
+**Decision rule**: mirror-deviation margin against the null built from the baseline in force
+when it runs; h2h >= `WinPct` 60%; one-directional flip shape; no drop against `carol_rush`.
+`fl`/`fd`/`fs` diagnostic only.
+
+**Map-level prediction, with a control group this time:**
+- **Should move**: DefaultLarge (49.0%), Bunny (44.8%), DefaultMedium (36.4%), Castle (34.2%).
+- **Should NOT move**: Parking_lot (0.1%), gridworld (1.1%), walalilongla (3.4%) — no donor
+  exists, so the mechanism physically cannot act.
+
+Parking_lot is the same zero-firing control that made iteration 18's result convincing, and it
+arrives here by a completely different mechanism. If Parking_lot or gridworld move materially
+for iteration 20, the effect is not the ferry.
+
+**A defect caught in review before the run, worth recording.** My first implementation had the
+ferry deliver the mopper's whole load and then called `refillIfPossible()`, which withdraws
+from any adjacent tower whenever the mopper is below half capacity — so the mopper would have
+immediately sucked its own delivery back out of the tower it had just filled. The fix needs no
+extra state: deliver only down to half capacity, which is exactly the threshold
+`refillIfPossible` refuses to act below. One mechanism, no new flags, and the undo is
+impossible by construction rather than by a guard I would have to remember.
