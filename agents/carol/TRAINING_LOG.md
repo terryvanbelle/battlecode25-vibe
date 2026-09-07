@@ -5741,3 +5741,40 @@ of the curve. Early indication is that dose 0 does *better* against dose 6 than 
 incumbent 3, which would put the peak at or below 3 — structurally the same finding as the
 mopper curve, and the reason the run carried a zero arm and a high arm rather than one new
 constant.
+
+## Iteration 22 (splasher dose) — the incumbent 3 is at or past the peak; REJECT both arms
+
+Run `20260907-150922`, 20 pinned maps, dose arms measured against a shared opponent.
+
+| comparison | `carol_i22a` (dose **0**) scores | so the opponent scores |
+|---|---|---|
+| vs `carol_iter18` (dose **3**, incumbent) | **5/40 = 12.5%** | **87.5%** |
+| vs `carol_i22b` (dose **6**) | **15/40 = 37.5%** | **62.5%** |
+
+Both arms are measured against the *same* opponent on the *same* pinned maps in the *same*
+run, so the comparison between them is exact. **Dose 3 beats dose 0 far more decisively than
+dose 6 does** — 87.5% against 62.5% — so the curve is concave and **the incumbent 3 sits at or
+just past the peak, with 6 clearly worse.**
+
+**DECISION: REJECT both arms.** `SPLASHER_IN_20` stays at 3.
+
+**What the run bought for its 120 games**, given neither arm is accepted:
+
+1. **Splashers are worth ~50 points** and were on the unmeasured list. Iteration 11 accepted
+   them at 62.5% ten iterations ago and nothing had priced them since.
+2. **The incumbent is confirmed near-optimal**, which is a real result: it retires "sweep the
+   splasher share" as a direction rather than leaving it as a permanently plausible unexplored
+   knob. Doctrine #2's curve-with-a-zero-arm did this in one run where a sequence of single
+   doses would have taken three and still not shown the shape.
+3. **The two unit-mix knobs behave oppositely.** The mopper share was *past* its peak by a wide
+   margin (5 → 2 was worth +6 games); the splasher share is *at* its peak. I had no way to
+   guess which before measuring, and the symmetric-looking hypothesis "carol over-provisions
+   cheap support units" would have been half right and half expensively wrong.
+
+### Closed-directions ledger update
+
+- **"Change the splasher share" — CLOSED.** `20260907-150922`: dose 0 = 12.5% (catastrophic),
+  dose 6 loses to dose 3 on a shared-opponent comparison (62.5% vs 87.5%). The incumbent is at
+  or just past the peak; only dose 1–2 is unmeasured and it is bracketed on both sides by
+  worse points. Re-opening needs a reason the *optimum moved*, e.g. a change to the paint
+  economy large enough to alter what a 300-paint unit costs in practice.
