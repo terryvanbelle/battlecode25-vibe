@@ -4826,3 +4826,30 @@ census and is the first thing I will look at.
 
 **Launched**: run `20260907-145851`, `BOT=alice_iter19 OPPONENTS="alice_i20p5
 alice_i20p10 alice_i20p25" NMAPS=12`, 72 games, alongside iteration 21's audit.
+
+### A confound I nearly read as a finding (coverage check, iteration 20)
+
+I went to test my own pre-registered explanation — that iteration 20's saved
+soldier turns go into ground painting — by comparing coverage differentials.
+The raw numbers looked alarming: on UnderTheSea the T1−T2 coverage gap at r2000
+is **+148 for the iteration 19 game and only +46 for the iteration 20 game**,
+and at r1500 the iteration 20 game is actually **behind at −1**.
+
+**That comparison is invalid and I am recording it rather than quietly dropping
+it.** The two games have *different opponents*: `alice_i19diag` played against
+`alice_iter14`, while `alice_i20diag` played against `alice_iter19` — which is a
+stronger bot, because iteration 19 was accepted in between. A shrinking
+differential against a stronger opponent says nothing about the candidate. This
+is the cross-run comparison trap in a new costume: I changed the baseline and
+then compared across the change.
+
+What *is* valid is within-game: `alice_i20diag` leads `alice_iter19` on coverage
+at every checkpoint on gridworld (+236 / +259 / +251 / +234) and is essentially
+level on UnderTheSea until the very end (+2 / +3 / −1 / +46). So on UnderTheSea
+iteration 20 wins while barely out-painting — consistent with a thin effect, and
+consistent with the flat tower count.
+
+**The coverage explanation is therefore neither confirmed nor refuted here.** To
+test it properly I would need a same-opponent pair, which the 72-game H2H
+against `alice_iter19` supplies directly. Waiting for it rather than reading
+tea leaves from two games.
