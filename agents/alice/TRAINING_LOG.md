@@ -5293,3 +5293,206 @@ so `alice_iter19`'s accept never got a lineage-drift reading.** Per §5b the
 frozen roster is the only instrument that can see a chain of individually-
 positive accepts walking downhill, and iteration 22 is a large structural removal
 — exactly when it should be checked, before accepting rather than after.
+
+## Evidence already on disk — EVERY tournament game is decided by paint coverage
+
+Read while `20260907-181936` plays, from `tournaments/20260907-1300/` (450 games,
+all 75 maps, complete run). This is the sanctioned cross-agent channel and the
+only measurement here taken against opponents my lineage did not produce.
+
+Win-condition tally, joining `results.csv` to `reasons.txt`:
+
+| matchup | "painted enough of the map" (instant win) | r2000 tiebreak (painted more) | anything else |
+|---|---|---|---|
+| bob beat alice (139) | **132** | 7 | **0** |
+| alice beat bob (11) | 8 | 3 | **0** |
+| alice–carol (150) | 91 | 59 | **0** |
+
+**All 450 games in the round robin ended on paint coverage. Not one ended by
+elimination or tower destruction.** As played by these three lineages, Battlecode
+2025 is a coverage race with a mercy rule, and every other quantity — tower
+count, unit count, kills — is instrumental to it at best.
+
+**And bob is winning that race fast, not narrowly.** Of the 139 games bob took
+off alice, 132 ended **before** round 2000 at a **median round 644** — bob hits
+the coverage threshold in under a third of the game. Only 7 went the distance.
+Head-to-head alice is at 7.3% and bob swept **65 of 75 maps** against me.
+
+### Why this matters for iteration 22, and for what comes after it
+
+1. **It independently corroborates the direction, from outside the lineage.**
+   The 2x2's own explanation for why removing both paint branches scores 0/24
+   was "coverage is the r2000 tiebreaker". The tournament says something
+   stronger: coverage is the *entire* win condition, including the 88% of my
+   losses that never reach r2000. A change that reallocates the largest
+   discretionary paint sink is being made on the axis the games are actually
+   decided on. This is corroboration, not proof — it does not license skipping
+   the gate on `20260907-181936`.
+2. **It reframes the census numbers as an efficiency problem, in the right
+   units.** The census measured where a soldier's 200 paint goes. The objective
+   is *tiles covered per paint spent*, and by that measure the tile-under-self
+   branch was the worst line in the budget: it spends 5 paint on a tile the
+   soldier is about to walk off, buying an upkeep rebate it does not stay to
+   collect (`saved/spent` 0.039–0.052). The area branch spends the same 5 on the
+   nearest **empty** tile in range. Removing the first makes its action slot fall
+   through to the second — that is the mechanism of the +7, and it is a coverage
+   mechanism.
+3. **It names the next target without needing a traced game.** Not "why did I
+   lose map X" but the absolute, opponent-free degeneracy the algorithm's target
+   -selection rule prefers: **what is alice's map-coverage curve over rounds, and
+   where does it flatten?** bob crosses the threshold at ~644. If alice's curve
+   plateaus well below it, the deficit is a *rate* problem (paint delivered per
+   round) or a *ceiling* problem (paint delivered per soldier lifetime), and
+   those have different fixes. Instrument the curve before hypothesising.
+
+### Correction to my own framing, recorded so it is not repeated
+
+I have been treating the tower economy ("6–18 soldiers to complete one tower")
+as the thing the paint budget is for. Towers are not a win condition here; they
+are a paint *pump*. The census line I should have read loudest is not the 3–10%
+reaching patterns — it is that 24–36% was going somewhere that produces no
+coverage at all. I got to the right change through the tower framing, but the
+framing was wrong, and it would have sent the *next* iteration at pattern
+throughput. Superseding it in place: **the objective is covered tiles; towers
+are a means.**
+
+## Iteration 22 mechanism verification — the +7 shows up in the replay, and not where I expected
+
+One game, `alice` (iteration 22 candidate, T1) vs `alice_iter19` (T2) on **Money**
+(35x35, 6.9% walls, 24 ruins — a map `i22a` swept). Candidate wins AREA_PAINTED.
+
+| per 250 rounds, steady state | iter22 (T1) | iter19 (T2) |
+|---|---|---|
+| coverage at r2000 | **524‰** | 452‰ |
+| paint actions (r1750 window) | **321** | 167 |
+| **starvation deaths** (r1500/1750/2000) | **7 / 11 / 8** | **32 / 42 / 30** |
+| soldiers alive | 19–23 | 19–24 |
+| towers | 12 | 12 |
+| chips at r2000 | $289,850 | $303,770 |
+
+**The mechanism engaged, and the dominant effect is one I did not predict.**
+I costed this branch as wasted *coverage*. The replay says its larger effect is on
+**paint starvation: the candidate starves at roughly a quarter of the baseline's
+rate** (8–11 vs 30–42 deaths per 250 rounds) with the same soldier population and
+the same tower count. That follows directly and I should have seen it in the
+census: a soldier that stops spending 24–36% of its 200-paint tank on the tile
+underfoot simply *has that paint left*, and a soldier at 0 paint takes −20 HP/turn
+and dies. Removing the sink did not only redirect paint, it kept the unit alive to
+spend the rest.
+
+Logging this as a **prediction I got right for an incomplete reason** — the sign
+and the size were right, the causal channel was half wrong. Both channels are
+real (paints per window nearly doubled *and* starvation quartered); coverage is
+the sum of them.
+
+## Structural finding — alice's coverage plateaus ~200‰ BELOW the instant-win bar
+
+This is opponent-free and therefore the strongest kind of target the algorithm's
+selection rule allows ("prefer absolute degeneracy signals over opponent-relative
+comparisons — a stall needs no opponent to be wrong").
+
+`RULES.md`: **instant win at >= 70% of `areaWithoutWalls`** (700 per-mille).
+
+Coverage over rounds, from three replays already on disk:
+
+| replay | r250 | r500 | r1000 | r1500 | r2000 |
+|---|---|---|---|---|---|
+| **mirror** (alice vs itself, UnderTheSea) T1 | 300@r200 | 524@r600 | 521 | 526 | **499** |
+| **mirror** T2 | 306@r200 | 446@r600 | 457 | 457 | **482** |
+| Money, iter22 | 438 | 486 | 493 | 530 | **524** |
+| Money, iter19 | 519 | 482 | 483 | 443 | **452** |
+
+**Every curve flattens between round 500 and 600 and then does not move again for
+1,400 rounds.** The equilibrium is 450–530‰. The bar is 700‰. In the *mirror* —
+no opponent asymmetry, both sides the same program — coverage is still stuck at
+~500‰. So this is not something bob does to me; **it is my own ceiling.**
+
+And it is not a resource shortage at the ceiling: at r2000 on Money the candidate
+holds **$289,850**, 12 towers, 810 tower paint, 19 soldiers, and is painting
+127–321 tiles per 250 rounds. It paints continuously and coverage does not rise.
+Paints (127–321) run alongside unpaints (90–212) in every window: **alice is on a
+paint treadmill, repainting contested ground rather than expanding into unpainted
+ground.**
+
+Contrast bob in the tournament: it crosses 700‰ against me at a **median round
+644**, i.e. right about where my curve stops moving.
+
+### Iteration 23 candidate — SPLASHERS, a unit type this lineage has never built
+
+Nominated by the ceiling above, and it is the algorithm's named failure mode:
+*"a whole game mechanic sat unused for 81 iterations because the obvious methods
+were assumed to be the whole interface."*
+
+**Two facts, both verified in code rather than inferred:**
+
+1. **The tower never builds one.** `runTower`'s `want` is `MOPPER` or `SOLDIER`
+   and nothing else. Every replay window in every dump I have, across every map
+   and both teams, reads `spl0` and `+spl0`. Zero splashers, ever, in this
+   lineage's entire history.
+2. **And if it did, they would never fire.** `runSplasher` initialises
+   `bestScore = 3` and scores only the **centre tile** — enemy paint 2, empty
+   passable 1. The maximum achievable score is 2, so `score > bestScore` can
+   never be true, `best` stays `null`, and the splasher wanders without ever
+   attacking. This is dead-on-arrival code, not merely unused code. Any splasher
+   iteration must fix the scorer *first* or it will measure nothing — exactly the
+   reachability pre-check the algorithm requires before building.
+
+**The price, computed before the benefit, as the loop demands.** Tower paint is
+the binding resource (chips are at $290k); so everything is priced per tower-paint.
+
+| | soldier | splasher |
+|---|---|---|
+| tower paint / chips to build | 200 / 250 | **300 / 400** |
+| paint cap | 200 | 300 |
+| paint per attack | 5 | **50** |
+| attacks per lifetime | 40 | **6** |
+| tiles per attack | 1 | **13** (r²<=4 of centre) |
+| tiles per lifetime | 40 | **78** |
+| **tiles per tower-paint** | **0.20** | **0.26** |
+| action cooldown | 10 | **50** |
+| can overwrite ENEMY paint | **no** | **yes**, within r²<=2 (9 tiles) |
+
+**Break-even is sharp and pre-registrable: a splash must convert >= 10 of its 13
+tiles to beat a soldier's 5-paint-per-tile rate.** Below 10 it is worse than the
+soldier it displaced from the same tower-paint pool; the overlap between a blast
+and already-ally ground is the whole question, and it is a *measurement*, not an
+argument.
+
+The second row matters at least as much as the first: **soldiers cannot overwrite
+enemy paint at all** (`soldierAttack` paints only empty-or-ally tiles). The
+treadmill above is alice paying moppers to erase enemy paint one tile at a time at
+r²<=2. A splasher erases *and* claims 9 tiles in one action. That is a
+treadmill-breaking capability the lineage does not possess in any form.
+
+**Pre-check to run before building anything** (instrument the DECISION, not the
+outcome, per the loop): a diagnostic build that, each soldier turn, evaluates the
+best available splash centre in vision and reports **how many of its 13 tiles are
+non-ally**. If the achievable median is below 10, the unit is priced out before it
+costs a run and the ceiling needs a different attack. If it is comfortably above,
+the iteration is justified on arithmetic before a single game is played.
+
+This is queued, not started: iteration 22 must clear its gate first, and nothing
+here may be bundled into it.
+
+## Tooling — my replay dumper is now the shared `tools/replay-dump.sh`; my copy is deleted
+
+The coordinator promoted my dumper to `tools/replay-dump.sh` + `tools/replaydump/`
+(`152ad05`), using mine as the base because it was the most complete of the three,
+and kept the `DieAction`-not-`diedIds` fix with its comment. `agents/alice/tools/
+replay-dump.sh` and `agents/alice/tools/replaydump/` are removed; everything above
+and below this line uses `../../tools/replay-dump.sh`, verified identical output on
+the census replay before deleting.
+
+Same reasoning as the two duplicates I removed earlier today (the parity table and
+`map-resample.py`): a private copy of a shared instrument drifts, and when it does
+the other lineages inherit my bug without inheriting my fix.
+
+**New capability I intend to use:** ASCII arena views (`--map N`, `--map-at R`,
+`--views`). The reconstruction closes against the engine's `teamCoverageAmounts`
+on every frame and prints the gap — my own "close the accounting before you read
+anything off it" rule applied to a tool, which caught a 1-based-team encoding bug
+and a −2‰ offset from towers painting their own tile at spawn. Documented limit:
+`SplashAction` carries only its centre, so splashed tiles are not applied and the
+gap is printed. **That limit lands directly on iteration 23** — if I build
+splashers, the reconstructed grid stops closing and must not be believed; the
+engine's `cov` counter stays trustworthy and is what I will quote.
