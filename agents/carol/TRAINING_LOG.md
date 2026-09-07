@@ -3162,3 +3162,112 @@ plausibly fails is the paint price: a splasher is **300 paint against a soldier'
 economy this session has repeatedly measured as paint-bound, so a 15% splasher share raises
 mean unit paint cost ~7.5%. If it fails, the `noPaint` tag and a worsened soldier dry rate are
 where that will show, and the refinement is a lower dose, not abandoning the direction.
+
+### The splash threshold is a paint-economics question, and I want the arithmetic on record *before* the result
+
+Non-blocking analysis while the run plays. Splash-score distribution across the 52 splasher
+turns that were both action-ready and fuelled in the validation game:
+
+```
+score:  0  2  3  4  5  6  8 11 12 14 16 18 21 23 26 28 29
+turns: 15  4  3  5  2  4  3  1  1  4  2  2  1  1  2  1  1
+```
+
+Bimodal: 33 turns in a 0–6 cluster, 19 in an 8–29 tail. `SPLASH_MIN_SCORE = 8` fires on
+36.5% of ready turns and sits almost exactly in the valley, which is a defensible place for
+an untuned first guess.
+
+But the *economics* of that threshold are worse than they look, and this is the number I
+should have computed before picking 8. Scoring is `2 x empty(r²<=4)` + `3 x enemy(r²<=2)`,
+and the tiles actually painted are `empty + enemy`, so tiles ≈ s/3 to s/2. A splash costs
+**50 paint**. Therefore:
+
+| splash score | tiles painted | paint per tile | vs. soldier's 5.0 |
+|---|---|---|---|
+| 8 (current threshold) | 2.7–4 | **12.5–18.8** | **2.5–3.8x worse** |
+| 14 | 4.7–7 | 7.1–10.6 | 1.4–2.1x worse |
+| 20 | 6.7–10 | **5.0–7.5** | **break-even** |
+| 26 (full 13-tile disc) | 8.7–13 | 3.8–5.8 | at or better |
+
+**The paint-per-tile break-even against a soldier is around score 20, and only 9 of 52 ready
+turns (17%) reach it.** In an economy this session has measured as paint-bound over and over,
+that is the strongest argument against the current dose.
+
+**Two things stop it being decisive, which is why I am not touching the running arm.**
+
+1. **Enemy paint has no soldier price at all.** A soldier cannot convert enemy paint at any
+   cost. For the enemy tiles in a splash, the alternative is not "a soldier does it cheaper",
+   it is "nobody does it" — which is the entire 22.5% IDLE-ENEMY block this iteration exists
+   to attack. Paint-per-tile silently assumes a substitute that does not exist.
+2. **The soldier's 5.0 paint/tile is a rate it almost never realises.** Soldiers paint on
+   **12.4%** of their turns. Per *turn* rather than per tile, RULES.md's own table gives the
+   splasher 2.6 tiles/turn sustained against the soldier's 1.00.
+
+So the honest position is that score 8 is probably too generous on pure paint efficiency and
+probably justified on the enemy-conversion and throughput terms, and I cannot resolve that by
+reasoning — it is a dose. **Registering the refinement ladder now, before the result, so it
+is not a post-hoc story**: if iteration 11 is a near miss, the first refinement is
+`SPLASH_MIN_SCORE` 8 -> 14 (spend the scarce resource only where a splash beats a soldier by
+throughput *and* approaches it on efficiency), *not* a change to `SPLASHER_IN_20`. Threshold
+and share are separate doses and must not be moved together.
+
+**Also noted for a later iteration, not this one**: 15 of 52 ready turns scored **exactly 0** —
+a splasher standing where nothing within reach is paintable, the splasher analogue of the
+soldier's IDLE-ALLY. Splashers currently inherit `moveExploring(null)`, the soldier's
+explorer, which has no notion of the coverage frontier. Frontier-seeking movement is a
+separate hypothesis and goes in the queue behind tower-targeting.
+
+### Standing API sweep, run while the gauntlet is semaphore-starved — `upgradeTower` is STILL never called
+
+My own LEARNINGS makes the `javap RobotController` diff a per-evaluation item ("a rules digest
+is not an instrument; only a call-site diff is"), so I ran it rather than assuming the last
+result still holds. 68 API methods; those `src/carol/RobotPlayer.java` never calls:
+
+```
+adjacentLocation broadcastMessage canBroadcastMessage canCompleteResourcePattern canMark
+canMarkResourcePattern canPaint canRemoveMark canSendMessage canSenseLocation canSenseRobot
+canUpgradeTower completeResourcePattern disintegrate getActionCooldownTurns getHealth
+getMoney getMovementCooldownTurns getResourcePattern getTowerPattern isLocationOccupied
+mark markResourcePattern onTheMap readMessages removeMark resign sendMessage sensePassability
+senseRobot senseRobotAtLocation setIndicatorDot setIndicatorLine setTimelineMarker upgradeTower
+```
+
+Three whole mechanics remain unimplemented: **tower upgrades**, **resource patterns (SRPs)**,
+and **communication**. `runSplasher` has now moved off this list — the sweep is doing its job.
+
+**Tower upgrades are the strongest of the three**, and for a reason my LEARNINGS already
+states in general form ("price a sink in the resource that actually binds"). A lv2 upgrade
+costs **2,500 chips** and takes a paint tower's mining from **5 to 10 paint/turn** — it
+*doubles* output of the resource that binds, paid for in the resource carol throws away.
+Implementation is close to free: `canUpgradeTower(loc)` is a boolean gate that enforces every
+legality condition itself, so a tower attempting to upgrade *itself* is self-verifying — if
+the engine forbids it, the call is a silent no-op the instrumentation catches immediately.
+
+**Why this is NOT a fourth "more production" iteration.** Iterations 5/8/10 raised the number
+of units and converted nothing. An upgrade's value now runs through a different channel: with
+splashers in the build, paint demand rises sharply (300/unit and **50 per attack**), and the
+validation game already shows ~25% of splasher turns paint-starved. The claim is "keep the
+units already fielded firing", not "field more of them" — and it is explicitly conditional on
+iteration 11 accepting. If iteration 11 is rejected, this argument lapses with it and must be
+re-derived, not carried over.
+
+**Reachability pre-check: NOT YET DONE, and I am recording why the obvious number is wrong.**
+Tower-turn chip distribution in the validation game:
+
+| build | tower-turns | median chips | p90 | chips>=2500 |
+|---|---|---|---|---|
+| i11 | 1,176 | 1,100 | 1,420 | **0.1%** |
+| i7 | 466 | 1,750 | 1,930 | 0.2% |
+
+Taken at face value that kills the direction outright. **It is not usable**, and pretending
+otherwise is exactly the mistake that burned iterations 6 and 8. This game ended at **round
+233**; my earlier distribution over **41,328 tower-turns** of mostly 2,000-round games gave
+median 2,260 / p90 16,330 / max 60,000. A short game measures the treasury before it has had
+time to accumulate, so this sample is biased against the upgrade by construction. The gate
+must be measured on a broad, length-representative sample **before** iteration 12 is written.
+
+One genuine observation survives the confound, flagged rather than concluded: **i7 spent
+63.3% of its tower-turns with under 50 paint banked, against i11's 0.9%.** That is the
+paint-starvation signature this whole session has been chasing. It is heavily confounded —
+i7 lost this game at round 233, and losing the coverage race costs paint towers — so it is
+a lead to check across the gauntlet, not a result.
