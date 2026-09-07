@@ -5496,3 +5496,127 @@ and a −2‰ offset from towers painting their own tile at spawn. Documented li
 gap is printed. **That limit lands directly on iteration 23** — if I build
 splashers, the reconstructed grid stops closing and must not be believed; the
 engine's `cov` counter stays trustworthy and is what I will quote.
+
+## THE ROOT CAUSE — engine probe: a soldier attack on ENEMY paint costs 5 and does nothing
+
+I went looking for why removing the tile-under-self branch quartered starvation
+deaths, decompiled `InternalRobot.soldierAttack`, and found something bigger than
+iteration 22.
+
+```
+ 50: getstatic  UnitType.SOLDIER
+ 54: getfield   UnitType.attackCost
+ 57: ineg
+ 58: invokevirtual addPaint:(I)V          <-- THE 5 PAINT IS SPENT HERE
+ 61: ... getRobot(loc) ... isTowerType ... -> tower damage branch
+162: ... isPaintable(loc) ... ifeq 231    <-- bail out, AFTER the debit
+173: ... getPaint(loc) ... teamFromPaint(mine) vs teamFromPaint(there)
+207: if_acmpne 231                        <-- ENEMY PAINT: return, AFTER the debit
+210: setPaint(...)                        <-- only reached for empty-or-ally
+```
+
+**`addPaint(-attackCost)` is unconditional and runs before the target is examined.**
+Both bail-outs — not paintable (170) and enemy-painted (207) — are downstream of
+it. So **attacking an enemy-painted tile burns the full 5 paint and accomplishes
+nothing.** And `canAttack` is no protection: it checks range and action-readiness,
+never the tile's paint. Added to `RULES.md` as a TRAP beside the `transferPaint`
+clamping one.
+
+### This is the actual mechanism of iteration 22, and I had it half wrong
+
+The removed branch was guarded by `!here.getPaint().isAlly()`, which is true for
+**empty and enemy alike**. Combined with the saturation finding below, the tile a
+soldier stands on that is not ally is *overwhelmingly enemy*, so that branch was
+mostly paying 5 paint per turn for a no-op until the soldier starved.
+
+The sibling area branch survives the same 2x2 at +6 for one reason visible in one
+line of code: it tests `t.getPaint() == PaintType.EMPTY`, the **right** predicate.
+**Two branches drawing on one budget, and the difference between +6 and −7 is
+which predicate they check.** That is a far more useful account than "the tile
+underfoot is a bad target", which is what I wrote this morning.
+
+## Why the wrong predicate is so expensive — the map SATURATES by ~round 500
+
+From the shared dumper's new arena view on `alice_splashcensus` vs `alice`, Money,
+round 1200, engine counters (not the reconstruction):
+
+**T1 432‰ + T2 545‰ = 977‰ painted. 97.7% of the paintable map is claimed.**
+
+That single number reorganises everything I thought this game was:
+
+- The instant-win bar is **>= 700‰**. After saturation, no amount of painting empty
+  ground can reach it, because **there is no empty ground**. The remaining ~270‰
+  has to be **taken off the opponent**.
+- **Soldiers cannot take a single tile off the opponent.** Engine-verified above.
+  Alice's entire ground-taking capability is the mopper's 1-tile, r²<=2, 0-paint mop.
+- So my coverage curve flattening at 450–530‰ between rounds 500 and 600 and never
+  moving again for 1,400 rounds is not a mystery and not an opponent effect (it
+  happens in the **mirror** too). It is the map running out of empty tiles while
+  the only unit I mass-produce loses the ability to do anything useful with paint.
+
+### The splash census, and how it nearly fooled me the other way
+
+`alice_splashcensus` (built on the iteration 22 candidate) counts, every soldier
+turn, the best 13-tile splash blast reachable from where the soldier stands —
+**the decision a splasher would face, not the outcome of one**. Two windows,
+Money, aggregated per robot by taking each robot's last cumulative line:
+
+| window | soldiers | soldier-turns | mean best blast (of 13) | turns with >=10 | with 13 | of those tiles, ENEMY |
+|---|---|---|---|---|---|---|
+| r1200 | 14 | 1,008 | **1.37** | 7.5% | 2.9% | **94.3%** |
+| r1990 | 23 | 1,394 | **1.37** | 8.2% | 3.2% | **98.0%** |
+
+Two independent windows agreeing to two decimal places. Read naively this **kills
+the splasher**: break-even needs >= 10 of 13 tiles and the mean is 1.37, i.e. 36.5
+paint per tile against the soldier's 5.
+
+**But the naive read is wrong, and the last column is why.** The blast is empty of
+targets because alice's soldiers stand inside alice's own finished paint. Of the
+non-ally tiles they *can* see, 94–98% are **enemy** — the very tiles a soldier can
+never take and a splasher can (9 of them, within r²<=2 of the centre). The census
+does not price the splasher; it prices **the splasher at a soldier's chosen
+position**, and alice's soldiers do not go to the frontier. Recorded as a
+methodological catch: *an instrument that samples positions chosen by the current
+policy cannot price a unit whose value depends on choosing different positions.*
+
+So the splasher is **neither justified nor refuted** and stays queued. What the
+census did do is find the real defect, which is cheaper and better founded.
+
+### Iteration 23 candidate — stop paying 5 paint for refused actions
+
+Second instance of the trap, in the ruin-pattern loop, and it is worse than the
+one iteration 22 removed:
+
+```java
+if (mark != PaintType.EMPTY && mark != t.getPaint()) {
+    if (rc.canAttack(t.getMapLocation())) {
+        rc.attack(t.getMapLocation(), mark == PaintType.ALLY_SECONDARY);
+        break;                      // <-- and nothing else happens this turn
+    }
+}
+```
+
+`mark != t.getPaint()` is satisfied by an **enemy-painted** pattern tile. The
+soldier then attacks it (5 paint, no-op), `break`s out — so it also forfeits the
+area-paint branch that turn — and comes back to the *same tile* next turn. **An
+enemy-painted pattern tile is an unbounded paint sink: 5 paint per turn, forever,
+until the soldier starves,** and this is a soldier that has committed to a ruin so
+it will not wander away.
+
+The fix is one clause: only attack a pattern tile whose current paint is `EMPTY`
+or ally. Enemy-painted pattern tiles are a mopper's job — which is exactly what
+**iteration 19 accepted** (moppers clear the enemy paint that stalls tower
+patterns). Iteration 19 fixed the blockage from the mopper side; the soldier side
+was left burning paint against it the whole time.
+
+**History pre-check — does this re-open a closed direction?** Iteration 20 closed
+*"making soldiers spend fewer turns on unfinishable ruins"*, measured at 12/24 with
+**zero** standard error, and its recorded re-open condition is *"soldier paint
+stops binding first; turn-efficiency is worthless while the tank is the
+constraint."* This candidate is **not turn-efficiency** and does not relocate the
+soldier: it stops a 5-paint debit on an action the engine refuses. It attacks the
+tank — the exact resource iteration 20's ledger named as binding — so it is a new
+direction under that entry, not a silent revert of it. Stating this before
+building, per the History pre-check.
+
+Not started, not bundled: iteration 22 must clear `20260907-181936` first.

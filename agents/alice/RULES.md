@@ -79,6 +79,14 @@ line refs below are to `engine/src/main/battlecode/world/*.java`.
 - Movement cooldown 10; all cooldowns -10/turn; act when cooldown < 10.
 - **Soldier attack** (InternalRobot.soldierAttack): if target holds enemy TOWER → 50 dmg
   (never damages robots); else paints tile if empty or already-ally. Cannot overwrite enemy paint.
+  **TRAP (engine-verified by javap, 2026-09-07)**: `addPaint(-SOLDIER.attackCost)` is invoked
+  at bytecode offset 58, **unconditionally and before the target is examined at all**. The
+  enemy-paint bail-out is at offset 207 (`if getPaint(loc)!=0 && teamFromPaint(mine)!=
+  teamFromPaint(there) -> return`), and the not-paintable bail-out at 170 -- both AFTER the
+  debit. So **attacking an enemy-painted tile costs the full 5 paint and does nothing.**
+  `canAttack` does not protect you: it checks range and action-readiness, not the tile's
+  paint. Every soldier attack must be guarded by `paint == EMPTY || paint.isAlly()` at the
+  call site. This is the single largest paint leak found in this lineage (iteration 22).
 - **Splasher attack**: target center within dist^2<=4; every tile within r^2<=4 of center:
   enemy tower there takes 100; empty/ally tiles painted; enemy paint overwritten ONLY within
   r^2<=2 of center. Effective max reach to a tower = 2+2 straight = **dist^2 16**.
