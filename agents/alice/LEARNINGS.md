@@ -466,3 +466,53 @@ supplies the quantity, not how fast you consume it.** That is why iteration 20 �
 soldiers refusing to commit to blocked ruins — is a different mechanism and not
 a refinement of 19: it does not fight the equilibrium at all, it stops paying
 for it.
+
+## Theme: removing waste pays only when the freed resource is the scarce one
+
+Iterations 19 and 20 attacked the *same* measured waste from opposite sides,
+against the same baseline, on the same map sampler. One accepted, one landed on
+the null to the game.
+
+| | mechanism | measured engagement | result |
+|---|---|---|---|
+| iteration 19 | moppers **clear** the enemy paint blocking a pattern | near-stall samples halved | **ACCEPT** 15/24, swept 3–0 |
+| iteration 20 | soldiers **avoid** ruins they cannot finish | blocked-ruin turns −10 to −19 pts, total ruin turns −27% / −57% | **REJECT** 12, 12, 13 of 24 |
+
+Iteration 20 engaged *harder* than 19 and bought nothing. The rule that explains
+the pair:
+
+> **Removing a waste frees a resource. It pays only if that resource was the
+> binding constraint.** Unblocking a pattern *adds a tower*, because the blocked
+> tile was what stopped the tower existing. Avoiding a blocked ruin merely
+> *relocates a soldier whose paint is already spent* — it frees turns, and turns
+> were never scarce.
+
+Engine arithmetic makes the constraint explicit: `SOLDIER.attackCost = 5` against
+a 200 tank (verified — `soldierAttack` calls `addPaint(-attackCost)`), so a
+soldier has **exactly 40 paint actions in its entire life** against a 24-tile,
+120-paint pattern. Handing it more *turns* to spend an exhausted *budget* is a
+no-op by construction.
+
+### How to tell the two cases apart BEFORE spending the run
+
+1. **Name the freed resource, then ask what else it is short of.** "Soldier
+   turns" freed by iteration 20 were immediately re-spent painting ground with
+   paint the soldier did not have. The freed resource has to be convertible into
+   the thing you are short of, or the conversion is where it dies.
+2. **A flat level on the master variable is the tell, and it is visible in the
+   mechanism run.** Tower count did not move in either of iteration 20's
+   mechanism games. I recorded that as a damning caveat before the evaluation
+   returned; it predicted the null exactly. **A mechanism check that moves its
+   own metric but not the master variable has already told you the answer.**
+3. **This is the "metrics that improve without converting" pattern with a
+   mechanism attached.** The 2026 project logged five mechanism-verified damage
+   increases converting to nothing. The addition here is *why*: damage, like
+   turns, was not the binding input.
+
+### The rejection was worth more than a marginal accept
+
+Iteration 20 cost 72 games and converted a plausible belief — "wasted soldier
+turns cap tower count" — into a measured falsehood, while promoting its
+pre-registered falsifier into the next target. **Soldier paint is the binding
+constraint, and I now know that rather than suspect it.** A 13/24 accepted on
+enthusiasm would have bought a marginal feature and left the belief intact.
