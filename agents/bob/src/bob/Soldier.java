@@ -181,11 +181,16 @@ public class Soldier {
         // from 33% to 15%. ~10 bytecodes. Still a pure function of the ruin, which the
         // marking protocol requires (see the note above: a type that changes over time
         // deadlocks workOnRuin's "already marked?" probe).
-        int h = ruin.x * 0x27D4EB2D + ruin.y * 0x165667B1;
-        h ^= h >>> 15;
-        h *= 0x2545F491;
-        h ^= h >>> 13;
-        return (h & 1) == 0
+        // ITERATION 12: iteration 7's avalanche hash REVERTED to iteration 1's parity
+        // rule, measured. Run 20260907-023720, 25 pinned maps vs frozen bob_iter1:
+        // the hash without SRPs is fine (bob_iter7, 76%), SRPs without the hash are
+        // the best build measured (bob_abl7, 82%), and the two TOGETHER collapse to
+        // 56%. An SRP returns +3 paint/turn PER ALLIED PAINT TOWER, so its payoff is
+        // multiplicative in the tower mix while its cost is a flat 200 chips -- and
+        // the hash raised mix variance (mirrored-pair mismatch 40% -> 97%, money-gap
+        // between halves 11.0 -> 24.0 pts). Variance that was survivable when income
+        // was linear in the mix is punishing once SRPs make it multiplicative.
+        return ((ruin.x + ruin.y) & 1) == 0
             ? UnitType.LEVEL_ONE_MONEY_TOWER : UnitType.LEVEL_ONE_PAINT_TOWER;
     }
 

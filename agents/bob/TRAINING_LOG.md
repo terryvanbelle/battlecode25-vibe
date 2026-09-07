@@ -3532,3 +3532,44 @@ its motivating story collapses.
 - **CLOSED: "iteration 7's avalanche hash is a net positive."** It was accepted at
   52.5% with its own audit recording −0.59 points across the pool; it is now measured
   at −20 points in the presence of SRPs. Reverting it.
+
+
+---
+
+## Iteration 12 (2026-09-07) — PRE-REGISTERED: revert the hash, keep the memory
+
+**Hypothesis.** Iteration 11's ruin memory (+18 pts) and removing iteration 7's hash
+(+26 pts) address **different** causes — expansion tempo versus tower-mix variance —
+and therefore compose rather than overlap.
+
+**Mechanism (one change, on top of accepted iteration 11).** `towerTypeFor` reverts
+from the avalanche hash to iteration 1's parity rule `((x + y) & 1)`. Nothing else
+touched.
+
+**Pre-registered gate — it must beat BOTH known builds, on the pinned maps:**
+
+```
+must exceed   iteration 11   74.0%   (the accepted bot, hash + SRP + memory)
+must exceed   bob_abl7       82.0%   (hash reverted, SRP, NO memory)
+```
+
+Beating iteration 11 alone is not enough. `bob_abl7` is a *simpler* build already
+measured at 82%, so if iteration 12 does not beat it, the memory is not paying for
+itself once the mix variance is fixed, and the correct bot is `abl7` — I would then
+ablate the memory back out rather than carry it. **A candidate must beat the best
+thing I have, not merely the thing it descends from.** That is the discipline whose
+absence let iteration 9 through: it beat `bob_iter7` head-to-head while being 20 points
+worse than `bob_iter7` in absolute terms, because both arms shared the hash.
+
+**Evaluation, deliberately on the frozen instrument first.** Same 25 pinned maps, same
+frozen `bob_iter1`, so all five prior arms are directly comparable with no map-draw
+term at all. The head-to-head versus iteration 11 follows only if this clears.
+
+That ordering is itself a change: I am now running the **absolute** instrument before
+the relative one, because this session produced a case where the relative instrument
+was structurally blind — an interaction shared by both arms cannot be seen by comparing
+them.
+
+**Prediction, registered:** ~82-88%. If it lands at ~82% (no better than `abl7`), the
+memory contributes nothing once the mix is fixed and the two effects were the same
+effect wearing different clothes.
