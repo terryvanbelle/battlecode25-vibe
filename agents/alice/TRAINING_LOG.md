@@ -7095,3 +7095,59 @@ correctly enumerated four rows and then silently assumed a non-identical row was
 frequent enough to matter. **Enumerate the cases, then count them** — the second
 half is the reachability pre-check, and I ran it here only because it was a
 candidate, not because I thought the enumeration needed it. It did.
+
+## Iteration 23 ablation, arm 1 COMPLETE — my prediction is wrong for the THIRD time
+
+`alice_i23abl` (the `break` variant: **stops paying, does not scan onward**) vs
+`alice_iter22`, 50 games, 25 maps, both sides.
+
+| | score | se | 95% CI | vs null | swept W/L | per-map |
+|---|---|---|---|---|---|---|
+| **`i23abl` vs `iter22`** = **effect (1) alone** | **33/50 (66%)** | 2.72 | [28, 38] | **+2.94 sd** | 9 / 1 | `{0:1, 1:15, 2:9}` |
+| `iter23` vs `iter22` = effects (1) + (2) | 34/50 (68%) | 2.39 | [30, 39] | +3.77 sd | 9 / 0 | `{1:16, 2:9}` |
+
+**Effect (1) alone is +8 over the null. The full change is +9. Effect (2) is
+therefore worth about +1 game — essentially nothing.**
+
+I predicted: *"effect (2) is the larger."* Wrong. **That is my third failed
+prediction about this one change** — the density direction, the ruin-count
+replacement, and now the mechanism split. The two effects are not close: the
+scan-onward behaviour I measured landing 11 extra pattern tiles at r200 converts
+to roughly one game, while simply **declining to pay for a refused action** carries
+essentially the whole result.
+
+### What this settles, and it settles it in favour of the framing I was doubting
+
+The engine-trap account is **the** mechanism, not the smaller half. That matters
+beyond my own log: it is the framing in the shared `tools/engine-facts.md` entry
+and in two of my commit headlines, and I flagged an hour ago that if effect (1)
+priced near zero the shared entry would be overstated. **It does not — it prices
+at +8 of the +9.** The shared entry stands as written.
+
+Iteration 23's attribution is therefore **CLOSED**: the change works because it
+stops paying 5 paint for actions the engine refuses, and the `continue`-versus-
+`break` refinement is a rounding error on top of that.
+
+### Two honest caveats on the arithmetic
+
+1. **The +9 comes from a different map sample** (run `20260907-194028`) than the
+   +8 (run `20260907-202412`), so subtracting them across runs is exactly the
+   cross-run comparison the gauntlet header warns is noisier than it looks. The
+   within-run arm — `i23abl` vs `iter23` — is the clean measurement of effect (2)
+   and is still playing at 40/50. **I am not calling the additivity check passed
+   until it lands.**
+2. `i23abl` picks up **one swept loss** where `iter23` had none (`{0:1}` vs no `0`
+   entry). One map, so it is not a finding — but it is the only per-map evidence
+   that scanning onward does anything at all, and it points the same direction as
+   the +1.
+
+### The pattern in my three failures is worth naming
+
+All three predictions shared a shape: **I reasoned from the mechanism I could see
+working in a trace, rather than from the mechanism that was expensive.** The
+scan-onward effect is *visible* — you can watch a soldier land a pattern tile it
+would have missed. The refused payment is *invisible* — nothing happens, 5 paint
+disappears, and no trace line records a non-event. **I kept betting on the
+mechanism that produces observable events over the one that produces absences**,
+and the absence was worth eight times more. That is the same reason the trap
+survived 22 iterations in the first place.
