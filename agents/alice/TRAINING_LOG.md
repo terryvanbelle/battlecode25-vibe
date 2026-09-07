@@ -6737,3 +6737,62 @@ is a directly measurable quantity I have not measured.
 - Starvation deaths are *higher* in absolute terms (91 vs 61 per 500 rounds) — but
   the candidate fields and spawns far more units (169 vs 145 soldiers spawned), so
   the rate per unit is not what this table shows and I am **not** claiming it fell.
+
+## The corrected model failed ITS first test too — there is no map-level structure at all
+
+I said one paragraph ago that the post-hoc tower-channel story was worth a
+sharper prediction rather than belief, and named it: if the dominant channel is
+converting stalled patterns into towers, the predictor should be the **absolute
+number of ruins available to convert**, not their density. Tested immediately, on
+data already in hand:
+
+| covariate | Spearman rho | permutation p |
+|---|---|---|
+| **absolute ruin COUNT** (the corrected model's variable) | **+0.104** | **0.640** |
+| ruin DENSITY (what I pre-registered) | +0.318 | 0.127 |
+| map AREA | −0.116 | 0.606 |
+
+**The corrected model's own variable performs WORSE than the one it was invented
+to replace.** All three are null.
+
+So the honest state is: **iteration 23's effect has no detectable map-level
+covariate structure whatsoever.** Not density, not ruin count, not size. Two
+stories have now been tested against map variation — my pre-registered one and my
+post-hoc replacement — and neither is supported.
+
+### What that actually means, and it is not bad news
+
+A uniform effect across a 4.8x density range and a 6x area range is **exactly what
+"swept 9, swept-lost 0" already said in a different language**: there is no map
+class where this is worse, and no map class where it is specially good. It simply
+works everywhere. That is the *strongest* shape a change can have for a bot that
+must play an unknown map, and it is a better outcome than a large effect
+concentrated somewhere.
+
+What it costs me is the **mechanism attribution**. Both the paint-reclaim story
+and the tower-conversion story predict map-level structure, and there is none. So:
+
+- The **replay evidence for the tower channel stands** — 18 towers vs 9, a
+  tower-paint pool 3–7x larger, coverage 671‰ vs 308‰ — because that is measured
+  directly in the game state, not inferred from cross-map variation.
+- The **cross-map evidence for it does not exist**, and I am not entitled to cite
+  density as support. Superseding the previous entry's "two independent readings
+  now agree" in place: **they do not. One is a null and the other is a single
+  game.**
+
+### The rule I am taking from this
+
+**A post-hoc explanation earns exactly one thing: the next test. Run it before
+writing the explanation down as though it were settled.** I did run it, within
+minutes, and it failed — which is the system working. The failure mode I avoided
+is the one where a rescue story gets recorded alongside a null it "agrees with",
+survives because nobody tests it, and is quoted three iterations later as
+established. This lineage has already found the wrong and right models sitting
+adjacent in LEARNINGS for exactly that reason.
+
+The separating experiment remains the one named earlier and it is a *game*
+experiment, not a correlation: **a variant that skips enemy pattern tiles but
+still `break`s** isolates the paint-reclaim effect from the scan-onward effect.
+That is what iteration 23 earns if it accepts, and it prices two code paths in one
+line — which §5b warns is exactly where a price does not divide the way the story
+does.
