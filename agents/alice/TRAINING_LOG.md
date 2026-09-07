@@ -3523,3 +3523,77 @@ tower within r²=9. If that is ~zero in self-play, the feature is dead code *in 
 instrument that would judge it*, even though bob demonstrably achieves it — and
 that would be a representativeness problem (doctrine #4) to state before, not
 after, the run.
+
+## Iteration 15 — DISCARDED on the trace. Two distinct failures, both caught before a run
+
+### 15a: the branch was dead code, and the "win" was a mirror artifact
+
+I placed the tower-attack check in the *idle* branch to avoid displacing ruin
+building. It never fired: **zero soldier→tower attacks in a full 2,000-round
+game**, by either team.
+
+The cause is the guard I nested inside. The block immediately above is:
+
+```java
+if (!here.getPaint().isAlly() && rc.canAttack(cur)) { rc.attack(cur); }
+```
+
+Painting the tile underfoot **consumes the action nearly every turn**, so
+`isActionReady()` was already false by the time my branch was reached. This is
+precisely the pre-check the algorithm spells out — *"read the guard you are
+nesting inside: a new clause added under an outer condition that already excludes
+the targeted case can never fire"* — and I wrote the clause without reading the
+five lines above it.
+
+**And 15a "won" its verification match 14 towers to 7.** Had I taken that as
+evidence I would have promoted a no-op. Two independent checks caught it: the
+attack census showed zero engagement, and `alice_i15` vs `alice_iter14` is
+effectively a **mirror**, where my own Phase 0 note already says *any inter-team
+stat difference is positional, not policy*. The 14-v-7 was the map, not the code.
+
+### 15b: moved before the paint — it engages, and still does not convert
+
+| | `alice_i15b` | baseline |
+|---|---|---|
+| soldier→tower attacks | **44** (37 money, 7 paint) | **0** |
+| **enemy towers destroyed** | **0** | 0 |
+| enemy tower count @r2000 | **8** | **8** |
+
+The mechanism now demonstrably fires — the first time in this lineage's history a
+soldier has attacked a robot — and the **pre-registered mechanism gate fails**:
+*"the opponent's tower count at r2000 must fall, and tower-destruction events must
+be non-zero."* It did not fall. Nothing died.
+
+Two reasons, and the second matters more:
+
+1. **The damage is spread, not concentrated.** 44 attacks × 50 = 2,200 damage
+   against 7-8 towers of 1,000-1,500 HP each. Every soldier independently picks
+   the weakest tower *within its own radius*, so no tower ever reaches zero.
+   Concentrating fire needs coordination between units — comms — which is a far
+   larger mechanism and not a refinement of this one.
+2. **44 attacks across 2,000 rounds with 12-17 soldiers alive is almost no
+   contact at all** — roughly one attack per 45 rounds. In self-play both
+   lineages expand into their own halves and rarely meet. Against `bob`, alice's
+   soldiers absorbed **38 tower attacks in 100 rounds** — contact is about
+   twenty times more frequent.
+
+### So the honest verdict is not "this feature is bad"
+
+It is the case the algorithm names explicitly: *a mechanistically-correct feature
+can be a no-op because upstream state never produces the situation it handles.*
+**My own gauntlet cannot judge this feature**, because my own lineage does not
+pose the threat it answers — doctrine #4's representativeness rule, which I
+registered as a risk before running and which is exactly what happened.
+
+I am **not** shipping it on that reasoning, because "my instrument can't see it"
+is not evidence that it helps. It is discarded, and the condition for re-opening
+is specific and checkable.
+
+### Closed-directions ledger
+| direction | closed by | can re-open if |
+|---|---|---|
+| Soldiers attack enemy towers with spare actions | iteration 15b: engages 44 times, destroys **zero** towers, enemy tower count unchanged at 8 | an instrument exists where soldier↔tower contact is frequent (the tournament shows ~20x more contact vs `bob` than in self-play). A synthetic archetype that contests our half would create one. Do not re-open on a self-play run. |
+| Concentrating soldier fire on one tower | not tested — identified as the reason 15b fails | it requires comms to coordinate targets; that is a separate, larger mechanism, and should be proposed as one |
+
+**Cost of this iteration: two verification matches.** The pre-registered mechanism
+gate did exactly what it exists for — the 28-game run was never spent.
