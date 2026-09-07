@@ -20,6 +20,14 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 SHARED = os.path.join(HERE, "..", "..", "..", "tools", "mapdata", "ruin_parity.txt")
 MEDIAN = 11.4          # corpus median ruins per 1000 tiles, from mapdata/README.md
 
+# WARNING, paid for on 2026-09-07: the median SPLIT below manufactured a
+# "density gradient" for iteration 22 that does not survive full resolution
+# (split said +6 sparse vs +2 dense; Spearman rho = -0.093, permutation
+# p = 0.673). Dichotomising a continuous variable discards the ordering within
+# each bin and lets the headline ride on which side of an arbitrary cut a few
+# maps fell. THE RANK CORRELATION IS THE PRIMARY STATISTIC; the split is a
+# descriptive companion. Both are printed so the two can never be quoted apart.
+
 
 def densities():
     d = {}
@@ -54,6 +62,43 @@ def load(run):
     return per
 
 
+def _rank(v):
+    s = sorted(range(len(v)), key=lambda i: v[i])
+    r = [0.0] * len(v)
+    i = 0
+    while i < len(v):                       # average ties, or dense maps tie badly
+        j = i
+        while j + 1 < len(v) and v[s[j + 1]] == v[s[i]]:
+            j += 1
+        avg = (i + j) / 2 + 1
+        for k in range(i, j + 1):
+            r[s[k]] = avg
+        i = j + 1
+    return r
+
+
+def _sp(rx, ys):
+    ry = _rank(ys)
+    mx, my = statistics.mean(rx), statistics.mean(ry)
+    num = sum((a - mx) * (b - my) for a, b in zip(rx, ry))
+    den = (sum((a - mx) ** 2 for a in rx) * sum((b - my) ** 2 for b in ry)) ** .5
+    return num / den if den else 0.0
+
+
+def spearman(xs, ys, iters=3000, seed=11):
+    """rho plus a permutation p-value -- no distributional assumption, which
+    matters because per-map wins take only the values 0, 1 and 2."""
+    rx = _rank(xs)
+    rho = _sp(rx, ys)
+    random.seed(seed)
+    z, cnt = list(ys), 0
+    for _ in range(iters):
+        random.shuffle(z)
+        if abs(_sp(rx, z)) >= abs(rho) - 1e-12:
+            cnt += 1
+    return rho, cnt / iters
+
+
 def boot(wins, maps, iters=20000, seed=7):
     n = len(maps)
     if n == 0:
@@ -84,6 +129,11 @@ if __name__ == "__main__":
         lo = sorted(m for m in maps if dens[m] < MEDIAN)
         hi = sorted(m for m in maps if dens[m] >= MEDIAN)
         print(f"\n{opp}   ({len(maps)} maps priced" + (f", {len(miss)} unpriced: {' '.join(miss)}" if miss else "") + ")")
+        if len(maps) >= 8:
+            rho, pv = spearman([dens[m] for m in maps], [per[opp][m] for m in maps])
+            verdict = "no trend" if pv > 0.10 else "TREND"
+            print(f"  PRIMARY  Spearman rho vs density = {rho:+.3f}   permutation p = {pv:.3f}   -> {verdict}")
+            print(f"  (negative rho = better on sparse-ruin maps. The split below is DESCRIPTIVE ONLY.)")
         for label, sub in (("SPARSE ruins (long live window)", lo),
                            ("DENSE  ruins (short live window)", hi)):
             if not sub:

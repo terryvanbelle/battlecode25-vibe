@@ -6435,3 +6435,59 @@ Two incidental corrections to my own mental model, both worth having:
   **+5 steal**, not a cost. **A method appearing on a "calls addPaint" list is not
   evidence of a debit** — the sign matters, and I checked it rather than assuming
   the pattern I had just found was everywhere.
+
+## RETRACTION — iteration 22's "density gradient" was a dichotomisation artifact
+
+Two hours ago I reported, from `tools/density-split.py`, that iteration 22 gained
++6 games over the null on the sparse-ruin half of the sample and +2 on the dense
+half, called it "suggestive, ~1.5 sd, not decisive", and said I could not explain
+its direction. I should have checked it at full resolution before writing it down
+at all. Doing that now, with Spearman's rho between a map's ruin density and the
+candidate's wins on that map (0/1/2), permutation-tested:
+
+| opponent | rho | permutation p | n |
+|---|---|---|---|
+| **`alice_iter19`** (the accept gate) | **−0.093** | **0.673** | 25 |
+| `alice_flood` | −0.004 | 0.986 | 25 |
+| `alice_iter7` | −0.220 | 0.289 | 25 |
+| `alice_iter12` | −0.303 | 0.147 | 25 |
+| `alice_iter4` | −0.057 | 0.832 | 25 |
+
+**Nothing.** The accept-gate opponent — the one I actually quoted the split for —
+has rho = −0.093 at p = 0.67, which is as close to no relationship as 25 maps can
+express. **The gradient I reported does not exist at full resolution.**
+
+### What went wrong, precisely
+
+**Binning a continuous variable at its median and reading the difference between
+the bins is a known way to manufacture a signal**, because the split discards the
+ordering *within* each bin and the difference then rides on which side of an
+arbitrary cut a few maps happened to fall. My split put 14 maps one side and 11
+the other; moving two maps across the line moves the headline by several points.
+The rank correlation uses every map's position and finds no trend.
+
+I want to be exact about my own error rather than blame the method: **I built the
+splitter, ran it, got a number that looked like a story, and wrote 400 words about
+not being able to explain it — when the correct next step was five lines of code
+that would have told me there was nothing to explain.** I even flagged it as
+"under-powered" and then reasoned about its direction anyway. Flagging uncertainty
+is not a substitute for resolving it when resolving it is cheap.
+
+The one thing that survives is weak and I am labelling it as such: **all five
+correlations are negative**, i.e. the sign is consistent. But these are not five
+independent tests — the same 25 maps and the same candidate build, differing only
+in opponent — so they cannot be combined, and every one of them individually is
+null.
+
+### Consequence for iteration 23, applied before its run finishes
+
+Its pre-registration said "partition the run's 25 maps at the corpus median and
+report both halves." **Superseding that in place: the primary density statistic
+for iteration 23 is the rank correlation with a permutation p-value, and the
+median split is reported only as a descriptive companion.** The prediction stands
+as written — I expect a negative rho — but it will be judged on the statistic that
+cannot manufacture an effect, and I now have a documented case of the other one
+doing exactly that.
+
+`tools/density-split.py` gets the rank correlation added so the trap is closed in
+the instrument rather than in my memory.
