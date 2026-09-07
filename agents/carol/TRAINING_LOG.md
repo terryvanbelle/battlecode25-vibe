@@ -3583,3 +3583,39 @@ class. This is also why I compiled `carol_i12` in an isolated `/tmp` dir rather 
 `vm-compile.sh`, which scps over the shared `src/`. **Rule: no vm-match, no vm-compile, while
 one of my own gauntlets is in flight.** Iteration 12's mechanism check waits for
 `20260907-013714` to finish.
+
+### Two pre-checks on iteration 12 that could each have wasted it
+
+**(a) The alternative explanation for "median tower paint = 0": are carol's towers simply
+mostly MONEY towers?** If so, tp=0 is trivially expected, upgrading the one or two paint
+towers would add ~5 paint/turn, and the whole iteration would be pointless — the fix would be
+the tower *ratio*, not upgrades. This matters because iteration 5, which is *accepted*,
+deliberately promoted money towers.
+
+`towerTypeFor()` builds a money tower at one ruin in three, so roughly **two-thirds of carol's
+towers are paint towers** — on gridworld's 13, about 8 or 9. The alternative explanation is
+therefore rejected: those 8-9 paint towers each mine 5/turn (~40-45 team-wide) and *still*
+show a median stash of 0, meaning every point is spent the instant it lands. Upgrading them is
+a genuine doubling, not a rounding error.
+
+Sizing it against the observed treasury: 8 paint towers to lv2 costs **20,000 chips** and takes
+team paint income from ~40/turn to ~80/turn; carrying them to lv3 costs 40,000 more for
+~120/turn. Against **406,170 idle chips** that is under 15% of the treasury for roughly a
+**tripling** of the binding resource.
+
+**(b) Does the guard actually match the towers I think it does?** Probed rather than assumed:
+
+```
+LEVEL_ONE_PAINT_TOWER    baseType=LEVEL_ONE_PAINT_TOWER   matches=true
+LEVEL_TWO_PAINT_TOWER    baseType=LEVEL_ONE_PAINT_TOWER   matches=true
+LEVEL_THREE_PAINT_TOWER  baseType=LEVEL_ONE_PAINT_TOWER   matches=true
+LEVEL_*_MONEY_TOWER      baseType=LEVEL_ONE_MONEY_TOWER   matches=false
+```
+
+`getBaseType()` collapses all three paint levels onto the lv1 constant, so
+`getBaseType() == LEVEL_ONE_PAINT_TOWER` matches a paint tower at **any** level while
+correctly excluding money and defense towers. Combined with `canUpgradeTower` enforcing the
+level ceiling and the chip cost, `carol_i12` therefore **ladders lv1 -> lv2 -> lv3 on its own**
+as the treasury allows, with no extra code. That is the behaviour I want and it was luck as
+much as design — had `getBaseType()` returned the identity, the guard would have upgraded each
+tower exactly once and silently capped at lv2.
