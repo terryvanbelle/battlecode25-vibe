@@ -3466,3 +3466,60 @@ is 62.5% against the build they replaced — not 75%, and not 75% compounded wit
 and it is precisely the correction a frozen yardstick exists to supply. It is also
 the first time this lineage's absolute-strength chart has had a rung capable of
 delivering such a correction.
+
+## Iteration 15 — PRE-REGISTERED before building: soldiers never attack enemy towers
+
+Found by the API sweep Phase 0 #2 mandates ("periodically sweep the full
+`RobotController` API for methods the bot never calls — a whole game mechanic sat
+unused for 81 iterations once"). This is that, in this lineage.
+
+### The gap
+
+`runSoldier` calls `rc.attack(...)` in exactly three places, and **all three
+target tiles**: paint the marked pattern tile, paint the tile underfoot, paint the
+nearest empty tile in range. `senseNearbyRobots(..., opponent())` appears **only in
+the tower code**. A soldier has never once been pointed at an enemy robot or tower.
+
+Per `RULES.md`, engine-verified: *"Soldier attack: if target holds enemy TOWER →
+50 dmg (never damages robots); else paints tile."* An L1 tower has 1000 HP, so
+**~20 soldier actions destroy an enemy tower** — and destroying a tower removes a
+spawn point, 5-15 paint/turn, and the 500 paint it started with.
+
+Three things make this the right target now:
+
+1. **The capacity is already paid for.** The iteration 13 reachability check
+   measured ~**34,000 idle soldier-turns per game** after the map saturates.
+   This is the algorithm's named winner's profile — *capability preserved at zero
+   marginal cost* — rather than a new cost.
+2. **Reachability is externally evidenced**, not assumed. On Paintball, **bob took
+   alice from 4 towers to 2**. Bob's units reach alice's towers and kill them, so
+   the geometry plainly permits it; alice simply never tries.
+3. **It attacks the master variable directly.** Every accepted iteration in this
+   lineage works by raising alice's own tower count. Nothing has ever *lowered the
+   opponent's*, which is the same variable from the other side.
+
+### The change (one mechanism, deliberately non-displacing)
+
+In `runSoldier`, the **idle** action branch — the one that currently paints the
+nearest empty tile because there is nothing better to do — first checks for an
+enemy tower inside the action radius and attacks it instead.
+
+It goes in the *idle* branch specifically. Ruin-building is this lineage's proven
+master variable and iterations 10 and 11 were both rejected for displacing it, so
+tower-attacking must spend only turns that were otherwise wasted. That history is
+the reason for the placement, and it is exactly the "History" pre-check.
+
+### Pre-registered gates
+- **Accept**: H2H vs `alice_iter14` **> 50%**, no unresolved one-directional
+  regression.
+- **Mechanism gate**: the opponent's **tower count at r2000 must fall** relative to
+  the baseline arm, and tower-destruction events must be non-zero. If soldiers
+  never get in range, the branch is dead code and it is discarded on the trace
+  without spending a full run — the iteration 9 mistake, not repeated.
+
+### Reachability pre-check to run FIRST
+Before evaluating: dump one existing game and count soldier-turns with an enemy
+tower within r²=9. If that is ~zero in self-play, the feature is dead code *in the
+instrument that would judge it*, even though bob demonstrably achieves it — and
+that would be a representativeness problem (doctrine #4) to state before, not
+after, the run.
