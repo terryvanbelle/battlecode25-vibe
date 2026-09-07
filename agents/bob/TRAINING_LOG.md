@@ -3460,3 +3460,75 @@ lost points.
 The remaining arms (`bob_iter3`, `bob_iter7`, `bob_abl7`) are still playing and will say
 whether the residual ~11 points localise at iteration 7 or are diffuse. Note the accept
 decision above does not depend on them.
+
+
+---
+
+## REGRESSION RESOLVED (2026-09-07) — run 20260907-023720, 200 games, 25 pinned maps
+
+Every arm played the identical 25-map sample against the identical frozen opponent.
+
+```
+                                          vs frozen bob_iter1
+bob_iter3                                    39/50   78.0%
+bob_iter7        (hash, no SRP)              38/50   76.0%
+bob_iter9        (hash + SRP)                28/50   56.0%     <- the accepted bot
+bob_abl7         (parity + SRP)              41/50   82.0%     <- BEST
+bob iteration 11 (hash + SRP + memory)       37/50   74.0%
+
+iter7 -> iter9    -20.0 pts   -2.16 sd
+iter9 -> abl7     +26.0 pts   +2.93 sd
+iter9 -> iter11   +18.0 pts   +1.92 sd
+```
+
+### 1. The decline is CONCENTRATED, not diffuse
+
+`iter3 -> iter7` is −2.0 points, comfortably inside noise. **The entire 85% → 56%
+collapse happens at iteration 9**, which I accepted earlier today on a 62.5%
+head-to-head with a mechanism traced end to end. Every word of that trace was true and
+the iteration still cost 20 points of absolute strength.
+
+### 2. The cause is an INTERACTION, and neither feature is guilty alone
+
+```
+                        no SRP      with SRP
+iteration 7 hash         76.0%       56.0%     <- -20
+parity rule              (iter1/3 lineage)  82.0%
+```
+
+`bob_iter7` carries the hash without SRPs and is fine at 76%. `bob_abl7` carries SRPs
+without the hash and is the **best build I have ever measured, 82%**. Only the
+combination collapses. This is why single-feature reasoning missed it: I evaluated
+iteration 9 against `bob_iter7`, which shares the hash, so the interaction was present
+in *both* arms of the accept test and therefore invisible to it.
+
+**Why it interacts, mechanistically.** An SRP is worth `+3 paint/turn per allied PAINT
+tower`, so its return is *multiplied* by your paint-tower count, while its cost is a
+flat 200 chips. Iteration 7's hash raised the variance of the tower mix — my own audit
+measured mismatched mirrored pairs going 40% → 97% and the money-gap between halves
+11.0 → 24.0 points. Higher mix variance is survivable when tower type only adds income
+linearly; it is punishing once SRPs make the payoff multiplicative in paint-tower
+count, because money-heavy draws now pay 200 chips a time for almost nothing.
+
+**Note carefully what this does and does not rehabilitate.** The side-split evidence I
+retracted was genuinely bogus — `split-by-side` is `2p(1-p)` and carried no
+information. But the *other* half of that audit, the mix-variance measurement, was
+real, and it is the half that matters here. Retracting bad evidence for a hypothesis is
+not the same as refuting the hypothesis, and I nearly conflated those: **A7 was aimed
+at the right feature for the wrong stated reason, and running it anyway is what found
+this.** That is a good argument for running a cheap pre-registered ablation even after
+its motivating story collapses.
+
+### 3. Consequences
+
+- **`bob_abl7` (82%) beats accepted iteration 11 (74%)** by 8 points (−0.97 sd, not
+  significant on its own, but it is the better build and it is *simpler*).
+- Iteration 11's ruin memory (+18) and removing the hash (+26) attack **different**
+  causes — expansion versus tower-mix variance — so they should compose.
+- **Iteration 12 is therefore obvious and is being built now: iteration 11 + the parity
+  tower rule**, i.e. ruin memory *and* the hash reverted. Predicted ~82-88%; the
+  pre-registered gate is that it must beat **both** iteration 11's 74.0% and `abl7`'s
+  82.0% on these same pinned maps.
+- **CLOSED: "iteration 7's avalanche hash is a net positive."** It was accepted at
+  52.5% with its own audit recording −0.59 points across the pool; it is now measured
+  at −20 points in the presence of SRPs. Reverting it.
