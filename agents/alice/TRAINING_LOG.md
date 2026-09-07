@@ -4888,3 +4888,64 @@ not the binding constraint, which redirects effort to what is.
 ruin-targeted soldier turns changes nothing, then soldier *turns* are not scarce
 — soldier *paint* is (median 18 at a ruin against a 120-paint pattern), and the
 next iteration should attack the paint budget rather than the turn budget.
+
+## Iteration 21 — §5b PAIRWISE ABLATION COMPLETE. No destructive pair; my own
+## nomination is refuted, and both features are worth more than I assumed
+
+Run `20260907-145307`, 72 games, 12 maps both sides, baseline `alice_iter19`.
+
+| arm | iteration 1 idle painting | iteration 12 ballistic wander | score |
+|---|---|---|---|
+| Z `alice_iter19` | ON | ON | **12/24** (by definition) |
+| A `alice_i21a` | **OFF** | ON | **6/24** |
+| B `alice_i21b` | ON | **OFF** | **10/24** |
+| C `alice_i21c` | **OFF** | **OFF** | **2/24** |
+
+**Main effects** (games, out of 24): idle painting is worth **+6**, ballistic
+wander **+2**. Both are real and both are carrying weight — idle painting is
+worth 25 percentage points, which is more than any single accepted iteration
+has ever been measured at.
+
+### The interaction, read exactly as pre-registered
+
+Additivity predicts C = 12 − 6 − 2 = **4/24**. Measured C = **2/24**.
+
+**Interaction = C − A − B + Z = −2 games.** The noise sd of an interaction over
+four 24-game arms is ≈ **4.9 games**, so |−2| / 4.9 = **0.41 sd**. That is
+comfortably inside noise.
+
+> **Conclusion: no detectable interaction. The two features are additive within
+> this test's resolution, and if anything mildly complementary (−2) rather than
+> substitutable (+).**
+
+**My nomination was wrong, and it was wrong in the direction I should have
+expected.** I argued iteration 1 and iteration 12 fight over the same 200-paint
+tank — accepted when soldiers barely travelled, then made to travel far — so I
+expected to find I was paying for the same thing twice (a positive interaction).
+The data says the opposite sign, at a magnitude indistinguishable from zero.
+Painting on the move and travelling further are not competing for the tank in
+any way this instrument can see; they reinforce.
+
+**§5b's own caution is the lesson, restated with a second instance behind it:**
+*a heuristic nominates a pair, it is never evidence about one, and the sign of an
+interaction is not predictable from its shape.* I now have my own case of that,
+not just the inherited one.
+
+### What the audit buys, given it found nothing
+
+1. **The drift worry is not a destructive pair in this slot.** The roster's thin
+   margins (58.2% vs iter7, 54.2% vs iter12) are *not* explained by these two
+   features fighting. That closes the most obvious §5b hypothesis with a
+   measurement instead of leaving it as unexamined unease.
+2. **Two accepted features are now priced.** Idle painting +6 games, ballistic
+   wander +2. Neither is the "worth ~0 or negative" case the 2026 audit found;
+   both survive ablation comfortably. That is the first time this lineage has
+   priced any carried feature.
+3. **A negative audit is cheap insurance, and I should say so plainly**: 72
+   games to learn that a suspicion was unfounded is a good trade against
+   carrying it as a nagging doubt into every future accept.
+
+### Closed-directions ledger
+| direction | closed by | can re-open if |
+|---|---|---|
+| "Iteration 1 × iteration 12 are a destructive pair fighting over soldier paint" | iteration 21: interaction **−2 games, 0.41 sd**, wrong sign and inside noise | a *different* pair is nominated by evidence, not by shape. This specific pair is priced and closed. |
