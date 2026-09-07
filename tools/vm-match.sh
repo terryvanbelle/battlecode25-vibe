@@ -24,9 +24,17 @@ gscp -r "$WS_DIR/src/." "$USER_NAME@$IP:$REMOTE_REPO/$WS_REL/src/" >/dev/null
 
 for MAP in "$@"; do
   echo "=== match: $TEAM_A vs $TEAM_B on $MAP ($WS_REL) ==="
+  # A single debug match is still a game on a shared box: it is counted by every
+  # other runner's HARD_CAP check, so if it does not TAKE a slot the cap is a
+  # fiction and three agents tracing replays can push the machine over. Same
+  # semaphore as gauntlet.sh and tournament.sh; the slot is released when this
+  # shell exits.
   gssh "
     export JAVA_HOME=\$HOME/jdk21 PATH=\$HOME/jdk21/bin:\$PATH
     cd ~/$REMOTE_REPO/$WS_REL
+    GLOBAL_CAP=${GLOBAL_CAP:-5} HARD_CAP=${HARD_CAP:-7}
+$(cat "$REPO_ROOT/tools/remote-slot.sh")
+    acquire_slot
     ./gradlew --no-daemon run -PteamA=$TEAM_A -PteamB=$TEAM_B -Pmaps=$MAP \
       -PoutputVerbose=false 2>&1 | tee \$HOME/bc25-match-$MAP.log | grep -E '\[server\]' || true
   "

@@ -34,6 +34,12 @@ if [ -z "${MAPS:-}" ]; then
   else MAPS="DefaultSmall"; fi
 fi
 
+# A pinned MAPS may arrive with newlines -- AGENT.md documents
+# MAPS="$(cat gauntlet/<run>/maps.txt)" for replaying a run's exact maps, and
+# that file is one map per line. Those newlines end up inside `for MAP in $MAPS`
+# in the generated remote script and break it, so normalise to spaces here.
+MAPS="$(printf '%s ' $MAPS)"
+
 exec 9>/tmp/bc25-tournament.lock
 flock -n 9 || { echo "another tournament is already running; exiting"; exit 0; }
 
@@ -107,33 +113,8 @@ CP=\$(./gradlew --no-daemon -q printClasspath | tail -1)
 # Same cross-runner counting semaphore as tools/gauntlet.sh -- the agents'
 # gauntlets keep running while a tournament plays, so the cap has to bind
 # across all of them, not just within this script.
-SLOTDIR=\$HOME/.bc25-slots; mkdir -p "\$SLOTDIR"
-acquire_slot () {   # sets SFD; held until the game's subshell exits
-  # Stand in ONE line, so that the HARD_CAP check below and the slot-taking
-  # that follows it cannot be interleaved by another runner. GLOBAL_CAP is
-  # enforced by the slot flocks and was never the leak; HARD_CAP is a `pgrep`
-  # count, so under the old code two runners could both read "6 < 7" before
-  # either started a game and the machine ended up at 8. That is not
-  # hypothetical -- 8 concurrent games against a cap of 7 were observed on
-  # battlecode-dev on 2026-09-06, and the shape reproduces in a harness
-  # (tools/semaphore-test.sh) that returns peak 8 ungated and 7 gated.
-  # The kernel drops the gate on fd close, so a runner that dies holding it
-  # cannot wedge the box, and a gate holder only ever waits for something no
-  # other runner could have proceeded past anyway.
-  exec {GFD}>"\$SLOTDIR/gate"
-  flock \$GFD
-  # Politeness toward the BC26 project, which runs its own games outside this
-  # semaphore: never push the machine-wide game count past HARD_CAP.
-  while [ "\$(pgrep -fc battlecode.server.Main || true)" -ge $HARD_CAP ]; do sleep 10; done
-  while true; do
-    for i in \$(seq 1 $GLOBAL_CAP); do
-      exec {SFD}>"\$SLOTDIR/slot.\$i"
-      flock -n \$SFD && { exec {GFD}>&-; return 0; }   # hold slot, leave the line
-      exec {SFD}>&-
-    done
-    sleep 5
-  done
-}
+GLOBAL_CAP=$GLOBAL_CAP HARD_CAP=$HARD_CAP
+$(cat "$REPO_ROOT/tools/remote-slot.sh")
 
 game () {  # <botA> <botB> <map>   (botA plays side A)
   local TA=\$1 TB=\$2 MAP=\$3 LOG W R RE
