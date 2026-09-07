@@ -3638,3 +3638,82 @@ Recording that possibility plainly: iteration 11 was accepted honestly on the ev
 available, and the evidence has since changed underneath it. Reverting an accept
 because a later measurement invalidated its premise is a normal outcome, not a failure
 of the earlier decision.
+
+
+---
+
+## MIRROR CALIBRATION (2026-09-07) — my bot is fully deterministic, and I invented a noise floor
+
+Applying the new shared doctrine (MULTI_AGENT.md, "Calibrate your null: run a mirror",
+`8073e62`). `src/bob_mirror` is `src/bob` with only the `package` line changed —
+verified by diff — played over the 25 pinned maps, run `20260907-032957`.
+
+**Result: every map returns one win and one loss with byte-identical round counts.**
+
+```
+  Justice        r525 / r525        MoneyTower     r630 / r630
+  leavemealone   r741 / r741        walalilongla   r729 / r729
+  windmill      r1000 / r1000       ...
+  maps complete: 9   split-by-side: 9   (and rising 1:1)
+```
+
+The mirror is **exactly 50%, with 100% of maps split by side**. My bot seeds
+`new java.util.Random(robot.getID())`, so there is no entropy anywhere: a game is a
+pure function of (map, side, both builds).
+
+### Consequence 1 — most of my "noise floor" reasoning this session was wrong
+
+I repeatedly discounted results as "1.26 sd", "0.50 sd", "1.01 sd" and called them
+noise. **Under determinism there is no sampling noise on the maps actually played.**
+A 24/40 head-to-head is an exact +4-game effect on those 40 games, not a draw from a
+binomial. Doctrine #1 said this all along — *"determinism means re-running is
+worthless"* — and I failed to draw the obvious corollary that the *variance model* it
+implies is zero, not binomial.
+
+**The precise correction, because the sd figures are not entirely meaningless:**
+uncertainty does not come from repeating games, it comes from *which maps were drawn*.
+So binomial-style error bars are legitimate **only** for the question "will this hold
+on the other 50 maps I did not play", and never for "is this difference real on the
+maps I did play". On a **pinned** sample — every comparison in the regression run —
+the difference is exact and error bars are meaningless. That reframes rather than
+erases: iteration 9's 56.0% versus `bob_abl7`'s 82.0% on identical pinned maps is a
+flat 13-game fact.
+
+And the remedy for generalisation uncertainty is **more maps, never more repeats**,
+which is what `NMAPS` is for.
+
+### Consequence 2 — the split-by-side null is 25/25, not `2p(1-p)`
+
+My retraction above computed the split-by-side null from binomial independence. The
+mirror gives the *true* null and it is different: **identical code splits every map**,
+because swapping sides just relabels a deterministic game. Both the retraction's
+conclusion and this both hold — split-by-side still carries little information about
+asymmetry — but the correct baseline is the mirror, not the binomial. The side-B
+retraction itself stands on **magnitude** (2.2 points over 271 games), which needs no
+variance model at all.
+
+### Consequence 3 — deviation attribution, which is the real prize
+
+Games where a candidate deviates from the mirror null are exactly the games its
+mechanism changed. Applied to the completed head-to-head between iteration 12 and
+`bob_abl7`, which differ by **only** the ruin memory:
+
+```
+25 maps,  mirror null predicts 25 splits
+  split by side   19
+  swept WINS       3    AlarmClock, giver, sayhi
+  swept LOSSES     3    HungerGames, Parking_lot, rain
+  deviations       6 maps (24%)
+```
+
+**The aggregate said 25-25, "no effect". The attribution says the memory decisively
+flips a quarter of all maps and nets to zero only because three wins and three losses
+cancel.** Those are completely different findings, and only the second one is
+actionable. This is precisely the coordinator's point that a low aggregate is not
+evidence a mechanism did nothing — here the aggregate is *exactly* the null and the
+mechanism is *highly* active.
+
+It also vindicates the caution I registered with iteration 11 and then failed to act
+on: *"the risk is not that it never fires but that it fires too readily — a soldier
+that walks 30 tiles to a remembered ruin someone else has already claimed has traded
+painting for travel."* Three swept losses is what that looks like.
