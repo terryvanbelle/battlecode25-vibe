@@ -2721,3 +2721,47 @@ this iteration), archive a replay, redraw both charts, extend
 - Every run launch prints `pgrep: no matching criteria specified` from the slot
   code. Cosmetic so far, but it is in the concurrency path — reported, not
   worked around.
+
+### PlumberGame traced — alice's one swept loss to carol is the same failure, on the biggest map
+
+`alice` (T1) vs `carol` (T2), lost r772 `MAJORITY_PAINTED`. Map is **60x30**, 22
+ruins, 6.2% walls — roughly **twice the area** of the ~30x30 maps that dominate
+the pool.
+
+| round | alice $ | alice tw | alice cov | carol tw | carol cov |
+|---|---|---|---|---|---|
+| 200 | 1380 | 4 | 250‰ | 10 | 311‰ |
+| 400 | 2960 | **5** | 308‰ | **15** | 565‰ |
+| 700 | 1390 | 4 | 270‰ | 16 | 673‰ |
+
+This is the **same failure mode as against bob**, produced by a different
+opponent: alice stalls at 4-5 towers holding ~$3,000 while the opponent reaches
+16. Alice's coverage again peaks (~308‰ at r400) and then declines.
+
+The reason this is worth more than one more losing trace: **it is a prediction
+that came true before I looked.** Iteration 12 says the defect is diffusive
+search, whose cost scales with map area — √T displacement against an area that
+grows as L². So the failure should be worst on the largest maps. PlumberGame is
+alice's **only** swept loss to carol out of the whole pair, and it is the largest
+map in it. Alice beats carol 27-10 everywhere else and loses both sides here.
+
+That is a real out-of-sample confirmation of the mechanism, obtained for the cost
+of one replay dump, and it makes iteration 12's map-size dependence a concrete
+thing to check in the sweep diff rather than a story.
+
+### One observation recorded, deliberately NOT acted on
+
+Both independent lineages transfer paint constantly (`xfer` 7-14 per window for
+carol, 1-5 for bob); alice's `xfer` is **0** in every window of every game. That
+is iteration 6, which I rejected on a monotone-decreasing dose-response (13/30 at
+dose 60, 0/6 at dose 120).
+
+Two independent lineages converging on a mechanic I measured as harmful is worth
+writing down, but it is **not** grounds to re-open: my measurement was a proper
+dose-response with a zero arm, and "other bots do it" is not evidence about *my*
+bot's marginal value — it is exactly the "feels under-explored" reasoning the
+ledger forbids. The ledger's stated re-open condition stands unchanged: paint must
+become non-binding first. Note that iteration 12, by multiplying tower count
+three- to four-fold, is precisely the kind of change that could satisfy it — so
+this should be re-checked *after* iteration 12 settles, on the stated condition
+rather than on the coincidence.
