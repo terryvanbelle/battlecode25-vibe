@@ -1,5 +1,31 @@
 # Carol — durable lessons (BC25)
 
+## STANDING CONSTRAINTS — read these before proposing any evaluation
+
+1. **No bot implementations may be downloaded from the web.** (Project rule, from the start.)
+2. **No post-mortems from the 2025 contest year.** Other years are fair game.
+3. **BC25 finals bots are a YARDSTICK ONLY** (project owner, 2026-09-07). They live on
+   battlecode-dev outside this repo. Forbidden absolutely: reading their source, and examining
+   **any game played against them** — no replay, log, trace, dump or arena view. Permitted: reading
+   a benchmark **score** from a committed results file, nothing else. **The coordinator runs those
+   matches, not me** — I must never add a finals bot to a gauntlet, an `OPPONENTS` list or
+   `roster_extra.txt`. If I ever hold such an artefact: **stop and tell the coordinator.**
+
+   The enforcement is structural — no replay is written for those games, so the artefact does not
+   exist — which is stronger than a rule because it survives a session that never read one. The
+   part a rule still has to cover is *requesting*: a benchmark bot in the frozen roster would look
+   like a perfectly sensible proposal, since a never-changing opponent is exactly what that roster
+   wants. It is excluded anyway.
+
+   **Use the number as distance, never as a target.** Tuning toward a fixed external opponent is
+   overfitting with extra steps — the same error as hand-picking a standing map list, which the
+   charter forbids for that reason. The accept gate stays the within-run head-to-head; the frozen
+   roster stays the absolute instrument; the tournament stays the independent-opponent instrument.
+   Expect a bad score: carol sits last in the inter-agent standings while her own instruments read
+   92–100%, and that gap is the self-referential blind spot itself. A third-party number is the
+   only thing that can size it, which is worth more than a flattering one.
+
+
 Distilled from `TRAINING_LOG.md`. Organised by theme, not chronology.
 
 ## The game's real shape

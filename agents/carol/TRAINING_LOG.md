@@ -6913,3 +6913,65 @@ question open, and it is now closed by measurement rather than by choosing.
 
 The reachability conclusion is unchanged and was never at risk: 116 of 116 rendered-empty tiles
 reachable, and any tiles hidden under units are by construction the ones units are standing on.
+
+---
+
+## STANDING CONSTRAINT (project owner, 2026-09-07): BC25 finals bots are a YARDSTICK ONLY
+
+Recording this in the append-only log because it binds every future session, not just this one.
+
+BC25 finals bots now exist on battlecode-dev, **outside this repo**, used solely to measure how
+far each lineage sits from a tournament-winning bot.
+
+**Forbidden, absolutely:**
+- reading their source, in any form, anywhere;
+- examining **any game played against them** — no replay, log, trace, dump, or arena view;
+- seeking out, requesting, or reasoning from any such artefact.
+
+**Permitted:** reading a benchmark **score** if one appears in a committed results file. That is
+the entire allowance. Which side won and in how many rounds — never how.
+
+**I do not run these matches.** The coordinator does. I must not add a finals bot to a gauntlet,
+an `OPPONENTS` list, `roster_extra.txt`, or anything else.
+
+**If I ever find myself holding such an artefact: stop and tell the coordinator.**
+
+The 2025 post-mortem ban is unchanged and still applies. So does the standing ban on downloading
+bot implementations.
+
+**Compliance check run at the time of the rule** (evidence, not assertion): every opponent
+appearing in any of my `gauntlet/*/results.csv` is `carol_*`, `carol_rush`, `carol_turtle` or
+`examplefuncsplayer`; every package in `src/` is `carol_*` or `examplefuncsplayer`; all eight
+archived replays are against my own lineage or my own synthetic. **Nothing external is or has
+been in this workspace.**
+
+### Why the enforcement design is the right shape, and the one gap I see
+
+The enforcement is *structural rather than behavioural*: the source is not in my checkout, and
+**no replay is written for those games at all**, so the artefact does not exist rather than
+existing and relying on me to look away. That is strictly stronger than a rule, because it also
+survives a session that never read the rule.
+
+The gap it does not close is **requesting**. A restarted session reads `AGENT.md` first, and that
+file currently lists the standing constraints (no downloaded bots, no 2025 post-mortems) without
+this one. A future me could therefore ask for a benchmark replay in good faith, or propose adding
+a finals bot to the frozen roster — which is exactly the kind of thing `roster_extra.txt` is for,
+and it would look reasonable. **Flagging that for the coordinator rather than editing `AGENT.md`
+myself, since that file is theirs.** This log entry and the LEARNINGS entry cover the case where a
+future session reads them first, but the charter is what it reads *first*.
+
+### On how to use the number
+
+The score is **information about distance, not a target to tune against.** Tuning toward a fixed
+external opponent is overfitting with extra steps, and it is the same error as hand-picking a
+standing map list, which my own charter forbids for exactly this reason. My accept gate stays the
+within-run head-to-head against my last snapshot; the frozen roster stays my absolute instrument;
+the inter-agent tournament stays my independent-opponent instrument. The benchmark adds a fourth
+reference point, and a bad one is *expected* — carol sits last in the inter-agent standings while
+her own instruments read 92–100%, which is precisely the self-referential blind spot the
+algorithm warns about, and a third-party number is the only thing that can size it.
+
+**None of my working methods are affected for my own games.** Arena grids, flood fill, per-window
+aggregates, decision counters, mirror nulls, map-resampling — all remain available for my
+gauntlets, my synthetics, my frozen roster and the inter-agent tournament. Only benchmark games
+are off-limits.
