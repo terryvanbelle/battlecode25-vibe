@@ -17,6 +17,22 @@
 # SHARED VM: battlecode-dev also serves a live BC26 project. Never kill
 # processes, never stop the VM; games are gated by the same shared flock
 # semaphore as tools/gauntlet.sh (GLOBAL_CAP) under a machine-wide HARD_CAP.
+# Run from a private copy, so editing this file cannot corrupt a run in flight.
+# bash reads a script lazily by byte offset: edit it while it is running and the
+# interpreter resumes at a stale offset, landing mid-token. That is not
+# theoretical -- it killed the collation of a finished 450-game tournament on
+# 2026-09-07 ("syntax error near unexpected token `}'"), after all the games had
+# been played. Three agents plus a coordinator share this checkout, so a script
+# being edited mid-run is normal here, not an accident. The copy lives beside
+# the original so $(dirname $BASH_SOURCE) still finds lib.sh, and is unlinked
+# immediately -- the kernel keeps it alive on the open fd until we exit.
+if [ -z "${BC25_REEXEC:-}" ]; then
+  _self="$(dirname "${BASH_SOURCE[0]}")/.reexec-$(basename "${BASH_SOURCE[0]}").$$"
+  cat "${BASH_SOURCE[0]}" > "$_self" || exit 1
+  BC25_REEXEC="$_self" exec bash "$_self" "$@"
+fi
+rm -f "$BC25_REEXEC"
+
 set -euo pipefail
 source "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
