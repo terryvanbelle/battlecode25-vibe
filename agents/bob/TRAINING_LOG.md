@@ -3218,3 +3218,21 @@ largely implied by criterion 1**, since `p > 0.5` implies `p² > (1-p)²`. It is
 worthless — the deviation from `25p²` is informative — but it is not the independent
 confirmation I have been treating it as, and doctrine #10's "a real effect shows up in
 more than one place" is not satisfied by two functions of the same number.
+
+### Corrected readouts for the regression run
+
+With `split-by-side` struck, the regression run's readouts are:
+
+1. **Primary — the win-rate curve across snapshots on the pinned maps.** This alone
+   answers the *when* question (concentrated step versus diffuse drift versus null),
+   which is the question that matters most, and it needs no second metric to be
+   interpretable.
+2. **Second source, only if the curve shows a step — and drawn from a different KIND of
+   instrument** per LEARNINGS 14: replay-derived quantities on the stepping pair, i.e.
+   cumulative towers built and paint delivered per round, which are measured from the
+   replay rather than computed from the win/loss vector. These are follow-up dumps on
+   the identified pair, not a pre-registered arm, because there is nothing to read them
+   on until the curve names a step.
+
+No metric that is an arithmetic transform of the primary is being carried, which is the
+whole content of the retraction above.
