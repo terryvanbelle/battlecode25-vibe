@@ -4136,3 +4136,64 @@ causal effect, and 55% misses the 60% `WinPct`. Doctrine #9 is explicit that a t
 margin gets the frozen roster run **before** the decision, not after — it once caught a bad
 accept by ten games. Roster run `20260907-035132` launched (240 games) and the decision waits
 on it.
+
+### Iteration 13 DECISION — REJECT, and the roster check is what settled it
+
+| gate | threshold | result |
+|---|---|---|
+| mechanism | SRPs actually completed | **PASS — 9-12 per game** |
+| conditional reachability (`srpElig`) | placeable among turns that reach the line | 4.5% / 8.8% of IDLE-ALLY turns — live |
+| **primary metric** | tower-turns with `tp` < 50 should FALL | **FAILED — rose hard** |
+| h2h vs `carol_iter12` | >50% | 22/40 = 55% (**+2 games** vs the i12 null) |
+| peer `WinPct` | 60% | **not met** |
+| flip shape | one-directional | **mixed 4 wins / 2 losses = churn** |
+| **frozen roster (doctrine #9, run BEFORE deciding)** | confirm the thin margin | **did not confirm** |
+
+**The primary metric moved decisively the wrong way**, on both maps sampled:
+
+| | median tower paint | tower-turns with tp<50 |
+|---|---|---|
+| DefaultMedium — i12 | 375 | **8.5%** |
+| DefaultMedium — i13 | 119 | **27.2%** |
+| Bunny — i12 | 280 | **31.2%** |
+| Bunny — i13 | 24 | **55.3%** |
+
+Iteration 13 **guts the paint economy** — the exact resource every trace this session, and the
+tournament, identifies as carol's binding constraint. Note also what this incidentally proves:
+iteration 12's upgrades took `tp<50` from the 33.6% baseline down to **8.5%** on DefaultMedium,
+independent confirmation that the accept I reversed into was right.
+
+**The roster run did its job.** Doctrine #9 exists because a thin margin once survived two
+pre-registered metrics and was caught by ten games on the frozen roster. Here: `carol_i13`
+scores **26/40 = 65% vs `carol_iter7`**, against iteration 11's 25/40 = 62.5% on the identical
+pinned maps — **+1 game across two accepted iterations**. Iteration 12 alone was +5 games. So
+the roster says iteration 13 gave back most of iteration 12's gain even while beating i12 by 2
+head-to-head. A +2 h2h that does not survive contact with a frozen opponent is exactly the
+"thin accept" this rule was written to stop.
+
+**DECISION: REJECT.** `src/carol/` remains iteration 12.
+
+### Why it failed — a mechanism interaction I should have predicted, recorded as a hypothesis
+
+An SRP costs paint **immediately** (marks, plus 25 tiles at 5 paint each, drawn from tower
+stashes via `refillIfPossible`) and pays out **only after staying exact for 50 consecutive
+rounds** [E: RULES.md]. So the cost is certain and the benefit is conditional on persistence.
+
+**Hypothesis (untested, and I am flagging it as such): carol's own splashers destroy her SRPs.**
+A splasher paints every tile in an r²=4 disc around its centre, indiscriminately and without
+regard to marks. An SRP needs 25 *exact* tiles held for 50 rounds. Iteration 11 — accepted this
+session at 62.5% — put splashers into the build for the first time. The two mechanisms are
+therefore plausibly incompatible by construction, and iteration 13 pays the full paint cost of
+patterns that are broken before they ever pay out.
+
+I have not measured this, and it would need a direct test (tag SRP tiles, count splash
+overwrites) before being believed. It is recorded as the leading explanation, not a conclusion.
+
+### Closed-directions ledger update
+
+- **"SRPs laid from idle soldier turns" — CLOSED for the current build.** `20260907-032315`:
+  mechanism fires (9-12 completions/game) but tower paint collapses (tp<50 8.5% -> 27.2%,
+  31.2% -> 55.3%) and the roster shows +1 game across two iterations. Re-opening is legitimate
+  **only** with a specific mechanism for SRP persistence — e.g. excluding SRP tiles from
+  splasher targeting — since the recorded cause is the cost/persistence imbalance, not the
+  hypothesis that SRP income is valuable.
