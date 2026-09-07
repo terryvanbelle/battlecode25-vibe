@@ -4905,3 +4905,41 @@ Both are "capability preserved at zero marginal cost", the shape TRAINING_ALGORI
 the recurring winner's profile, and neither invents a new strategy — they stop existing units
 from idling. Against a 92%–8% deficit, that is the right register: the gap is not one
 mechanism wide, and my own gauntlet's 78.8% cannot see it at all.
+
+## Trace: where carol's chips actually go (tower levels + upgrade firing, 8 complete i14 games)
+
+Free measurement from the tower indicator (`tw=`, `lv=`, `UPG`/`upgPoor`), taken while three
+gauntlets were queued.
+
+| map | median chips | towers (max) | lv1 | lv2 | lv3 | `UPG` fires | `upgPoor` |
+|---|---|---|---|---|---|---|---|
+| Castle | 1,310 | 6 | 50.6% | 49.4% | 0.0% | **0** | 17,455 |
+| DefaultLarge | 1,320 | 10 | 44.6% | 55.4% | 0.0% | **0** | 29,931 |
+| DefaultMedium | 1,350 | 10 | 54.2% | 45.8% | 0.0% | **0** | 22,190 |
+| Bunny | 1,460 | 10 | 63.8% | 31.4% | 4.7% | 8 | 7,489 |
+| PlumberGame | 1,470 | 14 | 70.9% | 27.2% | 1.8% | 3 | 15,843 |
+| walalilongla | 2,180 | 9 | 44.9% | 27.8% | 27.3% | 7 | 6,977 |
+| Parking_lot | 3,940 | **3** | 43.1% | 53.2% | 3.7% | 2 | 1,691 |
+| gridworld | **76,420** | 15 | 59.3% | 8.8% | 32.0% | 2 | 411 |
+
+**The two regimes separate cleanly and they need opposite things.**
+
+- **Chip-poor (Castle, DefaultLarge, DefaultMedium)**: an upgrade needs
+  `CHIP_RESERVE + 2500 = 3700` against a median treasury of ~1,320, so `UPG` fires **zero**
+  times and `upgPoor` fires 17k–30k times. Production is blocked, upgrades are unreachable,
+  and the treasury sits pinned in the reserve dead band. **This is exactly what iteration 18
+  targets, and this table is independent confirmation that the target is the right one.**
+- **Chip-rich (gridworld, Parking_lot)**: carol banks a median of **76,420 chips** on
+  gridworld with 15 towers, a third of them already lv3. The surplus is not a policy failure
+  so much as a lack of sinks — RULES.md lists towers, upgrades and SRPs, and SRPs are closed
+  (iteration 13). Parking_lot pins at **3 towers** with 3,940 chips, i.e. it has run out of
+  ruins to build on, not out of money.
+
+**So "spend the chip surplus" is NOT the intervention.** On the maps where carol has a surplus
+she is already winning or already out of things to buy; on the maps where she is losing she has
+no surplus at all — she has 1,320 chips and a rule forbidding her to spend 1,200 of them.
+That is a single, cheap, well-localized fix, and it is iteration 18.
+
+This also retires a direction I would otherwise have queued: chasing a bigger chip sink
+(lv3 everywhere, a fourth tower type) would spend iterations optimizing the regime carol
+already handles.
