@@ -3847,3 +3847,45 @@ bind, to buy one proven to bind, is the "capability at zero marginal cost" profi
 must not fall — iteration 6 lost DefaultSmall when the treasury was mismanaged) and the soldier
 count, and require `UPG` to actually fire this time — the mechanism gate is now
 `UPG > 0 on a majority of maps`, not merely `> 0`.
+
+### Iteration 12b pre-registration — with the GUARD's gate registered, not just the mechanism's
+
+Having just diagnosed an inert mechanism, I applied the same conditional reachability test to
+my own fix and it failed. The first version of the deadlock guard reused iteration 2's
+`stagnantTurns >= STAGNANT_ROUNDS`. Measured before shipping, on the conditional (turns on an
+upgradable paint tower) as well as the marginal:
+
+```
+gridworld      all 11,016 turns: stag>=10 on 0.0% (max 0)   on paint towers (230): 0.0%
+DefaultMedium  all 16,340 turns: stag>=10 on 0.0% (max 0)   on paint towers (11,176): 0.0%
+```
+
+**`stag` is 0 on all 27,356 tower-turns sampled.** The counter only increments when chips are
+*exactly* unchanged, and chips move nearly every turn, so it resets constantly. The guard would
+never have tripped — leaving the deadlock it exists to prevent entirely unmitigated, inside the
+fix for a mechanism that was itself inert. Replaced with a `SAVE_GRACE` window whose give-up is
+directly observable in the trace.
+
+**The change**: an upgradable paint tower withholds spawning while saving for its upgrade. It
+saves for `SAVE_GRACE = 25` rounds unconditionally, and past that only while the treasury is
+demonstrably climbing above where it stood when saving began; otherwise it gives up, resets,
+spawns, and retries later.
+
+| gate | threshold |
+|---|---|
+| **primary** | h2h vs `carol_iter11`, 20 pinned maps x both sides = 40 games; **accept at >50%** |
+| **mechanism gate** | `UPG` fires on a **majority of maps** — not merely >0. Iteration 12's single firing in 11,016 turns is the bar this must clear. |
+| **guard gate (new)** | `upgGiveUp` appears **at all**, somewhere in the run. If it never appears the guard is dead code again and the deadlock is unmitigated regardless of the win rate. |
+| **counter-metric** | tower count must not fall (iteration 6 collapsed 8 -> 3 on treasury mismanagement); soldier count must not collapse |
+| **primary metric** | share of tower-turns with `tp` < 50, currently 33.6% |
+
+**Registered prediction.** `UPG` fires on most maps and `upgGiveUp` appears on at least one. On
+the scoreboard I again decline to predict above 50%: this spends unit production to buy paint
+income, and while iterations 5/8/10 make that trade look right in principle, the *withholding*
+is a genuinely new cost that no measurement of mine has priced.
+
+**Note on `SAVE_GRACE = 25` — it is an unmeasured constant and I am flagging it as such rather
+than defending it.** It is the first dose, chosen so a tower waits roughly the time a money
+tower needs to add ~1,000 chips. If 12b lands near 50% with the mechanism firing, the refinement
+is this number, and the zero arm (`SAVE_GRACE = 0`, i.e. never withhold) is iteration 12 itself,
+already measured.
