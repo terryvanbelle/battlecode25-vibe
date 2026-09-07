@@ -1,2 +1,3 @@
 29d2b39|EVAL12 retired: random 25-map sample per run
 247fa61|Mirror instrument built (alice_mirror) for play-symmetry audit
+dd003f2|Tournament adopted as primary loss source (external instrument)

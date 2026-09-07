@@ -1,4 +1,4 @@
-package alice;
+package alice_iter12;
 
 import battlecode.common.*;
 

@@ -3005,3 +3005,64 @@ one. More games do not fix it; only completing the arms does.
 So: **compare partial arms only on their shared map subset, or wait.** This is the
 within-run twin of the cross-run warning in AGENT.md, and it is sharper, because
 the shared-sample guarantee makes a mid-run comparison *look* exact when it is not.
+
+## Iteration 12 — ACCEPTED at dose 25. The dose-response curve is single-peaked
+
+Run `20260907-013038` complete, 60 games, 10 maps x both sides x 3 doses, one
+shared map sample so the cross-arm comparison is exact.
+
+| dose (`WANDER_RUN`) | candidate H2H vs `alice_iter7` | swept wins | **swept losses** |
+|---|---|---|---|
+| `5 + rnd(8)` ≈ 8.5 — **zero arm** | 50% by definition | — | — |
+| **25** | **15/20 (75%)** | **5/10** | **0** |
+| 100 | 12/20 (60%) | 3/10 | 1 |
+| 400 | 12/20 (60%) | 3/10 | 1 |
+
+**The curve is 50 → 75 → 60 → 60: single-peaked, with an interior optimum at the
+lowest nonzero dose.** The falsifier I registered before arm C landed — "arm C
+comes in above arm B" — did not occur; C and B tied to the game. So the
+interior-optimum reading stands as a prediction that survived a stated test, not
+as a description written afterwards.
+
+**Two independent criteria pick the same dose, which is why this accept is not a
+maximum-of-three artifact.** Dose 25 has the best headline *and* it is the only arm
+with **zero swept losses**; doses 100 and 400 each introduce a map they lose from
+both sides. The accept gate's third clause — "no unresolved one-directional
+regression" — is therefore satisfied *only* by dose 25, independently of which arm
+happened to score highest. And per the selection rule I committed before the data
+landed, the smallest effective dose is also the right choice under a flat curve, so
+every rule I had pre-registered points at 25.
+
+**Effect size, stated honestly.** 75% is the maximum of three arms and is biased
+upward as an estimate of dose 25's true value. The defensible claim is: *iteration
+12 is worth roughly 60-75% against `alice_iter7`, with the low dose better than the
+high ones, and the mechanism verified on two maps.*
+
+### Why the high doses are worse — the predicted reason, confirmed
+
+I registered this before the sweep: `WANDER_RUN` is the wander policy for **every**
+unit that falls through to `wander`, moppers and splashers included, so an
+over-long commitment should send a mopper with no enemy paint in vision out of the
+contested area for hundreds of rounds. The curve turning down between 25 and 100,
+and staying down at 400 rather than falling further, is the shape that predicts —
+the cost saturates once the commitment already exceeds the map.
+
+### Gates, all cleared
+- **Primary accept** — H2H vs last accepted snapshot > 50%: **75%**, p = 0.021.
+- **Mechanism gate** — tower count at r400 rises: verified twice, gridworld
+  **15 v 4** and boxofchocolates **8 v 5**. This is the gate iteration 9 failed
+  (10 v 11), so the family had already shown it can fail it.
+- **No one-directional regression**: zero swept losses in the accepted arm.
+- **Map-area check** (pre-registered, could have falsified the mechanism): swept
+  maps average 81% more area than split maps; the three smallest maps are all
+  splits, the two largest both swept.
+
+### Lineage
+`iter0 → iter1 → iter2 → iter4 → iter5 → iter7 → **iter12**`.
+`src/alice` == `src/alice_iter12`, byte-identical to the measured `alice_i12a`
+apart from the package line (verified by diff, not by assertion).
+
+**This is the first iteration in this lineage accepted on a target found by an
+external instrument.** Every previous one was chosen by looking at alice's own
+games. It is also the largest single mechanical change the lineage has made, and
+it is one constant.
