@@ -2,3 +2,4 @@
 247fa61|Mirror instrument built (alice_mirror) for play-symmetry audit
 dd003f2|Tournament adopted as primary loss source (external instrument)
 af856f8|alice_flood archetype added to the roster (spender pole, breaks lineage-only pool)
+0e1f2a3|Iteration 22: engine-predicate audit (javap) added to the pre-check routine

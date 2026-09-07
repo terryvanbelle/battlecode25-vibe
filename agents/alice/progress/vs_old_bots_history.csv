@@ -19,3 +19,9 @@ date,current_snapshot,opponent,wins,total,win_pct,source
 2026-09-07T03:39:15+00:00,alice_iter14,alice_iter12,13,24,54.2,roster-run
 2026-09-07T03:39:15+00:00,alice_iter14,alice_iter4,22,24,91.7,roster-run
 2026-09-07T14:16:53+00:00,alice_iter14,alice_flood,15,24,62.5,roster-run
+2026-09-07T18:19:36+00:00,alice_iter19+cand,alice_flood,38,50,76.0,roster-run
+2026-09-07T18:19:36+00:00,alice_iter19+cand,alice_iter0,50,50,100.0,roster-run
+2026-09-07T18:19:36+00:00,alice_iter19+cand,alice_iter1,50,50,100.0,roster-run
+2026-09-07T18:19:36+00:00,alice_iter19+cand,alice_iter12,46,50,92.0,roster-run
+2026-09-07T18:19:36+00:00,alice_iter19+cand,alice_iter4,49,50,98.0,roster-run
+2026-09-07T18:19:36+00:00,alice_iter19+cand,alice_iter7,37,50,74.0,roster-run

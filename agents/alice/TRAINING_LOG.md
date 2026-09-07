@@ -6283,3 +6283,112 @@ is queued rather than done — I have a candidate awaiting its gate and this is 
 on its path. Recorded now with the mechanism explicitly open, because "the PRNG
 seed decides my games" is exactly the sort of striking claim I would otherwise be
 tempted to write down before testing it.
+
+### Narrowing the mirror's mechanism — turn order is NOT team-blocked
+
+One cheap check while the run finished, on a replay I already had: within a single
+round, do all of one team's robots act before the other's?
+
+```
+round 600, first 20 turns by team:  T2 T1 T2 T1 T2 T1 T2 T1x3 T2x2 T1x2 T2x6
+```
+
+**Interleaved.** There is no "team A acts first" block, so the structural
+first-mover story for the mirror's total per-map side advantage is weakened —
+which is what the 13-map/12-map split already suggested. Turn order within a round
+runs by robot ID, and the spawn IDs in the dumps (T1 12121/12177/11565 against T2
+12296/13193/10210/10646) come from **one shared pool, interleaved between teams**,
+not from per-team blocks.
+
+That leaves both surviving candidates tracing back to the same root: **which IDs
+a team happens to draw**. It sets my PRNG seeds (`rc.getID() * 31 + 17`) *and* the
+order units act in, and it is fixed per map and side. Consistent with the
+observation and with the near-even 26–24 aggregate.
+
+**Still not settled** — this rules out one candidate and does not confirm another.
+The decisive test is an instrumented mirror with the PRNG seed held constant
+across teams; if the per-map side advantage survives that, IDs are not the cause.
+Queued with the rest.
+
+# ITERATION 22 — ACCEPTED
+
+Run `20260907-181936` complete: **328/400 (82.0%)**, 25 maps, both sides, 8 opponents.
+Uncertainty by map resampling (20k bootstrap); null = 1 win per map = 25/50.
+
+| opponent | role | score | se | 95% CI | vs null | swept W/L |
+|---|---|---|---|---|---|---|
+| **`alice_iter19`** | **accept gate** | **33/50 (66%)** | 2.72 | [28, 38] | **+2.94 sd** | **9 / 1** |
+| `alice_i22a` | identity check | 25/50 (50%) | **0.00** | [25, 25] | — | 0 / 0 |
+| `alice_flood` | peer (spender archetype) | 38/50 (76%) | 2.87 | [32, 43] | +4.53 sd | 14 / 1 |
+| `alice_iter7` | peer | 37/50 (74%) | 2.86 | [31, 42] | +4.20 sd | 13 / 1 |
+| `alice_iter12` | roster | 46/50 (92%) | 1.83 | [42, 49] | +11.5 sd | 21 / 0 |
+| `alice_iter4` | roster | 49/50 (98%) | 0.98 | [47, 50] | +24.5 sd | 24 / 0 |
+| `alice_iter1` | roster | 50/50 (100%) | 0.00 | [50, 50] | — | 25 / 0 |
+| `alice_iter0` | roster | 50/50 (100%) | 0.00 | [50, 50] | — | 25 / 0 |
+
+*(The three `se = 0.00` rows have an undefined sd, not a zero one — my ad-hoc
+script printed `+0.00` for them and that is a display artifact, not a result. The
+honest statement for `iter1`/`iter0` is "50/50, every map swept, deterministic".)*
+
+### Every gate, checked explicitly
+
+1. **Head-to-head > 50%** — 33/50 = 66%, **+2.94 sd**, lower CI bound 28 > 25.
+   Replicates the 2x2's 19/24 on a disjoint 25-map sample; **pooled 52/74 (70.3%)**.
+2. **Peer `WinPct` >= 60%** — the three peers are 66% / 76% / 74%. All clear.
+3. **Identity check** — 25/50, per-map histogram `{1: 25}`, **se 0.00**. The build
+   being accepted is behaviourally identical to the one the 2x2 measured.
+4. **No unresolved one-directional regression** — three swept losses in the whole
+   run, on **three different maps** (`Racetrack` 16.0 ruins/1000, `yearofthesnake`
+   7.9, `Parking_lot` 11.4), against three different opponents, and **no map is
+   swept-lost against more than one opponent**. That is the scattered,
+   mixed-direction shape doctrine #7 calls churn, not the concentrated shape it
+   calls a causal regression.
+5. **Frozen roster (§5b) — the only instrument that can see a lineage drifting
+   downhill.** It had not been run since `alice_iter14`. Every point rose:
+
+| frozen opponent | `alice_iter14` (this morning) | **iteration 22** | delta |
+|---|---|---|---|
+| `alice_iter12` | 54.2% | **92.0%** | **+37.8** |
+| `alice_iter7` | 58.3% | **74.0%** | +15.7 |
+| `alice_flood` | 62.5% | **76.0%** | +13.5 |
+| `alice_iter4` | 91.7% | **98.0%** | +6.3 |
+| `alice_iter1` / `alice_iter0` | 100% | 100% | at ceiling |
+
+**No destructive pair is hiding.** This is the check §5b exists for — a chain of
+individually-positive accepts walking downhill — and the answer is unambiguous.
+
+6. **Bytecode / exceptions** — 0 exceptions in 400 games; soldier peak 2,713 of
+   17,500 (84.5% headroom), no `OVR=` or `near=` on any indicator string.
+
+### What was accepted, in one line
+
+The `!here.getPaint().isAlly()` guard on the paint-the-tile-underfoot branch is a
+**proxy** for the engine's real predicate, and on a map that saturates to 97.7%
+the two diverge completely: the branch spent 5 paint per turn on attacks the
+engine refuses outright (`addPaint(-attackCost)` at offset 58, enemy-paint bail-out
+at 207). Deleting it cut starvation deaths roughly fourfold and raised coverage.
+
+### Opponent-pool classification after this run
+
+- **Peers** (30–90%, gate acceptance): `alice_iter22` (the new baseline),
+  `alice_flood` (76%), `alice_iter7` (74%).
+- **Roster** (never retired by design, absolute-progress instrument only):
+  `alice_iter0`, `iter1`, `iter4`, `iter12`, `alice_flood`.
+- `alice_iter12` at 92% is above the peer band and would normally retire, but it
+  is a roster member and roster members are never retired — the value is the
+  long-run trend of its line, not its current resolution.
+
+### Post-accept routine (all in this commit)
+
+- Snapshot `src/alice_iter22/`, compile-verified by a real match.
+- `progress/vs_old_bots_history.csv` +6 rows, charts regenerated
+  (`cumulative_iterations.png` now reads 10 accepted iterations, iter0..iter22).
+- Roster rows are labelled **`alice_iter19+cand`**, not `alice_iter22`, because
+  that is the build that actually played — it was a candidate when the run
+  started. Keeping the tool's honest label rather than back-dating it.
+- Replay archived: `replays/iter22_alice_iter19_Money_A.bc25` — the match carrying
+  the coverage curves and the fourfold starvation drop.
+
+**Next: iteration 23**, built, mechanism-verified, sized on two maps, and
+pre-registered (including a ruin-density split and a written admission that I have
+not found its price). Its baseline is now `alice_iter22`.

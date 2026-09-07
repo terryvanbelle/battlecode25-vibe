@@ -5927,3 +5927,99 @@ price     a soldier at exactly 0 paint cannot move, so it lingers ~13 rounds dyi
 
 **Accept gate**: head-to-head vs `bob_iter12`, fresh 25-map sample, both sides, read
 against the mirror null with intervals from `tools/map-resample.py`.
+
+---
+
+## Coordinator status query (2026-09-07 19:40) — 16 hours, 0 accepts. Answered directly.
+
+### 1. Consecutive rejects and `MaxConsecutiveRejects`
+
+Five attempts since `bob_iter12`, and the areas do rotate:
+
+```
+it  area                        outcome   cost            margin vs the mirror null (25/50)
+13  soldier movement (SRP)      REJECT    full gauntlet   -35 games
+14  tower type adaptivity       VOID      0 games         premise refuted by tournament report on disk
+15  soldier movement (bug nav)  REJECT    250 games       -1, -4, -4 across two independent draws
+16  spawn policy (denial mix)   REJECT    250 games       -13 and -33 games
+17  tower construction (siting) VOID      3 games         exactly 0 -- byte-identical, never executed
+18  tower construction (floor)  in flight
+```
+
+`MaxConsecutiveRejects = 3` has **not** fired on any single area: the longest run in one
+area is two (13 and 15, both soldier movement), and I recorded the rule at the time and
+left the area deliberately. Movement -> spawn policy -> tower construction.
+
+**Closed directions, with what killed each:**
+
+```
+paint refill by walking units home     it8   chip/paint economics; re-open trigger
+                                             "chips sustained below ~5,000" -- re-checked
+                                             today against 7 fresh traces, chips run
+                                             4.4k-61k in every game, trigger NOT met
+bug navigation / wall-following        it15  two arms, two map draws, 150 games, -1/-4/-4
+soldier movement as spare capacity     it13  -35 games; movement is scarce, not spare
+lowering SPLASH_MIN_VALUE              probe arithmetic: 10-12.5 paint/tile against a
+                                             soldier's 5; and it16 then measured the
+                                             splasher slot at +13 games, confirming the
+                                             threshold was never the problem
+deleting the denial slots              it16  -33 games against a denier, -46 on the lineage
+```
+
+Iteration 17 is **void, not closed** — it produced no evidence about anchoring, only
+about my own reachability check. Re-opening it requires ruin *memory* first, since the
+choice set is a singleton without it.
+
+### 2. The frozen roster was 15 hours stale. Re-launched.
+
+Fair, and it is the instrument I have the least excuse to neglect, having been the one to
+show a lineage can walk downhill with every local comparison looking fine. Launched
+`OPPONENTS="bob_iter0 bob_iter1 bob_iter11 examplefuncsplayer"` against the current build.
+It runs alongside iteration 18's dose gauntlet; the shared semaphore splits my share
+rather than the machine's, so this costs me wall-clock and nobody else anything.
+
+Note the run will be labelled `bob_iter12`, **not** `+cand`: `src/bob` is byte-identical
+to `bob_iter12` on all seven files, so this is a clean re-measurement of the accepted
+build rather than a pre-accept candidate point. It is directly comparable to the
+04:33 row (`bob_iter12` vs `bob_iter11`, 28/50 = 56.0%).
+
+### 3. Is the gate mis-calibrated? No, and the numbers say so plainly.
+
+This is the question I most wanted to be true, and it is not. If a strict gate were
+rejecting real gains, my rejections would cluster just under the bar — candidates at
+51-55% that a demanding threshold turned away. Here is where they actually landed,
+measured in games against a mirror null of exactly 25/50 with zero swept maps:
+
+```
+iteration 13   -35 games
+iteration 15   -1, -4, -4     (three arms, two independent map draws)
+iteration 16   -13, -33       (two arms)  and -46, -36 on the second run
+iteration 17    0             (byte-identical to the zero arm at every dose)
+```
+
+**Not one candidate has landed in the band where the gate's strictness could matter.**
+The nearest was iteration 15 at −4, which is below the null, not marginally above it.
+So the dry spell is not a stuck gate and not an unnoticed regression at the accept
+boundary — **the ideas have been wrong**, and the instrument has been telling me so
+clearly and cheaply.
+
+I will say the uncomfortable half too: at 92.3% in the tournament, the improvements still
+available are small, and my last three *hypotheses* were all built on premises the data
+then refuted — a broad denial weakness (one swept loss in 450 games), enemy paint blocking
+patterns (2% of ruin-turns), soldiers scattered across ruins (they already cluster). The
+pattern is not a gate problem; it is that I have been forming hypotheses from plausible
+mechanism stories and only then checking them against evidence already on disk.
+
+### The lever the coordinator named, and what I am changing because of it
+
+Cheap rejections cost me ~0 and were three of the last five: the History pre-check killing
+the refill fix, iteration 17 voided by an identity check for three games, and the shared
+dumper retracting my own "27 living units". The expensive ones were iterations 15 and 16,
+at 250 games each.
+
+**Change to my loop, recorded as a process change:** before any gauntlet, run the
+identity/reachability check that voided iteration 17 — build the arms, play *one map*, and
+diff the counters. If the arms are byte-identical the mechanism is dead and the gauntlet is
+wasted. That check cost three games and would have caught a 100-game run; it is now
+mandatory rather than lucky. Iteration 18's zero arm (`bob_f15`) is built to be
+byte-identical to `bob_iter12` precisely so this check runs inside the evaluation itself.
