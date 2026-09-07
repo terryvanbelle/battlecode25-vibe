@@ -2593,3 +2593,64 @@ close to an externally-validated target as this project can produce.
 `Brat` side B is therefore the pinned regression case for iteration 11: pin the map
 with `MAPS` and check whether the paint-fraction dose makes us build paint towers
 there at all.
+
+### Iteration 11's premise refuted before it was built, for zero games
+
+I had queued iteration 11 as a dose on the paint/money split, reasoning that a fixed
+50/50 `towerTypeFor` was spending half of all ruins on the resource we cannot spend.
+Before writing it I remembered `bob-tools/BobRuins.java` already answers this exactly:
+tower type is a **pure function of the ruin's coordinates**, so the split every map
+produces is computable from the map files with no games at all.
+
+```
+across all 75 maps      mean money fraction  50.9%   (min 27% Rose, max 75% Paintball)
+my loss maps            mean money fraction  53.9%
+my win maps             mean money fraction  57.3%
+```
+
+**No separation, and the sign is backwards** — the maps I win are slightly *more*
+money-heavy. The hash is behaving exactly as designed: near-50% on average with no
+lattice pathology. And the single most damning point: **Rose is the most paint-friendly
+map in the entire pool at 27% money — 19 paint ruins out of 26 — and Rose side B is
+the game where we built zero towers of either type.**
+
+**CLOSED: "we lose because too many ruins become money towers."** Killed by a
+measurement over the whole map pool that cost no games and about a minute, on a tool
+I had already written for a different question two iterations earlier.
+
+That is the third time this session the achievable-dose / reachability pre-check has
+killed a plausible headline before it cost a gauntlet (the others: `SRP_MIN_CHIPS`,
+and iteration 8's re-open). The pattern is now unmistakable enough to be a habit
+rather than a discipline: **the cheap measurement that could refute the hypothesis
+comes before the expensive one that could confirm it.**
+
+### Re-targeting: tower COUNT, not tower type — and the bot has no memory
+
+The losses do not differ from the wins in what they build ruins *into*. They differ in
+how many ruins they build at all: 0-3 towers in losses against 10-14 in wins. So the
+question is why expansion stalls, and the source answers it directly.
+
+`chooseRuin()` picks a target from `rc.senseNearbyRuins(-1)` — **only ruins inside the
+soldier's current vision, r² = 20.** There is no memory of a ruin walked past, and no
+sharing between soldiers. A soldier that cannot presently see an unoccupied ruin has
+no expansion target at all and falls through to wandering.
+
+The frequency is already measured, from the iteration-9 probe, no new games needed:
+
+```
+              soldier-turns with a ruin target   without one
+Castle              233  (21%)                    862  (79%)
+quack             1,161  (11%)                  9,250  (89%)
+```
+
+**Soldiers spend 79-89% of their turns with no expansion target.** On a 26-ruin map
+like Rose that is not a shortage of ruins; it is a shortage of *knowing where they
+are*. This is the Phase 0 item-2 failure shape — a capability assumed absent because
+the obvious call (`senseNearbyRuins`) was treated as the whole interface — and the
+engine also exposes a messaging layer (`r² = 20` unit-to-unit, `r² = 80` tower relay)
+that this bot has never once used.
+
+**Iteration 11 (re-targeted), to be pre-registered properly once iteration 10 resolves:**
+give each soldier a memory of unoccupied ruin locations it has seen, and navigate to
+the nearest remembered one when none is visible. Purely local memory, one mechanism,
+no comms yet — comms is the larger follow-on if memory alone proves the direction.
