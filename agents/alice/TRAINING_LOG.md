@@ -2645,3 +2645,79 @@ requires, the economy area having produced iterations 10 and 11 back to back.
 **Both economy iterations (10 and 11) are now closed**, and the area is left. The
 loop moves to navigation, where iteration 12 already has a mechanistic result that
 dwarfs anything the economy area produced.
+
+---
+
+# CURRENT STATE v3 (supersedes v2)
+
+**Accepted lineage**: `iter0 → iter1 → iter2 → iter4 → iter5 → iter7` (current).
+`src/alice` == `src/alice_iter7`. Gaps at 3, 6, 8, 9, 10, 11 are all rejected.
+
+## The one thing that matters right now
+
+The first full round-robin (`tournaments/20260907-0100`) says **bob beats alice
+143-7 (4.7%)**, while **alice beats carol 27-10 (73%)**. Alice is not a weak bot;
+it is missing exactly one capability that bob has and that alice and carol both
+lack: **directed expansion**.
+
+Traced to one line. `runSoldier` targets a ruin only within vision (r²=20) and
+otherwise calls `wander`, a random walk holding a heading `5 + rnd(8)` steps.
+Random-walk displacement grows as √T, so soldiers never *arrive* at distant ruins;
+chips then pile up ($3,240 unspent on gridworld) because chips buy towers and
+towers need a soldier standing on a ruin. Bob reaches 14 towers by r160 on a
+25-ruin map running its treasury at $10; alice reaches 5.
+
+**Iteration 12** changes exactly one constant, `WANDER_RUN`. Mechanistic
+verification on gridworld, `alice_i12b` vs `alice_iter7`: **15 towers / 620‰ at
+r400 against 4 towers / 233‰**. That reproduces bob's own profile.
+
+## IN FLIGHT — run `20260907-013038`, 60 games, resume here
+
+`BOT=alice_iter7 OPPONENTS="alice_i12a alice_i12b alice_i12c" NMAPS=10 MAXJOBS=2`
+
+Doses: `alice_i12a`=25, `alice_i12b`=100, `alice_i12c`=400; zero arm =
+`alice_iter7` (`5 + rnd(8)`, mean 8.5). Rows read `LOSS` from **alice_iter7's**
+perspective, so a `LOSS` row is a **win for the candidate**.
+
+- **Interim: 4/4 for `alice_i12a`**, including both sides of Circuit and both
+  sides of quack — two swept maps, immune to spawn advantage.
+- The run is slow (~1 game/10 min) because the 450-game tournament plus a sibling
+  gauntlet hold the rest of `GLOBAL_CAP`. That is the semaphore working.
+- It is `setsid`-detached: it completes whether or not anyone watches. If this
+  session died, **do not re-run it** — recover with
+  `../../tools/gauntlet-collect.sh 20260907-013038`.
+
+**Pre-registered gates** (do not move them after seeing data):
+- accept: H2H vs `alice_iter7` **> 50%**, mechanism gate passed, no
+  one-directional regression;
+- mechanism gate: **tower count at r400 must rise** vs `alice_iter7` — the exact
+  gate iteration 9 failed (10 vs 11), so this family has already proved it can
+  fail it.
+
+**On accept**: snapshot the winning dose to `src/alice_iter12` AND copy it into
+`src/alice` (HEAD is what plays in the tournament — that is the whole point of
+this iteration), archive a replay, redraw both charts, extend
+`progress/vs_old_bots_history.csv`, commit atomically.
+
+## Next targets, in order
+
+1. **Iteration 13 — the coverage plateau.** Reachability check already RUN and
+   passed: paint actions collapse 95% between r400 and r600 and stay near zero for
+   1,400 rounds with 23-27 soldiers alive (~34k idle soldier-turns/game). Cause is
+   structural: soldiers cannot overwrite enemy paint, and the map saturates
+   (640‰ + 317‰ = 957‰ on a ~4% wall map). Taking enemy paint needs moppers or
+   splashers. Secondary to iteration 12 because against bob the games end by r400.
+2. **PlumberGame** — a genuine **swept** loss to carol (both sides, r772/r723),
+   not a 2000-round tiebreak. The only such map. Worth one trace.
+
+## Instrument warnings (carried forward, still all true)
+- Deaths are `DieAction` inside a Turn, not `Round.diedIds`.
+- `+sold/+mop/+spl/died/xfer/starved` are **per-window**; read every window.
+- `setIndicatorString` is unusable for probes — `run()`'s `finally` overwrites it.
+- `p` (PaintAction) may not count soldier tile-painting; **trust `cov`**, which is
+  the engine's own figure, and win/loss. Every accepted conclusion rests on those.
+- A gauntlet's `bot.txt` labels the build that actually played. `+cand` means
+  "after iterN, not yet accepted".
+- Every run launch prints `pgrep: no matching criteria specified` from the slot
+  code. Cosmetic so far, but it is in the concurrency path — reported, not
+  worked around.
