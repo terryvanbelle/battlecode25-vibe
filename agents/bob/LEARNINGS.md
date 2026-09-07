@@ -401,3 +401,55 @@ Both halves were wrong, in different ways:
    were *fewer* than `25p²` predicts (5 and 0 against 7.8 and 2.8), so the two sides of
    a map are anti-correlated — maps have side-specific character. The metric was not
    useless; comparing it to the wrong baseline was.
+
+## 15. An accept gate against your predecessor is blind to interactions with what the predecessor already carries (2026-09-07)
+
+This is a property of the **method**, not of this bot, and it applies to any lineage
+that gates accepts on a head-to-head against its most recent snapshot.
+
+Measured, on 25 pinned maps against a frozen opponent:
+
+```
+                        no SRP     with SRP
+tower-type hash          76%         56%
+parity tower rule        (—)         82%
+```
+
+Neither feature is bad alone. The hash without SRPs is 76%; SRPs without the hash are
+82% — the best build the lineage ever produced. **Together they are 56%.** An SRP
+returns `+3 paint/turn per allied paint tower`, so its payoff is *multiplicative* in
+the tower mix, while the hash raised the variance of that mix. Variance that is
+survivable when income is linear becomes punishing when it is multiplicative.
+
+**Why the gate could not possibly have caught it.** Iteration 9 (SRPs) was evaluated
+head-to-head against `bob_iter7`, and `bob_iter7` **already carried the hash**. So the
+hash was present in *both arms* of the comparison. A head-to-head can only see effects
+that differ between the arms; anything the two builds share cancels out by
+construction. The gate reported 62.5% and was not wrong — the SRPs really are worth
++62.5% *given the hash*. It simply cannot express "and this pair is worth −20 against
+everything else".
+
+**The general rules:**
+
+1. **`accept(candidate vs predecessor)` measures the candidate's marginal value
+   conditional on every feature the predecessor already has.** It is a partial
+   derivative, not a level. A chain of positive partial derivatives can walk downhill
+   in absolute terms, and in this lineage it did — six accepts, every one winning its
+   gate, and the bot ended 29 points worse against a frozen opponent.
+2. **Only an instrument that does not move can see the level.** The frozen roster is
+   not a nice-to-have chart; it is the only thing in a self-referential loop that can
+   detect this failure at all. Run it *often*, not every five accepts.
+3. **When the roster shows a drop, ablate features PAIRWISE, not one at a time.**
+   Single-feature ablation would have exonerated both the hash (fine alone) and the
+   SRPs (excellent alone) and found nothing. The interaction only appears when you gate
+   one off *in the presence of* the other — which is exactly what `bob_abl7`
+   (iteration 9 minus the hash) did.
+4. **Suspect interaction whenever a new mechanism's payoff is multiplicative in some
+   existing quantity.** "+X per existing thing Y" is the signature: it converts
+   whatever controls Y's distribution from a linear concern into a variance concern,
+   and features that were harmless under linearity become harmful.
+5. **A marginal accept is where this enters.** Iteration 7 went in at 52.5% with its
+   own audit recording −0.59 points across the map pool. It sat harmlessly for two
+   iterations and then cost 20 points the moment a multiplicative mechanism arrived.
+   A coin-flip accept is not "free to keep" — it is an unpriced liability against every
+   future feature.
