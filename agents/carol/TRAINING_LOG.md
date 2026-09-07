@@ -4459,3 +4459,52 @@ mechanics rather than convenience wrappers:
   may well be near never, and that measurement comes first.
 - `disintegrate`, `resign`, `setIndicatorDot/Line`, `setTimelineMarker` — no strategic value
   or debug-only.
+
+## Candidate killed on reachability: "soldiers should focus-fire the weakest enemy tower"
+
+The API sweep flagged that `runSoldier` attacks the **first** tower in `senseNearbyRobots`
+scan order while `runTower` correctly targets lowest health — both a focus-fire miss and, on
+its face, the fixed-sensing-scan-order bug class Phase 0 item 7 warns about.
+
+Probe build `carol_probe` counts soldier turns with exactly one (`t1`) and with two or more
+(`t2`) *attackable* enemy towers. On **defensetower**, the most tower-dense map in the pool:
+
+```
+17,939 soldier samples      max t1 = 6 per robot (239 summed)      max t2 = 0
+```
+
+**Two enemy towers are never simultaneously attackable by one soldier.** The soldier action
+radius is r²=9 and towers do not cluster that tightly. With at most one candidate the choice
+never arises, so "target the weakest" is a no-op and scan order cannot bias anything either —
+the play-symmetry concern is moot for this loop specifically. **CLOSED**, cost: two matches.
+
+**And a self-correction inside the same measurement.** My first probe map, DefaultSmall,
+returned `t1 = 0` as well as `t2 = 0`, and I briefly read that as "carol's soldiers never
+attack enemy towers at all" — a much bigger claim. Checking `hitT` across the eight
+*complete* games I already had on disk refuted it immediately:
+
+```
+Bunny 542   DefaultMedium 380   PlumberGame 176   gridworld 146   Castle 131
+walalilongla 109   Parking_lot 11   DefaultLarge 6
+```
+
+Soldiers attack towers on every map sampled; DefaultSmall was a 362-round annihilation that
+ended before contact. That is the same one-map/one-slice bias that misled iteration 14's gate
+read, caught this time within minutes because I now check any surprising counter against
+complete games on several maps before believing it. The habit is starting to pay compound
+interest.
+
+### Pre-registered prediction for iteration 15 (recorded BEFORE the run landed)
+
+If visit memory works by the mechanism I claim — replacing a random exploration target with
+the nearest never-visited cell — its benefit should concentrate on the maps where iteration
+14's visible-frontier check comes up empty most often and idle turns are most numerous:
+
+| map | i14 frontier hit-rate | IDLE-ALLY turns |
+|---|---|---|
+| **Castle** | **4.0%** | **18,040** |
+| Parking_lot | 76.9% | 5,459 |
+
+So **Castle should flip toward i15 and Parking_lot should not**. If instead the gains land on
+the high-hit-rate maps, the mechanism I have described is not the mechanism doing the work,
+and I should not accept it on the headline number.
