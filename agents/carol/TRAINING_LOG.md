@@ -4395,3 +4395,67 @@ frequency counters diagnose and never decide):
 
 Runs in flight: `20260907-133422` (candidate, 80 games), `20260907-133516` (the i14 null, 40
 games), `20260907-131258` (i14 frozen-roster check, 240 games).
+
+## Iteration 16 (free tower AoE) — VOID on the reachability pre-check, cost: one match
+
+**Found by the Phase 0 periodic API sweep**, not by a losing game. Diffing
+`RobotController`'s 68 public methods against `src/carol`'s call sites leaves 33 uncalled;
+reading `runTower()` against RULES.md's engine probe turned up what looked like free damage
+being declined by our own code:
+
+```java
+if (enemies.length > 0 && rc.isActionReady()) rc.attack(null); // AoE
+```
+
+RULES.md item 1, from a direct read of `assertCanAttackTower`, says in terms: tower attacks
+check only the per-turn `hasTowerSingleAttacked`/`hasTowerAreaAttacked` flags, never
+`assertIsActionReady`, `towerAttack` adds no action cooldown, and **"Never gate tower attacks
+on `isActionReady()`."** Spawning a robot costs +10 action cooldown [E: RULES 108], so the
+guard looked like it was suppressing the free area attack on exactly the turns a tower was
+doing its main job.
+
+**Mechanism verification, one match on DefaultMedium: `aoeFreed = 0` across 15,621 tower
+indicator samples.** The branch never fires.
+
+**Why — and it is the pre-check TRAINING_ALGORITHM §3 tells me to run and I nearly skipped.**
+"Read the *guard you are nesting inside*." `runTower()` attacks **before** it spawns. Robot
+cooldowns tick down 10/turn and a robot acts when cooldown < 10 [E: RULES 66], so a spawn's
++10 has fully recovered by the tower's next turn — and the attack runs first anyway. There is
+no turn on which a tower has an enemy in sight and a non-ready action. The guard is dead, and
+my reasoning about the engine was correct while my reasoning about the *code* was not.
+
+**DECISION: VOID.** No gauntlet run; nothing to accept or reject. The guard stays as-is: it is
+inert, and removing dead code is not an iteration.
+
+**What is worth carrying forward.** The guard is a *latent* trap rather than a live bug — it
+becomes a real loss of free damage the moment anyone reorders spawning ahead of attacking in
+`runTower()`. Noted here so a future iteration that touches tower turn order knows to delete
+it in the same change rather than discovering it as a regression.
+
+**Cost accounting for the process.** A correct engine fact plus a correct reading of one line
+still produced a dead hypothesis, and the reachability pre-check killed it in ~2 minutes for
+the price of a single match rather than a 40-minute gauntlet and a rejected iteration. Third
+time this session that a cheap pre-check paid for itself (iteration 15a's write/read
+correlation, iteration 15b's mechanism count, this).
+
+### API sweep result (Phase 0 item 2, periodic)
+
+33 of 68 `RobotController` methods are still uncalled. The ones that represent real unused
+mechanics rather than convenience wrappers:
+
+- **`sendMessage` / `readMessages` / `broadcastMessage` / `canSendMessage` /
+  `canBroadcastMessage`** — comms, entirely unused. Towers broadcast at r²=80; this is the
+  only mechanism that could put the frontier into a robot's knowledge when it is outside
+  vision *and* outside that robot's own history. Deferred behind iteration 15, which attacks
+  the same problem far more cheaply.
+- **`markResourcePattern` / `completeResourcePattern` / `canMarkResourcePattern` /
+  `canCompleteResourcePattern` / `getResourcePattern`** — SRPs, closed by iteration 13 and
+  re-openable only with a persistence mechanism.
+- **`senseRobotAtLocation` / `senseRobot` / `getHealth`** — carol's *soldier* tower-attack
+  takes the **first** tower in `senseNearbyRobots` scan order (line 216) while its *tower*
+  logic correctly targets lowest health (line 146). A fixed sensing scan order is exactly
+  the play-symmetry bug class Phase 0 item 7 flags. Queued as a candidate, pending a
+  reachability count of how often two enemy towers are attackable at once — which on r²=9
+  may well be near never, and that measurement comes first.
+- `disintegrate`, `resign`, `setIndicatorDot/Line`, `setTimelineMarker` — no strategic value
+  or debug-only.
