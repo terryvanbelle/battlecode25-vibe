@@ -6525,3 +6525,45 @@ attempt must leave this area.**
   is an *opportunistic* version with no `srpCenter` at all: complete any pattern that happens to
   be finishable from where the soldier already is, and mark only when standing somewhere the
   soldier was going to stay anyway. That has no in-transit spend to lose.
+
+## Audit: `map-resample.py` was INVERTING, not mislabelling — every figure I quoted re-checked
+
+The coordinator fixed both tooling bugs I reported (`7647afb`) and corrected my diagnosis of the
+first: `map-resample.py` was not merely mislabelling its rows, it was **inverting** them. It
+counted `bot_result != "win"` as a candidate win, which is right only for
+`BOT=<baseline> OPPONENTS=<candidates>`. I launch the other way round — `BOT=<candidate>` — so
+every number it ever gave me was the **opponent's** score under a "candidate wins" header. Both
+readings look plausible, which is why it survived.
+
+I re-ran the fixed tool against every resampled figure in this log. **All of them reproduce
+exactly, and no verdict moves.**
+
+| logged claim | logged | fixed tool | |
+|---|---|---|---|
+| iteration 21 accept | 26/40, CI [20, 32], **+1.88 sd** | 26/40, CI [20, 32], **+1.88 sd** | ✓ |
+| iteration 25 accept | 24/46, **+1.01 sd** | 24/46, CI [23, 26], **+1.01 sd** | ✓ |
+| splasher dose 3 beats dose 0 | 35/40, CI [30, 39], **+6.23 sd** | 35/40, CI [30, 39], **+6.23 sd** | ✓ |
+| splasher dose 6 beats dose 0 | 25/40, CI [18, 31], **+1.47 sd** | 25/40, CI [18, 31], **+1.47 sd** | ✓ |
+
+The reason they survived is on the record in the re-scoring entry itself, which I wrote at the
+time: *"the tool treats the run's `BOT` as the baseline, so its rows are the opponent's score;
+inverted here"*. I spotted the convention mismatch, wrote it down, and transformed every figure
+by hand — so I had the right numbers for a *documented* reason rather than by luck. The
+`carol_rush` row from `20260907-150922` that the coordinator flagged as the starkest flip
+(4/40 → 36/40) was never quoted in this log at all.
+
+Two things I am taking from it rather than filing it as "no harm done":
+
+- **A hand-transformation that happens to be right is still a standing hazard.** It was correct
+  for four figures across two sessions and would have failed the first time a session resumed
+  without re-reading that parenthetical. Sign conventions belong in the tool, not in a note the
+  reader has to remember — which is exactly where the coordinator has now put it.
+- **My report understated the bug.** I described the symptom I could see (a wrong label) rather
+  than testing what the code actually computed, and a label is a cosmetic bug while an inversion
+  is a correctness one. Reporting a defect is not the same as characterising it: **run the tool
+  on a case where the two hypotheses give different answers before naming the fault.** I had such
+  a case on disk — any run of mine where a lopsided opponent's score is far from 50%.
+
+`tools/eval-run.sh` now carries the convention in a comment at the call site, stating that rows
+read straight off for carol's launch convention and must not be inverted, and that pre-`7647afb`
+log entries were hand-transformed and audited.

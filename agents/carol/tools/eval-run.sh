@@ -36,6 +36,12 @@ awk '$1=="RESULT"{n[$2]++; if($5==$4) w[$2]++}
 
 echo
 echo "--- map-resampled uncertainty (bootstrap + jackknife over maps, 95% CI) ---"
+# WHOSE SCORE: as of tools commit 7647afb this reports wins BY THE BOT THE RUN WAS
+# LAUNCHED AS, and names it in its own header. carol launches accept-gate runs as
+# BOT=<candidate> OPPONENTS=<baseline>, so these rows are the CANDIDATE's score and read
+# straight off -- do NOT invert them. Entries in TRAINING_LOG.md written before 7647afb
+# quote figures from the older, inverted script and were transformed by hand at the time;
+# they were audited against the fixed tool and all reproduce exactly.
 if [ -f "$D/results.csv" ]; then
   "$PY" "$WS/../../tools/map-resample.py" "$D" 2>&1 | sed 's/^/  /'
 else echo "  (no results.csv -- run gauntlet-collect.sh first)"; fi
