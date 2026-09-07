@@ -3619,3 +3619,42 @@ level ceiling and the chip cost, `carol_i12` therefore **ladders lv1 -> lv2 -> l
 as the treasury allows, with no extra code. That is the behaviour I want and it was luck as
 much as design — had `getBaseType()` returned the identity, the guard would have upgraded each
 tower exactly once and silently capped at lv2.
+
+### Iteration 12 pre-registration, written before iteration 11 reports — including the branch that would invalidate the candidate as built
+
+**Hypothesis.** Carol's towers sit at ~100% paint utilisation and ~0% chip utilisation
+(gridworld r2000: median tp=0 from round 400, 406,170 chips, tower count frozen at 13). A
+paint tower that upgrades itself converts the wasted resource into the binding one at **zero
+paint cost**, which no prior iteration has done: 5 (accepted) raised chips, 8 (rejected)
+raised paint towers but paid a 5x5 pattern in paint, 10 (rejected) raised soldier turns only.
+
+**The one change**: a lv1+ paint tower holding >= `UPGRADE_MIN_CHIPS` (3,700) calls
+`upgradeTower` on itself. Money and defense towers excluded.
+
+| | |
+|---|---|
+| primary gate | h2h vs the last accepted snapshot, 20 maps x both sides = 40 games; **accept at >50%** |
+| mechanism gate | `UPG` tag appears at all — `canUpgradeTower` may forbid a tower upgrading *itself*, in which case this is a silent no-op and the fix is to have soldiers do it (they are already within r²=2 while working a ruin) |
+| primary metric | team paint income; proxy = share of tower-turns with `tp` < 50, currently **33.6%** over 146,350 tower-turns |
+| counter-metric | chips must not be drained below the ruin-completion reserve: watch `rsv`/`stag` and the tower count, which iteration 6 showed can collapse 8 -> 3 when the treasury is over-spent |
+| stall metric | share of games reaching r2000 — currently 72% in-lineage, **50% cross-lineage against a 13% baseline** |
+
+**Registered prediction.** The `tp<50` rate falls and the r2000 rate falls. I am **not**
+predicting the h2h clears 50%, and I want that asymmetry on record: three iterations this
+session moved their mechanism metric hard and converted nothing, so "the metric will move" and
+"the scoreboard will move" are now separate claims for me and I have earned the right to only
+be confident about the first.
+
+**The branch that invalidates the candidate as built.** `src/carol_i12` was forked from **i7**,
+the currently accepted snapshot. So:
+
+- **If iteration 11 is REJECTED**, i7 remains the baseline, `carol_i12` is correct as it
+  stands, and it goes straight to evaluation.
+- **If iteration 11 is ACCEPTED**, the baseline becomes i11 (= i7 + splashers). Evaluating
+  `carol_i12` against it would then measure *two* changes at once — adding upgrades **and
+  removing splashers** — which is precisely the bundling error that made iteration 4
+  uninterpretable and cost this project four iterations. In that case `carol_i12` must be
+  **rebuilt from i11** before it is run, and the version currently committed must not be used.
+
+Writing this down now because the temptation, an hour from now with a candidate already
+compiled and a slot finally free, will be to just run the thing that exists.
