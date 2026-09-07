@@ -4048,3 +4048,91 @@ different functional area (map patterns, not tower economy). Its pre-check must 
 conditional reachability test this session invented — *how much ally-held, correctly-shaped
 ground exists among the turns that would actually attempt a pattern*, not how many chips or
 tiles exist in aggregate.
+
+## Mirror calibration — the null has NO variance, and it overturned my iteration 12 rejection
+
+Ran `carol_iter11` against `carol_m11`, a copy differing **only** in its package line (verified
+by diff). Run `20260907-030540`:
+
+```
+overall 20/40 (50.0%)   swept-win 0/20   swept-loss 0   split-by-side 20/20
+```
+
+**Identical code splits every single map, exactly 20/40, with zero sweeps.** So under this
+engine the null is *deterministic*: it has **no variance at all**. Every claim I made about a
+"binomial noise floor" on a 40-game h2h was therefore invalid at its root — there is no noise
+floor to be inside of. Later confirmed a second time on the i12 baseline
+(`20260907-034013`: 20/40, 0 sweeps, 20/20 split).
+
+**This makes the mirror an exact control**, and re-running iteration 12's numbers through it
+reverses the decision:
+
+| arm | matches null | deviations | -> wins | -> losses | margin |
+|---|---|---|---|---|---|
+| **iteration 12** | 35/40 | 5 | **5** | **0** | **+5 games** |
+| iteration 12b | 16/40 | 24 | 8 | 16 | **-8 games** |
+
+Iteration 12 deviates on exactly five games and **all five are wins**. I then verified each
+deviating game fired at least one upgrade: Fossil botB (1), Parking_lot botA (1), Bunny botB
+(1), Gears botB (1), walalilongla botB (3). Perfectly one-directional flips with a verified
+mechanism in each — doctrine #7's definition of a real causal effect.
+
+**So iteration 12 is ACCEPTED, reversing my earlier rejection.** Snapshotted `carol_iter12`.
+
+**Where my reasoning went wrong, precisely.** Two errors, and only one of them was the one I
+noticed at the time:
+
+1. **The noise argument was invalid.** I applied a binomial model to a deterministic system.
+2. **My pre-registered mechanism gate was mis-specified.** "UPG fires on a majority of maps"
+   tests **frequency**. The question that mattered was **causation** — did the firings that did
+   occur change outcomes? A rare mechanism can produce a large effect if each firing is
+   high-value, and a lv2 upgrade is a *permanent* +5 paint/turn, decisive in games settled on
+   area painted. Rejecting on a low firing count is the mirror image of accepting on a
+   favourable win rate: both substitute a proxy for the causal question.
+
+The diagnostic work behind the gate was still right and still worth doing — 3 firings in
+144,823 tower-turns is a real and important fact, and it is exactly why iteration 12b existed.
+What was wrong was the inference from it. **A guard against crediting a mechanism that never
+ran must not become a rule that a rare mechanism cannot have worked.**
+
+## Iteration 13 (SRPs) — mechanism confirmed, margin thin, roster run before deciding
+
+Placed the SRP work in the **IDLE-ALLY** branch: soldiers with an action ready, paint in hand,
+standing on ground already ours and nothing in reach worth painting. Gated on `ruin == null` so
+SRP marks never contend with tower-pattern marks for the same shared per-tile channel.
+
+**Conditional reachability read from live replays 18 games in** — the fix for exactly the
+mistake that cost iteration 12 its design:
+
+| map | soldier turns | IDLE-ALLY | `srpElig` among IDLE-ALLY turns | marks | paints | **SRPs completed** |
+|---|---|---|---|---|---|---|
+| DefaultMedium | 27,214 | 34.9% | **4.5%** | 13 | 139 | **9** |
+| Bunny | 15,419 | 46.2% | **8.8%** | 19 | 202 | **12** |
+
+**Mechanism gate: PASS emphatically** — 9-12 SRPs actually completed per game, against
+iteration 12's 3 firings in 144,823 tower-turns.
+
+**Result** (`20260907-032315`): **22/40 = 55.0%** vs `carol_iter12`; swept 3 win / 1 loss.
+
+**And I caught a control error in my own attribution.** My first pass read iteration 13 against
+the **i11** mirror, and Parking_lot, Gears and walalilongla appeared in *both* iteration 12's
+deviation list and iteration 13's — the tell that those deviations belonged to the upgrade
+already baked into the i12 baseline, not to SRPs. The null for an i12-baselined arm is **i12
+self-play**, so I built `carol_m12` fresh from `carol_iter12` and measured it. The two nulls
+**disagree on 6 of 40 games**, which is exactly why a mirror must be regenerated from the
+current build rather than reused.
+
+| null used | deviations | wins | losses | margin |
+|---|---|---|---|---|
+| i11 mirror (wrong) | 8 | 5 | 3 | +2 |
+| **i12 mirror (correct)** | **6** | **4** | **2** | **+2 games** |
+
+Same net, different games — the wrong null would have attributed SRP credit to maps the
+upgrade had already flipped.
+
+**Status: NOT YET DECIDED.** +2 games is real (no noise floor) and there is no one-directional
+regression, but the flips are **mixed** (4-2), which doctrine #7 calls churn rather than a
+causal effect, and 55% misses the 60% `WinPct`. Doctrine #9 is explicit that a thin accept
+margin gets the frozen roster run **before** the decision, not after — it once caught a bad
+accept by ten games. Roster run `20260907-035132` launched (240 games) and the decision waits
+on it.
