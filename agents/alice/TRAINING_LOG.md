@@ -4535,3 +4535,59 @@ null; mechanism gate = the fraction of ruin-targeted soldier turns spent on
 blocked ruins must **fall** (this is the metric iteration 19 left dead flat, and
 20 attacks it directly rather than through an equilibrium); falsifier = a flat
 dose curve closes the direction.
+
+## Iteration 21 — PRE-REGISTERED and built: the §5b PAIRWISE ablation, on the
+## pair today's measurements nominate
+
+**This is not a candidate. It is an audit**, run because the frozen roster —
+the only instrument that sees lineage drift — is showing thin and possibly
+falling margins against my own recent ancestors:
+
+| frozen opponent | `alice_iter14` win% |
+|---|---|
+| `alice_iter0` | 95.8% |
+| `alice_iter1` | 100% |
+| `alice_iter4` | 91.7% |
+| `alice_iter7` | **62.3% → 58.2%** (two runs) |
+| `alice_iter12` | **54.2%** |
+
+Saturated against distant ancestors, barely above even against recent ones, and
+the `iter7` line is pointing down. Two points on different map samples is not
+proof of drift, but §5b is explicit that a chain of individually-positive
+accepts can walk downhill and that only pairwise ablation can see it.
+
+### The nominated pair, and why this one
+
+**Iteration 1 (soldiers spend idle actions painting) × iteration 12/14 (wander
+became ballistic, `WANDER_RUN` 8.5 → 25).**
+
+Each is fine alone and they fight over the same 200-paint tank. Iteration 1 was
+accepted when soldiers barely travelled; iteration 12 then made them travel far,
+and iteration 1 paints the whole way. Today's census is the evidence: a soldier
+standing at a ruin holds a **median of 18 paint** against a 120-paint pattern.
+This is exactly §5b's shape — an interaction invisible to both accept gates,
+because each was measured against a baseline that already carried the other.
+
+**Stated as a caution, per §5b's own warning**: a heuristic *nominates* a pair,
+it is never evidence about one, and the sign of an interaction is not
+predictable from its shape. I am not predicting the outcome.
+
+| arm | iteration 1 idle painting | iteration 12 ballistic wander |
+|---|---|---|
+| zero (`alice_iter14`) | ON | ON (25) |
+| `alice_i21a` | **OFF** | ON (25) |
+| `alice_i21b` | ON | **OFF** (5 + rnd(8)) |
+| `alice_i21c` | **OFF** | **OFF** |
+
+Both features are gated rather than deleted, so each arm's diff against
+`alice_iter14` is exactly one switch. The 2×2 is the point: single-feature
+ablation would exonerate both halves of a destructive pair.
+
+**Reading rule, fixed in advance.** Let the four scores be Z, A, B, C. The
+interaction is `C − A − B + Z`. A large positive value means the two features
+are substitutes I am paying for twice; a large negative value means they are
+complements and the pair is doing real work together. **Only the interaction
+term is interpreted** — the main effects are ordinary ablations and are already
+covered by the accept gates that installed them.
+
+Queued behind iteration 19 and 20; this is an audit and does not block the loop.
