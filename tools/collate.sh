@@ -57,6 +57,18 @@ collate_run () {
       w=$(grep -c "^$OPP,.*,win$" "$OUT/results.csv" || true)
       awk -v o="$OPP" -v w="$w" -v t="$t" 'BEGIN{printf "  vs %-24s %d/%d (%.0f%%)\n", o, w, t, (t>0)?100*w/t:0}'
     done
+    # A partial opponent is NOT a random subsample. Opponents are the outer
+    # loop and maps play in a fixed shared order, so an opponent that has played
+    # fewer games has played a PREFIX of the map list. Comparing its win rate to
+    # a complete opponent's is confounded by map difficulty in an unknown
+    # direction -- an interim read of one arm at 89% against completed arms at
+    # 80% nearly produced a wrong dose decision on 2026-09-07.
+    awk -F, 'NR>1 {n[$1]++} END {
+      max = 0; for (o in n) if (n[o] > max) max = n[o]
+      part = ""
+      for (o in n) if (n[o] < max) part = part sprintf("\n  !!   %-24s %d of %d games", o, n[o], max)
+      if (part != "") printf "\n  !! UNEQUAL SAMPLES -- these opponents played a PREFIX of the map list,\n  !! not a random subsample, so their win rates are NOT comparable to the\n  !! complete ones above:%s\n", part
+    }' "$OUT/results.csv"
     grep '^EXC ' "$OUT/results.txt" | awk '{s+=$5; if($5>0) n++} END{
         if (s>0) printf "\n  !! %d thrown exceptions across %d games -- a throw abandons the rest\n  !! of that robot turn; fix before trusting this win rate. Worst:\n", s, n }'
     grep '^EXC ' "$OUT/results.txt" | awk '$5>0{printf "  !!   %-16s %-24s bot=%s  %s exceptions\n",$2,$3,$4,$5}' | sort -k5 -rn | head -5

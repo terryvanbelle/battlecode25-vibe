@@ -11,7 +11,13 @@
 # (default 25) maps drawn from tools/bc25-maps.txt -- not all 75, and not the
 # same 25 every time. Both sides of every map are still played, so the run stays
 # balanced; the sample is drawn once and shared by every opponent in the run, so
-# within-run comparisons between opponents are exact. The sample is written to
+# within-run comparisons between opponents are exact ONCE EVERY OPPONENT HAS
+# PLAYED EVERY MAP. Until then they are not: opponents are the outer loop and
+# maps play in a fixed shared order, so a partial opponent has played an easy-or-
+# hard PREFIX of the map list, never a random subsample of it. Comparing a
+# partial opponent's win rate against a complete one's is confounded by map
+# difficulty, systematically and in an unknown direction. The summary warns when
+# opponents have unequal game counts. The sample is written to
 # gauntlet/<run-id>/maps.txt, and passing MAPS="$(cat .../maps.txt)" replays a
 # run on exactly the same maps.
 #
