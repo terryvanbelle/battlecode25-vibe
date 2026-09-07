@@ -3987,3 +3987,64 @@ the `BOT` that actually played, so **`bot.txt` is wrong whenever `BOT` is overri
 is precisely the mislabelling it was introduced to prevent. I did not write a
 `vs_old_bots_history.csv` row from this run; had I, it would have been attributed to
 `carol_iter11`.
+
+## Iteration 12b RESULT — REJECT at 30%, the mechanism worked perfectly, and it refutes an inference I had been leaning on
+
+Run `20260907-024050`, 80 games, maps pinned.
+
+| instrument | iteration 12 | **iteration 12b** |
+|---|---|---|
+| h2h vs `carol_iter11` | 25/40 = 62.5% | **12/40 = 30.0%** |
+| swept-win / swept-loss | 5 / 0 | **4 / 12** |
+| vs `carol_rush` | 37/40 = 92.5% | **28/40 = 70.0%** |
+| overall | 77.5% | **50.0%** |
+
+**Both pre-registered gates PASSED, which is what makes this rejection worth its run:**
+
+| gate | threshold | result |
+|---|---|---|
+| mechanism | `UPG` on a majority of maps | **22 firings on 10 of 10 maps — PASS** |
+| guard | `upgGiveUp` appears at all | **152 firings on 10 of 10 maps — PASS** |
+
+Iteration 12 fired 3 times in 144,823 tower-turns; 12b fires **22 times in 48,327**, a ~220x
+increase in rate. The fix did exactly what it was designed to do. **And the scoreboard fell 32
+points.** 12 swept-losses against 4 swept-wins is a one-directional regression, not churn.
+
+**The inference this refutes, and I built 12b on it.** I argued that trading unit production for
+paint income was safe because *"iterations 5, 8 and 10 established that unit production is not
+carol's binding constraint — 4.1x the soldiers changed nothing."* That is true and it does not
+license what I did with it:
+
+> **"More X does not help" does not imply "less X is free."** Iterations 5/8/10 measured the
+> *upward* direction only. A plateau in one direction says nothing about the gradient in the
+> other, and carol was evidently sitting at the edge of one, not in the middle of a flat
+> region. 25,769 tower-turns were spent withholding spawning to buy 22 upgrades.
+
+That is the cheapest possible correction to a belief I would otherwise have carried into every
+future resource-tradeoff iteration, and it is exactly what TRAINING_ALGORITHM.md means by "a
+rejected attempt that converts a weakly-founded belief into a firmly-founded one paid for its
+run."
+
+**DECISION: REJECT.** `src/carol/` remains iteration 11.
+
+### Closed-directions ledger
+
+- **"Fund paint-tower upgrades by withholding spawning" — CLOSED.** `20260907-024050`, 12/40 =
+  30.0% h2h with the mechanism firing on 10/10 maps and the guard live. The cost of forgone
+  spawning exceeds the value of the upgrades bought, decisively.
+- **"Opportunistic paint-tower upgrades (no withholding)" — CLOSED as unreachable.**
+  `20260907-020717`: chips only accumulate when spawning is already blocked, so the gate fires
+  3 times in 144,823 tower-turns. Re-opening requires some *other* mechanism to free chips, not
+  a smaller threshold.
+
+Together these close **tower upgrades** as a direction. The dose curve now has two measured
+points — 0% withholding (inert, ~noise) and 100% withholding (-32 points) — and it is
+monotone over the range that matters, so an interior dose is not worth a run: it would buy few
+upgrades at meaningful cost. This is the third consecutive reject in the resource-economy area
+(10, 12, 12b), so per `MaxConsecutiveRejects` **the next attempt must leave this area.**
+
+**Next: iteration 13 = SRPs**, already ranked first in the post-tournament queue and in a
+different functional area (map patterns, not tower economy). Its pre-check must be the
+conditional reachability test this session invented — *how much ally-held, correctly-shaped
+ground exists among the turns that would actually attempt a pattern*, not how many chips or
+tiles exist in aggregate.
