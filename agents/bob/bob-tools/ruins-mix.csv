@@ -78,3 +78,4 @@ yearofthesnake,45x45,0,16,14,8,,
 maps=75  all-one-type: old 4 (5%)  new 0 (0%)
 mean deviation from a 50/50 mix: old 9.3 pts  new 9.9 pts
 worst deviation:                 old 50.0 pts  new 25.0 pts
+FOLDED rule: all-one-type 6 (8%)  mean dev 16.0  worst 50.0

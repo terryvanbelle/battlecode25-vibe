@@ -4296,3 +4296,147 @@ consistency check on the run as well as an arm.
 interior optimum would sit if one exists. If the curve is monotone downward the
 mechanism is rejected outright and the finding is that SRP siting cannot be bought
 with soldier movement.
+
+
+---
+
+## The parity rule's degeneracy has a DIRECTION, and nobody priced it (2026-09-07)
+
+Found while dumping the iteration 13 gridworld game for an unrelated reason: on
+gridworld, side A, **`ptowA = 0` for the entire 2000 rounds and the treasury reaches
+461,480 chips.** Zero paint towers, half a million idle chips, and it is my **only
+swept loss** to the re-forked `bob_denier`.
+
+`BobRuins` answers why from the map files, and this time I split the failure by
+direction, which the earlier analysis never did:
+
+```
+parity rule ((x+y)&1), all-one-type maps -- 4 of 75
+  CastleDefense   6 ruins,  0 money   ALL PAINT     benign
+  Filter          5 ruins,  5 money   ALL MONEY     catastrophic
+  Snowman         6 ruins,  6 money   ALL MONEY     catastrophic
+  gridworld      21 ruins, 21 money   ALL MONEY     catastrophic
+```
+
+**Three of the four are all-MONEY, and the two directions are not remotely equivalent.**
+A money tower is engine-verified sterile — `paintPerTurn == 0` and a new tower spawns
+with `paintAmount == 0`, so it can never accumulate the 200 paint a soldier costs. An
+all-money map is a bot with no paint income and no spawn points. An all-paint map is a
+bot short of a resource it already cannot spend (20,720 idle on box, 461,480 on
+gridworld). The closed comparison of the three tower-type rules counted "all-one-type
+maps" as one number — parity 4, hash 0, folded 6 — and that number silently treats a
+fatal outcome and a harmless one as the same event.
+
+The prediction is confirmed in my own recent results: **gridworld is a swept loss** to
+the re-forked denier, and **Snowman loses** to both `bob_denier` and `bob_iter11`.
+
+### And my own instrument cannot see it
+
+The 25 pinned maps that carry this log's entire regression curve — iter3 39/50, iter7
+38/50, `abl7` 41/50, iter12 41/50, iter9 28/50 — contain **none of the four**. So every
+comparison that decided to revert iteration 7's hash was made on ground that excludes
+the reverted rule's known catastrophic case. The revert is still right (the hash cost
+six swept losses against frozen `bob_iter1` through the SRP interaction), but its price
+was never on the instrument, and I should have noticed that a pinned sample drawn once
+is a fixed map list with all the overfitting properties AGENT.md warns about.
+
+Recorded as a standing caveat on every pinned-map number in this log, and the reason
+the full-pool tournament and fresh-sample gauntlets are not optional.
+
+### Iteration 14, pre-registered here: abandon the pure function
+
+Three closed directions surround this — "search for a better hash/mask", "fold the
+coordinates", "too many ruins become money towers". All three are about finding a
+better **pure function of the ruin's coordinates**, and any such function is degenerate
+on some lattice; that is the whole lesson of those three entries taken together.
+
+The purity requirement is not a law of the game. It exists because `workOnRuin`'s
+"already marked?" probe refuses to re-mark, so a ruin whose type changed mid-build
+could never complete. That is a defect in my own marking code, not an engine
+constraint — `markTowerPattern` may be called again to overwrite marks.
+
+So iteration 14 is the structural version: **make `workOnRuin` re-mark when the
+existing mark disagrees with the wanted type, then choose the type adaptively — build
+PAINT whenever the team is short of paint towers, MONEY otherwise.** That is the
+algorithm's own recorded design preference ("self-calibrating thresholds beat fixed
+constants ... derive the threshold from in-game observation"), it is not a re-open of
+any of the three closed entries (all of which assume purity), and it dissolves the
+lattice problem rather than searching for a lattice that survives.
+
+Queued behind iteration 13's dose-response, which is running.
+
+
+---
+
+## Iteration 14 PRE-REGISTERED (2026-09-07) — adaptive tower type, and a two-sided map subset
+
+Extending the degeneracy measurement from the 4 all-one-type maps to the whole
+distribution (`bob-tools/ruins-mix.csv`, now pulled local):
+
+```
+parity rule, money fraction of ruins        most extreme maps of 75
+gridworld    21 ruins  1.00        CastleDefense  6 ruins  0.00
+Snowman       6        1.00        MoneyTower    10        0.20
+Filter        5        1.00        starburst      8        0.25
+yearofthesnake 16      0.88        box            8        0.25
+lighthouse   11        0.82
+Brat         11        0.82
+windmill      8        0.75
+DefaultMedium 19       0.74
+boxofchocolates 15     0.73
+Money        20        0.70
+
+>= 75% money: 7 maps      <= 25% money: 4 maps
+```
+
+**The parity rule is not symmetrically degenerate — it is biased toward the fatal
+direction, 7 maps against 4.** That is a stronger statement than "4 maps are
+all-one-type", and it was free.
+
+Two honesty checks on it, both of which cut against my story and are recorded because
+they cut against it:
+
+- **`box` is 25% money — a PAINT-heavy map — and box is a loss in both recent runs.**
+  So the tower mix does not explain box, and I will not let it. The gridworld/Snowman
+  explanation stands on its own maps only.
+- `Brat` at 0.82 is the map whose side-B failure this log already diagnosed in the
+  iteration-11 era as "zero paint towers built, three money towers, chips running to
+  46,590 unspent". That entry did not connect the failure to the parity rule because
+  the bot was on iteration 7's hash at the time. It is the same failure shape, and
+  reverting to parity has re-armed it.
+
+### The change (built, compiled: `src/bob_i14`, forked from `bob_iter12`)
+
+Two edits, one of which is provably inert alone:
+
+1. `workOnRuin` completes whichever tower type the **ground** supports, not only the
+   type this soldier wants. With today's pure `towerTypeFor` the two can never
+   disagree, so this branch is dead and the build is iteration 12. It exists so an
+   adaptive type cannot deadlock a ruin an earlier soldier marked for the other type
+   — that deadlock, not any engine rule, is the sole reason the type had to be pure.
+2. `towerTypeFor` returns PAINT when `getChips() >= CHIP_SURPLUS` (dose 5000), else the
+   parity rule. `CHIP_SURPLUS = 0` is an exact zero arm, and `bob_iter12` already
+   serves as that arm at 41/50 on the pinned maps.
+
+This is **not** a re-open of the three closed tower-type entries ("better hash/mask",
+"fold the coordinates", "too many money towers"). All three search for a better pure
+function of the ruin's coordinates, and the lesson of the three taken together is that
+every such function is degenerate on some lattice. This abandons purity instead.
+
+### Pre-registered evaluation, defined by the mechanism before any game
+
+The mechanism fires whenever the treasury is in surplus, so it is **not** confined to
+money-heavy maps — on paint-heavy maps it pushes further toward paint and could starve
+the chips that buy towers and units. The subset therefore contains both tails:
+
+```
+FATAL tail (expect gains):    gridworld Snowman Filter yearofthesnake lighthouse Brat windmill
+BENIGN tail (expect no harm): CastleDefense MoneyTower starburst box
+```
+
+Accept requires **both**: a real gain on the fatal tail and no regression on the benign
+tail. Reporting only the first would be a cherry-pick, so both go in the log whichever
+way they land — the same rule iteration 7's affected-subset run was held to.
+
+A broad fresh-sample run and the head-to-head against `bob_iter12` follow only if the
+subset clears; the subset is a screen, never the accept gate.
