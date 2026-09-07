@@ -5220,3 +5220,84 @@ false with 8,240 chips in hand), and it is the algorithm's recorded winner profi
 *spending idle resources, capability at zero marginal cost*. The price to compute first:
 what the withheld 4,000 chips would otherwise have bought, on maps where construction is
 **not** geometry-blocked.
+
+### The History pre-check fires, and it saves the obvious fix (2026-09-07 19:10)
+
+Reading `Soldier.tryRefill` after the bankruptcy traces, the "obvious" cause is right
+there: it scans `senseNearbyRobots(-1, us)` — **vision only, r²=20** — so a soldier with
+no tower in sight cannot refill, paints itself to zero, and at zero cannot move, so it
+can never walk to one. The refill has no memory. That is exactly mode 1's mechanism.
+
+**And it is a CLOSED direction.** Iteration 8 built precisely that fix (`Refill.seek`,
+remembered towers, extended to moppers and splashers) and it was killed on economics, not
+tuning: *spawning converts 200 paint into 200 paint plus a body; refilling converts 200
+paint into 200 paint.* While paint binds and chips are free, spawning strictly dominates,
+and a unit that paints until it starves has converted its whole stash into tiles and
+freed the economy to build a replacement.
+
+The ledger gave a precise re-open trigger: **"when team chips stop accumulating — say
+sustained below ~5,000 while towers still want to spawn."** I checked it against every
+trace I dumped today rather than assuming:
+
+```
+                        outcome   bob chips at end   towers built   bob paint at end
+Rose                    loss              4,680            0               0
+CastleDefense           loss              8,240            0               0
+Jail                    loss              4,580            1             387
+SandyBeach              loss              4,412            0              11
+starburst               loss              5,480            0               —
+DefaultHuge             WIN              61,150           23          10,687
+Filter                  WIN              23,190            3             150
+```
+
+**The trigger is not met anywhere.** Chips accumulate in every game I have looked at, win
+or loss, on a 59x59 map and a 30x30 one. Refill stays closed, and the History pre-check
+just paid for itself: I would otherwise have re-implemented iteration 8 from a trace that
+looks like a slam dunk.
+
+### What the same table says instead — iteration 17 sharpened
+
+The real asymmetry between my wins and my fast losses is not refill. It is **towers**:
+
+```
+losses   0-1 towers built,  paint income = 1 starting LEVEL_TWO paint tower = 10 paint/turn
+wins     3-23 towers built, paint income scales with them
+```
+
+Exact engine figures (probed from the jar today, `UnitType` fields):
+
+```
+LEVEL_ONE_PAINT_TOWER    1000 chips   +5  paint/turn      <- 5 paint/turn per 1,000 chips
+LEVEL_TWO_PAINT_TOWER    2500 chips   +10 paint/turn
+LEVEL_THREE_PAINT_TOWER  5000 chips   +15 paint/turn      <- upgrade from L2 = +5 for 5,000
+LEVEL_TWO_MONEY_TOWER    2500 chips   +30 chips/turn
+LEVEL_THREE_MONEY_TOWER  5000 chips   +40 chips/turn      <- +10/turn of a DEAD resource
+```
+
+Two defects in the same eight lines of `Tower.run`, both of which spend or withhold a
+resource the table above proves is free:
+
+1. **`UPGRADE_RESERVE = 4000` makes the paint-tower upgrade cost 9,000 chips**
+   (`nextLevel.moneyCost 5000 + 4000`). CastleDefense peaked at 8,240 and therefore
+   *never upgraded at all* while its robots sat at zero paint for 130 rounds. Rose
+   crossed the bar at r390, 240 rounds after bankruptcy. The reserve is protecting a
+   1,000-chip tower completion that geometry refuses on 99% of attempts (my own
+   iteration-13 measurement) and that these maps never once achieved.
+
+2. **The upgrade gate is `selfType.canUpgradeType()` — it does not care which type.** A
+   money tower will happily spend 5,000 chips to gain +10 chips/turn, which is income in
+   the one resource that ends every game unspent (61,150 on DefaultHuge). Worse, it
+   competes for the same chips as the paint upgrade: on Filter I took two upgrades at
+   r166/r196 while robot paint sat flat at 150 for the whole game and finished with
+   23,190 chips idle.
+
+Iteration 17 will change **one** of these, not both. Defect 2 is the cleaner single
+mechanism — a pure deletion of a spend, with no new behaviour, no paint price at all, and
+a dose with a zero arm (upgrade: any tower / paint towers only / none). It is the
+algorithm's recorded winner profile in its exact words: *removing pure waste*.
+
+Pre-checks I still owe it before building, and will run when 16 closes: the **decision**
+count (how often a money tower actually takes the upgrade branch — not how many upgrades
+appear, which cannot distinguish "money tower upgraded" from "paint tower upgraded"), and
+the price (whether any game is ever chip-limited at the spawn gate, which the table above
+suggests is never but which I have measured only at end-of-game, not per-round).
