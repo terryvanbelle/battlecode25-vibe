@@ -7760,3 +7760,73 @@ That second bullet is the one I would normally leave unsaid. **A null result on 
 noisy instrument is not the same as a null on a precise one**, and the asymmetry —
 spending games to confirm bad news but not good news — is a bias I am choosing
 deliberately rather than falling into, and it belongs on the record either way.
+
+---
+
+# SESSION RESUMED — the roster run survived, its collation did not
+
+Session died between launching `20260907-211852` and reading it. Exactly the
+casualty `gauntlet-collect.sh --list` exists to catch: the run itself is
+**complete** (300 games, setsid-detached, unaffected by my death) and had even
+been pulled back to `gauntlet/`, but `track_vs_old_bots.py` had never been run
+on it, so the durable record — `progress/vs_old_bots_history.csv` — was missing
+the point entirely. Recovered without replaying a single game.
+
+## The iteration 23 roster point, against my pre-registered decision rule
+
+| opponent | iter22 run `181936` | **iter23 run `211852`** | delta |
+|---|---|---|---|
+| alice_iter0 | 100% | 100% | 0 |
+| alice_iter1 | 100% | 100% | 0 |
+| alice_iter4 | 98% | 98% | 0 |
+| alice_iter7 | **74%** | **94%** | +20 |
+| alice_iter12 | 92% | 96% | +4 |
+| alice_flood | **76%** | **92%** | +16 |
+| overall | — | 290/300 (96.7%) | — |
+
+I pre-registered before the run: *any resolving row down by more than ~5 points
+→ pinned re-run on iteration 22's exact maps; all rows flat or up → record the
+point and move on.* **Every row is flat or up. No pinned drift run.** §5b's
+downhill-walk failure mode is not showing here.
+
+### But I am explicitly NOT banking the rise
+
+The rule I wrote committed me to spending 150 games to confirm bad news and none
+to confirm good news, and I called that a deliberate bias at the time. It has now
+been cashed, so the consequence has to be stated rather than enjoyed: **the two
+big movers (+20 on `iter7`, +16 on `alice_flood`) are cross-run deltas on
+different random 25-map draws, which doctrine 6 says is an estimate, not an
+identity.** An unknown part of both is map draw. I have not measured how much and
+I am not going to, so the honest claim is **"no drift, and possibly a real gain
+of unknown size"** — not "+20 against iter7".
+
+This is the comfortable correction doctrine warns about: the direction that
+runs in my favour is the one least likely to get audited. Flagging it costs
+nothing and keeps the number from hardening into a fact by repetition.
+
+The three rows still at 98–100% (`iter0`, `iter1`, `iter4`) have no resolution
+left and gate nothing; `iter7`, `iter12` and `alice_flood` are the instrument now,
+and `alice_flood` at 92% is approaching the same ceiling.
+
+## Tournament `20260907-1300` — read, with the caveat that it played STALE code
+
+Standings: bob 92.3%, **alice 38.0% (+2.7)**, carol 19.7%. Head-to-head
+**alice–bob 7.3%**, alice–carol 68.7%. Swept maps alice–bob: **alice 1, bob 65.**
+
+The line that matters for how much weight this carries:
+
+```
+alice @ 688a75b  "ACCEPT iteration 14 -- wander slides along obstacles"
+```
+
+**The tournament exported iteration 14. I am on iteration 23.** Nine accepts —
+including everything from the engine-predicate finding onward — are not in that
+number. So the 7.3% against bob is a real measurement of a build I no longer run,
+and I should neither despair at it nor discount it: it is the last *external*
+reading I have, and the next tournament (01:00 UTC, ~2h) exports iteration 23 and
+will re-measure it properly. That is a free, already-scheduled experiment; I do
+not need to spend anything to get it.
+
+What survives the staleness: **bob swept 65 maps against me and I swept 1.** A gap
+that size is structural, not tuning, and no amount of iteration-14-era noise
+explains it. It stays the standing target.
