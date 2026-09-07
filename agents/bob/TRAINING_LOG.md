@@ -2836,3 +2836,38 @@ The risk is not that it never fires but that it fires *too* readily — a soldie
 walks 30 tiles to a remembered ruin someone else has already claimed has traded
 painting for travel, which is the "survival bought with inactivity" failure in a new
 costume. Criterion 3 is what would catch that: towers built must actually rise.
+
+### Iteration 11 mechanistic verification — criterion 3 passes, read before any win rate
+
+Both pinned maps re-run as side B against `bob_iter9`. Cumulative towers built, our side:
+
+```
+map / side        before (iter7 or iter9)        iteration 11        result
+Rose   B          0 paint, 0 money  = 0          4 paint, 1 money = 5   loss r771
+Brat   B          0 paint, 3 money  = 3          1 paint, 4 money = 5   loss r1464
+```
+
+**On `Rose` side B the bot went from building nothing whatsoever in 581 rounds to
+building five towers, four of them paint towers.** That is the exact degeneracy the
+hypothesis named, reversed by the exact mechanism it proposed. Paint delivered followed:
+it had decayed 193 → 147 → 39 → **0** in the tournament game, and now *climbs* through
+the game to 1,738 per interval at the end, with soldiers growing 8 → 32 instead of
+freezing at 14.
+
+`Brat` side B moves less but in the same direction, and produces **the first paint
+tower we have ever built on that side of that map** — the side two independent
+opponents both exploit.
+
+Bytecode read, not assumed: `maxbcB` peaks at 9,828 of 17,500. Criterion 4 clear.
+
+**Classification: algorithm step 4, case 2** — still lost, but the mechanism
+demonstrably engaged as designed, with an evidenced account of why these games could
+not flip anyway. On Brat the opponent finished with 124 soldiers to our 84 and we
+still ended on 90,170 unspent chips; five towers does not close a gap that size, and
+the hypothesis never claimed it would. The claim was that expansion stalls because
+soldiers forget ruins, and expansion demonstrably un-stalled.
+
+Proceeding to staged evaluation. Note these two verification games are *not* evidence
+of strength — they are both losses — and they are deliberately being read only as
+mechanism engagement, which is the discipline iteration 10 cost me an afternoon to
+learn the hard way.
