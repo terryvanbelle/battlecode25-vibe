@@ -1,0 +1,24 @@
+Ablation suite for the bob_iter1 regression (85% -> 56%, roster run 20260907-011346).
+
+One accepted feature gated off per build, everything else bob_iter9 verbatim. All are
+run against bob_iter1 on the roster run's PINNED map sample, so bob_iter9's own 28/50
+is a control measured on identical ground:
+
+  MAPS="$(cat gauntlet/20260907-011346/maps.txt)" \
+    BOT=<build> OPPONENTS=bob_iter1 ../../tools/gauntlet.sh
+
+  build       feature gated off                          builder
+  ---------   ---------------------------------------    ----------------------
+  bob_abl3    iteration 3 idle-chip tower self-upgrade    ablations/make-abl3.sh
+  bob_abl7    iteration 7 avalanche tower-type hash       ablations/make-abl7.sh
+  bob_iter7   iteration 9 SRPs (no build needed --        (already in src/)
+              iteration 7 IS iteration 9 minus SRPs)
+
+Priority order is abl7, then iter7, then abl3: iteration 7 is the only one of the three
+whose known cost (mirrored-pair mismatch 40% -> 97%, side-gap 11.0 -> 24.0 pts) predicts
+the side-dependence the roster actually shows (10 of 25 maps split by side vs iter1,
+against 2 of 25 vs iter0).
+
+Read TWO numbers from each, both pre-registered: the win rate, and the split-by-side
+count. A win-rate move without a side move on abl7 would mean the right answer for the
+wrong reason.
