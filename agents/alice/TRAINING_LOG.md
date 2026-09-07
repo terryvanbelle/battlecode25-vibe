@@ -2485,3 +2485,44 @@ contested phase (r0-r400) alice runs at $1,300-2,600, pinned just under
 `CHIP_RESERVE = 1450`. The premise was measured in the wrong window. This does
 not re-open iteration 6 (its dose-response was monotone decreasing, which stands
 on its own), but the *stated reason* needs the correction on record.
+
+### Queued for iteration 13 — the coverage plateau, read off the same replay
+
+The i12b verification game supplies the next target for free. `alice_i12b` reaches
+620‰ at r400 and then **flatlines at 628-640‰ for the remaining 1,600 rounds**
+with 23 soldiers alive. A 1,600-round stall with a full army is an absolute
+degeneracy signal of the kind step 1 says to prefer over opponent-relative ones.
+
+The arithmetic says the plateau is structural, not behavioural: at the end
+i12b holds 640‰ and `alice_iter7` holds 317‰, summing to **957‰ of a map that is
+~4% walls**. Every paintable tile is already painted by someone. Per `RULES.md`,
+a soldier's attack "paints tile if empty or already-ally" and **cannot overwrite
+enemy paint**. So once the map saturates, soldiers have nothing legal left to do,
+and the 70% instant win is unreachable by soldiers alone — it requires *taking*
+enemy paint (moppers remove it; splashers overwrite it within r²≤2).
+
+This does not re-open iteration 11 by itself — splashers were measured at 21% and
+33% and that stands. What it does is name the condition those measurements were
+taken under: both were played from round 1, competing with expansion, in a
+lineage that stalls at 5-6 towers. A splasher's value is realised only *after*
+saturation, which `alice_iter7` reaches at ~630‰ around r400 and which the losing
+build never reached at all. If iteration 12 accepts, the post-saturation window
+becomes a real, reachable, majority-of-the-game condition for the first time —
+that is a specific reason the recorded cause no longer applies, and it is the
+condition iteration 11's own ledger entry should be checked against before
+anything is rebuilt.
+
+**Reachability pre-check to run first** (the one iteration 9 skipped and paid for):
+in an accepted-i12 game, count the rounds where alice has ≥1 soldier with a legal
+paint target versus rounds where it has none. If soldiers are idle for 1,500
+rounds, the plateau is real and worth an iteration; if they are busy, it is not.
+
+### Interpretation registered in advance for the dose curve
+
+`WANDER_RUN` is the wander policy for **every** unit that falls through to
+`wander`, not just soldiers — moppers (iteration 7 sends them at visible enemy
+paint, else wander) and splashers use it too. One mechanism, but two consumers.
+If the curve peaks at the low dose (25) rather than rising to 400, the likely
+reason is a mopper with no enemy paint in vision committing 400 steps to one
+heading and leaving the contested area. Registering that now so it is a
+prediction rather than a post-hoc story.
