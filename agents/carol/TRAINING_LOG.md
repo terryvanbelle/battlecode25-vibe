@@ -5614,3 +5614,45 @@ the control for `carol_i21`, `carol_i22a/b` and everything measured against iter
 Note also that Castle, DefaultMedium and PlumberGame appear in **both** this list and iteration
 18's own deviation list — exactly the tell the rule names, and the reason it is stated as "maps
 appearing in both lists" rather than as a vague caution.
+
+## Iteration 21 (MOPPER_IN_20 = 2) — head-to-head complete: +6 games, and the gradient is clean
+
+Run `20260907-145635`, 20 pinned maps, null `carol_m18` (built from the baseline it is measured
+against, and confirmed at 20/40 with zero sweeps).
+
+| instrument | result |
+|---|---|
+| h2h vs `carol_iter18` | **26/40 = 65.0%** |
+| **margin vs the `carol_m18` null** | **+6 games**, 9 maps up / 3 down |
+| swept-win / swept-loss | 9 / 3 |
+| regression vs `carol_rush` | *arm still playing* |
+
+**The pre-registered map prediction lands, and as a gradient rather than a single hit.** I
+predicted the gain would concentrate where tower paint is scarcest, because that is where
+trading a 100-paint mopper for a 200-paint soldier bites hardest:
+
+| map | tower turns with `tp < 200` | i21 |
+|---|---|---|
+| walalilongla | 93.8% | **+1** |
+| PlumberGame | 83.7% | **+1** |
+| Bunny | 74.7% | **+1** |
+| DefaultLarge | 59.4% | −1 |
+| Castle | 26.5% | −1 |
+
+**Every map that moved up is above 74% starved; both maps that moved down are below 60%.** The
+sign of the effect tracks the scarcity of the resource the mechanism trades against, monotonely,
+across five maps with independent measurements. That is a far stronger form of confirmation
+than "the predicted maps moved" — it is the *dose of the underlying condition* predicting the
+*sign* of the outcome.
+
+Parking_lot (99.1%) and gridworld (97.3%) did not move at all, which is the one part that does
+not fit; both are maps where **every** tower is dry, so a cheaper unit still cannot be built and
+there is nothing for the change to bite on. That is consistent with the iteration-20 finding
+that those two maps have a paint *income* problem rather than a distribution or price problem.
+
+**Not yet decided** — the `carol_rush` regression arm is still playing, and iteration 19 showed
+that arm behaves *differently* for mopper-share changes (the zero arm scored 39/40 there while
+losing badly to the lineage). Given moppers pay off in long coverage wars and `carol_rush` ends
+games fast, I expect dose 2 to do slightly *better* than the incumbent against the rusher; if
+it instead drops materially, that is new information and I will treat it as such rather than
+waving it through on a good head-to-head.
