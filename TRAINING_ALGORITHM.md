@@ -543,9 +543,18 @@ than staring at the current bot.
    that is the self-referential blind spot in its most directly observable form.
 2. **Re-read the prior-year reference docs** in `reference/`. Year-specific
    mechanics rarely transfer; the shape of past mistakes does, and so does the
-   catalogue of ideas a lineage forgot to try. (Note what is *not* there and why:
-   both predecessors' `RESEARCH.md` are excluded because they are built on 2025
-   post-mortems, which stay forbidden second-hand as much as first-hand.)
+   catalogue of ideas a lineage forgot to try. Start with `reference/RESEARCH.md`
+   -- cross-year post-mortem findings from 2019-2024, whose §11 "The short list,
+   when stuck" exists for exactly this moment. Its most load-bearing entries for
+   a stalled lineage: symmetry inference (standard everywhere else, needs no
+   communication, and is exact rather than heuristic); *emergent* coordination
+   rather than commanded coordination, where one team won two-thirds of self-play
+   games from a spawn-ORDERING change with no messages sent; and the repeated
+   finding that the elaborate coordinated plan flops while basics done well win.
+   (`RESEARCH.md` is a rebuild, not either predecessor's copy: both of those are
+   built on 2025 post-mortems, which stay forbidden second-hand as much as
+   first-hand, so the sources were filtered block-by-block BEFORE being read and
+   only the 2019-2024 material survives. See `reference/README.md`.)
 
 Neither is a substitute for a trace of your own bot losing. They are for the
 state where you have run out of hypotheses, not the state where you have one.

@@ -10,10 +10,11 @@ there carries only its scaffold docs.
 
 | file | what it is |
 |---|---|
+| `RESEARCH.md` | cross-year post-mortem findings, 2019-2024 (**not** 2025) |
 | `22-LEARNINGS.md` | 2022 durable lessons, organised by theme |
 | `22-ART_OF_WAR.md` | 2022 strategy synthesis |
 
-## Why the RESEARCH.md docs are NOT here
+## How RESEARCH.md was rebuilt, and why it is safe to read
 
 Both predecessors' `RESEARCH.md` were fetched and then **removed unread by the
 agents**, because both are built substantially on **2025 post-mortems**, which
@@ -24,12 +25,23 @@ this project forbids from any source:
 - bc26's contains a table of direct links to five 2025 post-mortem PDFs and
   quotes several of them.
 
-The ban is not about the file name — it is about the content, and these two carry
-it second-hand. Second-hand is still reading it. The two files above were checked
-the same way and contain no reference to 2025 or to any 2025 team.
+The ban is not about the file name -- it is about the content, and those two
+carried it second-hand. Second-hand is still reading it.
 
-If you ever find 2025 post-mortem content in anything here, stop reading and tell
-the coordinator.
+`RESEARCH.md` here is a **rebuild, not a copy**. Both sources were filtered
+mechanically *before* anyone read them: every blank-line-separated block
+mentioning the 2025 year or naming a 2025 team was replaced with a redaction
+marker, and only the surviving 2019-2024 text was read and reorganised. The
+filter ran ahead of the reading deliberately, so the exclusion held for the
+coordinator who assembled the file as well as for you. The result was then
+checked to contain no 2025 team name anywhere, and every remaining mention of
+"2025" is a statement about the exclusion itself.
+
+The two 2022 files were checked the same way and contain no reference to 2025
+or to any 2025 team.
+
+If you ever find 2025 post-mortem content in anything here, stop reading and
+tell the coordinator.
 
 ## When to read these
 
