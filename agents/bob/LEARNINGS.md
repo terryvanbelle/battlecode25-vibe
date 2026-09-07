@@ -360,11 +360,27 @@ it is measured against a pool that moves with the bot.
    TRAINING_ALGORITHM.md's fixed roster is never retired and never updated. Run it more
    often than every five accepts — it costs one gauntlet and it is the only number in
    the whole system that is not self-referential.
+
+   **I wrote this rule on the morning of 2026-09-07 and broke it that evening**, letting
+   the roster go 15 hours and two accepts stale until the coordinator asked. §21 turns it
+   into the only form I can't wriggle out of: run it **before** accepting, every time, with
+   no margin-size trigger at all.
 3. **Marginal accepts are where the drift enters.** The prime suspect here is the one
    feature accepted at 52.5% whose own audit recorded that it *hurts 37 maps and helps
    18*, with a documented doubling of side asymmetry — and the roster's failure is
    specifically side-dependent. A 52.5% h2h and a −0.59-point pool effect is not a
    contradiction; it is what a coin-flip accept looks like from two directions.
+
+   **PARTIALLY SUPERSEDED, same day, by iteration 18 — see §21.** This rule is true of
+   marginal accepts but **false as a restriction to them**, and believing the restriction
+   is what cost me iteration 18. That accept was **+6 games with 6 swept maps and 0 swept
+   losses** against a null with zero variance — about as unmarginal as this lineage
+   produces — and it *still* came out 6 games behind its own predecessor against an
+   ancestor. Drift does not enter only through coin-flips. It enters through any accept
+   whose gain is conditional on something the baseline happens to carry, and confidence in
+   the margin says nothing about whether the gain is conditional. Read rule 3 as
+   "marginal accepts are **one** place drift enters", not as a filter that tells you when
+   you are safe.
 4. **Prefer the ablation to the invention when this fires.** The question "is the
    feature I added five iterations ago still worth anything?" is answerable with one
    pinned run per feature, and TRAINING_ALGORITHM.md records that this historically
@@ -498,6 +514,15 @@ buys 1000 → 1500 HP, which an income-only comparison cannot see.
 4. **A refuted prediction from a good heuristic is a success, not a waste.** It cost one
    run, corrected my model of the economy, and left the rule stronger by bounding what
    it can and cannot tell me.
+5. **This section bans nomination by PLAUSIBILITY. It does not ban nomination by
+   ANCESTRY — see §21 rule 3.** The distinction matters because the two look alike and a
+   future reader could quote this section to refuse an ablation §21 requires. Plausibility
+   nomination asks *"which of my features look like they should interact?"* and is a
+   prediction, which is why 2 of 3 were refuted. Ancestry nomination asks *"which features
+   entered or left between the two generations the roster is comparing?"* and is a
+   **lookup** — the roster has already supplied the evidence that something is wrong, and
+   ancestry only says where to look. Run the 2x2 when the roster drops; do not run it
+   because a pair looks coupled.
 
 
 ---
@@ -695,3 +720,18 @@ method, not of my bot.
 **The reusable shape:** any mechanism that spends a unit's last resource on work that only
 pays out *later, via somebody else* is a bet on the machinery that brings somebody else
 back. Check that machinery exists before pricing the bet.
+
+**Where this sits in this file** (added by the consistency pass, because these four
+sections are one thread and none of them cited the others):
+
+- **§13 is this same finding, measured on a different generation and written the same
+  morning.** It already said "run the roster more often than every five accepts". I broke
+  my own rule that evening. §13's rule 3 — *marginal accepts are where drift enters* — is
+  **partially superseded here**: iteration 18 was the opposite of marginal and drifted
+  anyway, so margin size is not a safety signal.
+- **§15 is the mechanism**, in the abstract: an accept gate is a partial derivative,
+  blind to any interaction with what the baseline already carries. §21 is the first time I
+  measured it happening to me rather than reasoning about it.
+- **§16 bans nomination by plausibility; §21 rule 3 permits nomination by ancestry.**
+  These are not in conflict and §16 rule 5 now says so explicitly — one is a prediction,
+  the other is a lookup performed only after the roster has already found something wrong.

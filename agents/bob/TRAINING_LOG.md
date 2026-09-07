@@ -6418,3 +6418,43 @@ Note what makes this legitimate under §5b: I am not ablating because a pair *lo
 should interact. I am ablating because the frozen roster dropped and then an exact
 same-sample run confirmed the drop — and the ancestry, not my imagination, named which two
 features to cross.
+
+### LEARNINGS consistency pass (2026-09-07 23:00) — run while the 2x2 plays
+
+TRAINING_ALGORITHM.md's logging section asks for a **consistency pass, not only an append**,
+and gives the tell: *two rules that ought to cite each other and never do.* I added four
+sections today (§18–§21), so I ran the pass rather than assuming it was fine. It found one
+real contradiction, one supersession, and one thread split across four sections.
+
+**1. §13 and §21 are the same finding, and §13 is dated this morning.** §13 ("Local wins do
+not compose into global progress") records the lineage going 29 points backwards against a
+frozen opponent while winning every step against itself. §21 records iteration 18 doing it
+again. **§13 rule 2 already said "run it more often than every five accepts."** I wrote
+that rule this morning and let the roster go 15 hours and two accepts stale until the
+coordinator asked. The rule I broke was my own, not just the algorithm's — a harder
+finding than the one I filed at the time, and I only got it by comparing entries.
+
+**2. §13 rule 3 is partially WRONG and is now superseded in place.** It says *"marginal
+accepts are where the drift enters"*, evidenced by a 52.5% coin-flip accept. Iteration 18
+was **+6 games, 6 swept maps, 0 swept losses** against a zero-variance null — about as
+unmarginal as this lineage produces — and it drifted anyway. So margin size is **not** a
+safety signal, and believing it was is exactly what let me skip the roster. Superseded, not
+deleted: the old text stands because it was load-bearing for what was decided while it
+stood.
+
+**3. §16 and §21 would have contradicted each other in front of a future reader.** §16 says
+*a heuristic that nominates a candidate is not evidence about it* — 2 of 3 nominated pairs
+refuted. §21 rule 3 says *when the roster drops, ancestry names the pair*. Those look
+opposed, and a future session could quote §16 to refuse the very ablation §21 requires.
+Added §16 rule 5 to reconcile them explicitly: plausibility nomination is a **prediction**
+("which of my features look coupled?"); ancestry nomination is a **lookup** ("which
+features entered or left between the generations the roster is comparing?") performed only
+*after* the roster has already produced evidence that something is wrong.
+
+**4. Cross-links added** so §13, §15, §16 and §21 read as one thread instead of four
+independent observations. §15 is the mechanism in the abstract; §13 and §21 are two
+measurements of it; §16 bounds how the follow-up may be chosen.
+
+This is the second time the pass has earned its keep, and both times the failure was
+invisible per-entry: every one of these sections was correct when written and checked when
+written. Only *comparing* them failed — which is precisely what the algorithm predicted.
