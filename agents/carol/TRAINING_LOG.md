@@ -5778,3 +5778,41 @@ just past the peak, with 6 clearly worse.**
   or just past the peak; only dose 1–2 is unmeasured and it is bracketed on both sides by
   worse points. Re-opening needs a reason the *optimum moved*, e.g. a change to the paint
   economy large enough to alter what a 300-paint unit costs in practice.
+
+## Re-scoring every accept with map-resampling (`tools/map-resample.py`)
+
+MULTI_AGENT.md gained a section while I was running: **the error bar is over MAPS, not over
+games**, with a tool to compute it. Every (map, side) cell is a fixed function of the two
+programs, so nothing is random per game; the only thing that varies between estimates is which
+maps were drawn. I had been quoting margins in games — correct as far as it went, and the
+right unit — but with no interval at all. Re-scoring all three accepts (the tool treats the
+run's `BOT` as the baseline, so its rows are the *opponent's* score; inverted here):
+
+| iteration | h2h | margin vs null | **resampled** | 95% CI on the candidate | clears the null? |
+|---|---|---|---|---|---|
+| **14** frontier-seeking | 26/40 | +6 | **+2.93 sd** | **[22, 30]** | **yes** |
+| **18** reserve dead band | 27/40 | +7 | **+2.40 sd** | **[21, 33]** | **yes** |
+| **21** `MOPPER_IN_20 = 2` | 26/40 | +6 | **+1.88 sd** | **[20, 32]** | **marginal — lower bound sits exactly on the null** |
+
+**Iteration 21 is the weakest of the three and I want that on the record.** Its point estimate
+is +6 games with 9 maps up and 3 down, the gradient across tower-paint scarcity is clean, and
+`carol_rush` is unchanged — so I am not reversing the accept. But the 95% interval's lower
+bound touches 20/40, which the other two clear outright, and TRAINING_ALGORITHM §5b is explicit
+that **"a marginal accept is an unpriced liability against every feature you have not written
+yet."** Iteration 21 is now the flagged half of any future destructive pair, and the frozen
+roster is the instrument that would catch it.
+
+Two things this immediately corrects about my own numbers:
+
+- **Iterations 14 and 18 are stronger than I claimed**, not weaker. I reported "+6 games" and
+  "+7 games" and left it there; resampling puts them at 2.9 and 2.4 sd with intervals clear of
+  the null. The per-map concentration is what does it — iteration 14's run has *no* map where
+  the candidate took both sides against it, so the variance is genuinely small.
+- **The splasher sweep is far more decisive than the raw percentages suggested.** Dose 3 beats
+  dose 0 at **+6.23 sd** (35/40, CI [30, 39]) while dose 6 beats it at only **+1.47 sd**
+  (25/40, CI [18, 31]). Those intervals barely overlap, so "the incumbent is at or past the
+  peak" is not a close call.
+
+The lesson generalizes past this tool: I spent the session carefully counting games and
+refusing to import a binomial model, which was right — but "no model" is not the same as "an
+interval", and for two accepts I under-sold a real result by declining to quantify it at all.
