@@ -1,0 +1,17 @@
+[Unit]
+Description=Prune old BC25 replays on battlecode-dev
+Documentation=file:///home/terryvanbelle/projects/vibe/2025/tools/vm-prune.sh
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=terryvanbelle
+Group=terryvanbelle
+WorkingDirectory=/home/terryvanbelle/projects/vibe/2025
+Environment=HOME=/home/terryvanbelle
+Environment=PATH=/usr/local/bin:/usr/bin:/bin
+TimeoutStartSec=600
+ExecStart=/home/terryvanbelle/projects/vibe/2025/tools/vm-prune.sh
+StandardOutput=append:/home/terryvanbelle/bc25-prune.log
+StandardError=append:/home/terryvanbelle/bc25-prune.log

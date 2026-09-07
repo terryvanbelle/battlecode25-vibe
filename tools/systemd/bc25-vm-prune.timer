@@ -1,0 +1,14 @@
+[Unit]
+Description=Hourly disk check on battlecode-dev
+
+[Timer]
+# Hourly. The VM reached 20G/20G with zero free once, which broke a replay
+# upload and would have broken tournament staging for all three lineages. An
+# hourly sweep costs nothing and the failure it prevents is shared.
+OnBootSec=10min
+OnUnitActiveSec=1h
+AccuracySec=5min
+Unit=bc25-vm-prune.service
+
+[Install]
+WantedBy=timers.target
