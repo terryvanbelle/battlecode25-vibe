@@ -6221,3 +6221,65 @@ flag is the cheapest coordination primitive on the board and I have never used i
 **None of these is started.** Iterations 22 and 23 are in flight and 24 is queued;
 this is the ledger of what the sweep found, dated, so that the next time the loop
 stalls the structural track has a costed menu rather than a brainstorm.
+
+## Play-symmetry audit, from the mirror arm I was already running (zero extra games)
+
+The algorithm requires a periodic mirror — bot vs byte-identical copy, every map,
+both sides — and the `alice_i22a` identity arm *is* one: 25 maps, 50 games, two
+programs that differ only in dead code and that the run proved behaviourally
+identical.
+
+```
+winning SIDE across all 50 games:            A 26,  B 24
+maps where the SAME side won both games:     25 / 25
+maps where the winner alternated with the bot: 0 / 25
+```
+
+### Two separate findings, and they point in opposite directions
+
+**1. No global play-symmetry bug is detectable.** A compass-order iteration, a
+fixed direction fallback, or anything else correlated with team identity would
+show up as a systematic skew toward A or B across maps. **26–24 is as close to the
+null as 50 games can get.** That is the reassuring half, and it is the specific
+thing the audit is for.
+
+**2. But the per-map side advantage is TOTAL.** On **every one of 25 maps, the
+same side won both games.** Not "usually", not "on the lopsided ones" — all 25.
+Two byte-identical programs, and which one wins is decided entirely by which spawn
+it got. Nothing about the program breaks the tie on any map in the sample.
+
+### Why this matters more than the reassuring half
+
+- **It is the empirical justification for the swept-map statistic**, which this
+  lineage has been leaning on by instinct since iteration 7. A swept map is a map
+  where the bot won from the side that a mirror says *should lose*. This mirror
+  says that is exactly the informative event, because in a mirror the swept count
+  is **zero out of 25** by construction. Reporting "swept 9 to 1" against
+  `alice_iter19` is therefore 9 maps where the change beat a side advantage that a
+  coin-flip-equivalent opponent never beats once.
+- **It bounds what a single-side result can ever mean.** A one-sided match in this
+  game is close to 100% confounded. I have quoted single-side generality checks
+  before (iteration 7's "8/8" was both sides, correctly; other spot-checks were
+  not).
+
+### I have NOT determined the mechanism, and I am not going to guess
+
+Maps are guaranteed symmetric by the map contract, so with identical programs the
+asymmetry must come from somewhere outside the map. Three candidates, none tested:
+
+- **Robot IDs.** My PRNG is `rngState = rc.getID() * 31 + 17`, and the two teams
+  get different ID sequences — so identical code makes *different random choices*
+  per side. If this dominates, a large share of my outcomes is decided by seed
+  rather than by policy, and reducing the bot's reliance on randomness (comms,
+  ground markers, deterministic exploration) converts luck into skill. That would
+  make the API-sweep items above considerably more valuable than they look.
+- **Engine turn order.** If team A acts first each round, that is a structural
+  first-mover edge. It would predict a skew toward A, and the observed 13-map/12-map
+  split argues against it dominating.
+- **Spawn placement under the specific symmetry class** of each map.
+
+Distinguishing these is a cheap engine probe plus one instrumented mirror, and it
+is queued rather than done — I have a candidate awaiting its gate and this is not
+on its path. Recorded now with the mechanism explicitly open, because "the PRNG
+seed decides my games" is exactly the sort of striking claim I would otherwise be
+tempted to write down before testing it.
