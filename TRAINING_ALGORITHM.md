@@ -234,6 +234,14 @@ building a solution:
   burned three iterations in one day once. Also read the *guard you are
   nesting inside*: a new clause added under an outer condition that already
   excludes the targeted case can never fire.
+
+  **Reachability means the CHOICE SET, not just the guard.** If the change ranks
+  or selects among options, check how many options actually exist at the moment
+  it runs. One lineage tuned a ruin-ranking function whose candidates were the
+  ruins *in vision* — and a soldier never sees two at once, so the choice set was
+  a singleton and every dose was byte-identical. It had run reachability on the
+  guard and never on the set the guard ranks. A ranking over one option is not a
+  ranking.
 - **Trigger frequency.** Check how often the triggering condition fires across
   *other* recent games, not just the diagnosed one. "Helps the diagnosed case,
   hurts broadly" is a recognizable failure shape: conditions that look narrow
