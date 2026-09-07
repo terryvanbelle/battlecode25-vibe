@@ -7581,3 +7581,58 @@ completed patterns are and could broadcast "claimed" so soldiers stop converging
 on ruins another soldier is already finishing. **Whether soldiers actually collide
 on ruins is a countable quantity I have not counted** — and by today's consistency
 pass, that count is the next artifact, not the schema.
+
+## Resumption state — two things in flight
+
+### 1. `20260907-211852` — the frozen roster on `alice_iter23` (300 games)
+
+`BOT=alice_iter23` against the full roster `alice_iter0 / iter1 / iter4 / iter7 /
+iter12 / alice_flood`, 25 maps, both sides. At 93/300. **Recover with
+`gauntlet-collect.sh`, never re-run.**
+
+**Why it is running**, in one line, and it is my own result that forced it:
+**head-to-head margins do not chain**, so "iteration 23 beats iteration 22 by +8"
+says nothing about where iteration 23 *stands*. The roster last saw the iteration
+22 candidate; this build has never been measured against a fixed opponent.
+
+Comparison table to fill in — the iteration 22 candidate's readings, so the delta
+is the thing to read:
+
+| frozen opponent | iteration 22 candidate | iteration 23 |
+|---|---|---|
+| `alice_iter0` | 100% | **100% (50/50, complete)** |
+| `alice_iter1` | 100% | 100% so far (43/43) |
+| `alice_iter4` | 98% | — |
+| `alice_iter7` | **74%** | — |
+| `alice_iter12` | **92%** | — |
+| `alice_flood` | **76%** | — |
+
+The three bolded rows are the ones with resolution; `iter0`/`iter1` are at ceiling
+and can only confirm nothing broke. **Record the result with
+`track_vs_old_bots.py <run>` and redraw both charts** — that is the post-accept
+routine's roster half, which iteration 23 has not yet had.
+
+### 2. `alice_ruincensus` — the count that must precede any comms schema
+
+Built and queued behind the roster (one match, UnderTheSea). Reports each
+soldier's **current ruin target** every turn; the counting happens **offline
+across soldiers from the replay**, because a soldier cannot see another soldier's
+target and doing it in-bot would be the instrument inventing its own answer.
+
+**Pre-registered readings**, before it lands:
+- For each round, group soldiers by target ruin. **If the modal group size is 1,
+  soldiers are not colliding and the coordination hypothesis is dead** — the comms
+  channel being reachable would not matter, and I would need a different use for
+  it before spending anything.
+- If groups of 3+ are common while other unclaimed ruins sit unworked, the
+  hypothesis survives and the schema becomes worth designing.
+
+**Prediction on record: collisions are common.** My calibration today is four
+predictions, one hit — so this is worth nothing until counted, and I am writing it
+down only so it cannot be adjusted afterwards.
+
+**The discipline this enforces**: the comms channel is *reachable* (53–65% of
+turns), which is a fact about the channel and not a reason to build anything.
+**Reachable is not useful.** This count is what decides whether there is a
+decision worth informing, and it costs one match against a 300-game gauntlet if I
+guessed wrong.
