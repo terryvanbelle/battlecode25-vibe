@@ -71,14 +71,20 @@ def git(repo, *args):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--workspace")
+    ap.add_argument("--bot", help="package that actually plays (default: the "
+                                  "workspace's own bot). A run launched with "
+                                  "BOT=<something else> plays that package, and "
+                                  "labelling it with src/<agent> would name a "
+                                  "build that never took the field.")
     args = ap.parse_args()
 
     ws = find_workspace(args.workspace)
     agent = ws.name
     src = ws / "src"
-    mine = src / agent
+    bot = args.bot or agent
+    mine = src / bot
     if not mine.is_dir():
-        sys.exit(f"!! no {src / agent}")
+        sys.exit(f"!! no {mine}")
 
     want = digest(mine)
     snaps = {}
@@ -88,18 +94,33 @@ def main():
             snaps[int(m.group(1))] = d.name
 
     match = ""
+    if bot in snaps.values():      # playing a snapshot directly: it is itself
+        match = bot
     for n in sorted(snaps, reverse=True):          # newest match wins
+        if match:
+            break
         if want is not None and digest(src / snaps[n]) == want:
             match = snaps[n]
             break
     base = snaps[max(snaps)] if snaps else ""
-    label = match or (f"{base}+cand" if base else "pre-iter0")
+    # An explicitly named non-snapshot package (BOT=carol_i12b) IS its own
+    # identity -- the package name says exactly which build played, which is
+    # more informative than "something after iter11". Only the workspace's own
+    # moving src/<agent> needs the +cand form.
+    if match:
+        label = match
+    elif bot != agent:
+        label = bot
+    elif base:
+        label = f"{base}+cand"
+    else:
+        label = "pre-iter0"
 
     repo = Path(git(ws, "rev-parse", "--show-toplevel") or ws)
     rel = mine.relative_to(repo) if repo in mine.parents else mine
     dirty = "1" if git(repo, "status", "--porcelain", "--", str(rel)) else "0"
 
-    for k, v in (("bot", agent), ("snapshot", match), ("base", base),
+    for k, v in (("bot", bot), ("snapshot", match), ("base", base),
                  ("label", label), ("head", git(repo, "rev-parse", "--short", "HEAD")),
                  ("dirty", dirty)):
         print(f"{k}={v}")

@@ -91,7 +91,7 @@ printf '%s\n' $MAPS > "$OUT/maps.txt"
 # Record WHICH BUILD is playing, now, while it is still knowable: src/<agent> is
 # a moving target and reconstructing it later from snapshot dates gives an answer
 # that changes the moment the candidate is accepted. Never fatal to a run.
-python3 "$REPO_ROOT/tools/bot_identity.py" --workspace "$WS_DIR" > "$OUT/bot.txt" 2>/dev/null || true
+python3 "$REPO_ROOT/tools/bot_identity.py" --workspace "$WS_DIR" --bot "$BOT" > "$OUT/bot.txt" 2>/dev/null || true
 [ "$SAMPLED" = 1 ] && MAPTAG="$(echo "$MAPS" | wc -w) sampled of $(wc -l < "$REPO_ROOT/tools/bc25-maps.txt")" \
                    || MAPTAG="$(echo "$MAPS" | wc -w) pinned"
 echo "gauntlet $RUN_ID  ws=$WS_REL bot=$BOT  opponents=[$OPPONENTS]  maps=$MAPTAG  games=$NGAMES  jobs=$MAXJOBS"

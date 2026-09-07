@@ -19,8 +19,21 @@ find_workspace
 mkdir -p "$WS_DIR/matches" "$WS_DIR/logs"
 ensure_vm
 
-gssh "mkdir -p ~/$REMOTE_REPO/$WS_REL/src" >/dev/null
-gscp -r "$WS_DIR/src/." "$USER_NAME@$IP:$REMOTE_REPO/$WS_REL/src/" >/dev/null
+# Build and play in a SIBLING directory, never the workspace the gauntlets use.
+# `./gradlew run` rewrites build/classes, and in-flight gauntlet games load their
+# robot classes from exactly that path -- so a debug match run while a gauntlet
+# is playing can swap the code out from under games already in progress and
+# silently corrupt their results. Taking a slot (below) does not help: the
+# damage is to the shared build output, not to concurrency.
+MATCH_REL="$WS_REL-match"
+gssh "
+  cd ~/$REMOTE_REPO
+  mkdir -p '$MATCH_REL/src'
+  for f in build.gradle gradle gradlew gradlew.bat gradle.properties engine_version.txt client_version.txt; do
+    [ -e '$MATCH_REL'/\$f ] || cp -r '$WS_REL'/\$f '$MATCH_REL'/ 2>/dev/null || true
+  done
+" >/dev/null
+gscp -r "$WS_DIR/src/." "$USER_NAME@$IP:$REMOTE_REPO/$MATCH_REL/src/" >/dev/null
 
 for MAP in "$@"; do
   echo "=== match: $TEAM_A vs $TEAM_B on $MAP ($WS_REL) ==="
@@ -31,14 +44,14 @@ for MAP in "$@"; do
   # shell exits.
   gssh "
     export JAVA_HOME=\$HOME/jdk21 PATH=\$HOME/jdk21/bin:\$PATH
-    cd ~/$REMOTE_REPO/$WS_REL
+    cd ~/$REMOTE_REPO/$MATCH_REL
     GLOBAL_CAP=${GLOBAL_CAP:-5} HARD_CAP=${HARD_CAP:-7}
 $(cat "$REPO_ROOT/tools/remote-slot.sh")
     acquire_slot
     ./gradlew --no-daemon run -PteamA=$TEAM_A -PteamB=$TEAM_B -Pmaps=$MAP \
       -PoutputVerbose=false 2>&1 | tee \$HOME/bc25-match-$MAP.log | grep -E '\[server\]' || true
   "
-  gscp "$USER_NAME@$IP:$REMOTE_REPO/$WS_REL/matches/$TEAM_A-vs-$TEAM_B-on-$MAP.bc25" "$WS_DIR/matches/" >/dev/null || echo "  (no replay pulled)"
+  gscp "$USER_NAME@$IP:$REMOTE_REPO/$MATCH_REL/matches/$TEAM_A-vs-$TEAM_B-on-$MAP.bc25" "$WS_DIR/matches/" >/dev/null || echo "  (no replay pulled)"
   gscp "$USER_NAME@$IP:bc25-match-$MAP.log" "$WS_DIR/logs/" >/dev/null || true
 done
 echo "artifacts in $WS_DIR/matches and $WS_DIR/logs"
