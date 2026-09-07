@@ -3573,3 +3573,13 @@ failure known, the 0 is fully explained by my run being dead, and no starvation 
 warranted. **The transient 8 > 7 still stands as an observation** and is reported to the
 coordinator as-is, unexplained — it is a brief overshoot, not a sustained breach, and I have
 not worked around it.
+
+**Tooling hazard, recorded before it bites me.** I wanted to mechanism-check `carol_i12` with a
+single `vm-match.sh` while the iteration 11 gauntlet plays. **Do not.** Both `vm-match.sh` and
+`gauntlet.sh` scp into the *same* remote workspace and build into the *same* `build/classes`,
+and gauntlet games load `-Dbc.game.team-a.url=build/classes`. A `gradlew run` mid-gauntlet
+recompiles under the running games, so a game starting during the rebuild can fail to load a
+class. This is also why I compiled `carol_i12` in an isolated `/tmp` dir rather than via
+`vm-compile.sh`, which scps over the shared `src/`. **Rule: no vm-match, no vm-compile, while
+one of my own gauntlets is in flight.** Iteration 12's mechanism check waits for
+`20260907-013714` to finish.
