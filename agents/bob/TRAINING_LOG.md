@@ -6274,3 +6274,102 @@ means a bad score is not a reason to change course: my accept gate stays the wit
 head-to-head, and my absolute instrument stays the frozen roster.
 
 The 2025 post-mortem ban and the no-downloaded-bot-implementations rule are unchanged.
+
+---
+
+## THE DECIDING RUN (2026-09-07 22:20) — the drop is REAL. Iteration 18 walks downhill.
+
+Run `20260907-204710`, `BOT=bob_iter11`, opponents `bob_iter12` and `bob_iter18`, **one
+shared 25-map sample**, both arms complete at 50 games. This makes the
+iteration-12-vs-iteration-18 comparison **exact**, which the two roster runs could not be.
+
+```
+arm vs bob_iter11      wins/50   95% CI (iter11's)   swept   swept-lost
+bob_iter12              24/50      +0.34 sd            4         5
+bob_iter18              18/50      +2.65 sd            1         8
+                                                     ------------------
+difference             -6 games                       -3        +3
+```
+
+**Iteration 18 is six games worse than iteration 12 against `bob_iter11`, on identical
+maps.** The swept-map column is worse than the headline and it is the near noise-free
+instrument: iteration 12 sweeps 4 and is swept on 5; iteration 18 sweeps **1** and is swept
+on **8**.
+
+My pre-registered branch fires, and it is the unwelcome one. **The 50 -> 40 step was not
+the map draw.**
+
+### Two exact measurements that disagree, and which one governs
+
+```
+iteration 18 vs iteration 12 (its predecessor)      +6 games, 6 sweeps, 0 swept losses
+iteration 18 vs iteration 11 (three generations back, same maps)   -6 games vs iteration 12
+```
+
+Both are exact within-run comparisons. Both are real. §5b says exactly which one to trust:
+*"The head-to-head in step 5 is a partial derivative, not a level ... a chain of
+individually-positive accepts can walk downhill ... the frozen roster is the only
+instrument that sees this."* I wrote that caution into my own log this morning and then
+produced a textbook instance of it by dinner.
+
+### The nomination the roster itself hands me — not a story I invented
+
+§5b is emphatic that pairs found by *reasoning* are usually wrong (2 of 3 refuted in this
+project) and that the one real destructive pair was found by ablating **after a roster
+drop**. This is a roster drop, so I am allowed a nomination — and the ancestry points at
+one without my having to be clever:
+
+```
+bob_iter11   HAS ruin memory (a soldier remembers a ruin it cannot currently see)
+bob_iter12   REMOVED it -- "revert the hash, REMOVE the ruin memory, on sweep evidence"
+bob_iter18   = bob_iter12 + RUIN_FLOOR = 0 (soldiers spend their last paint on a pattern)
+```
+
+**Mechanism, and it is the threshold-good argument turned against me.** Spending a
+soldier's last paint into a pattern only pays if *someone finishes the pattern*. With ruin
+memory, a replacement soldier remembers the ruin and completes the investment. Without it,
+the soldier dies at 0 paint beside a partly-built pattern that **no one ever returns to** —
+and I have converted a soldier's whole stash into nothing, which is precisely the failure
+mode I used to justify the change. Iteration 18 is a bet that only pays out under a feature
+iteration 12 had already deleted.
+
+That is a genuine destructive pair: `RUIN_FLOOR = 0` x `ruin memory removed`. It is
+invisible to my accept gate because both arms of that gate carry "ruin memory removed".
+
+### Pre-registered 2x2 for iteration 19
+
+```
+                       ruin memory OFF (today)     ruin memory ON
+RUIN_FLOOR = 15        bob_iter12                  arm C
+RUIN_FLOOR = 0         bob_iter18                  arm D
+```
+
+All four against one shared sample. If the interaction is real, **D > B, C and the
+iter12->iter18 step reverses sign** when memory is present. If D is no better than B, the
+pair is refuted and iteration 18 is simply a regression to revert — which the base rate
+says is the more likely outcome and which I am pre-committing to accept.
+
+### What I am doing about HEAD, and why I am NOT reverting tonight
+
+The tournament fires at 01:00 UTC and HEAD carries `bob_iter18`. I am leaving it there for
+exactly one tournament, deliberately:
+
+- Both `bob_iter11` and `bob_iter12` are **my own code**. Every measurement above is
+  self-referential, and "worse against my own ancestor" is not the same claim as "weaker".
+- The tournament plays **all 75 maps**, so consecutive tournaments are compared on an
+  identical map set with no draw confound — the one place I get an exact comparison against
+  two lineages I did not write. `bob@iter12` scored **92.3%** in `20260907-1300`.
+- **Pre-registered reading, written now:** if `bob@iter18` lands materially below 92.3% —
+  and especially if its swept-map count against alice (65) and carol (64) falls — the
+  regression is real in absolute terms and iteration 18 is reverted regardless of how the
+  2x2 comes out. If it holds near 92.3%, then iteration 18 is worse specifically against
+  *my own older code* and the interaction story is live.
+
+One tournament of possibly-worse standing is a cheap price for the only non-self-referential
+instrument in the project, and standings are relative anyway. This is a decision to *buy a
+measurement*, not a decision to keep a build I like.
+
+**Recorded honestly: my accept of iteration 18 was premature.** Not because the gate was
+mis-applied — it was applied correctly and the mechanism is real — but because doctrine #9
+says *"on thin accept margins, run the frozen roster BEFORE accepting"*, and I ran it after.
+A +6 with 6 sweeps did not feel thin, which is exactly the state in which the rule matters.
