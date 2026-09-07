@@ -4681,3 +4681,54 @@ the benefit must concentrate on the maps where `noPaint` is largest.
 
 If the gains land on the low-`noPaint` maps instead, the mechanism I have described is not the
 one doing the work and I must not accept it on the headline number, whatever that number is.
+
+## Trace: carol has TWO opposite economic pathologies, and one fixed constant serves neither
+
+Measured from the tower indicator line (`T r=.. chips=..`) across the same 8 complete
+iteration-14 games — free, no VM time. Spawn requires `chips >= CHIP_RESERVE + unit.moneyCost`
+with `CHIP_RESERVE = 1200`, so the thresholds are **1450** for a soldier, ~1500 for a mopper,
+**1600** for a splasher.
+
+| map | tower turns | **< 1450: cannot afford ANY unit** | 1450–1599: soldier only | ≥ 1600: anything |
+|---|---|---|---|---|
+| Castle | 4,354 | **95.9%** | 4.0% | 0.1% |
+| DefaultLarge | 3,856 | **93.2%** | 6.7% | 0.2% |
+| DefaultMedium | 4,642 | **78.6%** | 15.9% | 5.5% |
+| Bunny | 6,534 | 49.4% | 11.6% | 39.1% |
+| PlumberGame | 7,002 | 46.2% | 16.5% | 37.3% |
+| walalilongla | 5,165 | 24.6% | 10.5% | 64.9% |
+| Parking_lot | 4,097 | 13.6% | 13.5% | **72.8%** |
+| gridworld | 6,291 | 6.2% | 2.1% | **91.7%** |
+
+**These are two different games.** On Castle and DefaultLarge a carol tower cannot afford a
+single soldier on ~95% of its turns — the 1,200-chip reserve consumes the entire treasury and
+production stops. On gridworld and Parking_lot chips are abundant on 73–92% of turns and the
+reserve is irrelevant; RULES.md notes chips accumulate uselessly unless spent on
+towers/upgrades/SRPs, and iteration 12's upgrades are the only sink carol has.
+
+**One fixed constant cannot serve both regimes**, which is exactly the failure mode
+LEARNINGS.md already records under "Fixed constants rot into dead bands" and which
+TRAINING_ALGORITHM §5 answers: *"self-calibrating thresholds beat fixed constants for
+opponent-variable behavior — derive the threshold from in-game observation instead of
+searching over more constants."* The reserve exists to protect a 1,000-chip ruin completion;
+on Castle it is instead protecting 1,200 chips from ever being used at all.
+
+**Two things this also settles.**
+
+1. **The "wasted spawn roll" idea is small.** The roll picks a unit and builds nothing if that
+   unit is unaffordable, with no fallback to a cheaper one. But the band where the choice
+   matters — soldier affordable, splasher not — is only **2.1%–16.5%** of tower turns. Below
+   it nothing is affordable whatever the roll; above it everything is. A fallback is worth at
+   most a few percent of tower turns and is not the intervention here.
+2. **It explains why iteration 17's first verification match found no splashers at all.** A
+   splasher needs 1,600 chips; on Parking_lot that is available 72.8% of the time, but the
+   candidate's game simply never rolled one into an affordable turn. Splashers are **rare** in
+   carol's builds — which sharpens rather than weakens iteration 17: on gridworld a splasher
+   fires 20 times in a game while sitting dry for 381 turns, roughly 79% of its life spent
+   unable to act. The unit is scarce *and* idle.
+
+**Queued as the next structural target after iteration 17**, in the resource-economy area —
+re-openable now, since `MaxConsecutiveRejects` was satisfied by iterations 13/14/15 leaving
+it. The shape is a reserve derived from observation (income rate, tower count, whether a ruin
+is actually reachable) rather than the constant 1,200, with the zero arm and the current
+constant both measured as doses.
