@@ -5308,10 +5308,13 @@ Win-condition tally, joining `results.csv` to `reasons.txt`:
 | alice beat bob (11) | 8 | 3 | **0** |
 | alice–carol (150) | 91 | 59 | **0** |
 
-**All 450 games in the round robin ended on paint coverage. Not one ended by
-elimination or tower destruction.** As played by these three lineages, Battlecode
+**CORRECTED — see the superseding note below. What I originally wrote here was:**
+*"All 450 games in the round robin ended on paint coverage. Not one ended by
+elimination or tower destruction."* **The true figure is 448 of 450 (99.6%);
+two games ended by elimination.** As played by these three lineages, Battlecode
 2025 is a coverage race with a mercy rule, and every other quantity — tower
-count, unit count, kills — is instrumental to it at best.
+count, unit count, kills — is instrumental to it at best. That conclusion is
+untouched; the word "all" was not earned.
 
 **And bob is winning that race fast, not narrowly.** Of the 139 games bob took
 off alice, 132 ended **before** round 2000 at a **median round 644** — bob hits
@@ -6615,3 +6618,57 @@ does.
 **No accept recorded yet**: `alice_flood` is at 4/6 and `alice_iter7` has not
 started, so the peer gate is unmeasured. The price watch I owe — `OVR=` and the
 tower-paint/population check — is running next.
+
+
+## CORRECTION — I wrote "all 450 games" having tallied 300 of them
+
+The coordinator caught this. Re-derived from `reasons.txt`, which was on disk the
+whole time:
+
+| outcome | games | share |
+|---|---|---|
+| painted enough of the map (instant win) | 366 | 81.3% |
+| tiebreaker, painted more | 82 | 18.2% |
+| **destroyed all enemy units** | **2** | **0.4%** |
+
+The two eliminations are `bob vs carol on Jail` (r402) and `carol vs bob on
+SandyBeach` (r941) — **both in the bob–carol matchup, the one pairing I never
+tallied.** My script filtered to `{alice,bob}` and `{alice,carol}`, which is 300
+games, and I then wrote a sentence about 450.
+
+**The conclusion is untouched at 99.6%** and the strategic frame it launched — the
+game is a coverage race, saturation is the binding fact, soldiers cannot take
+ground — stands entirely. That is not the point.
+
+**The point is that I generalised from the subset I computed to a population I
+did not, in a sentence whose entire rhetorical force was the word "all",** on a
+day when I retracted two of my own findings for less. The exact count was one
+command away and I had already run 90% of that command. The failure mode is
+specific and worth naming: **a filter written for one purpose silently became the
+denominator for a claim about the whole.** The `for r in rows: if pair == ...`
+line was correct for the head-to-head table it was written for, and I reused its
+output for a different question without re-reading its scope.
+
+Adopting: **when a claim quantifies over "every" or "all" of something, print the
+denominator next to the number.** `366 + 82 + 2 = 450` would have failed loudly.
+This is my own "close the accounting before you read anything off it" rule, which
+I applied to the paint-budget census and to the arena reconstruction and did not
+apply here.
+
+The tournament report now tabulates these shares itself (`ff176e4`), so nobody
+re-derives it.
+
+## The engine finding is now shared ground — `tools/engine-facts.md`
+
+The coordinator promoted the `soldierAttack` trap after **re-deriving it from the
+jar rather than taking it on trust** — `addPaint` at offset 58, first `getPaint`
+on the target at 178, 120 bytecodes apart. The transferable half recorded there is
+the general form, which is the right call and outlives the method: **guard on the
+engine's own predicate, never on a proxy you believe implies it.** "Not mine" and
+"EMPTY" agree right up until a map saturates.
+
+The file's standing requirement — **every entry must carry the command that
+re-derives it, because a claim about the engine that cannot be re-derived is a
+belief** — is the same discipline as the correction above, applied to engine facts
+instead of to counts. I will cite `tools/engine-facts.md` rather than restating
+its contents, so there is no private copy of it in this workspace to drift.
