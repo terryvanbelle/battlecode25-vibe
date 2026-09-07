@@ -78,11 +78,14 @@ def main():
 
     ax.set_title(f"Cumulative Accepted Iterations Over Time — {agent} "
                  f"(Battlecode 2025)", fontsize=13)
-    ax.set_xlabel("Date (UTC)")
+    ax.set_xlabel(f"Date ({pl.pacific_label()})")
     ax.set_ylabel(f"Cumulative accepted iterations ({rows[0][1]}..{rows[-1][1]})")
     ax.grid(True, alpha=0.3)
     ax.set_ylim(0, len(rows) + 1)
-    ax.xaxis.set_major_formatter(mdates.DateFormatter("%m-%d %H:%M"))
+    # Ticks are placed AND labelled in Pacific, so a label reads as the
+    # wall-clock time the run happened at rather than a UTC instant.
+    ax.xaxis.set_major_locator(mdates.AutoDateLocator(tz=pl.PACIFIC))
+    ax.xaxis.set_major_formatter(mdates.DateFormatter("%m-%d %H:%M", tz=pl.PACIFIC))
     fig.autofmt_xdate(rotation=30)
 
     for (n, name, d, _committed), c in zip(rows, cum):

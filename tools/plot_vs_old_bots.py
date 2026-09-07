@@ -99,11 +99,14 @@ def main():
         f"Win % vs. a fixed roster of old snapshots — {agent} (Battlecode 2025)\n"
         "absolute-strength yardstick: frozen opponents, so a rising line is real progress",
         fontsize=12)
-    ax.set_xlabel("Date of gauntlet run (UTC)")
+    ax.set_xlabel(f"Date of gauntlet run ({pl.pacific_label()})")
     ax.set_ylabel("Win % against that frozen opponent")
     ax.set_ylim(-5, 105)
     ax.grid(True, alpha=0.3)
-    ax.xaxis.set_major_formatter(mdates.DateFormatter("%m-%d %H:%M"))
+    # Ticks are placed AND labelled in Pacific, so a label reads as the
+    # wall-clock time the run happened at rather than a UTC instant.
+    ax.xaxis.set_major_locator(mdates.AutoDateLocator(tz=pl.PACIFIC))
+    ax.xaxis.set_major_formatter(mdates.DateFormatter("%m-%d %H:%M", tz=pl.PACIFIC))
     fig.autofmt_xdate(rotation=30)
     handles, labels = ax.get_legend_handles_labels()
     if any_backfill:

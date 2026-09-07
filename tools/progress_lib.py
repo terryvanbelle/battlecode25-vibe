@@ -11,16 +11,33 @@ port, both forced by this project's shape:
    carol has its own workspace, so every tool auto-detects the workspace it is
    run from and reads only that agent's data. Nothing here ever reads a sibling
    agent's directory -- see MULTI_AGENT.md's isolation rules.
-2. **UTC, not Pacific.** Everything else in this project (the 06:00/18:00
-   tournament cron, gauntlet run-ids) is UTC, and both VMs run UTC.
+2. **Stored in UTC, displayed in Pacific.** Run-ids, both VM clocks and every
+   timestamp on disk are UTC, and stay that way -- converting stored data would
+   make run-ids disagree with the rows they name. Only the CHART AXES are
+   converted, via `PACIFIC` below, because the person reading a chart wants the
+   wall-clock time they were working at. The tournament schedule is likewise
+   Pacific (06:00/18:00 America/Los_Angeles).
 """
 import csv
 import re
 import subprocess
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
+try:
+    from zoneinfo import ZoneInfo
+    PACIFIC = ZoneInfo("America/Los_Angeles")
+except Exception:                      # no tzdata: fall back to fixed PDT
+    PACIFIC = timezone(timedelta(hours=-7), "PDT")
+
 UTC = timezone.utc
+
+
+def pacific_label(dt=None):
+    """Axis label suffix naming the zone as it stands at `dt` -- PDT or PST."""
+    when = dt or datetime.now(UTC)
+    name = when.astimezone(PACIFIC).tzname() or "Pacific"
+    return name
 
 
 def find_workspace(start=None):
