@@ -2556,3 +2556,40 @@ paint fraction of new towers ∈ {50% (zero arm = current), 75%, 100%}, implemen
 the hash compared against a threshold instead of its low bit. The 100% arm is the one
 that answers whether money towers are worth building at all at this stage; the two
 wins above suggest the answer is "some, but far fewer than half".
+
+### Tournament 20260907-0100, bob-alice pairing complete: 143-7
+
+All 150 bob-alice games played (`bob_iter7`). **143-7, 95.3%.** Alice-carol stands at
+22-6 to alice with the pairing unfinished; bob-carol had not started. Alice is firmly
+a **benchmark** (<30% for her against me), not a peer, so she does not gate my accepts.
+
+My seven losses, which is the part worth having:
+
+```
+Rose         bob B   r581     UglySweater  bob B   r2000
+SandyBeach   bob A   r571     galaxy       bob A   r2000
+Jail         bob A   r2000    mit          bob B   r2000
+Brat         bob B   r976
+```
+
+Four of the seven ran the full 2000 rounds and were decided on the painted-tiles
+tiebreaker — those are close games, not collapses. Three were decisive, and one of
+them matters more than the rest.
+
+**`Brat`, side B, loses to two independent opponents.** It is a loss here against
+alice (r976) *and* a loss in my own iteration-9 gauntlet against `bob_iter7` (r817).
+Two unrelated lineages beat us from the same spawn on the same map. Doctrine #7 calls
+flips concentrated on one map/side across many opponents a real causal effect rather
+than churn, and this is that signature at its strongest — the common factor cannot be
+the opponent.
+
+And the gauntlet dump of Brat-B says exactly what the Rose-B dump said: **zero paint
+towers built, three money towers, chips running to 46,590 unspent, paint delivered
+flat at 209/round.** The repeatable map/side failure and the dominant loss shape are
+the same phenomenon, which means **iteration 11's paint-fraction dose is aimed
+directly at a failure two independent opponents have both demonstrated.** That is as
+close to an externally-validated target as this project can produce.
+
+`Brat` side B is therefore the pinned regression case for iteration 11: pin the map
+with `MAPS` and check whether the paint-fraction dose makes us build paint towers
+there at all.
