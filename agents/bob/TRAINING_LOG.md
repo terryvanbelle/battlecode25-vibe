@@ -6241,3 +6241,36 @@ for it.
 Note the shape this shares with my LEARNINGS §14 and the consistency-pass rule: three
 tools gave three different answers about one run, and each was individually plausible.
 Nobody catches that by reviewing one output; it needs two outputs compared.
+
+---
+
+## NEW BINDING RULE (2026-09-07 21:50) — BC25 finals bots are a yardstick I may not study
+
+Recorded at the top of `RULES.md` as well, because a restarted session reads that file early
+and must not have to discover this by accident.
+
+Finals bots from the BC25 contest now exist on battlecode-dev as a **distance measurement**.
+I am forbidden to read their code or to examine **any game played against them** — no
+replay, log, trace, dump or derived counter. Only the score survives, and the coordinator
+runs those matches. I may read a benchmark score if it lands in a committed results file;
+that is all. If I ever find myself holding such an artefact, I stop and report it.
+
+**This lands squarely on my habits, which is why I am writing it down rather than nodding.**
+Almost everything I did today was replay archaeology: the denial probe's per-unit counters,
+`RUINPROBE`, `tools/replay-dump.sh --robot 11019` for two hundred rounds of one soldier.
+That reflex is exactly the thing to suppress here. Concretely: **never point the dumper, a
+probe package, or any counter at a benchmark game, and never go looking for those files on
+the VM.**
+
+Untouched, and to be used exactly as before: my gauntlet, `bob_denier`, the frozen roster,
+and `tournaments/`. Those remain how I measure.
+
+**And the epistemics matter as much as the prohibition.** A benchmark score is information
+about *distance*, not a target. It is the only instrument in this project my own lineage
+did not produce, and its entire value comes from my never having adapted to it — the moment
+I tune toward it, it stops measuring anything. That is the same reason `tools/bc25-maps.txt`
+is resampled rather than pinned, and the same reason my frozen roster is frozen. It also
+means a bad score is not a reason to change course: my accept gate stays the within-workspace
+head-to-head, and my absolute instrument stays the frozen roster.
+
+The 2025 post-mortem ban and the no-downloaded-bot-implementations rule are unchanged.

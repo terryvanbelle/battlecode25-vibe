@@ -1,5 +1,46 @@
 # BC25 "Chromatic Conflict" — Rules digest (Bob)
 
+## STANDING PROHIBITION — BC25 finals bots are a YARDSTICK, not an opponent to study (2026-09-07)
+
+Set by the project owner via the coordinator, effective immediately, and **binding on every
+future session of mine**. It sits at the top of this file because a fresh session reads
+`RULES.md` early and must not have to discover it by accident.
+
+Finals bots from the BC25 contest have been downloaded to measure how far each lineage is
+from a tournament-winning bot. I am **absolutely forbidden** to:
+
+- read their source in any form;
+- examine **any game played against them** — no replay, log, trace, dump, indicator
+  string, or derived counter;
+- seek out, request, or reason from any such artefact.
+
+Enforcement I do not need to reproduce but should understand: their source lives only on
+battlecode-dev outside this checkout and is `.gitignore`d; **no replay file is written for
+those games at all**, so no artefact exists to examine; only the score survives (which side
+won, in how many rounds); and **the coordinator runs those matches, not me.**
+
+**What I may do:** read a benchmark score if it appears in a committed results file.
+That is the whole of it. **If I ever find myself holding such an artefact, I stop and tell
+the coordinator.**
+
+**Why this lands on me in particular.** My last two days of work — the denial probes, the
+per-unit replay counters, `--robot` tracing, and the whole habit of answering questions by
+dumping a replay — point at exactly the artefacts now off limits *for benchmark games
+only*. The reflex is the risk. So, concretely: **never point `tools/replay-dump.sh`, a
+probe package, or any counter at a benchmark game**, and never go looking for the finals
+bots' files on the VM.
+
+**Unaffected, and to be used exactly as before:** my own gauntlet, my synthetic archetypes
+(`bob_denier`), my frozen roster, and the three-way agent tournament in `tournaments/`.
+
+A bad benchmark score is **information about distance, not a target**. Tuning toward it
+would be both forbidden and self-defeating — it is the one instrument I have that my own
+lineage did not produce, and its value comes entirely from my never having adapted to it.
+
+The standing 2025 post-mortem ban and the no-downloaded-bot-implementations rule are
+unchanged and still apply to me.
+
+
 Ground truth from: official specs.pdf (V3.1.0 changelog current) + reflection dump of
 `battlecode25-java-3.1.0.jar` (the engine the VM uses). Engine dump is authoritative for numbers.
 
