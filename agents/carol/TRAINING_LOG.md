@@ -3325,3 +3325,56 @@ tower-targeting, with the reachability pre-check now complete rather than assume
 hypothesis is deliberately narrow: *upgrade a paint tower when chips are abundant, and the
 paint-destitute tower-turn rate (33.6%) falls.* That counter-metric is measurable on the same
 trace, which is what makes this testable rather than a story about idle chips.
+
+### Engine probe: the iteration 12 premise is confirmed directly, not inferred
+
+Ran `UnitType`'s constants out of the 3.1.0 jar on the VM (no game slot needed, so it cost
+the starved semaphore nothing):
+
+```
+LEVEL_ONE_PAINT_TOWER    lvl=1  paint/turn=5   hp=1000  next=LEVEL_TWO_PAINT_TOWER
+LEVEL_TWO_PAINT_TOWER    lvl=2  paint/turn=10  hp=1500  chips=2500
+LEVEL_THREE_PAINT_TOWER  lvl=3  paint/turn=15  hp=2000  chips=5000
+LEVEL_ONE_MONEY_TOWER    lvl=1  money/turn=20  ...  LEVEL_TWO_MONEY_TOWER money/turn=30
+```
+
+A lv2 upgrade **exactly doubles** paint mining (5 -> 10) for 2,500 chips, and throws in
++500 HP on a unit type whose loss RULES.md calls a survival variable. `getBaseType()`,
+`canUpgradeType()` and `getNextLevel()` all exist, so iteration 12's guard compiles as
+drafted. Money-tower upgrades buy +10 chips/turn and are correctly excluded: that is more
+of the resource already being discarded.
+
+### A cross-lineage signal from the tournament, and a prediction registered before the data arrives
+
+The 0100 tournament is still inside its alice-bob block (145 games), but those games are
+already sanctioned evidence, and they say something about the *shape* of a decisive BC25 game
+that my own instruments cannot:
+
+| | alice vs bob (145 games) | carol vs carol_iter7 (40 games, run 20260906-230220) |
+|---|---|---|
+| median length | **824** | **2,000** |
+| reached r2000 | **12%** | **72%** |
+| decided by paint domination | 88% | — |
+
+Alice and Bob finish each other off; **carol's games grind to the round limit and are settled
+on tiebreak.** In a game my own LEARNINGS opens by calling "a coverage race", carol appears
+not to be able to close one out.
+
+**I am not concluding that, because the comparison is confounded in an obvious way**:
+carol-vs-carol_iter7 is very nearly a mirror, and two near-identical bots on a symmetric map
+deadlock by construction. Alice-vs-bob is a cross-lineage match where one side can break
+through. Some — possibly all — of the 72% vs 12% gap is that artifact, and treating it as a
+carol weakness would be exactly the "lopsided instrument" error the doctrine warns about.
+
+**But it becomes a clean test the moment carol's own tournament blocks play**, and the
+tournament supplies the missing arm for free:
+
+> **Registered prediction, before carol's tournament games exist.** If carol's stalling is a
+> property of her lineage, her cross-lineage games (carol-vs-alice, carol-vs-bob) will reach
+> r2000 **substantially more often than the 12%** that alice-vs-bob does. If carol's
+> cross-lineage timeout rate comes back near 12%, then the 72% is a mirror artifact, this
+> direction is closed, and I will say so.
+
+This is the first thing in this project that can distinguish "carol is slow to convert the
+map" from "self-play deadlocks" — precisely the self-referential blind spot MULTI_AGENT.md
+says the tournament exists to attack, and it needs no run of my own to settle.
