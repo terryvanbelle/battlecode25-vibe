@@ -3466,3 +3466,60 @@ One honest caveat on the reachability figure I logged earlier: 21.7% of tower-tu
 round 200 onward. The 21.7% is the conservative number and I will keep quoting it, but the
 distribution behind it is "hand-to-mouth in short decisive games, absurdly rich in exactly the
 stalled games that are the problem" — which is the best possible shape for this intervention.
+
+### TOURNAMENT: the registered stall prediction is CONFIRMED, and carol is far weaker than her own instruments said
+
+Computed myself from `tournaments/20260907-0100/results.txt` (the sanctioned channel), while
+the alice-carol block was still in progress:
+
+| pair | games | record | reached r2000 |
+|---|---|---|---|
+| alice-bob | 150 | alice **7 : 143** bob | 19 (**13%**) |
+| alice-carol | 28 (partial) | alice **22 : 6** carol | 14 (**50%**) |
+
+**The prediction registered before these games existed:** *"if carol's stalling is a property
+of her lineage, her cross-lineage games will reach r2000 substantially more often than the 12%
+that alice-vs-bob does. If carol's cross-lineage timeout rate comes back near 12%, then the 72%
+is a mirror artifact, this direction is closed, and I will say so."*
+
+**Cross-lineage timeout rate: 50%, against a 13% baseline on the same tournament.** The mirror
+confound is dead. **Carol's inability to close out a coverage race is a real property of her
+lineage**, not an artifact of playing near-copies of herself. This is the first claim in the
+project that survived a genuine independent instrument, and the trace above already names the
+mechanism: towers holding 0 paint and 406,170 chips, with the tower count frozen from round 0.
+
+**And the harder number: carol is 6-22 (21%) against alice.** Split by how the game ended:
+
+| | games | carol wins |
+|---|---|---|
+| settled at r2000 on tiebreak | 14 | 3 (21%) |
+| decided by paint domination | 14 | 3 (21%) |
+
+**21% in both halves.** Carol is not specifically bad at closing out games she is otherwise
+winning — she is uniformly behind, and the stall is a symptom of the same weakness rather than
+a separate one. That is a cleaner and more actionable picture than "she can't finish".
+
+**This is the self-referential blind spot, quantified.** Carol's own gauntlet reports headline
+win rates around **70%**; against one independent lineage she is at **21%**. Every instrument I
+own descends from my own code, and all of them were flattering me. MULTI_AGENT.md predicted
+exactly this and it is the reason the tournament exists. **Absolute-strength claims from my
+gauntlet are now to be treated as uncalibrated**, and I should say "carol beats her own
+ancestors" rather than "carol is strong" until the roster chart says otherwise.
+
+Note also that alice is **7-143** against bob, so alice — who is beating carol 22-6 — is
+herself being dismantled by the third lineage. The gap between carol and the strongest bot in
+the project is therefore much larger than the alice-carol score alone suggests. I am
+deliberately not drawing strategy conclusions from bob's results: what I am entitled to from
+this channel is *outcomes*, plus replays if I choose to watch them.
+
+**Effect on the queue: none, and that is the point.** The independent evidence points at
+exactly the constraint the gridworld trace located and that iteration 12 was already written
+to attack. Iteration 11 (splashers, in flight) and iteration 12 (paint-tower upgrades) both
+target coverage throughput. The tournament did not redirect me; it told me the target is much
+further away than my own instruments claimed.
+
+**Isolation slip, recorded honestly.** I ran a bare `git log --oneline -3` to confirm a push
+and it printed a sibling agent's commit *subject line*, which is their prose and not part of
+the sanctioned `tournaments/` channel. I did not open their files and I have not used what it
+said — the table above is computed by me from `results.txt` directly. Scoping every future
+`git log` with `-- agents/carol` so this cannot recur.
