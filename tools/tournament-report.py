@@ -35,7 +35,7 @@ def runs():
 
 
 def load(run):
-    """-> (wins {bot: n}, played {bot: n}, h2h {(x,y): x's wins}, sweeps, rows)"""
+    """-> (wins, played, h2h, sweeps, rows, maps-played)"""
     rows = list(csv.DictReader((run / "results.csv").open()))
     rows = [r for r in rows if r.get("winner_bot") and r["winner_bot"] != "unknown"]
     wins, played = defaultdict(int), defaultdict(int)
@@ -52,7 +52,7 @@ def load(run):
     for (pair, _), ws in bymap.items():
         if len(ws) == 2 and ws[0] == ws[1]:
             sweeps[(ws[0], pair[1] if ws[0] == pair[0] else pair[0])] += 1
-    return wins, played, h2h, sweeps, rows
+    return wins, played, h2h, sweeps, rows, {r['map'] for r in rows}
 
 
 def pct(w, t):
@@ -101,14 +101,20 @@ def main():
             break
         prev = r
 
-    wins, played, h2h, sweeps, rows = load(cur)
+    wins, played, h2h, sweeps, rows, cur_maps = load(cur)
     bots = sorted(played)
     forfeits, incomplete = flags(cur)
     commits = played_commits(cur)
 
-    pw, pp, ph, _, _ = load(prev) if prev else ({}, {}, {}, {}, [])
+    pw, pp, ph, _, _, prev_maps = load(prev) if prev else ({}, {}, {}, {}, [], set())
     prev_incomplete = flags(prev)[1] if prev else False
-    comparable = prev is not None and not incomplete and not prev_incomplete
+    # Deltas require the same ground, and "not truncated" does not establish
+    # that: a run played with an explicit short MAPS= list is complete and still
+    # not comparable. The first report compared a 450-game run against a 2-map
+    # smoke test and called both complete. So compare the map sets themselves.
+    same_maps = bool(prev_maps) and cur_maps == prev_maps
+    comparable = (prev is not None and not incomplete and not prev_incomplete
+                  and same_maps)
 
     L = []
     L.append(f"# Tournament {cur.name} (UTC)\n")
@@ -166,10 +172,16 @@ def main():
         L.append("First tournament — no deltas yet. From the next one on, the *vs last*\n"
                  "columns are the interesting part.")
     elif not comparable:
-        why = "this run" if incomplete else "the previous run"
-        L.append(f"Deltas are suppressed because {why} was truncated: a full run plays every\n"
-                 "map and a truncated one a random subset, so the two are measured on\n"
-                 "different ground and a delta between them would be noise dressed as signal.")
+        if incomplete or prev_incomplete:
+            why = "this run" if incomplete else f"`{prev.name}`"
+            L.append(f"Deltas are suppressed because {why} was truncated, so the two runs\n"
+                     "played different maps and a delta between them would be noise dressed\n"
+                     "as signal.")
+        else:
+            L.append(f"Deltas are suppressed because `{prev.name}` played a different map set\n"
+                     f"({len(prev_maps)} maps vs {len(cur_maps)} here). Both runs finished, but\n"
+                     "finishing is not the same as covering the same ground — comparing win\n"
+                     "rates across different maps measures the maps, not the bots.")
     else:
         L.append(f"Deltas compare against `{prev.name}`. Both runs were complete, so both\n"
                  "played the full map list and the two are measured on the same ground.\n"
@@ -181,16 +193,17 @@ def main():
     # -- running league table across every tournament --
     H = ["# Tournament history\n",
          "Every round-robin so far, newest last. Win% is over all games that bot",
-         "played in that run. `!` marks a truncated run, whose maps are a random",
-         "subset — compare those with care.\n",
-         "| run | " + " | ".join(sorted({b for r in all_runs for b in load(r)[1]})) + " | games |",
-         "|---" * (len(sorted({b for r in all_runs for b in load(r)[1]})) + 2) + "|"]
+         "played in that run. `!` marks a truncated run. The `maps` column matters:",
+         "two runs are only comparable when they played the same map set.\n",
+         "| run | " + " | ".join(sorted({b for r in all_runs for b in load(r)[1]})) + " | games | maps |",
+         "|---" * (len(sorted({b for r in all_runs for b in load(r)[1]})) + 3) + "|"]
     allbots = sorted({b for r in all_runs for b in load(r)[1]})
     for r in all_runs:
-        w, p, _, _, rr = load(r)
+        w, p, _, _, rr, _ = load(r)
         mark = "!" if flags(r)[1] else ""
         cells = [f"{pct(w[b], p[b]):.1f}%" if p.get(b) else "—" for b in allbots]
-        H.append(f"| {r.name}{mark} | " + " | ".join(cells) + f" | {len(rr)} |")
+        nmaps = len({row["map"] for row in rr})
+        H.append(f"| {r.name}{mark} | " + " | ".join(cells) + f" | {len(rr)} | {nmaps} |")
     (TDIR / "HISTORY.md").write_text("\n".join(H) + "\n")
 
     print(f"wrote {cur / 'report.md'} and {TDIR / 'HISTORY.md'}")

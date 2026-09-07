@@ -1,0 +1,450 @@
+bob alice Racetrack The winning team painted enough of the map.
+bob alice defensetower The winning team painted enough of the map.
+alice bob defensetower The winning team painted enough of the map.
+alice bob Racetrack The winning team painted enough of the map.
+alice bob UnderTheSea The winning team painted enough of the map.
+bob alice yearofthesnake The winning team painted enough of the map.
+bob alice UnderTheSea The winning team painted enough of the map.
+alice bob Portal The winning team painted enough of the map.
+alice bob lighthouse The winning team painted enough of the map.
+alice bob yearofthesnake The winning team painted enough of the map.
+bob alice Portal The winning team painted enough of the map.
+bob alice lighthouse The winning team won on tiebreakers (painted more of the map).
+alice bob sayhi The winning team painted enough of the map.
+alice bob Piglets2 The winning team painted enough of the map.
+bob alice Bread The winning team painted enough of the map.
+alice bob Bread The winning team painted enough of the map.
+alice bob CastleDefense The winning team painted enough of the map.
+bob alice Piglets2 The winning team painted enough of the map.
+bob alice CastleDefense The winning team painted enough of the map.
+alice bob DefaultMedium The winning team painted enough of the map.
+bob alice DefaultMedium The winning team painted enough of the map.
+bob alice sayhi The winning team won on tiebreakers (painted more of the map).
+alice bob PlumberGame The winning team painted enough of the map.
+bob alice PlumberGame The winning team painted enough of the map.
+bob alice Bunny The winning team painted enough of the map.
+alice bob SMILE The winning team painted enough of the map.
+bob alice leavemealone The winning team painted enough of the map.
+alice bob leavemealone The winning team painted enough of the map.
+alice bob Paintball The winning team painted enough of the map.
+bob alice SMILE The winning team won on tiebreakers (painted more of the map).
+bob alice Paintball The winning team painted enough of the map.
+alice bob Bunny The winning team won on tiebreakers (painted more of the map).
+alice bob roads The winning team painted enough of the map.
+alice bob sunrise The winning team painted enough of the map.
+alice bob TargetPractice The winning team painted enough of the map.
+bob alice TargetPractice The winning team painted enough of the map.
+alice bob Filter The winning team painted enough of the map.
+bob alice roads The winning team painted enough of the map.
+bob alice Filter The winning team painted enough of the map.
+bob alice Parking_lot The winning team painted enough of the map.
+bob alice sunrise The winning team painted enough of the map.
+alice bob Parking_lot The winning team painted enough of the map.
+alice bob Thirds The winning team painted enough of the map.
+alice bob Crab The winning team painted enough of the map.
+alice bob giver The winning team painted enough of the map.
+bob alice Crab The winning team painted enough of the map.
+alice bob HungerGames The winning team painted enough of the map.
+bob alice giver The winning team painted enough of the map.
+alice bob Rose The winning team painted enough of the map.
+bob alice Thirds The winning team won on tiebreakers (painted more of the map).
+bob alice HungerGames The winning team painted enough of the map.
+bob alice Rose The winning team painted enough of the map.
+bob alice Dominoes The winning team painted enough of the map.
+bob alice headphones The winning team painted enough of the map.
+alice bob Dominoes The winning team won on tiebreakers (painted more of the map).
+alice bob boxofchocolates The winning team painted enough of the map.
+bob alice boxofchocolates The winning team painted enough of the map.
+alice bob Mirage The winning team painted enough of the map.
+bob alice Mirage The winning team painted enough of the map.
+alice bob shell The winning team painted enough of the map.
+alice bob headphones The winning team won on tiebreakers (painted more of the map).
+alice bob Gears The winning team won on tiebreakers (painted more of the map).
+bob alice shell The winning team painted enough of the map.
+alice bob gridworld The winning team painted enough of the map.
+bob alice Gears The winning team won on tiebreakers (painted more of the map).
+bob alice Leaf The winning team painted enough of the map.
+bob alice gridworld The winning team painted enough of the map.
+alice bob Flower The winning team painted enough of the map.
+bob alice walalilongla The winning team painted enough of the map.
+alice bob Leaf The winning team painted enough of the map.
+alice bob Terminal The winning team painted enough of the map.
+bob alice Flower The winning team painted enough of the map.
+alice bob walalilongla The winning team painted enough of the map.
+bob alice Terminal The winning team painted enough of the map.
+bob alice MoneyTower The winning team painted enough of the map.
+alice bob MoneyTower The winning team painted enough of the map.
+alice bob maze The winning team won on tiebreakers (painted more of the map).
+bob alice maze The winning team won on tiebreakers (painted more of the map).
+alice bob DefaultHuge The winning team painted enough of the map.
+bob alice DefaultHuge The winning team painted enough of the map.
+alice bob quack The winning team painted enough of the map.
+bob alice quack The winning team painted enough of the map.
+bob alice SaltyPepper The winning team painted enough of the map.
+alice bob Snowman The winning team painted enough of the map.
+alice bob SaltyPepper The winning team painted enough of the map.
+bob alice Snowman The winning team painted enough of the map.
+bob alice SandyBeach The winning team painted enough of the map.
+alice bob SandyBeach The winning team painted enough of the map.
+bob alice Money The winning team painted enough of the map.
+alice bob Money The winning team painted enough of the map.
+alice bob BunnyGame The winning team painted enough of the map.
+bob alice BunnyGame The winning team painted enough of the map.
+bob alice DonkeyKong The winning team painted enough of the map.
+bob alice starburst The winning team painted enough of the map.
+alice bob starburst The winning team painted enough of the map.
+alice bob Oasis The winning team painted enough of the map.
+bob alice FourCorners The winning team painted enough of the map.
+alice bob FourCorners The winning team won on tiebreakers (painted more of the map).
+alice bob DonkeyKong The winning team painted enough of the map.
+bob alice Oasis The winning team painted enough of the map.
+alice bob Snowglobe The winning team painted enough of the map.
+bob alice Snowglobe The winning team painted enough of the map.
+bob alice Restart The winning team painted enough of the map.
+alice bob Restart The winning team painted enough of the map.
+bob alice gardenworld The winning team painted enough of the map.
+alice bob memstore The winning team painted enough of the map.
+bob alice memstore The winning team painted enough of the map.
+alice bob gardenworld The winning team won on tiebreakers (painted more of the map).
+alice bob fix The winning team painted enough of the map.
+bob alice fix The winning team painted enough of the map.
+bob alice Justice The winning team painted enough of the map.
+alice bob Justice The winning team painted enough of the map.
+bob alice TheBest The winning team painted enough of the map.
+alice bob Jail The winning team painted enough of the map.
+alice bob TheBest The winning team painted enough of the map.
+bob alice Jail The winning team won on tiebreakers (painted more of the map).
+alice bob windmill The winning team painted enough of the map.
+bob alice windmill The winning team painted enough of the map.
+alice bob galaxy The winning team painted enough of the map.
+alice bob UglySweater The winning team won on tiebreakers (painted more of the map).
+bob alice UglySweater The winning team painted enough of the map.
+alice bob Fossil The winning team painted enough of the map.
+bob alice Fossil The winning team painted enough of the map.
+bob alice galaxy The winning team won on tiebreakers (painted more of the map).
+alice bob sierpinski The winning team painted enough of the map.
+bob alice sierpinski The winning team painted enough of the map.
+alice bob box The winning team painted enough of the map.
+bob alice box The winning team painted enough of the map.
+alice bob Castle The winning team painted enough of the map.
+bob alice Castle The winning team painted enough of the map.
+alice bob DefaultSmall The winning team painted enough of the map.
+alice bob Barcode The winning team painted enough of the map.
+bob alice DefaultSmall The winning team painted enough of the map.
+bob alice Barcode The winning team painted enough of the map.
+bob alice mit The winning team painted enough of the map.
+alice bob BatSignal The winning team painted enough of the map.
+alice bob mit The winning team won on tiebreakers (painted more of the map).
+bob alice BatSignal The winning team painted enough of the map.
+alice bob Brat The winning team painted enough of the map.
+bob alice Brat The winning team painted enough of the map.
+alice bob AlarmClock The winning team painted enough of the map.
+bob alice AlarmClock The winning team won on tiebreakers (painted more of the map).
+bob alice DefaultLarge The winning team painted enough of the map.
+alice bob catface The winning team painted enough of the map.
+bob alice catface The winning team painted enough of the map.
+alice bob Circuit The winning team painted enough of the map.
+alice bob DefaultLarge The winning team painted enough of the map.
+bob alice Circuit The winning team won on tiebreakers (painted more of the map).
+alice bob rain The winning team painted enough of the map.
+bob alice rain The winning team painted enough of the map.
+alice carol defensetower The winning team painted enough of the map.
+carol alice defensetower The winning team painted enough of the map.
+alice carol Racetrack The winning team won on tiebreakers (painted more of the map).
+carol alice Racetrack The winning team won on tiebreakers (painted more of the map).
+alice carol yearofthesnake The winning team won on tiebreakers (painted more of the map).
+carol alice yearofthesnake The winning team painted enough of the map.
+alice carol UnderTheSea The winning team won on tiebreakers (painted more of the map).
+carol alice Portal The winning team painted enough of the map.
+carol alice UnderTheSea The winning team won on tiebreakers (painted more of the map).
+alice carol Portal The winning team won on tiebreakers (painted more of the map).
+alice carol lighthouse The winning team won on tiebreakers (painted more of the map).
+carol alice lighthouse The winning team won on tiebreakers (painted more of the map).
+carol alice sayhi The winning team painted enough of the map.
+alice carol sayhi The winning team won on tiebreakers (painted more of the map).
+alice carol Piglets2 The winning team painted enough of the map.
+carol alice Piglets2 The winning team painted enough of the map.
+carol alice Bread The winning team painted enough of the map.
+alice carol Bread The winning team won on tiebreakers (painted more of the map).
+alice carol CastleDefense The winning team won on tiebreakers (painted more of the map).
+carol alice CastleDefense The winning team painted enough of the map.
+alice carol SMILE The winning team painted enough of the map.
+alice carol DefaultMedium The winning team won on tiebreakers (painted more of the map).
+carol alice DefaultMedium The winning team won on tiebreakers (painted more of the map).
+carol alice SMILE The winning team won on tiebreakers (painted more of the map).
+alice carol PlumberGame The winning team painted enough of the map.
+alice carol Bunny The winning team painted enough of the map.
+carol alice PlumberGame The winning team painted enough of the map.
+carol alice Bunny The winning team painted enough of the map.
+alice carol Paintball The winning team painted enough of the map.
+alice carol leavemealone The winning team won on tiebreakers (painted more of the map).
+carol alice leavemealone The winning team won on tiebreakers (painted more of the map).
+carol alice Paintball The winning team won on tiebreakers (painted more of the map).
+alice carol roads The winning team won on tiebreakers (painted more of the map).
+carol alice roads The winning team won on tiebreakers (more towers alive).
+alice carol sunrise The winning team painted enough of the map.
+alice carol TargetPractice The winning team won on tiebreakers (painted more of the map).
+carol alice sunrise The winning team won on tiebreakers (painted more of the map).
+carol alice TargetPractice The winning team painted enough of the map.
+alice carol Filter The winning team won on tiebreakers (painted more of the map).
+carol alice Filter The winning team won on tiebreakers (painted more of the map).
+alice carol Parking_lot The winning team painted enough of the map.
+carol alice Parking_lot The winning team painted enough of the map.
+alice carol Thirds The winning team painted enough of the map.
+alice carol giver The winning team painted enough of the map.
+carol alice giver The winning team painted enough of the map.
+carol alice Thirds The winning team won on tiebreakers (painted more of the map).
+carol alice Crab The winning team won on tiebreakers (painted more of the map).
+alice carol Crab The winning team won on tiebreakers (painted more of the map).
+alice carol Rose The winning team painted enough of the map.
+carol alice Rose The winning team painted enough of the map.
+alice carol HungerGames The winning team won on tiebreakers (painted more of the map).
+carol alice HungerGames The winning team won on tiebreakers (painted more of the map).
+alice carol Dominoes The winning team painted enough of the map.
+carol alice headphones The winning team painted enough of the map.
+carol alice Dominoes The winning team painted enough of the map.
+alice carol boxofchocolates The winning team won on tiebreakers (painted more of the map).
+alice carol headphones The winning team won on tiebreakers (painted more of the map).
+carol alice boxofchocolates The winning team won on tiebreakers (painted more of the map).
+alice carol Gears The winning team won on tiebreakers (painted more of the map).
+carol alice Mirage The winning team painted enough of the map.
+carol alice Gears The winning team won on tiebreakers (painted more of the map).
+alice carol Mirage The winning team won on tiebreakers (painted more of the map).
+alice carol shell The winning team won on tiebreakers (painted more of the map).
+carol alice shell The winning team painted enough of the map.
+alice carol Leaf The winning team won on tiebreakers (painted more of the map).
+alice carol gridworld The winning team won on tiebreakers (painted more of the map).
+carol alice Leaf The winning team won on tiebreakers (painted more of the map).
+carol alice gridworld The winning team won on tiebreakers (painted more of the map).
+alice carol walalilongla The winning team painted enough of the map.
+carol alice walalilongla The winning team painted enough of the map.
+alice carol Flower The winning team won on tiebreakers (painted more of the map).
+carol alice Flower The winning team won on tiebreakers (painted more of the map).
+alice carol Terminal The winning team painted enough of the map.
+carol alice Terminal The winning team painted enough of the map.
+alice carol MoneyTower The winning team won on tiebreakers (painted more of the map).
+alice carol maze The winning team won on tiebreakers (painted more of the map).
+carol alice MoneyTower The winning team won on tiebreakers (painted more of the map).
+carol alice maze The winning team won on tiebreakers (painted more of the map).
+alice carol quack The winning team won on tiebreakers (painted more of the map).
+carol alice quack The winning team painted enough of the map.
+alice carol DefaultHuge The winning team won on tiebreakers (painted more of the map).
+carol alice DefaultHuge The winning team won on tiebreakers (painted more of the map).
+alice carol SaltyPepper The winning team painted enough of the map.
+carol alice SaltyPepper The winning team painted enough of the map.
+alice carol Snowman The winning team painted enough of the map.
+carol alice Snowman The winning team painted enough of the map.
+alice carol SandyBeach The winning team painted enough of the map.
+carol alice SandyBeach The winning team painted enough of the map.
+alice carol Money The winning team won on tiebreakers (painted more of the map).
+carol alice Money The winning team won on tiebreakers (painted more of the map).
+carol alice DonkeyKong The winning team won on tiebreakers (painted more of the map).
+alice carol DonkeyKong The winning team won on tiebreakers (painted more of the map).
+alice carol BunnyGame The winning team won on tiebreakers (painted more of the map).
+alice carol starburst The winning team painted enough of the map.
+carol alice BunnyGame The winning team won on tiebreakers (painted more of the map).
+carol alice starburst The winning team painted enough of the map.
+alice carol FourCorners The winning team painted enough of the map.
+carol alice FourCorners The winning team painted enough of the map.
+alice carol Oasis The winning team won on tiebreakers (painted more of the map).
+carol alice Oasis The winning team won on tiebreakers (painted more of the map).
+alice carol Snowglobe The winning team won on tiebreakers (painted more of the map).
+carol alice Restart The winning team painted enough of the map.
+carol alice Snowglobe The winning team won on tiebreakers (painted more of the map).
+alice carol Restart The winning team won on tiebreakers (painted more of the map).
+carol alice gardenworld The winning team painted enough of the map.
+alice carol gardenworld The winning team painted enough of the map.
+alice carol memstore The winning team painted enough of the map.
+carol alice memstore The winning team painted enough of the map.
+carol alice fix The winning team painted enough of the map.
+alice carol fix The winning team won on tiebreakers (painted more of the map).
+alice carol Justice The winning team won on tiebreakers (painted more of the map).
+alice carol TheBest The winning team won on tiebreakers (painted more of the map).
+carol alice TheBest The winning team won on tiebreakers (painted more of the map).
+carol alice Justice The winning team won on tiebreakers (painted more of the map).
+carol alice Jail The winning team painted enough of the map.
+alice carol Jail The winning team won on tiebreakers (painted more of the map).
+alice carol windmill The winning team painted enough of the map.
+carol alice windmill The winning team painted enough of the map.
+alice carol UglySweater The winning team painted enough of the map.
+carol alice UglySweater The winning team painted enough of the map.
+alice carol galaxy The winning team painted enough of the map.
+carol alice Fossil The winning team won on tiebreakers (painted more of the map).
+alice carol Fossil The winning team won on tiebreakers (painted more of the map).
+carol alice galaxy The winning team won on tiebreakers (painted more of the map).
+alice carol sierpinski The winning team painted enough of the map.
+carol alice box The winning team painted enough of the map.
+carol alice sierpinski The winning team won on tiebreakers (painted more of the map).
+alice carol box The winning team won on tiebreakers (painted more of the map).
+alice carol DefaultSmall The winning team painted enough of the map.
+alice carol Castle The winning team won on tiebreakers (painted more of the map).
+carol alice DefaultSmall The winning team won on tiebreakers (painted more of the map).
+carol alice Castle The winning team won on tiebreakers (painted more of the map).
+alice carol Barcode The winning team painted enough of the map.
+carol alice Barcode The winning team painted enough of the map.
+alice carol BatSignal The winning team painted enough of the map.
+alice carol mit The winning team won on tiebreakers (painted more of the map).
+alice carol Brat The winning team painted enough of the map.
+carol alice BatSignal The winning team won on tiebreakers (painted more of the map).
+carol alice mit The winning team won on tiebreakers (painted more of the map).
+carol alice Brat The winning team painted enough of the map.
+carol alice AlarmClock The winning team painted enough of the map.
+alice carol AlarmClock The winning team won on tiebreakers (painted more of the map).
+carol alice DefaultLarge The winning team painted enough of the map.
+alice carol catface The winning team painted enough of the map.
+alice carol DefaultLarge The winning team won on tiebreakers (painted more of the map).
+carol alice catface The winning team painted enough of the map.
+carol alice rain The winning team painted enough of the map.
+alice carol rain The winning team painted enough of the map.
+bob carol defensetower The winning team painted enough of the map.
+carol alice Circuit The winning team won on tiebreakers (painted more of the map).
+alice carol Circuit The winning team won on tiebreakers (painted more of the map).
+bob carol Racetrack The winning team painted enough of the map.
+carol bob defensetower The winning team painted enough of the map.
+carol bob Racetrack The winning team painted enough of the map.
+carol bob yearofthesnake The winning team painted enough of the map.
+bob carol UnderTheSea The winning team painted enough of the map.
+carol bob UnderTheSea The winning team painted enough of the map.
+bob carol yearofthesnake The winning team painted enough of the map.
+carol bob Portal The winning team painted enough of the map.
+bob carol Portal The winning team painted enough of the map.
+carol bob lighthouse The winning team painted enough of the map.
+bob carol sayhi The winning team painted enough of the map.
+bob carol lighthouse The winning team won on tiebreakers (painted more of the map).
+carol bob sayhi The winning team painted enough of the map.
+bob carol Bread The winning team painted enough of the map.
+carol bob Piglets2 The winning team painted enough of the map.
+bob carol Piglets2 The winning team painted enough of the map.
+bob carol CastleDefense The winning team painted enough of the map.
+carol bob CastleDefense The winning team painted enough of the map.
+carol bob Bread The winning team painted enough of the map.
+bob carol DefaultMedium The winning team painted enough of the map.
+carol bob DefaultMedium The winning team painted enough of the map.
+bob carol PlumberGame The winning team painted enough of the map.
+bob carol Bunny The winning team painted enough of the map.
+carol bob SMILE The winning team painted enough of the map.
+carol bob Bunny The winning team painted enough of the map.
+carol bob PlumberGame The winning team won on tiebreakers (painted more of the map).
+bob carol leavemealone The winning team painted enough of the map.
+bob carol Paintball The winning team painted enough of the map.
+bob carol SMILE The winning team won on tiebreakers (painted more of the map).
+carol bob Paintball The winning team painted enough of the map.
+carol bob roads The winning team painted enough of the map.
+carol bob leavemealone The winning team painted enough of the map.
+bob carol roads The winning team won on tiebreakers (painted more of the map).
+bob carol TargetPractice The winning team painted enough of the map.
+carol bob sunrise The winning team painted enough of the map.
+carol bob TargetPractice The winning team painted enough of the map.
+bob carol sunrise The winning team painted enough of the map.
+bob carol Filter The winning team painted enough of the map.
+carol bob Filter The winning team painted enough of the map.
+carol bob Parking_lot The winning team painted enough of the map.
+bob carol Parking_lot The winning team painted enough of the map.
+bob carol giver The winning team painted enough of the map.
+carol bob Thirds The winning team painted enough of the map.
+bob carol Thirds The winning team painted enough of the map.
+bob carol Crab The winning team painted enough of the map.
+carol bob giver The winning team painted enough of the map.
+carol bob Crab The winning team painted enough of the map.
+bob carol HungerGames The winning team painted enough of the map.
+carol bob HungerGames The winning team painted enough of the map.
+carol bob Rose The winning team painted enough of the map.
+bob carol Rose The winning team painted enough of the map.
+carol bob headphones The winning team painted enough of the map.
+bob carol headphones The winning team painted enough of the map.
+bob carol Dominoes The winning team painted enough of the map.
+carol bob Dominoes The winning team painted enough of the map.
+bob carol boxofchocolates The winning team painted enough of the map.
+carol bob boxofchocolates The winning team painted enough of the map.
+bob carol Gears The winning team painted enough of the map.
+bob carol Mirage The winning team painted enough of the map.
+carol bob Gears The winning team won on tiebreakers (painted more of the map).
+bob carol shell The winning team painted enough of the map.
+carol bob Mirage The winning team painted enough of the map.
+carol bob shell The winning team painted enough of the map.
+carol bob Leaf The winning team painted enough of the map.
+bob carol gridworld The winning team painted enough of the map.
+bob carol Leaf The winning team painted enough of the map.
+carol bob gridworld The winning team painted enough of the map.
+bob carol walalilongla The winning team painted enough of the map.
+bob carol Flower The winning team painted enough of the map.
+carol bob walalilongla The winning team painted enough of the map.
+bob carol Terminal The winning team painted enough of the map.
+carol bob Flower The winning team painted enough of the map.
+carol bob Terminal The winning team painted enough of the map.
+bob carol maze The winning team painted enough of the map.
+bob carol MoneyTower The winning team painted enough of the map.
+carol bob MoneyTower The winning team painted enough of the map.
+carol bob maze The winning team won on tiebreakers (painted more of the map).
+bob carol DefaultHuge The winning team painted enough of the map.
+bob carol quack The winning team painted enough of the map.
+carol bob DefaultHuge The winning team painted enough of the map.
+carol bob quack The winning team painted enough of the map.
+bob carol SaltyPepper The winning team painted enough of the map.
+carol bob SaltyPepper The winning team painted enough of the map.
+bob carol Snowman The winning team painted enough of the map.
+carol bob Snowman The winning team painted enough of the map.
+bob carol SandyBeach The winning team painted enough of the map.
+carol bob SandyBeach The winning team painted enough of the map.
+bob carol Money The winning team painted enough of the map.
+carol bob Money The winning team painted enough of the map.
+bob carol BunnyGame The winning team painted enough of the map.
+bob carol DonkeyKong The winning team painted enough of the map.
+carol bob BunnyGame The winning team painted enough of the map.
+carol bob DonkeyKong The winning team won on tiebreakers (painted more of the map).
+bob carol starburst The winning team painted enough of the map.
+carol bob starburst The winning team painted enough of the map.
+bob carol Oasis The winning team painted enough of the map.
+carol bob Oasis The winning team painted enough of the map.
+bob carol FourCorners The winning team painted enough of the map.
+carol bob FourCorners The winning team painted enough of the map.
+bob carol Snowglobe The winning team painted enough of the map.
+carol bob Snowglobe The winning team painted enough of the map.
+bob carol Restart The winning team painted enough of the map.
+carol bob Restart The winning team painted enough of the map.
+bob carol gardenworld The winning team painted enough of the map.
+bob carol memstore The winning team painted enough of the map.
+carol bob memstore The winning team painted enough of the map.
+carol bob gardenworld The winning team painted enough of the map.
+bob carol fix The winning team painted enough of the map.
+carol bob fix The winning team painted enough of the map.
+bob carol Justice The winning team painted enough of the map.
+bob carol TheBest The winning team painted enough of the map.
+carol bob Justice The winning team painted enough of the map.
+carol bob TheBest The winning team painted enough of the map.
+bob carol Jail The winning team painted enough of the map.
+carol bob Jail The winning team painted enough of the map.
+bob carol windmill The winning team painted enough of the map.
+carol bob windmill The winning team painted enough of the map.
+bob carol UglySweater The winning team painted enough of the map.
+carol bob UglySweater The winning team painted enough of the map.
+carol bob galaxy The winning team painted enough of the map.
+bob carol Fossil The winning team painted enough of the map.
+bob carol galaxy The winning team won on tiebreakers (painted more of the map).
+carol bob Fossil The winning team painted enough of the map.
+bob carol sierpinski The winning team painted enough of the map.
+carol bob sierpinski The winning team painted enough of the map.
+bob carol box The winning team won on tiebreakers (painted more of the map).
+carol bob box The winning team painted enough of the map.
+bob carol Castle The winning team painted enough of the map.
+carol bob Castle The winning team painted enough of the map.
+bob carol DefaultSmall The winning team painted enough of the map.
+bob carol Barcode The winning team painted enough of the map.
+carol bob Barcode The winning team painted enough of the map.
+carol bob DefaultSmall The winning team painted enough of the map.
+bob carol BatSignal The winning team painted enough of the map.
+carol bob BatSignal The winning team painted enough of the map.
+bob carol mit The winning team won on tiebreakers (painted more of the map).
+carol bob mit The winning team won on tiebreakers (painted more of the map).
+bob carol Brat The winning team painted enough of the map.
+carol bob Brat The winning team painted enough of the map.
+carol bob AlarmClock The winning team painted enough of the map.
+bob carol AlarmClock The winning team painted enough of the map.
+bob carol DefaultLarge The winning team painted enough of the map.
+carol bob DefaultLarge The winning team painted enough of the map.
+bob carol catface The winning team painted enough of the map.
+carol bob catface The winning team won on tiebreakers (painted more of the map).
+bob carol rain The winning team painted enough of the map.
+carol bob rain The winning team painted enough of the map.
+bob carol Circuit The winning team won on tiebreakers (painted more of the map).
+carol bob Circuit The winning team painted enough of the map.
