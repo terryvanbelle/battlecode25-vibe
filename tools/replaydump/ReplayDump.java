@@ -277,6 +277,10 @@ public class ReplayDump {
         System.out.println("    towers  P paint  M money  D defense    (team1 UPPER, team2 lower)");
         System.out.println("    mobile  s soldier  m mopper  p splasher (team1 lower, team2 UPPER)");
         System.out.println("            * splash centre this frame (its footprint is NOT in the paint grid)");
+        System.out.println("    NOTE units OCCLUDE the paint beneath them in this grid, so an unpainted tile");
+        System.out.println("         with a robot on it reads as a unit. DO NOT census paint by counting");
+        System.out.println("         characters here -- use the exact census printed below, or --views for");
+        System.out.println("         the paint-only grid.");
         printGrid(idx -> {
             Character o = overlay.get(idx);
             if (o != null) return o;
@@ -314,14 +318,27 @@ public class ReplayDump {
     }
 
     /** Close the accounting before anyone reads the grid: compare reconstructed
-     *  coverage against the engine's own figure for the same round. */
+     *  coverage against the engine's own figure for the same round, and print an
+     *  EXACT tile census.
+     *
+     *  The census exists because the combined grid overlays units on paint, so
+     *  counting characters there undercounts empty tiles by however many robots
+     *  are standing on them -- a reader once got 116 by eye against ~149 from
+     *  arithmetic, and both were defensible from what was on screen. Counting
+     *  from the arrays removes the question. */
     static void coverageCheck(int round) {
         int tiles = mapWidth * mapHeight;
         int[] mine = new int[4];
+        int empty = 0, walls = 0, ruins = 0;
         for (int i = 0; i < tiles; i++) {
+            if (wall[i]) walls++;
+            else if (paint[i] == 0) { empty++; if (ruin[i]) ruins++; }
             int tm = paintTeam(paint[i]);
             if (tm >= 1 && tm < 4) mine[tm]++;
         }
+        System.out.printf("    census  %d tiles = %d painted (T1 %d, T2 %d) + %d unpainted + %d wall"
+                        + "   [%d unpainted tiles are ruins]%n",
+                tiles, mine[1] + mine[2], mine[1], mine[2], empty, walls, ruins);
         StringBuilder sb = new StringBuilder("    coverage per-mille  ");
         boolean bad = false;
         for (int tm = 1; tm <= 2; tm++) {
