@@ -596,3 +596,58 @@ Three things follow, and they retro-fit several of my own iterations:
 standings and the swept-map table off it. The *reason* column was one `awk` away
 and is a stronger fact than either. When a report has a column you have never
 aggregated, aggregate it before spending a run.
+
+## 19. Reachability means the CHOICE SET, not just the guard (2026-09-07)
+
+Iteration 17 scored candidate ruins by a new term. Three doses — 0, 1, 3 — produced
+**byte-identical counters for every soldier in the game**. The change never executed.
+
+The cause: `chooseRuin` iterates `rc.senseNearbyRuins(-1)`, which is *ruins currently in
+vision* (r² = 20). A soldier essentially never sees two unoccupied ruins at once, so the
+candidate set is a **singleton**, and every scoring function whatsoever selects the same
+element of a one-element set.
+
+I did run §3's reachability pre-check. I applied it to the **guard** — "is this branch
+ever taken?", and it is, on 85% of soldier turns — and never to the **set the branch
+ranks**. A ranking change inside a reachable branch is still dead code if the thing being
+ranked has one element.
+
+**The general form:** for any change to a comparison, tie-break, priority or score, the
+reachability question is not *"does this code run?"* but *"does it ever run with two or
+more candidates?"* Instrument the size of the choice set, not the frequency of the branch.
+
+Cost of catching it here: three single-map games. Cost of not catching it: a 100-game
+gauntlet reporting a difference that could only have been churn.
+
+## 20. A floor constant on a threshold good manufactures zombies (2026-09-07)
+
+`PAINT_FLOOR = 15` stops a soldier painting when its stash drops below 15. Traced with
+`tools/replay-dump.sh --robot`, one soldier:
+
+```
+round  42  (23,17)  paint=14  aCD= 2  hp=250
+round 225  (24,18)  paint=13  aCD= 0  hp=250      <- ~200 rounds
+```
+
+Its action was **available and unused for roughly two hundred consecutive rounds**, and its
+HP never moved. `NO_PAINT_DAMAGE` applies only at *zero* paint, so the floor parks the unit
+one point above the band that would kill it. The bot manufactures immortal do-nothing
+soldiers — TRAINING_ALGORITHM.md's *"survival bought with inactivity"*, produced by a
+constant rather than by a policy.
+
+Two compounding reasons the constant is wrong here, and the second is the general lesson:
+
+1. My own iteration-8 economics concluded that **dying at zero is the efficient terminal
+   state** — a unit that paints until it starves has converted its whole stash into tiles
+   and freed the economy to build a replacement with a fresh body and a full stash. The
+   floor prevents precisely that.
+2. **A floor is a linear-value heuristic, and it was sitting on top of a threshold good.**
+   Reserving the last 15 paint is sensible if paint converts to value smoothly. A tower
+   pattern does not: 119 of 120 paint buys **zero** towers, 120 buys +5 paint/turn forever.
+   Under a threshold, the marginal value of the last unit spent is the *highest*, not the
+   lowest — which inverts the reasoning a floor is built on.
+
+**Reusable tell:** whenever a reserve, floor, minimum or "keep some back" constant guards
+a spend, ask whether the thing being bought is linear or a threshold. If it is a threshold,
+the constant is backwards near the threshold, and the size of the reserve is exactly the
+size of the loss.
