@@ -3717,3 +3717,82 @@ It also vindicates the caution I registered with iteration 11 and then failed to
 on: *"the risk is not that it never fires but that it fires too readily — a soldier
 that walks 30 tiles to a remembered ruin someone else has already claimed has traded
 painting for travel."* Three swept losses is what that looks like.
+
+
+---
+
+## MIRROR NULL MEASURED, and the whole regression restated in games and sweeps
+
+Mirror regenerated **from the current build** and byte-identity verified by diff
+(package line only), per the doctrine addition — a stale mirror would silently be an
+ordinary head-to-head against an old fork, which is the exact measurement it exists to
+replace. Run `20260907-032957`, 25 pinned maps:
+
+```
+MIRROR NULL     25/50 games     swept WIN 0     swept LOSS 0     split 25/25
+```
+
+Identical to the two other lineages' independently measured nulls. **The null for a
+sweep is exactly zero**, so every swept map is signal, and margins are quoted below in
+**games**, not standard deviations — this engine has no coin to be indistinguishable
+from.
+
+### The regression, restated on the sharp instrument
+
+```
+vs FROZEN bob_iter1, 25 pinned maps        games    sweptW  sweptL   net
+bob_iter3   (pre-hash lineage)             39/50      14       0     +14
+bob_iter7   (hash, no SRP)                 38/50      13       0     +13
+bob_abl7    (parity + SRP)                 41/50      16       0     +16
+iteration 12 (parity + SRP + memory)       37/50      13       1     +12
+bob_iter9   (hash + SRP)                   28/50       9       6      +3
+```
+
+**`bob_iter9` is the only build in the entire lineage that suffers swept losses against
+`bob_iter1` — six of them.** Every other build has zero or one. Against a null of
+exactly zero sweeps, six maps lost *from both sides* is not a percentage difference to
+be argued about; it is six maps where the bot is simply worse regardless of spawn.
+
+That is a far crisper statement of the same finding than "56.0% versus 82.0%", and it
+is the coordinator's point exactly: at these win rates the headline compresses, while
+sweeps do not. The win-rate view made this look like a 13-game gap needing a variance
+model; the sweep view makes it six unambiguous map-level regressions against a null of
+zero.
+
+### It also decides the ruin-memory question, which the head-to-head could not
+
+The direct head-to-head between iteration 12 and `bob_abl7` was **exactly 25-25**, and
+deviation attribution showed why: **3 swept wins and 3 swept losses**, 19 splits. The
+mechanism is highly active and nets precisely zero. A pure aggregate would have called
+that "no effect"; it is in fact "flips a quarter of all maps, both directions".
+
+On the frozen instrument the tie breaks: `abl7` is **+16 with zero swept losses**,
+iteration 12 is **+12 with one**. Adding the memory costs four net sweeps and
+introduces the only swept loss in an otherwise clean build.
+
+**Decision: the ruin memory is removed.** `src/bob` is now byte-identical to `bob_abl7`
+(verified by diff) — iteration 9's SRPs with iteration 1's parity tower rule, no
+memory. Snapshotted `src/bob_iter12`.
+
+This **un-accepts iteration 11's mechanism**, on better evidence than accepted it.
+Iteration 11's +18 games was measured in the hash world, where a compensating expansion
+fix was worth a lot; with the mix repaired that compensation is worth −4 net sweeps.
+The accept was honest on the evidence then available and the evidence changed. Reverting
+it is the system working.
+
+**Iteration 12 = revert iteration 7's avalanche hash to iteration 1's parity rule.**
+The evidence is the pinned regression run: +13 net sweeps over `bob_iter9`, and 6 swept
+losses eliminated.
+
+### Closed and open
+
+- **CLOSED: iteration 7's avalanche tower-type hash.** Net negative in the presence of
+  SRPs; reverted. Its own audit had already measured −0.59 points across the pool.
+- **CLOSED: per-soldier ruin memory as a standing feature.** Not inert — it flips 6 of
+  25 maps — but net −4 sweeps once the tower mix is clean. `bob-tools/shelved/` keeps it.
+- **OPEN, with a trace to do first:** the memory wins `AlarmClock`/`giver`/`sayhi`
+  outright and loses `HungerGames`/`Parking_lot`/`rain` outright. Map area and ruin
+  count do **not** separate those groups (1908 vs 1808; 21.3 vs 20.3 ruins), so my
+  travel-distance hypothesis failed its own cheap pre-check. A refinement must come
+  from tracing a swept-loss game, not from theorising — and the deviation attribution
+  above hands the trace exactly three games to look at.
