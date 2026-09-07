@@ -6102,3 +6102,56 @@ If the diff comes back one-directional and positive with no `OVR` and a stable
 tower-paint pool, then it really is a free correction of an engine trap — which is
 the *"capability preserved at zero marginal cost"* profile both prior projects
 name as the recurring winner.
+
+## New instrument `tools/density-split.py`, and an orientation bug I caught in it
+
+Splits a run's per-map result at the corpus median ruin density (11.4 per 1000
+tiles), reading counts from the **shared** `tools/mapdata/ruin_parity.txt` rather
+than a private copy. Built because several of my live quantities are
+ruin-related and the corpus spans 4.6–21.9 ruins/1000 — a 4.8x spread that a
+25-map random sample silently averages over.
+
+**It was wrong on first run and the bug is worth recording**, because it is the
+same shape as the 1-based-team encoding the coordinator hit in the shared dumper.
+My first version counted the **opponent's** wins, because I copied the counting
+convention from `tools/map-resample.py` — which is correct *there*, since ablation
+runs put the baseline in `BOT` and the candidates in `OPPONENTS`. This run is the
+other way round: `BOT=alice` is the candidate. Same file format, opposite meaning,
+and the output looked perfectly plausible at 28.6%/40.9%. The fix prints
+`bot.txt`'s bot name in the header and the docstring states the orientation and
+names the disagreement with `map-resample.py` explicitly, so the next reader
+cannot make the same substitution silently.
+
+### Iteration 22 has a density gradient, and it is the OPPOSITE of my model
+
+| opponent | sparse half (mean 8.6/1000, 14 maps) | dense half (13.9/1000, 11 maps) |
+|---|---|---|
+| **`alice_iter19`** (accept gate) | **20/28 = 71.4%** | **13/22 = 59.1%** |
+| `alice_flood` | 21/28 = 75.0% | 17/22 = 77.3% |
+| `alice_iter12` | 27/28 = 96.4% | 19/22 = 86.4% |
+
+Against the null (14 and 11), iteration 22 is **+6 on the sparse half and +2 on
+the dense half**. Difference of differences ≈ 4 games against a combined se of
+about 2.7 — **roughly 1.5 sd, which is suggestive and not decisive**, and I am
+labelling it that way rather than as a finding.
+
+**But its direction contradicts my mechanism.** My account of iteration 22 is that
+the removed branch was mostly attacking *enemy* paint underfoot and being refused.
+Enemy paint underfoot is a **saturation** phenomenon, so that account predicts the
+gain should be larger on **dense**, early-saturating maps. It is larger on the
+sparse ones.
+
+I can construct a story — on an unsaturated map the underfoot tile is often EMPTY,
+the area branch would paint it anyway at distance 0, so the two branches are near
+substitutes there and removing one costs little — but that story explains why the
+gain is *not smaller* on sparse maps, not why it is *larger*. **I do not have a
+coherent model of this gradient, and I am recording that rather than inventing
+one.** Under-powered at 1.5 sd; the honest move is to let iteration 23's own split
+arrive and see whether a gradient reproduces on an independent mechanism.
+
+**And it does not change iteration 23's pre-registered prediction**, which rests
+on a directly measured quantity rather than on this: the live window is longer on
+sparse maps (~200–1000 rounds on UnderTheSea vs ~150–400 on Money), so there are
+more turns in the branch to correct. That prediction now happens to agree with
+this gradient, which is *weak* corroboration at best — two arguments pointing the
+same way, one of which I have just said I cannot explain.
