@@ -3271,3 +3271,57 @@ One genuine observation survives the confound, flagged rather than concluded: **
 paint-starvation signature this whole session has been chasing. It is heavily confounded —
 i7 lost this game at round 233, and losing the coverage race costs paint towers — so it is
 a lead to check across the gauntlet, not a result.
+
+### Upgrade reachability, measured properly — PASSES, and the joint condition is the real finding
+
+Done on local replays (12 full-length games from run `20260906-230220`), so it cost no VM
+slots while the gauntlet was starved. **146,350 tower-turns of the accepted build `i7`** —
+length-representative, unlike the 233-round validation game above.
+
+| threshold | what it gates | share of i7 tower-turns |
+|---|---|---|
+| 1,600 | splasher spawn (`CHIP_RESERVE` + 400) | 25.2% |
+| 2,500 | bare lv2 upgrade | 22.4% |
+| **3,700** | **lv2 upgrade + the 1,200 reserve** | **21.7%** |
+| 6,200 | lv3 upgrade + reserve | 18.6% |
+
+**Reachability: PASS.** 21.7% is inside the operating band. The distribution is strongly
+bimodal — median 1,400 but p90 13,680 and max 31,250 — which is the "chips are garbage"
+regime showing up directly: most turns are hand-to-mouth, and a fat tail has chips piling up
+with nothing to buy.
+
+**Correcting a number in my own log.** I recorded the splasher gate as met on **61.6%** of
+tower-turns from an earlier 41,328-turn sample; this larger and more representative 146,350-turn
+sample puts it at **25.2%**. The splasher gate still clears reachability, but by a much thinner
+margin than I claimed when I wrote iteration 11, and I would rather correct it than leave the
+optimistic figure standing. If iteration 11 underperforms, spawn-gate starvation is now a live
+alternative explanation to the paint-cost one I pre-registered, and the two are distinguishable:
+paint cost shows up in the splasher `noPaint` tag, gate starvation in the tower `chips` trace.
+
+**The finding that actually matters is the joint condition.**
+
+| condition on an i7 tower-turn | share |
+|---|---|
+| chip-rich (>= 3,700) | 21.7% |
+| paint-destitute (`tp` < 50) | 33.6% |
+| **both simultaneously** | **11.1%** |
+
+Independence would predict 0.217 x 0.336 = **7.3%**, so the two are *positively* associated at
+about 1.5x rather than being disjoint regimes. **On 11.1% of all tower-turns, a carol tower is
+sitting on enough chips to permanently double its paint mining while holding too little paint
+to spawn anything at all.** That is not an abstract efficiency argument about idle chips; it is
+a directly observed, recurring state in which the exact resource the tower lacks is purchasable
+with the exact resource it is hoarding.
+
+(A formula slip in my first printout reported the independent baseline as 0.1% by dividing by
+100 twice, which would have made the association look 100x stronger than it is. Caught it
+because 0.1% was implausible against 21.7% x 33.6%. Same failure shape as the `[^p]*` character
+class earlier this session: hand-rolled arithmetic in an extraction script fails silently and
+flatters the hypothesis. The corrected 1.5x is a real but modest association, and 11.1% stands
+on its own without needing the association at all.)
+
+**Iteration 12 is therefore pre-registered as tower upgrades**, ahead of splasher
+tower-targeting, with the reachability pre-check now complete rather than assumed. Its
+hypothesis is deliberately narrow: *upgrade a paint tower when chips are abundant, and the
+paint-destitute tower-turn rate (33.6%) falls.* That counter-metric is measurable on the same
+trace, which is what makes this testable rather than a story about idle chips.
