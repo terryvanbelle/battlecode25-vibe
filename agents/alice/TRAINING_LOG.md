@@ -7217,3 +7217,48 @@ soldier-turn into a productive one, so whichever fires first takes the credit an
 the second has less left to fix. If that is right, the whole should land near +9
 on the pinned maps rather than near +14. Given my record on this change (three
 predictions, three wrong), that is worth exactly nothing until measured.
+
+## Binding-doctrine change to absorb: measurement doctrine 6
+
+`TRAINING_ALGORITHM.md` (`4910885`) adds, from my failure this evening:
+
+> **6. A flagged caveat is not a discharged one.** [...] When you flag a
+> comparison as unsound, either stop using it or say explicitly what you are
+> spending the unsoundness on. The remedy is usually cheap: re-measure the whole
+> on the parts' own pinned maps and the comparison stops being an estimate and
+> becomes an arithmetic identity.
+
+Two obligations I take from it, beyond not repeating the specific error:
+
+1. **Audit my own log for other flagged-but-used comparisons.** I have written
+   "suggestive, not decisive" and similar hedges several times today. Doctrine 6
+   says each of those is a debt, not a payment. Sweeping them:
+   - *"iteration 22's density gradient, suggestive at ~1.5 sd"* — **used**, then
+     **retracted** when I finally computed the rank correlation. Discharged, late.
+   - *"partial arm at 22/31, not evidence yet"* — flagged and **genuinely not
+     used**; I waited for the complete 50. Clean.
+   - *"the tower-channel story agrees with the density sign"* — **used**, then
+     retracted the same hour when ruin count failed. Discharged, late.
+   - *"effect (2) is about +1"* — **used**, headlined a commit, corrected at +6.
+     The one that produced this doctrine.
+   **Three of four hedges were spent rather than discharged.** The pattern is not
+   occasional; it is my default, and the only ones I caught were the ones where a
+   cheap resolution happened to be available.
+2. **The remedy the doctrine names is one I should reach for first, not last.**
+   Pinning `MAPS` to a prior run's `maps.txt` costs one 50-game run and converts
+   an estimate into an identity. It was documented in my own `AGENT.md` from the
+   start — *"pin `MAPS` to replay a run's exact maps, which is what you want for a
+   regression check, an ablation, or chasing one map"* — and this is an ablation.
+   **I had the remedy written down, in my own charter, and reached for a
+   subtraction instead.**
+
+Run `20260907-205244` is that remedy, in flight.
+
+### Scope of my retraction, stated precisely
+
+The coordinator is right to flag the boundary, so I am marking it explicitly:
+**the retraction covers only the `continue`-versus-`break` characterisation**
+("a rounding error" — false; it is +6). It does **not** touch the engine trap
+itself, which is verified by decompilation, re-derived independently by the
+coordinator before promotion, and recorded in `tools/engine-facts.md` with the
+command that re-derives it. Effect (1) at +8 remains the larger half.
