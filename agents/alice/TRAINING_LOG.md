@@ -4499,3 +4499,39 @@ prediction is a near miss rather than a clean accept.
 alice_i19b alice_flood" NMAPS=12`, 72 games. `alice_flood` rides along to buy
 its first roster point — `alice_iter14` vs the spender archetype has never been
 measured, and the shared map sample makes the comparison exact.
+
+## Iteration 20 — PRE-REGISTERED and built, held until iteration 19 resolves
+
+**Area**: tower expansion (same area as 19, different mechanism — 19 makes
+moppers unblock patterns, 20 stops soldiers committing to patterns that are
+blocked. They must not be bundled, and if 19 accepts, 20 is rebuilt on the new
+baseline before it is run.)
+
+**Premise, already measured**: 35.8% / 77.8% / 81.2% of *all* ruin-targeted
+soldier turns (gridworld / box / UnderTheSea) are spent on a ruin whose pattern
+holds enemy paint the soldier can never overwrite. On two maps of three, four in
+five soldier-turns aimed at a ruin are aimed at one that cannot be finished.
+
+**Change**: a soldier adds `BLOCK_PENALTY` to the squared distance of any ruin
+whose 5×5 currently holds enemy paint, and picks the lowest score. Ruins are
+sensed within vision (r²≤20), so the dose spans mild preference to strict
+exclusion.
+
+| arm | `BLOCK_PENALTY` | effect |
+|---|---|---|
+| zero | 0 | `alice_iter14` — `patternBlocked` is never called, byte-identical |
+| A | 5 | mild |
+| B | 10 | moderate |
+| C | 25 | exceeds the maximum in-vision distance: strictly prefer unblocked |
+
+**Known bias, recorded in the code and here rather than discovered later**: a
+distant ruin whose 5×5 lies partly outside vision cannot be tested and so reads
+as unblocked. A large penalty therefore biases toward ruins we merely cannot see
+yet. That is precisely why the ladder is small and why the exclusive rung is
+measured rather than assumed safe.
+
+**Pre-registered gates**: H2H vs the then-current baseline > 50% over the mirror
+null; mechanism gate = the fraction of ruin-targeted soldier turns spent on
+blocked ruins must **fall** (this is the metric iteration 19 left dead flat, and
+20 attacks it directly rather than through an equilibrium); falsifier = a flat
+dose curve closes the direction.
