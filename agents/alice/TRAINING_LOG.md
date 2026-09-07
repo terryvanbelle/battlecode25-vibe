@@ -4130,3 +4130,106 @@ absorbing-state finding.
 larger than the iteration: a corpus-wide map fact, the complete engine decode of
 all four patterns, and a demonstrated 75–25 value for a feature I was about to
 delete.
+
+## Iteration 18 — PRE-REGISTERED: dose the money/paint tower mix, on a ladder
+## whose middle rung is byte-identical to the baseline
+
+**Area**: production mix (re-opened legitimately — iteration 17's retraction
+replaced a false premise with a measured one).
+
+### Why this is now a live question
+
+The retraction established that at the money-only extreme the mix is worth
+**75–25**. That is an enormous effect for one branch, and it says the mix is a
+strong lever — but it says nothing about which *direction* from 53% is better,
+because I have only measured one endpoint. A single endpoint is exactly what
+Measurement doctrine #2 warns against; the curve is what carries the evidence.
+
+An arithmetic prior, stated before the run so it can be wrong: a soldier costs
+**250 chips + 200 tower paint**. L1 income is **20 chips** per money tower per
+turn vs **5 paint** per paint tower per turn. A purely spawn-limited economy
+therefore balances at roughly **1 money tower per 3 paint towers**, and tower
+completions (1000 chips each) pull that back toward money by an amount I cannot
+compute a priori. So the prior favours *more paint than 53%*, i.e. a peak at
+K=1 — but iteration 16 taught me that chips and paint trade in ways the naive
+ratio misses, so this is a prior, not a prediction.
+
+### The ladder, and why K=2 is the zero arm
+
+`p = (x+y)&1` (alice_iter14's existing bit), `q = ((x>>1)+(y>>1))&1`:
+
+| arm | rule | corpus money-share | degenerate maps |
+|---|---|---|---|
+| K=0 | always PAINT | 0.00 | 75 (by construction) |
+| K=1 | money iff `p==0 && q==0` | 0.26 | 4 |
+| **K=2** | **money iff `p==0`** — **`alice_iter14` exactly** | **0.53** | 4 |
+| K=3 | money iff `p==0 \|\| q==0` | 0.77 | 7 |
+| K=4 | always MONEY (`alice_i17c`, already measured) | 1.00 | 75 |
+
+K=2 *is* the baseline, byte for byte, so the zero arm has **zero variance** and
+every rung sits on the same parity backbone — the dose changes the mix and
+nothing else.
+
+**Reachability was checked corpus-wide BEFORE the run this time**, which is the
+whole lesson of the retraction. I also tested four other candidate hashes
+(`(x+3y)&3`, `(x/2+y/2)&3`, a multiplicative hash, a mixed one): every one of
+them is degenerate — money-share 0.00 or 1.00 — on at least one map, so no
+position-keyed mix rule is map-neutral. The named degenerate maps for K=1/2/3
+are recorded above so no arm gets traced on one by accident.
+
+### Pre-registered gates
+- **Accept**: H2H vs `alice_iter14` **> 50%**, judged in games over the mirror
+  null, and a dose curve that is **not flat** (iteration 16 died on flatness).
+- **Mechanism gate**: for any arm that beats the baseline, mean soldier count in
+  r100–r400 must **rise**, and team tower-paint stock must **not** collapse to 0
+  (iteration 5's absorbing state).
+- **Falsifier**: a flat curve across 0.00→0.77 says the mix is not the
+  constraint and closes the direction, exactly as iteration 16 closed the chip
+  gate.
+
+**Launched**: run `20260907-134502`, `BOT=alice_iter14
+OPPONENTS="alice_i18k0 alice_i18k1 alice_i18k3" NMAPS=12`, 72 games.
+
+## Instrument change — `alice_flood`, the spender archetype my pool has never had
+
+**This is a process change, not an iteration.** Every peer I own descends from
+my own code, so every one of them carries the same 1450-chip spawn stall, and
+**no instrument I have can see what that stall costs** — the self-referential
+blind spot, and Measurement doctrine #4's representativeness clause.
+
+The tournament replay `alice` vs `bob` on Paintball makes it concrete:
+
+| round | alice $ | alice soldiers | alice twPaint | bob $ | bob soldiers |
+|---|---|---|---|---|---|
+| 50 | 1150 | 4 | 910 | **0** | **8** |
+| 75 | 900 | **1** | **1905** | 750 | **8** |
+| 100 | 1400 | 2 | **2205** | 1200 | **11** |
+
+Alice's army collapses to one soldier at r75 while its towers hold 1,905 paint
+and its treasury sits just under the reserve; bob runs its treasury to zero and
+fields eight. Alice's coverage peaks at 370‰ on r75 and **falls** to 254‰;
+bob's climbs to 686‰ and wins on MAJORITY_PAINTED at r383.
+
+`alice_flood` = `alice_iter14` with `CHIP_RESERVE = 0` and nothing else changed.
+It is **frozen** and goes in `progress/roster_extra.txt` as a permanent
+yardstick. It is not a candidate and will never be retuned; its whole value is
+that it poses a behaviour my lineage never poses.
+
+### Iteration 6 (paint refill) — re-open CONSIDERED and RE-CLOSED, without a run
+
+The ledger permits re-opening the refill "if paint becomes non-binding". The
+Paintball trace looked like exactly that (2,205 idle tower paint). I checked the
+trigger frequency across four games before building anything:
+
+| game | T1 twPaint ≥1000 | starvation deaths per sample |
+|---|---|---|
+| gridworld mirror | 985/2000 | **0** |
+| box mirror | 1038/2000 | **0** |
+| UnderTheSea mirror | 1943/2000 | 0–2 |
+| Paintball vs bob | **7/18** — drains to 100–150 after r300 | 0–1 |
+
+Two reasons this fails its own re-open condition. Tower paint is abundant **in
+self-play only** — against a real opponent it drains to 100–150, which is where
+the refill would compete with spawning exactly as iteration 6 measured. And
+**starvation deaths are now 0–2 per sample**, not the 65–100% of deaths that
+motivated iteration 6 at all; the premise has decayed. Re-closed, no run spent.
