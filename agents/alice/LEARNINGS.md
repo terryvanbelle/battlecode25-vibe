@@ -856,3 +856,51 @@ ruin-density range and a 6x area range, iteration 23 swept 9 maps and lost none
 from both sides. "Works everywhere" is the strongest shape a change can have for a
 bot that must play an unknown map, and it is the same fact the swept-map count was
 already reporting in a different language.
+
+## Theme: enumerate the cases, then COUNT them — a case analysis has no frequencies in it
+
+Two things happened within an hour of each other, and together they make the rule.
+
+**The win.** Iteration 22's mechanism attribution was marked OPEN under the loop's
+step 3b. Rather than spend a run separating it, I enumerated the four possible
+states of the tile the deleted branch acted on, and found that **two of them are
+byte-identical between the two builds** — because the surviving area branch scans
+`r²<=9`, which includes distance 0, and picks the nearest empty tile with a strict
+`d < paintD`, so a d = 0 empty tile always wins. That left exactly one gaining row
+(the engine trap) and one losing row. **The attribution closed for zero games**,
+and it closed *falsifiably*: I named the case that would break it (show the area
+branch can miss a distance-0 empty tile) and checked the three ways it could occur.
+
+**The miss, in the same table.** I labelled the losing row *"a real loss that
+iteration 22 accepted without noticing"* and built a candidate to recover it. The
+decision census then found the state occurs **zero times in 4,331 action-ready
+soldier turns** — because the map is ~90% painted by round 300, so a soldier is
+essentially never standing on empty ground.
+
+> **A case analysis tells you which behaviours DIFFER. It contains no information
+> about which of them ever HAPPEN.** Those are different questions and the second
+> one is empirical. Enumerating four rows and then reasoning about a non-identical
+> row's size is smuggling a frequency claim into a logical argument.
+
+### The rule, and the two halves it joins
+
+1. **Enumerate** — it is cheaper than any run, it closes attributions that an
+   experiment would cost 100 games to settle, and the rows that come out *not*
+   identical are exactly the behaviours nobody deliberately chose.
+2. **Then count each surviving row** with a decision census, before believing any
+   of them matters. This is the existing reachability pre-check, and I did not
+   think to apply it to my own enumeration — I only ran it because one row had
+   become a candidate in its own right.
+
+Note the payoff runs both ways: the census **killed the candidate** and
+**strengthened the closure**. With the losing row measured at zero, iteration 22's
+deletion is not a large gain traded against a small loss — it is a pure removal,
+with three of four rows contributing exactly nothing.
+
+### And the correction ran in my favour, which is the dangerous direction
+
+"The loss I identified is actually zero" makes my accepted iteration look better.
+That is precisely the kind of correction that never gets made, because nothing
+prompts it. It got made here only because the row had been promoted to a candidate
+and candidates get pre-checked. **Findings that flatter you need the same
+pre-checks as findings that do not** — and they will not ask for them.
