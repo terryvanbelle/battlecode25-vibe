@@ -14,6 +14,7 @@ port, both forced by this project's shape:
 2. **UTC, not Pacific.** Everything else in this project (the 06:00/18:00
    tournament cron, gauntlet run-ids) is UTC, and both VMs run UTC.
 """
+import csv
 import re
 import subprocess
 from datetime import datetime, timezone
@@ -102,22 +103,45 @@ def snapshot_dates(repo_root, ws_dir, agent):
     return rows
 
 
-def roster_numbers(newest, stride=5):
-    """Fixed reference points: iteration 0, then every `stride`-th from 1.
+def roster_numbers(present, stride=5):
+    """Fixed reference points: the first accepted snapshot, then every
+    `stride`-th ACCEPTED SNAPSHOT BY POSITION.
 
     Derived, never hardcoded. BC26's port hardcoded its roster as a usage
     example, then wasn't revisited when a second reference snapshot existed, so
     the chart tracked a single opponent long after it should have had three.
     Deriving it means the roster grows on its own as the project does.
 
-    iter0 is always included: it is the origin, and win% against it is the
-    closest thing this project has to an absolute-strength yardstick. Never
-    remove an entry -- the value of each line is its long-run trend.
+    Strides over POSITION, not over the iteration number. Striding over numbers
+    ({0,1,6,11,...}) silently drops every slot whose iteration was rejected --
+    those snapshots never come into existence, so the rung is gone for good.
+    Alice, with accepted snapshots [0,1,2,4,5,7,12,14], got a roster of just
+    [iter0, iter1] because 6 and 11 were rejected: an agent that rejects more
+    candidates got a permanently worse absolute-strength chart, which is exactly
+    backwards. By position she gets [iter0, iter7], a rung that resolves.
+
+    Positions are stable as the lineage grows, because accepted snapshots are
+    only ever appended -- so a roster member stays a roster member.
+
+    The first snapshot is always included: it is the origin, and win% against it
+    is the closest thing this project has to an absolute-strength yardstick.
     """
-    if newest is None or newest < 0:
+    nums = sorted(present)
+    if not nums:
         return []
-    nums = {0} | set(range(1, newest + 1, stride))
-    return sorted(n for n in nums if n <= newest)
+    return [nums[i] for i in range(0, len(nums), stride)]
+
+
+def _history_opponents(ws_dir):
+    """Opponent names already recorded in this workspace's roster history."""
+    f = ws_dir / "progress" / "vs_old_bots_history.csv"
+    if not f.is_file():
+        return set()
+    try:
+        with f.open() as fh:
+            return {r["opponent"] for r in csv.DictReader(fh) if r.get("opponent")}
+    except (OSError, csv.Error):
+        return set()
 
 
 def roster_opponents(ws_dir, agent, stride=5, exclude_current=True):
@@ -131,8 +155,15 @@ def roster_opponents(ws_dir, agent, stride=5, exclude_current=True):
     """
     present = set(snapshot_numbers(ws_dir, agent))
     newest = max(present) if present else None
-    names = [snapshot_name(agent, n) for n in roster_numbers(newest, stride)
-             if n in present]
+    keep = set(roster_numbers(present, stride))
+    # Never drop a rung that already has history. "Never remove an entry -- the
+    # value of each line is its long-run trend" is a promise about the chart, so
+    # a snapshot that has ever been measured stays measured even if a later
+    # stride would not pick it. Without this, fixing the stride would have
+    # orphaned bob's iter1 line mid-project.
+    keep |= {n for n in present
+             if snapshot_name(agent, n) in _history_opponents(ws_dir)}
+    names = [snapshot_name(agent, n) for n in sorted(keep)]
     if exclude_current and newest is not None:
         cur = snapshot_name(agent, newest)
         names = [n for n in names if n != cur]
