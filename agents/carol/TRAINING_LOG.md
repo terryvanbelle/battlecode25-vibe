@@ -4762,3 +4762,53 @@ Concretely: had I attributed iteration 15c or 17 against `carol_m12`, I would ha
 debited them with games **iteration 14's own mechanism flipped**, on six maps. `carol_m14` is
 now the control for every candidate measured against `carol_iter14`, and it will be rebuilt
 again the moment the baseline moves.
+
+## Iteration 18 (reserve dead-band escape) — pre-registered
+
+**Evidence** (8 complete iteration-14 games, tower indicator `chips=`, no VM time spent):
+
+| map | median chips | **chips < 250** | **[1200, 1450): reserve-blocked** | >= 1450 |
+|---|---|---|---|---|
+| **Castle** | 1,310 | 0.6% | **83.4%** | 4.1% |
+| **DefaultLarge** | 1,320 | 0.6% | **79.3%** | 6.8% |
+| **DefaultMedium** | 1,350 | 0.6% | **64.4%** | 21.4% |
+| Bunny | 1,460 | 0.2% | 39.5% | 50.6% |
+| PlumberGame | 1,470 | 0.7% | 37.9% | 53.8% |
+| walalilongla | 2,180 | 0.1% | 19.9% | 75.4% |
+| Parking_lot | 3,940 | 0.0% | 13.3% | 86.4% |
+| gridworld | 76,420 | 0.0% | 4.1% | 93.8% |
+
+**This is not poverty, it is a dead band.** Chips fall below a soldier's raw 250 cost on
+**0.6% or less** of tower turns everywhere. On Castle the team holds the money and
+`CHIP_RESERVE = 1200` forbids spending it on 83.4% of tower turns.
+
+**Iteration 6 diagnosed this exact failure and its guard cannot reach it.** Its escape drops
+the reserve when chips are *exactly* unchanged for `STAGNANT_ROUNDS = 10` turns — reachable
+only at literally zero income. With any trickle of income chips move every turn, the counter
+resets, and the reserve stays armed forever. Iteration 6's own log records losing DefaultSmall
+by annihilation at round 69 "with 1350 chips banked", i.e. inside this band. The code comment
+even says the reserve "stays fully armed whenever income is positive... so this covers the
+unmeasured regime rather than reverting it" — and the measurement now shows the *positive*
+income regime is where the whole problem lives.
+
+**History pre-check** (asking which iteration wrote the line, per the 15b lesson): the reserve
+is iteration 2's, the escape hatch is iteration 6's. This supersedes iteration 6 **on new
+evidence** rather than silently reverting it — its zero-income case still trips
+`stagnantTurns`, and this adds the pinned-but-earning case it structurally cannot see.
+
+**Change**: count consecutive tower turns with `CHIP_RESERVE <= chips < CHIP_RESERVE + 250`;
+after `STAGNANT_ROUNDS` of them, release the reserve. Self-calibrating in the sense §5 means:
+the condition is read from the treasury's observed behaviour, not from a new constant.
+
+### Pre-registered, BEFORE the run
+
+**Decision rule**: mirror-deviation margin vs `carol_m14` (primary); h2h vs `carol_iter14`
+>= 60%; one-directional flip shape; no drop vs `carol_rush` from 37/40. `pin`/`pf` diagnostic
+only.
+
+**Map-level prediction**: the benefit must track the reserve-blocked column.
+- **Castle (83.4%), DefaultLarge (79.3%) and DefaultMedium (64.4%) should move toward i18.**
+- **gridworld (4.1%) and Parking_lot (13.3%) should barely move.**
+
+If the gains land on gridworld and Parking_lot instead, the mechanism I have described is not
+the one doing the work and I reject regardless of the headline.
