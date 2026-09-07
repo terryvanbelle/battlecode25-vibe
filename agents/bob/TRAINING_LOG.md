@@ -4718,3 +4718,65 @@ had bought wall-dense maps with something paid elsewhere, and I would want to kn
 tie-break. The mirror in run A is therefore also the symmetry audit — identical code must
 still split every map 1-1. If the null is no longer 25/50 with zero sweeps, the
 handedness has introduced a side bias and that is a real bug regardless of the win rate.
+
+
+## Iteration 15 arm A RESULT — REJECTED on both pre-registered gates
+
+```
+RUN A  20260907-144139, fresh 25-map sample, 100 games
+  MIRROR NULL   bob_iter12 vs byte-identical clone     25/50   swept 0-0, split 25
+  ACCEPT GATE   bob_iter12 vs candidate                24/50   candidate swept 4, lost 5, split 16
+                                                        -> -1 game, -1 net sweep vs the null
+
+  deviation attribution: 11 of 50 games deviate (22%) -- candidate won 5, lost 6
+
+RUN B  20260907-152404, the 8 most wall-blocked maps, 32 games
+  SUBSET        candidate vs bob_iter12                 8/16   swept 1-1, split 6
+  HANDEDNESS    candidate vs byte-identical clone       8/16   swept 0-0, split 8
+```
+
+**Rejected.** The accept gate is one game *below* a null that never sweeps, and the
+subset defined by the mechanism — the eight maps the whole hypothesis is about — is
+flat at 1 swept win and 1 swept loss.
+
+**Registering the subset in advance is what makes this readable.** The verification game
+was spectacular: 19 towers against 4 on maze, matching the independent sibling's ~20
+exactly. Played from both sides against the same opponent, maze **splits**. That single
+game would have carried an accept if I had let it, and it is a textbook instance of the
+regularity TRAINING_ALGORITHM.md records — metrics that improve without converting to
+wins. The bot really does build 19 towers now; it does not win more often for it.
+
+**The handedness audit is a clean positive and worth keeping.** Identical code carrying
+right-handed wall-following splits all eight of the most obstacle-dense maps in the pool,
+zero sweeps either way. So the Phase 0.7 worry about a fixed absolute-order tie-break is
+measured and dismissed *for this mechanism* — the consistent handedness costs no side
+symmetry, which is not something I could have assumed.
+
+### One refinement, on an identified defect (near-miss refinement 1 of 3)
+
+The deviations have a shape and it is not random:
+
+```
+candidate swept WINS   windmill 14.2%  Piglets2 16.2%  gardenworld 12.3%  Racetrack 11.7%
+candidate swept LOSSES CastleDefense 16.5%  Bread 11.1%  rain 6.9%  Oasis 4.8%  DefaultHuge 3.1%
+                                                  sample mean blocked 10.1%
+```
+
+Every swept win is above the sample's mean blocked share; three of the five swept losses
+are among the least obstructed maps in the pool, where there is barely a wall to follow.
+
+**The cause is in the latch condition.** `canMove()` is false for a tile occupied by an
+**ally** as well as by terrain, and with 60+ robots alive three adjacent tiles are
+routinely all blocked by teammates. Arm A latches there and starts wall-following around
+a *crowd* — and because bug mode only releases when the target is **strictly** closer
+than when it latched, a moment of congestion can hold a soldier for many turns. On open
+maps that is all cost and no benefit, which is exactly where the swept losses are.
+
+Refinement: latch only when the blocking tile is impassable terrain
+(`!onTheMap || !isPassable`); on congestion fall back to the pre-iteration-15 wide fan,
+which never latches. Compiled; arm A preserved as `src/bob_i15a`.
+
+Evaluated against **both** `bob_iter12` and arm A on one fresh sample, because the
+refinement and arm A differ by exactly the terrain check, so a direct head-to-head is
+far more sensitive than comparing their records against a third party — and the arm A
+column simultaneously replicates today's result on a map draw it has never seen.
