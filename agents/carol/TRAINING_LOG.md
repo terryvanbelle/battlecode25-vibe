@@ -4732,3 +4732,33 @@ re-openable now, since `MaxConsecutiveRejects` was satisfied by iterations 13/14
 it. The shape is a reserve derived from observation (income rate, tower count, whether a ruin
 is actually reachable) rather than the constant 1,200, with the zero arm and the current
 constant both measured as doses.
+
+## The i14 mirror null — fourth zero-variance confirmation, and the strongest stale-null evidence yet
+
+Run `20260907-133516`: `carol_iter14` vs `carol_m14`, verified byte-identical apart from the
+package line, on the same 20 pinned maps.
+
+```
+overall 20/40 (50.0%)   swept-win 0/20   swept-loss 0   split-by-side 20/20
+```
+
+**Fourth independent measurement, fourth exact even split with zero swept maps.** The null has
+no variance under this engine. Margins are counted in games, never in standard deviations.
+
+**And it makes the stale-null rule concrete in a way the original evidence did not.** Comparing
+the i14 null against the i12 null game-by-game, the two disagree on **12 of 40 games** — six
+maps whose winning side flipped outright:
+
+```
+Bunny  DefaultLarge  DefaultMedium  Gears  Parking_lot  PlumberGame      (both sides of each)
+```
+
+When I put this rule into MULTI_AGENT.md the evidence was two nulls one accept apart
+disagreeing on 6 of 40. One more accept later the disagreement is **twice that**. Four of the
+six flipped maps (DefaultLarge, DefaultMedium, Parking_lot, PlumberGame) also appear in
+iteration 14's own deviation list, which is precisely the tell the rule names.
+
+Concretely: had I attributed iteration 15c or 17 against `carol_m12`, I would have credited or
+debited them with games **iteration 14's own mechanism flipped**, on six maps. `carol_m14` is
+now the control for every candidate measured against `carol_iter14`, and it will be rebuilt
+again the moment the baseline moves.
