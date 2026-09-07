@@ -2839,3 +2839,33 @@ inverted, which would have forced a rewrite of the mechanistic story even with a
 Arms B (dose 100) and C (dose 400) are still playing. **The accept decision waits
 for the curve**, because the dose that goes into `src/alice` should be the one the
 curve picks, not the first one measured.
+
+### Mechanism gate verified on a second map — boxofchocolates (55x55, 19.5% walls, 19 ruins)
+
+gridworld alone would be a single-map mechanism check, so I pulled one of the
+swept-win replays out of the sweep itself. `alice_iter7` (T1) vs `alice_i12a` (T2):
+
+| round | iter7 tw | iter7 cov | i12a tw | i12a cov |
+|---|---|---|---|---|
+| 900 | 5 | 374‰ | 4 | 430‰ |
+| 1200 | 5 | 437‰ | 6 | 493‰ |
+| 1500 | 5 | 440‰ | **8** | 527‰ |
+| 1800 | 5 | 434‰ | **8** | **531‰** |
+
+The gate passes again — towers 8 vs 5, coverage 531‰ vs 434‰ — and `alice_iter7`
+shows its signature failure a third time: **tower count frozen at 5 from r900
+onward and coverage plateauing at ~437‰ while the candidate keeps climbing.**
+
+Two things worth recording because they qualify the mechanism rather than just
+confirming it:
+
+1. **The margin is much smaller here than on gridworld (8v5 versus 15v4), and it
+   arrives 1,000 rounds later.** This map is **19.5% walls** against gridworld's
+   20%... but 55x55 with only 19 ruins, so ruins are sparse *and* the ballistic
+   walk gets interrupted constantly — every blocked step re-rolls the heading,
+   which is the diffusive behaviour creeping back in. That is a concrete,
+   named limitation of the dose-only fix, and the obvious refinement (slide along
+   the obstacle instead of re-rolling) is a **separate mechanism** and therefore a
+   separate iteration, not something to bundle into this accept.
+2. Both teams show `xfer0` and very large `starved` counts (49 and 72 per window
+   late). Consistent with everything else this lineage does; noted, not acted on.
