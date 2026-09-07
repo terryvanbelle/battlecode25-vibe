@@ -2332,3 +2332,174 @@ between its proxy and the mechanism it stands for. Register the mechanism's own
 quantity where you can, and when you must use a proxy, write down what would make the
 proxy lie.* Here the proxy lied because it collapsed a team-global stock (chips) and a
 per-tower stock (paint) into one threshold, and only the second one gates a spawn.
+
+
+---
+
+## Tournament 20260907-0100 — first cross-agent evidence, and one loss worth everything
+
+The project's first round-robin. Read while in flight; the bot that played is HEAD at
+01:00 = `c7d8263`, i.e. **`bob_iter7`** — iteration 9's SRP work was still uncommitted
+when the tournament started. So these results describe iter7, not the current bot.
+
+Bob vs Alice, 78 of 150 games played at the time of reading:
+
+```
+bob     77 / 78   (98.7%)
+alice    1 / 78
+```
+
+No forfeits — 78 real games, rounds 240 to 2000, median 838, every decision by
+`MAJORITY_PAINTED` or its tiebreaker. **Alice is a benchmark, not a peer** (<30%), so
+by the algorithm's classification she does not gate my acceptance and should be played
+less often. Carol had not been reached yet when I read this.
+
+I am deliberately not treating 98.7% as a strength claim. It says my lineage beats one
+independent lineage at this stage; it says nothing absolute, and the pool of two is
+tiny. The valuable part is the single loss.
+
+### The one loss: `Rose`, bob as side B, r581 — we build nothing at all
+
+```
+round   covA(alice) covB(bob)   soldB  ptowB  mtowB   paintB/round
+   50       132        87          6      0      0        193
+  200       239       125          9      0      0        147
+  400       550        101        14      0      0         39
+  550       665         89        14      0      0          0
+  581       702         85        14      0      0          0   FOOTER winner=A
+```
+
+`ptow`/`mtow` are *cumulative towers built*. **Bob built zero towers in 581 rounds.**
+Alice built three paint towers and five money towers over the same span. Our soldier
+count froze at 14 by round 350 and never moved; paint delivered to the map decayed
+193 → 147 → 39 → **0**, and coverage went backwards, 125 → 85.
+
+This is the doom loop in its pure form, and it is an *absolute* degeneracy signal of
+exactly the kind the algorithm says to prefer over opponent-relative deficits: no
+new paint towers → no paint income growth → soldiers cannot afford to paint ruins →
+no new paint towers. It needs no opponent to be wrong. A bot that paints zero tiles
+per round for the last 30+ rounds of a game is broken on that map/side regardless of
+who it is playing.
+
+For contrast, the same map with sides swapped is a **win**: bob built 10 paint and 4
+money towers and took it at r1202. So this is not "Rose is a bad map for us" — it is
+one spawn position on one map where expansion never starts. That side-specificity is
+the signature TRAINING_ALGORITHM.md flags in doctrine #7 (concentrated on one
+map/side = real causal effect, not churn) and in the play-symmetry audit item.
+
+### One observation about Alice worth recording (replay-observable only)
+
+Alice's bytecode peak reads **1,842–2,063** all game, against our 9,194–9,701. She
+runs an order of magnitude cheaper per turn and, in the game we won, still fielded
+**176 soldiers to our 98** by round 900 — while painting less per round (2,689 vs
+4,747). Two things follow, neither of which requires knowing anything about how she
+decides: bytecode is nowhere near the binding constraint for a bot of this shape, and
+raw unit count is not what wins these games — paint delivered is. That is consistent
+with iteration 9's own finding from the other direction.
+
+### Next target, selected
+
+**Zero-expansion games.** Before hypothesising, check generality: is "built zero (or
+near-zero) towers" a recurring shape in my *own* gauntlet losses, or is Rose-B a
+one-off? Dumping four iteration-9 losses (`fix`, `Snowman`, `box`, `Brat`) to read
+`ptow`/`mtow` answers that for the cost of four replay dumps and no games.
+
+
+---
+
+## Reachability probe (2026-09-07) — why SRP counts range 1 to 10, and the dose I was about to sweep is dead
+
+Iteration 9's criterion 3 under-delivered on magnitude: `srpA` held at 1 on Castle and
+2 on quack against 10 on Oasis. My first instinct was a dose sweep on
+`SRP_MIN_CHIPS = 500`, since the accepted bot's treasury now hovers near 1,300 and a
+500-chip gate looked like it was competing with spawning.
+
+**That would have been a dead dose.** Before spending a gauntlet I built
+`src/bob_probe` — iteration 9's code plus counters for every reason an SRP start is
+refused — and ran it against `bob_iter7` on Castle and quack with robot stdout on.
+The instrumented build reproduced quack exactly (win, r1380, same as the uninstrumented
+candidate), so the counters are describing the real game.
+
+```
+                        Castle                 quack
+attempts to start        862                    9,250
+  geometry (isValid-)    856   99.3%            8,029   86.8%
+  overlapping mark         6    0.7%              884    9.6%
+  chips < 500              0    0.0%              175    1.9%
+  robot paint < 25         0    0.0%              156    1.7%
+  enemy paint              0    0.0%                4    0.0%
+  starts                   0                        2
+```
+
+**The chip gate accounts for 1.9% of refusals on one map and 0.0% on the other.**
+Sweeping `SRP_MIN_CHIPS` would have moved almost nothing — the precise failure
+doctrine #2 warns about ("a dose sweep once produced byte-identical games because the
+parameter fed a check that never ran"). The probe cost two matches and no gauntlet.
+
+### The real constraint, from the engine rather than inference
+
+`javap -c` on `RobotControllerImpl.assertCanMarkResourcePattern` gives exactly four
+conditions: robot type, `assertCanActLocation(loc, 8)`, `GameWorld.isValidPatternCenter(loc, false)`,
+and `getPaint() >= 25`. And `isValidPatternCenter` is: `x >= 2`, `y >= 2`,
+`x < width - 2`, `y < height - 2`, and `areaIsPaintable(loc)` — all 25 tiles free of
+walls and ruins.
+
+So 87–99% of refusals are "the 5×5 around this soldier contains a wall, a ruin, or a
+map edge".
+
+### The actual bug, and it is a policy bug, not a tuning one
+
+`workOnSrp` tests **exactly one candidate centre per turn: the tile the soldier is
+standing on.** It never looks anywhere else. But the engine's own check is
+`assertCanActLocation(loc, 8)` — **r² ≤ 8, which is 25 candidate tiles, not one.**
+The bot has been sampling one square of a 25-square neighbourhood and concluding the
+neighbourhood is unusable.
+
+That also explains the map spread without any map-specific story: on open maps
+(Oasis) a random tile is often a valid centre, so one sample succeeds often enough to
+reach 10 SRPs; on cluttered maps (Castle) a random tile almost never is, and one
+sample per turn finds nothing in 862 tries.
+
+This is also a clean instance of the algorithm's Phase 0 item 2 — *"sweep the
+`RobotController` API for methods the bot never calls"* — in miniature: the capability
+to mark at range was in the signature the whole time and the bot passed `me` to it.
+
+## Iteration 10 (2026-09-07) — PRE-REGISTERED: search the markable neighbourhood
+
+**Hypothesis.** SRP construction is limited by candidate-site *sampling*, not by
+chips, paint, marks, or map geometry. Testing more of the r² ≤ 8 neighbourhood the
+engine already permits will raise sustained SRP counts, and — since an SRP is +3
+paint/turn on *every* allied paint tower and paint is the established binding
+constraint — that will convert into paint delivered and coverage.
+
+**Mechanism (one change).** In `workOnSrp`, when `srp == null`, test up to `SRP_SCAN`
+candidate centres within r² ≤ 8 instead of only the soldier's own tile, taking the
+first that passes `canMarkResourcePattern` and `srpSiteSafe`. Candidate order is
+rotated by `rc.getID()` so soldiers do not all probe the same tile first — and
+deliberately *not* by compass order, per the play-symmetry audit item.
+
+**Dose, with a zero arm (doctrine #2).**
+`SRP_SCAN ∈ {1, 5, 13, 25}`. **`SRP_SCAN = 1` is byte-identical to iteration 9** —
+that is the zero arm and it is already measured (25/40 vs iter7). 25 is the full
+legal neighbourhood.
+
+**Pre-registered accept criteria.**
+1. **h2h vs `bob_iter9` > 50%** — accept gate, 20 maps × 2 sides.
+2. Swept-win > swept-loss.
+3. **Mechanistic**: sustained `srpA` rises versus iteration 9 on the *cluttered* maps
+   specifically (Castle 1, quack 2 are the reference points). If `srpA` does not move
+   on those maps, the hypothesis is wrong regardless of the win rate, and the win rate
+   is then measuring something else.
+4. **Bytecode, and this one can veto.** `canMarkResourcePattern` scans 25 tiles, so
+   `SRP_SCAN = 25` is up to 625 tile examinations per soldier-turn. Iteration 9 peaks
+   at `maxbc` 10,038 of a soldier's 17,500. If `maxbc` reaches the limit the soldier
+   is silently truncated mid-turn and every downstream conclusion is void. **Read
+   `maxbcA` first, before the win rate.** A dose that wins while clipping bytecode is
+   rejected, not accepted.
+
+**Reachability pre-check on the fix itself** (applying the lesson to the lesson):
+the probe says 8,029 of 9,250 quack refusals are geometric, so a scan that examines
+25 sites instead of 1 has real headroom to find one — this branch is demonstrably
+live. What the probe cannot tell me is whether valid centres are *spatially
+clustered*, in which case 25 neighbours of a bad tile are also bad and the scan buys
+less than the arithmetic suggests. That is precisely what the dose curve measures.
