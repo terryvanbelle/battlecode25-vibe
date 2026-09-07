@@ -13,3 +13,6 @@ date,current_snapshot,opponent,wins,total,win_pct,source
 2026-09-07T02:25:04+00:00,alice_iter12,alice_iter0,23,24,95.8,roster-run
 2026-09-07T02:25:04+00:00,alice_iter12,alice_iter1,24,24,100.0,roster-run
 2026-09-07T02:36:37+00:00,alice_iter14,alice_iter7,15,24,62.5,roster-run
+2026-09-07T03:06:54+00:00,alice_iter14,alice_iter0,24,24,100.0,roster-run
+2026-09-07T03:06:54+00:00,alice_iter14,alice_iter1,24,24,100.0,roster-run
+2026-09-07T03:06:54+00:00,alice_iter14,alice_iter7,14,24,58.3,roster-run

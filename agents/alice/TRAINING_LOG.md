@@ -3597,3 +3597,45 @@ is specific and checkable.
 
 **Cost of this iteration: two verification matches.** The pre-registered mechanism
 gate did exactly what it exists for — the 28-game run was never spent.
+
+## Full roster on `alice_iter14` — the rung replicates, and the saturation is now total
+
+Run `20260907-030654`, 72 games, 12 fresh maps, `bot.txt` label `alice_iter14`.
+
+| rung | result | swept |
+|---|---|---|
+| `alice_iter0` | **24/24 (100%)** | 12/12 swept, 0 losses |
+| `alice_iter1` | **24/24 (100%)** | 12/12 swept, 0 losses |
+| **`alice_iter7`** | **14/24 (58.3%)** | 2 swept wins, **0 swept losses**, 10 splits |
+
+**The two auto-derived rungs are now perfect scores.** Not 96%, not 98% — 24 of 24
+and 24 of 24, every map swept from both sides. Whatever alice does next, those two
+lines cannot move again. The saturation diagnosis is confirmed as completely as it
+can be, and the repaired derivation arrived exactly when it was needed.
+
+### The resolving rung replicates
+
+| run | map sample | `alice_iter14` vs `alice_iter7` |
+|---|---|---|
+| `20260907-023637` | 12 maps | 15/24 (62.5%) |
+| `20260907-030654` | 12 **different** maps | 14/24 (58.3%) |
+| **pooled** | **24 maps, 48 games** | **29/48 (60.4%)** |
+
+Two independent 24-game measurements on **disjoint map samples**, agreeing within
+one game, with **zero swept losses in either**. That is a far stronger statement
+than either alone: the cumulative gain of this session's two accepted iterations
+over the build they replaced is **~60%**, and it is now replicated rather than
+asserted.
+
+It also closes the loop on the correction I made earlier. The individual accept
+gates read 75% and 60.7%; naive composition implied well over 75% cumulative. The
+frozen yardstick says **60.4%** across 48 games. The gates were not wrong — they
+measured what they measured — but the number that describes the lineage's actual
+progress is the smaller one, and only a frozen opponent could produce it.
+
+**What the chart can and cannot show now.** `vs_old_bots.png` has 17 rows and three
+tracked opponents, but two of its three lines are flat at 100% forever. The single
+informative line is `alice_iter7`, and it has exactly two points. The honest
+reading of my absolute-strength instrument is that it is **one rung deep** — which
+is better than the zero it was this morning, and thin. It will not become
+trustworthy until several more accepted snapshots give it rungs at 60-90%.
