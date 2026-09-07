@@ -619,3 +619,52 @@ games. Iteration 18 (release the pinned reserve): benefit = unblock production, 
 towers**, verified by a paired within-game count; +7 games. Both are the "capability preserved
 at zero marginal cost" profile — and the reason that profile keeps winning is precisely that
 its price term is *zero*, so getting the price wrong cannot hurt you.
+
+## A counter that reads zero and a counter that is ABSENT are different facts
+
+I nearly rejected a working mechanism because my extraction helper was
+
+```python
+def mx(k):
+    v = [ ... regex over the replay ... ]
+    return max(v) if v else 0          # <-- "no samples" and "genuinely zero" both render as 0
+```
+
+After rebasing iteration 20 onto a new baseline I had left its counters out of
+`setIndicatorString`, so the regex matched nothing and the helper reported `fl=fd=fs=0`. I
+wrote it up as "the mechanism is completely inert over a full 2,000-round game" and reasoned my
+way to a tidy mechanistic explanation for why. Re-run with the counters actually emitted: **134
+deliveries per mopper.**
+
+This is the exact inverse of the failure this whole project guards against. Doctrine says never
+*accept* a mechanism whose firing count is zero, because it cannot have caused the result. It
+follows just as strongly that you must never *reject* one on a zero you have not proved is real.
+An absent counter looks identical to a dead mechanism, and the wrong conclusion is available in
+one line of plausible Python.
+
+- **Assert the sample count before reporting the value.** `assert v, f"no samples for {k}"` —
+  or print `n=` alongside every statistic. I now print the sample count for every counter I
+  read, and a counter with `n=0` is a **tooling bug until proven otherwise**, never a finding.
+- **Whenever a mechanism reads zero, first confirm the instrument is present.** The cheapest
+  check is a sibling counter that must be non-zero — here `tw2` (ally tower in vision) was
+  reading 275, which would have exposed the artifact instantly had I emitted and read it.
+- **Rebasing a candidate onto a new baseline is exactly when instrumentation goes missing**,
+  because the string-surgery that ports the change has to re-find its anchor points and will
+  silently drop what it cannot place.
+
+## Two of my own mechanistic stories, both tidy, both wrong, both killed by one game
+
+Within an hour I reasoned my way into two confident explanations and measured both:
+
+- *"Moppers idle 95% of the time because they bleed 2–4 paint/turn, freeze at zero and die."*
+  RULES.md genuinely says a robot at 0 paint cannot move or act and takes −20 HP/turn against
+  the mopper's 50 HP. It is a clean, rules-grounded story. **Median mopper paint: 94 of 100.
+  Turns at zero: 1.0%.** Refuted.
+- *"The ferry cannot fire because moppers are broke."* Refuted by the same numbers, and by 134
+  deliveries per mopper.
+
+Neither story was careless — both were derived from the spec and both would have survived a
+review. What killed them was one instrumented game each, costing about two minutes. That ratio
+is the whole argument for TRAINING_ALGORITHM §2: **trace, don't theorize.** The danger is not
+holding a wrong theory, it is that a *well-founded* wrong theory reads exactly like a finding
+and will be written into the log as one if nothing is measured.
