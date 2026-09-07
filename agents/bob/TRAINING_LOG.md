@@ -4652,3 +4652,69 @@ them. Idle movement was not idle at all. The distinction that separates them: a
 idle only because its output is not on any counter I print. Before spending anything
 called idle again, ask which of the two it is, and find the counter that would show its
 output.
+
+
+---
+
+## Iteration 15 (2026-09-07) — PRE-REGISTERED: bug navigation
+
+**Target.** `maze`, a swept loss to an independent lineage from both sides, where I
+build 4 towers to their ~20. Selected from the tournament, not from my own gauntlet,
+so it is a weakness my whole lineage shares and no self-play instrument could have
+surfaced.
+
+**Mechanism (one change, `Nav.navTo`).** The old greedy fan tried the target direction
+and ±45° and ±90°, so it almost never failed to *move* — it failed to make *progress*,
+sliding along a concavity and back, with a random escape after three turns literally
+stuck that resets rather than circumnavigates. Replaced with Bug2: take the straight
+step (preferring non-enemy paint, with ±45° slides); if it is blocked, latch a
+wall-following heading and hold it until the target is strictly closer than it was when
+the obstacle was met. The `lastLoc`/`stuckTurns` random escape is deleted.
+
+**Mechanistic verification (algorithm §4), before any gauntlet:**
+
+```
+bob (bug nav) vs bob_iter12, maze, side A -- WIN r1608 (MAJORITY_PAINTED)
+
+round        towers A (bug nav)      towers B (iteration 12)     coverage
+  400            1p + 1m                   1p + 1m                215 / 160
+  800            2p + 2m                   1p + 1m                337 / 290
+ 1200            8p + 7m                   2p + 2m                550 / 346
+ 1608            9p + 10m  = 19            2p + 2m  = 4           700 / 286
+soldiers built    213                       132
+```
+
+**19 towers against 4**, which is exactly the ~20 the independent sibling built on this
+map, and iteration 12 reproduces its 4-tower failure against *my own* snapshot as
+faithfully as it did against alice — so the defect is a property of the map, not of the
+matchup, which is what a navigation bug must look like. `sierpinski` (5th most blocked)
+also flips to a win. Bytecode max **8,837 of 17,500, zero overruns**.
+
+### Pre-registered evaluation, and why NOT on the pinned maps
+
+The 25 pinned maps carrying this log's regression curve contain **none of the eight most
+wall-blocked maps** (maze, gridworld, boxofchocolates, yearofthesnake, sierpinski, mit,
+CastleDefense, Brat are all absent). Measuring a navigation change there would
+systematically understate it — the same blind spot I recorded this morning about the
+tower-mix revert, now cutting the other way. So the accept gate runs on a **fresh random
+sample**, per AGENT.md, and the wall-dense maps are reported separately as a subset
+defined by the mechanism rather than by outcome.
+
+```
+RUN A (accept gate + null)   BOT=bob_iter12  OPPONENTS="bob_mirror bob"  fresh 25 maps, 100 games
+   bob_iter12 vs bob_mirror -> the mirror NULL, regenerated from the BASELINE being
+                               measured against (verified byte-identical, 7 files)
+   bob_iter12 vs bob        -> the head-to-head accept gate, on the identical maps,
+                               so deviation attribution against the null is exact
+RUN B (mechanism subset)     the 8 most wall-blocked maps, BOT=bob OPPONENTS=bob_iter12
+```
+
+**Accept requires all three:** the head-to-head beats the mirror null in games and net
+sweeps; no one-directional regression in the diff; and the subset moves in the predicted
+direction. A subset gain with a flat head-to-head is **not** an accept — it would mean I
+had bought wall-dense maps with something paid elsewhere, and I would want to know what.
+
+**Phase 0.7, registered in advance:** wall-following handedness is a fixed absolute-order
+tie-break. The mirror in run A is therefore also the symmetry audit — identical code must
+still split every map 1-1. If the null is no longer 25/50 with zero sweeps, the
+handedness has introduced a side bias and that is a real bug regardless of the win rate.
