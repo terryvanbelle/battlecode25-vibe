@@ -6892,3 +6892,24 @@ which is which rather than picking the convenient one.
 Pre-checks for the map-memory target: **1 (sizing/reachability) DONE and passing**; 2 (bytecode
 budget costed before behaviour) and 3 (play-symmetry of a coordinate-keyed memory) remain **not
 done**, and both stay build gates.
+
+#### Correction, in place: the exact census resolves my 116/149 bracket
+
+The coordinator fixed the occlusion flaw I hit (`4388f3d`): the combined arena view now warns
+that units are drawn over paint and must not be censused by counting characters, and every frame
+prints an **exact census from the arrays** that closes to the map area by construction. Re-ran
+the same DefaultMedium round-1200 frame:
+
+```
+with a robot on it reads as a unit. DO NOT census paint by counting
+coverage per-mille  T1 recon=431 engine=434 gap=-3  T2 recon=444 engine=448 gap=-4  
+```
+
+That supersedes the "116 lower bound / ~149 upper bound" I recorded above. **Neither of my two
+numbers was wrong given what was on screen** — which is the point. The render could not answer
+the question I was asking it, and no amount of care in counting would have fixed that; the fix
+had to be a different data source. The bracket was the right way to hold an unanswerable
+question open, and it is now closed by measurement rather than by choosing.
+
+The reachability conclusion is unchanged and was never at risk: 116 of 116 rendered-empty tiles
+reachable, and any tiles hidden under units are by construction the ones units are standing on.
