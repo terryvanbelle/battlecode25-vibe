@@ -424,3 +424,65 @@ This rejection was worth its run precisely because both pre-registered gates pas
 22 times on 10/10 maps and the guard tripped 152 times on 10/10, so the mechanism demonstrably
 did what it was designed to do and the result is about the *trade*, not the implementation. The
 strongest rejections are the ones where the mechanism worked.
+
+## An early conditional-gate read samples game PHASES, not turns
+
+Reading a conditional reachability counter 8 games into a run — instead of waiting 40
+minutes for the full one — is the single best process change I made, and it has a failure
+mode I walked straight into.
+
+On iteration 14 I read the counter early and wrote *"the hypothesis is wrong: of the idle
+turns this targets, 93.5% have no empty tile anywhere in vision."* Over **complete** games
+the same counter reads:
+
+| map/side | hit-rate among targeted turns |
+|---|---|
+| Parking_lot B | **76.9%** |
+| Bunny B | 58.9% |
+| walalilongla B | 49.9% |
+| DefaultMedium B | **20.5%** (I quoted 6.5% for this map) |
+| Castle B | 4.0% |
+
+The rate is not a constant. It varies by map from 4% to 77%, and it varies **within** a game:
+early rounds are exactly when territory is least saturated and the frontier is nearest, so a
+prefix of the replay over-samples the phase where the counter reads highest — or, as here,
+lowest, once you realise which way the bias runs for *this* counter. A partial replay is a
+biased sample of game phases, not a small random sample of turns.
+
+The fix is not to stop reading gates early — 5 minutes versus 40 is still the right trade.
+It is:
+
+- **Treat an early read as directional only.** Never write "the hypothesis is wrong" on one.
+- **Ask which way the phase bias runs before quoting the number.** Any counter whose rate
+  depends on board saturation, unit count, or resource level is phase-dependent by
+  construction, and that is most counters worth measuring.
+- **Let the decision rule, not the diagnosis, make the call.** I kept the run alive because I
+  had pre-registered that the verdict came from mirror deviation rather than firing count.
+  That is what saved a +6-game one-directional accept from being thrown away on a bad number.
+
+This is the same lesson as iteration 12's from the other side. There, a *low* firing count
+nearly killed a real effect; here, a *misread* firing count nearly did. Both times the
+protection was the same: **frequency counters diagnose, they never decide.**
+
+## Measure whether a memory can LEARN before you build one
+
+Iteration 15's first design remembered where EMPTY ground had been *seen*, and steered idle
+soldiers at the nearest remembered cell. It compiles, it is cheap, and it is nearly useless:
+on Castle it fired `memHit` 1,250 times against `memNone` **8,084**.
+
+The reason is structural and I should have seen it on paper. The memory could only be written
+inside the vision scan that runs on idle turns, and that scan returns a target on just 4% of
+those turns on Castle. **A memory that can only learn on the turns it already has an answer
+starves exactly when it is needed.** Its density is highest where it adds least.
+
+Inverting it fixed the density problem completely. Remembering *where this robot has been* is
+written once per turn, unconditionally, with no sensing at all — and at spawn every cell is
+unknown, so "somewhere I have never been" is dense from turn one and is precisely where
+unpainted ground can still be. Measured over a full game, **every** exploration target the
+inverted version picked was a never-visited cell (`expOld = 0` across 27,822 indicator
+samples), so the memory never saturates either.
+
+The general rule: for any proposed memory, state its **write condition** and check it against
+the **read condition** before implementing. If the two are correlated, the memory is a
+no-op dressed as a mechanism. Two minutes of measurement caught this one; it would have cost a
+40-minute run and probably a rejected iteration.

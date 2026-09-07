@@ -4323,3 +4323,75 @@ of soldier turns) into paint at the boundary rather than random wandering inside
 measured against a null that is not stale. Roster run `20260907-131258` launched on the same
 pinned maps *before* the writeup (240 games) as the §5b scheduled frozen-roster check; it will
 compare directly against `carol_i13`'s 26/40 and `carol_iter11`'s 25/40 vs `carol_iter7`.
+
+## Iteration 15 (remembered exploration) — first design measured and discarded before the run
+
+**Target**: the `frontNone` turns iteration 14 leaves on the table. Complete-game data from
+run `20260907-043104` says these are 23%–96% of idle soldier turns (699–7,162 per game), and
+on every one of them the soldier falls back to `newExploreTarget()` — 4 uniformly random map
+coordinates, keep the farthest. That function has no idea where the robot has already been.
+
+Pre-checks, all read from **complete games** rather than a prefix (the iteration 14 lesson):
+
+| pre-check | result |
+|---|---|
+| reachability | `frontNone` fires 699–7,162 times/game on 8/8 maps sampled |
+| trigger frequency | highest exactly where i14 helped least (Castle 96%, DefaultLarge 88.6%) |
+| generality | 8 maps, both sides |
+| history | strictly extends iteration 14; reverts nothing |
+
+### 15a — "remember where EMPTY was seen" — DISCARDED on a 2-minute measurement
+
+Coarse 5x5-tile grid, `memRound[cell]` = last round this robot saw EMPTY passable ground
+there, refreshed for free inside the vision scan i14 already runs, own cell cleared whenever
+that scan finds nothing. One game on Castle:
+
+```
+memHit 1,250      memNone 8,084      frontFound 557      frontNone 14,014
+```
+
+**The memory starves, structurally.** It can only be *written* on turns the vision scan finds
+an empty tile — 557 turns, 4% of idle turns on Castle — and it is *read* on the other 96%.
+Write condition and read condition are anti-correlated, so the mechanism is a no-op dressed
+up as a memory. Discarded without a gauntlet run. Kept at
+`scratchpad/i15a_empty_sighting.java` for the record.
+
+### 15b — "remember where I have BEEN" — the inversion, and it is dense from turn one
+
+Same grid, opposite polarity: `memSeen[cell]` = last round this robot stood there, written
+**once per turn, unconditionally, with no sensing**. `newExploreTarget()` now returns the
+**nearest never-visited cell**; if the robot has been everywhere, the least-recently-visited
+one; the old random pick survives only for a 1x1 grid.
+
+Nearest rather than farthest is a deliberate reversal of the old behaviour (which kept the
+farthest of 4 random samples): unvisited ground next to us is reached in a few turns and pays
+immediately, while unvisited ground across the map costs a long walk over ground we have
+already painted, and a target that re-rolls every 120 turns may never be reached at all.
+
+**Mechanism verification, one full game on Castle:**
+
+| counter | value |
+|---|---|
+| exploration targets that were a never-visited cell (`xn`) | **all of them** |
+| targets that fell back to least-recently-visited (`xo`) | **0**, across 27,822 indicator samples |
+| bytecode max / overruns / near-misses | **5,981 / 0 / 0** (i14 was 6,419) |
+
+So the mechanism engages on every single exploration decision, and the memory never
+saturates within a 2,000-round game. Bytecode went *down*: the new target costs one array
+write per turn plus a <=144-cell scan only when a target is actually re-picked, and it no
+longer allocates four random `MapLocation`s each time.
+
+The one game itself was a loss (Castle A, i14 won that slot) — TRAINING_ALGORITHM.md §4 case
+2: mechanism demonstrably engaged, single game not a verdict, proceed to evaluation.
+
+**Pre-registered decision rule** (fixed before the run, per the iteration 12/14 lesson that
+frequency counters diagnose and never decide):
+
+- **primary**: mirror-deviation margin against `carol_m14`, built fresh from the accepted
+  iteration-14 baseline — the null the candidate is actually measured against.
+- **secondary**: h2h vs `carol_iter14` >= `WinPct` 60%; flip shape one-directional; no drop
+  vs `carol_rush` from i14's 37/40.
+- `xn`/`xo` are **diagnostic only** and will not be used to accept or reject.
+
+Runs in flight: `20260907-133422` (candidate, 80 games), `20260907-133516` (the i14 null, 40
+games), `20260907-131258` (i14 frozen-roster check, 240 games).
