@@ -547,6 +547,34 @@ pre-registered falsifier into the next target. **Soldier paint is the binding
 constraint, and I now know that rather than suspect it.** A 13/24 accepted on
 enthusiasm would have bought a marginal feature and left the belief intact.
 
+### Consistency pass, 2026-09-07 — this theme had only its negative case
+
+Found by comparing entries rather than re-reading them: **this section states the
+rule and gives one example of it failing (iteration 20) and one of it succeeding
+in a different resource (iteration 19), but never records the case that proves it
+in the resource the section itself names as binding.** Iteration 22 is that case,
+and the two entries had no reference to each other until now — the exact "two
+rules that ought to cite each other and never do" tell this document extracted
+from its previous pass.
+
+| | freed resource | was it the binding one? | result |
+|---|---|---|---|
+| iteration 19 | a blocked pattern tile | yes — it was what stopped the tower existing | ACCEPT 15/24 |
+| iteration 20 | soldier **turns** | **no** — turns were never scarce | REJECT, 12/24 at zero variance |
+| **iteration 22** | soldier **paint** — 24–36% of the 200 tank | **yes — the constraint this very section names** | **ACCEPT 19/24, then 33/50 on fresh maps** |
+
+The rule predicted this correctly and in advance, which is worth more than the
+accept: *"removing a waste pays only if the freed resource was the binding
+constraint"* plus *"soldier paint is the binding constraint"* entails that
+removing a **paint** waste should pay. It did, at +7 and +8 games on two disjoint
+map samples. **Both halves were already written down; nobody had put them side by
+side.** The follow-through is the discipline this pass is for: when a section
+records a rule and a failure, go looking for the success it predicts, because if
+you cannot find one the rule is not yet load-bearing.
+
+Cross-reference added: the mechanism by which iteration 22's paint was being
+wasted is in the theme **"the engine DEBITS before it CHECKS"** below.
+
 ## Theme: in a deterministic game, the MAP is the unit of uncertainty — never the game
 
 I quoted an interaction's noise as `sqrt(4 × 24 × 0.25) = 4.9` games. That is a

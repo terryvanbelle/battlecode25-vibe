@@ -5701,6 +5701,8 @@ Per-soldier cumulative counts, aggregated by taking each soldier's latest line.
 |---|---|---|---|---|---|
 | 150 | 7 | 143 | 64 | 5 | **7.2%** |
 | 300 | 11 | 64 | 5 | **55** | **91.7%** |
+| 500 | 16 | **0** | 0 | 0 | branch dormant |
+| 700 | 19 | **0** | 0 | 0 | branch dormant |
 | 800 / 1600 / 1990 | 39 | **0** | 0 | 0 | branch dormant |
 
 **The pre-registered outcome that fired is the first one: concentrated early and
@@ -5717,11 +5719,25 @@ large.** The profile is sharper than I expected and it explains itself:
 - **r800+** — dead. All 24 of Money's ruins carry towers (11 mine, 13 theirs), no
   unclaimed ruin is ever sensed again, and the branch never executes.
 
-So the live window is roughly **rounds 200–600** — which is precisely the window
-in which the coverage curve is still rising and in which bob finishes me off
-(median round 644). It is the highest-leverage stretch of the game, not a
-footnote. Had I only sampled the late game I would have filed this as dormant and
-been wrong; had I only sampled r150 I would have filed it as tiny and been wrong.
+**CORRECTION to what I wrote one paragraph ago, before anyone else has to catch
+it.** I said the live window was "roughly rounds 200–600". The r500 and r700
+samples had already landed and both read **zero**: soldiers born after about
+round 350 never sense an unclaimed ruin on this map, because all 24 of Money's
+ruins carry towers by then. **The live window is roughly rounds 150–400, not
+150–600**, and it is narrower than the story I was about to tell. Writing it the
+smaller way on purpose — I have a candidate built and a motive to make its window
+look bigger.
+
+That window still overlaps the stretch where the coverage curve is rising and
+where bob finishes me (median round 644), but it ends before that median rather
+than straddling it. And the measured size is modest: **275 paint across 11
+soldiers at r300, ~25 paint each, about 12.5% of one 200-paint tank.**
+
+Two sampling lessons, both cheap and both real: had I only sampled the late game
+I would have filed this dormant; had I only sampled r150 I would have filed it
+tiny. **One sampling round gives the wrong answer in either direction**, and the
+correction above shows a third failure mode — sampling enough and then quoting
+the window I wanted rather than the one I measured.
 **One sampling round would have given the wrong answer in either direction.**
 
 ### The change (`src/alice_i23`), one mechanism
@@ -5755,3 +5771,22 @@ soldier from paying to bang on the blockage in the meantime.**
   tile gets painted. If coverage at r600 does not rise while starvation falls, the
   freed paint is going somewhere that does not convert — the exact failure shape
   iteration 20 hit — and it is a reject, not a near miss.
+
+
+### Sizing check — Money may be a degenerate map for this quantity
+
+Money has **24 ruins on 1,141 paintable tiles**, one of the denser ruin supplies
+in the corpus, so its ruins are exhausted early and the branch dies at ~round 350.
+A map with sparser ruins keeps unclaimed ruins in play far longer and would give
+this branch a much longer live window — or, if the waste is a Money artifact,
+none at all.
+
+Per the loop's *"check your sizing map is not degenerate"* rule (the lineage has
+already been burned once by `gridworld`, the densest map in the corpus and one of
+four with single-parity ruins), `alice_i23diag` is now running on **UnderTheSea**
+(45x45, 27 ruins over 1,847 paintable tiles — roughly **half Money's ruin
+density**). Pre-registered: if the wasted share on UnderTheSea is also >80% during
+its live window, the effect is a property of contested ruins rather than of Money,
+and the candidate is worth a full evaluation. If UnderTheSea shows little waste,
+the quantity is map-specific and the candidate is not worth a run on the strength
+of one map.
