@@ -4737,3 +4737,42 @@ It is frozen and will not be retuned.
 |---|---|---|
 | Removing or lowering `CHIP_RESERVE` | now three independent measurements: iteration 16's flat dose across 1450/1250/1000; iteration 18's dose showing chips buy towers; and `alice_flood` at **37.5%** with the reserve deleted outright | a change first raises chip *income* — the reserve is a symptom of income, not the constraint itself |
 | "The treasury sitting under the gate is why my army is small" | same — the spender fields no more army | — |
+
+## Reachability scan for a future iteration 22 — and gridworld would have hidden
+## this one too, in the same direction
+
+Fraction of `alice_iter14` soldier turns with **no ruin anywhere in vision**
+(soldiers only ever target ruins from `senseNearbyRuins`, vision r²=20, and have
+no memory of any ruin they have walked past):
+
+| map | ruins | soldier turns | with a ruin target | **blind wander** |
+|---|---|---|---|---|
+| gridworld | 21 on 31×31 | 29,490 | 22,092 (74.9%) | **7,398 (25.1%)** |
+| box | 8 on 31×31 | 26,458 | 1,152 (4.4%) | **25,306 (95.6%)** |
+| UnderTheSea | 23 on 45×45 | 58,457 | 3,342 (5.7%) | **55,115 (94.3%)** |
+
+**On normal-density maps a soldier cannot see a ruin 94–96% of the time.** On
+gridworld — 21 ruins on a 31×31 board, the densest map in the corpus — it is
+25%.
+
+This is the coordinator's generalisation landing a second time, in the same
+direction and on the same map. Had I sized "soldiers cannot find ruins" on
+gridworld, I would have called it a 25% problem and probably passed on it. It is
+a 95% problem. **gridworld is not merely parity-degenerate; it is
+density-degenerate, and both distortions make a real defect look small.** I am
+treating it as disqualified for sizing any ruin-related quantity, and the check
+is now cheap: `tools/mapdata/ruin_parity.txt` carries ruins-per-map alongside
+parity.
+
+**Not yet a candidate.** High blind-wander is necessary but not sufficient — it
+only pays if there are unclaimed ruins the soldier has *already seen and walked
+away from*. Sizing that needs memory instrumentation which does not exist yet,
+so the honest status is: the trigger is verified common, the payoff is not yet
+verified. That instrumentation is the first step of iteration 22, before any
+mechanism is written.
+
+**Deliberately not consulted**: another lineage's commit subjects are visible in
+`tournaments/*/report.md`, and one of them names this area. A different bot's
+result on its own navigation is not evidence about mine, and designing around it
+would be borrowing a conclusion I have not earned. This will be measured from my
+own traces or not at all.
