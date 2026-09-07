@@ -6178,3 +6178,64 @@ pre-registered now:
 
 Arm B is the real test. Arm A can only ever be worth a couple of games; Arm B is what says
 whether I have bought them for free or paid for them somewhere I did not look.
+
+## Iteration 25 — ACCEPT. Both pre-registered arms hit exactly, and the price is measured at zero
+
+`gauntlet/20260907-184254`, 46 games, `carol_i25` vs `carol_iter21` on the 20 standing pinned
+maps plus `Filter MoneyTower CastleDefense`. Null: `carol_iter21` vs `carol_m25`'s predecessor
+`carol_m21`, verified byte-identical apart from the package line before use, on the same 20 maps
+(`20260907-153510`) and extended to the 3 new ones (`20260907-184322`).
+
+```
+headline      i25 24/46 (52.2%)   null 23/46
+swept maps    i25 swept 1 of 23   null swept 0 of 23   (identical code sweeps nothing)
+resampling    +1.01 sd over maps, boot_se 0.99, jack_se 1.00
+```
+
+### The map-level diff is the result, not the headline
+
+I diffed all 46 `(map, side)` cells against the mirror null:
+
+```
+cells compared: 46
+DEVIATIONS from the mirror null: 1
+   gridworld  side A:  null=loss -> i25=win
+```
+
+**One cell in forty-six.** Forty-five of forty-six are outcome-identical to identical code, and
+the single deviation is the exact map and the exact direction I registered before the run. The
+"price is zero" claim is now measured rather than argued: there is no map where this cost me
+anything, because there is no map other than gridworld where it did anything at all.
+
+- **Arm A (does it help where it fires?)** — gate was `> 4/8` on the four money-heavy maps with
+  gridworld not a swept loss. Result **5/8 vs the null's 4/8**, and gridworld went from a
+  1–1 split to a **swept win**. Filter, MoneyTower and CastleDefense did not deviate: their
+  global mixes (4:1, 8:2, 4:2) are money-heavy but their *local* censuses evidently never reach
+  the money-heavy state, which is the conservative direction to be wrong in.
+- **Arm B (is it free everywhere else?)** — prediction was zero deviation off gridworld.
+  **Zero deviations on all 22 other maps.** Not "within the noise band": identical.
+
+### Why I accept a +1-game margin, and the flag I am attaching to it
+
+Under a null that splits every map and sweeps none — six mirrors, now seven — a swept map is a
+near noise-free instrument, so "+1 swept map against 0" is a real effect and not spawn luck.
+More to the point, this is the profile TRAINING_ALGORITHM names as the recurring winner:
+**capability preserved at zero marginal cost.** It repairs a corpus-level degeneracy (gridworld
+builds 21/21 money towers and has no paint income all game) and provably spends nothing to do it.
+
+§5b's warning about marginal accepts is that they are unpriced liabilities against features not
+yet written. I record the flag, and also why it is smaller here than usual: the mechanism is
+gated behind `census >= 3 && seenPaint*2 < seenMoney`, measured to be false on every healthy map
+instrumented, so its interaction surface with any future feature is confined to money-heavy
+tower mixes. It is not a broad behavioural change that could pair destructively with something
+unrelated.
+
+**DECISION: ACCEPT.** `src/carol` = iteration 25, snapshot `src/carol_iter25`, new mirror
+`src/carol_m25` regenerated from the new baseline (the previous accept's mirror is now stale by
+construction and must not be reused).
+
+### Functional-area note
+
+Tower-mix policy: 24a rejected, 24b rejected, 25 accepted. The two rejects cost 4 games of VM
+time between them because both were killed by decision counters at the pre-check stage rather
+than by evaluations. That is the thread closing successfully, not a run of rejects.
