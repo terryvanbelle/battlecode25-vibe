@@ -202,6 +202,24 @@ def main():
             sha, subj = commits.get(b, ("?", ""))
             L.append(f"- `{b}` @ `{sha}` {subj}")
 
+    # How games actually end. Worth printing rather than leaving each lineage to
+    # derive it: one derived it by hand and reported "none by elimination" when
+    # two of 450 were, which is the kind of small overstatement a table prevents.
+    reasons = cur / "reasons.txt"
+    if reasons.is_file():
+        counts = {}
+        for line in reasons.read_text().splitlines():
+            parts = line.split(None, 3)
+            if len(parts) == 4:
+                counts[parts[3]] = counts.get(parts[3], 0) + 1
+        if counts:
+            L.append("\n## How games ended\n")
+            L.append("| outcome | games | share |")
+            L.append("|---|---|---|")
+            tot = sum(counts.values())
+            for why, n in sorted(counts.items(), key=lambda kv: -kv[1]):
+                L.append(f"| {why} | {n} | {100.0*n/tot:.1f}% |")
+
     L.append("\n## What this cannot tell you\n")
     L.append(
         "**These standings are relative, not absolute.** Every game has a winner\n"

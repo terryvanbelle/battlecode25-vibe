@@ -35,6 +35,14 @@ Each bot is exported from HEAD at tournament time, never the working tree.
 - `bob` @ `ceef7af` bob: iteration 12 -- revert the hash, REMOVE the ruin memory, on sweep evidence
 - `carol` @ `c213c1b` carol: REVERSE the iteration 12 rejection -- ACCEPT it; the mirror control refutes my noise argument
 
+## How games ended
+
+| outcome | games | share |
+|---|---|---|
+| The winning team painted enough of the map. | 366 | 81.3% |
+| The winning team won on tiebreakers (painted more of the map). | 82 | 18.2% |
+| The winning team destroyed all of the enemy team's units. | 2 | 0.4% |
+
 ## What this cannot tell you
 
 **These standings are relative, not absolute.** Every game has a winner
