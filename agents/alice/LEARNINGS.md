@@ -1104,6 +1104,69 @@ half of a future destructive pair nobody thinks to suspect. Recorded here so tha
 if a frozen-roster reading ever drops, this clause is on the list of things to
 ablate first.
 
+## Theme: swept maps and the head-to-head margin are THE SAME NUMBER, not two signals
+
+Discovered 2026-09-08 while accepting iteration 24, in the act of citing both as
+independent corroboration. They are arithmetically identical.
+
+In a gauntlet that plays **both sides of every map**, let `SW` = maps won from both
+sides, `SL` = maps lost from both sides, `SP` = maps that split by side, over
+`N = SW + SL + SP` maps and `2N` games. A split map contributes exactly one win by
+construction, so:
+
+```
+wins            = 2·SW + SP
+margin over 50% = wins − N = 2·SW + SP − (SW + SL + SP) = SW − SL
+```
+
+> **The margin over 50% equals the net swept-map count, exactly. Split maps
+> contribute precisely nothing to it.**
+
+Verified on all three opponents of run `20260907-234431`, with no residual:
+
+| opponent | SW | SL | SP | wins | margin over 50% | SW − SL |
+|---|---|---|---|---|---|---|
+| alice_iter23 | 8 | 0 | 17 | 33/50 | **+8** | **+8** |
+| alice_flood | 21 | 1 | 3 | 45/50 | **+20** | **+20** |
+| alice_iter7 | 4 | 0 | 2 | 10/12 | **+4** | **+4** |
+
+### What this invalidates, including something I said an hour ago
+
+I wrote that iteration 24 was supported by "two independent signals — head-to-head
+66% (p≈0.02) and swept 8–0 (p≈0.008)" and treated that convergence as satisfying
+doctrine 13's *"a real effect usually shows up in more than one place."* **It is one
+place, cited twice.** Worse, the two p-values I quoted differ only because I applied
+two different null models to the same eight maps, so the smaller one was not extra
+confidence — it was a second opinion from the same witness.
+
+This is not a small bookkeeping point: **the summary file prints both numbers side
+by side on every run**, and I have been reading them as mutually corroborating for
+many iterations.
+
+### What each one is still good for
+
+They are the same *magnitude*, but not the same *statement*, and the difference is
+worth keeping:
+
+- **`SW − SL` is the estimator.** It is the margin, computed on maps rather than
+  games, and it is immune to spawn advantage by construction.
+- **`SP` is the noise gauge, and it is free.** 17 of 25 maps splitting by side says
+  most of this matchup is decided by which side you spawn on. That is information
+  about the *instrument's resolution* which the win rate alone hides, and it says
+  the effective sample here is nearer 8 maps than 50 games.
+
+So the honest reading of iteration 24 is: **+8 net swept maps out of 25, with 17
+maps carrying no signal at all.** That is still a clear accept — SW − SL = 8 with
+SL = 0 is a one-directional result, and doctrine 10 says one-directional beats
+scattered — but it is one result, and the genuinely independent corroboration is the
+**mechanism** (starvation 48.8% → 31.1%), which is a different measurement of a
+different quantity.
+
+**The general rule: before calling two numbers independent corroboration, check
+whether one is a deterministic function of the other.** Two statistics computed from
+the same games usually are.
+
+
 ## Theme: a retraction is a claim too, and shares the assumption that produced the error
 
 The subtlest thing this session found, and it is about the *shape* of corrections
