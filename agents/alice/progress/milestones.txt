@@ -3,3 +3,4 @@
 dd003f2|Tournament adopted as primary loss source (external instrument)
 af856f8|alice_flood archetype added to the roster (spender pole, breaks lineage-only pool)
 61b7037|Per-map results split by ruin density (tools/density-split.py)
+d4350cb|accept gate becomes the full 75-map census, single opponent
