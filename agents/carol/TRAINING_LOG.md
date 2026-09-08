@@ -8345,3 +8345,75 @@ weak point of the price argument and I am recording it as such rather than leani
 
 Run `20260908-044251` launched: `BOT=carol_i31_100`, opponents `carol_iter30` and `carol_i31_200`,
 fresh random 25-map sample, 100 games.
+
+### Iteration 31 — REJECTED (25/50), and the pre-named weak point is exactly what killed it
+
+Run `20260908-044251`, fresh random 25-map sample, 100 games.
+
+| arm | result | swept-win | swept-loss | D (split) |
+|---|---|---|---|---|
+| `carol_i31_100` vs **`carol_iter30`** (the accept gate) | **25/50 (50.0%)** | 2 | 2 | **21** |
+| `carol_i31_100` vs `carol_i31_200` | 26/50 (52%) | 4 | 3 | 18 |
+
+**Fails the pre-registered gate** (`> 50%` required; this is exactly 50%). No dose rescue: 100 and
+200 are indistinguishable at 26/50, so the ladder is flat rather than pointing anywhere.
+
+**The mechanism was NOT dead — this is a real rejection, not a void iteration.** The mirror null is
+an exact even split with **zero** swept maps; this run has 4 swept maps against `carol_iter30`
+(2 win, 2 loss). Games genuinely changed and the net came out at zero.
+
+**Mechanism verification: it worked exactly as designed.** From the `gridworld` replay (a swept
+loss), both arms in one game, at the round-500 window:
+
+| | soldiers built | **moppers built** | **realized mopper share** | towers | coverage |
+|---|---|---|---|---|---|
+| **`carol_i31_100`** (floor 100) | 18 | **2** | **9.5%** — the intended share | 5 | 358m |
+| **`carol_iter30`** (floor 0) | 27 | **21** | **44%** | 9 | 534m |
+
+The floor did precisely what it was built to do: it pulled the realized mopper share from 44% to
+9.5%, onto its intended 10%. **And the bot got no better.** This is my own LEARNINGS entry "a
+mechanism can rewrite the whole game and move nothing", second instance, and I should have weighted
+that entry more heavily when the mechanistic story looked this clean.
+
+**Why it moved nothing, and it is the term I flagged in advance.** I wrote in the pre-registration:
+*"if moppers are worth as much per paint as soldiers, this is worth exactly zero... [the 95.1% idle
+figure] is from an older iteration and I have not re-measured it on the current build. That is the
+honest weak point of the price argument."* That is the term that failed. In the same window:
+
+- `carol_iter30`'s moppers: **112 unpaint actions and 28 mop swings.**
+- `carol_i31_100`'s moppers: **19 unpaints and 0 mop swings.**
+
+**Moppers on the current build are active, not idle.** The 95.1%-idle figure that the whole price
+argument rested on does not describe this bot. Blocking them removed real work, and the paint
+released did not buy more than the work it displaced — `carol_iter30` out-produced the candidate on
+*every* axis in that window (48 builds to 21, 9 towers to 5), because mopping enemy paint is itself
+part of how coverage is won.
+
+So the rejection converts a weakly-founded belief into a firmly-founded one, which is what the
+algorithm says a rejected run is for: **the mopper is not the waste channel this lineage has assumed
+it to be since iteration 19a.** Two iterations have now attacked mopper production on the strength
+of a stale idle figure, and both failed — 19a at 32%, this at exactly the null.
+
+`src/carol` is untouched and remains iteration 30; nothing to revert.
+
+### Closed-directions ledger update
+
+- **"Cut mopper production to redirect tower paint" — CLOSED, both routes measured.** Iteration 19a
+  deleted the mopper roll: **32%**. Iteration 31 throttled it with a paint floor at two doses,
+  leaving the spend channel open: **25/50 and 26/50, exactly the null**, with the realized share
+  verified to have moved 44% → 9.5%. The mechanism is confirmed to work and the effect is confirmed
+  to be zero. **Re-opening requires a re-measurement showing moppers have become idle on the
+  then-current build** — not an argument that they ought to be, and not the 95.1% figure, which is
+  superseded (see LEARNINGS). The two attempts used opposite mechanisms and landed in the same
+  place, which is what makes this a closure rather than a pair of near misses.
+
+- **NOT closed: "the tower build gate is paint, not chips."** That finding stands on its own
+  measurements — 100.0% of chips-available no-builds are `tpIn < paintCost` on three maps, and the
+  realized mix is set by cost ordering. What iteration 31 refutes is one *use* of that finding (that
+  the mopper is the channel worth reclaiming), not the finding. The unexplored branch it leaves is
+  the other direction entirely: on `sunrise`, the one chip-scarce map measured, the stash reaches
+  1,000 and splashers reach 23% of production unaided. **Raising tower paint income** — rather than
+  re-dividing a starved stash — is the branch nothing has tested, and RULES.md names the instrument:
+  each active SRP adds +3/turn to *every* tower, so its value scales with tower count. Registering
+  it as the next candidate to size, with iteration 26's recorded failure (gate set at the cost of
+  the first step, 59–88% of marks abandoned) as the specific thing a design must fix.

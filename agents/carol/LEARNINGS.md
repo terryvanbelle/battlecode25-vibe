@@ -631,6 +631,16 @@ games.
 which is under 200 paint on 57–99% of tower turns. Cutting the cheap unit in a paint-starved
 economy *removes* production. Running at 32%.
 
+> **SUPERSEDED IN PLACE (iteration 31).** The "moppers idle on 95.1% of 78,480 turns" figure above
+> is left as written because it was load-bearing for iteration 19a's decision, but it **no longer
+> describes this bot**. Iteration 31 throttled mopper production with a paint floor, verified the
+> realized share moved 44% -> 9.5% exactly as designed, and scored **25/50 — the null.** In the same
+> game the un-throttled arm's moppers performed **112 unpaint actions and 28 mop swings** in one
+> 250-round window against the throttled arm's 19 and 0. Moppers on the current build are active,
+> and mopping enemy paint is part of how coverage is won. Two iterations (19a, 31) have now attacked
+> mopper production on the strength of the 95.1% figure and both failed. Do not price a change
+> against a utilisation number measured on an older build; re-measure it first.
+
 **Iteration 26 (build SRPs) — and this one is a different shape.** Here I *did* cost the price.
 I costed it repeatedly and correctly: 200 chips, ~90–150 paint, payback ~13 rounds, all written
 down before building. Then I set the entry gate to
