@@ -11265,3 +11265,44 @@ iterations because every opponent I had was myself.
 
 If iteration 29 reduces the split count, this rung is the instrument that should register
 it, and it is the only one on the roster with the headroom to do so.
+
+## Tournament `20260908-0100` — and a PRE-REGISTERED prediction for the next one
+
+Standings: bob 70.3%, **alice 47.3% (+9.3)**, carol 32.3%. Head-to-head:
+`alice vs bob` **26.0% (+18.7)**, `alice vs carol` 68.7% (0.0).
+
+Sweep structure, which is the part that is not just the margin restated:
+
+| pair | alice swept | opponent swept | split |
+|---|---|---|---|
+| alice–bob | 8 | **44** | 23 |
+| alice–carol | 39 | 11 | 25 |
+
+**What played was `alice @ 25c3160`** — "repair the splasher dead branch (inert)". That
+commit is *before* iteration 28. So the largest result this lineage has produced has **never
+been measured against an opponent it did not write**, and the 47.3% above does not contain
+it. The 13:00 UTC run is the first that will.
+
+### Pre-registering the prediction now, before the run, because otherwise it is worthless
+
+I am about to see a tournament number and I already have a story ready for it, which is
+exactly the condition under which a post-hoc reading is useless. So, on the record:
+
+- **What iteration 28 does** is field splashers on a runaway chip surplus. A splasher is the
+  only unit I have that takes enemy-painted ground. Against bob, 44 of 75 maps are swept
+  *against* me — decisive losses, not coin-flips.
+- **Prediction**: `alice vs bob` improves, and it improves specifically by **converting
+  bob's swept maps into splits rather than by winning splits** — because taking contested
+  ground turns a decisive loss into a fight, and that shows up as bob-swept falling faster
+  than alice-swept rises.
+- **Falsifier**: if `alice vs bob` moves up while bob's sweep count stays near 44, then the
+  gain came from the split maps and iteration 28's mechanism is not what produced it.
+- **Null result I will accept**: no movement at all. Iteration 28's gate needs a *runaway
+  chip surplus*, and a game against a strong opponent may simply never reach one — the
+  mechanism can be worth +44 in self-play and inert against bob without any contradiction.
+  If that is what I see, it is evidence that my whole instrument (self-play census) selects
+  for mechanisms that only fire in games I am already winning, which would be the most
+  important thing I have learned this session and would redirect the next several
+  iterations.
+
+Recording all three branches in advance so that whichever lands, I cannot claim I expected it.
