@@ -878,3 +878,56 @@ call required.
 
 **Rule: when closing a direction, write the cause as a condition that could later be observed to
 be false.** "Not worth it" cannot be re-opened honestly. "Worth little while X holds" can.
+
+## `canAttack` is a legality check, not an efficacy check — and a bug class is never local
+
+The largest single waste ever found in this lineage: **71–85% of all soldier attacks were
+discarded by the engine**, burning 42–55% of the entire soldier paint budget, every game, on every
+map measured. `workOnRuin` attacked tower-pattern tiles holding **enemy** paint. A soldier paints a
+tile only if it is EMPTY or already own-team; `rc.canAttack()` returns true anyway, the engine
+charges the full 5 paint, and nothing happens.
+
+Three things generalise, and the third is the expensive one.
+
+**1. Separate "may I do this" from "will this accomplish anything".** Every `can*` predicate in
+this API answers the first question only. Cooldown, range, and cost are checked; whether the
+action's *effect* is legal on that target is not. Any call site that picks a target must apply the
+effect rule itself. Grep for `rc.attack(` and read every site against the effect rule, not the
+guard.
+
+**2. The symptom looked like six unrelated problems.** Before the cause was found I had, in one
+session, separately measured: soldiers dying dry at ~50 rounds (77–94% at paint < 5); the ruin
+branch consuming 56–71% of soldier turns; a realized build mix of 50% moppers against an intended
+10%; the paint tower pinned in the [100,200) dead band on 27–49% of turns; splashers at 0.7% of
+builds against an intended 15%; and a paint accounting that would not close by 41–53%. **All six
+are the same bug.** When several independent-looking degeneracies appear at once, look for one
+upstream cause before designing six fixes — and note that the accounting failing to close was the
+only one of the six that pointed *at* the cause rather than away from it. That is what the
+"close the accounting before you read anything off it" rule buys.
+
+**3. I had already found this exact bug class, in another unit, and did not sweep.** An earlier
+iteration fixed the splasher's targeting for precisely this reason — it "scored enemy tiles
+anywhere in r²=4, so it preferred centres ringed by enemy paint it could not actually convert" —
+and the same iteration never checked the soldier, the mopper, or the tower. The soldier's version
+then survived for many more iterations while I chased its downstream symptoms.
+**A bug class found at one call site is a hypothesis about every other call site of the same kind,
+and testing it costs one grep.** When a fix is written, the commit should sweep the siblings.
+
+## Two artefacts that agree are only evidence when they are actually independent
+
+I measured soldier paint drain two ways offline and got 3.40 and 3.46 per turn — agreement to 2%,
+which I read as corroboration. The true figure was **1.20–1.58**. Both routes differenced the same
+per-turn paint series and both assumed paint leaves a robot only via drain or via an action the
+replay logs; discarded attacks are logged nowhere, so the shared assumption was false and the two
+"independent" checks were one method computed twice.
+
+The tell was available and I missed it: the two agreed with each other but neither closed against
+the *lifetime budget*, which is a third artefact of a genuinely different kind. **Reconcile against
+an artefact that does not share your method's assumptions** — a total, a conservation law, a
+number produced by the engine rather than by your parser. Agreement among same-family estimates
+measures consistency, not truth.
+
+This is the counterpart to the existing rule that the tell for a wrong referent is "two artefacts
+that should agree and didn't". The complement is just as real: **two artefacts that agree may
+simply share a blind spot**, and the cure for both is the same — pick the reconciling artefact for
+its independence, not for its convenience.

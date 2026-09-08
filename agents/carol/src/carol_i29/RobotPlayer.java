@@ -1,4 +1,4 @@
-package carol_mirror;
+package carol_i29;
 
 import battlecode.common.*;
 
@@ -60,7 +60,7 @@ public class RobotPlayer {
      * measurement-neutral -- it shifts the replay hash, so a dose pair must share one tag if
      * doctrine #3's byte-identity check is to work on raw hashes.
      */
-    static final String BUILD = "i25";
+    static final String BUILD = "i29";
 
     /**
      * Consecutive turns this tower has seen the team treasury EXACTLY unchanged, and the count
@@ -447,6 +447,16 @@ public class RobotPlayer {
         for (MapInfo tile : rc.senseNearbyMapInfos(ruin, 8)) {
             PaintType mark = tile.getMark();
             if (mark != PaintType.EMPTY && mark != tile.getPaint()) {
+                // Iteration 29: a SOLDIER cannot overwrite enemy paint -- the engine paints a
+                // tile only if it is EMPTY or already own-team (RULES.md, soldier attack [E]).
+                // `canAttack` does not check this, so attacking an enemy-painted pattern tile
+                // is legal, costs the full 5 paint, and does nothing. Measured on four maps
+                // with a verified no-op probe: 71-85% of ALL soldier attacks were discarded
+                // this way, burning 42-55% of the entire soldier paint budget, and it is the
+                // sink that made the paint accounting fail to close by 41-53%. Skipping the
+                // tile also lets the loop reach a pattern tile that IS paintable, instead of
+                // breaking on an impossible one.
+                if (tile.getPaint().isEnemy()) continue;
                 if (rc.canAttack(tile.getMapLocation())) {
                     rc.attack(tile.getMapLocation(), mark == PaintType.ALLY_SECONDARY);
                     break;

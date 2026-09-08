@@ -7209,3 +7209,98 @@ and the observed values are suggestive both ways: 5, 6, 7, 10, 11 are exactly {s
 clumping too. Enemy mopper attacks on our soldiers are logged individually as `ATTACK -> <id>`, so
 the discriminating case is free and is running now: split the same drain distribution by whether an
 enemy attacked that soldier that round.
+
+### The discriminating case: my offline drain estimate was WRONG, and the probe found the real sink
+
+`gauntlet/20260907-234722`, 8 games, `carol_i29p` vs `carol_iter25`. **Identity check passes and is
+unusually strong**: 4/8, all four maps split by side, zero swept, and every game ends on the
+*byte-identical round* as the i28p run (r2000 / r1037 / r1015 / r728). Confirmed no-op.
+
+**The drain model closes.** Observed end-of-turn drain vs. what the rules predict from the tile
+underfoot and the adjacent-ally count, read by the robot itself:
+
+| map | observed | predicted | residual | turns mismatched | terrain | clumping | **end-of-turn tile is ENEMY paint** |
+|---|---|---|---|---|---|---|---|
+| Bunny | 1.20/turn | 1.19 | +0.01 | 1.0% | 1.08 | 0.52 | **41.6%** |
+| DefaultMedium | 1.56/turn | 1.58 | −0.02 | 1.3% | 1.02 | 1.31 | **39.4%** |
+| Fossil | 1.58/turn | 1.54 | +0.04 | 2.1% | 1.27 | 0.92 | **48.5%** |
+| Mirage | 1.57/turn | 1.58 | −0.01 | 1.2% | 1.18 | 1.16 | **45.2%** |
+
+**And it refutes my own offline number in the entry above.** I published 3.2–3.5 paint/turn,
+derived two ways that agreed with each other. The truth is **1.20–1.58**. Both offline routes
+shared one assumption — that a soldier's paint could only leave via drain or via an action the
+replay logs — and they agreed because they were the *same* method twice, not two methods. That is
+the "what did both versions take for granted" failure in its exact form, and the agreement of two
+artefacts is only evidence when the two are actually independent. Superseding the number in place.
+
+#### The sink neither offline route could see
+
+Tracing soldier `id11954` on Bunny end to end — it loses 5 or 7 paint on turn after turn while the
+probe's measured drain rises by only 2, and the replay logs **two** PAINT events for its entire
+life:
+
+```
+r549 p=195  dO= 0   ruin=[11, 20]        <- 200 -> 0 in 37 turns
+r550 p=188  dO= 2   ruin=[11, 20]           drain accounts for 60
+r551 p=181  dO= 4   ruin=[11, 20]           actions account for 10
+...                                          the other 130 is invisible
+r583 p=  0  dO=60   ruin=[11, 20]
+```
+
+**`workOnRuin` attacks tower-pattern tiles that hold ENEMY paint.** A soldier paints a tile only
+if it is EMPTY or already own-team (RULES.md, soldier attack `[E]`). `rc.canAttack()` does **not**
+check this, so the attack is legal, the engine charges the full 5 paint, and **nothing happens.**
+The soldier in the trace is standing on enemy ground working a ruin whose pattern is enemy-painted,
+and it burns its entire 200-paint stash doing it, at 5 per turn, for 35 turns.
+
+**Attribution closed by enumeration over the code, not by a story.** There are four soldier attack
+sites. Line 278 hits an enemy tower (lands, 50 dmg). Line 292 is guarded by
+`myTile.getPaint() == EMPTY`. Line 303 skips every candidate with `t.getPaint() != PaintType.EMPTY`.
+All three provably always land. **Line 451 in `workOnRuin` is the only unguarded one**, so it
+accounts for all of the waste. Falsifiable: name a soldier attack that fails at 292 or 303 and the
+identity breaks — their guards make it impossible.
+
+Measured exactly, per turn, against the probe's drain and the replay's logged actions:
+
+| map | **attacks discarded** | attacks that landed | **% of all soldier attacks discarded** | paint burned | **% of the soldier paint budget** |
+|---|---|---|---|---|---|
+| Bunny | 1,104 | 454 | **70.9%** | 5,520 | **41.8%** |
+| DefaultMedium | 4,789 | 826 | **85.3%** | 23,945 | **54.9%** |
+| Fossil | 1,956 | 444 | **81.5%** | 9,780 | **48.4%** |
+| Mirage | 1,751 | 464 | **79.1%** | 8,755 | **49.7%** |
+
+That is the 41–53% hole the accounting could not close, found and named. It also explains every
+downstream symptom in one stroke: why soldiers die dry at ~50 rounds, why 77–94% end at paint < 5,
+why the ruin branch eats 56–71% of soldier turns without producing towers, and why the paint tower
+never climbs out of the [100,200) dead band — the soldiers it funds are pouring its output into
+attacks the engine discards.
+
+## Iteration 29 — don't attack a tile the engine will not let us paint
+
+**Change (one line of behaviour):** in `workOnRuin`, `if (tile.getPaint().isEnemy()) continue;`
+before the attack. The loop then reaches a pattern tile that *is* paintable instead of breaking on
+an impossible one. The zero arm is the current code, byte-identical.
+
+**Price:** zero. The skipped attacks accomplish nothing by the engine's own rules, so this is not a
+reallocation and there is no forgone use to charge against it — the one case where "priced against
+zero" is the correct accounting rather than the error I have made three times. The paint saved is
+picked up by the existing paint block, which targets EMPTY tiles in the action radius.
+
+**Pre-registered, before any evaluation:**
+1. Discarded-attack share falls from 71–85% toward 0 (mechanistic verification).
+2. Soldier median life rises from its 49–56 rounds.
+3. Head-to-head vs `carol_iter25` > 50% on a **fresh random 25-map sample** — not the four maps
+   the diagnosis was made on, which are an overfitting surface.
+4. Map-level: gains concentrate where the discarded share is highest (DefaultMedium 85.3%,
+   Fossil 81.5%) and least on Bunny (70.9%).
+
+**Identity check / first read** (`gauntlet/20260908-000103`, the four diagnosis maps):
+**8/8, all four maps SWEPT, zero swept losses**, against a null measured three separate times
+today on these exact maps at 4/8 with all four split by side and **zero** sweeps. Games also end
+far earlier (Fossil r403 and r1107 vs r1037; DefaultMedium r1087/r1345 vs r2000), i.e. carol is
+now reaching the 70% paint win rather than grinding to the round limit.
+
+**This is not the accept.** Those are the diagnosis maps. The accept gate is the fresh-sample run
+now in flight (`carol_i29` vs `carol_iter25` plus the full frozen roster, 8 opponents x 25 fresh
+maps x both sides = 400 games), which also refreshes the absolute-strength instrument on the same
+ground per measurement doctrine #12 — run the roster *before* accepting, not after.
