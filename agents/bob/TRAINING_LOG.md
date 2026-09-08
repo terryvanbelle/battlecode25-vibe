@@ -6860,3 +6860,98 @@ other way — **all three of us starve**: alice's deaths are ~95% starvation (37
 rounds), carol's are lower but large, and mine are ~95%. A weakness all three lineages share
 is exactly what none of our instruments can see, and the tournament cannot reveal it either
 because it is zero-sum. Logging it as an open question, not a candidate.
+
+## Iteration 20 RESULT — dose curve has an INTERIOR PEAK at 2:2:1. Roster running before I accept.
+
+Run `20260908-000848`, `BOT=bob` (the refactored zero arm), one shared 25-map sample, 200
+games, complete. Scores below are wins **by the zero arm**, so a low number means the
+opponent arm is better.
+
+```
+arm            mix        zero-arm   95% CI      vs null    arm swept   arm swept-against   split D
+bob_iter18      --          25/50    [25, 25]   exactly the null (se=0)     0        0         25
+bob_mirror      --          25/50    [25, 25]   exactly the null (se=0)     0        0         25
+bob_s2        2:2:1         17/50    [12, 21]      -3.45 sd                 8        0         17
+bob_s3        1:3:1         21/50    [15, 27]      -1.31 sd                 7        3         15
+```
+
+**The mandatory identity check passed exactly**: the zero arm scored 25/50 against
+`bob_iter18` with **all 25 maps split and se = 0**. The refactor is a verified no-op, so
+`bob_s2`'s margin against the zero arm *is* its margin against `bob_iter18` — established by
+behavioural identity, not by chaining head-to-heads (which §21 says does not work).
+
+```
+dose curve (games above the null)      3:1:1  ->  0      2:2:1  ->  +8      1:3:1  ->  +4
+```
+
+**Interior peak, which doctrine #2 calls the strongest evidence available here** — and I
+pre-registered it mechanistically in §24a before the run: cut soldiers too far and the
+mopper->soldier repaint chain starves, because a mopper turns enemy paint NEUTRAL and only
+a soldier can then claim it. That is exactly the shape that came back.
+
+**What the sweeps add here, given §25's identity.** The margin already told me +8 and +4, so
+the sweep *difference* is not new. The decisiveness is: **`bob_s2` sweeps 8 maps and is
+swept on none.** `bob_s3` wins 7 and loses 3. Same net, different risk — and "never swept on
+any of 25 maps" is a statement the margin alone does not make.
+
+### Doctrine 15 (replay state is POST-turn) — scoping which of my claims it kills
+
+Verified the mechanism in my own code rather than taking it on trust:
+`RobotPlayer.run()` calls `rc.setIndicatorString(... p=" + rc.getPaint())` **after**
+`Soldier.run()`/`Splasher.run()` have already acted. So my `p=` census is post-action paint
+and doctrine 15 applies to it directly.
+
+**Which way the bias runs, and why that decides everything.** Post-action paint is <= paint
+at the decision point, always. So a replay-derived affordability rate is biased **downward**:
+
+- it can **manufacture** a false *"could not afford"* finding — the other lineage's case
+- it can only **understate** a *"could afford"* finding
+
+My claim was *"89.6% of soldiers held paint above the floor — they were able and idle"*.
+That is a **can-afford** claim, so the bias makes it conservative. It survives a fortiori.
+
+**The prescribed reconciliation — multiply the rate out, compare against a countable thing:**
+
+```
+~103 of 115 soldiers affordable x 21 rounds  ~=  2,163 affordable soldier-turns
+paint actions actually taken in that window   =        10
+neutral tiles CREATED in that window (mopper unpaints, both teams)  =  21
+```
+
+10 <= 21. The realized count is bounded by **target supply**, not by affordability, and the
+supply number is a count of realized actions, immune to doctrine 15. The gap between 2,163
+and 10 is explained, so nothing is left dangling.
+
+**Independent confirmation from a doctrine-15-SAFE instrument I already had.** The
+2026-09-07 denial probe used `src/bob_probe`, an in-bot build counting at the decision
+point — which is precisely what doctrine 15 prescribes:
+
+```
+splasher turns, DefaultHuge:   paint below 60   5.2%      NO TARGET >= threshold   85.4%
+```
+
+Two instruments, one of them immune, agreeing that splashers are **target-limited, not
+paint-limited** — and the in-bot figure (94.8% not blocked by paint) is *higher* than the
+replay figure (68% affordable), exactly as the bias direction predicts. That agreement is
+what makes today's conclusion safe rather than lucky.
+
+**Not affected**, because both numerator and denominator are realized actions or map state:
+the 0.4-5.2% soldier action rates, the 7.8-16.4x splasher:soldier productivity ratios, the
+saturation timings, the tower-vision counts, and the ~95% starvation share (a claim about
+post-turn state, which is what post-turn state supports).
+
+**Already retracted for a different reason:** the older "splashers and moppers run at ~1% of
+action capacity" number died in LEARNINGS §7 as a *denominator* error (cumulative spawns
+instead of live population; real figure ~37%). That is not a doctrine-15 fault, and saying
+so keeps the two failure modes distinct.
+
+### Pre-accept frozen roster — running now (`20260908-005627`), decision withheld
+
+LEARNINGS §21 rule 2, written by me after iteration 18: *"the trigger is not the margin's
+size; it is simply 'before accepting'"* — because iteration 18 felt too strong to need the
+check and was the accept that drifted. +8 with 8 sweeps and zero swept losses feels exactly
+that strong, so the roster runs first. `OPPONENTS="bob_iter0 bob_iter1 bob_iter11
+examplefuncsplayer"`. The number that matters is **`bob_iter11`**, where the lineage
+recorded 25/50 for iteration 12 and **20/50 for iteration 18** — the drop that started all
+of this. **Pre-registered: if this candidate does not beat iteration 18's 20/50 against
+`bob_iter11`, I do not accept it on the head-to-head alone.**
