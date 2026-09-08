@@ -318,8 +318,14 @@ after I first recorded this wrongly here. Per tile in its arc it does:
 `addPaint(-MOPPER_SWING_PAINT_DEPLETION)`. **No tile-paint write exists in the method.**
 
 - `canMopSwing(dir)` / `mopSwing(dir)`; **cardinal directions only**; MOPPER only.
-- Hits **3 tiles** (`int[4][6]` = 4 directions x 3 coordinate pairs).
-- Removes `MOPPER_SWING_PAINT_DEPLETION = 5` from each **enemy ROBOT** standing there.
+- Hits **6 tiles**, a **3-wide x 2-deep block in front**. (Corrected twice. The body builds
+  **two** `int[4][6]` tables — `astore_2` = dx, `astore_3` = dy — indexed `[dir][k]` with the
+  loop bound at 6, not one table of coordinate pairs. For NORTH: dx `{-1,0,1,-1,0,1}`,
+  dy `{1,1,1,2,2,2}` -> `(-1,1)(0,1)(1,1)(-1,2)(0,2)(1,2)`. EAST/WEST swap the roles.)
+- **It therefore out-ranges the mopper's own attack**: the far row sits at dist^2 = 4-5, while
+  `MOPPER.actionRadiusSquared = 2`. The swing reaches tiles the single-target attack cannot.
+- Removes `MOPPER_SWING_PAINT_DEPLETION = 5` from each **enemy ROBOT** standing there — so up
+  to **30 paint** across a full 6-robot arc, against the single-target attack's 10 on one.
 - Cooldown **20** (hard-coded `bipush 20`), vs the normal attack's `MOPPER.actionCooldown = 30`
   (verified: `attack` applies `getType().actionCooldown` unmodified). Mopper `attackCost = 0`,
   so both are free in paint.
