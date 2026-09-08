@@ -13568,3 +13568,38 @@ The jar flag applies to facts derived in earlier sessions too, so I re-read the 
 Both stand on 3.1.0. I checked these two rather than the whole of `RULES.md` because these are
 the two whose failure would change what `src/alice` does *today*; the rest are re-verified as
 they are used, which is how the mopSwing correction surfaced.
+
+## API sweep, run correctly at iteration 37 — 38 of 68 unused, and one of them answers today's question
+
+Due on the schedule (last run at iteration 29) and timely given the jar flag. Run against
+`tools/engine-jar.sh --remote`: **68 unique method names, 38 never called** in `src/alice`
+(was 37 of 68 at iteration 29; `mopSwing`/`canMopSwing` are back in the unused set because
+iteration 32 was rejected).
+
+The standing gaps are unchanged — the whole **communication system** (`sendMessage`,
+`readMessages`, `broadcastMessage`, and their `can*` guards) is still untouched after ~29
+iterations, and **resource patterns** remain closed on their earlier verdict.
+
+### But `getNumberTowers` is the one that matters today, and I would not have noticed it without the sweep
+
+Today's central finding is a **phase change**: expansion finishes when the last reachable
+ruin is claimed, and from that round the splasher is the only unit whose output still
+converts ground. Everything I have built around that — iteration 28's gate, iteration 29's
+lower gate, iteration 37's lower-still gate — detects the phase by **proxy**, through a chip
+threshold, because chips only pile up once there is nothing left to buy.
+
+`rc.getNumberTowers()` is a **direct, team-wide** reading of the quantity the proxy stands in
+for, it is free, and this bot has never called it. A tower keeps static state across its own
+turns, so it can hold the previous round's count and see the *trend* — and "tower count stopped
+rising" is exactly "expansion is finished", with no dependence on how fast chips happen to
+accumulate on a given map.
+
+That reframes the splasher gate from a **tuned threshold** into a **state test**, which is the
+same move as iterations 5, 25 and 33 (replace a searched constant with something the engine
+already knows). Logging it as the successor to iteration 37 rather than acting now: iteration
+37a is already built, pre-registered and supported by a two-game mechanism reading, and
+switching mechanisms mid-stream is how a lineage ends up with two half-measured ideas.
+
+> **This is the second time the scheduled sweep has paid.** The first found the splasher line
+> itself. Its value is not that it lists methods — it is that it re-asks "what does the engine
+> already know that I am inferring?" at a moment when I have a fresh question to ask it.
