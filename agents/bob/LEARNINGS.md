@@ -1937,14 +1937,56 @@ records the exact one.* The dangerous form is not an obviously wrong number; it 
 iterations because nobody re-derived the divisor. §36 and §43 are the same lesson about noise; this is
 it about rates.
 
-**Unresolved, and deliberately not asserted.** The companion figure "moppers have no enemy paint
-anywhere in vision on 97.6% of their turns" (`bob-tools/BobMop.java`) is **not reproduced** by this
-probe, which puts moppers with nothing in vision at 50-77%. I checked BobMop for the same defect and
-it does **not** have it — it iterates real `Turn`s, and its team indexing is 0-based consistently
-(`sa.team() - 1`), so the obvious suspects are clear. The two tools differ in that BobMop models
-splash footprints and mine does not, while mine is validated against the engine's own coverage
-(+7 per-mille on `Leaf`). I have not run the discriminating case, so I am flagging the disagreement
-rather than adjudicating it. What makes 97.6% hard to believe on its face is coverage arithmetic: on
-`Leaf` the enemy holds 590 per-mille of the passable map, and a 69-tile vision disc that contains zero
-enemy tiles 97.6% of the time is not compatible with that unless our moppers are confined to a pocket.
-**Re-measure before any future session cites it.**
+**CORRECTION, an hour later — I ran the discriminating case and half of the paragraph I first wrote
+here was wrong.** My initial draft flagged the companion figure "moppers have no enemy paint anywhere
+in vision on 97.6% of their turns" as an unresolved *disagreement between two instruments*. It is not a
+disagreement, and it is not an instrument fault. Running `BobMop` on today's replays:
+
+```
+                          mopInVis / ourMop      what my new probe says
+Leaf        (60x60)           60%                     59%
+DefaultHuge (59x59)           57%                     --
+```
+
+The two tools **agree to within a point**, and their reconstructed enemy-tile counts agree with the
+engine census to ~2%. So the 97.6% is not reproducible against the *current* bot — but it was correct
+when it was taken. The original table gives it away and I had read past it twice:
+
+```
+MOPPERS                       DefaultHuge
+  turns                          1,942        <- over a WHOLE 2000-round game
+  fired                              8  ( 0.4%)
+  NO ENEMY PAINT IN VISION       1,895  (97.6%)
+```
+
+**1,942 mopper-turns in a 2000-round game is ~1 mopper alive at any time.** Today the same map carries
+~12. One lone mopper wandering a 59x59 board really does see nothing 97.6% of the time. The figure did
+not break; **the bot outgrew it** — iteration 20 doubled the splasher share and the denial population
+grew roughly twelvefold.
+
+**Which forces me to correct my own headline too.** "1% of capacity" had *two* independent sources, not
+one:
+
+1. **2026-09-06** — the spawned x rounds divisor above. A genuine artefact; reproduced exactly.
+2. **2026-09-07** — "moppers fired on 0.4% of 1,942 turns", i.e. ~1.2% of ceiling. This one is
+   **correctly denominated** (turns, counted at the decision point). It was *true of the bot that was
+   measured*.
+
+So the claim was not simply a miscalculation. It was one part miscalculation and one part a true fact
+about a bot that no longer exists. Both roads end in the same place — **the current bot runs at 19-43%
+of ceiling, so "denial units run at 1% of capacity" is false today** — but the reasons differ, and
+saying "it was just a bad divisor" would have been a tidier story than the truth.
+
+**The rule this actually teaches**, which is stronger than the one about divisors:
+
+> A measurement of your own bot has an expiry date, and nothing in your notes will tell you when it
+> passed. A measurement of the *engine* is permanent; a measurement of the *bot* is a snapshot, and it
+> silently stops describing anything the moment composition or policy moves. Mine expired the day
+> iteration 20 doubled the splasher share, and I carried it for two more days and one 250-game
+> iteration.
+
+Concretely: **date every bot-derived number and re-take it before building on it.** The re-take here
+cost two `mop-trace.sh` invocations against replays already on disk, and it overturned the premise of
+the last iteration I ran. And note which check did the work — not scepticism about the number, but
+running the *old* tool on *new* replays. I had been about to publish "the instruments disagree", which
+was wrong, from exactly the kind of plausible reasoning that the discriminating case exists to kill.

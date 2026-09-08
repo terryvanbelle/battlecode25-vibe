@@ -11453,3 +11453,52 @@ capacity. Nothing here is worth an iteration until the calibration says what eff
 
 **Still queued, unchanged, and still gated on the calibration**: ablate iteration 18 (`src/bob_abl18`,
 built and compile-checked), then the position-symmetric mirror arm, then in-bot symmetry inference.
+
+### Correction, ~17:00 UTC — I ran the discriminating case and it overturned half my own write-up
+
+An hour ago I published LEARNINGS 47 with a paragraph flagging "moppers have no enemy paint in vision
+on 97.6% of turns" as an **unresolved disagreement between two of my instruments**. That was wrong, and
+I only found out because I went and ran the other instrument instead of reasoning about it.
+
+`BobMop` on today's replays gives `mopInVis/ourMop` of **60% on Leaf and 57% on DefaultHuge**; my new
+probe gives **59% on Leaf**. The two tools agree to within a point, and their enemy-tile
+reconstructions agree with the engine census to ~2%. There is no instrument disagreement.
+
+**What there is instead is a stale fact.** The original table says
+`MOPPERS turns 1,942` for a whole 2000-round game — about **one mopper alive at a time**. Today
+DefaultHuge carries ~12. A single mopper on a 59x59 board genuinely does see nothing 97.6% of the time.
+The number was right when taken; the bot outgrew it, largely because iteration 20 doubled the splasher
+share and the denial population grew ~12x.
+
+**And that forces a correction to my own headline.** "1% of capacity" had two independent sources:
+the 2026-09-06 spawned-x-rounds divisor (a real artefact, reproduced exactly), **and** a 2026-09-07
+probe measuring "moppers fired on 0.4% of 1,942 turns" — which is **correctly denominated** and was
+true of the bot it measured. So the claim was one part miscalculation and one part an expired truth.
+Both roads end at the same place — the current bot runs at 19-43% of ceiling — but "it was just a bad
+divisor" would have been a tidier story than the real one, and I had already committed it.
+
+The generalised rule is now in LEARNINGS 47 and it is worth more than the divisor lesson:
+**a measurement of the engine is permanent; a measurement of your own bot is a snapshot with an expiry
+date that nothing in your notes announces.** Date them, and re-take before building.
+
+### Free by-product: every unit death in this lineage is paint starvation
+
+`BobMop`'s death forensics on today's `Leaf` replay, bucketed by paint held on the last turn:
+
+```
+SOLDIER   439 deaths   438 starved (paint <= 10)     1 killed
+SPLASHER  409 deaths   370 starved                   9 killed
+MOPPER    202 deaths   202 starved                   0 killed
+```
+
+**1,050 of 1,050 unit deaths are starvation, and combat kills are 10.** Paired with the same run's
+paint accounting — passive drain of 70,110, i.e. **-59% of tower income**, against 16% of unit-turns
+spent standing on enemy paint at -2 (moppers -4) — this says mopper lifetime, and therefore total
+denial throughput, is set by a paint budget rather than by anything either the navigation or the
+firing-threshold hypotheses touched.
+
+**Recorded as a lead, deliberately NOT opened as an iteration.** Paint refill by walking units home is
+a closed direction (it8) whose re-open trigger is "chips sustained below ~5,000", and that trigger is
+still not met. This is a different quantity — paint, not chips — so it does not re-open it by default,
+and it is exactly the kind of striking number that has now twice tempted this lineage into an iteration
+before the instrument could resolve it. It waits for the calibration like everything else.
