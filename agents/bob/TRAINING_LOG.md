@@ -7198,3 +7198,46 @@ would have been converting idle turns into *travel* turns and nothing else.
 
 Note the degenerate case is handled for free: a unit born near the map centre has a march
 length near zero and is "arrived" immediately, which is correct — it is already at the front.
+
+### A structural weakness in the tournament data, and a SECOND pre-registered prediction for iteration 21
+
+Mined the local `20260908-0100` results (bob = iteration 18) against map geometry parsed from
+the jar. Bob's per-map win rate correlates with map **area**:
+
+```
+corr(win rate, area)    +0.412          corr(win rate, wall %)   -0.246
+area >= 2500  (n=16)     84.4%
+area <  2500  (n=59)     66.5%
+
+worst maps: Brat 0/4 (841)  DefaultSmall 0/4 (400)  Filter 1/4 (441)  Jail 1/4 (600)
+            FourCorners 1/4 (625)  CastleDefense 2/4 (400)  Barcode 1/4 (1050)
+best maps:  TheBest 4/4 (3600)  Restart 4/4 (3025)  UglySweater 4/4 (2500)  memstore 4/4 (2301)
+```
+
+**Bob is a large-map bot.** Seven of the eight worst maps are among the smallest in the
+corpus. That is consistent with the lineage's whole direction: splasher-heavy area denial
+needs territory to convert, and on a 20x20 map the game is decided before denial compounds.
+
+**Why this predicts where iteration 21 will and will not help.** The beacon fixes *blindness*
+— units that cannot see a target. Blindness is a function of vision relative to map size, and
+`VISION_RADIUS_SQUARED = 20` gives a 9x9 sensed box:
+
+```
+DefaultSmall  20x20     81 / 400  = 20.3% of the map visible from one tile
+DefaultHuge   59x59     81 / 3481 =  2.3%
+```
+
+**So I pre-register: iteration 21's gain should be concentrated on LARGE maps and be near
+zero on small ones**, because on a small map a wandering splasher stumbles onto the enemy
+half by accident within a few turns and there is little for the beacon to fix. If the run
+comes back with a gain that is *flat* across map size, my mechanism story is wrong even if
+the margin is positive — the bot would be winning for some reason other than the one I built.
+
+That is deliberately the uncomfortable prediction: it says my headline number should come
+from the maps I am *already strongest on*, and it means iteration 21 is **not** the fix for
+the small-map weakness. That weakness is the strongest candidate for iteration 22, and I am
+naming it here so it does not get quietly absorbed into this iteration's story.
+
+**Caveat, stated rather than buried:** this is iteration 18, a build both instruments agree
+was regressed. The area correlation may differ for iteration 20. The 13:00 UTC tournament
+gives the same table for iteration 20 and I will recompute rather than assume it carries.
