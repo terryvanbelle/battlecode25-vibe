@@ -9872,3 +9872,75 @@ near 1 at every nonzero dose.
 Corollary, and the reason this is worth a numbered entry: the same flat ladder would have been read as
 *"robust across doses, the effect is real"* had the sign been positive. The failure mode is symmetric
 and it is not detectable from the numbers alone — only from re-deriving what the knob controls.
+
+---
+
+## Iteration 29 — PRE-REGISTERED 2026-09-08, before the probe reports
+
+Written before I have seen a single probe number, so the arms cannot be fitted to them.
+
+**Where this came from.** Not from a new idea — from the *code reading that explained 28c*. To
+explain why the hint ladder was flat I had to work out what `workRuin != null` costs, and the answer
+was a coupling that exists **in the shipping bot at baseline**:
+
+```java
+if (workRuin == null && workOnSrp()) return;      // Soldier.run(), step 1b
+```
+
+`srp` is a persistent per-soldier field. A soldier that has already marked a 5×5 resource pattern —
+25 tiles of paint, spent — **abandons it the moment any free ruin enters vision**, and `srpTurns`
+stops advancing while it is away, so `SRP_PATIENCE` never retires the stale site either. When the
+ruin work ends, `workOnSrp` sees `distanceSquaredTo(srp) > 8` and walks the soldier back. That is an
+oscillation between two sites with paint sunk into one of them.
+
+28c is what makes this worth a run rather than a note: it *measured* how expensive this gate is.
+Forcing `workRuin` non-null more often cost **15–16 games of 50**. A coupling with that much
+leverage is worth testing in the other direction.
+
+**Fit to the algorithm's stated winner profile.** "Capability preserved at zero marginal cost —
+standing defenses, spending idle resources, **removing pure waste**." An abandoned half-built SRP is
+pure waste, and finishing it spends no movement and no new resource.
+
+**Neither SRP closure covers this, and I checked both rather than assuming.**
+- Iteration 10 closed *"build more SRPs by searching harder for sites"* — and recorded a re-open
+  note that this is a **different mechanism**: *"or moves SRP construction deliberately away from
+  ruins ... a different mechanism (site selection policy) from the one just killed."*
+- Iteration 13 closed *"spend soldier movement to find SRP sites"* at −35 games, re-open trigger
+  "soldier movement stops being the binding constraint."
+
+This iteration **spends no movement and searches for no sites.** It changes only whether a soldier
+keeps working the site it is *already standing on and has already paid for*. It does not touch
+`chooseRuin`, site selection, or the search. Iteration 13's −35 came from movement spent
+prospecting; there is no prospecting here.
+
+**Pre-registered reachability veto (this is the part that can kill it before it costs a gauntlet).**
+The probe `bob_srpgate` counts the DECISION at the gate, not the outcome:
+`abandon` = turns with `workRuin != null && srp != null`; `forgone` = turns ruin-busy while standing
+on a legal, safe, affordable centre. **If `abandon` is ~0 across both probe maps, arm A is dead code
+and does not get built** — no gauntlet. Iteration 10 already found that tower marks blanket the
+ground soldiers occupy, and `srpSiteSafe` rejects any marked tile, so I expect `forgone` to be low;
+`abandon` is the quantity that is genuinely unknown.
+
+**Arms — and per LEARNINGS 40, the ladder titrates the quantity that does the work.** 28c's knob
+(acceptance radius) was not on the causal path. The causal quantity is *the fraction of turns SRP
+work is suppressed*, so the ladder steps that directly, in increasing SRP priority:
+
+- `bob_s0` — exact baseline copy. Null arm; must read 25/50 all-split or the run is void.
+- `bob_s1` — finish what you started: run `workOnSrp()` when `srp != null`, even if ruin-busy.
+- `bob_s2` — s1, plus take a legal safe centre under foot rather than forgoing it.
+- `bob_s3` — SRP work unconditionally outranks ruin work.
+
+**Accept gate, pre-registered, per the standing rule**: arm's own score via `eval_arms.py`
+(`50 − bot`). **≥ +7 accepts; +5/+6 needs replication on a fresh sample; ≤ +4 rejects.** If the
+ladder is monotone in the arm index, that is corroboration the causal quantity is the right one; a
+*flat* ladder here means I have made LEARNINGS 40's mistake twice and the knob is still wrong.
+
+**Priced against what it displaces, not against zero.** The gain is a completed SRP (+3 resources/turn
+per mining tower per active SRP, compounding in tower count). The price is delayed tower capture — and
+towers are worth 30 chips/turn flat *and* raise the value of every future SRP. So the price is real and
+plausibly larger than the gain; s3 in particular could be strongly negative, which is why the ladder
+runs from "finish the sunk one" (cheapest, waste-removal only) up to "SRP always wins" (most
+expensive) rather than testing only the aggressive end.
+
+**Prediction, recorded now:** s1 > 0 and small (waste removal), s2 ≈ s1, s3 < 0. If s3 is the best arm
+my model of the tower/SRP trade is wrong and I should say so plainly.
