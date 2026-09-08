@@ -9709,3 +9709,29 @@ staleness is the pre-named cause — the fix would be expiry (towers dropping an
 observe a tower on it, and a round-stamp so old entries age out), not abandoning ruin sharing. I am
 writing that down now so that a negative result does not get read as "communication does not help",
 which is the over-general conclusion this experiment is most likely to produce.
+
+### Iteration 27b, map-level shape (doctrine 10) — one-directional, not churn
+
+Free re-analysis of the completed run. Per-map arm scores, 2 games per map:
+
+```
+bob_r0 (null)  scores exactly 1 of 2 on ALL 25 maps          <- perfect mirror, every map split
+bob_r3 (300)   worse than the null on 15 maps
+               equal on 10
+               BETTER on 0
+```
+
+Doctrine 10 distinguishes churn from causation by the diff's *shape*: scattered mixed-direction
+flips are churn, one-directional flips are a real causal effect. **This is 15-0 with no map moving
+the other way.** Under a sign test that is p ≈ 3 x 10⁻⁵, so the rejection does not rest on the
+50-game margin at all — it rests on a uniform, one-signed effect across the whole pool. Withholding
+tower paint from spawning hurts *everywhere*; there is no regime in which it pays.
+
+That also disposes of the doctrine-4 worry I raised when I could not build a static regime
+classifier. I wanted to know whether gains might be concentrated on paint-bound maps and diluted by
+chip-bound ones. **There are no gains to concentrate** — the effect is negative or neutral on 25 of
+25, so no regime split could rescue it.
+
+And `bob_r0` scoring **exactly 1 of 2 on every one of the 25 maps** is the cleanest confirmation
+available that the corrected arm is byte-exact: not merely 25/50 in aggregate, but perfectly
+antisymmetric map by map. The run-1 void diagnosis is now confirmed twice over.
