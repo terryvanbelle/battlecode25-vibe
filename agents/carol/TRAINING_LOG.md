@@ -8907,3 +8907,41 @@ ordering inverts, chips bind sooner than the evidence suggests and the direction
   costs the most absolute paint towers (`tools/mapdata` gives ruin density independently of any
   game: gridworld 21.9/1000 tiles, median 11.4, Gears 4.6). If the gain is uniform across ruin
   density, the attribution is OPEN.
+
+### Free finding while iteration 34 ran: the paint-tower UPGRADE gate is an off switch
+
+Read off replays **already on disk**, at zero VM cost, from the counter iteration 12 left in the
+tower state string. Snowglobe (iteration 33 build; the tower code is identical to iteration 30's):
+
+```
+  UPG        4
+  upgPoor    9147
+```
+
+**The paint-tower upgrade fires on 0.04% of eligible tower turns.** Iteration 12's gate is
+`need = CHIP_RESERVE + getNextLevel().moneyCost` = 1200 + 2500 = **3,700 chips**, and the treasury
+is measured on this build to oscillate in roughly **[1,600, 2,450]** — `$2,250 / $2,250 / $2,050 /
+$2,450` on Parking_lot at rounds 300/600/900/1200, `$2,350` on Snowglobe at 400. It never reaches
+3,700, so the mechanism is switched off rather than tuned.
+
+**This is the same fault iteration 30 already fixed once, in the same file, and was accepted on at
+44/50**: *"50–95% of splasher rolls die at the chips gate (1600 = CHIP_RESERVE + 400) because
+cheaper units drain the shared treasury below it first, pinning the realized splasher share at
+1.2–2.7% against an intended 15%."* A gate set above where the treasury actually sits is not a
+policy, it is an off switch — and this lineage now has two independent instances of it, both from
+adding `CHIP_RESERVE` to a cost that already had one.
+
+It also matters *more* than the splasher case, because of what it buys: upgrading a paint tower
+lv1→lv2 takes it from **5 to 10 paint/turn**, permanently, and paint is the resource three separate
+measurements this session identify as binding while chips sit idle above $2,200. That is the
+cheapest chips→paint converter in the game and it has been dormant since iteration 12.
+
+`src/carol_i35` is built and compiles: it drops the `CHIP_RESERVE` term from the upgrade gate
+only. The reasoning for dropping the reserve rather than adding a floor is that CHIP_RESERVE exists
+to protect a **1,000-chip ruin completion from robot production**; an upgrade is not robot
+production, it is the same class of investment the reserve protects, so charging it the reserve on
+top of its own 2,500 cost double-counts. Note there is no dose below this — `canUpgradeTower`
+checks affordability itself, so any `need` under 2,500 is identical to 2,500.
+
+Held until iteration 34 resolves, since if 34 is accepted the baseline moves and this must be
+rebuilt on top of it. Registered here so the measurement is durable regardless.
