@@ -12230,3 +12230,117 @@ instances with independent mechanisms is a rule about *this bot*: measured per-u
 cohesive formation is not recoverable by making units individually less wasteful. Any future
 "units are wasting X" hypothesis in this lineage must now argue why it is not the third instance
 before it earns a run.
+
+---
+
+## Iteration 32 — PRE-REGISTERED 2026-09-08, before the run exists. Tower type: fold-then-stripe.
+
+### The framing I started with was wrong, and the arithmetic killed it before the run
+
+Last night's FINDING said the tower-TYPE parity rule is single-branch on 4 of 75 maps and that fixing
+it was the next iteration. I built the corpus instrument to design that fix, and the instrument
+refuted the motivation:
+
+```
+Term 1 (degeneracy):  3 maps fixed (gridworld, Snowman, CastleDefense), 1 newly broken
+                      (starburst), 1 unchanged (Filter) = +2 net maps x 2 sides = 4 games,
+                      at the tournament-measured 11.5-point degenerate-map deficit
+                                                                 -> +0.46 games / 150
+```
+
+**+0.46 against a gate of +10 — twenty-two times below my own resolution.** The degeneracy fix cannot
+be measured, so it cannot be the reason to run. That is LEARNINGS 49 applied one entry after writing
+it: bound the prize first, and this time the bound says the headline motivation is a rounding error.
+
+The FINDING is not retracted — the mechanism is still certain and the trace still matches. It is
+**demoted**: real, and too small to see.
+
+### The reason to run is a different term, and it comes from my own prior measurement
+
+Building the instrument turned up something I did not go looking for. `src/bob`'s comment claims
+parity is "team-symmetric". **Measured over all 75 maps, it is not** — parity's symmetry holds only
+when `W+H` is even, and:
+
+```
+  rule                     mismatched-mirror maps   half-to-half money% gap
+  parity (incumbent)             30 / 75                    11.0%
+  hash7  (iteration 7)           73 / 75                    21.8%
+  fold-then-stripe (this arm)     0 / 75                     0.0%
+```
+
+The first two rows **reproduce my own ablation-A7 audit exactly** (30 and 73 maps), from an
+independent dump of the map flatbuffers — so the instrument is validated against a number I recorded
+months of iterations ago, not fitted to it.
+
+A7 is the only experiment this lineage has run on that dimension, and it priced it: hash7's 73
+mismatched maps lost **20 points** to parity's 30. That is **0.47 points per mismatched map**, and
+taking 30 to 0 predicts:
+
+```
+Term 2 (symmetry):   30 -> 0 mismatched maps  ->  +14 games / 150      <- 30x Term 1
+```
+
+### Why this is not the closed area re-opened
+
+The log records the area closed on three rules, and it should have been. But those three sit at three
+corners of a two-factor space, and the fourth corner has never been built:
+
+```
+  rule                   sym-broken   mean dist to nearest PAINT ruin   paint%    result
+  parity                     30                 4.13                    46.7%   incumbent
+  hash7 (iter 7)             73                 4.02                    48.8%   -20, rejected
+  folded parity (iter 22)     0                 4.46                    44.4%   lost
+  fold-then-stripe            0                 3.81                    49.9%   THIS ARM
+```
+
+Each prior failure fixed one factor and paid on the other. hash7 bought degeneracy-freedom with 73
+broken maps. Iteration 22's folded parity bought perfect symmetry but paid the **worst** paint
+logistics in the table (4.46) and the **worst** balance (44.4%). **Fold-then-stripe is the first rule
+that is best-in-class on both**: tied-best symmetry (0), strictly best logistics (3.81), strictly best
+balance (49.9%), and it halves the degeneracy (4 -> 2 single-branch maps) as a side effect.
+
+**The honest weakness, stated up front:** this is a two-factor model fitted to two data points. It is
+underdetermined, and the +14 comes from linearly extrapolating a single A7 slope through the origin.
+I am pre-registering it because it makes a *directional* prediction that the two prior failures
+constrain, not because the point estimate is trustworthy.
+
+### The mechanism — one function, exactly one line of behaviour
+
+`u = min(x, W-1-x)`, `v = min(y, H-1-y)` — distance to the nearest vertical/horizontal edge. Both are
+**exactly invariant under all three candidate map symmetries** (rotation, hflip, vflip), so *any*
+function of `(u,v)` is unconditionally team-symmetric. That is a proof, not a measurement, and the
+0/75 row above confirms it empirically.
+
+Keying on **bit 1** of `u+v` rather than bit 0 makes the rule depend on `(u+v) mod 4`, which an
+even-but-not-multiple-of-4 ruin lattice can no longer collapse — that is where the degeneracy halving
+comes from.
+
+Still a pure function of the ruin and the map dimensions, which `workOnRuin`'s "already marked?"
+protocol requires. `G.mapW`/`G.mapH` are already cached, so the cost is ~6 bytecodes against measured
+usage of 1,600-1,900 out of 17,500.
+
+**Verified minimal**: six of seven files in `src/bob_fold4` are byte-identical to `src/bob` modulo the
+package line; `Soldier.java` differs only inside `towerTypeFor`. Remote compile: OK.
+
+(This also discharges the deferred cleanup noted earlier — the misleading "ABLATION A7" comment on
+shipping code gets rewritten by the first commit that legitimately touches `Soldier.java`, which is
+this one if it is accepted.)
+
+### Gate — pre-registered, full corpus
+
+`BOT=bob_fold4 OPPONENTS=bob NMAPS=75` — 75 maps, both sides, **150 games**, a census rather than a
+sample. My own calibration puts the residual (engine chaos, not sampling) at **sd 4.80 per 150**, so:
+
+- **>= +10** (bob_fold4 >= 85/150) → **ACCEPT**
+- **+7 .. +9** (82-84) → **replicate** before deciding
+- **<= +6** (<= 81) → **REJECT**, and the area closes for the fourth and last time
+
+**Power is not the problem here**: the rule changes the type of **672 of 1,374 ruins (48.9%)** and
+affects **74 of 75 maps**. This is a broad change, and I am gating it as one — *not* as a targeted
+4-map fix, which the arithmetic above says is unmeasurable.
+
+**Secondary, descriptive only, too few games to gate anything:** gridworld / Snowman / CastleDefense
+should swing toward `bob_fold4` and starburst toward `bob`. Filter is the single map with **zero** type
+changes, so any difference there is pure engine chaos.
+
+Registered before launch.
