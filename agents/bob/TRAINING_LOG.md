@@ -8537,3 +8537,44 @@ Iteration 25 is that extension: `1200` (zero arm) / `2400` / `3600`.
 **Functional area accounting.** Tower production/economy: 1 reject. Iteration 25 stays in the
 area deliberately — it is the same dose ladder extended through its best point, not a new
 mechanism, which is what doctrine 2 asks for when a curve is monotone at its boundary.
+
+## Iteration 25 — PRE-REGISTERED before the run returns (launched, 150 games): extend the reserve ladder upward
+
+**One mechanism, same knob, extended through its best measured point.** Arms `bob_w12` (1200 =
+exact zero arm), `bob_w24` (2400), `bob_w36` (3600).
+
+**Why this and not a new mechanism.** Iteration 24's curve is monotone increasing in the
+reserve across [0, 1200] and 1200 is the *boundary* of the tested range, not an interior peak.
+Doctrine 2 says a curve that peaks in the middle is stronger evidence than any single point —
+I do not have that yet, and the cheapest way to get it is to keep going in the direction the
+data points. `reserve = 1200` was set in iteration 0 as "the 1000 a tower costs, plus a little"
+and has never been searched upward in 25 iterations.
+
+**Gates.**
+- **Void** if `bob_w12` is not 25/50 with all 25 maps split.
+- **Accept-eligible** at best arm **>= 30/50**, then the frozen roster before accepting
+  (`bob_iter0` 46/50, `bob_iter1` 44/50, `bob_iter11` 35/50, `examplefuncsplayer` 50/50; none
+  may regress by more than 3).
+- **Both outcomes are informative, which is why this is worth a run.** If 2400 or 3600 clears
+  the bar, that is an accept on a constant nobody has touched since iteration 0. If both fall
+  below the null, the curve has an **interior peak at the incumbent**, and 1200 stops being an
+  unrefuted guess and becomes a measured optimum — bracketed on both sides by 0/600 below and
+  2400/3600 above. I would rather have a validated constant than an unexamined one, so I am not
+  treating the second branch as a failure.
+
+**The prediction I am willing to be wrong about.** I expect an **interior peak at or near
+1200** — i.e. both new arms at or below the null. The reasoning: the reserve insures tower
+completion, tower utilisation is already 80-92% of claimable ruins and pinned at the engine cap
+on large maps, so raising the reserve buys readiness for towers that mostly cannot be built,
+while the chips it withholds are exactly the ones iteration 24 showed are refusing 38-90% of
+early spawns. That argument says the gain from raising it should be small and the cost real.
+
+**Registering the asymmetry honestly**: this prediction is the comfortable one. It ends with my
+existing bot being right, and doctrine warns that the comfortable correction is the least
+audited. So the *number* decides, and if 2400 clears 30/50 I accept it and write down that my
+tower-saturation argument was wrong about the margin.
+
+**Pre-check NOT done**: I still have not measured how often a completed pattern actually waits
+on chips — the price half of the reserve's trade. Iteration 24 rejected on the benefit half
+alone, which was enough to reject but is not enough to *explain*, and if 2400 wins here that
+missing counter is the first thing to instrument rather than a third dose.
