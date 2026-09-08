@@ -6519,6 +6519,21 @@ The mirror null came back at **exactly 25/50 with se = 0 and every one of 25 map
 1–1** — a third independent confirmation on a fresh build and a fresh draw. So −3 games
 is a real 3-game effect, not spread.
 
+> **ANNOTATED 2026-09-08 (superseded in place, not deleted — this rejection was decided while the
+> reasoning below stood).** The sentence above is **wrong**, and LEARNINGS 36 retracts the premise:
+> a byte-identical mirror arm is *structurally forced* to 25/50-all-split on a deterministic engine,
+> so its zero variance is a wiring check on the harness and **not** this instrument's standard error.
+> Against the floor actually measured since — binomial `se ≈ 3.5`, confirmed today at **3.37** by
+> four PRNG-phase-only arms (LEARNINGS 43) — the −3 that rejected iteration 19 is **0.85 se, i.e.
+> indistinguishable from zero.** Iteration 19 was not refuted; it was **unresolved**, and the two runs
+> disagreeing by 10 games is exactly what two different 25-map draws produce.
+>
+> The same correction applies with the opposite sign to **iteration 18's ACCEPT**, which cited the
+> identical `se = 0` claim to accept a **+6** — a figure my current gate sends to replication rather
+> than to acceptance. **One retracted premise let a +6 in and kept a −3 out**, and both are still
+> carried in the shipping bot's ancestry. This is why `src/bob_abl18` is built and why the
+> iteration 18 ablation is the first candidate after the full-corpus calibration.
+
 ### The two runs are in tension, and §5b says which one governs
 
 Both are exact within-run measurements and they disagree in direction:
