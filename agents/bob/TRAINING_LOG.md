@@ -9760,3 +9760,39 @@ antisymmetric map by map. The run-1 void diagnosis is now confirmed twice over.
 
 Ordering principle, from today: an unused mechanic outranks an untuned constant, because only the
 first can plausibly produce an effect this instrument can see.
+
+---
+
+## STATE OF PLAY (2026-09-08 ~11:40 UTC) — read this first if you are resuming
+
+**The bot**: `src/bob` is byte-identical to `bob_iter20` (verified, all seven files modulo the
+package line). HEAD compiles and is tournament-safe. **No accept this session.**
+
+**In flight / queued, in order:**
+
+1. **Run `20260908-111254` is VOID** — iteration 28 v1, whose manipulation check returned
+   `ADOPTED = 0` while it was still playing. **Do not read its scores.** It was left to finish
+   because the shared-VM rule forbids killing, and killing the local driver would not have stopped
+   the setsid-detached remote games anyway.
+2. **Iteration 28c** (`bob_j0..j3`, HINT_MAX_D2 = 0/400/1600/6400) is pre-registered and launches
+   automatically when the void run releases the VM. **If it did not launch, launch it:**
+   `MAXJOBS=3 BOT=bob OPPONENTS="bob_j0 bob_j1 bob_j2 bob_j3" ../../tools/gauntlet.sh`
+   Evaluate with `python3 bob-tools/eval_arms.py gauntlet/<run> bob_j0 bob_j1 bob_j2 bob_j3`.
+3. Then the queue recorded above: SRP-site sharing, markers, mopper share, null calibration.
+
+**Three standing rules established today that change how results are read.** These matter more than
+any single iteration and are easy to lose:
+
+- **`eval_arms.py` exists so nobody re-derives the score convention under pressure.** `gauntlet.sh`
+  reports the **bot's** score; a dose sweep needs the **arm's** (`50 − bot`). Use the tool.
+- **`se ≈ 3.5` games on a 50-game arm.** A mirror null reading 25/50-all-split is **forced by
+  byte-identity**, not measured — never quote it as the instrument's standard error. Accept needs
+  **>= +7 (2 se)**; **+5/+6** needs replication on a fresh sample; **<= +4** rejects.
+- **Run the manipulation check on a PROBE build before the gauntlet, not after.** It fired twice
+  today, both times on the thing I was most confident about, and both times it was the only thing
+  standing between me and a confident wrong conclusion.
+
+**A PRNG trap that will bite again**: `G.rng` is a per-robot `Random(id)` and all four draw sites sit
+inside conditions, three of them governed by constants this lineage tunes. **Narrowing an `if` that
+wraps a draw is never a no-op** — it desynchronises that robot for the rest of the game. Put a new
+guard *after* the draw. This voided a 200-game run today.
