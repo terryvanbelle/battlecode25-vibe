@@ -206,6 +206,27 @@ The accept/reject machinery lives or dies on these rules. Each one is paid for.
    margins, run this *before* accepting, not after — it once caught a bad
    accept by ten games when the two pre-registered metrics had each moved by
    one.
+
+   **Watch the roster for SATURATION, and report the weakest rung rather than
+   the mean.** A rung you beat 94-100% of the time has stopped measuring: it can
+   register no further improvement, and — the part that matters — it can no
+   longer register a *decline*. When every rung is at ceiling the roster reads
+   like your strongest instrument while having quietly become your least
+   informative one, because a saturated line looks identical whether you are
+   improving, flat, or sliding.
+
+   That is precisely the condition in which §5b's failure mode — a chain of
+   individually-positive accepts walking downhill — is undetectable, and a thin
+   accept (say +0.9 sd, CI spanning the null) is exactly the kind of link such a
+   chain is made of. So saturation is most dangerous at the moment it is least
+   noticeable.
+
+   The fix is to add a HARDER fixed reference, not to retire the old ones: a
+   synthetic archetype built to exploit a weakness you know you have, listed in
+   `progress/roster_extra.txt`. It is a valid rung for the same reason an old
+   snapshot is — it never changes — and unlike a snapshot you can choose its
+   difficulty. **Never a benchmark finals bot**, which the tooling refuses; those
+   are a yardstick, not something to train against.
 13. **Don't let pre-registered metrics decide when a cheap unrun instrument
     could reverse them.** A real effect big enough to accept on usually shows
     up in more than one place.
