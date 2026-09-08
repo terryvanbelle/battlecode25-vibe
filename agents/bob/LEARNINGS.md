@@ -1680,3 +1680,38 @@ It is detectable only by re-deriving what the knob controls. This sits directly 
 designed a channel and a consumer without a producer; here I designed a dose ladder without checking
 the dose. Both are the same error — analysing the part that feels hard, and never sizing the part the
 result actually turns on.
+
+---
+
+## 41. An identity check can fail silently by being *stricter* than the property it tests
+
+Phase 0 verified determinism honestly — the same match run four times produced byte-identical replays
+— and then wrote down a conclusion that does not follow from it: *"arm-to-arm identity checks can
+`cmp` replays directly."* The four runs shared a **team name**, because they were the same match. Two
+arms never do: they are different Java packages, they play under different team names, and **the team
+name is recorded in the replay**. So `cmp` answers "same game *and* same name", while the question is
+only "same game".
+
+Measured: a behaviour-neutral probe vs `bob_iter11` differed from baseline by 514 bytes on one map and
+1,105 on another — same winner, same win type, same round number, and a `replay-dump.sh` event stream
+that diffs **clean at 66 and 283 lines**. Same game, different recording. Trusting `cmp` would have
+condemned a good instrument, and — worse — the check would have kept failing no matter how small I
+made the probe, because the thing it was detecting was the package rename I could never remove.
+
+**The general shape: a check that is stricter than the property you care about does not fail safe.**
+It fails as a *false positive that cannot be cleared by fixing the code*, which is the most expensive
+kind, because the natural response is to keep shrinking the change until you abandon a sound design.
+When an identity check fires, the first question is not "what did I break" but **"is this check
+actually testing identity, or identity-plus-something-I-changed on purpose?"**
+
+Corollary on naming the fault: two hypotheses fit a failing `cmp` — *"the arm changed behaviour"* and
+*"only the recording differs"*. I had a third in play too, that two concurrent runs sharing a remote
+build dir had corrupted results. Re-running the baseline **alone** reproduced the earlier run
+byte-for-byte, which killed the corruption hypothesis outright; only then did the event-stream diff
+separate the remaining two. Each competing explanation needed its own discriminating run, and the
+cheap ones came first.
+
+**Rule.** Compare event streams, not bytes:
+`tools/replay-dump.sh X.bc25 --quiet | grep -v GameHeader` on both arms, then `diff`.
+`cmp` stays valid for exactly one job — re-running an **identical pairing** to test determinism or
+detect a corrupted run — where the names match by construction.
