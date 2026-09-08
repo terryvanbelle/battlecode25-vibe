@@ -7780,3 +7780,46 @@ search is the one that found this in ten seconds. **I searched by functional are
 ledger is keyed by mechanism.** The run is not wasted — it is a better-designed run than the
 one I registered, because it now has a decomposition to report either way — but it went out
 under a justification that was partly false, and the false part was recoverable for free.
+
+### Tooling: two shared-VM hazards in MY OWN `bob-tools/vm-verbose-match.sh`, plus the audit of what they may have cost
+
+Found while the iteration-22 gauntlet was in flight, by reading `tools/vm-match.sh` to work
+out why my migration-probe counters came back empty. (They came back empty because the
+shared runner hardcodes `-PoutputVerbose=false` — which is not a bug, it is why my own
+verbose wrapper exists. Reading it is what turned up the rest.)
+
+My wrapper (a) built and ran inside `$WS_REL`, the very directory the gauntlets build from,
+and (b) took no slot from the shared semaphore. `tools/vm-match.sh` documents and avoids
+both, in comments that say exactly why: `./gradlew run` rewrites `build/classes` and
+in-flight gauntlet games load their robot classes from that path, so a trace run during a
+gauntlet can swap code out from under games already in progress; and a runner that does not
+take a slot makes every other runner's `HARD_CAP` check a fiction on a box shared with a
+live BC26 project and two sibling lineages. Fixed both: sibling directory, `acquire_slot`.
+
+This is my file in `bob-tools/`, so fixing it is right — the "report, don't work around"
+rule is about `tools/`, which is coordinator-owned. But the defect came from *copying*
+`vm-match.sh` and dropping the two parts that looked like boilerplate. Both were load-bearing
+and both said so in comments I did not read.
+
+**Audit of the damage, because a fix is not an assessment.** 12 verbose runs exist. Pull
+times against gauntlet windows (dir name = start, `summary.txt` mtime = collate):
+
+```
+box 13:38, gridworld 13:39   gauntlets 13:11-13:24 and 13:46-14:35     gap, clear
+maze 14:38, sierpinski 14:39 gauntlets 13:46-14:35 and 14:41-15:23     gap of 6 min, clear by 3
+catface/DefaultHuge 16:13    gauntlets 15:37-16:03 and 18:17-19:02     gap, clear
+Rose 19:21                   gauntlets 18:56-19:18 and 19:29-20:15     gap of 11 min, clear by 3
+Oasis/quack/Castle/Brat 01:20-01:50, DefaultMedium (Sep 6 18:33)       UNVERIFIABLE
+```
+
+**No verified overlap**, so no gauntlet result on disk is known to be corrupted. But twice
+the margin was three minutes, which is luck and not discipline, and five runs fall in windows
+whose gauntlet directories have since been pruned locally, so they cannot be checked at all.
+I am not going to retract anything on this basis — "might have overlapped" is not evidence —
+but the honest summary is that this lineage has been running an unsafe tool for two days and
+got away with it, rather than that it was never at risk.
+
+**The generalisable bit**: the hazard is invisible at the call site. A trace run and a
+gauntlet do not conflict in anything either script prints; the collision is in a build
+directory neither mentions in its output. That is why it survived being written, reviewed,
+and used a dozen times.
