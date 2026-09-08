@@ -14234,3 +14234,64 @@ of the endgame does not override a 150-game census of the whole game.
 **Note on tooling, not a bug**: the replay dump's `xfer` is an *action count*, not a paint
 volume, so the tower-paint decomposition I flagged as open cannot be closed with it. That
 remains open and I am not reading anything off it.
+
+## Iteration 40, DRAFTED while the 39 screen runs — are soldiers captured by uncompletable ruins?
+
+**Not built.** Recording the design and the pre-checks before any number exists, and noting
+that it lives in a **different functional area** (soldier targeting) from the unit-mix and
+tower-mix axes, both of which are closed.
+
+**The code, read rather than theorised.** `runSoldier` picks a ruin target with only one
+exclusion:
+
+```java
+for (MapLocation r : ruins) {
+    if (rc.canSenseRobotAtLocation(r)) continue;   // tower already there -- the ONLY filter
+    ...pick nearest...
+}
+```
+
+and then, when painting the pattern:
+
+```java
+if (t.getPaint().isEnemy()) continue;   // refused by the engine; 5 paint for nothing
+```
+
+**So a ruin whose pattern tiles are held by ENEMY paint is permanently attractive and
+permanently uncompletable.** It has no tower on it, so it is never filtered out; the soldier
+walks to it, cannot paint the blocked tiles, cannot complete the pattern, and remains attracted
+next turn. Nothing in the loop can break that cycle.
+
+This fits today's structural finding rather than competing with it: after expansion the team's
+output is capped by tower paint, so soldier-turns spent orbiting a ruin that can never be
+claimed are the one form of waste that is *actually* waste — unlike the tower idling, which
+accumulates paint and was my wrong-referent error this session.
+
+### Pre-checks to run BEFORE building, named so a fresh session inherits the doubt
+
+1. **Reachability of the CHOICE SET, not just the guard** — the trap that cost another lineage
+   a whole dose ladder. `senseNearbyRuins(-1)` is limited by vision (r^2=20), so how many ruins
+   does a soldier actually see at once? If the answer is usually one, any re-ranking of ruins is
+   a ranking over a singleton and every dose will be byte-identical. **This kills the "rank
+   ruins better" version of the idea outright**, and it is the version I would otherwise reach
+   for first. The surviving version is a *filter* (drop uncompletable ruins), which is well
+   defined on a singleton.
+2. **Size the capture, and instrument the DECISION.** Count soldier-turns on which a ruin was
+   targeted, against tower completions actually achieved, per game. A big ratio is suggestive;
+   the discriminating count is soldier-turns targeting a ruin **whose pattern contains enemy
+   paint the soldier refused to overwrite**, because that is the specific trap.
+3. **Do NOT size it on `gridworld`** (`tools/mapdata`: densest map in the corpus at 21.9 ruins
+   per 1000 tiles *and* single-parity), nor on the three other single-parity maps. Size on
+   several typical maps.
+4. **Price the reallocation against what it displaces, not against zero.** A soldier freed from
+   a ruin does not paint for free — it wanders, and wandering costs paint per tile too. The
+   benefit is (tiles painted while free) minus (tiles it would have painted while orbiting),
+   and the orbiting soldier is not idle: it paints the pattern tiles it *can* reach.
+5. **History.** Iterations 19-23 worked on ruin and pattern behaviour. Any filter here must
+   supersede that reasoning with evidence, not silently revert it.
+
+### The falsifier, registered now
+
+If soldier-turns spent on enemy-blocked ruins are a small fraction of soldier-turns on typical
+maps, the capture is not happening at a scale worth an iteration, and this direction closes
+without a gauntlet ever running.
