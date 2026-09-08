@@ -8109,3 +8109,111 @@ Every one of those quantities is computable offline from the map files with the 
 already have, so the next step spends **zero games**: extend `bob-tools/foldscan` to score the
 candidate rule family on share, all-one-type maps, mix deviation and mirror mismatch, and only
 build the arms whose numbers say they are a dose.
+
+---
+
+## Iteration 23 — PRE-REGISTERED before the run returns (launched, 150 games): the money share, priced at last
+
+**Functional area: tower type, second attempt.** Iteration 22 was a reject in this area and
+the count-keyed candidate was a step-0 void, so by `MaxConsecutiveRejects` I am close to
+having to leave. I am staying for one more attempt on a specific ground: **both previous
+attempts changed the rule's *symmetry*, and neither changed the *share*, which is the quantity
+all the economic evidence actually points at.** They were the wrong variable.
+
+### The premise, and every number in it is independently sourced
+
+```
+chips are slack     $132,014 unspent at r2000 (DonkeyKong), $39,925 (Flower), $7,600 (Dominoes)
+                    every tower upgraded by ~r600, tw25 = the engine cap, every ruin taken
+paint binds         ~75% of unit deaths are STARVATION; tower paint pools at 8-10% of the
+                    1000 cap all game
+the rule            money share 53.3% corpus-wide, an iteration-1 default never re-measured
+the balance point   35% at S=0 SRPs, 43% at S=4, 47% at S=8
+```
+
+The last line is the one I would previously have got wrong: the bare cost table puts the
+balanced share at 26-35%, but the SRP bonus is `+3 per active pattern per tower, of that
+tower's own resource` — **verified today from `InternalRobot.processBeginningOfRound` bytecode,
+not inferred** — and because the flat +3S is a bigger fraction of a paint tower's smaller base
+it lifts a paint tower 15->27 (+80%) against a money tower's 40->52 (+30%). That moves the
+balance point up to 43% and would have made me overshoot the dose.
+
+### The mechanism, chosen to change ONE variable
+
+Parity picks MONEY exactly as today; a **folded** selector then flips a fraction of those MONEY
+ruins to PAINT. Folded means invariant under all three map symmetries, so the override
+contributes no mirror mismatch of its own. Scored over all 75 official maps offline, before a
+game was played (`bob-tools/foldscan/BobMix.java`):
+
+```
+rule            money%   allOne   spread   mismatch%
+mask 0 (today)   53.3       4      16.3      46.4
+mask 15          49.3       3      16.7      43.7
+mask 7           42.1       2      15.7      39.3     <- the balance point
+mask 3           33.3       5      15.4      33.0     <- deliberate overshoot
+mask 1           14.8      31      14.0      22.7     <- catastrophic, NOT an arm
+```
+
+**`mask 7` lands on 42.1% and is better than the incumbent on all three secondary axes**
+(all-one-type 2 vs 4, spread 15.7 vs 16.3, mismatch 39.3% vs 46.4%). That is the point of the
+folded override: it moves the share without paying anything back on the axes iteration 22
+showed are expensive. `mask 1` is excluded on the offline table alone — 31 maps building zero
+money towers is a catastrophe I do not need to buy games to recognise.
+
+### Step 0, and it is the check that killed the previous candidate
+
+I did not repeat the mistake of trusting an *intended* dose. Extracted every tower the arms
+actually built, and evaluated the rule on those exact ruins:
+
+```
+             towers   rule-vs-observed mismatches   ruins flipped MONEY->PAINT
+k7 Dominoes    16                 0                            1
+k7 memstore     8                 0                            1
+k3 Dominoes    16                 0                            2
+k3 memstore     8                 0                            2
+```
+
+**Zero mismatches**: the rule does exactly what it says on every ruin in play. And the dose is
+real, monotone and small — 0 / 1 / 2 converted towers on a captured set of 8-16. That is a
+genuine dose ladder with a zero arm, but I want the *size* on the record before the result, so
+it cannot be re-scaled afterwards: one converted tower is +27 paint/turn at S=4 against a
+measured team paint income of ~165/turn, i.e. **~+16% paint income per flip**.
+
+### Arms and pre-registered gate
+
+```
+bob_k0   mask 0   MANDATORY IDENTITY CONTROL: must be 25/50, every map split by side
+bob_k7   mask 7   42.1% money -- the balance point
+bob_k3   mask 3   33.3% money -- deliberate overshoot
+```
+
+- **Void** if `bob_k0` is not 25/50 with all 25 maps split.
+- **Accept-eligible** at best arm **>= 30/50** (+5 over the null), then the frozen roster
+  before accepting, no member regressing by more than 3 games.
+- **The dose prediction, and it is sharp: an INTERIOR PEAK at `k7`.** The SRP-corrected balance
+  point is 43%; `k7` is 42.1% and `k3` overshoots to 33.3%. So if the balanced-share model is
+  right the curve reads `k7 > k3 > k0` — better than the null, but with `k3` *falling back*
+  because it has gone past the balance point. A monotone curve `k3 > k7 > k0` would mean more
+  paint is simply better and my balance model is wrong about where the optimum sits (though
+  right about the direction). `k7 ≈ k3 ≈ k0` means a 1-2 tower dose cannot be resolved at 50
+  games per arm.
+- **What would falsify the premise outright**: both arms *below* the null. Chips would then be
+  doing something I have not accounted for, and the whole chip-surplus reading — which is
+  currently the largest un-acted-on evidence I own — would need re-examining rather than
+  re-dosing.
+
+### Pre-checks NOT done, named
+
+1. **The early game is still unpriced.** The surplus is an endgame observation; Dominoes sat at
+   $661 at r200. `src/bob_sprobe` is built and compile-checked to answer this at the decision
+   point (chip-blocked vs paint-blocked vs tile-blocked spawns) and has **not been run** — I
+   did not want its stdout instrumentation competing for VM slots with the run itself. If both
+   arms come back negative, that probe is the first thing to run, not another dose.
+2. **I have not verified that the instrumented `bob_sprobe` is behaviourally identical** to the
+   shipping build. Doctrine requires that before believing anything it reports.
+3. **The realized share is confounded by capture.** A build's realized mix depends on which
+   ruins it takes, so `k7` measured 62.5% money on Dominoes against the baseline's 57% — higher,
+   despite the rule strictly removing money assignments. That is not a contradiction (different
+   games capture different ruins) but it does mean **realized share is not a valid read-out of
+   the dose**, and I will not quote it as one when the result comes back. The dose is the
+   policy, verified per-ruin above.
