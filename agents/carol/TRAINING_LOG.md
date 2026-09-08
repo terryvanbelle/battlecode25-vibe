@@ -9917,3 +9917,99 @@ figure. The price of iteration 37 is real either way — moving the mix toward s
 claims with area-paint throughput — but the number attached to it is 2.6x sustained, with the
 standing caveat that a splasher wastes paint inside already-owned territory and is worth much more
 on the frontier.
+
+---
+
+## PHASE 0 API SWEEP — carol calls 35 of 68 `RobotController` methods
+
+Run on coordinator instruction, which also put this on a schedule (iteration 5, every 10
+thereafter, and whenever the loop stalls) because "periodically" is an instruction with no trigger
+and loses every time it competes with a live hypothesis. I am at iteration 37 and had never run it.
+Method: `javap battlecode.common.RobotController` off the engine jar, `grep` for `rc.<name>(` in
+`src/carol`, `comm -23`. Cost: two commands.
+
+### Never called (33 of 68)
+
+```
+adjacentLocation broadcastMessage canBroadcastMessage canCompleteResourcePattern canMark
+canMarkResourcePattern canPaint canRemoveMark canSendMessage canSenseLocation canSenseRobot
+completeResourcePattern disintegrate getActionCooldownTurns getHealth getMoney
+getMovementCooldownTurns getResourcePattern getTowerPattern isLocationOccupied mark
+markResourcePattern onTheMap readMessages removeMark resign sendMessage sensePassability
+senseRobot senseRobotAtLocation setIndicatorDot setIndicatorLine setTimelineMarker
+```
+
+Triaged honestly, because most of that list is noise:
+
+- **Conveniences and debug** — `adjacentLocation`, `onTheMap`, `isLocationOccupied`,
+  `sensePassability`, `getHealth`, `getMoney`, the cooldown getters, `setIndicatorDot/Line`,
+  `resign`, `disintegrate`. Nothing here changes what carol can do.
+- **Decided absence, not an oversight** — the whole resource-pattern family
+  (`markResourcePattern`, `completeResourcePattern`, `canCompleteResourcePattern`,
+  `getResourcePattern`). Iterations 26 and 32 built both possible designs and the log CLOSES the
+  mechanic on a dilemma: reaching a viable cell needs steering, and steering is what killed it.
+  That closure stands and I am not re-opening it here.
+- **One real find, below.**
+
+### The find: carol has NO COMMUNICATION AT ALL, and never checked whether it could
+
+`sendMessage`, `canSendMessage`, `broadcastMessage`, `canBroadcastMessage`, `readMessages` —
+five methods, zero calls, across 37 iterations. From `GameConstants`:
+
+| constant | value | what it means |
+|---|---|---|
+| `MAX_MESSAGE_BYTES` | 4 | a full 32-bit payload; a MapLocation needs 12 bits |
+| `MESSAGE_RADIUS_SQUARED` | 20 | robot -> tower send range, exactly a unit's vision |
+| **`BROADCAST_RADIUS_SQUARED`** | **80** | tower -> everyone; **4x the AREA of a unit's vision disc** |
+| `MESSAGE_ROUND_DURATION` | 5 | messages live 5 rounds |
+| `MAX_MESSAGES_SENT_ROBOT` | 1 | per robot per round |
+| `MAX_MESSAGES_SENT_TOWER` | 20 | per tower per round |
+
+**The damning part is not that I never used it — it is that I reasoned around its absence in
+writing.** The iteration-32 closure note, arguing for a future SRP design anchored to ruins, says:
+
+> "a fixed offset from each sensed ruin is still a pure function of the map, **so it still needs no
+> communication**"
+
+I treated "needs no communication" as a design *virtue* to be engineered for, at a moment when a
+four-byte broadcast with 4x my vision area was sitting unused in the API. That is exactly the miss
+this sweep exists to catch: **not a mechanism used badly, a mechanism never called at all**, and
+re-reading my own bot could never have surfaced it because the failure mode is not knowing the call
+exists.
+
+### Why this lands directly on the critical path, not on a side quest
+
+I had already named iteration 38 in this session, before the sweep, as **ruin memory**: soldiers
+sense ruins only within `senseNearbyRuins` at r2=20, hold no memory of ruins seen earlier, and a
+soldier that walks past an unclaimed ruin forgets it permanently. My planned fix was a private
+per-robot array — each soldier separately re-learning the map.
+
+Messaging replaces that with a **team** solution, and the geometry is the argument: a tower
+broadcasts at r2=80 against a unit's r2=20 vision, so one tower informs four vision-discs' worth of
+units at once, 20 messages a round. Carol's measured deficit is that its coverage engine does not
+scale with map area (paint threshold reached in 2 of 64 games on maps >= 2500 tiles, against 40 of
+76 on maps <= 900), and the per-robot search radius not scaling with the map is a direct candidate
+cause.
+
+This is the shape the coordinator described: **a call that changes the constraint rather than
+rationing under it.** Iteration 37, in flight, rations chips between soldiers and splashers.
+Messaging would change what a soldier can find at all.
+
+### Open questions to settle BEFORE pre-registering it (not assumed)
+
+1. **Who can `sendMessage` reach?** The signature takes a `MapLocation`. BC25 is believed to allow
+   robot<->tower messaging only, not robot<->robot. If so the topology is soldier -> tower ->
+   broadcast, which still works but changes the design. **Verify against the spec/engine, do not
+   assume.**
+2. **What does it cost?** No paint or chip cost is visible in the constants, but a cooldown may
+   apply. If it is free, this is a "capability at zero marginal cost" change — the same shape as
+   iteration 14, which was accepted.
+3. **Does anything need it more than ruins do?** Ruin locations are the obvious payload; enemy
+   tower locations and frontier direction are alternatives. One mechanism, one payload.
+
+### One tooling item worth taking now
+
+`setTimelineMarker(String, int, int, int)` writes a marker into the replay. My whole analysis
+pipeline this session was reconstructing bot decisions from `SPAWN` deltas and per-200-round
+aggregates. A timeline marker would let the bot label its own decision points for
+`replay-dump.sh` to read back. Noting it; not acting on it while a verdict is pending.
