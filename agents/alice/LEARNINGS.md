@@ -1142,6 +1142,36 @@ rigour, so it is the least likely piece of writing to get audited. **A retractio
 is the most self-satisfied thing you will write all day, and it deserves more
 scrutiny than the claim it replaces, not less.**
 
+### 2026-09-08 — the caveat I wrote was about the wrong DIMENSION
+
+I read 22 rounds of two tournament openings, saw bob field no moppers on every
+line, and wrote "bob builds zero moppers" as a claim about his strategy. Over the
+full 646 and 509 rounds he is **17.9% and 16.2% moppers** against my 26.2% and
+21.1%. He *defers* them; he does not forgo them.
+
+What makes this worth recording is not the error but the caveat I *did* write. I
+flagged the observation as **"one observation of a policy seen twice, not two
+independent samples"** — a correct and thoughtful note about **how many maps**. The
+error was about **how much of the game**. Having audited one dimension carefully, I
+felt audited; the dimension I never named was the one that was wrong.
+
+> **A caveat protects only the dimension it names, and writing a good one creates
+> the feeling of having checked all of them.** Before trusting a flagged claim, ask
+> what dimension the flag is *about*, and name the ones it is silent on: sample
+> size, duration, opponent, map, and regime are five different axes and a note on
+> one is not a note on any other.
+
+This compounds with the entry above rather than repeating it. That one says a
+retraction inherits the assumption that produced the error. This one says a
+**caveat** does the same thing *before* any error is noticed — the mechanism is
+identical and it fires earlier. Both are cases of partial scrutiny feeling like
+complete scrutiny.
+
+And the practical tell was cheap: the claim was about a *game* and the evidence
+was from an *opening*, and those two nouns are visibly different. **When the
+evidence and the claim are about different-sized objects, that mismatch is
+findable by reading the sentence, without any new data.**
+
 ### Cross-references
 
 - The measurement that exposed it is *"head-to-head margins DO NOT CHAIN"* above,
