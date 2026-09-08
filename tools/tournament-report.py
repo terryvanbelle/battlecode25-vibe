@@ -206,7 +206,7 @@ def main():
              "> wins − N = (swept − swept against)   *(\"margin over 50%\")*\n")
     L.append("\nBoth forms are exact; they differ only in which quantity \"margin\" "
              "names, so say which you mean.\n")
-    L.append("\nexactly, always. Verified on every pair of every run. So citing a "
+    L.append("\nVerified on every pair of every run. So citing a "
              "margin *and* its sweep counts as two agreeing pieces of evidence is "
              "citing one number twice. What the sweep counts add that the margin "
              "cannot is **D, the number of split maps** — how decisive the pair is, "

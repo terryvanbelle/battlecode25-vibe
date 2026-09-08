@@ -34,7 +34,7 @@ Won from *both* sides, so a sweep is immune to spawn advantage.
 Both forms are exact; they differ only in which quantity "margin" names, so say which you mean.
 
 
-exactly, always. Verified on every pair of every run. So citing a margin *and* its sweep counts as two agreeing pieces of evidence is citing one number twice. What the sweep counts add that the margin cannot is **D, the number of split maps** — how decisive the pair is, not who is ahead. A 60–40 pair with few splits is a different animal from a 60–40 pair that is mostly coin-flips, and only the sweep counts tell them apart.
+Verified on every pair of every run. So citing a margin *and* its sweep counts as two agreeing pieces of evidence is citing one number twice. What the sweep counts add that the margin cannot is **D, the number of split maps** — how decisive the pair is, not who is ahead. A 60–40 pair with few splits is a different animal from a 60–40 pair that is mostly coin-flips, and only the sweep counts tell them apart.
 
 - **alice–bob**: alice swept 1, bob swept 65, 9 split
 - **alice–carol**: alice swept 42, carol swept 14, 19 split
