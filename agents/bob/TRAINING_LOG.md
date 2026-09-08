@@ -9096,3 +9096,53 @@ check that never ran.
 The gauntlet's own diff-from-null count is a *weaker* version of this check (it detects that games
 differ, not that they differ **for the pre-registered reason**), so it is a cross-check, not a
 substitute. Both will be reported.
+
+### PREDICTION (2) WITHDRAWN TOO — the frozen rung refutes the early-collapse story before the tournament runs
+
+I argued the fast-loss share was *"a shape, not a level"* and therefore robust to opponent drift.
+**That was wrong, and my own data says so.** Round length is strongly opponent-dependent: in run
+`20260908-005627`, **78% of my wins over `examplefuncsplayer` end inside 500 rounds** versus 2.2%
+at r2000 against `bob_iter0`. A pool that got stronger shortens my losses and lengthens my wins.
+So the fast-loss share is confounded by exactly the same opponent drift as the standings — I
+invented a reason it would not be, and the reason does not survive contact with the data.
+
+**The unconfounded instrument was available the whole time.** `bob_iter11` is frozen and cannot
+change, so bob's fast-loss share *against it* is a clean measurement of bob:
+
+```
+run                 vs bob_iter11   win%    losses inside r500
+20260907-034757        50 games      58%        4/21 = 19%
+20260907-043355        50 games      56%        5/22 = 23%
+20260907-193911        50 games      50%        4/25 = 16%
+20260907-201817        50 games      40%   <-    2/30 =  7%   <- ITERATION 18, the regression
+20260907-232155        50 games      46%        6/27 = 22%
+20260908-005627        50 games      70%        3/15 = 20%
+```
+
+**Flat at 16-23% across every build, and iteration 18 has the LOWEST fast-loss share of the six.**
+The early-collapse mode does not exist in bob. The tournament's 0.0% -> 17.4% -> 25.8% rise is
+alice and carol getting better at closing games quickly, not bob acquiring a way to die young.
+
+So **the `RUIN_FLOOR = 0` / zero-paint story is refuted** — not weakened, refuted, by the one
+instrument in the project that holds the opponent fixed. I am not spending an iteration on it, and
+`src/bob_zprobe` is not needed for that purpose. (I am keeping it: its `refillNoTower` counter
+measures iteration 27's *premise* — how often a soldier below 50 paint finds no tower holding
+>= 100 — which is a live question regardless.)
+
+### The actual lesson, and it is that I made the same error twice in ninety minutes
+
+Both times I took a tournament-derived quantity as a measurement of my bot; both times the referent
+was really *bob-and-alice-and-carol jointly*; both times the fix was the frozen roster. The second
+occurrence is the damning one, because I had **just written the correction for the first** and then
+reached for a different tournament statistic and told myself a story about why *this* one was
+immune. The story was even plausible. It was also invented to license the number I wanted.
+
+**Rule: no tournament-derived quantity measures my bot. Not the standings, not the head-to-head,
+not any distributional shape derived from them.** The tournament tells me where I stand *today
+against today's opponents*, which is genuinely valuable and is what MULTI_AGENT.md says it is for.
+It cannot tell me whether a change of mine helped, because the other two lineages are accepting
+iterations between every pair of runs. Only a frozen opponent can answer that, and I have five.
+
+**Where this leaves the tournament**: still the highest-value evidence for *target selection* — a
+map I am swept on is a real weakness whoever caused it — but never for *attribution*. That is a
+narrower role than the one I have been giving it all session.
