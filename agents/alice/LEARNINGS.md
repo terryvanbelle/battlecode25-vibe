@@ -1894,3 +1894,93 @@ wrong-referent error, and the first time I have caught one before it moved a ver
 itself* determines (did it fire?) over a proxy for the conditions under which it should fire.
 Under a deterministic engine and a single-mechanism diff, the split/sweep structure is that
 classifier, and it is free.
+
+## Theme: ROUND-COUNT IDENTITY is not byte-identity — the tiebreak forges the evidence
+
+The split/sweep entry above gave me a free firing-rate instrument: under a deterministic
+engine and a one-line diff, a map where the mechanism never fires is played identically from
+both sides, so **equal round counts on the two sides means the builds never diverged.**
+
+That inference has a hole, and it is not a small one.
+
+> **Every game that reaches the round cap has round count 2000 on both sides — whether or
+> not the two games were the same game.** The tiebreak *forces* the equality that I was
+> reading as evidence of identity.
+
+Caught by a subset test that could not fail honestly. Iteration 29 lowered a threshold, so
+its never-fired set must be a **subset** of iteration 28's. Raw counts: 23 and 16. A subset
+cannot be larger than its superset, so the instrument was wrong, not the result. Excluding
+r2000/r2000 games: 6 and 8, subset holds, zero violations.
+
+The correction is one line: **exclude games at the round cap before comparing round counts.**
+What it cost was an overclaim I had already written down and reasoned from the same day —
+"of 31 splits, 16 are byte-identical" — where the honest number is 8. The contamination is
+worst exactly where this lineage's games cluster: 23.8% of tournament games end at the cap.
+
+> **A necessary condition read as a sufficient one is invisible when it agrees with you.**
+> Identical games ⇒ equal round counts. The converse needed the cap ruled out, and I never
+> checked because every case I looked at was one I already believed.
+
+**Operational**: the check that found this was run on a result I *expected to pass*. Nothing
+else would have caught it — a check run only when the answer is feared is a formality whose
+verdict is already decided.
+
+## Theme: measure WHICH guard binds before fixing a mechanism that never fires
+
+Replay forensics showed an accepted mechanism — iteration 25's paint refill — making
+**zero** `transferPaint` calls across three entire games, while the opponent made 62, 74 and
+36. It has three guards: below half paint, action unused, and a tower with spare paint
+**adjacent**.
+
+I formed a hypothesis from reading the code: `runSoldier` spends the action painting, so the
+action guard must be what blocks the refill. The fix followed immediately and was a genuine
+one-liner — move the call before the role dispatch. It was **completely wrong**.
+
+Instrumented build, counters read off replay indicator strings, three self-play games:
+
+| | hungry turns | action FREE | tower ADJACENT |
+|---|---|---|---|
+| DefaultMedium | 499 | 50% | **0.0%** |
+| TheBest | 9,808 | 86% | **1.0%** |
+| UnderTheSea | 1,708 | 93% | **0.0%** |
+
+The action guard passes on 50-93% of the turns where it matters — obvious in hindsight, since
+a soldier low on paint cannot paint and therefore never spends its action. **Adjacency binds
+by two orders of magnitude.** The one-line fix targeted the one guard that was never the
+problem.
+
+> **When a mechanism never fires and it has N guards, the cost of measuring which one binds
+> is a handful of games. The cost of guessing is an entire iteration that changes nothing —
+> and a census that "rejects" a fix which was never applied.**
+
+Two riders worth as much as the finding:
+
+1. **A plausible causal story read off the source is not a measurement.** Mine was coherent,
+   specific, and referred to real lines of code. It was still false.
+2. **The same trap sat one step further on.** The replacement mechanism has to spend
+   *movement*, and `wander()` already spends movement every turn — so appending a walk after
+   the role would have been inert **for exactly the reason the refill is inert**. Having just
+   been burned, I checked instead of assuming, and put the walk before the role dispatch.
+   A failure mode you have just diagnosed is most dangerous in its next disguise.
+
+## Theme: a pre-registered criterion may only cite quantities from the run it judges
+
+Third wrong-referent error in one day, and the first one I had written *into a
+pre-registration*, which is the place it does the most damage.
+
+I pre-registered: *"a lower threshold that reaches further must produce fewer splits than
+iteration 28's 31."* The run returned 60. But **31 was measured in `i28` vs `iter25` and 60 in
+`i29` vs `i28` — different baselines.** A pair's split count measures how often *that pair*
+differs; it is not a property of either member, so the two numbers are not comparable. The
+criterion was not failed. It was **inapplicable**, and it was inapplicable the moment I wrote
+it.
+
+> **Rule: every quantity in a pre-registered gate must be measurable inside the run the gate
+> judges.** A cross-run constant smuggles in a second matchup, and the gate then tests a
+> comparison nobody ran.
+
+Note what makes this insidious: I had written up the identical error that morning, in detail,
+as the reason my iteration 28 classifier failed — and then reproduced it before lunch. The
+write-up did not inoculate me. What would have caught it is a mechanical check at
+pre-registration time: *for each number in this gate, which run produces it?* If the answer
+is "a different one", the gate is broken.
