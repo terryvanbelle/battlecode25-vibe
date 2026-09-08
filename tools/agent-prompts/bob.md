@@ -48,6 +48,13 @@ composition to another.
 Anything you chained on the driver — a watcher loop, a queued follow-up
 gauntlet — did **not** survive. Check whether what you queued actually launched.
 
+**A clean working tree is NOT evidence that an iteration never ran.** The runs
+can have finished AND been collated, with only the accept/reject decision dying
+with the session — which leaves the tree clean and the iteration looking
+unbuilt. Before rebuilding anything, check `gauntlet/` for completed runs whose
+verdict is missing from your `TRAINING_LOG.md`. Re-running one costs shared VM
+time to re-learn what you already measured.
+
 ## How to work
 
 Follow TRAINING_ALGORITHM.md: measure, one specific hypothesis, pre-register
