@@ -11519,3 +11519,71 @@ is soldiers stranded at the perimeter at zero paint. Measured: `starved` turns a
 and **the falsifiable version — if this fails the way 38/39 did, deaths and starvation will rise
 against the incumbent while coverage does not.** If instead coverage rises and starvation is flat,
 the tether is not the binding constraint on soldiers the way it was on splashers.
+
+## Iteration 42 RESULT — **REJECT** at 70/150 on the full corpus. Exact, and no argument to be had.
+
+Census `gauntlet/20260908-163205`: `carol_i42_a` vs `carol_iter36`, **all 75 maps, both sides, 150
+games**. **70/150 = 46.7%.** The pre-registered census gate was ACCEPT above 75/150; this is below
+it. There is no unresolved band and no sampling error to appeal to — that is the point of a census.
+
+Sweeps: **swept-win 15, swept-loss 20, split 40**. Identity holds exactly (wins − N = −5 = SW − SL).
+
+**DECISION: REJECT.** `src/carol` remains iteration 36; HEAD compiles.
+
+### The mechanism fired enormously. It just did not help.
+
+| `TheBest` (60x60) | `carol_iter36` | `carol_i42_a` |
+|---|---|---|
+| IDLE-ALLY | 71.0% | **6.8%** |
+| turns actually painting | 5.7% | **28.4%** |
+
+And the coordinator's free census test corroborates it independently: byte-identical code splits
+every map by spawn side, so **35 of 75 maps decided by a sweep proves the change did a great deal**.
+This is the cleanest separation I have produced between *a mechanism working* and *a mechanism
+being worth having* — a tenfold reduction in the exact idleness I measured as the large-map deficit,
+converted into nothing.
+
+### The pre-registered weak link is FALSIFIED, and that matters more than the rejection
+
+I predicted the tether would kill it as it killed iterations 38 and 39: *"if this fails the way
+38/39 did, deaths and starvation will rise against the incumbent while coverage does not."*
+
+| | deaths | starved-turns |
+|---|---|---|
+| `DefaultHuge` — `i42_a` | **161** | **68** |
+| `DefaultHuge` — `iter36` | 1,127 | 1,095 |
+| `DefaultSmall` — `i42_a` | 39 | 15 |
+| `DefaultSmall` — `iter36` | 32 | 17 |
+
+Deaths and starvation went **down**, by a factor of seven on the large map. Radial soldiers do not
+strand — they survive far better than the incumbent's. **So the paint tether is not what bounds
+soldier behaviour**, and four iterations of mine (38, 39, and the framing of 40 and 41) have leaned
+on a tether story that this measurement does not support for soldiers. That is the most valuable
+thing in this rejection and it was only available because the failure mode was named in advance.
+
+### A fifth single-map generalisation, caught this time
+
+`DefaultHuge` was a swept win with coverage 687 vs 296 on **4 towers against 25**; `DefaultSmall` a
+swept loss at 253 vs 715. I formed the obvious hypothesis — radial wins big maps, loses small ones,
+the inverse of carol's profile — and then checked it against the census instead of building it:
+
+| tiny (<=900) | small (901-1600) | medium (1601-2500) | large (>2500) |
+|---|---|---|---|
+| 18/38 = 47.4% | 21/48 = 43.8% | 20/38 = 52.6% | 11/26 = 42.3% |
+
+**Flat.** No trend, and the "large maps" cell is the *worst* of the four. The two-game story was
+wrong, and this time it cost one query against a file already on disk rather than four builds and
+six matches. That is the afternoon's lesson actually being applied, and I am recording the catch
+as deliberately as I recorded the failure.
+
+### What I now believe, and what iteration 43 must not assume
+
+Carol's large-map deficit is real and cross-lineage (29.5% vs 54.8% over 300 tournament games).
+Soldier idleness is real and scales with area (1.4% -> 49.2%). **But fixing the idleness does not
+fix the deficit**, so idleness was a symptom sharing a cause with the deficit rather than the cause
+of it — and the tether, my standing explanation for that cause, is now falsified for soldiers.
+
+I am therefore out of a working theory rather than out of ideas, which is the honest position.
+Per TRAINING_ALGORITHM's "when the loop stalls", the next move is not another mechanism: it is to
+re-examine the cross-lineage tournament replays and `reference/` before proposing anything, since
+every theory I currently hold has now been tested and at least partly falsified.
