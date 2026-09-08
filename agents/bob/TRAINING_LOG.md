@@ -12802,3 +12802,42 @@ the ladder has not even reported yet, and naming a size now would be a number I 
 gradient at z = -8.44 and turning it into the project's largest accept. I do not know which property
 that was and will not look. The parallel is worth recording only as evidence that this *class* of
 analysis — a gradient over a map property, measured in the tournament — is where the value has been.)
+
+### Confound check on the gradient, and it BROADENS the mechanism rather than confirming it
+
+Ruin count correlates with map area, so "few ruins" and "small map" are two readings of the same
+tournament rows. I split them, because if the property is really area then my fix is aimed at the
+wrong thing.
+
+```
+  area band          ruin density   bob wins/games    win%
+  small  (<=900)     LOW   10.4       94/144         65.3%
+  small  (<=900)     HIGH  16.6      116/164         70.7%
+  mid  (901-1600)    LOW   10.5      136/192         70.8%
+  mid  (901-1600)    HIGH  15.3      156/196         79.6%
+  large   (>1600)    LOW    7.2      197/256         77.0%
+  large   (>1600)    HIGH  11.6      225/256         87.9%
+```
+
+**Ruin density survives conditioning on area** — higher density wins in all three bands, by +5.4, +8.8
+and +10.9 points. So the ruin story is not an artefact of map size.
+
+**But area survives conditioning on ruins too.** Reading down the columns at matched density: 65.3 ->
+70.8 -> 77.0 and 70.7 -> 79.6 -> 87.9. And inside the <=8-ruin set alone, the smaller half wins
+**60.0%** against the larger half's **71.9%**. Both properties carry independent signal, so my
+one-variable framing was too narrow.
+
+**The unifying reading, and it is better supported than either variable alone: bob's deficit is an
+EARLY-GAME deficit, and it appears wherever the early game decides the outcome.** Few ruins means no
+second chance to bootstrap; small area means the game ends before a recovery can happen. Both are
+"the opening is the whole game". The loss-duration data has been saying this the entire time and I
+read it as a symptom rather than as the classifier: **bob's losses run 93-151 rounds while its wins run
+453-2,000.**
+
+This does not change iteration 33's arm — a paint reserve that lets the third tower get built is
+precisely an *opening* intervention — but it changes what the fix is claimed to do, and it widens the
+population where it should help beyond the 12 ruin-poor maps to the fast-decided maps generally. It
+also means the tournament prediction should be read against **loss duration** as well as against the
+ruin buckets: if the mechanism is right, bob's fast losses should get slower before they get rarer.
+
+Recorded as a correction to my own framing from an hour ago, not as a confirmation of it.
