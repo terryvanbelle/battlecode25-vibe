@@ -14369,3 +14369,68 @@ estimate. And it is an expectation over map area, not over the positions soldier
 occupy — LEARNINGS already carries "an instrument that samples positions your current policy
 chooses cannot price a policy that chooses different positions". Neither limit rescues the
 ranking version: it would need `P(>=2)` to be several times larger, not slightly.
+
+## Iteration 39 screen — run `20260908-204324`, read from the ARM's side
+
+Convention as registered: baseline `alice_iter30` in `BOT`, arms as opponents, so an arm is
+good when the BOT loses. `tools/gate-read.sh` reports the BOT's side; inverted here, with the
+identity check passing on both pairs (`wins−N == SW−SL`).
+
+| arm | mechanism | arm record | SW | SL | split | net swept | decisive | sd | in sd |
+|---|---|---|---|---|---|---|---|---|---|
+| `alice_i39b` | **replaces** the chip proxy | 26/50 | 3 | 2 | 20 | **+1** | 5 | 2.24 | +0.45 |
+| `alice_i39c` | **augments** (union) | 30/50 | 6 | 1 | 18 | **+5** | 7 | 2.65 | **+1.89** |
+
+**The ordering is the one the mechanism predicts.** The union arm, which can only *add* splasher
+production, outscores the replacement arm, which can also *remove* it where the chip proxy was
+right. That is the named risk behaving exactly as named, and it is why arm C existed.
+
+> **`alice_i39b` is REJECTED.** +1 net swept, 0.45 sd — inside noise on any reading. Replacing
+> the proxy outright is not the move; iterations 28/29 were catching cases the phase signal misses.
+
+### My pre-registered screen gate was MIS-SPECIFIED, and it is stricter than my accept gate
+
+I registered "an arm advances only if it clears `2.27 × sqrt(decisive)`" — the same *sd-multiple*
+as my census accept gate. That is wrong, and the algebra says so without reference to this result:
+
+- A true effect is **extensive** in maps: a change worth `+12` net swept over 75 maps is worth
+  `+12 × 25/75 = +4` over 25.
+- Noise is **sqrt**: sd falls only from 5.29 to 2.65.
+- So holding the sd-multiple constant across sample sizes **raises the bar on the true effect**.
+  A candidate sitting exactly at my accept threshold passes the census ~50% of the time and my
+  registered screen gate only ~23% of the time.
+
+**My screen would have rejected the median candidate my census would accept.** That is doctrine
+14 applied to my own gate: a condition that did not mean what I believed it meant.
+
+The coherent criterion is the **expected screen value of a threshold candidate — `+4` net swept**,
+which restores equal stringency rather than loosening anything about acceptance.
+
+**Required check that this does not silently rewrite past verdicts** (doctrine 14): iteration 38's
+arms scored **+3** and **+1**. Both remain below `+4`; **both stay rejected.** No verdict moves.
+
+> **Flagging the discomfort explicitly, because LEARNINGS says the dangerous corrections are the
+> comfortable ones.** I am relaxing a gate *after* seeing a result that the old gate failed, which
+> is the exact shape of a rationalisation. What makes it survive audit: the error is provable from
+> the scaling algebra alone and is independent of this run; it runs in the direction of *my own
+> stringency being wrong*, not the candidate's merit; it changes only **advancement to a census**,
+> never acceptance; and the accept gate stays at `+12` on 75 maps, untouched.
+
+### `alice_i39c` advances to a full census — NOT an accept
+
+Launched as run `20260908-211909`: `BOT=alice_i39c`, opponent `alice_iter30`, **all 75 maps,
+150 games**, candidate-as-BOT per the registered convention. The decision remains **net swept
+>= +12**; `+5` on 25 maps is a *shape*, and only the corpus fixes a *level*.
+
+**The falsifier did NOT fire.** It required *both* arms inside 1 sd; `i39c` is at 1.89 sd. So the
+splasher-gate area stays open, on the pre-registered condition rather than on my preference.
+
+### External corroboration, from the sanctioned channel
+
+`tournaments/20260908-1300/report.md` records that `bob` currently ships "spawn 2 splashers per
+5 units" — a far higher and *ungated* splasher share than mine, while holding me to 75–75. My
+own splasher production is near zero on most maps. That is the self-referential blind spot in
+its observable form: a sibling attacks the same axis without any phase gate at all. It does not
+validate iteration 39 — it is one line of a commit message, not a measurement I ran — but it is
+a reason to keep this axis open, and a ready follow-up if the census rejects: a flat splasher
+share, no gate of any kind.
