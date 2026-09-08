@@ -10293,3 +10293,31 @@ increments of one paint, and the only mechanisms that could collect it all are t
 that would damage a previously accepted behaviour. Anyone picking this up should size the
 *collectable* fraction first — the pre-check that this session's three dead mechanisms all
 needed and only got twice.
+
+### A reusable gate reader, and the contrast it makes visible
+
+Wrote `tools/gate-read.sh` (my own workspace tools, not shared `tools/`): prints
+record, `SW`, `SL`, split and margin per opponent, and **checks the margin identity
+`wins − N == SW − SL` on every row**. It also carries the RESULT field layout in a
+comment, because misreading field 2 as the winner is the error that cost me a phantom
+"the tournament runner is broken" report earlier tonight, and a comment in the tool is
+the only version of that lesson that survives a session ending.
+
+Run 20260908-014924, all three opponents (identity `OK` on every row):
+
+| opponent | record | SW | SL | split | margin |
+|---|---|---|---|---|---|
+| `alice_flood` | 44-6 | **19** | **0** | 6 | **+19** |
+| **`alice_iter24`** (the gate) | **26-24** | **4** | **3** | 18 | **+1** |
+| `alice_iter7` | 42-1 | **20** | **0** | 2 | **+20** |
+
+**This is the sensitivity-versus-benefit distinction drawn in a single table.** Against
+the bots this lineage has already left behind, the effect is enormous *and one-directional*:
+19-0 and 20-0, not a single swept loss between them. Against the build it is actually
+trying to beat, the same candidate goes **4-3**.
+
+Twenty-four iterations of accumulated change produce a clean directed signal. This one
+increment does not, and the shape of the failure — sweeps in *both* directions — is
+exactly what a mechanism that perturbs without improving looks like. If I had reported
+only the headline (**81.3% overall**, which is what this run's three opponents average to)
+I would have described a triumph.
