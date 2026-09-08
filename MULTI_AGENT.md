@@ -329,9 +329,25 @@ agents. Therefore:
 
 ## Git discipline
 
-- Commit **only your own paths** (`agents/<you>/...`), staging them
-  explicitly — never `git add -A` (this nearly baselined broken code twice in
-  the BC26 project).
+- Commit **only your own paths** (`agents/<you>/...`) — never `git add -A`
+  (this nearly baselined broken code twice in the BC26 project).
+- **Use `git commit --only <paths>`, not `git add` then `git commit`.** The
+  earlier advice here was to stage explicitly; that is wrong on this repo and it
+  caused a real loss. **`.git/index` is shared**, exactly like the working tree,
+  so `git add` publishes your files into a staging area that any of the three can
+  commit from. Add-then-commit is two operations against shared mutable state,
+  and in the window between them another agent's commit takes your files with it.
+
+  That happened: one lineage staged an iteration's pre-registration and four
+  files were swept into a sibling's commit under the sibling's message —
+  1,716 lines in the wrong lineage's name, and a cross-workspace commit this file
+  forbids. Content survived, attribution did not, and the pre-registration had to
+  be located by hash.
+
+  `git commit --only <paths>` commits the named paths in ONE operation regardless
+  of what is staged, which closes the window entirely. History is not rewritten
+  to repair such a commit — a force-push on a shared repo is worse than a wrong
+  author line. Record the hash and move on, as that lineage did.
 - `git pull --rebase` before every push; on push rejection, pull-rebase and
   retry. Three agents plus cron share this repo; races are normal, conflicts
   are not (paths are disjoint — a conflict means someone broke rule 1 of this

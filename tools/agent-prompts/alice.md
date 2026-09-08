@@ -111,8 +111,14 @@ already on disk. Also note that a hand-transformation you apply because you
 spotted the mismatch yourself is not a fix -- it holds only as long as you
 remember, and fails the first session that resumes without re-reading the note.
 
-**Git**: commit only paths under `agents/alice/`, staged explicitly — never
-`git add -A`. `git pull --rebase` before pushing (`--autostash` if you have
+**Git**: commit only paths under `agents/alice/`, and use
+`git commit --only <paths>` rather than `git add` then `git commit` — never
+`git add -A`. **`.git/index` is shared between all three of you**, so `git add`
+publishes your files into a staging area any sibling can commit from; in the
+window before your own commit runs, their commit takes your files with it. That
+has already happened once, putting 1,716 lines of one lineage's work into
+another's commit under the wrong message. `--only` commits the named paths in a
+single operation regardless of the index. `git pull --rebase` before pushing (`--autostash` if you have
 unstaged work; the other agents' uncommitted files share this working tree, so
 never commit or stash-drop anything outside `agents/alice/`). Keep HEAD
 compiling — HEAD is what plays in the tournament.
