@@ -8921,3 +8921,42 @@ even if the headline is positive, and I will say so.
 **What would falsify the whole framing**: if all three non-zero arms sit at the null, then spawning
 is not over-done, the reserve's −7 at zero has some third explanation, and I stop theorising about
 that constant and go back to the tournament maps for a target.
+
+### Two notes recorded WHILE iteration 27 is in flight, neither of which may rescue a null
+
+Written after launch and marked as such, so that neither can be quietly promoted into an
+explanation if the run comes back at the null. The pre-registered gate and falsification
+condition above are unchanged.
+
+**1. The resource regime is NOT predictable from static map data — a negative result worth having.**
+I tried to build a map-regime classifier so the doctrine-4 map-level prediction could be scored on
+all 25 sampled maps rather than the ~1.7 of my five measured maps a random draw is expected to
+contain. Against the measured early chip-refusal rates:
+
+```
+map          chipRefusal%   ruins   paintable   area/ruin   ruins per 1000 tiles
+memstore            90.0      26        2055        79.0                  12.65
+Justice             51.3       8         381        47.6                  21.00
+Flower              38.8      12        1611       134.2                   7.45
+DonkeyKong           7.5      46        3186        69.3                  14.44
+Dominoes             0.0      20        1208        60.4                  16.56
+```
+
+**Neither statistic is monotone in the regime** — Flower has by far the highest area-per-ruin and
+sits mid-table; Justice has the highest ruin density and is second-most chip-bound. So the binding
+resource is not a simple function of ruin supply or map area. This is the *first* time the "ask the
+map files instead of running games" habit has come back empty, and that is the useful part: the
+regime is a dynamic property, so classifying it requires the in-bot refusal counter and cannot be
+short-cut. A future session should not re-attempt a static classifier.
+
+Consequence, stated plainly: **I cannot score the map-level half of my prediction on this run.** I
+will score the headline and the dose shape, and report the map-level prediction as untestable here
+rather than quietly dropping it.
+
+**2. A specific way the mechanism can fail that I did not think of before launching.** Withheld
+paint only pays off if a starving soldier is actually adjacent to the tower holding it —
+`tryRefill` needs the tower inside the soldier's vision. Soldiers wander far from towers, so the
+reserve could simply park paint in a tower nobody comes back to, buying nothing while still costing
+the forgone unit. If all three arms read null, this is the first thing to check, **not** an excuse
+to re-run. Checking it is a probe (count refill attempts that found no tower with >=100 paint versus
+soldiers that starved with no tower in vision at all), not another gauntlet.
