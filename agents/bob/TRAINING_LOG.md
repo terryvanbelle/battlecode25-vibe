@@ -9299,3 +9299,27 @@ of `n1..n3` becomes the minimum margin any future single-sample arm must clear b
 mechanism paragraph about it. If the spread is wide, my accept gate of `>= 30/50` (a +5 margin) is
 too generous and moves up. I am committing to that direction now, while I do not know the answer —
 a calibration that can only ever loosen my gate is not a calibration.
+
+### PRNG draw-site audit of the live bot (LEARNINGS 35's corollary, checked rather than assumed)
+
+Every `G.rng` draw in `src/bob`, with the condition that gates it:
+
+```
+Tower.java:77   int start = G.rng.nextInt(8)      inside  if (chips >= moneyCost + reserve)
+Nav.java:23     G.randomDir()                     inside  if (stuckTurns >= 3)
+Nav.java:52     int start = G.rng.nextInt(8)      inside  if (wanderDir == null || wanderSteps <= 0
+Nav.java:58     wanderSteps = 6 + G.rng.nextInt(10)         || !rc.canMove(wanderDir))
+```
+
+**All four draws sit inside a condition, and three of those conditions are governed by constants
+this lineage tunes** — the spawn `reserve` (iterations 24-26), the stuck threshold `3`, and the
+wander-length constants `6` and `10`. So **essentially every behavioural change I can make to this
+bot also reshuffles the PRNG.**
+
+That is not a bug and mostly not fixable: for a genuine behavioural change the reshuffle is *part of
+the change*, not a confound to be removed. The trap is narrower and is exactly the one I fell into —
+believing a change inert while it re-scopes a draw.
+
+But it does settle the priority of the queued calibration. If every measured arm's score is
+`mechanism + reshuffle`, then knowing the reshuffle's typical size is not a refinement, it is a
+precondition for reading **any** of my results. I have run 27 iterations without it.
