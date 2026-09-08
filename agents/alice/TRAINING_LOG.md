@@ -13515,3 +13515,37 @@ climbs 454 -> 672 while the baseline's decays 433 -> 308.
 **Arm b is dropped.** Arm a goes forward — but on the strength of a *quantity* (tower count,
 a direct mechanism reading) plus one game's outcome on a map I have used repeatedly, which is
 **not** evidence of benefit. It earns a proper run and nothing more.
+
+## Coordinator flag: which engine jar did my decompiling read? — checked, and it is 3.1.0
+
+battlecode-dev's gradle cache holds **both** `battlecode25-java-1.0.0.jar` and `3.1.0`, so a
+bare `find -name 'battlecode25*.jar' | head -1` can silently return the stale one.
+
+**Today's reads are clean, and I checked rather than asserted it.** Every `javap` I ran this
+session used an explicitly-typed 3.1.0 path, selected by hand from a `find` that listed both.
+`tools/engine-jar.sh --remote` resolves to a **byte-identical** string. Discriminating check on
+that jar: `getChips` and `getNumberTowers` are both present (2 hits); on 1.0.0 both are absent
+(0 hits). So the `UnitType` constructor field order, `LEVEL_ONE_MONEY_TOWER.moneyPerTurn = 20`,
+`LEVEL_ONE_PAINT_TOWER.paintPerTurn = 5`, `SOLDIER.moneyCost = 250` and `paintCost = 200` all
+came from 3.1.0. Iterations 33, 34 and 35 rest on those and are unaffected.
+
+### The API sweep — the number the coordinator flagged, resolved by the discriminating case
+
+*"37 of 68 unused"* was run in an earlier session whose jar I cannot see, and a raw method
+count does not settle it, because the sweep's own pipeline dedupes overloads with `sort -u`:
+
+| count | 3.1.0 | 1.0.0 |
+|---|---|---|
+| `javap -p ... \| grep -c 'public '` | 77 | 70 |
+| `javap ... \| grep -c 'public '` | 77 | 70 |
+| **the sweep's exact pipeline (unique method NAMES)** | **68** | **62** |
+
+**68 is the 3.1.0 number, exactly.** The sweep read the right jar, and both halves of its
+diff stand. My first two counts (77 vs 70) matched *neither* jar and would have been a false
+alarm if I had stopped there — **the sweep's own command was the only thing that could answer
+the question about the sweep**, which is the same "run the discriminating case before you name
+the fault" rule that has bitten this project before.
+
+`RULES.md` now carries `tools/engine-jar.sh` in the reproduce block instead of an unexplained
+`$BC_JAR`, plus the `getChips`/`getNumberTowers` version check, so the next session cannot
+reproduce the sweep against the wrong jar even by accident.

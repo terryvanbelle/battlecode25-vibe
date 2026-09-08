@@ -66,6 +66,15 @@ line refs below are to `engine/src/main/battlecode/world/*.java`.
 - All robots+towers: **vision^2 = 20** (sqrt20 ≈ 4.47).
 
 ### Reading `UnitType` from the jar — the field order (verified 2026-09-08)
+
+**Resolve the jar with `tools/engine-jar.sh`, never with a bare `find`.** battlecode-dev's
+gradle cache holds **both** `battlecode25-java-1.0.0.jar` and `3.1.0`, so
+`find -name 'battlecode25*.jar' | head -1` can return either, and a wrong *constant* does not
+announce itself the way a missing *method* does. Discriminating check on any jar you are
+handed: `getChips` and `getNumberTowers` exist in 3.1.0 and in neither case in 1.0.0.
+Everything in this section was read from the path `tools/engine-jar.sh --remote` resolves to,
+confirmed byte-identical (2026-09-08).
+
 `javap -p -c battlecode.common.UnitType` shows a 14-arg enum constructor
 (`String, ordinal, then 13 ints`). The 13 ints are, in order:
 
@@ -297,10 +306,20 @@ calls. First run of this project was at iteration 29 and found **37 of 68 unused
 one entire mechanic. Reproduce with:
 
 ```bash
-gssh "javap -cp \$BC_JAR battlecode.common.RobotController \
+# JAR RESOLUTION IS NOT OPTIONAL -- battlecode-dev's gradle cache holds BOTH
+# battlecode25-java-1.0.0.jar and 3.1.0, so `find -name 'battlecode25*.jar' | head -1`
+# can silently return the wrong one. tools/engine-jar.sh reads the wanted version from
+# arena/engine_version.txt and REFUSES to print a non-matching path.
+J="$(../../tools/engine-jar.sh --remote)"
+gssh "javap -cp $J battlecode.common.RobotController \
       | sed -n 's/.* \([a-zA-Z][a-zA-Z0-9]*\)(.*/\1/p' | sort -u" > rc_api.txt
 while read m; do grep -q "rc\.$m(" src/alice/RobotPlayer.java || echo "  $m"; done < rc_api.txt
 ```
+
+**The 68 is verified against the right jar (2026-09-08), by the discriminating case rather
+than by assertion**: this exact pipeline yields **68 unique names on 3.1.0 and 62 on 1.0.0**,
+so the sweep that produced "37 of 68" read 3.1.0. The cheap version check on any jar is
+`getChips` / `getNumberTowers` -- both present in 3.1.0, both absent from 1.0.0.
 
 ### RESOURCE PATTERNS (unused through iteration 29)
 
