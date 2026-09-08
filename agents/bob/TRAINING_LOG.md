@@ -7020,3 +7020,101 @@ keeps the old label, so an accepted candidate's roster point stays permanently "
 the only absolute chart I have — it reads as "may have been rejected" when it was accepted.
 I am **not** hand-editing the CSV, which the docs say is derived and never hand-edited, and
 a hand-fix would hold only as long as I remembered it. Reported to the coordinator.
+
+---
+
+## Iteration 21 — PRE-REGISTERED before the run: denial units have no long-range objective
+
+New functional area. Iteration 20 doubled the splasher share (1→2 of every 5 spawns), which
+makes the largest un-acted-on number I own twice as expensive as it was when I measured it.
+
+### The number this iteration attacks
+
+From the 2026-09-07 denial probe (`src/bob_probe`, counted at the **decision point**, so
+doctrine 15 does not touch it):
+
+```
+SPLASHERS  nothing scoreable in vision at all   1,650 / 2,908 turns   56.7%
+MOPPERS    no enemy paint in vision at all      1,895 / 1,942 turns   97.6%
+```
+
+Both types react only to what is inside `VISION_RADIUS_SQUARED` and **random-walk
+otherwise**. The probe's own conclusion was that the fault is not paint and not the
+threshold: *"there is no target to navigate to."* Nothing has been done about it since.
+
+### Mechanism chain, each link verified rather than assumed
+
+1. The map is **>=95% painted by 13-22%** into a game (denominator-free tile counts, four maps).
+2. Once saturated the only scoreable tiles are **enemy** tiles — a soldier cannot overwrite
+   enemy paint (`engine-facts.md`), and `SPLASHER_ATTACK_ENEMY_PAINT_RADIUS_SQUARED = 2`
+   confirms the splasher is the unit that can, which is what my score function already models.
+3. Enemy tiles are in the **enemy half**, by map symmetry.
+4. `VISION_RADIUS_SQUARED = 20` — a radius under 4.5 tiles on maps up to 60 wide. A unit in
+   friendly territory cannot see the enemy half, and has no other way to learn where it is.
+5. So the denial units sit in their own paint, rich and idle, exactly as counted.
+
+### The change (one mechanism, no tuned constant)
+
+A **migration beacon**: each robot records its birth location once and computes the 180°
+rotation of it about the map centre, `(W-1-x, H-1-y)`. When — and *only* when — there is
+**nothing scoreable in vision at all**, it navigates to the beacon instead of random-walking.
+
+**Why the rotation is symmetry-agnostic, which is what makes it constant-free.** BC25 maps
+are symmetric under one of vertical reflection, horizontal reflection, or 180° rotation. I do
+not need to know which, because I only need the beacon to land in the *enemy half*:
+
+```
+vertical reflection  (enemy half is x > W/2):  beacon x' = W-1-x > W/2   in enemy half
+horizontal reflection(enemy half is y > H/2):  beacon y' = H-1-y > H/2   in enemy half
+180 rotation         (both flip):              both hold                 in enemy half
+```
+
+All three cases hold, so the beacon needs **no symmetry detection and no comms**. It is not
+the true mirror of my spawn under reflection — it does not have to be.
+
+### Pre-checks done before writing a line of it
+
+- **Is the march affordable?** `PENALTY_ENEMY_TERRITORY = 2`, `PENALTY_NEUTRAL_TERRITORY = 1`
+  against `MOVEMENT_COOLDOWN = 10` / `COOLDOWNS_PER_TURN = 10`. Crossing hostile ground is a
+  **cooldown tax of 10-20%, not a paint cost** — there is no paint drain for standing on
+  enemy paint. And `INCREASED_COOLDOWN_THRESHOLD = 50` only bites below 50% paint, while
+  splashers carry a measured mean of **205 of 300 (68%)**. The march is affordable; verified
+  from `GameConstants` in the 3.1.0 jar, not from memory.
+- **Does it fight an existing mechanism?** No. The patch touches exactly one branch — the
+  `tgt == null` fallback. A splasher already adjacent to a scoreable tile (`best <= 2`) still
+  holds position exactly as before; that branch is copied through unchanged and I checked it.
+- **Will it silently never execute?** This is what voided iteration 17. `src/bob_mprobe`
+  (arm B plus counters, non-competing) will be run separately to confirm the branch fires and
+  the beacon distance actually falls.
+
+### Arms — one run, shared map sample, so within-run comparisons are exact
+
+`BOT=bob` (= `bob_iter20`, verified byte-identical) vs three opponents:
+
+```
+bob_m0   package rename only          MANDATORY IDENTITY CONTROL: must be 25/50, se = 0
+bob_mA   splashers migrate
+bob_mB   splashers AND moppers migrate
+```
+
+### Pre-registered gate, and the shape I predict
+
+- **Void** the run if `bob_m0` is not 25/50 with every map split. The zero arm is the only
+  thing standing between me and §21's "margins do not chain".
+- **Accept-eligible** requires the best arm at **>= +7 games over the null (>= 32/50)** and
+  **swept-against <= 3**. Margin and sweeps are the same number (§25) — the sweep clause is
+  there for **D, the split count**, i.e. whether the pair is decisive or coin-flips.
+- **Before accepting anything**, the frozen roster runs (§21 rule 2 — the rule I wrote after
+  iteration 18 precisely because it applies when the margin feels too strong to need it).
+  Registered now: **no roster member may regress by more than 3 games, and `bob_iter11` must
+  hold at >= 32/50** against iteration 20's 35/50.
+
+**The shape I predict, and it is not the obvious one.** Moppers have far the worse pathology
+(97.6% vs 56.7%), so the naive expectation is `mB > mA`. I predict **`mA > null` but
+`mB < mA`**, from the mechanism §24a already established: a mopper turns enemy paint
+**neutral**, and only a **soldier** can then claim it. Soldiers do not migrate in either arm.
+So marching moppers deep into enemy land breaks the mopper→soldier chain — it manufactures
+neutral tiles where no soldier will ever arrive. That is the same interior-peak logic that
+made iteration 20's dose curve turn over at 1:3:1, applied before the fact rather than after.
+
+If `mB > mA` instead, the chain story is weaker than §24a claims and I will say so.
