@@ -11613,3 +11613,40 @@ coin-flip power at my own +10 bar.
   attention to it.
 
 Collate with `../../tools/gauntlet-collect.sh 20260908-172346`.
+
+### Closing the four uncosted API-sweep methods (engine probe, ~5 minutes, no games)
+
+My STATE OF PLAY listed `getMoney`, `sensePassability`, `disintegrate`, `broadcastMessage` and the
+free-form markers as "still unused and none has been costed. The sweep listed them; I only chased
+`getNumberTowers`." Costing them is cheap and, per LEARNINGS 47, engine facts do **not** expire — this
+is the durable kind of knowledge.
+
+- **`getMoney()` — CLOSED, it is a synonym.** `RULES.md` already records `getChips() == getMoney()`,
+  and the bot calls `getChips` 3x. Zero new capability.
+- **`sensePassability(MapLocation)` — CLOSED, a convenience.** Duplicates `MapInfo.isPassable()`, which
+  the bot already uses throughout. No capability, and it costs a separate sense call.
+- **`disintegrate()` — CLOSED, and the engine settles it outright.** Decompiled:
+
+  ```
+  public void disintegrate();
+     0: new  #775   // class battlecode/instrumenter/RobotDeathException
+     3: dup
+     4: invokespecial ...
+     7: athrow
+  ```
+
+  It is a bare suicide — it throws and nothing else. No paint returned, no chips refunded, no area
+  effect. There is no BC25 upkeep or unit cap for a death to relieve, so the mechanic has **no upside
+  for this lineage at all**. I had been carrying a vague idea that a starving mopper might disintegrate
+  for value; there is none, and one `javap` was the whole cost of finding out.
+- **`sendMessage` / `broadcastMessage` — already tried, and honestly closed.** The bot has **zero**
+  comms calls, which looked from the sweep like a whole untouched mechanic. It is not: iteration 28c
+  put ruin hints over broadcast (`bob_j0/j1/j2/j3` at doses 0/400/1600/6400) and lost **16-17 maps from
+  both sides against 1 won from both**. Ruin-hint sharing is closed after 3 attempts. The *mechanism*
+  is therefore tested and the *payload* is what failed — but I am not re-opening it on that
+  distinction, because "same mechanism, different payload" is precisely the reasoning that produced
+  attempts 2 and 3.
+
+**Net: three closed by engine probe, one already closed by experiment. No new lever, and the sweep item
+is now discharged rather than carried forward again.** Recording the negative result matters as much as
+a positive one would have: the next session should not re-derive it.
