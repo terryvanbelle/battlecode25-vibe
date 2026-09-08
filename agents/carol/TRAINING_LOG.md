@@ -7542,3 +7542,46 @@ run with the maps pinned** — which is what doctrine's map-level discipline ask
 do rather than settling it by choice of denominator. Nothing in the accept rests on it: the gate
 was the fresh-sample head-to-head and the roster, both met, and predictions 1 and 2 are now met
 outright.
+
+### Prediction 4 resolved without a run, and the economy re-measured on UNCONTAMINATED data
+
+**Prediction 4 is untestable on the diagnosis maps, and the reason is saturation.** `carol_i29`
+went 8/8 there. A ceiling leaves no residual variation for a map covariate to explain — which is
+doctrine 3b's note that "no covariate structure" and "swept everywhere" are frequently the same
+fact. Testing it needs an instrument that does not saturate, and the attribution is already closed
+by direct measurement (0.0% discarded), so this is a nice-to-have rather than a gate. Not spending
+a run on it.
+
+**More important: my entire model of carol's economy was built on data contaminated by this bug.**
+Re-measuring the same quantities on iteration 29 (intended mix = 75 / 15 / 10):
+
+| map | realized soldier % | realized **splasher** % | realized mopper % | dead band [100,200) | tp ≥ 300 |
+|---|---|---|---|---|---|
+| Bunny | 49.3 → **59.4** | 0.7 → **1.5** | 50.0 → 39.1 | 48.6% → 39.7% | 0.3% → **12.1%** |
+| DefaultMedium | 49.4 → **77.5** | 0.7 → **2.3** | 49.9 → 20.3 | 43.0% → 36.4% | 9.6% → **22.3%** |
+| Fossil | 63.1 → **69.2** | 2.5 → **2.7** | 34.4 → 28.1 | 26.5% → 29.9% | 40.7% → 31.3% |
+| Mirage | 72.7 → **54.0** | 1.7 → **1.2** | 25.6 → 44.9 | 36.9% → 32.2% | 21.2% → 25.5% |
+
+Three findings, and the second kills a target I would otherwise have spent a run on:
+
+1. **The soldier/mopper distortion largely resolved itself.** DefaultMedium goes 49.4% → 77.5%
+   soldiers against an intended 75% — essentially exact. It was a symptom of the discarded attacks,
+   not a separate defect. Three of the six degeneracies I catalogued are now gone without being
+   targeted.
+2. **The affordability story is refuted a second time, on new data.** On Bunny the tower's
+   splasher-affordable share went from 0.3% to **12.1% — a 40x increase — and the realized splasher
+   share moved only 0.7% → 1.5%.** If affordability were the binding constraint, a 40x loosening
+   could not leave the outcome flat. This is an independent confirmation of the refutation I
+   recorded from the count reconciliation, and it arrives from a different direction.
+3. **The splasher shortfall SURVIVES and is now the best-founded open target**: 1.2–2.7% realized
+   against 15% intended, on clean data, with affordability eliminated as the cause. Expected builds
+   from the roll and the stash alone are two orders of magnitude above what is observed, so
+   something between the roll and the build is discarding almost every splasher.
+
+**Registered next target, with the pre-check named**: instrument the tower build DECISION — count
+rolls by type, then how many fail the chips gate, and how many fail `canBuildRobot` — rather than
+the outcome, which is what I have been counting all along. One live suspicion to test rather than
+assume: the build site is a single `DIRS[rng.nextInt(8)]` cell with no retry, so a blocked
+neighbour discards the whole build. That would hit every type, so on its own it cannot explain a
+splasher-specific shortfall — which is exactly why the decision counter has to separate the two
+failure modes instead of my guessing between them.
