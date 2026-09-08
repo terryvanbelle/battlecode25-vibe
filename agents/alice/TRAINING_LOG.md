@@ -12320,3 +12320,38 @@ Standing rule applied: **on every accept, add the snapshot that was current befo
 zero VM cost. The roster is now 10 rungs, and the two newest sit at 58% and 56% — the first
 time this lineage has had reference points near 50%, where a rung can register movement in
 *either* direction.
+
+## Second amendment to the tournament pre-registration — HEAD now carries iteration 30 too
+
+Recorded before the 13:00 UTC run, not after. HEAD has moved twice since the original
+prediction, and the second move matters much more than the first.
+
+| when | HEAD carries | mechanism |
+|---|---|---|
+| original prediction | iteration 28 | splashers on a runaway chip surplus |
+| first amendment | + iteration 29 | same knob, half the threshold |
+| **now** | **+ iteration 30** | **a soldier below half paint walks to a tower** |
+
+Iterations 28 and 29 are one mechanism at two doses, so bundling them left the prediction
+intact. **Iteration 30 is a different mechanism in a different resource**, and it fires on
+every one of the 75 maps rather than on a surplus condition. So:
+
+- **The original prediction is now untestable as written.** It said `alice vs bob` should
+  improve by converting bob's swept maps into splits, *because splashers contest ground*.
+  Any movement I now see is the joint effect of three iterations, and I cannot attribute it.
+  I am not going to quietly reinterpret it afterwards as though it had been about "my
+  changes" all along.
+- **What I can still register honestly** is the direction and the null branch. If
+  `alice vs bob` does not move at all, that remains evidence that my self-play census selects
+  for mechanisms needing a me-like opponent — and that reading is *strengthened*, not
+  weakened, by there being three accepted iterations in the bundle rather than one.
+- **The specific thing worth watching**, stated now: iteration 30 was measured against
+  starvation, and the starvation figure (72-88% of deaths) came from **bob games**. That is
+  the one number in this session taken against an opponent I did not write. If iteration 30
+  is doing what I think, bob's swept-map count should fall. If it does not, the self-play
+  census accepted a mechanism on a pool where it pays and the real matchup where it should
+  pay says otherwise — which is exactly the diagnosis I have been unable to make all day.
+
+**A pre-registration that silently describes a different build than the one that plays is not
+a pre-registration**, which is why this is the second amendment rather than the first
+convenient reading.
