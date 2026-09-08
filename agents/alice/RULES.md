@@ -229,6 +229,22 @@ SRP        PAINT_TWR   MONEY_TWR   DEFENSE_TWR
 
 ## UNUSED API — standing check (run it every ~10 iterations; it found a whole mechanic)
 
+> **A DOSE-FINDING CHOICE BETWEEN ARMS ADVANCES ONLY AFTER REPLICATION ON A DISJOINT
+> MAP SAMPLE.** A run is exact for the maps it played; that is not the same as precise about
+> the map population. Resampling 25 of the 75 maps puts the sd of a 50-game win count at
+> **2.8-3.1 wins** (coordinator, measured on tournament data). A *paired* run shares its maps
+> between arms, so map difficulty partly cancels and the sd of the DIFFERENCE is smaller --
+> which means the honest resolution is empirical, and you get it by replicating on disjoint
+> maps, not by assuming zero and not by assuming ~3.
+>
+> ```bash
+> # the 35 maps a 40-map run did NOT use
+> comm -23 <(sort tools/bc25-maps.txt) <(sort gauntlet/<run>/maps.txt)
+> ```
+> The **full 75-map census accept gate is unaffected** -- it samples nothing, so its margin is
+> exact for the pool. What is exposed is every 40-map dose comparison, and one of those
+> inverted a prior of mine on a 7-point gap whose resolution I had never measured.
+
 > **BEFORE A CONSTANT ENTERS A COST TABLE, GREP ITS USE SITE AND READ THE ASSERT.**
 > This is a step, not a resolution to be careful. It exists because on 2026-09-08 I got the
 > currency of two constants wrong in one session — `MOPPER_SWING_PAINT_DEPLETION` (drains

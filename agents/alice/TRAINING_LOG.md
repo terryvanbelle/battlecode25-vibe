@@ -12602,3 +12602,81 @@ That is the iteration-32 probe, and it costs six games.
   soldier's action free for the refill that follows. A guard can be non-binding and still be
   load-bearing, which is a distinction I did not have this morning.
 - Resource patterns and `mopSwing` keep their places behind the probe.
+
+## The refill-collapse probe is INCONCLUSIVE — and mismatched sides nearly gave me a false answer
+
+I named a six-game test for the iteration 31 rejection hypothesis and ran it (12 games, run
+`20260908-120140`): `alice_p30` and `alice_p31` are iteration 30 and iteration 31 plus
+identical counters, differing only in the pre-emption.
+
+**My first read compared `p30` side A against `p31` side B**, because those were the two files
+sitting in `losses/`. It said: hungry 7,507 -> 12,156, refills **83 -> 433**. A clean 5×
+*increase* in refills — my hypothesis refuted, decisively, and I was one keystroke from
+writing that down.
+
+Matched sides, same map, same run:
+
+| build | hungry turns | action BLOCKED | tower adjacent | **refills** |
+|---|---|---|---|---|
+| `p30` side A | 7,507 | 309 (4%) | 91 (1.2%) | **83** |
+| `p31` side A | 3,315 | 689 (**21%**) | 4 (0.1%) | **4** |
+| `p30` side B | 10,645 | 2,694 (25%) | 164 (1.5%) | **144** |
+| `p31` side B | 12,156 | 1,785 (15%) | 445 (3.7%) | **433** |
+
+**The two sides disagree in opposite directions by more than an order of magnitude.** On side
+A iteration 31 refills **20× fewer** (83 -> 4), which supports my hypothesis. On side B it
+refills **3× more** (144 -> 433), which refutes it. The blocked-rate flips too: 4% -> 21% on
+A, 25% -> 15% on B.
+
+**So the probe settles nothing**, and the honest verdict on my mechanism story is *neither
+confirmed nor refuted*. I do not have an explanation for iteration 31's −7, and I am not going
+to keep the one I wrote just because it was already typed.
+
+Two things worth keeping from a test that failed to answer its question:
+
+1. **The near-miss.** Comparing side A of one build against side B of another produced a
+   confident, clean-looking, and entirely spurious 5× result. Both files were in `losses/`
+   simply because those were the games each build lost — **which is a selection on outcome,
+   the exact thing my sweep methodology exists to neutralise.** I caught it only because I
+   stopped to ask whether the sides matched.
+2. **The variance is the finding.** Per-game refill counts swing 20× between the two sides of
+   *one map*. Any probe of this quantity at n=1 map is measuring noise, and I designed a
+   six-game test for a statistic that needs far more.
+
+## Accept-gate power — conceding the point, and the part I still think holds
+
+Coordinator correction: the reasoning "the engine is deterministic, therefore `se = 0`"
+conflates *exact for the maps played* with *precise about the map population*. Resampling 25
+of 75 maps puts the sd of a 50-game win count at **2.8–3.1 wins**.
+
+**I have written "exact, not an estimate" twice today** — for iteration 29's +9 and iteration
+30's +12 — and I should separate the part that survives from the part that does not.
+
+- **Survives**: those two censuses played **all 75 maps, both sides**. For the population
+  *"the 75 maps in `tools/bc25-maps.txt`"* there is no sampling at all, and the margin is
+  exact. That was the population my gate named.
+- **Does not survive**: I have repeatedly *reasoned* as though that exactness extended to "this
+  change is better", full stop. It does not. Generalisation beyond the 75-map pool — to the
+  tournament, to opponents I did not write — is exactly where the variance lives, and it is
+  the inference I actually care about. Calling the number "exact" made a narrow technical
+  truth do the work of a broad claim. **That is the wrong-referent error again, applied to my
+  own foundational assumption**, which makes six today.
+- **Genuinely unaffected**: iteration 30's reach check. "The identical-to-baseline set is empty
+  on all 75 maps" is a statement about *mechanism reach*, not effect size, and involves no
+  sampling.
+
+**Where I am actually exposed is the dose-finding**, exactly as the coordinator says: 40 maps,
+80 games per arm, and I chose `i30b` over `i30a` on +10 versus +3 — then wrote a LEARNINGS
+entry declaring that "the conservative dose is not automatically the safe one", a general
+methodological lesson drawn from a 7-point gap whose resolution I never measured.
+
+**So I am replicating it rather than arguing about it.** Run `20260908-120914`: the same two
+arms against the same baseline, on the **35 maps the dose-finding run did not use** —
+disjoint by construction, verified (`comm -12` returns 0 overlap). 140 games. If `i30b` still
+leads clearly, the lesson stands on two independent samples; if the gap shrinks into noise,
+the LEARNINGS entry gets the same retraction treatment as everything else today.
+
+**And per doctrine 16 — the rule my own currency error produced, that a lesson written down is
+not a lesson installed — the corrective is a step, not a resolution.** Going into `RULES.md`:
+*any dose-finding choice between arms advances only after replication on a disjoint map
+sample.* The full-census accept gate is unchanged, because it samples nothing.
