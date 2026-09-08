@@ -8887,3 +8887,92 @@ can interleave commits.
 **Note the irony, which is also the reason it is tempting:** it is a *good*
 instrument, aimed at a real next question, in my own idiom. That is exactly what
 makes silently adopting it attractive and wrong.
+
+## RESOLVED — the `alice_stallcensus` artefact, and a clobber audit I ran rather than accepted
+
+Superseding my "provenance unknown" entry above in place; that entry stands as
+written, and this is its answer.
+
+**Cause, from the coordinator:** for about six minutes there were **two live Alice
+sessions**. A message sent to me resumed this session *after it had already
+reported*, while a fresh Alice had separately been launched — a queued message
+revives a completed agent, which was not expected. The newer session was stopped
+and this one kept. `src/alice_stallcensus/` was its orphan.
+
+**My inference was right for the right reason.** I wrote that the most plausible
+explanation was "a second Alice session existed briefly and exited", derived from
+the file being built on my *own* post-00:26 source while only one `claude` process
+remained. Worth noting because the inference was labelled as inference and the
+facts were listed separately from it — which is why it could be checked rather
+than believed.
+
+**The artefact is already gone** from the working tree, so the "discard it" option
+resolved itself; `git status agents/alice` is now completely clean.
+
+### The clobber audit — asked of me, and run rather than assumed
+
+The coordinator said my commits "look clean" and asked me to confirm, since I am
+better placed. I did not take the reassurance, because the specific danger was
+narrow and real: **I ran `git add agents/alice/src/alice` at 00:29:12, one minute
+after the other session wrote at 00:28** — so had it also touched `src/alice`, its
+edit would have been committed under my name and become indistinguishable from my
+own work.
+
+| check | result |
+|---|---|
+| every commit touching `agents/alice` today | **14, all mine**, all prefixed `alice:`, strictly sequential 23:53→00:31, no gaps, none foreign |
+| `src/alice` vs `src/alice_iter24` | 5 hunks, **all** of them my splasher fix (`MIN_SPLASH_TILES`, `runSplasher`, `splashScore`); nothing else |
+| files under `agents/alice` modified 00:20–00:35 | exactly **two**: `TRAINING_LOG.md`, `src/alice/RobotPlayer.java` — both mine |
+| `25c3160` (inside the window) TRAINING_LOG diff | 67 added lines, all under my own `Splasher dead-branch REPAIRED` heading |
+| working tree | clean |
+
+**Nothing was clobbered.** The accepted iteration 24 snapshot, the roster history,
+both charts and `src/alice` are all exactly what I wrote.
+
+The one thing I would flag for next time: the window was survivable only because
+the other session wrote a **new directory** rather than editing a shared file. Had
+it appended to `TRAINING_LOG.md`, my very next `git add TRAINING_LOG.md` would
+have absorbed it silently, and no audit afterwards could have separated the two
+authors. The coordinator's procedural fix (check `ListAgents` *after* sending, since
+a send can resurrect the agent being replaced) addresses the cause; this is just
+the reason the cause matters.
+
+## The margin identity — I was right, and the useful lesson is about definitions
+
+The coordinator initially read my `SW − SL` identity as off by a factor of two,
+then re-derived it and committed the correction (`0e50364`) rather than quietly
+amending. Both formulas were exact; they name different quantities:
+
+```
+margin over 50%  = wins − N       =     (SW − SL)     per MAP   <- what I wrote
+win−loss margin  = wins − losses  = 2 × (SW − SL)     per GAME  <- what was read
+```
+
+**The lesson is not that I was right.** It is that an identity stated without its
+definitions cost two correct parties an argument, and doctrine 14 now carries both
+forms. I have added both to `LEARNINGS.md` in place.
+
+What actually settled it in minutes was **the verification table, not the
+argument**: the entry recorded the identity checked on all three opponents with
+zero residual, which converted "whose formula is wrong" into "which quantity does
+the word name". Recorded as a durable rule — *write the check into the log, not
+just the conclusion*, because a claim carrying its own verification can survive
+being contradicted by someone with more context than you, and a bare claim cannot.
+
+## Genuine corroboration on split-by-side — and this one really is corroboration
+
+The coordinator reached "split-by-side is the one non-redundant number"
+independently from the tournament side, and `tools/tournament-report.py` now prints
+it beside the sweeps (last run: alice–bob 9 split, alice–carol 19, bob–carol 10).
+
+Worth flagging against my own freshly-written lesson: I had just caught myself
+citing two statistics as independent when one was a deterministic function of the
+other. **This is the opposite case and passes the test I set** — two parties
+reaching the same conclusion from different data (my gauntlet's within-run
+head-to-heads; the coordinator's cross-lineage tournament), neither derivable from
+the other. That is what the word is for.
+
+The alice–bob split count of **9** is also directly useful to me: it says that
+matchup is decided by side on only 9 of 75 maps, so unlike my near-mirror gauntlet
+(17 of 25) the tournament against bob has **most of its resolution intact** — the
+losses there are real, not spawn noise. That sharpens the bob gap as a target.

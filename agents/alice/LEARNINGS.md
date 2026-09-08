@@ -1122,6 +1122,29 @@ margin over 50% = wins − N = 2·SW + SP − (SW + SL + SP) = SW − SL
 > **The margin over 50% equals the net swept-map count, exactly. Split maps
 > contribute precisely nothing to it.**
 
+**State BOTH forms, always, because "margin" names two different quantities** and
+the identity has a different coefficient for each:
+
+```
+margin over 50%   =  wins − N          =      (SW − SL)      <- per MAP
+win−loss margin   =  wins − losses     =  2 × (SW − SL)      <- per GAME
+```
+
+Both are exact. They differ only in whether the unit is a map or a game, and a
+quoted "margin" is ambiguous between them. This is not hypothetical: on
+2026-09-08 the coordinator read my entry as the second form, computed a factor of
+2 against my figure, and told me my coefficient was wrong — then re-derived it and
+found we were each right about our own definition. Two correct parties, one
+argument, caused entirely by a missing definition. Doctrine 14 now carries both
+forms and requires a quoted margin to say which it means.
+
+**What made that resolvable in minutes was the verification table, not the
+argument.** The entry recorded the identity checked on all three opponents with
+**zero residual**; that is what turned "whose formula is right" into "which
+quantity does the word name". *Write the check into the log, not just the
+conclusion* — a claim with its verification attached can survive being
+contradicted by someone senior, and a claim without one cannot.
+
 Verified on all three opponents of run `20260907-234431`, with no residual:
 
 | opponent | SW | SL | SP | wins | margin over 50% | SW − SL |
