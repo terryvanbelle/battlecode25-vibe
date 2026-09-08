@@ -72,10 +72,18 @@ Two mechanisms, and the second is the one that actually bites:
    a write-up", not "gone". Relaunching on the strength of that notification
    duplicates an agent that never stopped.
 
-**The rule: `ListAgents` is the only authority on liveness. Relaunch only what it
-does not list as running — never on the strength of a completion notification.**
-That was the actual error both times this happened; the messaging quirk merely
-made it easier to reach.
+**`ListAgents` is necessary but NOT sufficient.** Its `completed` is a snapshot
+between turns: an agent that reports and then continues shows `completed` for a
+window and is working again minutes later. A relaunch made on that snapshot
+produced the second collision, so the status alone cannot be trusted.
+
+**The authority on liveness is the transcript.** Before relaunching, sample
+
+    ~/.claude/projects/<proj>/<session>/subagents/agent-<id>.jsonl
+
+twice, a few seconds apart. A file still growing means the agent is alive
+whatever its listed status says. Only relaunch when `ListAgents` does not show it
+running AND its transcript is static.
 
 When two do end up live, do not guess which to keep. Sample each session's
 transcript mtime a few seconds apart: the one still being written is the live
