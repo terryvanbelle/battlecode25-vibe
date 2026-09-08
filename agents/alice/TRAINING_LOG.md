@@ -11858,3 +11858,57 @@ spotted a mismatch is not a repair.
 
 Complied: my work is now under `<scratchpad>/alice/`, the root holds only the log the running
 gauntlet is actively writing, and I will not glob the root again.
+
+## Iteration 30 dose-finding: BOTH arms beat the baseline, and the LARGER dose wins
+
+Run `20260908-100124`, `BOT=alice_iter29 OPPONENTS="alice_i30a alice_i30b"`, 40 maps, 160
+games. **Reading it in the direction I wrote down before the run**: the summary reports from
+`alice_iter29`'s point of view, so an arm is good when the baseline *loses* to it.
+
+| arm | diverts when | baseline SW | baseline SL | split | **arm net swept** | arm win% |
+|---|---|---|---|---|---|---|
+| `alice_i30a` | `paint < attackCost` | 4 | 7 | 29 | **+3** | 54% |
+| `alice_i30b` | `paint * 2 < capacity` | 3 | **13** | 24 | **+10** | **62%** |
+
+**Both arms beat `alice_iter29`.** The direction is not the marginal thing here — the
+mechanism works at both doses — but the *dose* answer is the surprise.
+
+**The larger dose is more than three times better**, and I had expected the opposite. My
+reasoning before the run was iteration 26's: diverting soldiers that can still paint should
+cost coverage, so the conservative arm ought to win. It is not what happened, and the reason
+is visible in today's forensics rather than in the arm design: 72-88% of my deaths are
+starvation, so a soldier that keeps painting until it is *provably* empty is a soldier that
+dies before it reaches a tower. `i30a` is too late to save the unit — the risk I named for it
+and then quietly expected not to matter.
+
+### The pre-committed manipulation check, run as promised
+
+`i30a`'s predicate implies `i30b`'s, so **every map where `i30b` never fires must be a map
+where `i30a` never fires**. Identity is a mirror match: arm ≡ baseline ⇒ same game both sides
+⇒ split with equal round counts — **with r2000 games excluded by construction this time**,
+which is the correction from this morning rather than a fix applied after the fact.
+
+```
+  I(alice_i30a) = 3  [Dominoes, defensetower, windmill]
+  I(alice_i30b) = 0  []
+  violations    = []          subset holds: True
+```
+
+Zero violations, and the numbers are internally consistent in a way that is worth stating:
+the larger dose fires on **all 40 maps** and the smaller one leaves 3 untouched — exactly the
+ordering the predicates entail. A check that merely fails to contradict me is weak evidence;
+one whose numbers reproduce a relation derived independently from the source is not.
+
+### Advancing to the accept gate
+
+`alice_i30b` -> full 75-map census vs `alice_iter29`, run **`20260908-103815`**, launched.
+
+**Deliberate change of convention for the decisive run**: the candidate is `BOT` and the
+baseline is the opponent, which is my usual direction. The dose-finding run had to be
+inverted so both arms could share one map sample against one baseline, and I documented the
+inversion in advance — but there is no reason to carry that risk into the run that actually
+accepts something. **Choosing the convention that makes the reading unambiguous is cheaper
+than remembering which way round it was.**
+
+Gate, unchanged from the pre-registration: net swept > 0, `SW`/`SL` separately, 0 exceptions,
+0 overruns, over the whole 75-map population.
