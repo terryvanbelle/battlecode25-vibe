@@ -654,6 +654,32 @@ vision* (r² = 20). A soldier essentially never sees two unoccupied ruins at onc
 candidate set is a **singleton**, and every scoring function whatsoever selects the same
 element of a one-element set.
 
+> **EXTENDED 2026-09-08 — there is a THIRD way, and it cost me a second candidate in the
+> same functional area.** Reachability has now failed for this lineage in three distinct
+> places, and checking the first two does not cover the third:
+>
+> 1. **The guard never fires** — a dead branch. (The failure this check was invented for.)
+> 2. **The choice set is a singleton** — the guard fires, there is nothing to choose between.
+>    (This entry.)
+> 3. **The decision is sampled at a degenerate TIME.** Iteration 23's first candidate keyed
+>    the tower type on `getNumberTowers()`, expecting the realized share to be a controlled
+>    sequence converging on 1/K. The guard fired, the choice set had two live members, the
+>    implementation was verified correct on every ruin in play — and the realized money share
+>    still swung **14% to 89%** across three maps, because *marking is bursty*: soldiers latch
+>    the first ruin they see and hold it for 170-250 turns (measured, iteration 17), so every
+>    ruin on the map is stamped with whatever the counter read during one early window.
+>
+> The unifying question is **"how many distinct values does the deciding quantity actually
+> take, at the moments the decision is made?"** A guard check answers it for the branch, a
+> choice-set check answers it for the options, and neither answers it for the *sampling
+> distribution*. All three are the same failure — a decision with one effective input — and
+> the third is the one that survives the first two checks.
+>
+> Note this is the same underlying fact about soldier behaviour, reaching a third mechanism:
+> **ruin claims are latched early and never revisited.** That fact has now voided two
+> candidates and constrained a third. It is a property of the bot I keep designing *around*
+> instead of changing, and it belongs on the candidate list in its own right.
+
 I did run §3's reachability pre-check. I applied it to the **guard** — "is this branch
 ever taken?", and it is, on 85% of soldier turns — and never to the **set the branch
 ranks**. A ranking change inside a reachable branch is still dead code if the thing being
