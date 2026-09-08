@@ -10511,3 +10511,79 @@ correctly aimed, and too small to measure"* rather than *"promising but under-do
 
 Which is the argument for iteration 26 being the tower mix instead: that one reallocates
 **half of all tower production**, not 1.5% of unit paint.
+
+## Session death, then the recovery — and the determinism check came back CLEAN
+
+The confirmation run (`20260908-024242`, `alice_i25` vs `alice_iter24`, 50 games) **finished
+on the VM and was never collated here**: the session died between the last poll and
+`collate_run`. On disk it had `results.txt` with all 50 games and no `results.csv`,
+no `summary.txt`. `gauntlet-collect.sh 20260908-024242` recovered it in one call. Nothing
+was re-run; the finished games were still there, exactly as MULTI_AGENT.md says they would
+be, because the runner is setsid-detached and outlives the session that started it.
+
+### The pre-registered determinism check: 6 shared maps, 12 games, 12 matches
+
+| shared map | run1 (side,winner) | run2 |
+|---|---|---|
+| DefaultHuge | AA, BA | identical |
+| Filter | AA, BB | identical |
+| PlumberGame | AB, BB | identical |
+| Restart | AA, BA | identical |
+| Snowglobe | AB, BB | identical |
+| yearofthesnake | AB, BB | identical |
+
+**12 of 12 identical -> determinism confirmed on a full run**, by my own hands rather than
+by assumption. This is the first time this lineage has verified it end-to-end, and it is
+the assumption underneath "identical code sweeps nothing", "a swept map is a near
+noise-free instrument", and every dose-response argument in this log. It holds.
+
+The check cost nothing — it was a by-product of an overlap I only noticed because I went
+looking for the double-counting bug. Tool committed as `tools/determinism-check.sh`.
+
+### Pooling over 44 DISTINCT maps, as pre-registered
+
+| | SW | SL | split | record |
+|---|---|---|---|---|
+| run 1 (`20260908-014924`, 25 maps) | 3 | 3 | 19 | 25/50 |
+| run 2 (`20260908-024242`, 25 maps) | 6 | 2 | 17 | 29/50 |
+| **pooled, 44 distinct maps** | **9** | **5** | **30** | **48/88 (54.5%)** |
+
+Pre-registered gate — *pooled net swept maps over distinct maps > 0* — **passes at +4**.
+
+And a map-level bootstrap (20,000 resamples over the 44 maps) says what the gate cannot:
+**54.5%, 95% CI [46.6%, 62.5%], +1.09 sd, P(<=50%) = 0.173.** The gate passes and the
+interval straddles the null. That is the definition of a thin margin.
+
+### Why the frozen roster is NOT the right check here, though rule 12 asks for one
+
+Doctrine rule 12 says: on a thin accept margin, run the frozen roster *before* accepting.
+I went to do exactly that and stopped, because rule 9 forbids what it would produce.
+The roster's seven opponents sit, on their most recent readings, at:
+
+`alice_iter0` 100%, `alice_iter1` 100%, `alice_iter4` 98%, `alice_iter12` 96%,
+`alice_iter7` 88-98%, `alice_flood` 88-92%, `alice_iter23` 66%.
+
+**Six of seven are pinned above 88%.** Rule 7: an instrument pinned near 100% cannot
+resolve a few games. Rule 9: never accept or reject on a lopsided instrument alone. So 350
+games of shared VM time would buy six numbers that *cannot move* in response to a 1.5%
+paint mechanism, plus one that can. Rule 12's own justification — "it once caught a bad
+accept by ten games" — describes an instrument with resolution to spare. Mine has none.
+
+### The check that DOES resolve it: stop sampling maps and take the census
+
+The 44 distinct maps are a sample from a population of exactly **75** (`tools/bc25-maps.txt`).
+The bootstrap interval above is entirely map-sampling noise — determinism means there is no
+other kind. So the remaining **31 maps, 62 games**, do not widen the sample: they *exhaust*
+it. Pooled with what I have, the result is a **census of the whole map pool**, and the
+question "would a different 25-map draw have said something else" stops being answerable-in-
+principle and becomes vacuous, because there is no other draw left.
+
+That is doctrine rule 6's remedy applied literally — "re-measure the whole on the parts'
+own pinned maps and the comparison stops being an estimate and becomes an arithmetic
+identity" — for 62 games instead of 350, on the one instrument that is actually even.
+
+**Pre-registered now, before the run returns:** the accept gate is net swept maps over all
+75, `SW` and `SL` reported separately, 0 exceptions. Net > 0 accepts. I am not entitled to
+a confidence interval on the result and will not report one — over a census there is
+nothing left to be uncertain about at the map level, and saying "significant" of a
+population parameter would be a category error.
