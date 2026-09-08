@@ -230,6 +230,27 @@ The accept/reject machinery lives or dies on these rules. Each one is paid for.
     metric is computed from the same games as the first, work out whether it is
     a genuinely new projection of the data or an algebraic restatement. An
     identity always agrees with itself, so it can never be evidence.
+15. **Replay per-robot state is recorded POST-action. Never use it to estimate
+    whether an action was possible.** The paint and money a replay shows for a
+    robot on turn N are what it had *after* spending, so "how often could this
+    robot afford X" computed from replay state is conditioned on the very outcome
+    it is meant to predict — the turns where it *did* afford X are exactly the
+    turns whose recorded resources were spent down. The rate comes out near zero
+    and looks like a discovery.
+
+    A lineage came one reconciliation away from publishing "a soldier was
+    affordable on 0.10% of turns" as its central finding. The check that killed
+    it: 0.10% implies roughly 24 team opportunities in that game, and **572
+    soldiers were actually built in it**. Whenever an instrument yields a rate,
+    multiply it back out into a count and compare against a count you can observe
+    directly. Two orders of magnitude is not a subtle bias.
+
+    **Scope what dies, not the whole analysis.** In that same run the finding that
+    the resource pooling was a chip drought *survived*, because it is a claim
+    about post-turn state and post-turn state is exactly what supports it. Only
+    the step from post-turn state to *affordability at the decision point* was
+    invalid. To measure a decision, instrument the decision: record the deciding
+    quantities in-bot, at the decision point, before the action resolves.
 
 ---
 

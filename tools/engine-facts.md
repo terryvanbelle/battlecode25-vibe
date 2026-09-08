@@ -68,3 +68,25 @@ coverage per-mille  T1 recon=68 engine=68
 *reconstructed* rather than engine coverage and produced an unpainted-tile
 estimate ~25% too high — a number that was plausible, defensible, and computed
 correctly from the wrong referent.
+
+---
+
+## Replay per-robot state is written AFTER the robot's turn resolves
+
+The paint and money a replay reports for a robot on round N are its values
+*after* that round's actions, not the values it decided on. So any quantity read
+from replay state is post-spend.
+
+**Re-verify:** take a game in which a unit type is built often, compute from
+replay state the fraction of turns on which that unit was affordable, multiply
+that fraction by the number of robot-turns to get implied opportunities, and
+compare against the number of that unit actually built in the same game. If the
+state were pre-decision the two would be the same order of magnitude. Measured on
+one game: an implied ~24 opportunities against **572 soldiers actually built**.
+
+**Consequence:** replay state answers "what was true after the turn", which is
+enough for questions about accumulation, pooling and drought. It cannot answer
+"what could this robot have done", because the turns where it *did* act are
+exactly the turns whose recorded resources were spent down — the estimate is
+conditioned on the outcome it is predicting. To measure a decision, instrument
+the decision in-bot, at the decision point.
