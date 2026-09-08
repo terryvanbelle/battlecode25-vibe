@@ -10642,3 +10642,34 @@ This is the same class as `p`-counts-tiles from earlier today: a quantity whose 
 normalisation it does not have. Both were caught by an external check (an impossible ratio; an
 arena that disagreed with a table), not by re-reading the code, which is the argument for
 rendering the thing at least once rather than only tabulating it.
+
+## Candidate for iteration 40 raised and KILLED in the same hour: walls are not the barrier
+
+Rendering `mit` at round 900 showed both teams' paint stopping dead at horizontal wall bands
+(rows 37, 42, 45), with rows 47-59 untouched. `stepToward` is a greedy stepper with no
+pathfinding and `mit` is 16.3% walls, so "greedy movement cannot cross wall structures" was an
+attractive iteration-40 hypothesis — and it was built on a within-lineage game, where **both**
+teams are carol and share the mover, so the symmetry that looked like evidence was guaranteed by
+construction.
+
+The discriminating case is an opponent with a different mover, and it was already on disk.
+`carol-vs-bob-on-galaxy`, round 900:
+
+- **bob** holds a single connected region spanning the centre and right of the map and reaching
+  the top rows, **straight past the same kind of wall structures**;
+- **carol** is confined to a narrow strip down the left edge and one block in rows 18-27.
+
+Walls are not the barrier. Bob crosses them; carol simply never expands. **The deficit is
+dispersal, not pathfinding**, and an iteration spent on a routing algorithm would have been spent
+on a non-problem.
+
+Two things worth keeping:
+
+1. **A symmetry observed in a self-play game is not evidence about the game.** Both arms shared
+   the mover, so "both stop at the wall" was a property of the *pair*, not of the terrain. This is
+   the self-referential blind spot again, in its most seductive form yet — the artefact was a
+   picture, and a picture feels like direct observation rather than an inference.
+2. **It corroborates iteration 39's premise from outside the lineage.** Carol has a large empty
+   frontier immediately adjacent to its territory and its splashers sit inside painted ground
+   scoring a median of zero. That is exactly the condition steering is meant to fix, and it is now
+   visible in a game against an opponent my lineage did not produce.
