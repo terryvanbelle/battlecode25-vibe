@@ -14457,3 +14457,62 @@ opponents*. The signal was sized against `alice_iter30` only, and the census is 
 `alice_iter30` only, so nothing in this iteration tests how the signal behaves when a different
 opponent contests ruins on a different schedule. The tournament is the instrument that would
 answer it, and only after an accept.
+
+## Iteration 40 is CLOSED before it was built — it is iteration 20, and my new control caught it
+
+Pre-check 5 of the draft was "History: iterations 19-23 worked on ruin and pattern behaviour;
+any filter here must supersede that reasoning with evidence." Run properly, it does not
+supersede anything — **it duplicates a rejected iteration.**
+
+`TRAINING_LOG.md:4953`, iteration 20, run `20260907-145851`, baseline `alice_iter19`:
+*"soldiers avoid ruins they cannot finish"*, as a `BLOCK_PENALTY` dose ladder.
+
+| dose | meaning | result |
+|---|---|---|
+| 0 (zero arm) | baseline | 12/24 by definition |
+| 5 | soft penalty | 12/24 (50.0%) |
+| 10 | soft penalty | 12/24 (50.0%) |
+| **25 (exclusive)** | **the FILTER — the exact version I drafted** | **13/24 (54.2%)**, 1 swept win |
+
+Rejected, with the mechanism engaging *harder* than the accepted iteration 19's did:
+blocked-ruin turns fell 10-19 points and total ruin turns fell 27-57%. **The behaviour changed
+a great deal and the outcome did not move at all.**
+
+The recorded cause is precise and is not weakened by anything I learned today:
+
+> Removing a waste frees a resource, and it pays only if that resource was binding. Unblocking
+> a pattern *adds a tower*. Avoiding a blocked ruin merely **relocates a soldier whose paint is
+> already spent** — it frees *turns*, and turns were never scarce. With `SOLDIER.attackCost = 5`
+> against a 200 tank, a soldier has **exactly 40 paint actions in its whole life** against a
+> 24-tile pattern; handing it more turns to spend an exhausted budget is a no-op by construction.
+
+**Today's structural finding REINFORCES that rejection rather than reopening it.** I measured
+that after expansion the team's output is capped by tower paint income and nothing else. Freeing
+soldier turns still does not create paint. Re-opening requires a specific reason the recorded
+cause no longer applies, and I have the opposite: fresh evidence that the recorded cause is more
+true than when it was written.
+
+> **Iteration 40 is closed, unbuilt, at zero game cost.** The pre-check discharged this morning
+> (the ruin choice set is a singleton) had already killed the *ranking* version; the history
+> pre-check now kills the *filter* version, which was the only survivor. The direction is
+> exhausted.
+
+### The control installed today is what flagged it, hours after being installed
+
+`tools/gate-read.sh` now prints on every verdict read:
+
+```
+1. SCARCITY. Name the resource you claim was wasted, and the resource that is
+   actually binding. ... (i20: freed soldier TURNS, paint was binding -> null. ...)
+```
+
+I wrote that line this session as the fix for having made the same error three times, listing
+iteration 20 as a worked example — and then drafted a candidate that *was* iteration 20. The
+note in LEARNINGS had failed to stop the error three times; the printed pre-check named the
+precedent by number.
+
+> **This is the first evidence in this lineage that converting a lesson into a mechanism
+> actually changes an outcome.** Doctrine 16's test — "could the next session make this mistake
+> without reading anything?" — was answered in the affirmative by me, today, and the mechanism
+> is what closed the gap. Worth stating plainly because the sample is one and the temptation is
+> to over-read it: what it demonstrably prevented here is a screen, not an accept.
