@@ -10001,3 +10001,86 @@ or bytecode data. `bob_namectl` — a copy of `src/bob` identical modulo the pac
 probe code** — is built and compile-checked to settle it: if it differs from baseline by a similar
 amount with an identical event stream, the name alone explains it and no instrumentation is implicated.
 Until that runs, the attribution is a hypothesis; **the standing rule above does not depend on it.**
+
+---
+
+## Iteration 29 — VETOED at the pre-registered reachability check. No gauntlet. Cost: 4 probe games.
+
+The veto I wrote into the pre-registration fired on the arm I was most confident about, which is the
+third time today that a pre-gauntlet check has been the only thing between me and a confident wrong
+conclusion.
+
+**Probe** `bob_srpgate2`, two full games vs `bob_iter11` (Thirds 60×21, Leaf 60×60). v1 printed only
+every 250 rounds and produced 6–9 lines a game — too sparse to measure — so v2 prints every 100
+rounds **and** emits an event line the first six times each target counter increments per robot.
+That makes absence meaningful: zero event lines is a **census** over every soldier that ever ran, not
+a sampling gap.
+
+**Probe verified behaviour-neutral by the corrected method** (event-stream diff, not `cmp` — see the
+methodology correction above). Peak bytecode *at the probe point* was 1,300 of a soldier's 17,500, so
+the added senses are nowhere near the limiter.
+
+| map | robots | soldier turns | ruinBusy | srpLive | **abandon** | **forgone** |
+|---|---|---|---|---|---|---|
+| Thirds | 49 | 3,752 | 497 (13.2%) | 147 | **0** | 3 |
+| Leaf | 566 | 74,211 | 15,584 (21.0%) | 384 | **0** | 0 |
+
+**`abandon` is exactly 0 across 77,963 soldier turns.** This is not a small number, it is *zero*, and
+neither input state is rare: soldiers are ruin-busy 13–21% of turns, and they hold an active SRP on
+147 and 384 turns respectively. If the two states were independent the expected overlap is
+3,752 × 0.132 × 0.039 ≈ 19 turns on Thirds and 74,211 × 0.21 × 0.0052 ≈ 81 on Leaf — call it ~100
+turns expected, **0 observed**. The two states are structurally mutually exclusive.
+
+**Why they cannot co-occur, which is the finding worth keeping.** `srpSiteSafe` rejects any tile with
+a non-empty mark within r²≤8, and `markTowerPattern` blankets a 5×5 around every ruin under
+construction. So an SRP can only ever be *started* on ground with no tower marks — that is, away from
+ruins — and once started the soldier stays within d²≤8 of it. **SRP-active soldiers are, by
+construction, in ruin-free neighbourhoods.** This is a direct quantitative confirmation of iteration
+10's mark-saturation measurement (~128% of geometrically-valid candidates refused per turn) and of
+`RULES.md`'s "marks are a contended, map-wide resource", arrived at from the opposite direction.
+
+**Verdict**: arm `s1` (finish what you started) acts on a state that never occurs — dead code. Arm
+`s2` would have fired **three times in a 1,374-round game** on one map and never on the other, which
+cannot move 7 games in 50. `s3` remains logically possible but its whole premise was that SRP and
+ruin work contend, and they do not. **Iteration 29 is not built and does not reach a gauntlet.**
+Four probe games instead of two hundred.
+
+**My pre-registered prediction was wrong in an instructive way.** I predicted "s1 > 0 and small, s2 ≈
+s1, s3 < 0" — I was arguing about the *sizes* of effects in a state that does not exist. The
+pre-check that mattered was not "which arm wins" but "does the situation arise at all", and I had
+written that veto down precisely because I could not answer it from the code. Reachability outranks
+effect-size reasoning, every time, and the reason is that effect-size reasoning always *sounds*
+answerable.
+
+### The measurement that came out of the failed iteration is worth more than the iteration was
+
+Dumping the probe replays for engine-reported **active** SRP counts turned up something I did not go
+looking for. `T1` is the current bot, `T2` is `bob_iter11` — **which carries the same SRP code**:
+
+```
+Leaf     r400   T1 $1,507 cov395 srp4   |  T2 $6,336   cov567 srp8
+         r1000  T1 $1,555 cov535 srp3   |  T2 $8,430   cov445 srp8
+         r2000  T1 $1,268 cov544 srp3   |  T2 $301,529 cov438 srp5
+Thirds   r1000  T1 $1,468 cov325 srp1   |  T2 $1,419   cov526 srp4
+```
+
+Two things, and I am deliberately separating what is measured from what it might mean.
+
+1. **The current bot sustains 2–4× fewer active SRPs than its own ancestor on identical SRP code.**
+   Iteration 13 saw this once (1 vs 9 on DefaultHuge) and moved on; it reproduces here on two more maps.
+2. **On Leaf the current bot's treasury is pinned at ~$1,300 for 1,800 rounds** while `bob_iter11`
+   ends on $301,529. Flat-at-low with continuous spending means income ≈ spending: the bot is
+   **chip-bound** on that map.
+
+Point 2 matters because a recorded re-open trigger is written against exactly this quantity.
+Iteration 8's closure says: *re-open trigger "chips sustained below ~5,000" — re-checked against 7
+fresh traces, chips run 4.4k–61k in every game, trigger NOT met.* On Leaf it now reads $413–$1,571
+all game. **The trigger appears to be met — on one map.** My own doctrine forbids sizing a quantity on
+one map ("a quantity measured on one map is a statement about that map"), and Thirds is genuinely
+mixed ($1,468–$7,519), so this is **not yet a re-open**. A 21-map chip census over baseline replays
+already on disk is running; the re-open stands or falls on that, not on Leaf.
+
+Note also that the direction is not obvious and I should not pre-judge it: `bob_iter11` has 8 SRPs and
+$301k it cannot spend and **still loses on coverage** (438 vs 544). More resource income is only worth
+something to a bot that converts it. The current bot converts and is short; its ancestor hoards and is
+not. That asymmetry is the actual hypothesis, and it is about *chips*, not about SRPs.
