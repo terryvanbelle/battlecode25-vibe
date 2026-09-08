@@ -12143,3 +12143,77 @@ solving a problem that early detection had already dissolved.
 - **Queued: re-measure `i44_a` vs `i44_den` at full census power (150 games)** before either
   removing the ban set or claiming it earns its place. At 50 games this run could not have detected
   a genuine +1 sd effect.
+
+## Splasher frontier-steering — KILLED at the arithmetic, before a build
+
+Soldiers got frontier-seeking at iteration 14 and it was accepted. Splashers never did:
+`runSplasher` ends in `moveExploring(null)`, i.e. a **random far map coordinate**, and the splasher
+is the unit that paints 2.6x faster per turn and is worth most on the frontier. That looks like an
+accepted mechanism simply never applied to the unit that needs it most.
+
+Splasher turn census, `carol_i44_a` on Rose, 1,694 splasher-turns:
+
+| tag | turns | share |
+|---|---|---|
+| `cd` (action cooldown) | 671 | 39.6% |
+| **`noPaint`** | **521** | **30.8%** |
+| `lowScore` | 237 | 14.0% |
+| `noTgt` | 140 | 8.3% |
+| **`SPLASH` (actually fired)** | **125** | **7.4%** |
+
+The `cd` block is an engine ceiling, not a defect: a splasher's attack adds +50 cooldown falling
+10/turn, so each fire necessarily blocks the next four turns — 125 x 5 = 625, which accounts for
+the 671 almost exactly.
+
+**The tempting read**: 377 turns (22.3%) were ready AND fueled and did not fire for lack of a
+target — three times the 125 fires that happened. Steer those at the frontier and splasher output
+triples. That is the iteration-14 argument, transplanted.
+
+**Why it is wrong, and the number that kills it**: `noPaint` is **30.8%**. The splasher is already
+**paint-saturated** — it is spending every point of paint it can get. A splasher attack costs 50
+from a 300 capacity, so six attacks empty it, and `transferPaint` is r2<=2 so it must physically
+walk to a tower to refill. Total tiles painted over a splasher's life is therefore set by **how
+much paint reaches it**, not by how many targets it finds. Better targeting makes it fire sooner,
+run dry sooner, and paint the same total.
+
+So the honest gain from steering is not throughput at all — it is **tiles per 50 paint** (a fire on
+13 fresh tiles instead of 4), which the existing score function already maximises locally and
+`SPLASH_MIN_SCORE` already gates. That is a much smaller prize than "triple the fires", and it is
+the prize I would actually have been buying.
+
+- **"Frontier-steering for splashers" — CLOSED on arithmetic, zero gauntlets spent.** Re-opening
+  requires the splasher to stop being paint-saturated, i.e. `noPaint` well below 30% on the
+  then-current build. That is a real re-opening condition: iteration 20's ferry or a paint-income
+  change would produce exactly it.
+
+**The general form, which is the transferable part**: an idle-turn count is not a prize until you
+check which resource the unit is actually short of. I have now made this mistake twice with idle
+counters (iteration 42's soldiers, and this, caught) and the check is the same both times —
+*if this unit were never idle again, what would it spend?* If the answer is "paint it does not
+have", the idleness is a symptom of the shortage, not an independent waste.
+
+### Ablation, re-scored against the lineage's STANDING gauntlet gate (not my ad-hoc sd)
+
+Commit `5443d59` already set a standing gate for 50-game **sampled** gauntlets, where map-sampling
+error dominates and the census floor does not apply: **>= 29/50 accepts, <= 25 rejects, 26-28 is
+UNRESOLVED and must be replicated on a disjoint map sample.** Scoring the ablation on that instead:
+
+| `carol_i44_a` vs | record | standing gate |
+|---|---|---|
+| `carol_iter36` | 32/50 | **resolved win** |
+| `carol_i44_ban` | 30/50 | **resolved win** |
+| `carol_i44_den` | 27/50 | **UNRESOLVED** (26-28 band) |
+
+So the correct statement is **not** "early denial alone is indistinguishable from the full change"
+— it is **unresolved**, which under the standing rule *requires* the replication I had already
+queued rather than merely inviting it. I am tightening my own wording because "indistinguishable"
+smuggles in an accepted null, and this lineage has a standing rule against exactly that.
+
+What does NOT change: `i44_ban` (the 8-slot ban set without early denial) is a **resolved loss**
+against the full change, so **early denial detection is confirmed load-bearing**. The open question
+is only whether the ban set adds anything on top of it.
+
+And the audit I was about to redo is already done: `5443d59` records that iterations 34 and 36 were
+accepted at +1.03 sd, unresolved on their headlines and resting on mechanism evidence. I re-derived
+that same concern from the corrected census units and found the lineage had already caught and
+recorded it — so it is not a new finding, and iteration 36's paint floor is not quietly unsupported.
