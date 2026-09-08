@@ -128,6 +128,37 @@ you rely on to escape.
 - Tower survives even if its pattern is later painted over. Towers occupy the ruin tile
   (impassable). Ruin visible only within vision radius.
 
+## Provenance of every [E] fact in this file (added iteration 42)
+
+battlecode-dev's gradle cache holds **both** `battlecode25-java-1.0.0.jar` and
+`battlecode25-java-3.1.0.jar`, so any probe that locates the engine with
+`find ... -name 'battlecode25*.jar' | head -1` can decompile the WRONG engine and produce a
+confident, plausible, false constant. A missing method announces itself; a changed constant does
+not.
+
+**Derive engine facts only through `tools/engine-jar.sh`**, which resolves the version from
+`arena/engine_version.txt` and refuses to print a mismatched path:
+
+```
+javap -p -c -cp "$(tools/engine-jar.sh)" battlecode.common.RobotController
+```
+
+My own probe used `find ... | sort -V | tail -1`, which takes the HIGHEST version and therefore
+happened to resolve 3.1.0 correctly — but that was the luck of an ordering flag, not a check.
+**Re-verified against the resolver-approved 3.1.0 jar on 2026-09-08**, all identical to what this
+file already claimed:
+
+- SRP: `COMPLETE_RESOURCE_PATTERN_COST=200`, `EXTRA_RESOURCES_FROM_PATTERN=3`,
+  `RESOURCE_PATTERN_ACTIVE_DELAY=50`, `RESOURCE_PATTERN_RADIUS_SQUARED=8`,
+  `MARK_PATTERN_PAINT_COST=25`, `PATTERN_SIZE=5`, `RESOURCE_PATTERN=28873275`.
+- Comms/vision: `MESSAGE_RADIUS_SQUARED=20`, `BROADCAST_RADIUS_SQUARED=80`,
+  `VISION_RADIUS_SQUARED=20`, `MAX_MESSAGES_SENT_ROBOT=1`, `MAX_MESSAGES_SENT_TOWER=20`,
+  `MESSAGE_ROUND_DURATION=5`, `MAX_MESSAGE_BYTES=4`.
+
+The Communication section below predates this session and had **no recorded provenance**; it is
+now confirmed on 3.1.0. Anything added here in future must name how it was derived, because later
+nobody can distinguish a fact that came from the right jar from one that did not.
+
 ## Communication [E]
 
 - Message = 32-bit int + sender id + round. Buffer keeps 5 rounds.
