@@ -839,3 +839,38 @@ unmeasured iteration-0 default, and those two facts sat in the same section, eig
 apart, for a day without being put together. **Two facts in one section that imply a
 candidate and never cite each other is the same tell as two rules that never cite each
 other.**
+
+### 24a. Amendment, written BEFORE the run returned: "incapable" was too strong — they are DEMAND-LIMITED
+
+Checked §24's claim one more time before results could bias me, and it does not survive as
+written. Soldiers cannot overwrite *enemy* paint, but **moppers remove enemy paint and leave
+the tile NEUTRAL** — and a soldier can paint neutral. So there is a two-step conversion path,
+mopper then soldier, and the soldier is a real part of it. Counted over the same windows:
+
+```
+map            T1 soldier PAINT   T1 mopper UNPAINT   T2 mopper UNPAINT
+Gears                10                  2                  19
+DefaultLarge         14                 22                  18
+Money                24                 10                   2
+Parking_lot          23                  6                   1
+```
+
+Soldier paints sit in the same order of magnitude as total mopper activity on both sides
+(plus, on the two maps that never fully saturate, some residual virgin ground). That is the
+signature of soldiers servicing neutral tiles as they are *created*.
+
+**So the correct statement is not "soldiers cannot score" but "soldier work arrives at a rate
+set by mopper activity, and I field 100+ soldiers to service 7-40 tiles per 21 rounds."**
+Demand-limited, not incapable. The distinction matters for the candidate:
+
+- It **strengthens** the case for cutting the soldier share, because the required number of
+  soldiers is set by the neutral-tile arrival rate, not by how much paint the team holds.
+- It **predicts an interior peak rather than a monotone curve** — cut soldiers far enough and
+  the mopper→soldier chain starves, so 1:3:1 may well be worse than 2:2:1. That is now a
+  mechanistic reason for the interior-peak branch I pre-registered, rather than mere hedging.
+
+The general lesson, which is the one worth keeping: **before calling a unit useless, enumerate
+who else changes the state it consumes.** I had checked what a soldier can do to enemy paint
+and stopped there; the answer changed once I asked what makes a tile neutral in the first
+place. §17's "does this ever engage" question applied to the *supply* of work rather than to
+the mechanism.
