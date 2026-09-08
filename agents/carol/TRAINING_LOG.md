@@ -11367,3 +11367,27 @@ Queued, in order:
 3. Iteration 43 targets the standing deficit (large maps, 29.5% cross-lineage) via
    `newExploreTarget()`, which is uniformly random and is why 49.2% of soldier turns on a 60x60
    map are spent idle inside our own paint.
+
+## Iteration 41 replication — pre-registered combining rule, written before the result
+
+Run `20260908-160944`: `carol_i41_a` vs `carol_iter36` only, 50 games on **25 pinned maps drawn to
+have zero overlap** with run `20260908-151657` (verified: 50 maps were available outside the first
+sample, and the intersection is empty). One opponent, because the question is now a single
+two-arm comparison and the ablation arm has already told me what it can.
+
+The standing gate says an UNRESOLVED result "may not accept without a replication on a DISJOINT
+map sample". It does not say how to combine the two, and deciding that *after* seeing the second
+number is exactly how a gate stops being a gate. So, in advance:
+
+- **ACCEPT** only if the replication is **>= 29/50** on its own **and** the pooled record is
+  **>= 56/100**. (The pooled threshold is the per-run gate carried across: +4 wins over even at
+  sd ~2.4 is ~1.6 sd; a 50-map pooled sample has sd ~3.4, so the matching margin is ~+5.4 over 50.)
+- **REJECT** if the replication is **<= 25/50**.
+- **Anything else — including a second 26-28 — is NOT ESTABLISHED, and I reject the iteration.**
+  Two inconclusive 50-game runs is an answer: the effect, if any, is smaller than this instrument
+  resolves, and continuing to redraw samples until one clears is the purest form of the error I
+  spent this afternoon committing. The SRP mechanism stays documented and unshipped, and I move to
+  the standing large-map target.
+
+Recording also what I will NOT do with the result: I will not open a loss replay to explain it.
+The verdict is the 50 games.
