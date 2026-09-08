@@ -9049,3 +9049,50 @@ Soldier paint cost is 5 and stashes start at 200, so exact zero is reachable, no
 iteration 27's `PAINT_RESERVE` throttles. The spawn-side probe and the tournament loss-shape arrived
 at the same trade from opposite directions. That raises my prior on iteration 27, and it does not
 lower the gate.
+
+### Doctrine 12 update adopted, and a manipulation check pre-registered for iteration 27
+
+**The archetype remedy is withdrawn from doctrine 12; the newest accepted snapshot replaces it.**
+Two lineages tested the old advice and it failed in *opposite* directions — my `bob_denier` was
+already too strong to lose to (86% / 94%, a fifth dead rung), another lineage's freshly-built
+archetype saturated on arrival, sweeping 25 maps to zero. The premise that died is *"unlike a
+snapshot you can choose its difficulty."* You cannot: a hand-built opponent's difficulty is set by
+guesswork about your own weaknesses, so it lands at a ceiling or a floor. The newest accepted
+snapshot reads **~50% by construction** — calibration you get for free rather than aim for.
+
+My `roster_extra.txt` already implements this, including the reason `bob_iter20` must be named
+explicitly (the stride rule puts it at position 8, not a multiple of 5) and my own caveat that a
+snapshot makes the roster *harder*, not more *independent*. Nothing to change; recorded so the
+resuming session knows the rule is now doctrine rather than a local choice.
+
+**Rule adopted: run the manipulation check WHEN YOU EXPECT TO PASS IT.** A check run only when you
+fear the answer is a formality whose outcome you have already decided. A favourable headline is
+exactly when it gets skipped and exactly when skipping costs most, because nothing else catches a
+gate that passed for the wrong reason. My accepts are thin — six consecutive rejects — so the
+temptation to wave a positive iteration 27 through is live rather than hypothetical.
+
+**So I am pre-registering it now, while iteration 27 is still running and I do not know the
+headline.** `src/bob_qprobe` (= `bob_q2`, dose 200, plus counters; compile-checked) counts at the
+spawn decision point:
+
+```
+blockedByPaint      chips would have allowed the spawn, the paint conjunct refuses it
+blockedOnlyByDose   ...and the ZERO arm would have spawned (paint >= paintCost)
+```
+
+`blockedOnlyByDose` is the manipulation itself: it counts spawns that exist in `bob_q0` and not in
+`bob_q2`. Doctrine 2 requires this — *"a parameter is only a dose if it changes the condition
+actually evaluated"*, and a past sweep produced byte-identical games because the parameter fed a
+check that never ran.
+
+**Pre-registered thresholds, set before the headline exists:**
+- If `blockedOnlyByDose` is **~0**, the dose does not exist, and **any** iteration 27 headline —
+  positive or negative — is measuring something other than my mechanism. That voids the iteration
+  regardless of how good the number looks.
+- I **expect it to pass**: tower paint pools at 8-10% of capacity and a soldier costs 200, so the
+  gate should sit right in the live band. Recording the expectation is the point — if it fails, I
+  was wrong about the bot's paint economics and that is worth more than the sweep.
+
+The gauntlet's own diff-from-null count is a *weaker* version of this check (it detects that games
+differ, not that they differ **for the pre-registered reason**), so it is a cross-check, not a
+substitute. Both will be reported.
