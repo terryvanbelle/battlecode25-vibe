@@ -11223,3 +11223,147 @@ Four times the area, thirty-five times the idleness. Two points is not a curve, 
 claiming the exponent — but the *direction* is the one the mechanism predicts, and it agrees with
 the 300-game cross-lineage small/large split (54.8% vs 29.5%) that was measured on completely
 independent ground. Three instruments, one story.
+
+## Iteration 41 RESULT — **UNRESOLVED** at 27/50, +0.76 sd. The mechanism is real and has a diagnosed defect.
+
+Run `gauntlet/20260908-151657`. `carol_i41_a` vs `carol_iter36`: **27/50, +0.76 sd**, SW 6 / SL 4 /
+D 15, small 18/32 = 56.2%, large 9/18 = 50.0%. Under the standing gate that is **UNRESOLVED**
+(26-28), which may not accept without a disjoint-sample replication.
+
+**DECISION: not accepted. `src/carol` remains iteration 36; HEAD compiles.**
+
+### Both of my pre-registered predictions FAILED, and I am recording that before the good news
+
+1. **"The large-map arm should move more than the small-map arm."** It did not: small **56.2%**,
+   large **50.0%** — the opposite ordering. My reasoning was that an idle soldier in our own
+   territory is exactly the one that can lay a pattern, so large maps (49.2% IDLE-ALLY) had more
+   spare capacity to convert. The capacity was there; something else ate the gain.
+2. **"If the guard is what makes SRPs work, `i41_b` should be the worst of the three."** It was
+   not. `carol_i41_a` vs the guard-ablated `carol_i41_b`: **24/50, −0.54 sd** — the ablated arm is
+   *marginally ahead*, well inside noise, but certainly not the worst. So the pre-flight's
+   splasher-guard story, which was *proved* on a single rendered game, does not show up as a
+   win-rate effect over 50. **A correct mechanism account is not the same as a load-bearing one**:
+   splashers really do break patterns, and stopping them really does let patterns activate, and
+   that turns out not to be what decides games.
+
+### Link 1 and link 3 fire hard. Link 2 is fully cleared.
+
+`TheBest` (60x60), reproduced deterministically because it is a **swept WIN** and my own learning
+says not to read a mechanism off a loss sample:
+
+| | `carol_i41_a` | `carol_iter36` |
+|---|---|---|
+| rounds with >=1 ACTIVE pattern | **1,376** | 0 |
+| SRP-rounds actually paid | **2,739** | 0 |
+| first activation | round **155** | — |
+| median fleet tower paint | **3,453** | 1,113 |
+| splashers built | **238** | 180 |
+| **paint towers built** | **4** | **4** |
+| end coverage | **478** | 365 |
+
+**Tower paint 3.1x, coverage up, splashers up, paint towers equal — and it wins a 60x60 map this
+lineage normally loses.** The economic premise of the iteration is confirmed: SRPs convert idle
+chips into the binding resource at scale.
+
+### And on the losing side, the pre-registered price condition fires exactly as written
+
+`DefaultHuge`:
+
+| | `carol_i41_a` | `carol_iter36` |
+|---|---|---|
+| SRP-rounds paid | 1,748 | 0 |
+| median fleet tower paint | **2,256** | 1,764 |
+| **soldiers built** | **26** | **479** |
+| **paint towers built** | **4** | **14** |
+| end coverage | **240** | **695** |
+
+I wrote in advance: *"Falsifiable: paint towers built must NOT fall. If `twPAINT` drops against
+`carol_iter36` while `srp` rises, the subordination gate has failed and the iteration is rejected
+regardless of the win count."* **twPAINT fell 14 -> 4 while SRP-rounds rose 0 -> 1,748.** The
+condition fired. It is map-dependent rather than uniform — it held on `TheBest` — but it fired, and
+it names the defect precisely.
+
+### The defect, and it is iteration 30's lesson repeated against my own new code
+
+Soldiers are built only when `chips >= 2250` (the binding term is iteration 30's `SPLASH_FLOOR`
+of 2000 plus a soldier's 250). **I gated SRP completion at `CHIP_RESERVE + 200 = 1400.**
+
+> The SRP's chip gate sits **850 chips BELOW the soldier gate**, so a completing pattern takes the
+> treasury out from under soldier production and holds it there. On `DefaultHuge` that cost ~450
+> soldiers, and soldiers are the only unit that converts a ruin into a tower — 14 paint towers
+> became 4, and coverage 695 became 240.
+
+This is precisely the mechanism my own iteration-30 note describes — *"the cheap unit does not
+merely get built more often, it PREVENTS the expensive one from ever being afforded"* — and I
+reproduced it with a 200-chip purchase I had argued was free because "the treasury sits idle".
+**The treasury is idle at 3,000 and contested at 2,300, and a gate is only ever evaluated at the
+margin.** I priced the purchase against the average and it is the threshold that matters.
+
+### Iteration 42: raise the SRP chip gate above the soldier gate
+
+One constant, the same shape as `SPLASH_FLOOR` and `PAINT_FLOOR` before it: complete a pattern
+only out of true surplus, so an SRP can never be the reason a soldier was not built. This is the
+resolution of iteration 41 rather than a new hypothesis — the mechanism is established, the price
+is diagnosed, and the fix is the one the diagnosis names.
+
+## Iteration 42 attempts ABANDONED — and the reason is a methodological failure, not a bot failure
+
+I built and pre-flighted four fixes for iteration 41's `DefaultHuge` collapse. All four failed.
+Then I checked the run and found the collapse was not real:
+
+> **`carol_i41_a` went 1/2 on `DefaultHuge`, not 0/2. It won the other side.** The large-map
+> record for the run was **9/18**, with `TheBest` and `Oasis` both swept wins.
+
+**I spent six VM matches debugging one side of one map.** Every "diagnosis" was fitted to a single
+game, and each one was wrong in a different way:
+
+| attempted fix | prediction | pre-flight result |
+|---|---|---|
+| `SRP_CHIP_FLOOR` 1400 -> 2250 | SRPs were starving the soldier gate | soldiers still 24 vs 485 |
+| `SRP_MIN_TOWERS` = 8 (expand first) | pattern work was stalling early expansion | reached 8 towers, stalled back to 5 |
+| `SRP_SHARE` = 1-in-8 soldiers | bound the mobility cost | SRP nearly off (51 rounds), still lost |
+| `SRP_GUARD` off | the guard was suppressing splashes near tower patterns | still lost, and 0 SRPs survived |
+
+The fourth is the one that should have stopped me two attempts earlier: **with the mechanism almost
+entirely disabled, the arm still lost that game.** That is proof the mechanism was not what lost
+it, and I read it as "so it must be the guard" instead of "so this map is not evidence about the
+mechanism at all".
+
+**This is the THIRD time today I have generalised from a single map** — after the `twPaint~`
+reading that was mostly one map, and "the current build barely upgrades" from one `galaxy` game. I
+wrote the lesson down both times. What is new here is the cost: the earlier two produced a wrong
+sentence in a log, this one produced four builds and six matches of shared VM time, and it did so
+*after* the gauntlet had already given me the honest 25-map answer.
+
+The specific trap, stated so I can recognise it next time:
+
+> **A gauntlet gives you a distribution; the `losses/` directory gives you its left tail. Opening
+> one tail replay and diagnosing "why the candidate loses" silently substitutes one draw for the
+> distribution.** The number that matters was already computed — 27/50, large 9/18 — and no amount
+> of staring at one replay can revise it. Replay inspection is for *mechanism* (does link 1 fire?),
+> never for *verdict*, and I crossed that line the moment I started fixing things.
+
+I have also, twice today, treated a within-noise comparison as a signal in the direction I wanted:
+`i41_b` beating `i41_a` at −0.54 sd was noise, and I first dismissed it as noise, then later
+seized on it as proof the guard was harmful. It cannot be both. It is noise.
+
+**Exploratory candidates deleted** (`src/carol_i42_a`, `src/carol_i42_b`); none was a designed dose
+and none belongs in the tree. `src/carol` remains iteration 36 and HEAD compiles.
+
+## The correct next step, which the gate already prescribed
+
+Iteration 41 is **UNRESOLVED at 27/50**, and my standing gate says exactly what to do with that:
+*a disjoint-sample replication*. Not a redesign, not a fix for a map that was never broken — a
+second 25-map draw that does not overlap the first, to separate a real +0.76 sd from sampling
+noise. The economic case is strong and independently confirmed (`TheBest`: tower paint 3,453 vs
+1,113, coverage 478 vs 365, paint towers equal, a swept win on a 60x60 board), and that is worth
+resolving properly rather than abandoning.
+
+Queued, in order:
+1. **Replicate iteration 41 on a disjoint map sample.** `MAPS` drawn to exclude this run's 25.
+2. If it accepts, snapshot `carol_iter41`, redraw both progress charts, and **extend the frozen
+   roster** — `progress/vs_old_bots_history.csv` has not been extended since iteration 30, six
+   iterations ago, and it is the lineage's only absolute-strength instrument.
+3. Iteration 43 targets the standing deficit (large maps, 29.5% cross-lineage) via
+   `newExploreTarget()`, which is uniformly random and is why 49.2% of soldier turns on a 60x60
+   map are spent idle inside our own paint.
