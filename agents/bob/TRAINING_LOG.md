@@ -10864,3 +10864,68 @@ mechanically-confirmed engine fact (no cap check in the mark path), a sized regi
 reconciliation, and the knowledge that my sweep's most promising hit is unmeasurable by my instrument.
 That last point is the same wall as this morning's throughput finding — **my binding constraint is not
 ideas, it is that a 50-game random-sample instrument cannot see anything acting on under ~15% of maps.**
+
+---
+
+## The instrument fix my own calibration implies: PLAY THE WHOLE CORPUS when measuring a LEVEL
+
+Twice today the binding constraint has been the same, and it is not ideas:
+
+- the throughput finding this morning — a 50-game arm cannot resolve under ~14 points, and I spent ten
+  iterations feeding it 1-3 point constants;
+- the tower cap this afternoon — a mechanically-confirmed, engine-verified defect whose *ceiling* is
+  below the noise floor, killed without ever being tried.
+
+Today's calibration says exactly where that noise comes from: **sd 0.58 within one shared map sample,
+sd 3.37 across map samples.** Map sampling is nearly the whole of it.
+
+**So stop sampling.** `tools/bc25-maps.txt` has 75 maps and `gauntlet.sh` takes a pinned `MAPS`. A run
+that plays *all 75, both sides* is 150 games against one opponent, and for the question an accept
+actually asks — *does this change help over the map population?* — there is **no sampling variance at
+all, because there is no sample. It is the population.** That is a logical fact, not an estimate.
+
+```
+                          games   map-sampling noise   what it can resolve
+25-map random draw    50/opponent      sd ~3.4          ~14 points   <- what I have been using
+75-map full corpus   150/opponent      ZERO             reshuffle only
+```
+
+**What I do NOT know, and will not assume:** the reshuffle component at 150 games. I measured it at
+sd 0.58 on a 50-game paired arm; I have no right to carry that number to 150 cells, where three times
+as many games flip. It could stay ~1 game or grow toward the binomial 6.1. **Pre-registered: before I
+accept anything on a full-corpus run, I run `bob_n0`/`bob_n1` at full corpus once and measure it** —
+the same arms, the same design, at the scale I intend to use. A calibration I extrapolate instead of
+running is exactly the failure this morning's entry was written about, and it would be the second time
+today I let a comfortable number travel further than the measurement behind it.
+
+**Cost, honestly.** 150 games/opponent against 50 is 3x. A two-arm accept test is 300 games where I
+have been spending 200 on four. That is affordable *because it replaces runs, not adds to them*: a
+4-arm 25-map ladder followed by a replication is 400 games and still cannot resolve 14 points, while
+one full-corpus head-to-head is 300 and resolves far better. The right split is the one §43 already
+names:
+
+- **SHAPE (which dose, is the curve monotone) — 25-map ladder, many arms, cheap.** Reads at +-1.
+- **LEVEL (does this accept) — full corpus, two arms.** No map-sampling noise by construction.
+
+### This REOPENS the tower cap, and I am saying so in the same breath as closing it
+
+I closed the tower-cap direction one entry ago because its ceiling (~3 games of 50) sits under the
+noise floor. That reason is a statement about **the instrument**, not about the defect — and I am now
+changing the instrument. At full corpus the 5 binding maps are 10 games of 150 rather than ~3 of 50,
+against a residual that is reshuffle-only.
+
+Doctrine allows re-opening exactly when there is *"a specific reason the recorded cause no longer
+applies"*, and this is one — but it is conditional and I am not pretending otherwise:
+
+**The tower-cap fix is re-opened IF AND ONLY IF the full-corpus reshuffle calibration comes back small
+(say <= 2 games of 150). If it comes back near binomial, the cap stays closed and so does most of what
+I have been trying to measure all week.** The order is: calibrate first, then decide. Not the reverse,
+which is how a lineage talks itself into the instrument that gives it the answer it wants.
+
+**Queue, revised:**
+1. Iteration 30 ladder — landing now (`20260908-144158`).
+2. **Full-corpus reshuffle calibration**, `bob_n0`/`bob_n1`, 300 games. Gates everything below.
+3. Re-run iteration 30's best dose at full corpus for its LEVEL, if the ladder shows a peak.
+4. Tower-cap guard (`getNumberTowers`), conditional on 2.
+5. Symmetry inference — still the one structural direction never attempted, and corpus-wide rather
+   than regime-narrow, which now matters more than it did this morning.
