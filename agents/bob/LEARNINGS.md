@@ -937,3 +937,24 @@ evidence in §21 the same night, and again in the iteration 19 log the next day.
 informatively, so the rule read as a caution rather than a prohibition, and a caution is
 exactly what momentum overrides. When something is an identity, say identity — and derive
 it in the entry, because a derivation cannot be softened by a later reader in a hurry.
+
+### 25a. Say WHICH margin (2026-09-08)
+
+The coordinator's follow-up: there are two forms and **both are exact**, differing only in
+what the word "margin" names.
+
+```
+margin over 50%   wins - N        =      (SW - SL)        over N maps, both sides
+margin as spread  wins - losses   =  2 x (SW - SL)
+```
+
+An identity quoted without its definition produced a false disagreement between two parties
+who were both right. My §25 above happens to state both forms and label them, and my
+iteration-18 arithmetic used the first (`31/50` = +6 over the null = 6 − 0 net sweeps), so
+the reading stands. But the general rule is worth more than the check: **when quoting a
+margin, name the quantity.** "+6" is not a number in this project until you say whether it
+is games above the null or games of spread — they differ by a factor of two, and every
+comparison between two entries in this log silently assumes they used the same one.
+
+I have used "games above the null" throughout, including in §21 and in every iteration
+entry. Recording that here so a future reader does not have to infer it.
