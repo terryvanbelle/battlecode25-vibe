@@ -3,9 +3,18 @@
 splits, and the map-size breakdown that iteration 21 pre-registered.
 
 Usage: arm_eval.py <run-dir> [jar]
-Scores are from the ARM's point of view (bot_result is the reference bot's, so
-it is inverted). A run's map sample is shared by all arms, so cross-arm
-comparison within one run is exact.
+SIGN CONVENTION -- read this before quoting a number. `bot_result` in
+results.csv is the REFERENCE bot's result, so this tool inverts it and every
+score printed is the ARM's. TRAINING_LOG tables written before 2026-09-08 print
+the *reference's* score instead, so the same game appears as 17/50 there and
+33/50 here. Both are right; they answer different questions. Validated against
+run 20260908-000848, where it reproduces the logged iteration-20 dose curve
+exactly (mirror +0 se 0 / s2 +8, 8 swept 0 against / s3 +4, 7 swept 3 against).
+
+`sd` is a plain binomial se over GAMES (sqrt(n)/2). It is NOT the statistic the
+older log rows quote, which is finer-grained; the accept gate is registered in
+games for exactly that reason. A run's map sample is shared by all arms, so
+cross-arm comparison within one run is exact.
 """
 import csv, sys, collections, zipfile, struct, gzip, glob, os, math
 
