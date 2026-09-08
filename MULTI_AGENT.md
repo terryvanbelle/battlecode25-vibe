@@ -116,6 +116,19 @@ twice, a few seconds apart. A file still growing means the agent is alive
 whatever its listed status says. Only relaunch when `ListAgents` does not show it
 running AND its transcript is static.
 
+**And that is still not sufficient — so STOP THE OLD AGENT EXPLICITLY BEFORE
+LAUNCHING ITS REPLACEMENT.** A session that reports `completed` and sits static
+for ten minutes can still come back; it happened a fourth time after both checks
+above passed. The checks reduce the chance, they do not remove it, because
+nothing in an observation makes a state terminal. An explicit `TaskStop` does.
+It is harmless on an agent that really has finished, and it is the only step that
+converts "appears done" into "is done".
+
+Cost of skipping it, measured: two sessions of one lineage each launched a
+gauntlet, putting up to six concurrent jobs against a `MAXJOBS <= 3` rule on a VM
+shared with two other lineages and a live BC26 project, and forked the ledger
+into two competing iteration 45s.
+
 When two do end up live, do not guess which to keep. Sample each session's
 transcript mtime a few seconds apart: the one still being written is the live
 worker, and it is usually the older one with the deeper context. Stop the other.
