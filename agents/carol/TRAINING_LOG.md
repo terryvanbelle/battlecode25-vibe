@@ -11391,3 +11391,55 @@ number is exactly how a gate stops being a gate. So, in advance:
 
 Recording also what I will NOT do with the result: I will not open a loss replay to explain it.
 The verdict is the 50 games.
+
+## Iteration 41 REPLICATION — **REJECT** at 22/50, −1.22 sd. Pooled 49/100. The effect was not there.
+
+Run `20260908-160944`, 25 pinned maps with **zero overlap** with the first sample.
+`carol_i41_a` vs `carol_iter36`: **22/50, −1.22 sd**, SW 3 / SL 6 / D 16.
+
+Against the rule I wrote before seeing it — *reject if the replication is <= 25/50* — this is an
+unambiguous **REJECT**, and the pooled record is **49/100**, below even the even-money line, let
+alone the 56 I pre-registered for an accept.
+
+**DECISION: REJECT iteration 41.** `src/carol` remains iteration 36; HEAD compiles.
+
+### What the two runs together actually say
+
+| | run 1 (25 maps) | run 2 (25 disjoint maps) |
+|---|---|---|
+| overall | 27/50, +0.76 sd | **22/50, −1.22 sd** |
+| small maps | 18/32 = 56.2% | **13/32 = 40.6%** |
+| large maps | 9/18 = **50.0%** | 9/18 = **50.0%** |
+
+The large-map arm reproduced *exactly* — 50.0% twice, on disjoint ground. The small-map arm swung
+56.2% -> 40.6%. **So the first run's +0.76 sd lived entirely in the small-map half, and that half
+did not replicate.** A single 50-game run pointed at a real-looking effect on the maps where carol
+is already strong, and a second draw erased it. This is the whole reason the unresolved band exists
+and the reason it may not accept on one sample.
+
+### The honest summary of iteration 41
+
+The mechanism is **real, measurable and confirmed at every link**: patterns activate at scale
+(1,376 rounds on `TheBest`), tower paint triples (3,453 vs 1,113), coverage and splasher counts
+rise, and the paint-per-chip arithmetic against a tower upgrade is right. Every engine constant
+behind it re-verified this hour against the resolver-approved 3.1.0 jar.
+
+**And it does not win games.** Those are not in tension: the SRP converts idle chips into paint
+income, and this lineage's binding constraint is evidently not the paint income at the margin — it
+is the *reach* that decides how much ground the paint can be spent on. Iterations 37-41 have now
+all attacked the resource economy in some form, and the standing measurement says the deficit is
+geometric: **29.5% on large maps against 54.8% on small, cross-lineage over 300 games**, with 49.2%
+of soldier turns on a 60x60 board spent idle inside our own paint because `newExploreTarget()`
+picks a uniformly random coordinate.
+
+Five iterations of economics have produced one accept. The next one goes at the geometry.
+
+### Kept from the rejection
+
+- `carol-tools/mixcheck/srpcheck.py` and the content-keyed `dumpcache.sh` — instruments, still good.
+- The proof that carol's splashers repaint carol's own secondary tiles. That is a true fact about
+  the bot with no current consequence, and it will matter the moment anything else in this lineage
+  depends on holding a specific paint arrangement.
+- `src/carol_i41_a` and `src/carol_i41_b` stay in the tree as a documented negative result: a fully
+  working SRP implementation, so a future session can tell "we never tried it" from "we tried it
+  and it did not pay".
