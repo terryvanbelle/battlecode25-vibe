@@ -12355,3 +12355,68 @@ every one of the 75 maps rather than on a surplus condition. So:
 **A pre-registration that silently describes a different build than the one that plays is not
 a pre-registration**, which is why this is the second amendment rather than the first
 convenient reading.
+
+## `mopSwing` VERIFIED — both open items closed, and it is strictly better on every axis
+
+I flagged two things as inference rather than fact. Both are now checked, and both held.
+
+**1. The field mapping.** `UnitType`'s constructor assigns in exactly declaration order —
+`putfield` sequence read off the bytecode:
+
+```
+paintCost, moneyCost, attackCost, health, level, paintCapacity,
+actionCooldown, actionRadiusSquared, attackStrength, aoeAttackStrength,
+paintPerTurn, moneyPerTurn, attackMoneyBonus
+```
+
+Against MOPPER's arguments `(100, 300, 0, 50, -1, 100, 30, 2, -1, -1, 0, 0, 0)` this gives
+**`actionCooldown = 30`**, and incidentally **`attackCost = 0`** — a mopper's attack costs no
+paint at all.
+
+**2. The normal attack's cooldown.** `RobotControllerImpl` has exactly three cooldown sites,
+and they are distinguishable in the disassembly:
+
+```
+buildRobot :  bipush 10                                        -> 10
+attack     :  getType().actionCooldown ; addActionCooldownTurns -> UNMODIFIED, so 30
+mopSwing   :  bipush 20                                        -> 20
+```
+
+So the comparison is settled:
+
+| | tiles | paint removed | cooldown | paint cost |
+|---|---|---|---|---|
+| mopper single-target | 1 | 10 | **30** | 0 |
+| **`mopSwing`** | **3** | **15** | **20** | **0** |
+
+**Strictly better on every axis, and free.** Three tiles instead of one, half again the paint
+removed, two-thirds the cooldown, and no paint cost either way. My moppers have used only the
+single-target attack for thirty iterations.
+
+### The methodological note, which cuts the other way from this morning's
+
+Twice today a confident reading of source was refuted by measurement, and I wrote that the
+response is "not to stop reading source but to stop promoting readings to facts". **This is
+the case where the reading survived checking** — and it is worth recording, because the wrong
+lesson to draw from two refutations is that source reading is unreliable. It is not: what was
+unreliable was reading source about *how often a code path executes*, which is a runtime
+property that only measurement can give. Both refutations were of that kind — the refill's
+binding guard, and the tower paint hypothesis.
+
+> **Source tells you what the engine DOES. Only a run tells you what your bot does OFTEN.**
+> The mopSwing question is entirely of the first kind, which is why `javap` could close it and
+> why no game was needed.
+
+### Queued as iteration 32, ahead of resource patterns
+
+It displaces the resource-pattern idea in the queue on evidence rather than taste: mopSwing is
+a **strict** improvement at zero resource cost, while resource patterns cost 200 paint per
+pattern and pay rent only on ground I demonstrably fail to hold. The mopper change is also
+regime-matched to my measured weakness — my coverage falls because enemy paint replaces mine,
+and this is a 3-tile enemy-paint remover I already field the units for.
+
+**Named risk, before the run**: `mopSwing` is cardinal-only, so a mopper adjacent to enemy
+paint on a diagonal gains nothing, and a naive "always swing" policy would swing at one tile
+of value where the single-target attack would have taken the better tile. The dose question is
+*when* to prefer the swing, and it is a comparison of counts I can compute in-bot, so it needs
+no searched constant.
