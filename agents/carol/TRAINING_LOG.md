@@ -7496,3 +7496,49 @@ now carry an inline `**[SUPERSEDED <date>: …]**` marker at the point of the st
 retroactively to the 3.40/3.46 drain figures and to the build-mix subsection whose explanation was
 refuted. Preserving the old text is right; leaving it indistinguishable from live text is the
 defect.
+
+### Mechanism verification — attribution CLOSED, and prediction 4 stays honestly unscored
+
+`gauntlet/20260908-005610` (8/8, all four maps, end rounds byte-identical to the `carol_i29` run,
+so `carol_i29q` is verified no-op instrumentation of the accepted build), plus four `vm-match`
+games run to pull replays back, since a build that wins every game leaves no losses to collect.
+
+**Prediction 1 — discarded-attack share falls toward 0. MET, exactly.**
+
+| map | discarded (iter25) | **discarded (iter29)** | landed (iter25) | **landed (iter29)** |
+|---|---|---|---|---|
+| Bunny | 70.9% | **0.0%** | 454 | **1,021** |
+| DefaultMedium | 85.3% | **0.0%** | 826 | **999** |
+| Fossil | 81.5% | **0.0%** | 444 | **1,447** |
+| Mirage | 79.1% | **0.0%** | 464 | **1,239** |
+
+Zero, on every map, by the same measurement that found 1,104–4,789 of them before. **The
+attribution recorded as OPEN at the accept is now CLOSED**: the mechanism is the mechanism.
+
+**Prediction 2 — soldier median life rises. MET, and by more than I expected.**
+
+| map | median life (iter25) | **median life (iter29)** | on ENEMY paint (iter25 → iter29) | drain/turn |
+|---|---|---|---|---|
+| Bunny | 56 | **93** | 41.6% → **25.6%** | 1.20 → 1.06 |
+| DefaultMedium | 50 | **81** | 39.4% → **36.5%** | 1.56 → 2.15 |
+| Fossil | 49 | **93** | 48.5% → **29.7%** | 1.58 → 1.59 |
+| Mirage | 50 | **120** | 45.2% → **28.5%** | 1.57 → 1.08 |
+
+Soldiers live **1.6–2.4x longer**, and the share of turns spent standing on enemy paint — where a
+soldier can do nothing at all — falls by a third to a half. That second number was not predicted
+and is worth keeping: the old build parked soldiers on enemy ground because the ruin loop kept
+handing them an "action" there. Removing the fake action removed the reason to stand still.
+
+**Prediction 4 — gains concentrate where the discarded share was highest. STILL UNSCORED, and now
+for a second reason.** The accept run's random sample contains none of these four maps. And even
+here the comparison is between *different games*: i29 wins Fossil at r403–r1107 where i25 ran to
+r1037, and Mirage at r1846 where i25 ended at r728, so attack totals are not comparable without
+normalising, and raw vs per-round orderings disagree with each other **and** with the prediction
+(DefaultMedium had the highest discarded share, 85.3%, and the smallest gain on both measures).
+
+I could pick whichever normalisation flatters the prediction. I am not going to. **The registered
+map-level prediction is untested, its cheapest test is confounded, and the correct next step is a
+run with the maps pinned** — which is what doctrine's map-level discipline asks for and what I will
+do rather than settling it by choice of denominator. Nothing in the accept rests on it: the gate
+was the fresh-sample head-to-head and the roster, both met, and predictions 1 and 2 are now met
+outright.
