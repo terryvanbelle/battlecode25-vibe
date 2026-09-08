@@ -13549,3 +13549,22 @@ the fault" rule that has bitten this project before.
 `RULES.md` now carries `tools/engine-jar.sh` in the reproduce block instead of an unexplained
 `$BC_JAR`, plus the `getChips`/`getNumberTowers` version check, so the next session cannot
 reproduce the sweep against the wrong jar even by accident.
+
+### Spot-checking the two engine facts the SHIPPING bot most depends on, against the canonical jar
+
+The jar flag applies to facts derived in earlier sessions too, so I re-read the two that
+`src/alice` actually rests on, using `tools/engine-jar.sh --remote`:
+
+- **`InternalRobot.soldierAttack` (iteration 22 — "the single largest paint leak found in this
+  lineage").** `getfield UnitType.attackCost` at **54**, `addPaint` at **58**; the tower branch
+  is at 83-86 and the `isPaintable` / enemy-paint bail-outs at **167** and **178-204**. So the
+  debit really is unconditional and really does precede every examination of the target, at
+  the offsets `RULES.md` already recorded. The guard in the shipping bot is sound.
+- **`RobotControllerImpl.upgradeTower` (iteration 4 — towers upgrading themselves).**
+  `assertCanUpgradeTower` -> `getNextLevel` -> `moneyCost` -> `TeamInfo.addMoney` ->
+  `InternalRobot.upgradeTower`, with **no cooldown call anywhere in the body**. Confirms "a
+  self-upgrade costs chips and nothing else".
+
+Both stand on 3.1.0. I checked these two rather than the whole of `RULES.md` because these are
+the two whose failure would change what `src/alice` does *today*; the rest are re-verified as
+they are used, which is how the mopSwing correction surfaced.
