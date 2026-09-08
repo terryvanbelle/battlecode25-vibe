@@ -12718,3 +12718,57 @@ stated as a property of the *instrument* rather than of the opponent list.
 It also explains why the twice-daily tournament is described in `MULTI_AGENT.md` as the
 highest-value evidence in the project. It is not higher-value because it has more games. It is
 higher-value because it varies **the only factor my own instrument holds fixed.**
+
+## Iteration 32, drafted — `mopSwing` on the mopper's genuinely unused action
+
+Drafted while the replication runs; **it does not launch until the replication reports**, per
+the step I just put in `RULES.md`.
+
+### The opening, which is in my own code
+
+`runMopper`'s attack block scans `senseNearbyMapInfos(2)` for **enemy paint** and attacks the
+best tile. If there is no enemy paint in action range, `best` stays null and **the action is
+not spent at all** — even when enemy robots are standing right there. `mopSwing` drains enemy
+robots and needs no enemy paint on the ground.
+
+So the mechanism writes itself in the shape this lineage's three best accepts share
+(iterations 24, 25, 28 — "consume only what was going spare"):
+
+> **When the existing tile-targeting logic finds nothing, pick the cardinal direction whose
+> 3-tile arc holds the most enemy robots, and swing if that count is >= 1.**
+
+No searched constant. The threshold is 1 because the action would otherwise be discarded
+entirely, so any non-zero drain is strictly better than nothing.
+
+### The named risk, and it is NOT "zero opportunity cost"
+
+I am not going to make the iteration 31 mistake twice. **`mopSwing` adds 20 action cooldown**
+(hard-coded, verified), so a swing today delays the mopper's next *tile clear*. The action is
+spare **this turn**; the cooldown it buys is not spare — it is borrowed from future turns.
+Iteration 31 is precisely a case where spending something that looked free was worse than
+discarding it, and iteration 30's pre-emption turned out to be load-bearing for exactly that
+reason. **"The action is idle" is an argument about one turn; the cost lands on the next two.**
+
+### Pre-registered
+
+- **Instrument**: `alice_i32` vs `alice_iter30`, full 75-map census, candidate as `BOT`.
+  No map sampling, so no disjoint replication is required for the accept itself.
+- **Gate**: net swept > 0, `SW`/`SL` separately, 0 exceptions, 0 overruns.
+- **Mechanism check**: the identical-to-baseline set (r2000 excluded) must be **small**. If it
+  is large, moppers rarely reach the "no enemy paint but enemy robots present" state and the
+  mechanism is close to inert — in which case any margin is not this change.
+- **Failure diagnostic, named in advance**: if it loses, compare mopper *tile clears* against
+  the baseline. A fall there is the cooldown cost landing, and it would mean the swing must be
+  gated on the mopper having no valuable tile to clear **soon**, not merely none right now.
+- **Single arm deliberately.** There is no dose to search — the threshold of 1 falls out of
+  "the action was going to be discarded". That also keeps this iteration clear of the
+  40-map dose-comparison exposure the coordinator flagged.
+
+### What it does NOT claim
+
+It does not claim to address my coverage collapse. `mopSwing` drains **robots**, not tiles —
+the correction I had to make earlier today. Its rationale is that **starvation causes 76-90%
+of bob's deaths and 72-88% of mine**, so draining unit paint attacks the largest single cause
+of death in these games. That is a claim about killing units, and my self-play census can test
+it *only* because my census opponent starves at a similar rate to bob — which I checked rather
+than assumed.
