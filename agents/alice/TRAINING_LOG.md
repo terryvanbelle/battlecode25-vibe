@@ -13405,3 +13405,48 @@ map where the fix should matter most is the map where the confound is largest.**
 **What survives**: the key itself is fine (validated on all 1,374 ruin coordinates,
 single-branch on no map, and its spatial spread of paint towers is slightly *better* than
 parity's). What is refuted is the ratio, decisively and in one direction.
+
+## Iteration 37 — open the splasher gate earlier (pre-registered)
+
+**Direction supplied by iteration 36's refutation rather than by a new idea.** I built two
+arms to *reduce* splashers, and one game showed the winning side going to zero soldiers and
+twelve splashers with coverage climbing 495 -> 623 -> 662, while the soldier-heavy arm's
+coverage fell 534 -> 312. After expansion ends the splasher is the only unit I field that
+takes enemy paint, so it is the only one whose output still converts ground.
+
+The gate's own history is already a measured sequence, and this continues it:
+
+| iteration | threshold | outcome |
+|---|---|---|
+| 28 | `CHIP_RESERVE + 5000` (an L3 upgrade) | accepted |
+| 29 | `CHIP_RESERVE + 2500` (an L2) | accepted |
+| **37a** | **`CHIP_RESERVE + 1500`** | this run |
+| **37b** | **`CHIP_RESERVE + 500`** | this run |
+
+**Why the total override is kept deliberately.** Near the threshold, team money *oscillates*
+across it — `DefaultMedium` runs $3,140 at r200, $1,270 at r400, $4,010 at r600 — so a lower
+gate does not mean "splashers only". It means a **mixed composition that shifts toward
+splashers as the surplus grows**, with no new mixing constant to tune. That is exactly the
+behaviour I want, and it falls out of the existing structure.
+
+### Pre-registered
+
+- **Convention**: two-arm screen, **baseline in `BOT`** (`BOT=alice_iter30
+  OPPONENTS="alice_i37a alice_i37b"`), 25 shared maps, 100 games. **An arm is good when the
+  BOT loses.** The survivor gets a 75-map census with **candidate-as-`BOT`** before any accept.
+- **Gate (census)**: net swept > 0, `SW` > `SL`, 0 exceptions, 0 overruns.
+- **Named risk — iteration 26's cliff, and this arm walks at it deliberately**: a splasher
+  costs **400 chips** and `completeTowerPattern` gates on `getMoney() >= 1000`. Iteration 26
+  lost 21 net swept by starving tower construction, and iteration 29's own comment says this
+  gate is "only safe while the threshold still sits past the end of expansion". At
+  `+ 500` the threshold is $1,950 against a $1,000 tower completion, so **37b may fund
+  splashers out of expansion money**. If 37b loses while 37a does not, that is the cliff and
+  the curve has an interior peak between +500 and +2500.
+- **QUANTITY named in advance, to be measured on one game before the census** (the practice
+  that killed iteration 36 for 0.7% of a screen's cost): **the round at which the gate first
+  fires, and the tower count at r400 and r800.** If the gate opens earlier but tower count
+  falls, that is the cliff, and it is visible in one replay rather than in 150 games. This is
+  the measurement iteration 28 said it "should have made first and had not"; it still has not
+  been made, and this iteration makes it.
+- **Falsifier**: if both arms lose, the gate is already at or past its optimum and the
+  splasher line is finished as an axis — iterations 28 and 29 took what there was.
