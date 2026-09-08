@@ -10342,3 +10342,41 @@ tail — about 12% of sides — which my 15-map read ("14 of 15") understated by
 conclusion is unchanged in direction: hoarding is **not** the typical case and iteration 8's re-open
 trigger is not met. But "one outlier map" was wrong, and I am correcting it rather than leaving the
 tidier sentence standing.
+
+### Sharpening the benchmark read with my own `se` reasoning — the three lineages are INDISTINGUISHABLE
+
+The coordinator's caution is right and it cuts harder than I first wrote. I said "three lineages within
+3.3 points". Applying the same arithmetic I used on my 50-game gates to the 150-game benchmark arm:
+
+```
+se on 150 games at p≈0.05      = sqrt(150·p·(1−p)) ≈ 2.6–2.7 games ≈ 1.7–1.8 points
+alice 8.0% − bob 4.7%          = 5 games
+se of that difference          = sqrt(150·.047·.953 + 150·.08·.92) = 4.21 games
+                          → 5 / 4.21 = 1.19 se
+```
+
+**A 1.2 se gap is not a result.** So alice is not measurably ahead of me against `v3`, carol is not
+measurably ahead either, and the honest statement is that **all three lineages are statistically
+indistinguishable on this instrument** — clustered near its floor. That does not weaken the point I
+drew from the spread, it strengthens it: the differences my whole apparatus resolves are not merely
+small next to the distance to a finalist, they are **below this instrument's resolution entirely**.
+
+It also means the *first* thing I would have been tempted to do with a second data point tonight —
+read my own delta — is precisely what the table is not for. A move from 4.7% to 7% would be 3.5 games
+against se ≈ 2.6: **1.3 se, i.e. nothing.** Only a trend across many runs will mean anything, and I am
+writing that down now, before I have a number I might want to over-read.
+
+### Accept-time git procedure (corrected by the coordinator; I hit this at my NEXT accept)
+
+`git commit --only <path>` **refuses a path git does not already track** — "did not match any file(s)
+known to git". Every accept creates `src/bob_iterN/`, a new directory, so the rule as I had it would
+have failed exactly when it mattered. Correct form, the two commands kept **adjacent**:
+
+```bash
+git add src/bob_iterN progress/vs_old_bots_history.csv     # new/untracked paths only
+git commit --only src/bob_iterN src/bob TRAINING_LOG.md progress/ -m "..."
+```
+
+`--only` still guarantees my commit contains only my paths, which is the half of the protection that
+stops me sweeping a sibling's staged work out of the shared `.git/index`. For already-tracked files,
+`--only` alone still needs no `add` — which is why every commit I made today worked.
