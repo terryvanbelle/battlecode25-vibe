@@ -1254,3 +1254,28 @@ sits exposed.
 Reported to the coordinator rather than only worked around: the same trap sits in front of all
 three lineages, and `git add -A` (already forbidden) is the loud version of a hazard whose quiet
 version is plain `git add` of one's own paths.
+
+## The frozen roster un-saturates itself, and my "the roster is blind" note is now out of date
+
+I recorded earlier this project that the frozen roster had saturated at 94-100% and could no
+longer discriminate, and I built `carol_racer` to try to fix it (which failed, for the separate
+and better reason that a yardstick I construct inherits my blind spots). The roster is now:
+
+```
+carol_iter0 carol_iter1 carol_iter7 carol_iter21 carol_iter35 carol_rush carol_turtle examplefuncsplayer
+```
+
+**`carol_iter35` is in it.** The roster is derived automatically as "iteration 0, then every 5th
+accepted snapshot", so it picks up recent strong snapshots on its own as the lineage advances. Its
+top member is no longer a bot from the distant past that everything beats — it is the immediate
+predecessor, against which iteration 36 measured 28/50. That is the opposite of saturated.
+
+**So the instrument repaired itself by the mechanism it was designed with, and the fix I went
+looking for was unnecessary.** The correct move when a frozen instrument saturates is to check
+whether its own refresh rule will fix it before building a replacement — I built the replacement
+first and only checked the roster's composition afterwards, in a lull, by accident.
+
+Deferring the roster run itself for now with the reason stated rather than silently skipping it:
+it is 8 opponents x 50 = 400 games, a gauntlet is in flight, and the twice-daily tournament is
+about two hours out. It should be run once iteration 37 resolves, and it will now produce a
+point that means something.
