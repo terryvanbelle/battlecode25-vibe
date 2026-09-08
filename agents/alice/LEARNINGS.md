@@ -2269,3 +2269,33 @@ visible anywhere in a soldiers-per-turn table.
 - **Validating a geometric key against all 1,374 real ruin coordinates before running games
   was cheap and correct**, and it is reusable. The key had zero single-branch maps. The key
   was never the problem.
+
+### Same-day correction: the Barcode collapse is NOT the universal mechanism
+
+I wrote the table above from `Barcode` and let "tower count froze at 7 for 900 rounds" stand
+as *the* explanation. I then dumped a second map, and it does not hold:
+
+| `DefaultMedium`, T1 = `alice_i34` | r200 | r300 | r500 | r1000 | outcome |
+|---|---|---|---|---|---|
+| T1 towers | 10 | 10 | 11 | 11 | **T1 WON** |
+| T2 towers | 11 | 12 | 12 | 12 | |
+
+**No freeze, a one-tower gap, and the candidate won the map.** The tower-starvation story is
+real on `Barcode` and is not what happens everywhere; iteration 34 wins some maps.
+
+> **A replay chosen because I already had it verifies that a mechanism CAN operate. It never
+> establishes how often it does.** I have this rule written down twice already — for
+> iteration 25's `UnderTheSea` arm and for the R=0 ablation — and I still let a single map's
+> table carry the word "why" in a headline.
+
+The honest division of labour, and it is the same every time:
+
+- **The census says whether it HARMED.** That is the evidence, and it is overwhelming.
+- **A replay offers a mechanism that could produce that.** `Barcode` offers one; a second map
+  shows the mechanism is not uniform, so the aggregate harm is a *mixture* — some maps
+  collapse, some are unaffected, some improve.
+
+The pre-registered diagnostic survives this intact, because I registered it as a **comparison
+of two named branches**, not as a claim about every map: towers fell rather than soldiers
+rising, on the map where it failed. What does not survive is my generalising one map's
+magnitude into the mechanism's headline.

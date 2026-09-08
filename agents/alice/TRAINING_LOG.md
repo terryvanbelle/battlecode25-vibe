@@ -13111,3 +13111,109 @@ purely positional, so still immune to the money-at-mark-time artifact parity was
   cliff and implies raising the money share; a *rise* in soldiers alongside a loss means the
   army grew and the extra soldiers were not worth the towers, which implies the opposite fix.
   Those two are distinguishable and they contradict each other, which is the point.
+
+## Tournament 20260908-1300 — alice is FIRST for the first time, and level with bob
+
+| run | alice | bob | carol |
+|---|---|---|---|
+| 20260907-0100 | 35.3% | 95.7% | 19.0% |
+| 20260907-1300 | 38.0% | 92.3% | 19.7% |
+| 20260908-0100 | 47.3% | 70.3% | 32.3% |
+| **20260908-1300** | **56.3%** | 48.3% | 45.3% |
+
+Head-to-head vs bob: **26.0% -> 50.0%** (75-75, **23 swept each**, 29 split). Against carol
+62.7%. What played was `alice @ 920dafd` — **iteration 30**, the refill walk.
+
+**Read this with the report's own caveat.** Wins are conserved across three bots, so a delta
+means *changed relative to the other two* and never *got better* on its own; bob fell 22
+points in the same run, and part of my +9 is his fall. But two things are mine:
+
+- **The bob head-to-head is a two-bot number and it moved 24 points**, from 39–111 to 75–75.
+  Bob's sweeps against me went **44 -> 23** while mine went **8 -> 23**. A 36-map swing in
+  swept maps is not a rounding artifact of a three-way standings table.
+- It arrived on the tournament immediately after iteration 30 was accepted, and iteration 30
+  is the only accept between the two runs.
+
+**The r500–1200 deficit I diagnosed from the replays is where the refill walk acts**, so the
+mechanism and the measurement agree about *which phase* moved. I am not claiming iteration 30
+caused all 24 points — one tournament, and bob moved too — but this is the strongest external
+signal this lineage has had, and it is the third instrument (gauntlet census, frozen roster,
+tournament) to favour iteration 30.
+
+**What it does NOT change**: coverage still peaks and decays, and my army is still ~10
+soldiers against bob's 150+. Being level with bob is not being done.
+
+## Iteration 34 decomposed — the KEY fix and the RATIO change point opposite ways
+
+Iteration 34 changed two things at once and I should have separated them. The per-map results
+separate them for me. Bucketing each map by **what the OLD parity rule's money share is on
+that map** (from `tools/mapdata/ruin_parity.txt`), over the maps complete at the time of
+writing (43 of 75 — I will redo this on the full census):
+
+| parity money share on the map | i34 SW | i34 SL | split | net |
+|---|---|---|---|---|
+| paint-heavy (<= 35% money) | 1 | 0 | 2 | **+1** |
+| **balanced (35-65% money)** | **0** | **28** | 4 | **−28** |
+| money-heavy (>= 65% money) | 2 | 4 | 2 | **−2** |
+
+**Every bit of the damage is on maps where parity already produced a balanced mix.** Where
+parity was skewed or degenerate, iteration 34 is roughly neutral — and its only three swept
+wins are `Filter` and `Snowman` (both **all-even**: parity builds 100% money towers and
+**zero paint towers** there) plus `Oasis` (already 67% paint under parity).
+
+> **The degeneracy fix is worth roughly 0 to +3. The ratio change costs ~28.** Iteration 34
+> bundled them, so the good half was invisible under the bad half.
+
+### And a rival hypothesis I had not considered, which the same design tests
+
+Parity is a **checkerboard**: adjacent ruins alternate money/paint, so tower types are
+maximally *interleaved*. My hash scatters them into clumps at the same corpus ratio. That
+difference is not about the ratio at all, and it plausibly matters:
+
+- `tryRefill` searches for an ally tower within **r^2 <= 2**.
+- **Iteration 30 — my single largest accepted win, and the one the tournament just credited
+  with +24 points against bob — is the walk to a tower when out of paint.**
+
+If paint towers clump instead of spreading, a soldier's nearest tower is more often a *money*
+tower with no paint income, and the refill walk degrades. **Parity's checkerboard may have
+been doing real work for a reason its own comment never claims.**
+
+## Iteration 35 — dose curve on ONE key, and it separates ratio from arrangement
+
+Two arms, identical except for one constant, both on the iteration-34 key
+`(x*13 + y*29) % 105`, which was validated against all 1,374 official ruin coordinates and is
+**single-branch on no map** at either threshold:
+
+| arm | `MONEY_CUT` | realized money share | vs parity's 53.3% |
+|---|---|---|---|
+| `alice_i35a` | 52 | **49.1%** | matches the ratio, changes only the arrangement |
+| `alice_i35b` | 74 | **69.6%** | more chips than parity |
+
+With iteration 34's censused 24.3% this gives **three points on one curve** — 24.3 / 49.1 /
+69.6 — plus the parity baseline at 53.3% with its degeneracy.
+
+### Pre-registered
+
+- **Convention, stated before the numbers**: this is a two-arm screen, so the **baseline goes
+  in `BOT`** (`BOT=alice_iter30 OPPONENTS="alice_i35a alice_i35b"`) to share one map sample
+  across both arms. **That inverts the summary: an arm is good when the BOT loses.** Per my own
+  rule, whichever arm survives gets a decisive **census with candidate-as-`BOT`**, so nothing
+  is accepted under the inverted reading.
+- **Sample**: 25 maps, shared, 100 games. **Deliberately not a census.** Iteration 34's effect
+  was ~−29 net swept on 43 maps; my measured resolution limit for a *sampled* run is ~5 net
+  swept, so a sample resolves effects of this size easily. Censuses are for the accept.
+- **Gate (for the follow-up census, not the screen)**: net swept > 0, `SW` > `SL`, 0
+  exceptions, 0 overruns, full 75 maps.
+- **Primary prediction, sharp and falsifiable**: `i35a` matches parity's ratio, so if the
+  RATIO is the whole story it must land **near zero overall** while **gaining on the four
+  parity-degenerate maps** (`gridworld`, `Filter`, `Snowman`, `CastleDefense`).
+- **The discriminating outcome, and the reason this run is worth more than a dose**: if `i35a`
+  **loses on the balanced maps** — where its ratio equals parity's — then the ratio is *not*
+  the whole story and **tower ARRANGEMENT matters independently**. That would make parity's
+  checkerboard a load-bearing feature I nearly discarded as an arbitrary coin-flip, and it
+  points at the refill walk rather than at economics. These two outcomes imply opposite next
+  iterations, which is the point of running it.
+- **Named risk**: `i35b` walks toward iteration 26's cliff from the other side — more money
+  towers means less tower paint, and iteration 5 measured that a paint-starved tower falls
+  into an absorbing state where only moppers are affordable. If `i35b` loses while `i35a` does
+  not, the optimum is at or below parity's share and the curve has an interior peak.
