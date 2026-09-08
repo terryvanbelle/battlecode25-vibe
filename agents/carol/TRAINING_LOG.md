@@ -10782,3 +10782,35 @@ Report D, sd distance, and the area split; gate on none of them.
 3. **The price.** Fewer paint towers means less paint income *immediately* and the upgrade payoff
    arrives later, so this should look worse early and better late. Measured: `twPaint`, upgrades,
    splashers built, coverage, and the early/late split rather than the game total.
+
+## Iteration 40 ADDENDUM — my own upgrade table was contaminated by the round-1 freebies
+
+Building the link-1 checker exposed it. All four starting towers upgrade on round 1 for free, so
+a raw `grep -c UPGRADE` carries a constant +2 per team. Excluding round 1, and counting only
+**paint**-tower upgrades — the only ones that convert chips into paint income (5/turn -> 10/turn):
+
+| map | carol | opponent |
+|---|---|---|
+| DefaultHuge | 7 | alice **24** |
+| SMILE | **0** | alice **12** |
+| galaxy | 1 | bob **9** |
+| SMILE | **0** | bob **12** |
+
+**Carol upgrades zero paint towers on two of the four maps**, and the self-play `galaxy` game from
+iteration 39's run has **0 real upgrades for both arms**. So my pre-registration's claim that "the
+current build upgrades 8-11 per game in self-play" was also round-1 contamination — the current
+build barely upgrades either.
+
+This makes the premise *stronger* and the ceiling larger than I registered: going from zero
+upgrades to any is pure gain, and the weak-link arithmetic I put on record (one ruin sacrificed
+per upgrade bought) is only knife-edged when upgrades are actually firing. At zero, the money
+towers are buying nothing at all — which is precisely what the iteration is meant to change, and
+precisely what link 1 will now measure.
+
+**A second thing the opponents do that carol never does:** alice and bob upgrade *money* towers
+too (64, 19, 8, 3 against carol's 0 everywhere). Noted, not acted on — one mechanism at a time.
+
+**Third time today for the same defect class:** a count whose name implied a normalisation it did
+not have (`p` = tiles not units; `twPaint~` = sum not mean; `UPGRADE` = includes a constant
+baseline). All three were caught by building the *next* tool rather than by re-reading the last
+one, which is now the pattern rather than the exception.
