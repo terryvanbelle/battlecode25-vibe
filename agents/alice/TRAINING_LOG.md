@@ -10437,3 +10437,33 @@ Still a function of ruin coordinates alone, still identical for both teams, stil
 
 Not started: the iteration 25 confirmation owns the VM, and starting a second candidate
 before the first has a verdict is how a lineage ends up unable to attribute either.
+
+### The confirmation's map sample OVERLAPS the first run's by 6 maps — pooling naively would double-count them
+
+`comm -12` on the two runs' `maps.txt`: **6 of 25 maps are shared**, so the two samples
+cover **44 distinct maps**, not 50.
+
+This matters because of the property the whole session's reasoning rests on: **the engine
+and both bots are deterministic**, so a repeated (map, side) cell is not a second
+observation — it is *the same observation played again* and must produce the identical
+result. Pooling the two runs by simply adding `SW` and `SL` would count those 6 maps
+**twice**, biasing the pooled margin by whatever they happened to do the first time, in
+whichever direction that was.
+
+My pre-registered rule was *"pooled net swept maps > 0 accepts"* and I wrote it without
+anticipating sample overlap. Correcting the arithmetic — pooling over **distinct maps** —
+is not a goalpost move: it is the same rule computed on the population it always named,
+and I am fixing it *before* seeing the second run's results, which is the only time such a
+correction is cheap to trust.
+
+**And the overlap is a free instrument check I would not otherwise have had.** Those 6
+maps were played by the same two committed builds in both runs. If determinism holds, all
+12 games must match exactly. If any differ, then the null is *not* variance-free, and the
+reasoning behind "identical code sweeps nothing", "a swept map is a near noise-free
+instrument", and tonight's whole sensitivity-versus-benefit argument would need revisiting.
+I get that test for nothing, and it tests an assumption I have been leaning on all session
+without ever having verified it myself in a full run.
+
+Pre-registering the reading now: **12 of 12 identical -> determinism confirmed, pool over
+44 distinct maps. Any mismatch -> stop and report it**, because a non-deterministic engine
+is a bigger finding than iteration 25 either way.
