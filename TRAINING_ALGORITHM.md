@@ -759,6 +759,57 @@ latest snapshot directory name.
 
 ---
 
+## Most of what you try will fail. That is the design, not a verdict on you.
+
+A loop whose changes mostly worked would have a gate that was too loose. The
+rejection rate is the price of a gate strict enough to be worth trusting, so a
+run of negative results is evidence the method is working, not evidence the
+lineage is stuck. Read this section when a string of rejections starts to feel
+like a plateau.
+
+**An accept is not the only thing that moves the project.** These all did, in a
+single day across three lineages:
+
+- **A closed direction.** A constant bracketed on both sides is settled forever;
+  nobody spends games there again. "Reserve is a plateau, not a peak" cost 400
+  games once and saves them every time it is not re-litigated.
+- **A falsified premise.** One lineage found the paint-tether story that **four**
+  of its iterations rested on was simply false. That is worth more than any one
+  of those iterations, because it invalidates a class of future proposals too.
+- **A cheap kill.** Two games refuted an iteration's premise; one `javap` killed
+  another; four probe matches killed a treatment before it cost 150 games. The
+  cheapest possible way to be wrong is the most valuable habit here.
+- **A better instrument.** In one day: the noise floor measured three ways, the
+  full-corpus census, the API sweep, the engine-jar pin. Every future verdict is
+  more trustworthy because of work that produced no accept at all.
+- **A caught error.** A phase-only arm — a change that does *nothing* — scored
+  **+12** and would have cleared an inherited accept gate. Declining to ship it
+  is not a null result; it is a regression prevented.
+
+**And the needle IS moving.** Over four full tournaments:
+
+```
+            20260907-0100   20260908-1300
+alice           35.3%    ->     56.3%      (+21)
+carol           19.0%    ->     45.3%      (+26)
+bob             95.7%    ->     48.3%      (-47)
+```
+
+Two lineages climbed more than twenty points in two days. **And bob's fall is
+not a decline** — the standings are zero-sum, so his number fell because the
+other two rose. His own frozen roster, the only instrument that reports a level,
+has him going 40 -> 70 against a fixed ancestor over the same period: his
+strongest build ever, while his relative standing halved. Never read the
+tournament as absolute strength in either direction.
+
+**What this asks of you:** keep proposing things, and keep killing them cheaply.
+A lineage that stops trying because most attempts fail has guaranteed the
+outcome it feared; a lineage that keeps generating candidates and rejecting them
+in two games apiece is spending almost nothing per attempt and will eventually
+buy an accept that holds. The bounds are the rules — isolation, the shared VM,
+the benchmark-as-yardstick — and inside them, being wrong quickly and in public
+is exactly the job.
+
 ## When the loop stalls
 
 **Out of ideas? Do these two things before inventing a new mechanism.** Both are
