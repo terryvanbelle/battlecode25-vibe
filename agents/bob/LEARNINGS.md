@@ -721,6 +721,20 @@ method, not of my bot.
 pays out *later, via somebody else* is a bet on the machinery that brings somebody else
 back. Check that machinery exists before pricing the bet.
 
+**Second instance, next day (2026-09-08), and it is the OTHER face of the same fact.**
+§21 above is "direct margins do not chain into a level". Iteration 19 produced the converse:
+a gap measured against a *common reference* did not predict the *direct* head-to-head.
+
+```
+against bob_iter11 (draw 1):   bob_mC 26/50  vs  bob_iter18 19/50     -> mC ahead by +7
+directly (draw 2):             bob_mC 22/50 against bob_iter18        -> mC behind by -3
+```
+
+Both exact, both against a zero-variance null. So neither direction of the inference works:
+you cannot chain direct margins into a level, **and you cannot read a direct margin off two
+comparisons with a shared third party.** The only measurement of "does A beat B" is A
+against B. Anything else is a different quantity that happens to be denominated in games.
+
 **Where this sits in this file** (added by the consistency pass, because these four
 sections are one thread and none of them cited the others):
 
@@ -735,3 +749,93 @@ sections are one thread and none of them cited the others):
 - **§16 bans nomination by plausibility; §21 rule 3 permits nomination by ancestry.**
   These are not in conflict and §16 rule 5 now says so explicitly — one is a prediction,
   the other is a lookup performed only after the roster has already found something wrong.
+
+## 22. The map that suggested the hypothesis is the worst map to size it on (2026-09-08)
+
+TRAINING_ALGORITHM.md warns "check your sizing map is not degenerate". This is the sharper
+version, and it is a *selection effect*, not bad luck.
+
+I nearly built a soldier-repulsion mechanism on the strength of `mit`, where my soldiers sat
+**6.5x** more clustered than a uniform-placement null. Sizing it on three more maps:
+
+```
+map              r200    r400    r600    r800
+mit   60x60      3.2x    6.5x    4.2x    1.4x     <- the map that suggested it
+Gears 55x55      0.0x    1.0x    1.6x    1.6x     <- the LARGEST map: no effect at all
+rain  30x30      2.2x    2.5x    1.6x    2.2x
+quack 30x35      2.6x    1.0x    1.0x     -
+```
+
+**The reason `mit` suggested the hypothesis is the same reason it is atypical**: I noticed
+clustering there *because* clustering was extreme there. Any map that makes an effect
+visible enough to hypothesise about has been selected for having an unusually large value of
+it. So the motivating map is not merely a poor estimate of the population — it is a
+*biased* one, biased upward, every time.
+
+**Rule:** the motivating map may establish that an effect *exists*; it may never be used to
+size it. Size on maps chosen before you looked. Cost of obeying this: zero games. Cost of
+not obeying it here would have been a full 200-game evaluation of a mechanism worth nothing.
+
+Cross-links: §10 (a pre-registered trigger is only as good as its proxy) is the same error
+one level up — there the proxy was wrong, here the *sample the proxy was calibrated on* is
+wrong. §18's 300-game census is the counter-example that shows the fix: a claim sized on the
+whole corpus needed no such caveat.
+
+## 23. Check that a number lies in its own logical range (2026-09-08)
+
+My first coverage table read **`DefaultSmall 134.4%`**. A percentage over 100 cannot be a
+close call — it is a proof of error, available before any interpretation and requiring no
+domain knowledge at all. Cause: `Round.teamCoverageAmounts` is **per-mille of TOTAL map
+tiles** (`tools/engine-facts.md` says so explicitly) and I had divided it by *passable*
+tiles. Exactly doctrine #5's wrong-referent error, and exactly the failure this file's §8
+records for instrument bugs.
+
+What made it safe to proceed afterwards was closing the accounting, not just fixing the
+divisor:
+
+```
+census 3025 tiles = 2002 painted (T1 1106) ...  coverage per-mille  T1 recon=366 engine=382
+```
+
+recon 366 against engine 382, gap **−16**, and T1 had **17 units** on the board occluding
+paint in the reconstructed grid. The residual is explained to within one tile, which is what
+licences reading anything off the corrected figures.
+
+**Rule:** before interpreting any derived quantity, ask what range it is *allowed* to take
+and check it is inside. Shares in [0,1], counts ≤ their population, per-mille ≤ 1000. This
+catches the wrong-referent class of error at zero cost, and it caught one the same day I
+was congratulating myself for catching two others.
+
+## 24. "Idle" has a THIRD meaning: structurally incapable (2026-09-08)
+
+§17 distinguishes an idle **resource** (accumulates unused; spending it is nearly free) from
+an idle **capability** (produces value continuously, looks idle only because its output is
+on no counter). Iteration 20's trace found a case that is neither:
+
+```
+Gears, rounds 900-920, map 99.9% painted
+  2441 soldier-turns  ->  10 painted tiles   (0.4% of turns)
+   534 splasher-turns ->   3 splashes = 33 converted tiles
+  and 89.6% of those soldiers held paint ABOVE the floor -- they were not starved
+```
+
+The soldiers were able to act, had paint, had no cooldown problem, and had **no legal
+scoring move**: soldiers cannot overwrite enemy paint at all, and the map was full. That is
+not inefficiency and not a hidden capability — it is a unit type that has become
+*structurally incapable* of affecting the score, while still costing 200 tower paint every
+time one is re-bought.
+
+**The diagnostic that separates the three:** ask what the unit *could* do if it played
+perfectly from here. A resource would be spent; a capability would keep producing something
+you were not counting; a structurally incapable unit would do **exactly the same nothing**.
+Only the third case licences removing the unit rather than improving it.
+
+This is also why §17's warning did not protect me and should not have: §17 says do not
+redirect something that looks idle. Here the finding is stronger than "looks idle" — the
+rules of the game say it cannot act. Cross-links: §18 (coverage decides every game) is what
+makes "cannot affect the score" equivalent to "cannot affect the outcome"; §5 already
+recorded that soldiers cannot overwrite enemy paint and that the 3:1:1 spawn ratio is an
+unmeasured iteration-0 default, and those two facts sat in the same section, eight lines
+apart, for a day without being put together. **Two facts in one section that imply a
+candidate and never cite each other is the same tell as two rules that never cite each
+other.**
