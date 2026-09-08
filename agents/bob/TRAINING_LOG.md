@@ -6668,3 +6668,116 @@ momentum without the doubt:**
    (they are `bob_iter11`'s losses). Saturation timing should be roughly outcome-independent,
    but I have not verified it on a game I lost. Run 232155's `losses/` can settle this and I
    have not looked.
+
+---
+
+## Iteration 20 — spawn mix. PRE-REGISTERED before the run (launched `20260908-000848`).
+
+New functional area (**required**: ruin work / paint floors hit `MaxConsecutiveRejects`).
+
+### The three pre-checks I named as undone, now done
+
+**Pre-check 2 (reachability of a tower-local saturation trigger) — FAILED, and it killed
+the design I first had in mind.** I intended to have each tower sense its own unpainted
+surroundings and switch production locally. Measured, offline, counting unpainted passable
+tiles within r²≤20 of every T1 tower:
+
+```
+map           round   map unpainted    towers with ZERO unpainted in vision
+Gears          r100      37.4%                 5 / 5      <-- fires with a THIRD of the map virgin
+Gears          r600       0.6%                 9 / 9
+DefaultLarge   r100      48.7%                 1 / 5
+Money          r200       1.6%                10 /12
+rain           r100      33.6%                 1 / 5
+```
+
+A tower sits in the middle of its own painted blob, so **its local vision saturates long
+before the map does** — on Gears every tower reads "saturated" at r100 while 37.4% of the
+map is unpainted. A tower is the wrong sensor. Design abandoned before it was written.
+
+**Pre-check 1 (price the reallocation) — PASSED, and it is large.** Rather than price the
+outcome I counted the *decision*, offline, over rounds 900–920 (r500–520 for Parking_lot):
+
+```
+map            soldier-turns  tiles   per 1000    splasher-turns  tiles   per 1000   ratio
+Gears              2441         10       4.1           534          33      61.8     15.1x
+DefaultLarge        592         14      23.6           197          41     208.1      8.8x
+Money               460         24      52.2            99          85     858.6     16.4x
+Parking_lot         470         23      48.9           174          66     379.3      7.8x
+```
+
+**Soldiers act on 0.4–5.2% of their turns.** Not because they are starved — a paint census
+from the indicator strings at Gears r900 shows **89.6% of soldiers hold paint above the
+floor** and 68% of splashers can afford a splash. They are able and idle, because the map is
+full and **a soldier cannot overwrite enemy paint at all**. Splashers convert 7.8–16.4x more
+tiles per unit-turn at 1.5x the paint cost: **5–11x per unit of paint.**
+
+**Pre-check 3 (win-bias) — acknowledged, not discharged.** All these replays are games I
+won (they are `bob_iter11`'s losses). Saturation timing should be roughly outcome-independent,
+but the productivity ratio is measured only on winning games. In a losing game I hold less
+territory and face more enemy paint, which should make splashers *more* valuable, so I
+expect the bias to understate the effect — but that is an argument, not a measurement, and
+run `20260908-000848`'s own `losses/` will settle it.
+
+### The change (one mechanism, one constant)
+
+`Tower.SPLASHER_SLOTS`, a bitmask over `spawned % 5` selecting which spawn slots build a
+splasher. Slot 4 stays MOPPER; everything else is a soldier.
+
+```
+arm            mask       soldier : splasher : mopper
+bob   (zero)   0b00100        3 : 1 : 1     <- the iteration-0 default, EXACT zero arm
+bob_s2         0b01100        2 : 2 : 1
+bob_s3         0b01110        1 : 3 : 1
+```
+
+The zero arm reduces the new expression to the original one exactly, so **the identity check
+runs inside the evaluation**: `bob` vs `bob_iter18` must come back at exactly 25/50 with
+every map split. If it does not, the refactor is not behaviour-preserving and the whole run
+is void. `bob_mirror` is regenerated from this build and is the null.
+
+LEARNINGS §5 has called the 3:1:1 ratio *"an unmeasured iteration-0 default"* for some time;
+no prior iteration established it deliberately, so no history is being silently reverted.
+
+### Pre-registered reading
+
+- **Monotone in dose** (s3 better than s2 better than zero) -> accept the largest dose and
+  sweep further next iteration.
+- **Interior peak** (s2 best) -> accept s2; doctrine #2 calls a curve peaking in the middle
+  the strongest evidence available here.
+- **Flat or negative** -> the *marginal* splasher is worth much less than the *average* one.
+  This is the specific risk I have NOT priced: splashers currently splash on only 0.6–8.1%
+  of their turns against a cooldown ceiling of 20%, so opportunities may be limited by
+  front-line geometry rather than by splasher count. A flat curve is the evidence for that,
+  and it would close this direction rather than invite a refinement.
+
+---
+
+## TOOLING BUG (coordinator-owned `tools/replaydump/ReplayDump.java`) — arena glyphs are not injective
+
+Reporting rather than working around, and reporting what the code *computes* rather than the
+symptom. The arena renderer encodes team by case over an alphabet where tower and mobile
+glyphs already overlap:
+
+```java
+if (tower) c = PAINT_TOWER ? 'P' : MONEY_TOWER ? 'M' : 'D';
+else if (SOLDIER) c='s'; else if (MOPPER) c='m'; else c='p';
+if (team == 2) c = tower ? toLowerCase(c) : toUpperCase(c);
+```
+
+So `M` = team-1 money tower **or** team-2 mopper; `P` = team-1 paint tower **or** team-2
+splasher; likewise `m`/`p` for the mirrored pair. This is a correctness failure, not a
+mislabelling — the glyph does not identify the unit.
+
+**Discriminating case, on data already on disk** (Gears r800, `bob_mC__Gears__botB.bc25`),
+comparing grid glyphs against tower positions taken from the authoritative event log:
+
+```
+cells rendered 'M': 10   actually T1 money towers:  5   (other 5 are T2 moppers)
+cells rendered 'P': 15   actually T1 paint towers:  4   (other 11 are T2 splashers)
+```
+
+Anyone censusing towers or units from the arena grid gets a 2x–4x overcount. `D`/`d` are
+safe (defense towers only) and `s`/`S` are safe (the soldier glyph is not a tower glyph),
+which is why the soldier-dispersion figures earlier in this entry are unaffected. Suggested
+fix: give towers a disjoint alphabet from mobiles, or print team as a separate layer.
