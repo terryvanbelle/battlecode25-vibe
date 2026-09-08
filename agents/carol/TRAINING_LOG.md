@@ -10298,3 +10298,49 @@ measurement — and that is the fact iteration 39 needs.
 half the army. Whether that is tower count, tower paint income, or paint spent per tile is the
 next question, and the frozen-roster/gauntlet instruments cannot ask it because every carol
 snapshot shares the deficit.
+
+## Iteration 38 ADDENDUM 2 — the tower economy behind "half the army", and an external retro-validation of iteration 36
+
+Same four tournament dumps, now reading build mix and tower economy.
+
+| map | team | mean towers | mean tower paint | +sold | +mop | +spl | mean chips |
+|---|---|---|---|---|---|---|---|
+| DefaultHuge | **carol** | 23.7 | 1523 | 425 | **887** | 2 | 1894 |
+| DefaultHuge | alice | 24.1 | 2143 | 971 | 304 | 0 | 128297 |
+| SMILE | **carol** | 13.4 | 1212 | 190 | **459** | 0 | 1579 |
+| SMILE | alice | 20.8 | 4483 | 683 | 237 | 0 | 1684 |
+| SMILE | **carol** | 13.0 | 1732 | 322 | 238 | 8 | 1123 |
+| SMILE | bob | 17.0 | 4259 | 576 | 179 | 184 | 2492 |
+| galaxy | **carol** | 7.6 | 2415 | 216 | 96 | 11 | 1639 |
+| galaxy | bob | 6.6 | 577 | 188 | 58 | 58 | 57935 |
+
+**THE CAVEAT FIRST, because it changes everything about how this is read.** The tournament
+exported `carol @ 6c55fc4`, which is **iteration 29**. Iterations 30-36 have never played a
+tournament. Nothing in this table describes the bot I am currently testing, and I nearly wrote it
+up as a live deficit.
+
+**Read correctly, it is an external retro-validation of iteration 36.** On two of four games
+carol built **two moppers for every soldier** — 887 against 425, and 459 against 190 — a 60-70%
+mopper share against an intended `MOPPER_IN_20 = 2`, i.e. 10%. That is *exactly* the failure
+iteration 36's `PAINT_FLOOR` was built to fix, and whose mechanism the code comment spells out:
+tower paint accrues at 5/turn, a mopper costs 100 and a soldier 200, so the cheap unit resets the
+stash before the expensive one is ever affordable and **prevents** it rather than merely
+outnumbering it. Only soldiers call `workOnRuin`, so every displaced soldier is a ruin not claimed.
+
+This matters more than a normal corroboration. **Iteration 36 was accepted at 28/50, +1.03 sd —
+statistically unresolved under the gate I re-set today** — and it stood on a within-lineage
+manipulation check (5 moppers against 367). Here is the same fault, at the same magnitude,
+measured on the only opponents my lineage did not produce. That is independent evidence for the
+mechanism arriving from outside the lineage, and it is the strongest support iteration 36 has.
+
+**What it does NOT license.** It says nothing about whether iteration 36 *fixed* it — the fixed
+build has never played an external opponent. The next tournament is the first that will, and it
+is the measurement to look for.
+
+**One live-looking signal, flagged but not acted on.** Carol's mean treasury sits at 1,100-1,900
+while alice banks 128,297 on DefaultHuge and bob 57,935 on galaxy. Carol spends everything she
+earns; the opponents cannot spend what they have. If that survives into iteration 36's build, it
+says chips genuinely bind for carol and not for them — which is the one condition under which
+iteration 38's link 2 could actually hold, since the whole benefit of a refill over a rebuild is
+250 chips. I am recording this as a *hypothesis about the weak link*, from a build that is nine
+iterations stale, not as support for it.
