@@ -11709,3 +11709,54 @@ r500-1200 and that I sit on idle chips throughout. If the pair moves nothing, th
 evidence my self-play census selects for mechanisms which need an opponent that behaves like
 me — and iteration 30's direction (paint logistics, not chip spending) is the response
 already in flight.
+
+## The coverage collapse is general, not a three-map artifact
+
+Extended the aggregate dump to seven of bob's swept maps from tournament `20260908-0100`:
+
+| map | alice peak | @round | alice final | drop | bob peak | bob final | bob falls? | bob spl first > 0 |
+|---|---|---|---|---|---|---|---|---|
+| Circuit | 276 | 400 | 229 | **−47** | 698 | 698 | no | r200 |
+| DefaultMedium | 391 | 250 | 292 | **−99** | 683 | 674 | yes | r200 |
+| HungerGames | 294 | 450 | 258 | **−36** | 678 | 678 | no | r250 |
+| Parking_lot | 274 | 350 | 274 | 0 | 604 | 604 | no | r200 |
+| Snowglobe | 337 | 300 | 291 | **−46** | 692 | 692 | no | r200 |
+| TheBest | 251 | 450 | 251 | 0 | 685 | 685 | no | r200 |
+| UnderTheSea | 401 | 350 | 281 | **−120** | 679 | 679 | no | r200 |
+
+**My coverage ends below its own peak on 5 of 7 maps; bob's does on 1 of 7.** My peak lands
+at r250-450 — the front edge of the r500-1200 band where the round-bucket analysis says I
+lose 88% of decided games. The two instruments agree, and they were built for different
+questions.
+
+**Bob's splasher count first exceeds zero at r200 on six of seven maps and r250 on the
+seventh.** Mine is zero on all seven, on every sampled round. My gate needs a runaway chip
+surplus; whatever round that arrives on, it is not r200.
+
+The honest caveat on the two zero-drop rows: `final` is the last sample before the game
+ended, so a map whose game ends near my peak cannot show a drop. That biases *against*
+finding the effect, which makes 5 of 7 a floor rather than a ceiling.
+
+## TOOLING / ISOLATION REPORT — the shared scratchpad leaks between lineages
+
+Reporting rather than working around it, per my charter.
+
+**The session scratchpad is shared by all three agents, exactly as `tasks/` is.** Its path is
+keyed to the coordinator's session UUID
+(`.../fb8ba202-.../scratchpad`), and my prompt warns explicitly about globbing `tasks/` for
+that reason. **The same hazard applies one directory up, and the warning does not mention
+it.**
+
+A plain `ls <scratchpad>/*.bc25`, run to find my own replay dumps, returned **9 replay files
+belonging to another lineage** among 473 entries. I saw only filenames and **opened none of
+them**; I am not naming what the filenames imply beyond confirming they are not mine. Replay
+blobs are worse than transcripts in one respect — a `.bc25` is a complete game record, so a
+single accidental dump would expose another lineage's unit composition, timings and
+build order in full.
+
+This is the same failure the `tasks/*.output` warning was written for, and it has now
+occurred in the adjacent directory. My local mitigation is to keep my own files in
+`scratchpad/alice-work/` and never glob the scratchpad root — but **a mitigation I apply by
+remembering is worth nothing**, because the next session that resumes without reading this
+note will glob the root exactly as I did. The fix belongs in the tooling: a per-agent
+scratchpad path, or the same explicit warning the `tasks/` directory carries.
