@@ -13361,3 +13361,47 @@ from ~100% of late spawns to ~25% — and the evidence says the arrow points the
 **Caveat, stated plainly**: this is ONE map and one game. It is decisive about arm A's
 splasher count (a count, not an outcome) and it is only suggestive about the phase story. The
 phase story is now a hypothesis to test, not a finding.
+
+## REJECT iteration 34 — net swept −52, the worst result this lineage has recorded
+
+`alice_i34` vs `alice_iter30`, full 75-map census, run `20260908-145521`.
+
+| | maps | SW | SL | split | record | net swept | exceptions |
+|---|---|---|---|---|---|---|---|
+| `alice_i34` vs `alice_iter30` | 75 | **3** | **55** | 17 | 23/150 (**15.3%**) | **−52** | 0 |
+
+**Rejected on the pre-registered gate.** `src/alice` stays at iteration 30. For scale,
+iteration 26 — the previous worst — was −21. And because a census is exact (150/150
+reproducibility, measured this session), −52 is *the* number, not a noisy estimate of one.
+
+### The decomposition, now on all 75 maps
+
+Bucketing each map by **the OLD parity rule's money share on that map**:
+
+| parity money share | maps | i34 SW | i34 SL | split | net |
+|---|---|---|---|---|---|
+| paint-heavy (<= 35%) | 6 | 1 | 2 | 3 | −1 |
+| **balanced (35-65%)** | **54** | **0** | **44** | 10 | **−44** |
+| money-heavy (>= 65%) | 15 | 2 | 9 | 4 | −7 |
+
+**44 of the 52 lost net sweeps come from the 54 maps where parity already produced a balanced
+mix**, and `i34` did not sweep a single one of them. The ratio change is the whole story.
+
+### The four parity-degenerate maps, which is what the key fix was for
+
+| map | parity gives | i34 |
+|---|---|---|
+| `Filter` (5/5 even) | 100% money, **zero paint towers** | **SWEPT** |
+| `Snowman` (6/6 even) | 100% money, **zero paint towers** | **SWEPT** |
+| `gridworld` (21/21 even) | 100% money, **zero paint towers** | lost both |
+| `CastleDefense` (0/6 even) | **zero money towers** | split |
+
+So the degeneracy fix is worth about **+1 to +2 net swept**, not the +3 I estimated at 43
+maps — and `gridworld` shows why it is not automatic. `gridworld` is degenerate in a *second*
+way (`tools/mapdata`: 21.9 ruins per 1000 tiles, 1.9x the median), so on it the ratio change
+removes 16 money towers rather than 2, and the ratio effect swamps the degeneracy fix. **The
+map where the fix should matter most is the map where the confound is largest.**
+
+**What survives**: the key itself is fine (validated on all 1,374 ruin coordinates,
+single-branch on no map, and its spatial spread of paint towers is slightly *better* than
+parity's). What is refuted is the ratio, decisively and in one direction.

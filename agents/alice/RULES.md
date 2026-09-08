@@ -64,6 +64,33 @@ line refs below are to `engine/src/main/battlecode/world/*.java`.
 | Mopper | 50 | 100 | 100/300 | 0 | 30 (mop), 10 (transfer), 20 (swing) | **2** | -10 paint from enemy robot (+5 to self) |
 
 - All robots+towers: **vision^2 = 20** (sqrt20 ≈ 4.47).
+
+### Reading `UnitType` from the jar — the field order (verified 2026-09-08)
+`javap -p -c battlecode.common.UnitType` shows a 14-arg enum constructor
+(`String, ordinal, then 13 ints`). The 13 ints are, in order:
+
+```
+paintCost, moneyCost, attackCost, health, level, paintCapacity, actionCooldown,
+actionRadiusSquared, attackStrength, aoeAttackStrength, paintPerTurn, moneyPerTurn,
+attackMoneyBonus
+```
+
+Confirmed against `javap -p` field declarations. Spot values that pin the order:
+`SOLDIER` = 200, 250, 5, 250, -1, 200, 10, 9, 50, -1, 0, 0, 0;
+`LEVEL_ONE_PAINT_TOWER` = 0, 1000, 0, 1000, 1, 1000, 10, 9, 20, 10, **5**, 0, 0;
+`LEVEL_ONE_MONEY_TOWER` = same but **paintPerTurn 0, moneyPerTurn 20**.
+
+**A money tower's `paintPerTurn` is 0.** It spawns from the 500 paint it is born
+with and never regenerates any, absent a mopper transfer.
+
+**But do NOT price the two tower types against each other with a per-turn rate.**
+Chips buy towers (`completeTowerPattern` gates on `getMoney() >= 1000`; upgrades
+2,500/5,000) and towers produce both currencies; paint buys nothing that
+produces. Dividing both by `SOLDIER.*Cost` to get "soldiers funded per turn"
+makes an investment and a consumable look commensurable and is a category error
+-- it cost iteration 34 a full census. See LEARNINGS, "you cannot compare a
+COMPOUNDING resource to a CONSUMPTIVE one with a per-turn rate".
+
 - **Vision vastly exceeds action range for every unit** — the exploitable gap:
 
   | unit | vision r² | action r² | tiles seen vs actionable |
