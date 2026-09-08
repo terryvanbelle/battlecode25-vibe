@@ -1279,3 +1279,46 @@ Deferring the roster run itself for now with the reason stated rather than silen
 it is 8 opponents x 50 = 400 games, a gauntlet is in flight, and the twice-daily tournament is
 about two hours out. It should be run once iteration 37 resolves, and it will now produce a
 point that means something.
+
+## "Realized != intended" says one of them is wrong, and I assumed four times it was the realized one
+
+Iterations 30, 35 and 36 were all found by one recipe: compare the *realized* behaviour against
+the *intended* behaviour, find the gate causing the divergence, make the gate reachable. All three
+were real and all three were accepted. Iteration 37 ran the same recipe on `SPLASH_FLOOR = 2000`
+and lost **3/50, 0 of 26 on the large-area half**, with the covariate reversing sign
+(rho = -0.491, t = -2.70 against a pre-registered rho > 0).
+
+**The recipe has an unstated premise: that the *intended* side is correct.** The intended mix here
+is `SPLASHER_IN_20 = 3`, a constant from iteration 3, never validated against anything. The gate
+was not corrupting a good policy — the gate *was* the policy, silently correcting a stale constant
+that the roll had been getting wrong for thirty iterations.
+
+So the general form: **a divergence between realized and intended is evidence that one of them is
+wrong, and which one is an open question every time.** Ask it explicitly. The cheap version of the
+question is "is the gate doing work?", answerable by removing it — which is what this run did, at
+the cost of learning it the expensive way.
+
+**Three confirmations of a heuristic is exactly when it stops being checked.** The fourth case fit
+the template so well that I wrote "the fourth gate-as-off-switch in this lineage, and the first one
+I built myself" into the pre-registration as though the pattern-match were the finding.
+
+**What it bought, which is real.** Forcing splashers past the cheaper units is worth roughly 44
+points of win rate against the same opponent family, and my instrument had never measured it,
+because every gauntlet I run is carol against carol and both sides carried the same gate. An
+accepted iteration's *size* is invisible to a within-lineage instrument; only removing it measures
+it. Iteration 30 accepted at 28/50 and is worth ~44 points.
+
+## Pre-registering the weak link is worth more than pre-registering the gate
+
+The pre-registration named the causal chain (gate -> soldiers -> ruins claimed -> towers -> income)
+and, in an addendum written before any game was played, identified **link 2 as the weak one**, on
+rho(soldiers built, ruins claimed) = +0.199, t=+0.86, ns — with the consequence stated in advance:
+"if soldier share rises and towers do not, the fault is ruin *conversion*, not affordability."
+
+That is exactly what happened. Soldier share 62.2% -> 93.7%; tower count +0.30, higher in 2 of 6
+games. **1,078 soldiers bought 0.3 of a tower.** Because the consequence was written down first,
+the rejection came with its diagnosis attached instead of needing a second run to find one.
+
+Also worth keeping: the registered **price** came due at twice the size of the benefit. Coverage
+289 against 612 — 53% less ground painted, in 0 of 6 games more. 41 splashers produced 289
+coverage; 338 produced 612. Registering a price turns "it lost" into a number that explains why.

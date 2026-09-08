@@ -10013,3 +10013,109 @@ Messaging would change what a soldier can find at all.
 pipeline this session was reconstructing bot decisions from `SPAWN` deltas and per-200-round
 aggregates. A timeline marker would let the bot label its own decision points for
 `replay-dump.sh` to read back. Noting it; not acting on it while a verdict is pending.
+
+### VERDICT — REJECT, emphatically, and the covariate came back with the WRONG SIGN
+
+Run `gauntlet/20260908-104505`, `BOT=carol_i37_eq`, opponents `carol_iter36` and `carol_i37_res`,
+100 games, fresh random 25-map sample.
+
+| gate (pre-registered) | required | measured | |
+|---|---|---|---|
+| 1. `carol_i37_eq` vs `carol_iter36` | > 25/50 | **3/50 (6%)** | **FAIL** |
+| 2. swept wins (new absolute floor) | >= 5 of 25 | **0**, against 22 swept losses | **FAIL** |
+| 3. large-area half win rate | >= 45% | **0.0%** — 0 of 26 games | **FAIL** |
+
+The other dose is no better: `carol_i37_res` (soldier gate 1850) took 5/50. The ladder is monotone
+in the wrong direction — 2250 (incumbent) >> 1850 >> 1600 — so this is a gradient, not noise.
+
+**Covariate: rho(wins, area) = -0.491, t = -2.70, df=23.** I pre-registered `rho > 0` and said in
+advance I held it with low confidence. It came back **negative and significant**. The arm won
+**0 of 26 games on the large-area half** and all 3 of its wins on the small half.
+
+So the direction is not merely unsupported, it is reversed: moving the mix toward soldiers made
+carol's *large-map* deficit worse, and large maps are precisely the deficit this iteration set out
+to fix.
+
+### What I got wrong, which is worth more than the run cost
+
+I opened the pre-registration by calling `SPLASH_FLOOR = 2000` "the fourth gate-as-off-switch in
+this lineage, and the first one I built myself." **That framing was wrong, and the error has a
+name I can generalise.**
+
+My evidence was: realized mix 44% soldier / 55% splasher, against an *intended* 75/10/15 from the
+build roll. I treated the divergence as proof the gate was broken. But a divergence between
+realized and intended is evidence that **one of the two is wrong, and I assumed every time that it
+was the realized one.** The intended mix is `SPLASHER_IN_20 = 3`, a constant dating from iteration
+3, never validated against anything. The gate was not corrupting a good policy — **the gate WAS
+the policy, and it was quietly correcting a stale constant.** This run is the measurement that the
+roll constants, not the gate, are the vestigial half.
+
+That also retro-validates iteration 30 far more strongly than its own 28/50 accept did: forcing
+splashers past the cheap units is worth roughly **44 points of win rate** against the same
+opponent family, and nothing in my instrument had ever measured it, because every gauntlet I run
+is carol against carol and both sides carried the same gate.
+
+**Why the pattern-match was seductive.** Iterations 30, 35 and 36 were all real off-switches, all
+found by the same recipe (compare realized against intended, find the gate, make it reachable),
+and all accepted. A fourth case fitting the template arrived and I ran the recipe without asking
+the one question the previous three never forced me to ask: *is the gate doing work?* Three
+confirmations of a heuristic are exactly when it stops being checked.
+
+### The gradient this bought, stated as the useful output
+
+Splashers carry carol on large maps. Reducing splasher share cost **every single game** on the
+large-area half. That is a sharper directional signal than anything my accepted iterations have
+produced, and it points the opposite way from where I was heading:
+
+- coverage — painted area — is the win condition in 76% of tournament games;
+- a splasher paints 2.6x the sustained tiles/turn of a soldier at 23% lower paint per tile
+  (`RULES.md`);
+- carol's measured deficit is that coverage does not scale with map area.
+
+**The lever on large maps is splasher throughput, not soldier count.** Iteration 38 should test
+that directly rather than inferring it from a rejection.
+
+### What does NOT follow, said explicitly so a later session does not over-read this
+
+This is a within-lineage result: every game was carol against carol. It establishes that the
+splasher gate beats its absence *for this bot's other machinery*, not that carol's splasher share
+is optimal, and not that more splashers is monotone good. The tournament — the only opponents this
+lineage did not produce — is where that gets checked, and iterations 30-36 have never played one.
+The next tournament is the first that will.
+
+### The manipulation check: link 1 fired perfectly, link 2 failed exactly where I said it would
+
+Six paired loss replays, both bots in the same game (`carol-tools/mixcheck/paircheck.py`):
+
+| game | cand s/m/p | sold% | inc s/m/p | sold% | cand tw | inc tw | cand cov | inc cov |
+|---|---|---|---|---|---|---|---|---|
+| Brat | 148/1/2 | 98.0 | 142/0/6 | 95.9 | 3.0 | 3.0 | 340 | 573 |
+| DefaultHuge | 273/5/8 | 95.5 | 56/0/68 | 45.2 | 18.0 | 15.0 | 286 | 603 |
+| Gears | 71/5/4 | 88.8 | 39/0/36 | 52.0 | 0.0 | 0.0 | 232 | 659 |
+| SMILE | 189/6/14 | 90.4 | 117/0/73 | 61.6 | 10.0 | 13.0 | 337 | 555 |
+| Oasis | 122/10/9 | 86.5 | 5/0/96 | 5.0 | 8.0 | 4.5 | 167 | 678 |
+| Circuit | 275/5/4 | 96.8 | 200/1/59 | 76.9 | 5.0 | 6.7 | 371 | 605 |
+| **POOLED** | **1078/32/41** | **93.7** | **559/1/338** | **62.2** | **7.33** | **7.04** | **289** | **612** |
+
+Read against what I registered in advance:
+
+1. **Soldier share >= 60%: PASSED, overwhelmingly — 93.7%.** The gate change did exactly what the
+   arithmetic said it would. My reading of the code was correct; my reading of what the code was
+   *for* was not.
+2. **Towers strictly higher: FAILED. +0.30, and higher in only 2 of 6 games.** Soldier share went
+   from 62.2% to 93.7% — a half-again increase in soldiers — and the tower count did not move.
+3. **The price: catastrophic. Coverage 289 against 612 — the candidate painted 53% less ground,
+   in 0 of 6 games more.** 41 splashers produced 289 coverage; 338 produced 612.
+
+**Addendum 2 of this pre-registration called link 2 the weak one, before any game was played,
+and it is exactly the link that broke.** I wrote: "if soldier share rises and towers do not, the
+fault is ruin *conversion*, not ruin *affordability*." That is now measured rather than
+speculated: 1,078 soldiers bought 0.3 of a tower. **Soldiers are not the constraint on tower
+count, and no amount of making them cheaper will make them one.**
+
+The rejection is therefore not "it lost"; it is fully accounted for. Link 1 worked, link 2 does
+not exist at the strength I assumed, and the price I registered came due at roughly twice the size
+of any benefit that was available.
+
+**DECISION: REJECT.** `src/carol` is untouched and remains iteration 36; nothing to revert, HEAD
+compiles and is what plays in the tournament. Cost: one 100-game run and six cached dumps.
