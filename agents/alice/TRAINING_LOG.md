@@ -13711,3 +13711,64 @@ derived a ratio from constants that were not commensurable.
   **the round at which `expansionFinished` first becomes true, against the round the chip gate
   opens on the same map.** One replay, both numbers, and it says immediately whether the new
   signal is earlier, later, or merely different.
+
+## Iteration 37a censused at +7 — and HELD, not accepted, on the coordinator's calibration
+
+`alice_i37a` vs `alice_iter30`, full 75-map census, run `20260908-165930`, candidate-as-`BOT`.
+
+| | maps | SW | SL | split | record | net swept | exceptions |
+|---|---|---|---|---|---|---|---|
+| `alice_i37a` (gate `CHIP_RESERVE + 1500`) | 75 | 11 | 4 | 60 | 82/150 (54.7%) | **+7** | 0 |
+
+That clears the gate I pre-registered (`net swept > 0`, `SW > SL`, 0 exceptions). **I promoted
+it, and then reverted the promotion.** `src/alice` is back at iteration 30.
+
+### Why, and the part of my own finding that was too strong
+
+I measured 150/150 identical games across two censuses and wrote that a census is *exact*.
+That is true **of byte-identical builds** — which is what those two runs were. It does not
+follow that a census *margin* is exact, because **any real candidate differs in code, which
+perturbs the PRNG stream**, and that is a different regime.
+
+The coordinator's calibration, from a third lineage running two **policy-identical arms that
+differ only in PRNG phase** over the full corpus: **sd 4.80 games per 150, 78% of binomial**,
+with only **38 of 75 maps surviving a phase change**. So the residue on a fixed corpus is
+**engine chaos, not sampling** — and more of the *same* maps cannot remove it. Census buys
+~2.2x resolution, not the ~4.7x that "zero variance" implies.
+
+Their starting band for a 150-game full-corpus head-to-head: **>= +10 accept, +7 to +9
+replicate, <= +6 reject.**
+
+**Iteration 37a is +7. That is the replicate band, not the accept band.** Shipping it would
+have contradicted the entry I wrote four hours earlier refusing to accept iteration 35b on +4.
+
+**My other verdicts are unaffected, and I checked rather than assumed it**: iteration 34 at
+**−52**, iteration 35b at **−1**, iteration 33 at **0** are all far outside +6..+9. Nothing is
+revisited.
+
+### Narrowing my own corollary, which needs it
+
+I wrote that byte-identical code splits every map, so sweep counts are a free mechanism test.
+That holds **between byte-identical arms**. Between arms that differ, ~half the corpus flips on
+phase alone, so **a handful of swept maps is now weak evidence of mechanism.** A *large*
+decisive set still is strong — iteration 30's empty identical-set, or iteration 34's 26 of 75 —
+but iteration 37a's **15 decisive maps of 75** is no longer something I can lean on.
+Correcting that in `LEARNINGS.md` rather than leaving the stronger claim standing.
+
+### Calibrating my OWN floor instead of borrowing one — run `20260908-174022`
+
+`src/alice_phase` is `alice_iter30` with **one** substantive change: the PRNG seed offset,
+`rc.getID() * 31 + 17` -> `+ 18`. Every decision keeps its distribution; only the realisation
+moves. So it is policy-identical and phase-different by construction.
+
+One run, 300 games, both opponents sharing the same 75 maps:
+
+- **`alice_phase` vs `alice_iter30`** — the pure phase null. Whatever net swept this returns is
+  **entirely engine chaos**, and it is my floor, measured on my own bot rather than inherited.
+- **`alice_phase` vs `alice_i37a`** — a **phase-shifted replication** of the +7. This is the
+  only honest way to replicate here: re-running the *same* pair is guaranteed to return +7
+  again (150/150 reproducibility), so a re-run confirms the pipeline and nothing else.
+
+**Pre-registered before the run**: iteration 37 is accepted only if the phase-shifted contrast
+also favours `alice_i37a`, and by a margin that clears my measured floor. If the phase null
+alone returns something near ±7, then +7 was never a signal and iteration 37 is rejected.
