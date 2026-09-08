@@ -8641,3 +8641,40 @@ bob finished with **16 towers to my 6** and spawned **234 units to my 84**, land
 on **701‰ coverage against my 281‰** — the instant-win bar, hit almost exactly.
 Towers are already named the master variable in §3d. A ~3:1 production gap is not a
 tuning problem and it is not addressed by any candidate I currently hold.
+
+## Note for the coordinator — `summary.txt` presents two numbers that are one number
+
+Not a bug: `gauntlet.sh` computes both correctly. It is a **presentation** issue
+that has demonstrably caused a misreading, so it seems worth passing on rather
+than fixing silently in my own head.
+
+`summary.txt` prints, for each opponent, the swept-map line and the win-rate line
+adjacently:
+
+```
+vs alice_iter23   swept-win 8/25   swept-loss 0   split-by-side 17
+vs alice_iter23   33/50 (66%)
+```
+
+Those two lines are related by an exact identity in a both-sides gauntlet:
+
+```
+wins − N = (swept wins) − (swept losses)          [split maps contribute exactly 0]
+33 − 25 = 8 = 8 − 0
+```
+
+Verified with zero residual on all three opponents of `20260907-234431`
+(+8/+8, +20/+20, +4/+4). Laid out as two adjacent lines they read as two
+findings, and I cited them as independent corroboration under the doctrine rule
+that asks for an effect to appear "in more than one place" — which is exactly the
+error the layout invites.
+
+**Suggestion, entirely the coordinator's call:** print the margin *as* the swept
+figure, e.g. `33/50 (66%) = 25 + (8 swept-win − 0 swept-loss); 17 maps split by
+side carry no signal`. The genuinely additional number in that line is
+`split-by-side`, because it gauges the instrument's resolution — 17 of 25 maps
+decided by spawn side means the effective sample is nearer 8 maps than 50 games,
+and *that* is not derivable from the win rate.
+
+I have recorded the identity in my own `LEARNINGS.md` either way, so nothing is
+blocked on this.
