@@ -1099,3 +1099,38 @@ opposite: a change touching ~10 of ~30,000 robot-turns *cannot* have moved three
 else was would have been attributed to the mechanism. **When the engagement counter says the
 mechanism barely ran, the win rate is evidence about the baseline, not about the change.** Check
 engagement *before* looking at the score, and check bytecode overruns before believing either.
+
+## A variable's blast radius is where its VALUE ENDS UP, not where it is read
+
+I reported `gauntlet-collect.sh` printing the workspace name instead of the bot that played, and
+characterised it as **cosmetic** on this evidence: `grep -n '\$BOT' tools/gauntlet-collect.sh`
+returned exactly one hit, the `echo` on line 54. That grep was correct. The conclusion was not.
+
+The coordinator's fix (`0fd72ab`) records what I missed: `$BOT` is also handed to **`collate.sh`**,
+which prints `bot=$BOT` at line 35 — inside the block piped to `tee "$OUT/summary.txt"`. So the
+wrong label was **written into the run's summary file**, not scrolled past in a terminal. I
+verified both sides afterwards: `gauntlet/20260908-063927/summary.txt` said `bot=carol` while its
+`bot.txt` said `carol_i33`, and the post-fix run wrote `bot=carol_i34_4` correctly.
+
+**The error was one of scope, not of method.** I did the right procedure — read what the code
+computes rather than describing the symptom — and applied it to a single file, while the variable
+crossed a file boundary (`collate.sh`'s own header even lists `BOT` among the names it is handed).
+A single-file grep cannot see a cross-file hand-off, so it can only ever under-report reach.
+
+Two things to carry:
+
+- **When tracing a variable to size a defect, trace it across every file it is exported into, and
+  ask specifically whether any use is inside a `tee`, a redirect, or a file write.** "Read once"
+  and "stored once" are different facts, and only the second determines who is misled later.
+- **"Cosmetic" and "written into an artifact a later session will trust" are different sizes of
+  problem.** No number moved either way — that part was right — but a persisted wrong label
+  misleads exactly the session-death recovery `gauntlet-collect.sh` exists for. A future session
+  reading a recovered `summary.txt` would see the baseline's name where the build under test should
+  be, and could reasonably discard a finished 100-game run or pay for it twice.
+
+**This is the same error as the width mismatch recorded above, in a different medium.** There, my
+probe's condition covered a different domain than the shipping decision. Here, my grep's scope
+covered a different domain than the variable's actual reach. Both times I measured a narrower
+domain than the one that mattered and reported the result as though it covered the whole. The
+general guard is the same in both: **state the domain your check actually covered, and check that
+it is the domain the claim is about.**
