@@ -12540,3 +12540,88 @@ land.
 
 **Do NOT re-open**: any coordinate-keyed tower-type rule, and any argument resting on the A7
 symmetry slope, which this run refutes.
+
+---
+
+## Iteration 33 — PRE-REGISTERED 2026-09-08, before the run exists. The spawn/build paint split.
+
+Straight out of tonight's replay finding, and it is the first hypothesis in a while that came from
+watching another lineage rather than from staring at my own code.
+
+### The mechanism, engine-verified rather than inferred
+
+Spawning pays the unit's paint cost out of **the spawning tower's own stash** — `RULES.md` line 84,
+and confirmed by `javap` on `RobotControllerImpl.assertCanBuildRobot`, which throws *"Not enough paint
+to build new robot!"* on `InternalRobot.getPaint() < UnitType.paintCost`. `UnitType.paintCost` is a
+public field. SOLDIER costs **200 paint**, SPLASHER **300**, MOPPER **100**.
+
+That is the *same stash* soldiers withdraw from to refill, and a soldier needs roughly 30-50 paint plus
+a 25-paint mark to complete a 5x5 tower pattern. So tower paint has two uses that compete directly:
+**buy another unit, or let the units you have finish a tower.** Only the second one compounds — a new
+paint tower adds income; a new soldier adds a consumer.
+
+My bot has no rule mediating that competition. It spends down to whatever `canBuildRobot` allows.
+
+The replays show the consequence with no interpretation needed:
+
+```
+                  round 10        round 30                 outcome
+  carol         sold2 spl2      sold2 spl2  tw4  twP866    cov 91 -> 659, wins r93
+  bob           sold5           sold6       tw2  twP100    cov 215 -> 156, starved 1/2/4
+```
+
+**Six soldiers, 1,200 paint, all of them starving, and no third tower for the whole game.**
+
+### Arms — one mechanism, exact zero arm, verified minimal
+
+A single constant in `Tower.java`: paint the tower keeps back rather than spending on a spawn.
+
+```java
+if (chips >= want.moneyCost + reserve
+        && rc.getPaint() - want.paintCost >= SPAWN_PAINT_RESERVE) {
+```
+
+- `bob_pr0` — **reserve 0. Behaviourally identical by construction**: the guard reduces to
+  `getPaint() >= paintCost`, which `canBuildRobot` already enforces (engine-verified above), so nothing
+  changes. **Must read ~25/50 all-split; if it does not, the run is void.**
+- `bob_pr100` — keep back one mopper's worth.
+- `bob_pr200` — keep back one soldier's worth.
+- `bob_pr300` — keep back one splasher's worth.
+
+**Verified minimal**: six of seven files byte-identical to `src/bob` modulo the package line in every
+arm, and the four arms differ from each other in **exactly the constant**. Remote compile: OK, all four.
+
+**Deliberately only ONE of the two mechanisms tonight's finding produced.** The other — iteration 20's
+splasher branch being gated behind `getRoundNum() > 60`, which makes my last accepted change inert in
+every game decided before round 60, and I lose games at rounds 93-151 — is real, is written up, and
+gets its **own** iteration. This log records more than one lineage-hour lost to bundling two
+mechanisms into one arm.
+
+### The price, bounded before the run, because LEARNINGS 49 now requires it
+
+The prize is not "recovered waste": it is a *reallocation* of a pool that is fully spent either way.
+The price is therefore concrete and broad — **a reserve means strictly fewer units, everywhere,
+including on the ~77% of maps I currently win.** Early coverage is the win condition and fewer early
+soldiers paint less.
+
+That is a real risk of the same shape that sank iteration 31, and it is why this is a **ladder** rather
+than a single arm: I expect the response to be **non-monotone with an interior peak**, because reserve
+0 is measurably too little (six starving soldiers) and reserve 300 starves production outright. A
+monotone fall would say the current allocation is already right and close the direction.
+
+I am not predicting an accept.
+
+### Gate
+
+25-map SHAPE ladder, 4 opponents x 50 = 200 games. **A 50-game arm cannot resolve below ~14 points, so
+this run accepts nothing.** It answers only: is there a dose response, and where does it peak?
+
+- **Interior peak, or monotone rise** → promote the best dose to a **full-corpus 150-game head-to-head**
+  and judge it there against the real gate (>= +10 accept, +7..+9 replicate, <= +6 reject).
+- **Flat** → tower paint is not the binding constraint after all; close it.
+- **Monotone fall** → the current spend-it-all allocation is already correct, which is a finding about
+  the bot and closes the direction from the other side.
+
+The `pr0`-must-split check is the run's own validity condition and is read first.
+
+Registered before launch.
