@@ -11897,3 +11897,89 @@ cache, or if `engine_version.txt` is pinned below the highest cached jar — at 
 derived from `engine_version.txt`, so it cannot resolve a mismatched version. The one-line fix is
 for `replay-dump.sh` to use the same exact-version name (or `engine-jar.sh --remote`) instead of
 `sort -V | tail -1`. Not patched here: `tools/` is coordinator-owned.
+
+## Iteration 44 RESULT — ACCEPT on the primary gate. The pre-registered SECONDARY FAILED.
+
+Run `20260908-200140`, full-corpus census, 150 games, `carol_i44_a` vs `carol_iter36`.
+
+| | |
+|---|---|
+| **97/150 = 64.7%** | margin **+44** |
+| swept wins / swept losses / split | **29 / 7 / 39** |
+| margin in sd of carol's measured chaos floor (6.48) | **+6.8 sd** |
+
+The swept counts corroborate nothing extra — `wins − losses = 2 × (swept − swept-against)` is an
+identity, and 2 × (29 − 7) = +44 exactly. What they *do* add is D = 39 split maps, i.e. the pair is
+decisive on about half the corpus and a coin flip on the rest.
+
+**DECISION: ACCEPT.** Pre-registered gate was ACCEPT >= +13; this is +44. Promoted to `src/carol`
+and frozen as `src/carol_iter44`; HEAD compiles.
+
+### The secondary was pre-registered precisely so it could not be back-filled, and it FAILED
+
+> *"the margin on maps with >= 18 ruins exceeds the margin on maps with <= 17 ruins. The mechanism
+> has no fuel on ruin-poor maps, so if the gain is flat in ruin count the headline is not this
+> mechanism."*
+
+| | margin |
+|---|---|
+| few ruins (<= 17) | **+24** (50/76) |
+| many ruins (>= 18) | **+20** (47/74) |
+
+| ruins | | margin |
+|---|---|---|
+| <= 11 | 27/38 = 71.1% | +16 |
+| 12-17 | 23/38 = 60.5% | +8 |
+| 18-23 | 24/40 = 60.0% | +8 |
+| >= 24 | 23/34 = 67.6% | +12 |
+
+**Flat, and the ruin-poorest bucket is the best one.** By the rule I wrote before the run, this
+means **the attribution is OPEN, not confirmed**. The bot got a great deal better and the
+mechanism demonstrably fires — but this run does not establish that the gain comes from the
+ruin-count-dependent part of it, and I am not entitled to say it does.
+
+### Why this instrument may be structurally unable to test that claim
+
+The gradient was measured **against alice and bob**. This census is **self-play against
+`carol_iter36`, which has the identical defect.** On a ruin-rich map the incumbent is crippled too,
+so the ruin-rich maps are not the ones where I was uniquely losing — both arms flail there. The
+cross-lineage gradient exists *because alice and bob convert ruins into towers and carol does not*;
+an opponent that also fails to convert them cannot reproduce it.
+
+That is a specific, falsifiable reason and not an excuse, so it comes with its own test.
+
+### PRE-REGISTERED, before the next tournament runs
+
+`carol_iter44` is now HEAD, so the next scheduled round-robin plays it against alice and bob with
+no action from me. **Prediction: carol's ruin-count gradient flattens.** Concretely, re-running
+`carol-tools/ruingradient/ruingradient.py` on the next completed tournament should show the
+pooled Cochran-Armitage |z| **fall below the 8.44 measured over the previous five**, and the
+`>= 24` bucket rise from 14.0% pooled / 19.1% in the last run.
+
+If the gradient does NOT flatten while the headline improves, the mechanism is a general
+improvement that has nothing to do with ruin count, my whole causal story is wrong, and the
+tournament will have said so against opponents I did not build. That is the outcome to watch for.
+
+### Link 2 (the weak link that killed iteration 42) — held, on the probe
+
+Named in advance: *"if the decision counters fire but towers-built does not rise, I REJECT."*
+Iteration 42 cut IDLE-ALLY 71% -> 6.8% and bought nothing. This time the probe showed **towers 8
+vs 2** and coverage 644 vs 73 alongside blocked-at-ruin 43.2% -> 2.8%, so the chain
+*blocked turns fall -> towers get built -> coverage rises* is intact at every link rather than
+snapping at the second. That is the difference between the two iterations, and it is why one is a
++44 and the other was a −10.
+
+### Cost of the change, measured rather than assumed
+
+Removing the loop `break` means scanning all 25 pattern tiles every turn. Peak soldier bytecode
+**3,928 vs the incumbent's 3,716** — a 5.7% rise, both about 22% of the 17,500 limit, with **zero
+overruns and zero near-misses** across the probe game.
+
+### A scoring bug I caught with a sanity check, worth recording
+
+My first pass at the secondary used a `winner_bot` column that does not exist in a gauntlet
+`results.csv` (the column is `bot_result`), and printed **0/150 wins in every bucket**. It was
+caught only because the total is *impossible* — the summary says 97. The lesson is the cheap one:
+**check a derived table against a total you already know before reading anything into its shape.**
+Had the bug been subtler than "everything is zero" — a mis-joined bucket rather than a missing
+column — the shape would have looked plausible and I would have read a story out of it.
