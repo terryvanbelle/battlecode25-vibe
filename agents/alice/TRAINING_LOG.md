@@ -9710,3 +9710,81 @@ I am recording these as observations, not adopting them: what an opponent does i
 evidence that something is *possible and survivable*, never evidence that it is
 right for my bot. But "zero, all game, every game" for three separate mechanics is a
 pattern about my lineage rather than about any one of them.
+
+### Chasing the collapse: one hypothesis killed by reading, one that survives
+
+**Killed — the enemy-tile attack burn.** The obvious explanation for "units starve
+faster as the enemy's share grows" is the engine trap in `RULES.md` line 82: a
+soldier attack on an enemy-painted tile debits the full 5 paint via `addPaint`
+*before* bailing out, so it costs 5 and does nothing. If my soldiers were doing that,
+the loss would scale exactly with enemy coverage and would explain the whole curve.
+
+**They are not.** Both attack sites are guarded: the pattern loop carries
+`if (t.getPaint().isEnemy()) continue;` (iteration 23, which was accepted for exactly
+this) and the opportunistic branch tests `t.getPaint() == PaintType.EMPTY`. Dead
+hypothesis, closed by reading the source rather than running anything — the cheap
+direction doctrine prefers.
+
+**Survives — passive UPKEEP, which scales with enemy coverage the same way.**
+`RULES.md` line 47: a robot pays **-1/turn standing on a neutral tile, -2/turn on an
+enemy tile, and 0 on an ally tile.** And `wander()` — the movement every soldier uses
+when it has no ruin to work on — chooses its heading at random and its slide
+direction by a **coin flip**, considering paint not at all. Nothing in my movement
+has ever looked at what it is standing on.
+
+Sizing it from numbers already in the table, with no new run:
+
+| regime | bob coverage | my expected upkeep/turn | turns a 200-paint tank survives on upkeep alone |
+|---|---|---|---|
+| round 280 (my peak) | 390m | ~1.4 | ~143 |
+| round 1600 (collapse) | **627m** | **~1.7** | **~118** |
+| hypothetical, on ally paint | — | **0** | unbounded |
+
+That is the positive feedback loop the coverage curve draws: **the enemy's share of
+the map is a tax on my units' lifetime, so as bob's coverage grows my units starve
+faster, so I spend more tower paint replacing them, so I paint less, so bob's
+coverage grows further.** It is self-amplifying, which is the right shape for a curve
+that peaks and then falls rather than levelling off.
+
+### Pre-registered iteration 26 (only if 25 resolves first) — pick the slide by upkeep, not by a coin flip
+
+The mechanism must not disturb iterations 12/14, which established that a **ballistic**
+walk (long straight runs) beats a diffusive one and that *sliding* along an obstacle
+rather than re-rolling the heading is worth real tower count. So the change is
+deliberately the smallest one that touches no heading:
+
+> `wander()` already picks between the left and right slide **at random** when the
+> heading is blocked (`if (rnd(2) == 0) swap(l, r)`). Replace that coin flip with a
+> preference for the tile whose paint is **ALLY over EMPTY over ENEMY**.
+
+The heading, the run length, and the slide-instead-of-reroll behaviour are all
+untouched. The coin flip is being *spent* rather than *added to* — the same "capability
+preserved at zero marginal cost" shape as iterations 22 and 24, both of which were
+accepted. Zero tuned constants.
+
+**Pre-registered gate**, before any data: > 50% head-to-head vs the accepted snapshot
+read as net swept maps, zero exceptions, no bytecode overruns, plus a firing count
+(how often the two slide candidates differ in paint type — if they almost never
+differ, the mechanism cannot be the cause of any result, exactly as for iteration 25).
+
+**And a named risk I am recording now so it cannot be rationalised later:** preferring
+ally paint biases movement *back toward my own territory*, which is the opposite of
+the outward exploration iterations 12 and 14 bought. If this wins, I must check tower
+count and coverage-at-round-200 did not regress, because a bot that huddles on its own
+paint could win the upkeep argument and lose the expansion one.
+
+**Reachability pre-check FIRST, before writing iteration 26 — the lesson of this
+whole session applied to my own next plan.** The slide only runs when the heading is
+**blocked**, which on an open map may be rare. Twice today a mechanism that looked
+obviously worthwhile turned out to be gated by something I had not counted (the
+splasher at 0.15-0.25%, the refill at 26 firings a game). So iteration 26 does not get
+written until a census answers: *how often is the heading blocked, and on what share
+of those turns do the two slide candidates actually differ in paint type?* If that
+product is small, the mechanism is thin no matter how good the upkeep argument is, and
+the right change is a different one — biasing the heading re-roll, which happens every
+`WANDER_RUN` = 25 steps and is therefore far more frequent, at the cost of touching
+the ballistic walk that iterations 12 and 14 bought.
+
+I am writing that down *before* the census rather than after, because "the mechanism
+was thinner than I thought, so here is a bigger version of it" is a rationalisation if
+constructed afterwards and a plan if committed beforehand.
