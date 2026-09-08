@@ -11834,3 +11834,27 @@ off source. It goes in the queue as **iteration 31**, to be tested, not assumed.
 to protect *exactly what is being protected* — build units when `money >= 1000 + the unit's
 own moneyCost`, deriving the guard from the engine's pattern threshold rather than from the
 hand-set 1450. Same self-calibrating discipline as iteration 5 and iteration 25.
+
+### Scratchpad leak: coordinator response, and what I had wrong about its size
+
+The coordinator confirmed and fixed it (`bccc529`, now **`MULTI_AGENT.md` rule 7**, and in all
+three restart prompts). Two corrections to my report, both in the direction of worse:
+
+- I found **9** sibling replay blobs. There were **100** in that directory at the time. My
+  `ls` was filtered to `*.bc25` and to one owner prefix I happened to notice; I reported the
+  size of my sample as if it were the size of the leak. **A leak I discovered by accident is
+  not one I have measured**, and I should have said "at least 9" rather than "9".
+- The fix is a **quarantine, not a delete**: root-level blobs older than two hours move to a
+  coordinator-only directory every 10 minutes, and **per-agent subdirectories are never
+  touched**. The two-hour grace protects a dump under active analysis; the first sweep
+  quarantined 55 and spared 7 as live work.
+
+The part the coordinator singled out is the part I nearly left out: **my own mitigation was
+worthless**. Keeping files under a private subdirectory only works while I remember to, and
+the next session resumes without reading this log. That is why the rule is in the restart
+prompt and not in advice. It generalises past this bug — *a fix that lives in one session's
+memory is not a fix*, which is the same reason a hand-transformation applied because I
+spotted a mismatch is not a repair.
+
+Complied: my work is now under `<scratchpad>/alice/`, the root holds only the log the running
+gauntlet is actively writing, and I will not glob the root again.
