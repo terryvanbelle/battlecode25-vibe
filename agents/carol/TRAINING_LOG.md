@@ -9007,3 +9007,66 @@ Two things this changes, both stated before any result is read:
 be neutral-to-better elsewhere. That is checkable against `mixscan` per map without any extra games,
 and it separates "the direction is wrong" from "the dose overshot" — which the win rate alone
 cannot do.
+
+## Iteration 34 — ACCEPT. 28/50 with a weak margin and a STRONGLY confirmed mechanism prediction
+
+Run `20260908-071553`, fresh random 25-map sample, 100 games.
+
+| arm | result | swept-win | swept-loss | split | resampled |
+|---|---|---|---|---|---|
+| `carol_i34_4` vs **`carol_iter30`** (the accept gate) | **28/50 (56.0%)** | **7** | 4 | 14 | 95% CI [22, 34], **+0.92 sd** |
+| `carol_i34_4` vs `carol_i34_5` | 25/50 (50.0%) | 4 | 4 | 17 | CI [20, 30], +0.00 sd |
+
+**The pre-registered gate is met**: > 50%, swept wins (7) exceed swept losses (4), and the peer
+direction shows no one-directional regression (only 4 maps swept-lost of 25).
+
+**And the headline margin is weak, which I am recording rather than smoothing over.** +0.92 sd,
+with a 95% CI of [22, 34] that *includes the 25/50 null*. That is weaker than iteration 25's
+accept (+1.01 sd) and nothing like iteration 30's 44/50. On the win rate alone this would be a
+coin-flip dressed as a result.
+
+### What actually carries this accept is the pre-registered map-level prediction
+
+Before the run I wrote: *"the gain should be largest on **ruin-rich** maps, where the money share
+costs the most absolute paint towers ... If the gain is uniform across ruin density, the
+attribution is OPEN."* Joining the 25 per-map results against ruin counts read from the official
+corpus (`carol-tools/mixscan`, no extra games):
+
+| | maps | record | win% |
+|---|---|---|---|
+| ruin-**poor** half (< 18 ruins) | 11 | 10/22 | **45.5%** |
+| ruin-**rich** half (≥ 18 ruins) | 14 | 18/28 | **64.3%** |
+
+**Spearman rho(wins, ruin count) = +0.624** (n = 25, t = 3.83, df = 23, **p < 0.001**).
+
+This is the prediction I registered, in the direction I registered, at a significance the headline
+margin does not come close to. It matters *because* it was pre-registered: a covariate story fitted
+after the fact would be the back-filled mechanism rule 3b forbids, but a covariate prediction
+written down before the sample was drawn is independent evidence. The mechanism is confirmed:
+converting money ruins to paint ruins pays in proportion to how many ruins there are to convert,
+and on ruin-poor maps there is nothing to convert and the change is correctly near-null (45.5%).
+
+### Why the dose ladder is flat, and it was predicted too
+
+Doses 4 and 5 are indistinguishable (25/50, +0.00 sd). The corpus scan explains it and did so in
+advance: `MONEY_MOD = 5` leaves **zero money ruins on 18 of 75 maps** against 6 for dose 4, which
+reproduces iteration 3's diagnosed failure state (chip income pinned at 30/turn from the single
+starting money tower). So dose 5 buys more paint towers where ruins are plentiful and loses the
+chip floor where they are not, netting to zero against dose 4. **A flat ladder here is the floor
+being found, not the axis being wrong** — which is exactly the distinction I registered it to make.
+
+**DECISION: ACCEPT at dose 4.** Dose 4 is also the safer of two statistically tied arms (6
+zero-money maps against 18), so the tie is broken on measured risk rather than preference.
+`src/carol` is now iteration 34 (`MONEY_MOD = 4`, realized money share 32.5% → 27.1% corpus-wide);
+frozen as `src/carol_iter34`. Both charts regenerated: 15 accepted iterations, `carol_iter0..34`.
+
+**Honest statement of what was bought**: a small, real, mechanism-confirmed gain concentrated on
+ruin-rich maps. Given the CI spans the null, the *size* is not established — only the direction and
+the channel. The next tournament (13:00 UTC) is the external check, and per MULTI_AGENT.md it is
+the only measurement here taken against opponents this lineage did not produce.
+
+**Caveat carried forward, unresolved.** My absolute-strength instrument is saturated at 94–100%
+(logged earlier this session), so TRAINING_ALGORITHM §5b's "chain of individually-positive accepts
+walking downhill" is exactly the failure I currently cannot detect — and a +0.92 sd accept is
+precisely the kind of link such a chain is made of. `src/carol_racer` is built and compiles for
+this reason; validating it as a roster yardstick is the outstanding process task.
