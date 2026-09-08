@@ -10929,3 +10929,39 @@ which is how a lineage talks itself into the instrument that gives it the answer
 4. Tower-cap guard (`getNumberTowers`), conditional on 2.
 5. Symmetry inference — still the one structural direction never attempted, and corpus-wide rather
    than regime-narrow, which now matters more than it did this morning.
+
+### Why the FULL corpus and not just a fixed 25-map list — the charter already answers this
+
+The cheap version of the fix would be to pin one standing 25-map list and reuse it for every accept
+test. That gets the same statistical benefit (both arms see identical maps, so map difficulty cancels
+and only the reshuffle remains) at 50 games instead of 150. It is also **forbidden by my own AGENT.md**,
+for a reason that has nothing to do with statistics:
+
+> Do not hand-pick a standing map list: a fixed list is an overfitting surface, and accepted iterations
+> drift toward the maps on it.
+
+Both things are true at once, and the full corpus is the **unique** map set that satisfies both:
+
+```
+                        fixed?  (no sampling noise)     overfitting surface?
+fresh random 25          no  -- sd 3.4 across runs       no
+standing pinned 25       yes -- sd ~0.6                  YES, and my charter forbids it
+all 75                   yes -- sd ~0.6 (to be measured) NO -- you cannot overfit to the population
+```
+
+You cannot drift toward the whole map set: fitting it *is* the objective. So the corpus is the one
+fixed reference that costs nothing in generalisation, and the 3x game cost is what buys the exemption
+from the charter's rule rather than a violation of it.
+
+**Design for the next run, combining the calibration with the level test in one go**, so the noise
+measurement is taken at the exact scale it will be used at and on the exact same maps:
+
+```bash
+MAPS="$(cat ../../tools/bc25-maps.txt)" MAXJOBS=3 BOT=bob \
+  OPPONENTS="bob_n1 bob_n2 bob_<best dose from iteration 30>" ../../tools/gauntlet.sh
+```
+
+`n1` and `n2` are policy-identical to `bob` and differ only in PRNG phase, so **their deviation from
+75/150 IS the noise floor at this scale** — two independent draws of it, measured inside the same run
+that measures the candidate, on identical ground. 450 games. That is one run answering the calibration
+question and the accept question together, instead of two runs answering neither.
