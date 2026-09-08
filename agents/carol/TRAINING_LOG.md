@@ -10248,3 +10248,53 @@ was exactly the link that broke. Doing that again:
    and it will have evidence behind it.
 
 Measured for all three: `twPaint`, `+sold`/`+spl` spawn counts, `died`/`starved`, `cov`.
+
+## Iteration 38 ADDENDUM — cross-lineage evidence, recorded BEFORE the verdict lands
+
+Four carol games from tournament `20260908-0100` (the sanctioned cross-agent channel), dumped
+while the gauntlet plays. This is the only instrument in the project that can see a weakness my
+whole lineage shares, and it **corrects my own framing of this iteration**. Writing it down now,
+with the run still in flight, so it cannot be read as post-hoc.
+
+| map | team | starv% of deaths | mean soldiers alive | coverage |
+|---|---|---|---|---|
+| galaxy 2025 | **carol** | 93.2 | 18.4 | **281** |
+| galaxy 2025 | bob | 93.5 | 16.1 | 659 |
+| DefaultHuge 3481 | **carol** | 35.3 | 23.7 | **377** |
+| DefaultHuge 3481 | alice | 57.0 | 53.9 | 592 |
+| SMILE 3600 | **carol** | 83.3 | 38.6 | **300** |
+| SMILE 3600 | alice | 80.7 | 64.0 | 661 |
+| SMILE 3600 | bob | 91.1 | 84.4 | 683 |
+
+**1. Starvation is not a carol defect. It is how BC25 works.** My motivating statistic — 88% of
+carol's deaths are paint starvation — is matched almost exactly by both opponents (bob 91-94%,
+alice 57-81%). RULES already said why: *no unit damages enemy robots' HP directly*, so attrition
+is tower fire plus starvation and starvation necessarily dominates. **I measured a property of
+the game and read it as a property of my bot.** The number is correct; the diagnosis I hung on
+it was not, and only an opponent my lineage did not produce could have shown me that. This is
+the self-referential blind spot the training algorithm warns about, caught in the act.
+
+**2. The real deficit, which this table does show, is a different quantity.** Carol paints
+**roughly half** what its opponents paint on large maps (281/377/300 against 592-683) — and
+carries **a third to a half of their standing army** (18-39 soldiers against 54-84). Same
+starvation rate, half the units in the field, half the ground painted. Carol's problem is not
+that units die; everyone's units die. It is that carol cannot keep as many alive at once.
+
+**3. What this does to the weak link I pre-registered, before I know the answer.** I named link 2
+— fewer starvation deaths becoming more coverage — as the one likely to break, because a refill
+draws the same tower paint a replacement would have been built from. This table sharpens that
+into a near-prediction: if all three lineages starve alike and the opponents still field twice
+the army, the binding constraint is paint THROUGHPUT, and recycling a unit at 200 paint instead
+of rebuilding it at 200 paint + 250 chips leaves army size exactly unchanged. **Refill would then
+buy chips, not units** — worth something only if chips bind, which is a separate claim I have not
+established.
+
+So my honest expectation, stated before the result: **link 1 passes, link 2 fails, and the arm
+lands at or below the null.** If that is what comes back, the iteration is still worth its VM
+time, because it converts "carol is paint-limited, not chip-limited" from a guess into a
+measurement — and that is the fact iteration 39 needs.
+
+**4. Iteration 39 is already named by this table, independent of how 38 resolves**: carol fields
+half the army. Whether that is tower count, tower paint income, or paint spent per tile is the
+next question, and the frozen-roster/gauntlet instruments cannot ask it because every carol
+snapshot shares the deficit.
