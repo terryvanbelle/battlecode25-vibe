@@ -9735,3 +9735,28 @@ chip-bound ones. **There are no gains to concentrate** — the effect is negativ
 And `bob_r0` scoring **exactly 1 of 2 on every one of the 25 maps** is the cleanest confirmation
 available that the corrected arm is byte-exact: not merely 25/50 in aggregate, but perfectly
 antisymmetric map by map. The run-1 void diagnosis is now confirmed twice over.
+
+### Queue after iteration 28 (recorded now, while the reasoning is fresh)
+
+1. **SRP-site sharing — the same key, a second lock.** Iteration 13 closed *"spend soldier movement
+   to find SRP sites"* at −35 games, and the SRP gate probe showed why: only **20.6%** of paintable
+   tiles are legal pattern centres, and the bot tests exactly **one** candidate per turn (whichever
+   tile a random wander left it on). The mechanism was never the problem — it *"demonstrably produced
+   active SRPs on maps where iteration 12 produces none in 2,000 rounds"* — the **price** was, and the
+   price was movement. If ruin-sharing works, the identical protocol carries SRP-legal centres, and
+   a soldier walks to a *known* legal site instead of prospecting for one. Note this is the **same
+   re-open condition** iteration 13 wrote, applied to the same closure a second time.
+2. **Markers** (`mark`/`removeMark`, unused). A persistent ally-visible blackboard on the terrain,
+   1 paint, no cooldown, no connectivity requirement and no protocol. Cheaper than messaging and
+   would survive the death of the unit that wrote it — which messages do not. Caveat already on
+   record: marks are a contended map-wide resource that tower-pattern marking competes for.
+3. **Mopper share.** The mopper slot has been pinned at 1-in-5 since iteration 0, appears nowhere in
+   the CLOSED list, and iteration 20 established a real mopper→soldier repaint chain (a mopper turns
+   enemy paint neutral and only a soldier can then claim it), so an interior optimum is plausible.
+   Ranked below the first two per LEARNINGS 37: it is another constant in a space I already know,
+   and a 50-game arm cannot resolve a small win.
+4. **Null-distribution calibration** (`bob_n0..n3`, built and compile-checked). Still queued; its job
+   is now the sharper question of whether the real spread **exceeds** binomial.
+
+Ordering principle, from today: an unused mechanic outranks an untuned constant, because only the
+first can plausibly produce an effect this instrument can see.
