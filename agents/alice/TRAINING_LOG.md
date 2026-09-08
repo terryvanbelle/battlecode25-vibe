@@ -8614,3 +8614,30 @@ direction — the opponent erases paint all game and the painter has no answer. 
 is the *expected* behaviour of this pole against my own lineage, and it is exactly
 why the pole is interesting in the other direction: it tells me what a build that
 does not contest paint looks like from the other side.
+
+## Closed-directions ledger — update, current as of iteration 24 (in flight)
+
+Superseding in place; the iteration-22 table above stands as written.
+
+| direction | closed by | can re-open if |
+|---|---|---|
+| **Mopper avoids standing on ENEMY paint** (the original iteration-24 scope) | Census 2026-09-07, 25,825 mopper-turns / 3 maps: **P(stands on enemy paint AND an alternative exists \| hold branch) = 9.0%**, under the pre-registered 10% kill line, and under 10% on all three maps independently. Moppers stand on **ally** paint 75.7% of the time; the premise was false. | Only if the upstream policy changes so moppers routinely end their move on enemy paint. Note this is closed as scoped — the *engine-predicate* version (non-ally, i.e. including EMPTY) is **not** closed and is iteration 24. |
+| **The crowding tax is what drains moppers** | Never run — refuted by closing the paint accounting on data already on disk. Observed Δpaint −0.54 / −2.04 / −3.50 against the engine's 0 / −2 / −4 terrain table; the ally-tile residual (**−0.54**) *is* the crowding tax, against terrain's −2 to −4. | Only if the army clumps far more than it does now (moppers currently average ~0.5 adjacent ally robots). Cost 0 games. |
+| **Refuelling moppers from towers** (`transferPaint` withdraw) | Not re-opened. The iteration-6 cause applies unchanged to moppers: a refill costs the tower **100 paint against a 100-paint new mopper** — break-even on the binding resource, saving only chips, which sit at $290k. | Same conditions as the soldier entry: tower paint stops being the spawn bottleneck, or the walk back becomes free. |
+| **"bob fields no moppers", and the low-mopper iteration resting on it** | Retracted by my own full-game parse: bob is **17.9% / 16.2%** moppers over 646 and 509 rounds against my 26.2% / 21.1%. He defers them, he does not forgo them. | The *general* low-mopper question is NOT closed — §3b's refutation was measured against my own ~90%-mopper lineage, which is the self-referential blind spot. `src/alice_painter` exists to attack that, but must have its own win rate measured first. |
+
+### Explicitly NOT closed, and now better supported than when last written
+
+**Splashers.** Promoted tonight and independently corroborated: bob built **43 on
+Piglets2 (18% of his army) and 14 on Fossil**, while this lineage has never built
+one. And the reachability pre-check found `runSplasher`'s attack branch is **dead
+code** (`bestScore=3`, `score` maxes at 2), so no result this lineage has ever
+recorded is evidence about it. Status: **open, unpriced, and now the leading
+structural candidate.** First step is repairing the footprint scoring, not building
+splashers.
+
+**Tower count / economy.** New tonight and larger than anything above: on Piglets2
+bob finished with **16 towers to my 6** and spawned **234 units to my 84**, landing
+on **701‰ coverage against my 281‰** — the instant-win bar, hit almost exactly.
+Towers are already named the master variable in §3d. A ~3:1 production gap is not a
+tuning problem and it is not addressed by any candidate I currently hold.
