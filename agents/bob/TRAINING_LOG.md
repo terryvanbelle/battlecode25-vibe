@@ -10291,3 +10291,54 @@ is the collation**, which is why `gauntlet-collect.sh <run-id>` exists. Do not w
 launcher in a short timeout; and if a launcher produces no output for minutes, check
 `gauntlet-collect.sh --list` before concluding it failed to start, because the absence of local output
 says nothing about the remote run.
+
+---
+
+## Benchmark 20260908-0212 read as DISTANCE (score only; no replay of those games exists)
+
+`bob` @ `e425f46` (iteration 20): **7/150 = 4.7% vs `v3`**, 1 map swept, 69 swept against.
+**0/150 vs `TSPAARKHS`**, 75 swept against — as did both other lineages.
+
+Recorded per the charter's one permitted access: a committed score, read as distance, never as a
+target. `v3` is not in my gauntlet, not in `progress/roster_extra.txt` (verified today: that file
+contains `examplefuncsplayer` and `bob_iter20`, nothing else), and there is nothing to examine.
+
+**The number I should actually take from this is not mine, it is the spread.** alice 8.0%, carol 5.3%,
+bob 4.7%. Three lineages within **3.3 points** of each other, all under 10%, and all **0.0% against
+`TSPAARKHS` with 75/75 swept against**. Meanwhile my tournament standing over those same two bots is
+70.3% and carol's is 32.3% — a 38-point spread *inside* the project.
+
+So: **the intra-project differences my entire measurement apparatus is built to resolve are tiny
+compared to the distance to a finalist bot.** All three of us are clustered in one narrow band, and my
+gauntlet — which plays my own snapshots on maps I resample — cannot see out of it by construction.
+This is the self-referential blind spot the algorithm names, quantified for once.
+
+**What follows for my loop, stated as a consequence and not as enthusiasm.** A cluster at 5% is not
+closed by another constant. The algorithm ranks **high-risk structural exploration** as a first-class
+track precisely for this state — *"name a capability gap or strategic difference versus a strong
+opponent, implement at whatever scope it needs"* — and notes the highest-value accepts in both prior
+projects came from it. My last four iterations have been: a constant, a constant, a messaging protocol,
+and a priority gate. The one direction the algorithm names that I have never attempted is **symmetry
+inference** — standard practice elsewhere, needs no communication, and is *exact* rather than
+heuristic. `reference/RESEARCH.md` §11 lists it first for a stalled lineage, and my own `bob-tools/`
+already contains `map_symmetry.py` and `BobSym.java`, so some past session started down this road and
+stopped.
+
+Caveat I am holding onto: `TSPAARKHS` at 0/150 with 75/75 swept against has **no resolution at all** —
+it cannot distinguish any change I make from any other. And `v3` at 4.7% is lopsided enough that it
+has almost no room to show a *regression*. Neither can catch a decline. **The frozen roster remains
+the only instrument that can**, which is exactly why `bob_iter11` catching iteration 18 sliding
+(25/50 → 20/50) mattered, and why `bob_iter20` was added as a hard rung.
+
+### Chip census, final at 21 maps — my "14 of 15" claim was too tidy
+
+```
+Leaf   B $527,895   shell B $106,895   mit A $53,365 B $99,018   FourCorners B $35,160
+all other sides:    $1,038 - $8,307
+```
+
+**37 of 42 sides sit in $1k-$8.3k; 5 sides across 4 maps carry a large hoard.** So there IS a real
+tail — about 12% of sides — which my 15-map read ("14 of 15") understated by luck of the draw. The
+conclusion is unchanged in direction: hoarding is **not** the typical case and iteration 8's re-open
+trigger is not met. But "one outlier map" was wrong, and I am correcting it rather than leaving the
+tidier sentence standing.
