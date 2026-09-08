@@ -7241,3 +7241,42 @@ naming it here so it does not get quietly absorbed into this iteration's story.
 **Caveat, stated rather than buried:** this is iteration 18, a build both instruments agree
 was regressed. The area correlation may differ for iteration 20. The 13:00 UTC tournament
 gives the same table for iteration 20 and I will recompute rather than assume it carries.
+
+### How bob loses, split by map size — sharpening the iteration 22 candidate
+
+Same tournament, joining `results.csv` to `reasons.txt` (join verified: 450 unique keys,
+0 duplicates, 0 unmatched of bob's 300 games).
+
+```
+bucket           outcome  games   mean rounds  median   lost on tiebreak
+small (<2500)      won      157       1109       965          15%
+small (<2500)      lost      79       1043       952          20%
+large (>=2500)     won       54       1147       944          20%
+large (>=2500)     lost      10       1781      2000          70%
+```
+
+**The two buckets fail in completely different ways.**
+
+- On **large** maps bob loses 10 games in 64, and those losses run to the **round cap**
+  (median exactly 2000) and are **70% tiebreaks**. Bob is essentially never *beaten* on a
+  large map; it occasionally fails to finish and loses on a paint count.
+- On **small** maps bob loses 79 in 236, at a median of **952 rounds** with only 20%
+  tiebreaks. Those are decisive mid-game losses: the opponent reaches the coverage threshold
+  while the game is still live.
+
+So the small-map problem is **not** an endgame or a closing problem — it is being out-paced
+to 70% coverage in the first half. That is a tempo/economy failure, and it is a different
+animal from everything iterations 16-21 have addressed, all of which improve *denial*
+(converting enemy territory once the map is full). Denial cannot help in a game that ends
+before the map fills.
+
+This is now a concrete iteration 22 hypothesis rather than a vague weakness, and it is
+deliberately outside the direction I have been mining, which is what the algorithm asks for
+when one area has been worked hard.
+
+**A caution I am writing down before I act on it:** the same +0.41 area correlation would
+appear if my *opponents* happen to be small-map specialists, since tournament wins are
+zero-sum among the three. "Bob is weak on small maps" and "alice and carol are strong on
+small maps" are the same table. Distinguishing them needs the frozen roster — my own
+snapshots, which cannot have specialised against me — broken down by map size. That is a
+cheap check on data I already hold and it comes before any iteration 22 code.
