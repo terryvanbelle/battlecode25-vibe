@@ -7847,3 +7847,44 @@ Two things follow, and the first is uncomfortable:
 
 The bob pair is the one to watch (8% → 50% on 14 of 150 games) and it is far too early to read.
 Polling it rather than concluding.
+
+### Tournament `20260908-0100` COMPLETE — iteration 29's external verdict, and it is a clean split
+
+| | iteration 25 (`20260907-1300`) | **iteration 29 (`20260908-0100`)** | delta |
+|---|---|---|---|
+| carol overall | 59/300 = 19.7% | **97/300 = 32.3%** | **+12.7** |
+| carol vs **bob** | 12/150 = 8.0% | **50/150 = 33.3%** | **+25.3** |
+| carol vs **alice** | 47/150 = 31.3% | 47/150 = 31.3% | **0.0** |
+| bob overall | 277/300 = 92.3% | 211/300 = 70.3% | −22.0 |
+
+Sweeps, quoted for **D** rather than as corroboration of the margin (doctrine 14 — they are the
+same number):
+
+| pair | before | **after** |
+|---|---|---|
+| bob–carol | bob 64, carol **1**, D=10 | bob 39, carol **14**, D=22 |
+| alice–carol | alice 42, carol 14, D=19 | alice 39, carol **11**, D=25 |
+
+**+12.7 points is the largest move any lineage made this run**, and carol went from sweeping **one**
+map against bob to sweeping **fourteen**. This is the instrument that matters — an opponent my
+lineage did not produce — and it says iteration 29 was real.
+
+**But the split is the interesting part, and it is sharp: +25.3 against bob, exactly 0.0 against
+alice.** Not approximately zero — the same 47/150, with 30 of 150 games flipping 15 each way.
+The same one-line change is worth a quarter of the matchup against one independent opponent and
+literally nothing against another.
+
+That is doctrine 7's representativeness rule arriving from an unexpected direction. The usual form
+is "an instrument cannot measure a defence against a behaviour its opponents never perform". Here
+it is the offensive twin: **the discarded-attack fix only pays where the opponent contests ground
+with paint that carol's soldiers then hammer at uselessly.** Against an opponent whose paint carol
+rarely stands on, there was nothing to stop wasting. I have not verified that account — it is a
+hypothesis with an obvious test (compare the share of carol soldier-turns spent on enemy paint in
+alice games versus bob games, which is free from tournament replays) and I am registering it as
+open rather than asserting it.
+
+**Caveat that bounds all of the above**: both siblings changed too (`alice` 688a75b→25c3160,
+`bob` ceef7af→f67ac8b, an accepted iteration). Wins are conserved in a three-way round robin, so
+bob falling 22 points and carol rising 12.7 are not independent facts. What is *not* explained by
+bob's decline is the asymmetry: if carol's gain were merely bob's loss, it would not have left the
+alice pair at exactly 0.0.
