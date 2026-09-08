@@ -12473,3 +12473,70 @@ tonight**, and deliberately: the two mechanisms above (the round-60 splasher gat
 paint split) are *two* mechanisms, and this log records more than one lineage-hour lost to bundling.
 The price is also real and broad — fewer early soldiers means less early coverage on the ~77% of maps
 where bob is currently winning — which makes this a **dose ladder**, not a single arm.
+
+---
+
+## Iteration 32 — **REJECTED**, and the A7 slope is refuted. Run `20260908-194418`, 150 games, full corpus.
+
+```
+  bob_fold4 (candidate)  67/150      margin  -8
+  paired per-map:  fold4 swept 14,  split 39,  bob swept 22    (net swept -8)
+```
+
+**Gate was >= +10 accept, +7..+9 replicate, <= +6 reject. The result is -8 — not a near miss, a
+negative.** Prediction was **+14**. The miss is **22 points, ~4.6 sd** against my calibrated floor of
+sd 4.80 per 150.
+
+(The margin and the net swept count agree at -8, as the tournament report's identity says they must:
+they are the same number, not two pieces of evidence. The 39 split maps are the part that adds
+something — and 39/75 splits is a close match for the 38/75 maps my own calibration said survive a
+PRNG phase change, so the churn here is ordinary engine chaos, not a sign of a broken arm.)
+
+### What is refuted: the 0.47-points-per-mismatched-map slope
+
+I have been treating ablation A7's result as a *fact about the symmetry dimension* — hash7's 73
+mismatched maps lost 20 points to parity's 30, therefore 0.47 points per map, therefore 30 -> 0 is
+worth +14. **That extrapolation is dead.** Taking mismatched maps from 30 to 0, by a rule that is
+provably symmetric under all three candidate map symmetries, made the bot **eight games worse**.
+
+So A7's -20 was not bought by symmetry. It was bought by something else that changed at the same time
+— hash7 differs from parity in far more than its mirror-agreement rate — and I attributed it to the
+one dimension I had happened to measure. That is the same error as last night's parity mechanism, one
+rung up: **a measured correlate of a rejected change is not the reason it was rejected.**
+
+### And the pre-registered secondary read went 4 for 5 — the degeneracy mechanism is REAL, and tiny
+
+This is the part worth keeping. Registered before the run, purely mechanism-driven:
+
+```
+  map            predicted      observed        
+  gridworld      -> fold4       fold4 SWEPT     correct   (degeneracy fixed: 0 -> 9 paint towers)
+  Snowman        -> fold4       fold4 SWEPT     correct   (degeneracy fixed: 0 -> 2)
+  CastleDefense  -> fold4       split           neutral
+  starburst      -> bob         bob SWEPT       correct   (fold4 NEWLY degenerate: 6 -> 0)
+  Filter         -> unchanged   split           correct   (the one map with zero type changes)
+```
+
+**Four of five in the predicted direction, including the one where my own rule was predicted to be
+WORSE and was.** A prediction that names the map where the change should backfire, and is then right
+about it, is much better evidence than four maps that all point the same way.
+
+So the degeneracy mechanism I found last night is **confirmed as a mechanism and confirmed as
+irrelevant to the score** — exactly the +0.46-games-per-150 this iteration's own pre-run arithmetic
+assigned it. It is swamped by whatever costs the other 70 maps 8 games.
+
+### The area is closed, for the fourth and last time, and the pre-registration says so
+
+I registered this before the result: *"if `bit1(u+v)` fails its gate, the fold-symmetric family fails
+with it — there is no better member to retreat to."* Every member of that family is provably
+symmetric, and the offline sweep showed they differ only on tie-breakers already shown to be below my
+resolution. `bit2(u+v)`'s one-fewer degenerate map is worth **+0.23 games**; it cannot recover -8.
+
+**The tower-type coordinate rule is now closed permanently.** Four rules measured — parity (incumbent),
+hash7 (-20), folded parity (lost), fold-then-stripe (-8) — and parity has beaten every challenger.
+`src/bob` is unchanged and still byte-identical to `bob_iter20`. The misleading "ABLATION A7" comment
+stays where it is, since the commit that would have legitimately rewritten it is the one that did not
+land.
+
+**Do NOT re-open**: any coordinate-keyed tower-type rule, and any argument resting on the A7
+symmetry slope, which this run refutes.
