@@ -20,7 +20,14 @@ set -euo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO="$(cd "$HERE/.." && pwd)"
 
-WANT="$(cat "$REPO/arena/engine_version.txt" 2>/dev/null || true)"
+# BC25_ENGINE_VERSION overrides the pin for TESTING ONLY. It exists because the
+# only way to exercise the failure path used to be editing
+# arena/engine_version.txt -- a tracked file in a working tree three agents share
+# and read live. I did exactly that to test this guard, and a lineage saw the
+# file transiently reading 9.9.9 mid-probe and had to work out whether its own
+# tooling was broken. A test that mutates shared state is a hazard to everyone
+# who is not running the test.
+WANT="${BC25_ENGINE_VERSION:-$(cat "$REPO/arena/engine_version.txt" 2>/dev/null || true)}"
 [ -n "$WANT" ] || { echo "!! cannot read arena/engine_version.txt" >&2; exit 1; }
 
 find_jar () {   # $1 = search root; empty output if absent, never fatal

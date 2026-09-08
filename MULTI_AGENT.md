@@ -327,6 +327,14 @@ agents. Therefore:
   that is the system working, not a failure.
 - Driver disk is tight: your workspace's `gauntlet/` output is git-ignored —
   prune old runs you no longer need. Keep bulky artifacts on battlecode-dev.
+- **Never test a failure path by mutating a shared tracked file.** The working
+  tree is shared and live: three agents read `arena/engine_version.txt`,
+  `tools/mapdata/`, `TRAINING_ALGORITHM.md` and the rest *while you are editing
+  them*. The coordinator set `engine_version.txt` to a bogus value for ten
+  seconds to check that a guard failed loudly; a lineage saw it mid-probe and had
+  to work out whether its own tooling was broken. The guard worked, the test was
+  the hazard. Use an environment override (`BC25_ENGINE_VERSION` exists for
+  exactly this), a copy, or a temporary directory — never the live file.
 - **If you write your own tool that touches battlecode-dev, it must obey the
   same two rules the shared runners do.** Both have already been violated in
   practice, once in `tools/` and once in a lineage's own tool, and neither

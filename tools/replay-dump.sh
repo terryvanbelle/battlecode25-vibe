@@ -27,7 +27,10 @@ source "$HERE/lib.sh"
 REPLAY="$1"; shift
 [ -f "$REPLAY" ] || { echo "no such file: $REPLAY" >&2; exit 1; }
 
-WANT_VER="$(cat "$HERE/../arena/engine_version.txt" 2>/dev/null)"
+# BC25_ENGINE_VERSION overrides the pin for TESTING ONLY -- see engine-jar.sh.
+# Never test a failure path by editing arena/engine_version.txt: it is tracked,
+# and three agents read it live from this same working tree.
+WANT_VER="${BC25_ENGINE_VERSION:-$(cat "$HERE/../arena/engine_version.txt" 2>/dev/null)}"
 [ -n "$WANT_VER" ] || { echo "!! cannot read arena/engine_version.txt" >&2; exit 1; }
 
 ensure_vm
