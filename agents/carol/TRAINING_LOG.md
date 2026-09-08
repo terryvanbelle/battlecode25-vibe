@@ -10673,3 +10673,112 @@ Two things worth keeping:
    frontier immediately adjacent to its territory and its splashers sit inside painted ground
    scoring a median of zero. That is exactly the condition steering is meant to fix, and it is now
    visible in a game against an opponent my lineage did not produce.
+
+## Iteration 39 RESULT — **REJECT** at 17/50, −3.50 sd. Steering inverted its own target metric.
+
+Run `gauntlet/20260908-125607`. `carol_i39_all` vs `carol_iter36`: **17/50, −3.50 sd**, small
+41.2% / large 18.8%, D=15. Second dose `carol_i39_notgt` beats `carol_i39_all` 32–18, so the
+ladder is again monotone toward zero steering: `iter36 >> i39_notgt > i39_all`.
+
+**Link 1 fired and found the frontier**: fleet-summed `sf=35,899 sn=4,078` — **89.8%** of steering
+decisions found a visible empty tile. The mechanism ran, at scale, and worked as designed.
+
+**And it inverted the metric it was built to raise** (`galaxy`, paired within one game):
+
+| | `carol_i39_all` | `carol_iter36` |
+|---|---|---|
+| splash actions (whole game) | 629 | **663** |
+| realised % of paint ceiling | 74.9% | **78.4%** |
+| splasher turns out of paint (window) | **47.0%** | 27.8% |
+| shots fired (window) | 10 | **19** |
+| mean firing score | 13.0 | 13.4 |
+| coverage | 362 | **436** |
+
+The pre-registered weak link said the extra shots would be *marginal* ones bought at a worse
+score. **That is not what happened — there were no extra shots.** Mean firing score barely moved
+(13.0 vs 13.4), so quality held; the candidate simply fired *less* and ran dry *more*.
+
+### Why, and it is the same fact as iteration 38 seen from the other side
+
+Steering pushes splashers toward the frontier, which is *away from towers*. Refill needs adjacency
+(r2<=2, hardcoded), so a splasher that runs dry at the frontier is dry permanently. `noPaint` went
+27.8% -> 47.0%: the steered splashers spent their paint further out and then stood there useless.
+
+> **Iteration 38 dragged units toward towers and drained the towers.
+> Iteration 39 pushed units away from towers and stranded the units.
+> Carol's units are TETHERED to towers by paint, and both iterations attacked the tether.**
+
+The tether length bounds carol's territory. That is why the arena shows carol boxed into a corner
+while bob spans the map, and it is why *both* movement overrides lost monotonically in the dose.
+**The tether is not extended by moving units better. It is extended by putting more towers
+further out** — which is the soldier -> ruin -> tower pump iteration 38 already identified.
+
+**DECISION: REJECT.** `src/carol` remains iteration 36; HEAD compiles.
+
+---
+
+# Iteration 40 — MORE MONEY TOWERS, because iteration 35 changed what a chip buys
+
+## The cross-lineage measurement (tournament replays, sanctioned channel)
+
+Tower upgrades per game:
+
+| map | carol | opponent |
+|---|---|---|
+| DefaultHuge | **9** (8 paint) | alice **90** (25 paint) |
+| SMILE | **2** (1) | alice **17** (13) |
+| galaxy | **3** (2) | bob **30** (10) |
+| SMILE | **2** (1) | bob **22** (13) |
+
+A 7-10x gap, against opponents this lineage did not produce. Honest discount: the tournament build
+is iteration 29, and the current build upgrades more (8-11 per game in self-play) because
+iteration 35 fixed the upgrade gate — but nowhere near 17-90.
+
+**A level-2 paint tower makes 10 paint/turn against a level-1's 5.** Paint income bounds splasher
+count, splashers bound coverage, and coverage is the win condition in 76% of tournament games.
+Upgrades need chips >= 2500; carol's treasury median is ~1,550.
+
+## The hypothesis, and why it reverses a constant I set myself
+
+`MONEY_MOD` makes a ruin a money tower when `k % MONEY_MOD == 0`. Iteration 34 raised it 3 -> 4
+(**fewer** money towers) on the grounds that paint binds and chips do not.
+
+**That was measured on a build where a chip could not buy paint.** The upgrade gate was then
+`CHIP_RESERVE + 2500 = 3700`, which iteration 35 showed the treasury never reaches — it fired 4
+times against 9,147 `upgPoor`. On that build, chips beyond production genuinely had no use paint
+would rather have, and trading them away was correct.
+
+**Iteration 35 changed what a chip buys.** The gate is now 2500 flat, and clearing it converts a
+tower's paint income from 5/turn to 10/turn permanently. So chips now purchase paint income
+directly, and iteration 34's premise no longer holds. This is my own LEARNINGS entry — *a measured
+constant is only valid for the build it was measured on* — applied to a constant I set six
+iterations ago and have not re-checked since.
+
+Note also that iteration 34's accept was **28/50, +1.03 sd — UNRESOLVED** under the gate I re-set
+this morning. I am not overturning a solid result; I am re-opening one that was never established.
+
+## Doses
+
+`carol_iter36` (MONEY_MOD 4, zero arm) / **`carol_i40_3`** (3, the pre-iteration-34 value,
+primary) / `carol_i40_2` (2, half of all ruins). Both candidates carry `BUILD = "i40"`.
+`BOT=carol_i40_3 OPPONENTS="carol_iter36 carol_i40_2"`, 25 fresh maps, both sides, 100 games.
+
+## Gate (standing gate, third use)
+
+**>= 29/50 accepts, <= 25 rejects, 26-28 UNRESOLVED** pending a disjoint-sample replication.
+Report D, sd distance, and the area split; gate on none of them.
+
+## Manipulation checks, weak link named in advance
+
+1. **Link 1 (strong).** Money-tower share rises and **paint-tower upgrades per game rise** above
+   the incumbent's 8-11. If upgrades do not move, the chain is cut at its first link.
+2. **Link 2 — THE WEAK ONE.** Upgrades become coverage. It breaks if the paint *lost* by
+   converting ruins to money towers exceeds the paint *gained* by upgrading the survivors. The
+   arithmetic is knife-edged and I want it on record before the result: each money tower forgoes
+   5/turn; each upgrade adds 5/turn. So the trade is roughly **one ruin sacrificed per upgrade
+   bought**, and it only wins if the chips buy *more than one* upgrade per forgone paint tower —
+   or if the treasury was so far below 2500 that upgrades were never firing at all, which is the
+   case the measurement actually supports.
+3. **The price.** Fewer paint towers means less paint income *immediately* and the upgrade payoff
+   arrives later, so this should look worse early and better late. Measured: `twPaint`, upgrades,
+   splashers built, coverage, and the early/late split rather than the game total.

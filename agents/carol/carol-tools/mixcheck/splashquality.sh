@@ -29,6 +29,10 @@ for T in T1 T2; do
     {v[n++]=$1; sum+=$1}
     END{if(n) printf "  FIRING shots=%d  mean score=%.1f  median=%d  p90=%d  max=%d\n",
         n,sum/n,v[int(n/2)],v[int(.9*n)],v[n-1]; else print "  FIRING shots=0"}'
-  grep 'IND' "$D" | grep "($T,SPLASHER)" | grep -o 'sf=[0-9]* sn=[0-9]*' | tail -1 | awk -F'[= ]' '
-    {if($2+$4>0) printf "  steer reachability: sf=%d sn=%d found=%.1f%%\n",$2,$4,100*$2/($2+$4)}'
+  # SUM across robots. These are per-robot cumulative counters, so tail -1 reports one
+  # arbitrary robot -- which read sf=0 sn=4 on a game where the fleet total was nothing like
+  # that. Same defect as reading one line and calling it the population.
+  grep 'IND' "$D" | grep "($T,SPLASHER)" | grep -o 'sf=[0-9]* sn=[0-9]*' | awk -F'[= ]' '
+    {f+=$2; n+=$4}
+    END{if(f+n>0) printf "  steer reachability (fleet sum): sf=%d sn=%d found=%.1f%%\n",f,n,100*f/(f+n)}'
 done
