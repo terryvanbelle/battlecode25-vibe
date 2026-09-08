@@ -24,10 +24,14 @@
 Won from *both* sides, so a sweep is immune to spawn advantage.
 
 
-**These do not corroborate the head-to-head margin — they restate it.** Every map is played twice, so wins = 2·SW + D and losses = 2·SL + D, where D is the split maps; the D cancels and
+**These do not corroborate the head-to-head margin — they restate it.** Every map is played twice, so wins = 2·SW + D and losses = 2·SL + D, where D is the split maps; the D cancels and, over N maps
 
 
-> margin = 2 × (swept − swept against)
+> wins − losses = 2 × (swept − swept against)  
+> wins − N = (swept − swept against)   *("margin over 50%")*
+
+
+Both forms are exact; they differ only in which quantity "margin" names, so say which you mean.
 
 
 exactly, always. Verified on every pair of every run. So citing a margin *and* its sweep counts as two agreeing pieces of evidence is citing one number twice. What the sweep counts add that the margin cannot is **D, the number of split maps** — how decisive the pair is, not who is ahead. A 60–40 pair with few splits is a different animal from a 60–40 pair that is mostly coin-flips, and only the sweep counts tell them apart.

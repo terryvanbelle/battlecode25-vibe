@@ -201,8 +201,11 @@ def main():
     L.append("Won from *both* sides, so a sweep is immune to spawn advantage.\n")
     L.append("\n**These do not corroborate the head-to-head margin — they restate it.** "
              "Every map is played twice, so wins = 2·SW + D and losses = 2·SL + D, "
-             "where D is the split maps; the D cancels and\n")
-    L.append("\n> margin = 2 × (swept − swept against)\n")
+             "where D is the split maps; the D cancels and, over N maps\n")
+    L.append("\n> wins − losses = 2 × (swept − swept against)  \n"
+             "> wins − N = (swept − swept against)   *(\"margin over 50%\")*\n")
+    L.append("\nBoth forms are exact; they differ only in which quantity \"margin\" "
+             "names, so say which you mean.\n")
     L.append("\nexactly, always. Verified on every pair of every run. So citing a "
              "margin *and* its sweep counts as two agreeing pieces of evidence is "
              "citing one number twice. What the sweep counts add that the margin "
