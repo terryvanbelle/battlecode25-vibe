@@ -14434,3 +14434,26 @@ its observable form: a sibling attacks the same axis without any phase gate at a
 validate iteration 39 — it is one line of a commit message, not a measurement I ran — but it is
 a reason to keep this axis open, and a ready follow-up if the census rejects: a flat splasher
 share, no gate of any kind.
+
+## Iteration 39 pre-check 2 DISCHARGED — bytecode, read off replays already on disk
+
+I registered this as *not done* when I launched the screen. Closing it from the `AlarmClock`
+replays of both wired arms, at no cost:
+
+| | value |
+|---|---|
+| peak bytecode observed, any robot | **12,796** |
+| robot limit / tower limit (RULES.md) | 17,500 / 20,000 |
+| my near-miss threshold (`limit − limit/7`) | 15,000 |
+| **overruns (`OVR=`) / near-misses (`near=`)** | **0 / 0**, both arms, every sampled robot |
+
+Peak sits at **73%** of the robot limit with the near-miss counter never arming, so the phase
+signal's per-turn cost — one `getNumberTowers()` call and a handful of integer compares on
+towers only — has not moved the bot toward the limiter. That matters because an overrun
+truncates a turn silently, which would corrupt the very census now running.
+
+**Still open, and named again so it is not mistaken for finished**: *trigger frequency across
+opponents*. The signal was sized against `alice_iter30` only, and the census is also against
+`alice_iter30` only, so nothing in this iteration tests how the signal behaves when a different
+opponent contests ruins on a different schedule. The tournament is the instrument that would
+answer it, and only after an accept.
