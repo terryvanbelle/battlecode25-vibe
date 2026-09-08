@@ -13148,3 +13148,65 @@ loses in 93-109 rounds) and low on Money (large, ruin-rich, bob sweeps and reach
 rate is the same on both, livelock is a constant background cost and cannot explain why bob's win rate
 varies from 62.5% to 88.5% across the corpus — which would demote it from "the mechanism" to "a
 mechanism", and I would rather find that out from the census than from a failed arm.
+
+**Two more probes landed before I stopped, and they change the census design:**
+
+```
+  CastleDefense (bob loses)   id12239  distinct tiles in last 30 turns = 2   <- the 2-cycle
+  CastleDefense (bob loses)   id11429  distinct tiles in last 30 turns = 8
+  Money         (bob sweeps)  id12116  distinct tiles in last 30 turns = 4
+```
+
+**n = 3 is not a rate and I am claiming none.** But the useful signal is in the *spread*: the winning
+map's robot sits at 4, which is not high mobility either. **If the background is 4-8, a fixed "<= 3"
+threshold is measuring the tail of a distribution I have not looked at.** So the census must emit the
+**distribution** of distinct-tiles-per-window per map, not a boolean flag against a threshold I picked
+after seeing one robot. That is a threshold chosen post-hoc on the observation that motivated it, which
+is the same error as a hand-picked map list.
+
+---
+
+## STATE OF PLAY — end of session 2026-09-08
+
+**The bot**: `src/bob` untouched all session, still byte-identical to `bob_iter20`. `compile-check.sh
+bob` → COMPILE OK, so HEAD is safe for the 01:00 UTC tournament. **Last accept remains iteration 20.**
+
+**Three iterations closed, no accept:**
+1. **31 — REJECTED** (recovered; the run had finished and been collated, only the verdict died with the
+   previous session). Anti-crowding ladder trends down. LEARNINGS 49.
+2. **32 — REJECTED, -8** on a 150-game census. Refutes the A7 symmetry slope I had been treating as
+   fact. Its pre-registered secondary went 4/5, so the degeneracy mechanism is confirmed real *and*
+   confirmed worth +0.46 games. Tower-type coordinate rules **closed permanently** (4 rules measured).
+3. **33 — VOID**, not rejected. Null arm PRNG-divergent; LEARNINGS 52.
+
+**The session's actual product is a diagnosis, not an accept.** Measured in the tournament — the only
+instrument that can test a cross-lineage claim — bob's win rate is **monotone across all five
+ruin-count buckets, 62.5% → 88.5%, z = -3.51 over 1,208 games**, it survives conditioning on map area
+(and area survives conditioning on ruins, so the real variable is *the opening*), and bob's **median
+loss has fallen 2000 → 1431 → 1098 → 703 across tournaments while its median win stayed flat near 800**.
+A traced soldier then showed the mechanism: **oscillating between two tiles for 32 rounds until it bled
+out**, caused by four lines in `Nav.java` whose stuck detector fires only when a robot does not move,
+and greedy-with-slide always moves.
+
+**Next session, in order:**
+1. **Build `bob-tools/` replay dumper for a one-pass, all-robot livelock census** (distribution, not
+   threshold). Run the registered discriminating prediction: high rate on CastleDefense/Filter, low on
+   Money. If equal, livelock is background cost and gets demoted.
+2. **Only then** consider a `navTo` cycle-breaker — `navTo` is the most load-bearing function in the
+   bot and this log contains a navigation "fix" that lost.
+3. Read the 01:00 UTC tournament against the three predictions registered before it ran (tower count
+   off 2 on ruin-poor maps; swept-against down on small/ruin-poor maps; loss duration slower before
+   rarer — baseline median 703, 10 sub-200-round losses). `bob-tools/tower-census.sh` is the instrument.
+
+**Do NOT re-open**: coordinate-keyed tower-type rules (4 measured, closed); the A7 symmetry slope
+(refuted); everything on the previous state-of-play's list. **Iteration 33 is void, not closed** — if
+re-run, hoist `G.rng.nextInt(8)` above the guard first.
+
+**New instruments committed**: `bob-tools/gate.py` (unit-bearing gate; `wins_above_half`, `sd_wins`,
+no bare "margin"), `bob-tools/tower-census.sh` (tower counts per replay, both validated against
+numbers known beforehand).
+
+**Four LEARNINGS this session**: 49 (bound the price, not just the prize), 50 (the refuting column was
+already in the trace I published as confirmation), 51 (my gate's unit is *wins above half*; put units
+in names), 52 (I verified the engine precondition and skipped the PRNG invariant my own entry 35 is
+about).
