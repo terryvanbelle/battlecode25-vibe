@@ -56,7 +56,11 @@ reflection dump of battlecode25-java-3.1.0.jar + engine source (GitHub). Key fac
 
 **Determinism**: VERIFIED. Same match run 4x: identical outcome (win r187), and
 replay files are BYTE-IDENTICAL for identical games → arm-to-arm identity checks can
-`cmp` replays directly. Caveat discovered: the FIRST run after a source change once
+`cmp` replays directly. **[THE CLAUSE AFTER THE ARROW IS WRONG — SUPERSEDED 2026-09-08, see
+"Methodology correction — `cmp` on replay bytes is NOT a valid arm-to-arm identity check" at the
+end of this log. The 4x test re-ran the SAME match, so the team names matched; two arms are
+different packages and play under different team names, which are recorded in the replay. Diff
+`replay-dump.sh --quiet` event streams instead. The determinism finding itself stands.]** Caveat discovered: the FIRST run after a source change once
 produced a result consistent with a stale build (example-copy behavior). Rule: never
 trust a single first-run result right after syncing new source; gauntlet.sh builds
 before running and is safe.
