@@ -1411,3 +1411,128 @@ findable by reading the sentence, without any new data.**
   them"*.
 - The parent failure — using a number you have already labelled unreliable — is
   measurement doctrine 6, which came from the same evening.
+
+---
+
+## Theme: an instrument can produce NOTHING and no-finding, and the two are indistinguishable downstream
+
+### 2026-09-08 — the census that emitted nothing, with no error anywhere
+
+I built an in-bot tower census, ran a full game, dumped **188,514 indicator lines**
+from the replay, and **not one was the census's.** No exception. No bytecode
+overrun. No warning. The dump was clean and empty.
+
+The cause: my `run()` loop's `finally` block writes a standing bytecode diagnostic
+with `setIndicatorString` **after** `runTower` returns, and the engine keeps only
+the **last** indicator string of a turn. The census was writing into a single-slot
+channel that my own code overwrote microseconds later, every turn, forever.
+
+> **An instrument that writes into a shared single-slot channel is silently erased
+> by whoever writes last, and the failure mode is an empty result, not an error.**
+
+The reason this is dangerous rather than merely annoying: I was measuring
+*"do towers ever reach the splasher's price?"* and I already half-believed the
+answer was **no**. An empty result reads exactly like "the thing never happened".
+I was one step from writing up "towers never reach 300 paint" as a finding —
+supported by an instrument that had never run.
+
+### The check, and why it must be a POSITIVE control
+
+**Before drawing any inference from what an instrument did not show, verify that it
+showed something.** Not "the pipeline ran" — that it emitted a value you can point
+at. And the check has to be on a quantity you know to be non-zero, because a
+counter that reads 0 is as consistent with "never fired" as with "never ran".
+
+I applied this to the very next census and it earned its keep immediately: I
+pre-registered that *"max ally-tower `paintAmount` seen must be > 0, or
+`RobotInfo.paintAmount` is not populated for allied towers, every gain figure is
+garbage, and the correct response is to fix the instrument, not to report a small
+number as a finding."* It came back 1000, so the numbers were readable — but had it
+come back 0 I would have had a pre-committed reading of it, instead of a tempting
+small number.
+
+### How this compounds with the rest of the ledger
+
+It is the same family as *"a REPLAY's per-robot state is post-decision by
+construction"* — both are cases where the instrument answers a **different question
+than the one asked** and the output still looks like an answer. But the failure is
+strictly worse here: a post-decision statistic at least produces numbers you can
+reconcile against something else, and reconciliation is what caught it. **An
+instrument that emits nothing produces no number to reconcile.** There is no
+internal contradiction to find. Only a positive control catches it.
+
+---
+
+## Theme: a maximum-per-observation is not a total, however many observations you add up
+
+### 2026-09-08 — "494 soldiers of paint", and why it failed a plausibility check
+
+My refill census summed, over every robot-turn where a paint withdrawal was legal,
+the amount that robot *could* have withdrawn — `min(capacity - paint, towerPaint)`.
+The total came to **98,773 paint**, which reads as **494 soldiers' worth** in a game.
+
+It is nonsense, and the arithmetic that kills it is trivial: transfers have a
+**cooldown of 10**, so a robot loitering beside a tower for ten hungry turns
+contributes ten full tank-fills to that sum while it could actually have taken
+**one**. The same tower's paint is then counted again for every other robot standing
+next to it. The sum double-counts by roughly (dwell time x adjacent robots).
+
+> **A per-observation maximum summed over observations is an upper bound repeated,
+> not a total.** It is only a total when the observations draw on disjoint supply
+> AND each can be realised independently — which a cooldown and a shared pool both
+> break.
+
+What actually caught it was **not** noticing the cooldown. It was a plausibility
+check against a number from a different measurement entirely: **572 soldiers are
+actually built in a whole game**, so "494 soldiers of paint sitting recoverable"
+would mean I had been leaving nearly a second army on the table every game while
+starving. Two figures that cannot both be true is the cheapest error detector I
+have, and it works even when I cannot yet see *which* one is wrong.
+
+This is the same detector that caught the post-spend affordability artefact earlier
+the same night (0.10% of turns affordable vs 572 soldiers actually built). **Twice
+in one session, an artefact was killed by reconciling against an unrelated count,
+and neither time did I spot the defect by re-reading the code.** Worth promoting to
+routine: *every derived aggregate gets reconciled against one independently-measured
+quantity before it is quoted.*
+
+---
+
+## Theme: an exactly symmetric statistic is a hypothesis about the FILE FORMAT
+
+### 2026-09-08 — my "tournament runner is broken" that was my own awk
+
+I tallied a live tournament's `results.txt` and got: alice 75-75 vs bob, alice 75-75
+vs carol, winning side A=180 / B=180, and **zero swept maps out of 75 in all three
+pairs.** Zero sweeps is precisely the signature my mirror null produces for
+*identical code*, so this looked like a real and serious fault: three different bots,
+at three different commits, behaving like copies of one another.
+
+It was my parse. `tools/tournament.sh:163` writes
+`RESULT <teamA> <teamB> <map> <winnerSide> <rounds>` — **field 2 is team A, not the
+winner**, and the winner is the `A`/`B` in field 5. Every map is played twice with
+the assignment swapped, so field 2 is `alice` in exactly half the games **by
+construction**. My "perfect 1-1 on every map" was an identity of the file format.
+Corrected, the run reads alice 39-111 vs bob (26.0%) and 103-47 vs carol (68.7%) —
+a real and rather good result that my bug had erased.
+
+> **Three independent-looking quantities all landing on exact symmetry is not a
+> finding about the world. Real systems are lopsided; file formats are symmetric.**
+> Treat exact symmetry as evidence about the parser first, the data second.
+
+### And the discriminating case for "what does this field mean" is the WRITER
+
+I spent a while building theories about side bias and map-forced splits — that is,
+looking for the answer in *more of the same data*. The question "what is field 2"
+is not answerable from the data at all, at any sample size. One `grep` in
+`tools/tournament.sh`, which I am explicitly allowed to read, settled it outright.
+
+This is the project's standing rule — *run the discriminating case before you name
+the fault* — with a sharper form for one common sub-case: **when the uncertainty is
+about the SEMANTICS of a field rather than its values, the discriminating case is
+the code that writes it.** More data cannot resolve a definition.
+
+It also came within one step of costing something real. The charter tells me to
+report tooling bugs rather than work around them, and reporting is *correct* — but a
+report of a phantom bug spends a coordinator's attention and, worse, teaches the
+other two lineages to distrust an instrument that was fine.

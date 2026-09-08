@@ -9478,3 +9478,98 @@ choice is MOPPER/SOLDIER only).
   *not* this mechanism and the correct verdict is REJECT-as-unattributable, however
   good the score looks. A low firing rate is not by itself evidence of no effect
   (rare and high-value is a real profile), but a *zero* firing rate is.
+
+### Mechanism verification BEFORE the gate — it fires 26 times
+
+`alice_i25` vs `alice_iter24`, UnderTheSea, full game, counted from the candidate's
+own indicator string (`i25=<refills>/<paint>`):
+
+| | |
+|---|---|
+| robots that lived | 776 |
+| **refills fired** | **26** |
+| paint withdrawn | 1,962 = **9.8 soldiers' worth** |
+| mean per refill | 75.5 paint |
+| robots that ever refilled | 19 of 776 (**2.4%**) |
+
+**That is rare — about 1.7% of the paint a game spends on soldiers.** I am recording
+the number before the gauntlet returns, because the pre-registered rule turns on it
+and I do not want to be reading it after seeing a win rate.
+
+Where the 1,005 legal hungry turns the census counted went, down to 26 firings:
+transfer has a **cooldown of 10** (so the same robot cannot refill each turn), the
+unit must have an **unused action** (by design — this never displaces), and, almost
+certainly dominant, the **tower must hold more than 200 paint of surplus**, which
+the tower census says happens on only 3.0-6.8% of tower-turns.
+
+The surplus reserve is the one number in the mechanism, so the honest next question
+is whether it is set too conservatively. I have queued a **headroom probe**, not a
+dose search: `alice_i25r0` is `alice_i25` with the reserve set to **0** — a bound on
+how often this mechanism could *ever* fire, never a shipping candidate, because
+draining towers to empty would starve the build pipeline outright. If R=0 barely
+moves the firing count, the whole direction is thin and the surplus reserve is not
+what limits it; if it multiplies it, there is a real dose to explore and it belongs
+to this iteration.
+
+### The tournament, read correctly the second time — and a parse error I nearly reported as a tooling bug
+
+`tournaments/20260908-0100` is the first tournament to run my post-iteration-24 bot
+(`alice` @ `25c3160`). It was still in flight, with both `alice` pairs complete at
+150 games each and `bob-carol` partial, so I read only the complete pairs.
+
+**First I got it badly wrong, and the way it went wrong is the lesson.** I tallied
+field 2 of each `RESULT` line as the winner and got a perfect **75-75 in both alice
+pairs, with zero swept maps out of 75, in every pair.** Zero sweeps is the exact
+signature my own mirror null produces for *identical code*, so this looked like a
+serious tournament-runner fault — three different bots at three different commits
+behaving like copies of one another.
+
+I did not report it, because the charter says to run the discriminating case before
+naming a fault. The discriminating case here was not a match: it was **reading the
+line that writes the field**. `tools/tournament.sh:163`:
+
+```
+printf 'RESULT %s %s %s %s %s\n' "$TA" "$TB" "$MAP" "${W:-?}" "${R:-?}"
+```
+
+Field 2 is **team A**, field 3 is **team B**, and the winner is the *fourth* field's
+`A`/`B`. Since every map is played twice with the assignment swapped, field 2 is
+`alice` in exactly half of the games **by construction** — my "perfect 1-1 split"
+was an identity of the file format, and my "zero sweeps" measured nothing at all.
+
+Two things worth keeping:
+
+1. **A statistic that comes out *exactly* symmetric is a format hypothesis, not a
+   finding.** 75-75, 75-75, and A=180/B=180 exactly — three independent-looking
+   quantities all landing on perfect symmetry. Real bots do not do that; file
+   formats do.
+2. **The discriminating case for "what does this field mean" is the code that
+   writes it, not more of the data.** I could have stared at winner/side/round
+   patterns for a long time — and I did, for a while, building increasingly
+   elaborate theories about side bias — while a one-line `grep` in a tool I am
+   allowed to read settled it outright.
+
+**Corrected standings, complete pairs only:**
+
+| pair | record | win% | swept | swept against | split |
+|---|---|---|---|---|---|
+| **alice vs bob** | **39-111** | **26.0%** | **8** | 44 | 23 |
+| alice vs carol | 103-47 | 68.7% | 39 | 11 | 25 |
+
+Against the previous full tournament (`20260907-1300`, which ran `alice` at
+**iteration 14**):
+
+| | then (iter 14) | now (iter 24) |
+|---|---|---|
+| alice vs bob | 7.3%, swept **1** vs 65 | **26.0%, swept 8** vs 44 |
+| alice vs carol | 68.7%, swept 42 vs 14 | 68.7%, swept 39 vs 11 |
+
+**The bob gap has closed substantially** — 7.3% to 26.0%, and my swept maps went
+1 -> 8 while bob's fell 65 -> 44. That is the ten iterations since, measured against
+an opponent my lineage did not produce, which is the only instrument here that
+cannot be self-referential. Against carol the headline is unchanged at 68.7%, but
+carol accepted **nine** iterations in the same window (through iteration 29), so
+holding station there is not stagnation.
+
+Bob is still the target: 23 split maps out of 75 means that matchup has most of its
+resolution intact, and 44 swept losses are real losses, not spawn luck.
