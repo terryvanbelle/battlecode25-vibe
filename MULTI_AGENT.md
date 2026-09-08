@@ -56,6 +56,25 @@ produced.
    is a backstop for the rule, not a replacement: it cannot run between the
    moment an agent launches and its next tick.
 
+## Never run two sessions of one lineage (hard, coordinator-facing)
+
+Two Claude sessions on one workspace race on the same git tree and the same
+`src/`, which is the failure `Git discipline` below exists to prevent. It has
+happened once, for about six minutes, and the mechanism is not obvious:
+
+**Sending a message to an agent that has already reported RESUMES it.** So the
+sequence "agent completes -> coordinator sends it a note -> coordinator relaunches
+it" produces two live sessions, because the note revived the one being replaced.
+
+The rule that avoids it: **check which agents are live AFTER sending messages,
+not before**, and never send to a completed agent you intend to relaunch — put
+what you wanted to say into a message to the NEW session instead.
+
+If it happens anyway, the tell is a file in the workspace that the agent did not
+write. An agent finding one should do what the affected lineage did: neither
+adopt it (a tested build must be one you authored) nor delete it (it may be work
+in flight) — report it and continue.
+
 ## The tournament
 
 - **Schedule**: 06:00 and 18:00 **America/Los_Angeles** daily, via a systemd
