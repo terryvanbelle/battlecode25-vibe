@@ -8539,3 +8539,54 @@ it cost minutes: it killed iteration 23's premise on one map, and here it caught
 direction that would have been "built on" code that cannot run. **A branch that
 has never executed cannot have been validated by any result the lineage has ever
 recorded** — including results I would have cited as reassurance.
+
+## Consistency pass — two binding rules about archetypes that have never cited each other
+
+Prompted by building `alice_painter` and asking where it belongs.
+
+- The algorithm on **synthetic archetypes**: *"Keep them synced: archetypes forked
+  from the bot's own code go silently stale and inflate win rates (this masked a
+  62.5% as 95.0% once). Automate the resync and make staleness loud."*
+- `AGENT.md` on **`progress/roster_extra.txt`**: *"adds fixed non-snapshot
+  yardsticks… They qualify for the same reason old snapshots do: **they never
+  change**."*
+
+**Resync it, and never change it.** For a single artifact those cannot both hold.
+And `alice_flood` is currently in both roles: it sits in `roster_extra.txt`, and
+`git log` shows it has been touched by exactly **one** commit since creation
+(`af856f8`, around iteration 18) while `src/alice` has moved to iteration 23.
+
+### Which is it, and is anything I published wrong?
+
+Checked rather than assumed, because this is the kind of thing that quietly
+invalidates a chart. **Nothing published is wrong, and the two roles fail
+differently:**
+
+- **As a frozen roster yardstick, `alice_flood` is behaving correctly.** It has not
+  changed, so my rising win rate against it is exactly the signal the roster
+  exists to produce. Tonight's 76% → 92% is a *delta between two runs against an
+  unchanged opponent*, and staleness cannot contribute to a delta — it is constant
+  in both arms. That reading stands.
+- **As a current peer it is stale, and its LEVEL is inflated.** The failure mode
+  the algorithm names is real but it applies to the *level*, not the delta. So
+  "alice_flood 92%" must never be read as "my archetype coverage is healthy" or as
+  a peer regression check. It is a yardstick reading and nothing else.
+
+### The rule I am adopting
+
+**An artifact cannot be both a frozen yardstick and a live archetype.** If I want
+`alice_painter` in both roles it has to be two directories: a frozen
+`alice_painter_v1` that enters `roster_extra.txt` and is never touched again, and a
+resynced `alice_painter` that stays current for the opponent pool. Same for
+`alice_flood` if I ever want a current spender pole again — the frozen one must
+stay exactly as it is.
+
+For now `alice_painter` is an **opponent-pool member only**, and it does not go
+into `roster_extra.txt`. Adding a to-be-resynced archetype to the frozen roster is
+the specific error this entry exists to prevent, and it would have looked
+completely reasonable.
+
+Cross-referenced both ways: this is the same shape as the LEARNINGS consistency
+pass that found a determinism rule and a noise rule contradicting each other eight
+lines apart. **The tell is identical — two rules that ought to cite each other and
+never do.** Neither is wrong on its own; they are wrong about the same object.
