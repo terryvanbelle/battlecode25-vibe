@@ -7386,3 +7386,39 @@ the conservative direction and the pre-check passes by slightly more than I clai
 cooldown effect that is real is `INCREASED_COOLDOWN_THRESHOLD = 50`, which bites *below* 50%
 paint — irrelevant to a splasher arriving at ~57% of capacity, and precisely the trap for a
 mopper arriving at ~32%.
+
+### Why iteration 15 (bug navigation) may have been tested in a regime where it could not pay
+
+Written now, before iteration 21's result, because it is an argument about the *design* and
+I do not want it available afterwards as an excuse.
+
+Iteration 15 replaced greedy nav with Bug2 and was **rejected on two independent map draws**
+(−4, −4, pooled 45/100). I have just audited where every `navTo` call in that bot was
+pointed:
+
+```
+Splasher   nearest scoreable tile      from senseNearbyMapInfos()   -> within vision
+Mopper     nearest enemy paint         from senseNearbyMapInfos()   -> within vision
+Soldier    workRuin                    from senseNearbyRuins(-1)    -> within vision when latched
+Soldier    srp centre, refill tower    vision-derived               -> within vision
+```
+
+**Every target was inside `VISION_RADIUS_SQUARED = 20` — a radius of 4.47 tiles.** Bug
+navigation exists to circumnavigate an obstacle standing between you and a *distant* goal.
+Over a four-tile hop there is essentially no concavity to escape, so Bug2's benefit was
+unmeasurable there while its costs — latching a heading, holding it until the target is
+strictly closer, and the deletion of the random escape — were paid on every step. A −4 result
+is what that predicts.
+
+**Iteration 21 is the first thing this lineage has built that creates a long-range target
+at all**: a median 30-tile march. If arm A shows a positive but modest effect, the natural
+reading is that the *objective* is right and the *executor* is the greedy fan, and bug
+navigation becomes re-testable on evidence rather than on a hunch — the regime changed, which
+is the only legitimate reason to reopen a rejected direction.
+
+**Registering the trap in the same breath.** This is a tidy story for reopening a direction I
+already spent two map draws rejecting, and tidy stories about one's own past failures are
+exactly what a lineage talks itself into. So: it is a hypothesis about *why* iteration 15
+failed, not evidence that Bug2 works, and it does not become an iteration until arm A has
+actually produced a long march worth navigating. If arm A is flat or negative, this note is
+moot and stays moot — there is no version of it that survives arm A failing.
