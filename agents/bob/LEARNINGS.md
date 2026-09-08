@@ -1486,3 +1486,39 @@ explains *why* the `+2` never replicated: it was never a +2 of anything.
   been supplying a formula where a measurement was wanted.
 - Hold the finding to standard: the 19/50 is **one** draw. The logical half — zero variance under
   byte-identity is forced — needs no sample and is the part I assert.
+
+### 36a. Refinement, same day: the binomial floor was right; the `se = 0` was the intruder
+
+Looking at the voided PRNG-phase-only arm map by map:
+
+```
+arm swept  2 / 25      bot swept  8 / 25      split 15 / 25
+```
+
+A byte-identical mirror splits **25 of 25**. With only the PRNG phase changed, **10 of 25 maps stop
+splitting** — which side wins is decided by seed phase, consistently across both sides. If each game
+were an independent coin flip, 50% of maps would be swept by one side or the other; the observed 40%
+is close to that, slightly under, as expected when the map itself favours neither side.
+
+So the per-game outcome between policy-identical bots is **near a coin flip**, and the right noise
+model is the ordinary binomial one: `n = 50`, `se = sqrt(50 x 0.25) ≈ 3.5 games`, so a **±7 band at
+2 se**. That reframes 36 more precisely and slightly against my first reading of it:
+
+- **The binomial noise floor doctrine 9 asks for was never the wrong tool.** I had it available and
+  it gives the right answer.
+- **What went wrong is that a second, incompatible number was in circulation** — the mirror null's
+  `se = 0` — and I quoted whichever was nearer to hand. Two quantities wore the same name
+  ("the null"), one forced by symmetry and one statistical, and the forced one silently won because
+  it appeared in every run's output.
+- **The 19/50 is a −1.7 se draw**, not an anomaly. I should not have implied it was surprising; it
+  is exactly what a ±3.5 se instrument does one time in ten.
+
+Against `se ≈ 3.5`, my logged results read: iteration 25's `+2` is **0.6 se**, iteration 24's `−3`
+is **0.85 se**, iteration 26's spread is **0.3-0.85 se**. None was ever distinguishable from zero,
+and the 400-game pooled replication that found exactly `+0` is what an honest reading predicts.
+
+**The rule this leaves:** when two numbers in your workflow can both be called "the null", name them
+apart and write down which one gates decisions. The failure was not a missing formula; it was a
+collision of vocabulary that let a structural constant impersonate a statistical one. The queued
+calibration is still worth running — its job is now the sharper question of whether the real spread
+**exceeds** binomial, which would mean cross-map chaos is correlated and even ±7 is too tight.
