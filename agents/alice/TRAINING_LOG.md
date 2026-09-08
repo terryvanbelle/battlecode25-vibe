@@ -11690,3 +11690,22 @@ arm introduces a new constant:
   map where `i30b` is identical to the baseline must also be one where `i30a` is** —
   the same subset test that caught the r2000 contamination, and I will exclude tiebreak
   games from the identity test this time by construction rather than after the fact.
+
+## Amendment to the tournament pre-registration, recorded BEFORE the 13:00 UTC run
+
+This morning I pre-registered a prediction for the next tournament on the basis that it would
+be **the first to contain iteration 28**. Since writing that I have accepted iteration 29 and
+promoted it, so HEAD now carries **iteration 28 *and* 29** — the splasher gate plus the
+lowered threshold.
+
+The prediction and its falsifier are unchanged, because both iterations are the same
+mechanism at two doses. But the test is now of the pair, not of iteration 28 alone, and **I
+can no longer attribute a movement to iteration 28 specifically.** Recording the amendment
+now rather than explaining it afterwards, which is the only time it counts.
+
+The null branch matters more than before, not less. Iteration 29 halved the chip threshold
+and still gates on a surplus; today's forensics say my losses to bob are decided in
+r500-1200 and that I sit on idle chips throughout. If the pair moves nothing, that is
+evidence my self-play census selects for mechanisms which need an opponent that behaves like
+me — and iteration 30's direction (paint logistics, not chip spending) is the response
+already in flight.
