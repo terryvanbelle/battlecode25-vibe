@@ -258,3 +258,34 @@ X...X      .XXX.      ..X..      XX.XX
 ```
 (rendered from the constants paint=18157905, money=15583086, defense=4685252, srp=28873275
 with bit = 5*(dx+2) + (dy+2), y increasing upward — matches the spec's diagrams.)
+
+## Engine probe — SRP completion preconditions, and marks are provably irrelevant [E, iteration 32]
+
+Disassembled `GameWorld.checkPattern`, `GameWorld.isValidPatternCenter` and
+`RobotControllerImpl.assertCanCompleteResourcePattern` (engine 3.1.0). Three facts, each read out
+of the bytecode rather than inferred from behaviour:
+
+1. **`checkPattern(pattern, team, centre, skipCentre)` reads PAINT ONLY.** Its whole body is
+   `getPrimaryPaint(team)` / `getSecondaryPaint(team)` compared against
+   `getPaint(centre.translate(dx,dy))` for dx,dy in −2..2, versus `getPatternBit(pattern,dx,dy)`.
+   **There is no marker lookup anywhere in it.** So `markResourcePattern`/`markTowerPattern` are
+   purely a convenience for the *bot* (they let you read the required colour back off the tile via
+   `getMark()`); paying their 25 paint is never required to complete a pattern. `checkTowerPattern`
+   passes `skipCentre = true` (the ruin tile is exempt); the resource variant does not, so an SRP
+   needs all **25** tiles exact.
+
+2. **`isValidPatternCenter(loc)` is exactly two conditions**: a 2-tile margin
+   (`x >= 2 && y >= 2 && x < width−2 && y < height−2`) and `areaIsPaintable(loc)`, which requires
+   `isPaintable` on all 25 tiles of the 5×5 — so a single wall **or ruin** anywhere in the block
+   disqualifies the centre outright.
+
+3. **`assertCanCompleteResourcePattern` additionally requires**: a robot type (not a tower),
+   the centre within action range, team money ≥ the SRP cost, and
+   `!hasResourcePatternCenter(loc, team)` — you cannot re-complete one already active.
+
+**Consequence worth carrying forward.** Fact 2 means "can an SRP go here?" is a *static* property
+of the map, decidable with no game running. `carol-tools/latticescan/` computes it over the
+official 75-map corpus and gets **29.4% of 5-stride lattice cells viable** (median 25%/map, min
+4.0%, max 63.6%, no map at zero) — and because the predicate is the engine's own, that number is
+exact rather than a model of it. Anyone re-opening the SRP direction should start from there
+instead of buying games to discover it.
