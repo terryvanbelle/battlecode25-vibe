@@ -11610,3 +11610,83 @@ accepted snapshot**, which reads ~50% *by construction* rather than by aim.
 - **What the snapshot rung does NOT fix**: it makes the roster harder, not more
   *independent*. `alice_iter28` shares every blind spot I have — it is me, one iteration ago.
   Only the tournament measures me against something my lineage did not write.
+
+## The refill guard probe: it is ADJACENCY, and it kills the fix I was about to write
+
+`alice_refillprobe` (= `alice_iter28` + counters, behaviourally identical; it split all three
+maps, as an instrumentation-only build must) vs `alice_iter28`, run `20260908-094830`.
+Counters read off the replay indicator strings at r1995-1999.
+
+| map | hungry turns | action FREE | tower ADJACENT | refills done |
+|---|---|---|---|---|
+| DefaultMedium | 499 | 249 (50%) | **0 (0.0%)** | 0 |
+| TheBest | 9,808 | 8,466 (86%) | **95 (1.0%)** | 90 |
+| UnderTheSea | 1,708 | 1,585 (93%) | **0 (0.0%)** | 0 |
+
+**The action guard was never the problem.** On 50-93% of hungry turns the soldier's action is
+sitting unused — of course it is: a soldier low on paint cannot paint, so it never spends the
+action. The guard I suspected is satisfied almost always.
+
+**Adjacency is the binding guard, by two orders of magnitude.** A tower with spare paint is
+next to a hungry soldier on 0.0%, 1.0% and 0.0% of the turns where it is needed.
+
+I was one step from writing the wrong iteration. My plan on the evidence available an hour
+ago was "move the `tryRefill` call before the role dispatch" — a genuinely one-line change,
+easy to justify, and **it would have accomplished exactly nothing**, because it targets the
+guard that was already passing. The probe cost six games. That is the cheapest lesson
+available today.
+
+It also answers the question I left open this morning with a **third** option I had not
+listed. Not "inert everywhere" and not "regime-dependent": the mechanism **fires at about 1%
+of the opportunities, in every regime**, because a hungry soldier is essentially never
+standing next to a tower. Iteration 25's +11 net swept therefore cannot be mostly the refill
+— 90 refills in one game and zero in two others is not what a +11 mechanism looks like.
+Logged as a **mis-attributed accept**: the iteration was real, the explanation was not.
+
+## Iteration 30, pre-registered — walk to the tower, and the dose is the open question
+
+**Hypothesis**: a soldier that cannot use its paint should spend its MOVEMENT closing the
+distance to a tower, instead of wandering dry until it starves. 72-88% of my deaths in the
+tournament games are starvation.
+
+**Why it must pre-empt the role, not follow it.** `wander()` spends the movement on every
+turn it is ready. A walk appended after the role would find no movement left and be inert —
+*for exactly the reason the refill is inert*. So `goRefill` runs first in `runSoldier` and
+returns true to pre-empt. Getting this backwards is the same shape of error as the guard I
+just disproved, so it is written down rather than assumed.
+
+**Two arms, because the dose is the whole question and I will not hand-search it.** Neither
+arm introduces a new constant:
+
+| arm | diverts when | rationale |
+|---|---|---|
+| `alice_i30a` | `paint < attackCost` | cannot paint one tile, so the painting given up is **provably zero** |
+| `alice_i30b` | `paint * 2 < paintCapacity` | the hunger line **already in `tryRefill`**; diverts a soldier that could still paint |
+
+`i30b` carries iteration 26's risk explicitly: pull painters off the map and coverage falls.
+`i30a` carries the opposite risk of being too late to save the unit, since a soldier at
+`paint < attackCost` may starve during the walk.
+
+### Pre-registered
+
+- **Instrument**: run `20260908-100124`, `BOT=alice_iter29 OPPONENTS="alice_i30a alice_i30b"`,
+  40 maps sampled, 160 games. Baseline as `BOT` so both arms play **the same maps against the
+  same baseline** — within-run comparison is then exact.
+- **DIRECTION, spelled out because this run is inverted relative to my usual one**: the
+  summary reports from `alice_iter29`'s point of view. **An arm is GOOD when `alice_iter29`
+  LOSES to it.** The quantity I want is `alice_iter29`'s swept-**loss** count against that
+  arm. I have written this down before seeing any number precisely so that a favourable-
+  looking headline cannot be read the wrong way round.
+- **Dose-finding gate**: the better arm is the one with the higher net swept *against*
+  `alice_iter29`. It advances to a full 75-map census against `alice_iter29`, which is the
+  accept gate. **This run does not accept anything.**
+- **Falsifier for the whole direction**: if *both* arms are at or below zero net swept, the
+  mechanism does not pay, and the conclusion is that starvation is a *symptom* of being
+  out-expanded rather than a cause — in which case iteration 31 goes to tower siting, not to
+  unit logistics.
+- **Manipulation check, pre-committed, to be run WHETHER OR NOT I like the result**:
+  `i30a` and `i30b` differ only in the predicate, and `i30a`'s condition implies `i30b`'s
+  (`paint < attackCost` ⇒ `paint*2 < capacity`, since attackCost << capacity/2). So **every
+  map where `i30b` is identical to the baseline must also be one where `i30a` is** —
+  the same subset test that caught the r2000 contamination, and I will exclude tiebreak
+  games from the identity test this time by construction rather than after the fact.
