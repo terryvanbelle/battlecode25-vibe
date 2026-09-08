@@ -8049,3 +8049,216 @@ have just called unsound. Instead: pinned `MAPS="Parking_lot"` and launched
 also loses Parking_lot to iteration 0, this is a long-standing lineage-wide weakness and the
 splasher floor is exonerated; if iteration 29 wins it, the floor caused it and the accept carries a
 map-shaped regression I should price. Two hypotheses, visibly different numbers, six games.
+
+## Iteration 30 follow-up — the Parking_lot probe, and the attribution CLOSES itself
+
+### The probe answered the "is it new?" question in six games
+
+Pinned `MAPS="Parking_lot"`, `BOT=carol_iter29`, opponents `carol_iter0 carol_iter21 carol_iter25`
+(run `20260908-041852`). Result: **iteration 29 splits Parking_lot against iteration 0** (1/2), and
+beats iterations 21 and 25 from both sides.
+
+So generation 30 sweep-loses a map that generation 29 splits, against the same ancestor: the
+splasher floor cost exactly **one game** there. That is a real one-game effect (deterministic
+engine, no noise floor) but it is one game on a lopsided instrument, and doctrine 9 says a
+lopsided instrument gives direction only. **It does not overturn a 44/50 accept, and the far more
+interesting fact is the one it rules out: this is not a regression the floor introduced. It is a
+lineage-wide weakness that predates iteration 30.**
+
+**Every single Parking_lot game — all 6 in the probe and all 16 in the roster run — was decided by
+paint coverage**, either `AREA_PAINTED` at the round limit or the coverage threshold. Not one
+elimination. Parking_lot is a pure coverage race.
+
+### The regime cut, done on an exogenous variable rather than an outcome
+
+First cut was by end condition: 98.6% when somebody hit the coverage threshold, 80.5% in r2000
+tiebreaks. **I am not using that number.** End condition is decided partly *by* who was winning, so
+conditioning on it is post-treatment selection — the same shape as doctrine 15. The exogenous cut is
+by map:
+
+| | maps | win rate |
+|---|---|---|
+| games reach r2000 on ≥50% of the map's pairings | 3 | 41/48 = **85.4%** |
+| everything else | 22 | 342/352 = **97.2%** |
+
+And within the slow maps it is not uniform — `shell` is 100%, `mit` 87.5%, **`Parking_lot` 68.8%**,
+the worst map in a 400-game run (next worst is `giver` at 75%, which is a *fast* map). So "slow maps
+are a weakness" is too coarse a claim to make from three maps; Parking_lot specifically is the
+outlier and that is what I traced.
+
+Ruin density, checked because it was my first guess: Parking_lot is rank **38 of 75**, exactly the
+corpus median (11.36 ruins/1000 tiles). Hypothesis dead before it cost anything. Area 2025, rank 26
+of 75 — large but not extreme.
+
+### The trace, and it is an absolute degeneracy
+
+`carol_i30_2000` (T1) vs `carol_iter0` (T2), Parking_lot, bot side A — a loss:
+
+| round | T1 cov | T1 chips | T1 tw | T1 paint acts | T1 died/starved | T2 cov | T2 tw |
+|---|---|---|---|---|---|---|---|
+| 200 | 122m | 4,020 | 3 | 238 | 9/8 | 100m | 3 |
+| 600 | 136m | 7,620 | 3 | 17 | 26/26 | 103m | 3 |
+| 1000 | 135m | 15,870 | 3 | **0** | 21/21 | 104m | 3 |
+| 1400 | 134m | 24,220 | 3 | **0** | 23/23 | 103m | 3 |
+| 1600 | 135m | 29,070 | 3 | 2 | 21/20 | **305m** | **10** |
+| 2000 | 146m | **35,620** | **3** | 19 | 21/20 | **305m** | 10 |
+
+Four facts, none of which needs an opponent to be wrong:
+
+1. **Coverage flatlines from round 600 to round 2000** — 136 → 146 per-mille across 1,400 rounds.
+2. **Paint actions are literally zero** for windows at rounds 800, 1000 and 1200.
+3. **Deaths are starvation deaths**: `starved` ≈ `died` throughout (21/21, 23/23, 26/26). The bot
+   builds ~20 units per 200 rounds and ~18 of them die at zero paint having painted nothing.
+   `xfer` is **0 for the entire game** — not one paint transfer — while iteration 0 does 8–18 per
+   window.
+4. **35,620 chips banked against a 3-tower count and a 25-tower cap.** RULES.md's own line: "Chips
+   accumulate uselessly unless spent on towers/upgrades/SRPs."
+
+Iteration 0 wins by doing the opposite: it builds almost no units (+0–2 soldiers per window against
+my +6–11 soldiers and +8–18 moppers), so its towers keep paint, its few soldiers survive, and at
+round 1430–1537 it completes **seven** tower patterns and its coverage triples, 104 → 305.
+
+### This CLOSES iteration 30's open attribution — and the mechanism is bigger than registered
+
+I logged the attribution OPEN and said I would not back-fill it from the win rate. It is now closed
+by a within-game A/B that was already on disk: the archived `iter30_carol_iter29_Fossil_botA`
+replay has generation 30 (floor 2000) as T1 and **iteration 29 (floor 0, the zero arm) as T2**, on
+one map, in one game. At round 300:
+
+| | splashers alive | builds in window | tower paint | died/starved | coverage |
+|---|---|---|---|---|---|
+| **gen 30** (floor 2000) | **6** | +12 spl, **+0 sold, +0 mop** | **2,128** | 9/**4** | **635m** |
+| **iter 29** (floor 0) | 0 | +0 spl, **+26 sold, +4 mop** | 412 | 23/**21** | 263m |
+
+The registered mechanism is confirmed far more strongly than registered — realized splasher share
+went from ~0% to essentially 100% of builds. But the trace shows **it is one mechanism, not two**:
+blocking the cheap-unit spam is *how* the splashers get built, and the same block is why gen 30's
+towers hold 5x the paint and why its units stop starving (4 starved vs 21). Iteration 29 on Fossil
+is in exactly the same starvation spiral that generation 30 is in on Parking_lot.
+
+**Which hands me the iteration 31 target directly.** The floor is keyed on **chips**, but the
+resource it is really protecting is **tower paint**. On Parking_lot chips are ≥2000 on **100.0%** of
+tower turns, so the floor never binds — and the degeneracy survives precisely where chips are
+abundant. The throttle works; it is measured in the wrong currency.
+
+### I nearly published a doctrine-15 artefact, and the reconciliation caught it
+
+Sizing the operating band for that candidate, I extracted 2,403 tower-turns of `tp=` (the tower's
+own paint) from the Parking_lot replay, rounds 600–1400, and got: median **38**, max **200**,
+`tp >= 200` on **0.1%** of turns. Read naively that says *a soldier (200 paint) was affordable on
+one turn in a thousand* — a spectacular finding, and the basis for the paint-floor design I was
+about to build.
+
+It is invalid. `tp` is `rc.getPaint()` evaluated **in the return statement of `runTower`, after
+`rc.buildRobot` has already spent the stash.** It is post-spend state, and the turns that show a
+drained tower are exactly the turns it built something. Doctrine 15, verbatim.
+
+The check that caught it is doctrine 15's own: **multiply the rate back into a count.** 0.1% of
+2,403 turns implies ~2.4 soldier-affordable turns in that window; the replay shows roughly **30
+soldiers actually built** in it. An order of magnitude — not a subtle bias. (The `chips=` field in
+the same string *is* a decision-point value, captured at the top of `runTower`; I had verified that
+in an earlier session and carried the assurance across to a neighbouring field that does not share
+it. Two fields, one string, different referents.)
+
+**Scoping what dies, not the whole analysis**, per the doctrine: the claim that my towers *end*
+most turns at ~38 paint is a claim about post-turn state, which is exactly what post-turn state
+supports, so **"the towers are drained" stands.** What dies is only the step from that to
+affordability at the decision point — which is the number the design needed.
+
+### The history pre-check independently constrains the same design
+
+Before building, checked LEARNINGS for prior work on this currency. Two entries bite:
+
+- **Iteration 6's `PAINT_PLENTIFUL = 500`** sat *above* the mid-game tower-paint band and so fired
+  early and then never again — "verify a threshold against the operating band before, not after,
+  the run." A tower-paint floor is the same class of constant and needs the same sizing.
+- **Iteration 19a (stop building moppers)** ran at **32%**: a mopper costs 100 paint against a
+  soldier's 200, and "cutting the cheap unit in a paint-starved economy *removes* production."
+
+So a naive "tower may not build below a paint floor" is the shape of an already-rejected direction,
+and my sizing number for it was the invalid one. Both objections point the same way: **measure the
+decision properly first, then design.**
+
+Built `src/carol_i31p`: `src/carol` plus `int tpIn = rc.getPaint()` captured at the **top** of
+`runTower`, and `want`/`cost`/`afford`/`canBuildRobot`/`built` recorded per decision. All pure
+reads; `rng.next` call count verified unchanged, so the games must be identical to `carol`'s.
+Compiles, and `UnitType.paintCost` was confirmed by `javap` on the engine jar rather than assumed.
+Running it on the motivating game to get the true decision-point distribution.
+
+### The decision probe — and this time the accounting closes exactly
+
+`carol_i31p` vs `carol_iter0`, Parking_lot (run `20260908-042926`). **Arm-to-arm identity check
+passed**: the probe went 0/2, both losses at r2000, reproducing the shipping build's Parking_lot
+result against iteration 0 game for game. It is a no-op, so what it reports is what `src/carol` does.
+
+2,403 tower decisions, rounds 600–1400:
+
+| rolled `want` | decisions | share | paintCost | chips gate passes | **actually built** | tower paint ≥ cost |
+|---|---|---|---|---|---|---|
+| SOLDIER | 1,809 | 75.3% | 200 | **100.0%** | **2.0%** | 2.0% |
+| SPLASHER | 366 | 15.2% | 300 | **100.0%** | **0.0%** | 0.0% |
+| MOPPER | 228 | 9.5% | 100 | **100.0%** | **21.1%** | 21.1% |
+
+**The accounting closes before I read anything off it**, per the "close the accounting" rule and as
+the direct remedy for the artefact above: the probe predicts **84** builds in the window, and the
+independent per-window spawn counts in the aggregate trace (+20, +22, +20, +22 at rounds 800, 1000,
+1200, 1400) sum to **84**. Exactly. Nothing is left unexplained, which is what licenses the rest.
+
+Tower paint **at the decision point**: median **38**, p90 140, p99 205, **max 215**. (The invalid
+post-spend version said `≥200` on 0.1%; the true figure is 2.0% — the artefact understated it 20x,
+so the retraction was worth making and the corrected number is materially different, not cosmetic.)
+
+Three findings, in descending order of how firmly they are established:
+
+1. **The chips gate passes on 100.0% of 2,403 decisions.** Iteration 30's `SPLASH_FLOOR` provably
+   never binds on this map — measured at the decision point, not inferred from chip totals.
+2. **96.5% of decisions build nothing, and 100.0% of those failures are `tpIn < paintCost`.** Not
+   one failure has any other cause. The binding constraint is the tower's own paint stash, full stop.
+3. **The roll is a fiction.** Realized production is 36 soldiers : 48 moppers : **0 splashers** —
+   **43% / 57% / 0%** against an intended 75% / 9.5% / 15.2%. The tower never *chooses* a mopper;
+   a mopper roll simply succeeds 10x more often than a soldier roll (21.1% vs 2.0%) because it is
+   cheaper, and a splasher roll succeeds never. **The allocation is set by which roll happens to be
+   affordable — a policy nobody chose**, which is §5b's "the order they fire in sets the allocation,
+   by accident rather than by measurement" in the paint currency.
+
+This is the *same* clamping pathology iteration 30 fixed, one level down and much more severe:
+iteration 30 unclamped the chips gate, and the paint gate underneath it is untouched.
+
+## Iteration 31 — registered, NOT yet built: the paint-side clamp
+
+**Target**: the realized mopper share is 57% against an intended 9.5%, and my own LEARNINGS measures
+moppers as idle on **95.1%** of 78,480 turns. The single largest sink of a starved paint economy is
+the unit least able to use it, and it wins that sink by being cheapest rather than by being chosen.
+
+**Why this is not a silent revert of iteration 19a.** 19a *deleted* moppers from the roll and ran at
+**32%**, with the recorded cause "a mopper costs 100 paint against a soldier's 200, and cutting the
+cheap unit in a paint-starved economy *removes* production". That cause was correct and I am not
+contradicting it — but 19a was a permanent removal, and what the probe adds is *why* the cheap unit
+dominates. A floor that yields when paint is genuinely plentiful is a different mechanism from a
+deletion, and 19a's rejection does not reach it. Recording this as the specific reason the recorded
+cause no longer applies, rather than "feels under-explored".
+
+**Pre-checks I have DONE:**
+- *Reachability, at the decision point*: 2,403 decisions, chips gate 100%, paint gate binding on
+  96.5%. The branch fires constantly.
+- *Operating band* (iteration 6's `PAINT_PLENTIFUL` lesson): median 38, p99 205, max 215.
+- *Instrument validity*: identity check passed; accounting closes 84 = 84.
+
+**Pre-checks I have NOT done — naming them rather than letting momentum imply they are done:**
+1. **The band's max of 215 is ENDOGENOUS, and I have not proved it.** A splasher needs 300 and the
+   stash never reaches it — but that is a consequence of the *current* spending policy, not a cap.
+   Team paint income backs out at ~15/turn (12,000 paint spent over 800 rounds), so a blocked stash
+   should climb past 300 in ~20 turns. I have not verified that, and the whole design rests on it.
+2. **My own history contraindicates the obvious payoff.** LEARNINGS measures splashers as `noPaint`
+   on up to **79% of their turns, 1,987 turns on Parking_lot specifically, against 10 splashes.**
+   So "let the stash reach 300 and build splashers" would buy, on this exact map, the unit already
+   measured as useless on it. This is the price term, it falls on the binding axis, and it is the
+   most likely killer of the candidate. It must be settled before building, not after.
+3. **Sizing map is one map.** Parking_lot is the outlier that motivated this; per the "check your
+   sizing map is not degenerate" rule the distribution must be re-measured on a typical map before
+   a constant is chosen. The probe is built and is a verified no-op, so this costs 2 games.
+4. Bytecode on the shipping build (the probe adds a string concat that the shipping build would not).
+
+Stopping the design here deliberately. Pre-check 2 is the one that has caught this lineage three
+times in the "cost the price, not just the benefit" family, and it points at the payoff rather than
+the mechanism — exactly where I have historically not looked.
