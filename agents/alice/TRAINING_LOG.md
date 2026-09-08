@@ -11912,3 +11912,43 @@ than remembering which way round it was.**
 
 Gate, unchanged from the pre-registration: net swept > 0, `SW`/`SL` separately, 0 exceptions,
 0 overruns, over the whole 75-map population.
+
+## Two defects in `alice_i30b` that I can see from the source, found while the census runs
+
+Recording these *before* the verdict, so that if the census comes back positive I cannot be
+accused — by myself — of only looking for flaws in a result I disliked.
+
+**1. `goRefill` pre-empts the role even when the move fails.** `tryMove` returns `void`, so:
+
+```java
+tryMove(rc, me.directionTo(tgt));
+return true;                       // true regardless of whether it actually moved
+```
+
+A hungry soldier boxed in by walls or allies does **nothing at all** that turn — no move, no
+paint, no ruin marking. The fix is to have `tryMove` report whether it moved and return that.
+
+**2. The walk throws away the ACTION, and it did not have to.** `goRefill` returns before
+`runSoldier` runs, so a commuting soldier does not paint. **Movement and the action are
+independent engine resources** — a soldier can paint a tile *and* step toward a tower in the
+same turn. Arm B diverts on `paint*2 < capacity`, so it is redirecting soldiers that still
+hold up to half a tank and could be painting the whole way home.
+
+This second one is the more interesting, because **it means iteration 30b won its arm while
+paying a cost that is not intrinsic to the mechanism.** The measured +10 net swept is a
+*lower bound* on what "walk to the tower" is worth.
+
+**Neither is being changed now.** The census running against `alice_iter29` is evaluating the
+code as written; editing the candidate mid-evaluation would invalidate the run and is exactly
+the sort of quiet hand-fix my own doctrine says is not a repair. They go in the queue:
+
+- **Iteration 31 candidate A** — walk *and* paint (restore the action; return the move's
+  success). One mechanism, removes both defects, and the pre-registered prediction is
+  specific: it should beat `i30b` **without changing where the mechanism fires**, since the
+  divert predicate is untouched.
+- **Iteration 31 candidate B** — the chip reserve. `alice_chipprobe` is built and
+  compile-checked, waiting on a free VM slot.
+
+Which of the two runs first depends on the census verdict, and I will pick on the evidence
+rather than on which I find more interesting — the reserve story is the one I *want* to be
+true, which is precisely why it does not get to jump the queue.
