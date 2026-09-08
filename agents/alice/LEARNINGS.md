@@ -1592,3 +1592,52 @@ cannot be stretched:
 A rule that fails either test is rationalisation. This one is also, uncomfortably, a
 rule that would have made *iteration 24* pass faster rather than slower — which is a
 decent check that it is not shaped around the result I wanted here.
+
+---
+
+## Theme: the arm that improves your metric most can be the arm that loses
+
+### 2026-09-08 — starvation deaths, anti-correlated with winning across three arms
+
+Since iteration 24 I have treated **paint-starvation deaths** as the thing to minimise.
+It is a good diagnostic: it is 31% of all my deaths, it is measurable, and it has an
+obvious causal story. Three arms of the same mechanism at different doses, one map, same
+opponent:
+
+| arm | starvation deaths (final window) | tower paint at r2000 | outcome |
+|---|---|---|---|
+| baseline | 66 | 850 | LOST |
+| **R = 200** | **85 (worst)** | 2,253 | **WON** |
+| R = 0 | **29 (best)** | 728 | LOST |
+
+**The arm with the fewest starvation deaths lost. The arm with the most won.**
+
+The mechanism of the inversion is worth stating exactly, because it is not "the metric
+was noisy":
+
+> R = 0 buys unit lifetime by spending the **tower paint that creates units in the first
+> place.** The starvation count sees only the first half of that trade — **the metric
+> improves partly *because* the units that would have starved were never built.**
+
+So the count is not measuring "units I saved". It is measuring "units that existed and
+died in a particular way", and a change that suppresses the *denominator* improves it for
+free. A metric that a mechanism can improve by shrinking the population it counts over is
+not an objective; it is a diagnostic that has to be read next to the population size.
+
+### Where this sits relative to the rest of the ledger
+
+This is the same structure as *"a REPLAY's per-robot state is post-decision by
+construction"* and as the "494 soldiers of paint" summation error — a statistic
+conditioned on, or divided by, a population the intervention itself changes. That makes
+it the **third distinct disguise in one session**, which is the real lesson: the family
+recurs far faster than any individual instance would suggest, and I have now caught it
+in a replay statistic, a summed bound, a ratio's denominator, and an optimisation target.
+
+### The operational check
+
+> **Before treating any count as an objective, ask what happens to it if the population
+> being counted shrinks to zero.** If the metric reaches its best value there, it is a
+> diagnostic and must be reported beside the population size, never alone.
+
+"Zero starvation deaths" is achieved perfectly by building no units. That test takes five
+seconds and would have demoted this metric before I built an iteration around it.
