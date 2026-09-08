@@ -8243,3 +8243,94 @@ Worth stating explicitly because it also **retires a hypothesis I would otherwis
 for after a failed dose**: if iteration 23 comes back flat, "we just need more towers" is not
 the fallback. The fallback is the spawn probe (`src/bob_sprobe`, built and unrun), which asks
 whether the spawn decision is chip-limited or paint-limited at the decision point.
+
+---
+
+## Iteration 23 — RESULT: **REJECTED, and the premise is REFUTED, not merely the dose**
+
+Run `20260908-054213`, 150 games, 25 maps resampled, `BOT=bob` (= `bob_iter20`).
+
+```
+arm       money share   score  vs null     sd  swept  swept-against  split
+bob_k0       53.3%    25/50         +0  +0.00      0              0     25
+bob_k7       42.1%    22/50         -3  -0.85      1              4     20
+bob_k3       33.3%    17/50         -8  -2.26      0              8     17
+```
+
+Control `bob_k0`: **25/50, all 25 maps split, zero swept.** Fifth consecutive zero-variance
+null; the run is valid and the comparisons are exact.
+
+**A clean monotone dose-response, pointing the wrong way.** More paint towers is monotonically
+worse: +0, −3, −8 as the money share falls 53.3% → 42.1% → 33.3%. And `bob_k3`'s shape is
+one-directional — **0 swept-wins against 8 swept-losses** — which per doctrine 10 is the
+signature of a real causal effect rather than churn. This is not a near miss and not noise: it
+is a dose curve that says the incumbent share is better than either alternative I built.
+
+### My pre-registered falsification condition fired, and I am honouring it
+
+I wrote, before the run:
+
+> **What would falsify the premise outright**: both arms *below* the null. Chips would then be
+> doing something I have not accounted for, and the whole chip-surplus reading — which is
+> currently the largest un-acted-on evidence I own — would need re-examining rather than
+> re-dosing.
+
+Both arms are below the null. So: **the chip-surplus premise is refuted, and I am not
+re-dosing it.** Note how well-supported it looked. Every number in it was real and
+independently sourced — $132,014 unspent, every tower upgraded, tw25 at the engine cap, ~75%
+of deaths by starvation, tower paint pools at 8-10% of capacity, and a balance point computed
+from bytecode I decompiled myself. The premise was not built on a bad measurement anywhere. It
+was built on **correct measurements of the wrong time**.
+
+### The hypothesis for *why*, registered as a hypothesis and not as the finding
+
+Doctrine 3b forbids back-filling a mechanism because the number came out a certain way, so
+this is written as a claim with a test attached, not as an explanation of the result.
+
+**Iteration 4 may have been right all along, and my refutation of it read the wrong window.**
+Its recorded reason for rejecting a paint-heavy mix was: *"chips buy paint income back through
+iteration 3's upgrades at +5 paint/turn per 2,500 chips, so starving the treasury starves the
+upgrades and nets out worse."* I declared that refuted this morning on the strength of the
+endgame surplus. But **the surplus only appears after the upgrades finish, at around r600** —
+and by then the game is largely decided. My own LEARNINGS §18 says every game is settled on
+paint coverage, and my own coverage traces say the map is full by ~25% of game length and
+coverage peaks near r150.
+
+So the chip surplus may be a **post-decision artefact**: I measured a resource's abundance at
+a time when it could no longer matter, and concluded it had never mattered. That is the same
+shape as doctrine 15's post-action-state trap in a different coordinate — there the error is
+reading state *after the action*, here it is reading state *after the game is decided* — and
+it is worth naming as a sibling, because I would not have recognised it from the doctrine as
+written.
+
+**The test, which was pre-registered as this exact fallback and is already built:**
+`src/bob_sprobe` counts, at the spawn decision point, in-bot, before the action resolves,
+whether a tower is chip-blocked, paint-blocked or tile-blocked — per 200-round window, so the
+early game is separable from the late. If chips block spawns before ~r600, iteration 4's
+argument is vindicated and the premise dies with a named cause. If they never block, the
+premise dies without one and I will say so rather than invent one.
+
+Doctrine 15 is why this has to be an in-bot probe and cannot come off a replay: the chips a
+replay shows a tower holding on turn N are what it had *after* spending, so affordability
+computed from replay state is conditioned on the outcome it is meant to predict.
+
+### Functional area
+
+**Tower type: 3 consecutive rejects** (iteration 22, the count-keyed void, this one).
+`MaxConsecutiveRejects = 3`, so **the next attempt must leave this area** — and unlike the
+usual case I am not leaving it on a budget rule but on evidence: iteration 22 showed the
+symmetry axis is a local optimum, and this run shows the share axis is too. Both axes of the
+tower-type rule are now measured and the incumbent wins on both. The iteration-1 default that
+nobody had ever re-measured turns out to have been right, which is worth its three rejections.
+
+### What survives
+
+- The **null is calibrated five times over** now: identical code scores exactly 25/50 or 40/80
+  with every map split and zero swept, every time. A one-game margin in this lineage is a real
+  one-game effect.
+- The `markedTypeAt` readback (`src/bob_c2`) works and is verified; the "tower type must be a
+  pure function of the ruin" constraint is retired whenever it is next needed.
+- The offline scanners (`BobFold`, `BobMix`) now price any candidate tower rule on four axes
+  for zero games. `mask 1` was excluded on that table alone.
+- The chip-surplus *observations* stand as observations. What is refuted is the inference from
+  them to "the tower mix is wrong", which is a different statement and dies alone.
