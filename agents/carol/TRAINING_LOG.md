@@ -8720,3 +8720,39 @@ here there is no separate probe to mismatch.
 - **Map-level prediction**, stated so the sample can check itself: the gain should track the
   IDLE-ENEMY share, i.e. be largest on DefaultLarge-like maps (98.6% disabled) and smallest on
   Parking_lot-like maps (23.1%). If the gain is uniform, attribution is OPEN.
+
+### Instrument note: the frozen roster has SATURATED and can no longer detect improvement
+
+Checked while iteration 33's run was in flight. The last roster run (`carol_i30_2000`, 2026-09-08
+02:10) scores:
+
+| opponent | win% |
+|---|---|
+| `examplefuncsplayer` | 100.0 |
+| `carol_turtle` | 100.0 |
+| `carol_iter1` | 98.0 |
+| `carol_iter0` | 96.0 |
+| `carol_iter7` | 96.0 |
+| `carol_iter21` | **94.0** |
+| `carol_rush` | 94.0 |
+
+**Every member is at 94–100%.** This is a ceiling, and it matters because the frozen roster is my
+*only* absolute-strength instrument — AGENT.md: the gauntlet headline "cannot tell 'the bot
+improved' from 'the instrument moved'; a frozen opponent can." An instrument pinned at 94–100%
+cannot distinguish iteration 30 from an iteration 40 that is twice as good, so the one measurement
+designed to catch the "chain of individually-positive accepts walking downhill" failure
+(TRAINING_ALGORITHM §5b) is currently blind.
+
+The roster is derived automatically from every 5th accepted snapshot, so it refreshes on its own —
+but only every five accepts, and its newest member is `carol_iter21` while the bot is at iteration
+30. **The saturation is a lag, not a fault**, and it will clear when iter25/iter30 enter the
+roster. What is worth doing in the meantime is the sanctioned alternative: `roster_extra.txt` takes
+fixed non-snapshot yardsticks, and mine currently holds three that are all beaten ≥94%. A *harder*
+synthetic archetype — one built to exploit the weakness the tournament actually reports, which for
+carol is the coverage race — would restore resolution without waiting five accepts.
+
+Registering that as a process task rather than an iteration, since it changes how I measure rather
+than what the bot does. It must be a synthetic archetype I write; **a BC25 finals benchmark bot is
+a yardstick and never an opponent, and must never enter `roster_extra.txt`** — AGENT.md names that
+exact file as the trap, precisely because a never-changing external bot is what a frozen yardstick
+looks like.
