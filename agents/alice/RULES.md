@@ -226,3 +226,45 @@ SRP        PAINT_TWR   MONEY_TWR   DEFENSE_TWR
 - Message/paint/mark constants all in GameConstants.java (copied to scratchpad).
 - Defense tower "mining" = attackMoneyBonus 20/30/40 chips per attack that hits >=1
   robot (single and AoE each count, no stacking per extra target hit).
+
+## UNUSED API — standing check (run it every ~10 iterations; it found a whole mechanic)
+
+Phase 0 item 2 requires periodically sweeping `RobotController` for methods the bot never
+calls. First run of this project was at iteration 29 and found **37 of 68 unused**, including
+one entire mechanic. Reproduce with:
+
+```bash
+gssh "javap -cp \$BC_JAR battlecode.common.RobotController \
+      | sed -n 's/.* \([a-zA-Z][a-zA-Z0-9]*\)(.*/\1/p' | sort -u" > rc_api.txt
+while read m; do grep -q "rc\.$m(" src/alice/RobotPlayer.java || echo "  $m"; done < rc_api.txt
+```
+
+### RESOURCE PATTERNS (unused through iteration 29)
+
+- `markResourcePattern(loc)` / `completeResourcePattern(loc)` / `canCompleteResourcePattern`
+  / `getResourcePattern()` -> `boolean[][]`.
+- `COMPLETE_RESOURCE_PATTERN_COST = 200` paint; `EXTRA_RESOURCES_FROM_PATTERN = 3` chips/turn;
+  `RESOURCE_PATTERN_ACTIVE_DELAY = 50` rounds; `RESOURCE_PATTERN_RADIUS_SQUARED = 8` (5x5).
+- **Needs no ruin** — placeable on any 5x5 block of own paint, so uncapped by map features,
+  unlike towers.
+- **NOT YET VERIFIED**: whether `EXTRA_RESOURCES_FROM_PATTERN` stacks per completed pattern,
+  and whether patterns may overlap or need spacing. Probe before costing anything on it.
+
+### MOPPER AoE (unused through iteration 29)
+
+- `canMopSwing(dir)` / `mopSwing(dir)`; `MOPPER_SWING_PAINT_DEPLETION = 5`,
+  `ATTACK_MOPPER_SWING_COOLDOWN = 20`.
+- My moppers only ever single-target. Note this contradicts the premise of the 25-iteration
+  "I cannot take enemy ground" blind spot: the mopper has always had an area attack.
+
+### MESSAGING (unused through iteration 29)
+
+- `sendMessage` / `broadcastMessage` / `readMessages` / `canSendMessage` /
+  `canBroadcastMessage`. Every unit acts on purely local information.
+
+### Also unused, lower value but noted
+
+`getNumberTowers()` (a direct read of expansion state — iteration 28 wanted exactly this and
+used a chip-level proxy instead), `getChips`, `getHealth`, `getAllLocationsWithinRadiusSquared`,
+`sensePassability`, `isLocationOccupied`, `onTheMap`, `disintegrate`, `setIndicatorDot/Line`,
+`setTimelineMarker`, `getResourcePattern`, `getTowerPattern`, mark/removeMark.
