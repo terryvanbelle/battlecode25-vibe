@@ -7324,3 +7324,57 @@ collated in `gauntlet/`. What made me write it anyway is that the tournament tab
 *more impressive* instrument, and impressiveness is not discrimination. The zero-sum caveat
 was even printed in the report I was reading. I wrote the caveat down, called the check
 cheap, and still published the headline before running it.
+
+### AMENDMENT to the iteration 21 pre-registration, made BEFORE the run returned: I got the penalty's UNIT wrong
+
+In the pre-registration I wrote:
+
+> Crossing hostile ground is a **cooldown tax of 10-20%, not a paint cost** — there is no
+> paint drain for standing on enemy paint. Verified from `GameConstants` in the 3.1.0 jar,
+> not from memory.
+
+**That is backwards, and my own `RULES.md` has had it right the whole time:**
+
+> Paint penalties per turn (from robot's own stash): end turn on neutral −1, on enemy −2
+> (`PENALTY_NEUTRAL/ENEMY_TERRITORY`); PLUS 1 × (# adjacent allied robots), doubled while in
+> enemy territory. Moppers pay **2×** the territory penalties.
+
+`PENALTY_ENEMY_TERRITORY = 2` is **2 paint per turn**, not 2 cooldown. I read the constant's
+*value* correctly out of the jar and then assumed its *unit*. The discriminating evidence was
+sitting in the same constant dump I printed: **`MOPPER_PAINT_PENALTY_MULTIPLIER = 2`**. A
+multiplier that applies to the territory penalty and is named *PAINT* settles what the
+penalty is denominated in. I printed that line and did not read it.
+
+### Redoing the affordability pre-check with the right unit
+
+Roughly half a march is over friendly paint (no penalty); price the other half at the enemy
+rate, and recall a mopper pays double and cannot refill away from a tower:
+
+```
+                  capacity   drain/turn   median march (~17 hostile rounds)   worst (~47)
+SPLASHER            300          -2            -34 paint   arrives ~170        -94  arrives ~110
+MOPPER              100          -4            -68 paint   arrives ~32         -188  DEAD
+```
+
+- **Splasher: still affordable.** It needs 60 paint to splash and arrives with ~170 of a
+  measured mean 205. The pre-check passes, so arm A's design stands as written.
+- **Mopper: not affordable.** On a median map it arrives with ~32 of 100 — below the
+  `INCREASED_COOLDOWN_THRESHOLD = 50`, so it is *also* slowed exactly when it arrives. On a
+  long map it reaches zero paint, and at zero a robot cannot move or act and takes
+  `NO_PAINT_DAMAGE = 20`/turn against a mopper's **50 HP** — dead in three turns.
+
+**So arm B should be clearly worse than arm A, and may well be worse than the null.** That is
+the same ordering I pre-registered, but the reason I gave was wrong: I attributed it to the
+mopper→soldier repaint chain of §24a. The real mechanism is cruder — **a migrating mopper
+cannot pay for the trip.** Both predict `mB < mA`, so the run cannot separate them, and I am
+writing that down now rather than claiming afterwards that whichever story fits was mine.
+
+If `mB` comes back at or above `mA`, then this drain model is wrong too, and that becomes the
+finding rather than anything about migration.
+
+**Why this correction matters beyond one arm.** "Verified from the jar, not from memory" was
+the phrase I used to license the claim, and it was true of the number and false of the
+meaning. A constant dump gives values, never units — and the unit was recoverable from the
+very same dump. Reading the *name* of the neighbouring constant would have caught it, and so
+would opening `RULES.md`, which is my own javap-verified digest and the file I skipped
+because I "already knew" the mechanic.
