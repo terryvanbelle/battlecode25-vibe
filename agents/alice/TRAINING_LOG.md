@@ -14042,3 +14042,113 @@ is not measuring a defect I could fix — it is measuring how much of this bot's
 decided by short realisations on a deterministic engine. That number is a property of the
 apparatus, and the only response to it is the one I already took: a gate large enough that
 realisation luck cannot clear it.
+
+## Iteration 39 — the drafted phase signal, MEASURED, and the defect it turned up instead
+
+Built `alice_i39diag`: the drafted `getNumberTowers` state test, computed and reported every
+tower turn but **not wired to any decision**, so the build is behaviourally the shipping bot
+plus instrumentation. Engine fact checked first, through `tools/engine-jar.sh --remote`:
+`RobotControllerImpl.getNumberTowers()` -> `TeamInfo.getTotalNumberOfTowers(getTeam())`, i.e.
+**my own team's total**, free and team-wide. Confirmed, not assumed.
+
+### The floorless form of the draft is degenerate, and that is caught for free
+
+`longestGap` starts at 0, so *any* dry spell beats it and `expansionFinished` would be true from
+round 2 on every map. The draft's "honest first arm is the floorless one" was wrong as written.
+The fix needs no searched constant: **require two observed gains**, because one inter-gain gap
+does not exist until then. `towerGrowths >= 2 && (round - lastGrowthRound) > longestGap`.
+
+### The pre-registered quantity, on a map where the mechanism is known to BITE
+
+Per the iteration-38 lesson, run on a map where the chip proxy is known to fail —
+`AlarmClock`, where iteration 28's probe recorded `spl0`. T1 = the diag build.
+
+| signal | round |
+|---|---|
+| last tower actually gained | **208** |
+| state test fires durably (`fin=1` to end of game) | **274** |
+| shipping **chip proxy** opens (`$ >= 3950`) | **418** |
+| transient early fire, self-corrected | 129 |
+
+**The state test detects end-of-expansion 144 rounds before the chip proxy**, which is the
+draft's claim, confirmed. Two secondary facts worth recording: the signal is **not a latch** —
+it went true at 129 and back to false when towers resumed — and towers built late never fire it
+at all (`g=0`, `E=-1` for 4 of 10 towers on AlarmClock), because they never observe two gains.
+The old towers carry it, so the branch is reachable, but the design is not uniform across towers.
+
+### But the counters found something bigger, so I chased that instead
+
+Instrumenting the **decision** rather than the outcome (doctrine 3 of §3), across five maps:
+
+| map | build-turns | gate fired | of those, paint < 300 | splashers built | soldier displaced (`ATE`) |
+|---|---|---|---|---|---|
+| DefaultHuge | 1801 | 1374 (76%) | **1315 (96%)** | 59 | **465** |
+| Mirage | 653 | 265 | 255 (96%) | 10 | 108 |
+| DefaultLarge | 657 | 214 | 206 (96%) | 8 | 67 |
+| Barcode | 852 | 133 | 128 (96%) | 5 | 46 |
+| AlarmClock | 614 | 3 | 3 (100%) | 0 | 1 |
+
+Iteration 28 added `if (money >= CHIP_RESERVE + 2500) want = SPLASHER;` **after** iteration 5's
+paint guard, and it overwrites `want` unconditionally — so it bypasses the guard that exists
+because tower paint, not chips, is the binding constraint. When the gate fires the tower cannot
+afford the splasher's 300 paint **96% of the time**, and the build block then produces nothing.
+
+`alice_i39a` was one line: only override to splasher when `getPaint() >= SPLASHER.paintCost`.
+
+### REJECTED in two games, on its own pre-registered risk
+
+I named the risk before building: paint spent on soldiers is paint that never reaches 300. The
+manipulation check measured splashers-built directly rather than assuming.
+
+| build | DefaultHuge | Mirage |
+|---|---|---|
+| baseline gate firings / splashers built | 1374 / 59 | 265 / 10 |
+| **`alice_i39a` gate firings / splashers built** | **0 / 0** | **0 / 0** |
+
+**`GF=0` on every tower of both maps.** The guard does not trim the waste, it removes splasher
+production **entirely** — the tower spends paint on a soldier the moment it reaches 200 and
+never again reaches 300. That reverts iterations 28 and 29, both accepted. Killed for **two
+games**, before any screen.
+
+### The correction that matters more than the candidate: I had the wrong referent
+
+I called 1315 idle build-turns "pure waste" and built against that. It is not waste.
+
+> **Build slots are not the scarce resource; tower paint is.** An idle tower-turn does not
+> destroy anything — the paint carries forward, and the idling *is* the accumulation mechanism
+> by which splashers get built at all. Checked, not assumed: tower paint is nowhere near a cap
+> (~110 per tower against a 300 splasher cost), so nothing is lost by holding it.
+
+This is doctrine 5's wrong-referent error, in its textbook shape — a number correctly computed
+against the wrong thing, plausible, and it produced a candidate that compiled and ran. The tell
+was available before the run and I did not use it: **96% "unaffordable" is not a failure rate if
+the other 4% is what the 96% was saving up for.**
+
+What the shipping bot is actually doing is a **savings account nobody designed**: splasher has
+absolute priority once chips are loose, so the tower idles until it can afford one. Doctrine 5b
+names this exactly — two branches buying the same good from one budget, where *the order they
+fire in sets the allocation, by accident rather than by measurement*. The allocation happens to
+be defensible; it was still never chosen.
+
+### Structural finding: after expansion, chips have NO sink and paint is the only constraint
+
+Checked on DefaultHuge, T1: **25 towers, 25 upgrades to level 2, 25 to level 3** — every tower
+fully upgraded — with **$570,900 still unspent** at round 2000. The three chip sinks are units
+(tower-paint-bound), upgrades (saturated), and tower completions (no ruins left). So late-game
+output is capped by total tower paint income and nothing else, and the late-game army converges
+to **splashers only**: `sold0 spl53 mop0` from round 1600, with coverage climbing 422 -> 597.
+
+That vindicates iterations 28/29 rather than the candidate, and it reframes the open question
+in a form worth a real iteration: **with chips free and tower paint fixed, which unit buys the
+most painted area per unit of TOWER PAINT?** Costs are 200/250 soldier, 100/300 mopper, 300/400
+splasher — so the chip-cheap unit and the paint-cheap unit are different units, and the bot's
+mix was chosen when chips were scarce.
+
+### One accounting that does NOT close — named, not published
+
+Tower paint income on DefaultHuge is roughly 25 towers x ~15/turn ~= 375/turn, yet `twPaint`
+sits flat near 2,700 all game and splasher *builds* absorb only a fraction of that. Robot
+refills are the obvious sink and are almost certainly most of it, but **I have not closed this
+decomposition**, so I am recording it as an open question rather than reading anything off it.
+Doctrine §4: a decomposition that does not close is not evidence. The next step is the
+`tryRefill` transfer volume per round, which the replay's `xfer` counter already carries.
