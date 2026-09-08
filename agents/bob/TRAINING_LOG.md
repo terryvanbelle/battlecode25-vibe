@@ -9176,3 +9176,105 @@ towers (all)        <590 (2.9%)     <564 (2.8%)
 
 Caveat: these come from `bob_cprobe`, which carries extra instrumentation, so `src/bob` is at or
 below these numbers on the paths measured. Headroom is not in question either way.
+
+---
+
+## Iteration 27 run 1 — **VOID**, and the void check earned its keep
+
+Run `20260908-093442`, 200 games. Evaluated with the new `bob-tools/eval_arms.py`:
+
+```
+arm       PAINT_RESERVE   score  vs null  swept  sweptAg  split  diff-from-null
+bob_q0              0     19/50      +0      2        8     15        0/50   <- NULL, BROKEN
+bob_q1            100     25/50      +6      5        5     15       18/50
+bob_q2            200     15/50      -4      2       12     11       14/50
+bob_q3            300     15/50      -4      2       12     11       18/50
+```
+
+**Pre-registered void condition: "Void if `bob_q0` is not 25/50 with all 25 maps split."** It came
+back **19/50 with 15/25 split and 8 swept losses**. Void. Nothing in the table above means anything,
+including `bob_q1`'s +6.
+
+### Why the "exact" zero arm was not exact — my bug, not the tooling's
+
+`G.rng` is a **per-robot `java.util.Random(rc.getID())`**, and the spawn block is:
+
+```java
+if (chips >= want.moneyCost + reserve) {
+    int start = G.rng.nextInt(8);          // <-- consumed INSIDE the gate
+    for (int i = 0; i < 8; i++) { ... rc.canBuildRobot(want, l) ... }
+}
+```
+
+In the incumbent, a tower with enough chips but **too little paint to build anything** still enters
+the block, still draws from the PRNG, and still runs a loop that spawns nothing. My arm added the
+paint test to the `if`, so on exactly those turns the block was skipped and **the draw was not
+consumed**. From that moment the tower's PRNG stream is offset by one, and every subsequent
+`G.rng.nextInt(8)` — spawn directions, and `G.randomDir()` wherever else it is reached — returns a
+different value for the rest of the game.
+
+The change was **behaviourally neutral in outcome** (the skipped loop could not have spawned) and
+**behaviourally catastrophic in sequence**. Fixed by putting the paint test *inside* the chips block,
+after the draw:
+
+```java
+if (chips >= want.moneyCost + reserve) {
+    int start = G.rng.nextInt(8);
+    if (rc.getPaint() >= want.paintCost + PAINT_RESERVE)
+    for (int i = 0; i < 8; i++) { ... }
+}
+```
+
+At `PAINT_RESERVE = 0` this consumes the draw identically *and* its guard is exactly what
+`canBuildRobot` already asserts, so it is now genuinely exact. Rebuilt as `bob_r0..bob_r3`,
+compile-checked, relaunched as run **`20260908-101158`**.
+
+**What this cost and what it bought.** It cost 200 games of shared VM time. It bought the bug — and
+had I not pre-registered the void condition, I would have read `bob_q1` at **25/50, +6 over the
+null, 5 swept wins** as my first promising result in seven iterations, and it is an artefact of a
+desynchronised random number generator. That is precisely the coordinator's rule about running the
+manipulation check when you expect to pass: I expected the zero arm to pass, it was the check I was
+most confident about, and it is the one that fired.
+
+### The far more important finding: **my nulls' zero variance is STRUCTURAL, not statistical**
+
+For seven consecutive runs I have recorded the control arm at *exactly* 25/50 with all 25 maps split,
+and I wrote at iteration 18, in as many words, *"a zero arm measured at EXACTLY the null (25/50,
+**se = 0**, all 25 maps split)"*. I have been reading that as **the instrument has no noise**.
+
+It does not mean that. Those arms were **byte-identical** to the bot, so the deterministic engine
+produced a perfectly antisymmetric mirror; 25/50-all-split is forced by symmetry and could not have
+come out otherwise. It is a check that the harness is wired correctly. **It is not a measurement of
+how much a changed arm's score moves for reasons unrelated to its mechanism.**
+
+And run 1 accidentally measured that quantity for the first time. `bob_q0` differs from the
+incumbent **only** by PRNG phase — no decision rule changed, no outcome that the loop could have
+produced was altered — and it scored **19/50, with swept maps going from 0-against to 8-against.**
+
+**So a behaviourally neutral change moved this instrument by 6 games and 8 swept maps.** Against
+that, look at what I have been calling results:
+
+```
+iteration 24    reserve 600    -3
+iteration 25    reserve 2400   +2      <- wrote several paragraphs of mechanism for this
+iteration 26    1800 / 2400 / 3000     -1 / +0 / -3
+```
+
+**Every one of them is inside the band that a pure PRNG reshuffle produces.** This does not overturn
+iteration 26's conclusion — the plateau stands, and is if anything better supported, since the
+readings were noise exactly as the pooled 400-game result said. What it overturns is the *precision*
+I have implied all session, and it explains why iteration 25's `+2` failed to replicate: it was never
+a +2 of anything.
+
+**Caveat, held to my own standard (LEARNINGS 32): this is ONE draw from that distribution.** 19/50 is
+1.7 binomial sd below 25 and I am not going to build a mechanism story on a single sample. The
+*logical* half of the point needs no sample and is what I am asserting: a mirror null's zero variance
+is forced by byte-identity and says nothing about a changed arm's variance.
+
+**QUEUED — null-distribution calibration, and it is cheap and overdue.** Build 3-4 arms that are
+behaviourally neutral but PRNG-desynchronised in different ways (consume an extra draw at a different
+point), run them as one gauntlet, and read the **spread**. That is a direct measurement of this
+instrument's noise floor, which doctrine 9 has asked me for since day one — *"compute the binomial
+noise floor for each instrument's sample size and distrust any delta under it"* — and which I have
+been approximating with a binomial formula that assumes the only variation is coin-flipping. One
+200-game run buys a number that every future accept gate should be set against.
