@@ -296,6 +296,25 @@ agents. Therefore:
   that is the system working, not a failure.
 - Driver disk is tight: your workspace's `gauntlet/` output is git-ignored —
   prune old runs you no longer need. Keep bulky artifacts on battlecode-dev.
+- **If you write your own tool that touches battlecode-dev, it must obey the
+  same two rules the shared runners do.** Both have already been violated in
+  practice, once in `tools/` and once in a lineage's own tool, and neither
+  failure is visible in its own output:
+  1. **Take a semaphore slot before starting any game.** Every other runner's
+     `HARD_CAP` check counts running games, so a runner that starts one without
+     a slot does not merely exceed the cap — it makes the cap a fiction for
+     everyone, including the BC26 project.
+  2. **Never build into a directory a gauntlet runs from.** `gauntlet.sh`
+     compiles ONCE and then every game loads its robot classes from
+     `build/classes`; a `./gradlew run` in that same workspace rewrites those
+     classes underneath games already in flight. The damage lands on the
+     GAUNTLET, not on the tool, so the tool looks fine and the run it corrupted
+     never announces itself. Build in a sibling directory or under `/tmp`.
+     (Syncing `src/` is harmless — nothing recompiles mid-run — but only
+     because of that build-once behaviour, so do not rely on it loosely.)
+
+  A lineage found both of these in its own tool by reading `tools/vm-match.sh`,
+  which documents them. That is luck, not a process, which is why they are here.
 
 ## Git discipline
 
