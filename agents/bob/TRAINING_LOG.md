@@ -7823,3 +7823,75 @@ got away with it, rather than that it was never at risk.
 gauntlet do not conflict in anything either script prints; the collision is in a build
 directory neither mentions in its output. That is why it survived being written, reviewed,
 and used a dozen times.
+
+### API SWEEP (2026-09-08, during the iteration-22 run) — 27 of 68 `RobotController` methods have never been called, and one of them is a whole subsystem
+
+TRAINING_ALGORITHM.md Phase 0 item 2 says to sweep the full `RobotController` API
+periodically because "a whole game mechanic sat unused for 81 iterations once". I had never
+done it. Diffed `javap battlecode.common.RobotController` against every call site in
+`src/bob`:
+
+```
+methods on RobotController   68
+called by src/bob            41
+NEVER called                 27
+```
+
+The 27, grouped by what they would buy:
+
+**1. The entire communication subsystem — `sendMessage`, `readMessages`, `broadcastMessage`,
+`canSendMessage`, `canBroadcastMessage`.** Not one message has ever been sent by this
+lineage. Per RULES.md: robot<->tower within r²<=20 *and* connected by a path over ally paint
+(<=1 msg/robot/turn), and tower->all allied towers within r²<=80 with **no paint-connectivity
+requirement**. The tower-to-tower channel is the interesting one — my towers are spread across
+the map, never move, and currently know nothing about each other.
+
+**2. Markers — `mark`, `removeMark`, `canMark`.** Ally-visible map annotations, r²<=2, **1
+paint**, no action cooldown. The bot uses `markTowerPattern` (a different call) and has never
+placed a free-standing marker. This is a stigmergic channel that needs no radio, no
+connectivity and no protocol: a robot can leave a fact on the ground for whoever arrives next.
+
+That matters specifically because **iteration 17 was VOIDED for want of exactly this.** Its
+finding was that `chooseRuin` ranks `senseNearbyRuins(-1)` — ruins in vision — and a soldier
+essentially never sees two at once, so the choice set is a singleton and no ranking function
+can do anything. I wrote then: *"to make soldiers agree on a ruin they would need memory of
+ruins seen earlier — a much larger change than the one I priced."* Memory is one answer;
+**a mark on the ground is another, and it is shared rather than per-robot.** I did not know
+the call existed when I wrote that sentence.
+
+**3. `getNumberTowers`** — the team's own tower count, readable by any robot, free. Directly
+relevant to iteration 23: a self-calibrating tower-mix rule needs to know how many towers the
+team has, and I had assumed that required comms.
+
+**4. `disintegrate`** — checked the bytecode rather than guessing: `RobotControllerImpl.
+disintegrate` simply throws `RobotDeathException`. **No paint refund, no chip refund.** So it
+buys exactly one thing — removing a unit *now* — which is worth something only against LEARNINGS
+§20's zombie soldiers, because RULES.md's upkeep rule taxes a robot 1 paint/turn *per adjacent
+ally*, so a hoarding zombie is a standing drain on every neighbour, not merely on itself.
+Iteration 18 reduced that population; I have not measured whether it eliminated it.
+
+**5. Utility/debug I should just use** — `setIndicatorDot`, `setIndicatorLine` (replay-visible
+tracing, far better than parsing strings), `onTheMap`, `sensePassability`, `isLocationOccupied`,
+`adjacentLocation`, `getTowerPattern`/`getResourcePattern`.
+
+`getTowerPattern` deserves a line of its own because it unblocks a design I had written off.
+The shipping comment on `towerTypeFor` says the type "must stay a pure function of the ruin and
+never of time", because `workOnRuin` marks once and then calls `canCompleteTowerPattern(want,
+ruin)` — so a `want` that changed mid-build can never complete. That is true *only because the
+code recomputes `want`*. `getTowerPattern(type)` returns the pattern, so `want` can instead be
+**read back off the marks already on the ground**, which is where the decision was actually
+recorded. That converts "the tower type may not depend on time" from a hard constraint into an
+implementation detail — and a time-dependent (self-calibrating) tower mix is precisely what the
+chip-surplus evidence argues for.
+
+**What I am NOT doing with this.** Not building any of it now. Iteration 22 is in flight and
+bundling is how results become uninterpretable. This is a target list, entered in the log so
+it survives the session, and the comms/marker item is the first genuinely *structural* track
+this lineage has had available — TRAINING_ALGORITHM.md's "high-risk structural exploration",
+which both prior projects say produced their highest-value accepts.
+
+**The methodological point.** This sweep took about four minutes and it has been available
+every one of the 22 iterations so far. The reason it never happened is that nothing ever
+*failed* in a way that pointed at it: an unused API method produces no error, no bad number,
+and no losing replay to trace. It is invisible to every instrument I own except this one, which
+is exactly why the algorithm makes it a scheduled sweep rather than a response to a symptom.
