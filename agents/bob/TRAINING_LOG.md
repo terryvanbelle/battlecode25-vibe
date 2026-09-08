@@ -12864,3 +12864,26 @@ the margin reads directly. Full corpus is not a luxury here, it is the fix for t
 guarantees **all 12** ruin-poor maps are present (24 games of signal instead of 8) and removes map
 sampling variance entirely. Gate unchanged: **>= +10 accept, +7..+9 replicate, <= +6 reject**, plus the
 pre-registered 24-game ruin-poor subset read as the mechanism check.
+
+### Loss-duration baseline, the third leg of the tournament prediction
+
+```
+  tournament        bob losses   median rounds   <200 rounds    bob wins   median
+  20260907-0100          13          2000         0 ( 0.0%)        287       782
+  20260907-1300          23          1431         0 ( 0.0%)        277       726
+  20260908-0100          89          1098         2 ( 2.2%)        211       958
+  20260908-1300         155           703        10 ( 6.5%)        145       877
+```
+
+**bob's losses are getting faster — median 2000 -> 1431 -> 1098 -> 703 — while its wins stay long
+(782, 726, 958, 877).** The two distributions are separating, not shifting together. And sub-200-round
+losses, which did not exist two days ago, are now 6.5% of them.
+
+That is the early-game reading in its sharpest form: bob is not losing close games, it is increasingly
+being *ended* early, and when it survives the opening it still wins at the same pace it always did.
+Nothing about bob's mid or late game has visibly degraded.
+
+**Registered baseline for 01:00 UTC**: median loss duration **703** and **10 sub-200-round losses**.
+The mechanism predicts these move *before* the win column does — a bot that survives the opening but
+still loses is a bot whose opening got fixed and whose other problems are now visible, which is
+progress that a standings row would hide.
