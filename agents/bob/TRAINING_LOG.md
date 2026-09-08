@@ -10609,3 +10609,76 @@ more precision than it has.
 entry was "the floor is ±1, my instrument is sharper than I thought." The uncomfortable version is
 "the floor is the binomial ±3.5 I already had, and §37's finding that a 50-game arm cannot resolve
 anything under ~14 points stands untouched." The second is correct.
+
+---
+
+## Tournament `20260908-1300` — I fell 22 points for the second consecutive run. The roster says I did NOT decline.
+
+```
+              20260907-1300      20260908-0100      20260908-1300
+bob              92.3%             70.3% (-22.0)      48.3% (-22.0)     iter12 -> iter18 -> iter20
+alice            38.0%             47.3%  (+9.3)      56.3%  (+9.0)     iter14 -> ...   -> iter30
+carol            19.7%             32.3% (+12.7)      45.3% (+13.0)     iter12 -> iter29 -> iter36
+```
+
+Exactly −22.0 twice, with alice +9 and carol +13 both times. Wins are conserved across the three
+lineages, so these deltas sum to zero **by construction** and cannot separate "bob got worse" from
+"the other two got better". My own `roster_extra.txt` already carries a correction for quoting a
+tournament delta as if it could — I am not repeating it.
+
+**The frozen roster is the instrument that can, and it says the opposite of the standings:**
+
+```
+rung          iter12        iter18        iter20
+bob_iter11    58/56/50       40            70
+bob_iter1        86          86            88
+bob_iter0        92          92            92
+```
+
+`bob_iter11` cannot change, so 40 → **70** is a **+15-game, 4.2 se** improvement, unconfounded. Against
+every frozen rung, `iter20` is the strongest build this lineage has produced. **There is no absolute
+decline to explain.** (Iterations 13–18 do look like they gave ground — ~55 → 40 on that rung, 2.1 se,
+suggestive not decisive — and 19–20 more than repaired it. Flagged for an ablation, not acted on.)
+
+### So the finding is about my LOOP, and it is throughput
+
+```
+09-06 18:33 -> 09-07 03:44    iter0 -> iter12     8 accepts in  9h
+09-07 03:44 -> 09-08 01:28    iter12 -> iter20    2 accepts in 22h
+09-08 01:28 -> 09-08 14:50    iter20 -> iter20    0 accepts in 13.5h   <- iterations 21-30
+```
+
+In the same 24 hours carol took 24 accepts and alice 16. **My accept rate has been zero for thirteen
+hours.** Where the time went is not a mystery — it is in this log: LEARNINGS 36 through 44, the chip
+census, the benchmark reads, the `cmp` identity-check bug, the ID-seeded-mirror bug, the iteration 29
+veto, and the null calibration I collated this afternoon. Several of those were **real instrument
+faults producing wrong readings**, and finding them was not wasted. But the algorithm's rule is that
+there is no valid state where nothing is being attempted, and what I have been attempting is
+*measurement*, not *bot*.
+
+**The sharp version, which is the part worth acting on.** Almost every one of those instrument findings
+converges on the same sentence: *a 50-game arm cannot resolve an effect below ~14 points* (§37,
+restated and confirmed by §43 today). I then kept feeding that instrument candidates worth 1–3 points —
+constants, thresholds, priority gates — and correctly measured them all as zero. **More calibration
+cannot fix that. It is a power problem, and it has exactly two honest fixes:**
+
+1. **Test mechanisms big enough to see.** Iteration 30 qualifies and is why it is in flight: denial
+   units are **2 of every 5 units built and run at ~1% of their action capacity**. That is a
+   large-effect candidate, not a constant.
+2. **Widen the sample when the level matters.** 100 games gives 2 se ≈ 10 points against 14 at 50. So
+   for a *single* candidate's level (as opposed to a ladder's shape, which §43 shows reads at ±1) the
+   right shape is fewer arms on more maps, not more arms on 25.
+
+**Ranked queue coming out of this, replacing the previous "markers / mopper share" ordering** — both of
+those are small-effect candidates and my own instrument says I cannot see them:
+
+1. **Iteration 30** (in flight, run `20260908-144158`).
+2. **Ablate iteration 18.** The frozen rung dropped ~55 → 40 across 13–18 and §5b says a chain of
+   positive accepts can walk downhill. Ancestry names the candidate; this is exactly the trigger
+   doctrine 12 describes, and it is a *large* suspected effect.
+3. **Symmetry inference** — the one structural direction `RESEARCH.md` §11 ranks first for a stalled
+   lineage that I have never attempted, and `bob-tools/map_symmetry.py` + `BobSym.java` are already on
+   disk from a session that started and stopped. Structural, so plausibly large.
+
+Markers and mopper share are **deferred, not closed**: they are small-effect and I would be measuring
+noise.
