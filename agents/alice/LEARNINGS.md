@@ -1641,3 +1641,50 @@ in a replay statistic, a summed bound, a ratio's denominator, and an optimisatio
 
 "Zero starvation deaths" is achieved perfectly by building no units. That test takes five
 seconds and would have demoted this metric before I built an iteration around it.
+
+---
+
+## Theme: my gauntlet's resolution collapses exactly where I need it most
+
+### 2026-09-08 — the effective sample is decisive MAPS, and it shrinks as the candidate approaches its baseline
+
+Three head-to-heads from one run, same 25 maps, same 50 games each:
+
+| opponent | split maps (no signal) | decisive maps | resolution |
+|---|---|---|---|
+| `alice_iter7` (18 iterations back) | 1 | **24** | +24.41 sd |
+| `alice_flood` (synthetic) | 6 | **19** | +8.93 sd |
+| **`alice_iter24` (the accept gate)** | **18** | **7** | **+0.38 sd** |
+
+Every row cost the same 50 games. The gate row bought **7 usable observations**; the
+others bought 24 and 19.
+
+> **A head-to-head's effective sample size is the number of maps that do NOT split by
+> side, and that number falls as the two bots become more similar.** Games are not the
+> unit and never were; a split map is two games that cancel exactly.
+
+### Why this is adverse selection rather than bad luck
+
+The comparison I am *required* to make — candidate against its immediate predecessor —
+is by construction the comparison between the two most similar bots I have. So the
+instrument has its **worst resolution precisely on the measurement the accept gate
+depends on**, and its best resolution on comparisons that decide nothing. Iteration 24
+saw the same shape (17 of 25 split); this is structural, not a bad draw.
+
+This also explains something that used to read as a paradox: a run can post an
+impressive-looking headline (81.3% across three opponents) while the only row that
+matters is a coin flip. The strong rows are strong *because* they are irrelevant.
+
+### What to do about it
+
+- **Report split counts beside every head-to-head**, so "50 games" is never mistaken for
+  50 observations. `tools/gate-read.sh` now prints them by default.
+- **For a candidate that lands inside the noise, widen the sample rather than re-reading
+  it** — `NMAPS=40` draws 40 maps instead of 25, and the extra resolution lands in the
+  decisive maps because the split fraction is a property of the *pair*, not the sample
+  size. A second fresh 25-map sample does the same job by pooling, which is the route
+  the iteration-25 confirmation took.
+- **Do not chain**: the tempting shortcut is to infer the gate from the wide-open
+  `alice_iter7` row, which has plenty of resolution. That is exactly the chaining this
+  ledger already forbids — *head-to-head margins do not chain* — and the resolution
+  argument makes the temptation stronger, not weaker.
