@@ -8011,3 +8011,101 @@ starvation, tower paint pools at 8-10% of capacity, and the SRP arithmetic (veri
 bytecode today) putting the production-balanced money share at 43% against 53.3% today. That
 premise is about the *share*, and this run deliberately held the share fixed (53.3% -> 55.6%)
 so it could price symmetry alone. It priced it at −4. The share is still unpriced.
+
+---
+
+## Iteration 23 candidate — **VOID at step 0, for six single-map games**. A count-keyed tower rule is not a dose; it is a lottery on when the marking burst happens.
+
+### The design, and why it looked right
+
+Iteration 22 established that no *coordinate* rule can have both a low team gap and low
+whole-map mix variance: under any map symmetry the ruins come in mirrored pairs, so a zero-gap
+coordinate rule has at most n/2 independent draws and its mix variance rises by sqrt(2) by
+construction. The obvious escape is a rule that is **not a function of position at all**.
+Today's API sweep supplied one: `rc.getNumberTowers()` — the team's own tower count, free,
+global, no communication. Key the type on the count and the realized share becomes a
+*controlled sequence* converging on 1/K whatever the lattice does.
+
+It also required dissolving a constraint the shipping comment calls absolute — that the type
+"must stay a pure function of the ruin and never of time", because `workOnRuin` recomputes
+`want` and a changed type can never complete. `getTowerPattern` makes the type readable back
+**off the marks**, which is where the decision was recorded in the first place. I built that:
+one cached discriminating offset (the first cell at which the engine's two patterns disagree,
+found at runtime rather than hand-decoded, because RULES.md flags the row/column convention as
+unverified), then one sense call per turn.
+
+Arms: `bob_c0` (package rename, verified byte-identical), `bob_c2` (K=2, intended 50% money),
+`bob_c3` (K=3, intended 33%).
+
+### Step 0 — and it earned its keep twice over
+
+**First, the good news: the marks-readback works.** This was the real risk — a broken readback
+deadlocks `workOnRuin` and towers simply stop being built, which is how iteration 17 died. The
+arms build 10-17 towers against the baseline's 8-14. No deadlock. The "type must not depend on
+time" constraint is genuinely an artefact of the old code and not of the engine.
+
+**Second, the bad news, which kills it.** Realized money share, three maps:
+
+```
+                 Dominoes    Flower    memstore
+bob_c2 (K=2)       14%        89%        65%        <- intended 50%
+bob_c3 (K=3)       20%        17%        25%        <- intended 33%
+baseline           57%        75%        50%
+```
+
+**`bob_c2` swings from 14% to 89%.** That is not a dose. Doctrine 2 is explicit: *"a parameter
+is only a dose if it changes the condition actually evaluated (verify)"*, and this parameter
+does not control the quantity it is named for.
+
+### Why — and the cause is a finding of its own
+
+The count-keyed rule assumes marking decisions are *spread over* the tower-count sequence. They
+are not. **Marking is bursty**: iteration 17's ruin probe measured `switched = 0` for every
+soldier in the game and `heldMax` of 171/183/247/154 turns — soldiers latch the first ruin they
+see and hold it for the rest of their lives. So the first soldier to reach each ruin marks it,
+those first-arrivals cluster into an early window, and a mark placed then is stamped with
+**whatever the tower count happened to be during the burst**. The whole map's mix is decided by
+one accident of timing.
+
+K=3 is stable (17-25%) not because the design works but because with only 1 count value in 3
+producing MONEY, a burst is twice as likely to land on PAINT — the lottery is biased, not
+removed.
+
+**This is iteration 17's finding wearing new clothes, and I walked into it again.** There the
+lesson was "reachability means the choice set, not just the guard"; here it is the same
+underlying fact about soldier behaviour — ruin claims are latched early and never revisited —
+reaching a different mechanism. I checked that the *branch* fires and that the *readback*
+works, and never asked **when** the decision is taken. A time-keyed rule is only as controlled
+as the distribution of the moments it is sampled at, and I never looked at that distribution.
+
+### Cost, and what it bought
+
+**Six single-map games.** No gauntlet. Doctrine 5 step 0 exists for exactly this and it has now
+paid for itself twice in this lineage (three games for one iteration, six for this one) against
+runs of 160-240 games. Two things survive and are worth more than the candidate:
+
+1. **The marks-readback is verified working.** Any future self-calibrating tower rule can use
+   it; the "pure function of the ruin" constraint is retired. `src/bob_c2` holds the working
+   implementation.
+2. **Marking is bursty, measured.** Any rule keyed on *time*, in any form — round number, tower
+   count, resource level at mark time — inherits this and will be a lottery. That closes a whole
+   family, not one candidate.
+
+**CLOSED: "key the tower type on a time-varying team quantity sampled at mark time."** Re-open
+only if ruin claiming stops being latch-early-and-hold — which is itself a thing worth changing,
+and is now a candidate in its own right rather than a precondition I assumed away.
+
+### What iteration 23 becomes instead
+
+The share still needs a dose, and it now has to be **per-ruin** (so it is sampled once per ruin
+rather than once per burst) while holding the incumbent's symmetry properties near-constant, so
+that the run prices the *share* and not a second change to the gap. The design that does this
+is parity with a symmetric partial override — keep `((x+y)&1)` as the base assignment, and flip
+a *folded* (hence exactly symmetric) subset of the MONEY ruins to PAINT. The flipped fraction
+is the dose. Because only the small flipped subset carries the n/2-draws penalty, the mix
+deviation cost should be a fraction of the 9.3 -> 15.6 that full folding cost.
+
+Every one of those quantities is computable offline from the map files with the scanner I
+already have, so the next step spends **zero games**: extend `bob-tools/foldscan` to score the
+candidate rule family on share, all-one-type maps, mix deviation and mirror mismatch, and only
+build the arms whose numbers say they are a dose.
