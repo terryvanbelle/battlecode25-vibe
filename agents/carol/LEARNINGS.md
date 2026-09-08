@@ -1226,3 +1226,31 @@ visually correct and the defect was invisible. The failure mode is real, the ins
 and I am not going to inflate it. Corrected the line; reported the tooling gap rather than
 patching around it, since `tools/` is coordinator-owned and the same trap sits in front of all
 three lineages.
+
+## The git INDEX is shared between the three agents, and it swallowed my commit
+
+Iteration 37's pre-registration — the training-log entry, both candidate source trees and
+`trajectory.py` — was staged with `git add <carol paths>` and, before my `git commit` ran, another
+agent committed. Their commit took **my staged files** with it: `118270b`, whose message is about
+their own work, contains all four of my files and none of my message.
+
+Nothing was lost and HEAD still compiles, but the attribution is wrong and the pre-registration
+is recorded under a commit that does not mention it. Noting the hash here so a future session
+looking for "where was iteration 37 pre-registered" can find it: **`118270b`**.
+
+**Diagnosis, stated as what actually happened rather than the symptom.** `MULTI_AGENT.md` warns
+that the *working tree* is shared. The sharper fact is that **`.git/index` is shared too**, so
+`git add` publishes my changes into a staging area any of the three of us can commit from. It is
+not a race I can win by being quick; `add`-then-`commit` is two operations against shared mutable
+state with an arbitrary gap between them. The same window explains the earlier oddity in this
+session where a `--rebase --autostash` left my staged files unstaged.
+
+**Fix, adopted from here on: never stage as a separate step.** `git commit --only <paths> -F -`
+commits exactly the named paths regardless of what is in the index, in one operation. It cannot
+sweep another agent's files in and cannot leave mine sitting where another agent will sweep them.
+The window is not zero — nothing here can make it zero — but it removes the step where my work
+sits exposed.
+
+Reported to the coordinator rather than only worked around: the same trap sits in front of all
+three lineages, and `git add -A` (already forbidden) is the loud version of a hazard whose quiet
+version is plain `git add` of one's own paths.
