@@ -10380,3 +10380,80 @@ git commit --only src/bob_iterN src/bob TRAINING_LOG.md progress/ -m "..."
 `--only` still guarantees my commit contains only my paths, which is the half of the protection that
 stops me sweeping a sibling's staged work out of the shared `.git/index`. For already-tracked files,
 `--only` alone still needs no `add` — which is why every commit I made today worked.
+
+---
+
+## Iteration 30 — PRE-REGISTERED 2026-09-08. Denial-unit utilisation: the navigation policy fights the firing condition.
+
+**This is not a new idea. It is a fully worked, pre-registered candidate from 2026-09-06 that was
+queued as "iteration 8 — denial-unit utilisation", displaced by the queue revision that day, and
+never executed.** I found it by grepping my own backlog rather than by inventing something, which is
+the order the algorithm asks for. Today supplies the corroborating symptom it never had.
+
+**The measured defect (2026-09-06, free analysis on a replay already on disk).** Denial actions per
+denial unit per round ran at **~0.004 against ceilings of 0.33 (mopper) and 0.20 (splasher)** — on the
+order of **1% of capacity**. We spend **2 of every 5 units built** on the only two unit types that can
+remove enemy paint, and they are essentially idle.
+
+**The new corroboration, from today's coverage trajectories.** Painted coverage does not plateau, it
+**peaks and then declines**:
+
+```
+Leaf     cov 416 @r1400  ->  356 @r2000     (-14%)
+Thirds   cov 367 @r800   ->  205 @r1400     (-44%)
+```
+
+This is an **absolute degeneracy signal**, which the algorithm explicitly prefers over any
+opponent-relative comparison — a bot shedding 44% of its territory needs no opponent to be wrong. And
+it is exactly the symptom idle denial units predict, because of an engine fact in `RULES.md`:
+**soldiers cannot remove enemy paint — only splashers and moppers can.** So every tile the enemy
+converts is permanently lost to us unless a denial unit clears it, and our denial units are running at
+1% of capacity. Two independent measurements, taken two days apart for different reasons, meeting.
+
+**The mechanism, specific and checkable.** `Nav.navTo`'s first pass refuses to step onto enemy paint
+and only falls back to "take anything" when no other candidate exists. That is **correct for a
+soldier** (standing on enemy ground costs 2 paint/turn). It is **wrong for a mopper or splasher**,
+whose only useful terrain is enemy paint. `Mopper.run` navigates to the nearest visible enemy paint
+via `navTo` — so as it approaches, a sideways non-enemy candidate almost always exists and it
+**slides along the border instead of entering**. `Splasher.run` only fires on a cluster scoring ≥5,
+which on a saturated map needs enemy tiles within r²≤2 — i.e. needs having gone *in*. **The
+navigation policy and the firing condition are fighting each other.**
+
+**Arms — and the knob is on the causal path, checked against LEARNINGS 40.** The quantity the
+hypothesis is about is *denial units' willingness to stand on enemy paint*, and `paintPref` controls
+exactly that, monotonically:
+
+- `bob_d0` — Nav refactored, **every caller still passes pref 0**. Null arm. Must read
+  **25/50-all-split**, which also proves the refactor itself is inert. If it does not, the run is void.
+- `bob_d1` — moppers indifferent to enemy paint (pref 1).
+- `bob_d2` — moppers **and** splashers indifferent (pref 1).
+- `bob_d3` — both actively **prefer** enemy paint (pref 2).
+
+Verified minimal: `d0` touches only `Nav.java`; `d1` adds one call site; `d2`/`d3` add one more.
+**Soldiers are untouched in every arm.** The `G.randomDir()` draw under `stuckTurns >= 3` sits *above*
+the changed branch and is not re-scoped, per LEARNINGS 35.
+
+**Priced as a reallocation, not against zero.** The gain is denial throughput. The **price is paint**:
+standing on enemy ground costs 2/turn and *moppers pay double the territory component*, so a denial
+unit that lives in enemy paint drains faster and may sit frozen at 0. That price is why `d3` is in the
+ladder rather than being assumed best, and why I expect the ladder to be non-monotone at the top.
+
+**Not to be judged only in mirrors — pre-registered on 2026-09-06 and still binding.** In a
+`bob`-vs-`bob` mirror neither side poses a paint-denial threat, so an improvement to denial capacity
+has almost nothing to act on. `bob_denier` (my own synthetic archetype) goes in the run as a fifth
+opponent precisely to pose that threat. 5 opponents × 50 = **250 games**.
+
+**Gate.** `>= +7` accepts, `+5/+6` needs replication on a fresh sample, `<= +4` rejects — **unless the
+null-calibration run `20260908-131748`, in flight now, says the noise floor is wider, in which case the
+gate moves UP and this iteration is judged against the wider bar.** I am writing that down before
+either result exists. A calibration that only ever loosens a gate is not a calibration, and that
+applies to the iteration I want to accept tonight exactly as much as to any other.
+
+**Secondary instrument, mechanistic verification, separate from the win gate**: denial actions per
+**living** denial unit per round, from the dumper's `unpaint` column — normalised per round and per
+unit, because raw counts scale with game length and army size and would read as "better" for reasons
+unrelated to the change. A win with no movement in that number would mean the mechanism did not fire
+and the games were won by something else.
+
+**Prediction, recorded now**: `d1` positive and small, `d2` > `d1`, `d3` uncertain and possibly
+negative as the paint price bites.
