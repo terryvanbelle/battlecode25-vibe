@@ -247,8 +247,23 @@ while read m; do grep -q "rc\.$m(" src/alice/RobotPlayer.java || echo "  $m"; do
   `RESOURCE_PATTERN_ACTIVE_DELAY = 50` rounds; `RESOURCE_PATTERN_RADIUS_SQUARED = 8` (5x5).
 - **Needs no ruin** — placeable on any 5x5 block of own paint, so uncapped by map features,
   unlike towers.
-- **NOT YET VERIFIED**: whether `EXTRA_RESOURCES_FROM_PATTERN` stacks per completed pattern,
-  and whether patterns may overlap or need spacing. Probe before costing anything on it.
+- **STACKING: VERIFIED.** `GameWorld.extraResourcesFromPatterns(team)` is literally
+  `getNumResourcePatterns(team) * 3` (`iconst_3; imul`), with no cap in the method. Income is
+  **+3 chips/turn per active pattern**, linear.
+- **ACTIVATION: VERIFIED per-pattern.** `getNumResourcePatterns` counts centres owned by the
+  team whose `resourcePatternLifetimes[idx] >= 50` (`bipush 50; if_icmplt`), so the 50-round
+  delay is each pattern's own age, not a one-off global delay.
+- **PLACEMENT: no spacing rule found.** `GameWorld.isValidPatternCenter` checks only that the
+  5x5 box fits on the map (`x,y >= 2`, `x < width-2`, `y < height-2`) and that
+  `areaIsPaintable` holds for all 25 tiles (each `isPaintable`, i.e. passable, over
+  `translate(dx,dy)` for dx,dy in -2..2). Patterns therefore need **no ruin and no spacing** —
+  only a clear 5x5 block.
+- Still unchecked: whether `assertCanMarkResourcePattern` forbids overlapping an existing
+  centre (`hasResourcePatternCenter(loc, team)` exists and is presumably used for this).
+- **COST/BENEFIT**: +3/turn against a money tower's 20-40, so one pattern is ~1/10 of a tower;
+  200 paint is one soldier. The catch is that a pattern pays rent only while it stays intact,
+  and this bot's measured failure is *losing painted ground* (coverage ends below its own peak
+  on 5 of 7 maps).
 
 ### MOPPER `mopSwing` (unused through iteration 30) — drains ROBOTS, does NOT clear tiles
 
