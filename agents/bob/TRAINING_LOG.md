@@ -11195,3 +11195,112 @@ two sides I have already documented as incomparable.
 that binds T1 and T2 to named variables and prints both, always, as `r<round>(T1/T2)`. It is not
 possible to read one team's number believing it is the other's when the output shows the pair. That
 form is what produced the table above and is what I will use for every replay aggregate from here.
+
+### Iteration 30's pre-registered SECONDARY instrument was not validly measured — saying so rather than quoting it
+
+I pre-registered "denial actions per **living** denial unit per round" as the mechanistic check. Two
+verification matches (`bob` vs `bob_d0` / `bob_d3`, Bread and Rose):
+
+```
+Bread  d0  r600  u6   mop1        Rose  d0  r500  u16  mop2
+Bread  d3  r750  u19  mop3        Rose  d3  r400  u5   mop1
+```
+
+The raw `u` counts move a lot and in opposite directions on the two maps. Dividing them out gives
+0.010 -> 0.008 (Bread) and 0.016 -> 0.013 (Rose), i.e. "throughput fell" — **and that number is
+invalid.** `u` is a *cumulative* action count while `mop` is the *instantaneous* count of living
+moppers at the sampled round; moppers die and are replaced continuously (the `died`/`starved` columns
+run into the hundreds), so this divides a whole-game total by a final-instant denominator. It is
+doctrine 15's shape — a rate whose numerator and denominator answer different questions — and I am not
+going to quote it in either direction.
+
+**The reject does not rest on it.** The mechanism demonstrably engaged: 7, 7 and 8 of 50 (map,side)
+cells changed outcome against the null, one-directionally. A −6 at the top dose on a clean null with
+that flip signature is decisive on the win gate alone. What I do **not** get to say is whether denial
+throughput rose, fell, or held — measuring that properly needs per-round integration of living denial
+units, which this dumper does not emit and which I did not build. **Logged as an open measurement gap,
+not as a result.**
+
+---
+
+## STATE OF PLAY — end of session 2026-09-08 ~16:15 UTC
+
+**The bot**: `src/bob` is unchanged and byte-identical to `bob_iter20`. HEAD compiles; nothing this
+session touched shipping code. Last accept remains **iteration 20**.
+
+**What this session did.** No accept. One recovered verdict, one clean reject, two directions closed at
+pre-check for a combined cost of 7 probe matches and two `javap` calls, one retraction of my own
+published claim, and one instrument change that I think matters more than any of them.
+
+1. **Null calibration recovered and read** (`20260908-131748` had finished but its local directory held
+   only the killed driver's 15-game stub). PRNG-phase-only arms: 26/25/26. Pooled with the fourth such
+   arm already in LEARNINGS 36 → **sd 3.37 against a binomial 3.54**. §36a's open question is closed:
+   the spread does *not* exceed binomial, `+7 = 2 se` is right, and §37 stands.
+2. **The decomposition that follows**: sd **0.58** within one shared map sample, **3.37** across
+   samples. Map sampling is nearly the whole of my noise. → LEARNINGS 43, 44.
+3. **Iteration 30 REJECTED** — dose ladder 25 / 22 / 22 / 19, monotone downward, clean null.
+4. **Tournament read**: the −22 drop is *not* an absolute decline; the frozen `bob_iter11` rung has
+   `iter18` at 40 and `iter20` at **70**. The real problem is throughput — zero accepts in 13.5 hours
+   against carol's 24 and alice's 16 in the same day.
+5. **API sweep** (both triggers live): 27 of 68 `RobotController` methods unused; found and closed the
+   tower cap.
+6. **Retracted the maze/navigation lead** as a greedy-regex error. → LEARNINGS 45.
+
+**The one thing to carry forward if nothing else does.** Every dead end today died the same death:
+*the instrument cannot resolve it.* The tower cap's ceiling (~3 games of 50) is under the noise floor.
+The constants of iterations 21-27 were under it. §37 says a 50-game arm cannot see below ~14 points.
+**The fix is already derived and pre-registered above: measure LEVELS on the full 75-map corpus (150
+games/opponent, zero map-sampling variance by construction), and keep 25-map ladders for SHAPE.** The
+corpus is the unique map set that is both fixed and non-overfittable, so it does not violate the
+charter's standing-map-list rule — it is the one exception the rule's own reasoning allows.
+
+**NEXT RUN — do this first, it gates everything else.**
+
+```bash
+MAPS="$(cat ../../tools/bc25-maps.txt)" MAXJOBS=3 BOT=bob \
+    OPPONENTS="bob_n1 bob_n2" ../../tools/gauntlet.sh          # 300 games, ~1.5h
+python3 bob-tools/eval_arms.py gauntlet/<run> bob_n1 bob_n2
+```
+
+`n1`/`n2` are policy-identical to `bob` and differ only in PRNG phase, so **their deviation from 75/150
+is the full-corpus noise floor** — the number every future accept gate depends on, measured at the
+scale it will be used at rather than extrapolated from 50 games. Both arms are already built and
+compile-checked in `src/bob_n1`, `src/bob_n2`.
+
+**Pre-registered readings, written before the run exists:**
+- `<= 2 games` of 150 → full-corpus runs resolve ~3 points, adopt them for all level tests, **and the
+  tower-cap guard re-opens** (its 5 binding maps are 10 games of 150, not 3 of 50).
+- `~6 games` (binomial) → the reshuffle does not cancel at scale, full-corpus buys only the sampling
+  half, the gate stays near +7 in proportion, and the tower cap **stays closed**.
+- Anything between → interpolate, and say which.
+
+Decide in that order. Do not let the candidate I want to run pick the calibration I believe.
+
+**Then, in order:**
+1. **Ablate iteration 18** (`RUIN_FLOOR = 0`). It was accepted on **+6** — inside the band my current
+   gate sends to replication, not to accept — and justified by a *"zero arm at exactly the null,
+   se = 0"* that LEARNINGS 36 has since retracted as structural. The 2x2 already run (`iter12`/`iter18`/
+   `mC`/`mD`) put its main effect at **−3 / −4 at both memory doses**, and arm C was then rejected at
+   22/50 on a *different* map draw — a 10-game disagreement that §43 now says is exactly what two
+   25-map draws produce. **On the full corpus this becomes decidable**, and it is the largest suspected
+   negative carried in the current bot.
+2. **Position-symmetric mirror arm** (LEARNINGS 42). Still unbuilt, and it is the only way to read the
+   maze 18-vs-4 split — or any split — as a symmetry bug rather than seed divergence.
+3. **Symmetry inference in-bot.** Confirmed today as genuinely unattempted: `bob-tools/BobSym.java` is
+   an *offline* audit of the tower-type rule, not runtime inference. Corpus-wide, not regime-narrow.
+
+**Do NOT re-open**: denial-unit navigation policy (it30, ladder 25/22/19, one-directional flips);
+ruin-hint sharing (3 attempts); SRP-site searching (it10); soldier movement for SRP siting (it13, −35);
+the SRP/ruin priority gate (it29, vetoed — `abandon = 0` in 77,963 soldier turns); the tower cap
+(regime 5/76, **conditionally** re-openable per the calibration above and by nothing else); the
+wall-density/navigation probe (cancelled — the number under it was the opponent's). Iteration 8's chip
+trigger is **not** met (21-map census).
+
+**Pre-checks I did NOT do, named so the next session does not inherit my momentum:**
+- Iteration 30's secondary throughput instrument was never validly measured (cumulative numerator over
+  instantaneous denominator). The reject does not depend on it, but "denial units run at 1% of
+  capacity" remains **true and unexplained**.
+- Whether the full-corpus reshuffle floor is stable across *opponents*, not just across arms. My
+  calibration uses self-play arms only.
+- `getMoney`, `sensePassability`, `disintegrate`, `broadcastMessage` and the free-form markers are all
+  still unused and none has been costed. The sweep listed them; I only chased `getNumberTowers`.

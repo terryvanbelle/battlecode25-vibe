@@ -1818,3 +1818,64 @@ Six swept wins, manufactured out of a change with no behaviour in it. So:
 - What sweeps genuinely add over the margin is **D, the split count** — how decisive a pair is. Here D
   ran 14–19 of 25 between policy-identical bots, which is the honest picture of how much of my
   instrument is coin-flip.
+
+## 45. A greedy regex made every row of a probe table report the wrong team (2026-09-08)
+
+I built a lead, wrote it up, and committed it on this extraction:
+
+```bash
+grep -oE "^round [0-9]+ \| T1 .* tw[0-9]+"  |  sed -E 's/.*(round [0-9]+).* tw([0-9]+).*/\1 tw\2/'
+```
+
+Every dump line carries both teams, `T1 ... | T2 ...`. `.* tw([0-9]+)` is greedy, so it matched the
+**last** `tw` on the line — T2's tower count — while the pattern had `T1` written into it and I read
+the output as T1's. The claim ("on maze my bot claims 4 of 32 ruins in 2000 rounds — a navigation
+degeneracy") was the opponent's number. T1 actually reached 18 of 32, a completely normal 56%.
+
+This is doctrine 5's wrong-referent error with a new delivery mechanism: not a bad calculation, a
+correct one pointed at the wrong column, wearing a label that asserted otherwise. **The `T1` in my
+grep pattern made the output look verified.** It selected the right *lines* and said nothing about
+which *field* the sed then took.
+
+**Rules:**
+- **Never pull one entity's field out of a multi-entity line with a regex.** Split on the delimiter,
+  bind each entity to a named variable, and print **both**. A reader cannot mistake one for the other
+  when the output is a pair — that is the control, and it is why the replacement prints `r<round>(T1/T2)`
+  rather than a single number.
+- **Greedy quantifiers before a capture group are a referent bug waiting to happen** on any line with
+  repeated structure. `.*` reaches past the thing you meant.
+- **The tell was available before the retraction**: my table had one map at 12.5% capture while every
+  other sat at 50-57%, and a byte-identical opponent is not supposed to be four times better than me.
+  An outlier that flatters *the other side* deserves the same audit as one that flatters mine — I went
+  looking only because I happened to re-extract for a different reason.
+
+## 46. Churn and causality have different flip signatures, and now I have both measured (2026-09-08)
+
+Doctrine 10 says scattered mixed-direction flips are churn and one-directional flips are causal. On
+2026-09-08 I measured both shapes on the same instrument, hours apart:
+
+```
+                     cells flipped   direction      score
+PRNG phase only  n1        15         8 up / 7 down   +1     churn
+                 n2        14         7 up / 7 down   +0
+                 n3        19        10 up / 9 down   +1
+real mechanism   d1         7         2 up / 5 down   -3     causal
+                 d2         7         2 up / 5 down   -3
+                 d3         8         1 up / 7 down   -6
+```
+
+**The behaviourally-null change perturbed twice as many games as the real one and moved the score six
+times less.** So "how much did the games change" is not evidence of effect size — it is close to
+orthogonal to it. What carries the signal is the *asymmetry* of the flips, not their count.
+
+Two consequences:
+
+- A change that flips many games and scores near zero is not "a big change that happened to net out";
+  it is most likely doing nothing, and the flips are the engine's chaos re-rolling. Do not go looking
+  for the mechanism that cancelled itself.
+- A change that flips *few* games can be a large, decisive effect. `d3` moved 8 of 50 cells and is the
+  clearest reject I have run.
+
+This pairs with §43: without the churn baseline measured first, `d1`'s 7 flipped cells would have read
+as "barely engaged" when it is in fact twice as concentrated an effect as anything the reshuffle does.
+Neither number means anything alone; the two together are an instrument.
