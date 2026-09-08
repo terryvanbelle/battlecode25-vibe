@@ -2038,3 +2038,47 @@ whether the analysis respected the design.
 **And the meta-lesson about my own pre-registration:** registering thresholds is not enough if the
 statistic they are applied to cannot distinguish them. **Pre-register the estimator, not just the
 cut-offs.**
+
+---
+
+## 49. Measured per-unit waste in a cohesive formation is not recoverable by making units individually less wasteful (2026-09-08)
+
+**Second confirmed instance. One was an anecdote; two with independent mechanisms is a property of
+this bot.**
+
+Iteration 31 measured a real, large, correctly-computed inefficiency: moppers spend **38.1 of their
+100-paint stash** standing adjacent to allies, and die of paint starvation **202 times out of 202**.
+The recoverable prize was bounded honestly *before* the run at **9,999 paint/game = 8.5% of tower
+income**. The fix was one line on the causal path (`navTo` scoring `progressRank + CROWD_W *
+adjacentAllies`), with an exact-zero null arm that verified itself: `bob_x0` came back 25/50 with all
+25 maps split by side.
+
+The ladder:
+
+```
+  CROWD_W    0     1     2     4
+  margin    +0    +2    -7    -3
+```
+
+Every dose large enough to change behaviour **lost**. The paired per-map counts agree independently of
+spawn side (vs `x2`, bob sweeps 7 maps to 0).
+
+**The error was in what the bound bounded.** 8.5% of tower income was a ceiling on the *prize*. It said
+nothing about the *price* — a step spent stepping away from an ally is a step not spent approaching an
+objective — and the price turned out to exceed the prize before the crowd term even became dominant.
+
+This is the **bug-nav latch** again (removing a navigation defect scored worse, because the defect was
+supplying formation cohesion). Different mechanism, same shape: the "waste" is a visible side-effect of
+cohesion, and cohesion is load-bearing.
+
+> **The rule, and it is now a gate on my own hypotheses:** a "units are wasting X" hypothesis in this
+> lineage must argue why it is not the third instance *before* it earns a run. Specifically it must
+> bound the **price** of the fix in the same units as the prize, not just the prize. Bounding only the
+> prize is what made this one look plausible, and the arithmetic was correct the whole way.
+
+**Corollary about non-monotonicity as a diagnostic.** I predicted the ladder might be non-monotone at
+the top and put `x3` in it for that reason. It *was* non-monotone — `x2` (-7) is worse than `x3` (-3),
+which no dose-response story explains. Rather than fitting a story to that, read it as designed: an
+inversion between adjacent doses is evidence that **noise, not dose, separates those two arms**, and
+therefore that the ladder's informative content is only its overall trend. Here the trend was down, so
+the direction closes rather than tunes.

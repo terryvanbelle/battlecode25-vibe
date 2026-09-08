@@ -12152,3 +12152,81 @@ LEARNINGS says to write it down and measure it deliberately rather than ship a f
 **Reported to the coordinator**: `ruin_parity.txt`'s README says the trap is live for anyone. It is no
 longer hypothetical — a lineage walked into it, and the file's warning is what let me identify it in
 minutes rather than never.
+
+---
+
+## Iteration 31 — **REJECTED / DIRECTION CLOSED**. Run `20260908-183305`, 200 games, complete.
+
+Recovered on resume: the run had finished and collated, but the session died before the verdict was
+written. No games re-run.
+
+### The validity condition passed, and it is the first thing I read
+
+`bob_x0` (CROWD_W = 0, behaviourally identical to `src/bob` by construction) had to read ~25/50
+all-split or the run is void:
+
+```
+  vs bob_x0    25/50    swept-win 0/25   swept-loss 0   split-by-side 25/25
+```
+
+**25/50, every single map split by side, zero sweeps in either direction.** That is the exact
+signature of a mirror match. The null arm is confirmed null, the harness is confirmed sane, and the
+ladder's other three arms are therefore measuring the *decision* and nothing else.
+
+(`bot.txt`: `head=a44d9e8 dirty=0` — the pre-registration commit, clean tree. The measured `bob` is
+the committed bot, not a working-copy variant.)
+
+### The ladder
+
+Stated as the **arm's** margin over the mirror baseline, so positive = the crowd penalty helped.
+`bot_result` in `results.csv` is written from bob's perspective, so the sign is read off the file
+rather than inferred — checked against the lopsided `x2` arm, which is the discriminating case for a
+label-vs-inversion mistake.
+
+```
+  arm      dose (CROWD_W)   bob wins/50   arm margin      paired per-map (bob swept / split / arm swept)
+  bob_x0        0              25/50         +0            0 / 25 /  0     <- validity check
+  bob_x1        1              23/50         +2            3 / 17 /  5
+  bob_x2        2              32/50         -7            7 / 18 /  0
+  bob_x3        4              28/50         -3            6 / 16 /  3
+```
+
+### Verdict against the pre-registered gate
+
+The gate had three branches. Reading them in order:
+
+- **Monotone rise, or clear interior peak → promote to full corpus.** Not met. The only non-negative
+  dose is the smallest one, at **+2 games out of 50**. My own pre-registered resolution floor for a
+  50-game arm is **~14 points**. +2 is not a peak; it is zero with a rounding error.
+- **Monotone fall → crowding is load-bearing.** Not strictly met either: `x2` (-7) is *worse* than
+  `x3` (-3), which no dose-response story explains. That inversion is itself evidence that noise, not
+  dose, is what separates x2 from x3.
+- **Flat / all arms within noise → the myopic bound was the whole story; close it.** This is the
+  branch that fits, with one honest amendment: it is not flat, it **trends down**. Every dose big
+  enough to change behaviour (2 and 4) loses, and the paired per-map counts corroborate the sign
+  independently of spawn side — against `x2` bob sweeps **7 maps to 0**, against `x3` **6 to 3**.
+
+So: **the crowd-avoidance term does not pay, and at any dose large enough to matter it actively
+costs.** Rejected, and the direction is closed. I am explicitly not re-running it at corpus scale;
+the pre-registration forbade exactly that move ("do not re-run at corpus scale hoping the instrument
+was the problem"), and nothing here suggests the instrument was the problem — the null arm proves it
+was not.
+
+### What it means, and why the arithmetic did not save it
+
+The pre-run arithmetic was honest and still lost. The 9,999 paint/game ceiling (8.5% of tower income)
+was a real bound and the crowding it measured was real — 38% of a mopper's stash, 202/202 paint
+deaths. **The bound was on the prize, not on the price.** A step spent stepping away from an ally is a
+step not spent approaching an objective, and the ladder says that price exceeds 8.5% of tower income
+well before the crowd term starts dominating.
+
+This is **the bug-nav latch a second time** (LEARNINGS): a defect that looks like waste, whose removal
+scores worse, because the "defect" was buying formation cohesion. I predicted the ladder would be
+non-monotone at the top and put `x3` in it for that reason. It was non-monotone — just lower down
+than I expected, and in the direction that closes the idea rather than tunes it.
+
+**Filed to LEARNINGS as the second instance.** One instance is an anecdote about bug-nav; two
+instances with independent mechanisms is a rule about *this bot*: measured per-unit waste in a
+cohesive formation is not recoverable by making units individually less wasteful. Any future
+"units are wasting X" hypothesis in this lineage must now argue why it is not the third instance
+before it earns a run.
