@@ -61,6 +61,31 @@ print(f"sd(net swept)       : {sd_map:.2f}   [= sqrt(decisive); each decisive ma
 # so sd(net swept) and sd(wins) are the SAME quantity and compare directly -- no factor of 2.
 print(f"sd(wins), binomial  : {sd_binom:.2f}   -> map pairing keeps "
       f"{100*sd_map/sd_binom:.0f}% of binomial")
+
+# --- Var(S) against the Bernoulli ceiling (coordinator's contamination check) ---
+# S = this arm's per-map win proportion, in {0, 0.5, 1}. Under a genuine null E[S] = 0.5 and
+# Var(S) <= 0.25, the maximum a proportion can have. A paired/squared estimator absorbs any
+# DETERMINISTIC per-map asymmetry and charges it to chaos, so Var(S) > 0.25 is a contamination
+# signal, not a surprise -- and the resulting floor is an UPPER BOUND, defensible to adopt only
+# if adopted knowing it is a ceiling.
+S = [w / 2.0 for w in full.values()]
+var_null = sum((x - 0.5) ** 2 for x in S) / len(S)
+mean_S = sum(S) / len(S)
+var_obs = sum((x - mean_S) ** 2 for x in S) / len(S)
+print()
+print(f"mean per-map S      : {mean_S:.3f}   (a genuine null sits at 0.500)")
+print(f"Var(S) about 0.500  : {var_null:.3f}   ceiling 0.250  "
+      f"{'*** EXCEEDS CEILING -> contaminated, floor is an UPPER BOUND ***' if var_null > 0.25 else 'OK'}")
+print(f"Var(S) about mean   : {var_obs:.3f}")
 print()
 print(f"FLOOR: a |net swept| below ~{sd_map:.0f} is 1 sd -- indistinguishable from chaos.")
 print(f"       accept >= ~{2*sd_map:.0f} (2 sd); replicate between ~{sd_map:.0f} and ~{2*sd_map:.0f}.")
+
+# --- the check that matters most: is this "null" actually null? ---
+if sd_map and abs(sw - sl) > 2 * sd_map:
+    print()
+    print(f"*** WARNING: net swept {sw-sl:+d} is {abs(sw-sl)/sd_map:.1f} sd from zero.")
+    print("    A POLICY-IDENTICAL pair must be mean-zero. It is not, so this pair is NOT a")
+    print("    valid null: the perturbation has a SYSTEMATIC effect and the sd above is")
+    print("    understated. Treat |net swept| of this size as reachable by an incidental")
+    print("    PRNG-stream shift -- i.e. by a change with no policy content at all.")

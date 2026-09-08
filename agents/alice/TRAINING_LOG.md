@@ -13772,3 +13772,80 @@ One run, 300 games, both opponents sharing the same 75 maps:
 **Pre-registered before the run**: iteration 37 is accepted only if the phase-shifted contrast
 also favours `alice_i37a`, and by a margin that clears my measured floor. If the phase null
 alone returns something near ±7, then +7 was never a signal and iteration 37 is rejected.
+
+## My own noise floor — and it REJECTS iteration 37a
+
+Run `20260908-174022`. `alice_phase` is `alice_iter30` with **one** substantive change: the PRNG
+seed offset, `rc.getID() * 31 + 17` -> `+ 18`. Same distribution for every decision; only the
+realisation moves. **Zero policy content.**
+
+| `alice_phase` vs `alice_iter30` | maps | SW | SL | split | record | net swept |
+|---|---|---|---|---|---|---|
+| full 75-map census | 75 | 20 | 8 | 47 | 87/150 (**58.0%**) | **+12** |
+
+**A change that alters no policy whatsoever scored +12 net swept.** Iteration 37a — a real
+mechanism change — scored **+7**.
+
+> **Iteration 37a is REJECTED.** Not held for replication: rejected. Its margin is smaller than
+> what an incidental PRNG-stream shift produces on this bot. `src/alice` stays at iteration 30.
+
+### The floor, and the check that says the floor is understated
+
+| quantity | value |
+|---|---|
+| decisive maps | **28 of 75** (37% decisive, 63% split) |
+| `sd(net swept)` = sqrt(decisive) | **5.29** |
+| as a fraction of binomial | **86%** |
+| `Var(S)` about 0.500, ceiling 0.250 | **0.093** — under the ceiling, so *not* contaminated in that sense |
+| **mean per-map `S`** | **0.580**, where a genuine null sits at **0.500** |
+
+The `Var(S)` ceiling test passes, and it is the **mean** that fails. A policy-identical pair
+must be **mean-zero**; mine is **2.3 sd from zero**. So the sd above is an *understatement* —
+the estimator assumes the null is centred, and mine is not.
+
+**My floor sits between the two lineages the coordinator quoted** — 5.29 at 86% of binomial,
+against 4.80/78% and 6.48/106% — which is exactly their point: **the floor is a property of the
+bot.** Had I inherited 4.80 I would have set my gate ~10% too loose; had I inherited 6.48, too
+tight. And neither would have revealed the mean shift, which is the part that actually kills
+iteration 37a.
+
+### WHY a policy-free change is not behaviour-free — the mechanism, and it is a real defect
+
+`rngState = rc.getID() * 31 + 17`, and **the starting towers' IDs are fixed for a given map**
+(`Gears`: id1-id4; `DefaultMedium`: id4-id7). The engine is deterministic, so those towers draw
+the **same sequence in every game on that map**. The "25% moppers" line
+
+```java
+UnitType want = (rnd(4) == 0) ? UnitType.MOPPER : UnitType.SOLDIER;
+```
+
+is therefore **not 25% for the towers that matter most**. It is a fixed draw, decided per map by
+one constant. Worked through for two starting-tower seeds:
+
+| tower seed | first 12 `rnd(4)` draws | moppers |
+|---|---|---|
+| id3, offset **17** (shipping) | 0,0,3,1,2,1,0,0,2,2,0,1 | **5 of 12** |
+| id3, offset **18** | 1,1,2,2,3,1,2,2,3,2,3,2 | **0 of 12** |
+| id1, offset 17 | 3,1,0,2,3,1,3,0,3,1,3,0 | 3 of 12 |
+| id1, offset 18 | 2,0,1,1,2,1,1,2,2,1,0,3 | 2 of 12 |
+
+**Iteration 5 measured that early moppers crowding out soldiers is an absorbing state.** So the
+seed constant silently sets the opening mopper rate, per map, and offset 17 draws badly on at
+least some maps. That is an **unmeasured tuned parameter with a larger effect than most of my
+actual iterations**, and I did not know it existed.
+
+It also explains the mean shift cleanly: a seed change is not a mean-zero phase perturbation
+here, because it **re-rolls a fixed opening** rather than shuffling a long random stream.
+
+### What this changes going forward
+
+- **Accept threshold: `net swept >= +12`** on a 75-map census, not `> 0`. Anything smaller is
+  reachable by a change with no policy content. I will tighten this if a later null lands higher.
+- **Every "> 0" gate I have written was too weak**, and the ones it could have mattered for are
+  the small-margin accepts. Iteration 30 (+12, plus an independent full census and a 24-point
+  tournament move) and the large rejections (−52, −21) are unaffected. I am flagging rather than
+  silently re-reading the older small accepts, because re-censusing them is cheap now and
+  guessing is not.
+- **The real iteration this exposes** is not a seed choice — tuning the offset would be
+  overfitting to a fixed opening, and fragile. It is to make the opening unit mix **explicit**:
+  a per-tower counter giving exactly 1 mopper in 4, removing the hidden parameter entirely.

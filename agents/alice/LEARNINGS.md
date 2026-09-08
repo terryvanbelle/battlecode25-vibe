@@ -2463,3 +2463,69 @@ chaos**, measured on your own bot.
 That same arm also gives the only honest **replication** in this regime: re-running an
 identical pair returns the identical number by construction and confirms the *pipeline*, not
 the *effect*. To replicate an effect you must change the phase and keep the policy.
+
+---
+
+## Theme: a change with NO policy content moved my census by +12 — measure your own floor, and check its MEAN
+
+### 2026-09-08 — the "null" that wasn't, and what it cost
+
+To calibrate my own accept threshold I built `alice_phase`: `alice_iter30` with **one**
+substantive change, the PRNG seed offset `rc.getID() * 31 + 17` -> `+ 18`. Same distribution
+for every decision. Zero policy content. Full 75-map census against the baseline:
+
+| | SW | SL | split | record | net swept |
+|---|---|---|---|---|---|
+| `alice_phase` vs `alice_iter30` | 20 | 8 | 47 | 87/150 (58.0%) | **+12** |
+
+**Iteration 37a, a real mechanism change, had censused at +7 the same day.** A policy-free
+change beat it. Iteration 37a was rejected on this, having already been promoted once and
+reverted once.
+
+### Two diagnostics, and the one that fired is not the one I expected
+
+- **`Var(S)` against the Bernoulli ceiling** (S = per-map win proportion; max 0.25): mine came
+  back **0.093**, comfortably under. **Passed.**
+- **The MEAN**: a policy-identical pair must be **mean-zero**. Mine sat at **S = 0.580, 2.3 sd
+  from zero.** **Failed.**
+
+> **A variance check cannot detect a shifted null.** I would have accepted the floor as
+> well-behaved on the ceiling test alone. The mean is the cheaper and stricter check, and it is
+> the one that says *this pair is not a null at all* — which makes the sd an understatement
+> rather than an estimate.
+
+### Why "policy-identical" was false, and the defect it uncovered
+
+`rngState` is seeded from `rc.getID()`, and **starting-tower IDs are fixed for a given map**
+(`Gears` id1-id4, `DefaultMedium` id4-id7). The engine is deterministic, so those towers draw
+**the same sequence in every game on that map**. So
+
+```java
+UnitType want = (rnd(4) == 0) ? UnitType.MOPPER : UnitType.SOLDIER;
+```
+
+is **not 25% for the towers that matter most** — it is a fixed draw per map, set by one
+constant. Offset 17 gives one starting tower **5 moppers in its first 12 spawns**; offset 18
+gives the same tower **0 of 12**. Iteration 5 measured early moppers crowding out soldiers as
+an *absorbing state*, so that constant silently sets an opening the bot's author never chose.
+
+> **An ID-seeded PRNG in a deterministic engine is not randomness — it is a hard-coded opening
+> with a random-looking name.** Wherever entity IDs are stable across games, "random" tie-breaks
+> are fixed sequences, and the seed constant becomes a tuned parameter nobody knows they own.
+
+This is the same family as *"a constant's NAME is not its semantics"*: `rnd(4) == 0` reads as a
+frequency and is a *literal fixed sequence* for the units whose decisions matter most.
+
+### The operational rules
+
+1. **Measure your OWN floor.** Three lineages, same engine and same corpus, measured 4.80 (78%
+   of binomial), 5.29 (86%, mine), and 6.48 (106%). **The floor is a property of the bot.**
+   Inheriting another's would have set my gate ~10% too loose and would have hidden the mean
+   shift entirely.
+2. **Check the null's mean, not only its variance.**
+3. **A gate of "net swept > 0" silently asserts the floor is zero.** Mine is +12. Every such
+   gate I had written was too weak.
+4. **Do not fix this by tuning the seed.** That is overfitting to a fixed opening and fragile
+   under any change to spawn order. Fix it by making the opening mix *explicit* — a per-tower
+   counter giving exactly 1 in 4 — which deletes the hidden parameter instead of choosing a
+   lucky value for it.
