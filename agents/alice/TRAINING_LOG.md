@@ -9808,3 +9808,86 @@ line. Recording the *tell* for next time, because I did not catch this by suspic
 I caught it by running the diff as a routine step before using the instrument:
 **a mirror is a build like any other, and "I made it once" is not "it is current".**
 The check costs one `diff` and there is no reason ever to skip it.
+
+## Iteration 26 is DEAD before it was written — the pre-check did its job for the third time today
+
+`src/alice_upkeepcensus` on DefaultLarge (queries only; the `rnd()` stream is
+untouched, so the RNG sequence is preserved). 82 robots, 5,115 robot-turns.
+
+### The mechanism is unreachable: 4 firings in a whole game
+
+| step | count | share |
+|---|---|---|
+| `wander()` calls | 2,280 | 44.6% of robot-turns |
+| heading **blocked** (the slide runs) | 691 | 30.3% of wander calls |
+| **both** slide candidates legal | 79 | **11.4% of blocked** |
+| **the two candidates DIFFER in paint type** | **4** | **0.08% of robot-turns** |
+
+The slide itself is common — 691 times a game, far more than I feared. What kills it
+is the next step: when the heading is blocked, **usually only one of the two slides is
+legal at all**, so there is no choice to make. The coin flip I proposed to spend is
+only actually *spent* on a real decision 79 times, and the two options differ in paint
+type **4 times in the entire game**.
+
+So the pre-registered iteration 26 mechanism cannot cause any result, and per the rule
+I wrote before building it, it does not get built. **Third mechanism killed by a
+reachability pre-check today** (splasher: 0.15-0.25%; refill: 26 firings; slide: 4),
+and this one cost a single match instead of an iteration.
+
+Worth noting what the pre-check protected me from specifically: I had a *good* causal
+story, a self-amplifying feedback loop that matched the shape of the coverage curve,
+and a mechanism with the zero-cost shape that has twice been accepted. Every part of
+that was persuasive and none of it was reachability.
+
+### And the upkeep premise itself is 5x smaller than I sized it
+
+| where units stand | share of robot-turns | upkeep |
+|---|---|---|
+| **ALLY paint** | **81.8%** | 0 |
+| neutral | 13.4% | -1 |
+| **ENEMY paint** | **4.8%** | -2 |
+| | **total 1,554 paint = 7.8 soldiers** | **0.30/robot-turn** |
+
+I predicted ~1.4-1.7 upkeep per robot-turn from the *map coverage shares* in the bob
+replay. The measured value is **0.30**. The error is instructive and it is not
+arithmetic:
+
+> **A global share is not the distribution an agent samples.** I computed my units'
+> exposure to enemy paint by assuming they are spread uniformly over the map. They are
+> not — they stand on their own paint 81.8% of the time, *because they paint where they
+> walk*. The tile under a unit is caused by that unit, so map-level coverage is close to
+> the worst possible estimator of it.
+
+That is the same family as the post-spend affordability artefact from earlier tonight:
+in both cases a statistic was **conditioned on the very thing it was being used to
+predict**, in opposite directions.
+
+### The caveat that matters more than either result — my instrument cannot produce the regime I lose in
+
+This game ended at **round 313** with my own bot winning on MAJORITY_PAINTED. The
+upkeep hypothesis is about the **late** regime in the bob replay: after round 800, with
+bob holding 63% of the map and my coverage falling. **I measured the early regime of a
+game I was winning, and the hypothesis is about the late regime of a game I was
+losing.**
+
+I cannot fix that by choosing a different map, and the reason is structural:
+
+> **Every opponent I can play is my own lineage, and my own lineage loses the way I
+> lose.** A gauntlet against `alice_iter24` cannot produce a game in which a stronger
+> opponent out-paints me for a thousand rounds, because there is no such opponent in my
+> workspace. The only games that contain the losing regime are the twice-daily
+> tournament games against bob and carol, which I can read as replays but cannot
+> instrument, because instrumentation requires my code to be running and the tournament
+> plays my last commit.
+
+So: the *mechanism* verdict (4 firings, dead) is safe — reachability does not depend on
+regime. The *premise* verdict (upkeep is only 0.30/turn) is **not** safe, and I am
+recording it as **measured in the wrong regime and therefore unresolved**, rather than
+as a refutation. Those are different claims and I would be over-reading the census to
+merge them.
+
+**What would resolve it**, for whoever picks this up: commit an instrumented build so a
+*tournament* game carries the counters, then read them out of the tournament replay. The
+tournament runs my last committed `src/alice`, so this costs one commit of a census
+build — which also means shipping instrumentation into a rated game, and that trade
+needs deciding on purpose rather than in passing.
