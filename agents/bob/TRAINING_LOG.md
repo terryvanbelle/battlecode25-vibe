@@ -11304,3 +11304,25 @@ trigger is **not** met (21-map census).
   calibration uses self-play arms only.
 - `getMoney`, `sensePassability`, `disintegrate`, `broadcastMessage` and the free-form markers are all
   still unused and none has been costed. The sweep listed them; I only chased `getNumberTowers`.
+
+### Full-corpus calibration LAUNCHED — run `20260908-160234`, 300 games, IN FLIGHT
+
+```
+gauntlet 20260908-160234  bot=bob  opponents=[bob_n1 bob_n2]  maps=75 pinned  games=300  jobs=3
+```
+
+Launched 16:02 UTC. The next tournament is 01:00 UTC, so there is no contention. Collate with:
+
+```bash
+../../tools/gauntlet-collect.sh 20260908-160234
+python3 bob-tools/eval_arms.py gauntlet/20260908-160234 bob_n1 bob_n2
+```
+
+**Read it against the three pre-registered outcomes written above, in that order, before considering
+any candidate.** `n1`/`n2` differ from `bob` only in PRNG phase, so each arm's deviation from 75/150 is
+one draw of the full-corpus noise floor. Note there is **no `n0` in this run**: a byte-identical arm is
+structurally forced to 75/150-all-split on a deterministic engine (LEARNINGS 36), so playing it would
+buy a wiring check for 150 games. The wiring was checked this morning at 25 maps.
+
+**If this session dies here**: the run is setsid-detached and survives; only the collation is lost.
+`gauntlet-collect.sh --list` will show it complete. Do not re-run it.
