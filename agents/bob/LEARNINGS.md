@@ -2178,3 +2178,46 @@ published upside down.
 
 This is doctrine 14's *"say which margin you mean"* recurring one day later, in the gate rather than in
 the reporting — which is the argument for putting the unit in the identifier instead of in a lesson.
+
+---
+
+## 52. I verified the engine precondition and skipped the PRNG invariant my own LEARNINGS 35 is about (2026-09-08)
+
+Iteration 33's zero arm was `SPAWN_PAINT_RESERVE = 0`, and I argued it was behaviourally identical
+because `canBuildRobot` already enforces `getPaint() >= paintCost` — which I did not assume, I read out
+of `assertCanBuildRobot`'s bytecode before building anything. That check was correct and it was the
+right check to make.
+
+It was also not the check that mattered.
+
+```java
+if (chips >= want.moneyCost + reserve
+        && rc.getPaint() - want.paintCost >= SPAWN_PAINT_RESERVE) {
+    int start = G.rng.nextInt(8);      // <-- inside the conditional I just narrowed
+```
+
+The guard is *logically* redundant at zero and still changes which turns reach `G.rng.nextInt(8)`.
+The policy is identical; the RNG phase is not. The null arm came back with **5 bob-sweeps and 1
+arm-sweep** where an identical arm reads **0 sweeps and 25 splits** — a signature I had already seen
+twice, on iterations 30 and 31, so there was no interpreting to do.
+
+**LEARNINGS 35 is titled "A PRNG draw inside a conditional makes that conditional part of the
+behaviour."** I wrote it. The run it invalidated is the run I designed after writing it.
+
+> **The transferable rule: an exact-zero arm must be verified against the PRNG stream, not only against
+> the policy.** The question is not "does this change any decision?" but "does this change which
+> statements execute?" — and any `rng` call downstream of an edited condition answers yes. Concretely:
+> **draw first, then guard.** Hoist every PRNG call above any conditional an arm touches, so the stream
+> is identical by construction rather than by argument.
+
+**The deeper failure is one of attention allocation, and it is worth more than the rule.** I spent real
+effort on the *hard* verification — decompiling the engine to confirm a precondition — and that effort
+is exactly what made the *easy* one feel already handled. Rigour in one place reads, from the inside,
+like rigour. **A checklist item I have already been burned by deserves more suspicion than one I have
+not, not less**, because the one I have been burned by is the one I am most likely to believe I have
+covered.
+
+**Cost**: one 200-game run, ~100 minutes of shared VM time, and a ladder that answers nothing.
+**Cheap detector, and I already had it**: the null arm's sweep count. It cost one line of analysis and
+caught the fault before a single conclusion was drawn from the doses — which is the entire reason the
+condition was pre-registered and read first.

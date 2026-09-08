@@ -12965,3 +12965,155 @@ ready and no legal target. **That trace is the next thing to run, and it is chea
 I am explicitly *not* building an arm for this tonight. Tonight's lesson, three times over, is that the
 mechanism I can argue for from aggregates is not reliably the mechanism that is running, and this one
 has exactly the shape of the two I already had to withdraw.
+
+---
+
+## FINDING — the stuck detector cannot see the way my navigation actually gets stuck. One robot traced, mechanism confirmed in code.
+
+Ran the trace I said was next (`replay-dump.sh --robot`), on bob soldier `id12239`, CastleDefense.
+It does not show a paint problem, a tower-type problem, or a crowding problem.
+
+```
+round 10  (5,10) paint=127        round 26  (5,10) paint=52
+round 11  (6,9)  paint=122        round 27  (6,9)  paint=52
+round 12  (5,10) paint=117        round 28  (5,10) paint=47
+round 13  (6,9)  paint=112          ...
+round 14  (5,10) paint=107        round 42  (5,10) paint=7
+round 15  (6,9)  paint=102        round 43  (5,10) paint=0   hp=230
+   ...                            round 49  (5,10) paint=0   hp=110   <- dying
+```
+
+**It oscillates between two adjacent tiles from round 11 until its paint hits zero at round 43, then
+starves to death standing there.** Thirty-two rounds. It never reaches a ruin. It burns 5 paint a turn
+the whole time.
+
+### The mechanism, and it is four lines of my own `Nav.java`
+
+```java
+// stuck detection
+if (me.equals(lastLoc)) stuckTurns++; else stuckTurns = 0;
+lastLoc = me;
+if (stuckTurns >= 3) { ...random escape... }
+```
+
+**The detector fires only when the robot does not move at all.** A robot cycling between two tiles
+moves *every single turn*, so `me.equals(lastLoc)` is never true, `stuckTurns` is reset to 0 every
+turn, and the escape hatch **can never fire**.
+
+And greedy-with-slide is a policy that essentially never stands still — it always finds *some* legal
+candidate among `{d, d±45°, d±90°}`. **So the detector tests for the one failure mode this navigation
+does not have, and is blind to the one it does.** It is not a weak heuristic; it is a heuristic aimed
+at the wrong quantity, which is doctrine 5 again — the third instance today.
+
+### Why I believe this over tonight's other three candidates
+
+It explains, without further assumption, every gradient I measured this evening:
+
+- **The ruin-count gradient (62.5% -> 88.5%, monotone, z = -3.51).** Fewer ruins = longer journeys =
+  more opportunities to enter a cycle. On 25+-ruin maps a soldier is nearly always adjacent to a target.
+- **The area gradient that survived conditioning on ruins.** Small maps are walled maps
+  (CastleDefense: 15% walls on 20x20); local minima sit right next to spawn.
+- **The early-game timing.** A soldier that enters a cycle at round 11 is dead by round 49 — before
+  any of my paint-economy stories even begin.
+- **`starved` counts, and the 202/202 mopper starvation deaths already in this log.** A cycling unit
+  spends 5 paint a turn and arrives nowhere. It is not "starving"; it is *bleeding out in place*.
+- **`twPaint` sitting at 200-280 unused in the opening**, which is what killed iteration 33's stated
+  mechanism: tower paint was never scarce, the units simply never came back for it (`xfer0` for 28
+  straight rounds).
+- **Iteration 18's own comment**, which recorded "one traced soldier held aCD=0 and paint<=14 for ~200
+  consecutive rounds" and attributed it to `PAINT_FLOOR`. That was very likely this, seen once and
+  explained with the wrong cause.
+
+### Confidence, stated precisely, because tonight has earned the caution
+
+**High on the code fact, moderate on the magnitude.** The four lines are unambiguous and the cycling
+robot is unambiguous. But this is **one robot on one map**, and I have withdrawn three mechanisms
+today, all of which felt this convincing at the equivalent stage. What is *not* yet established: how
+many robots this happens to, on how many maps, and — critically — what an escape actually buys, given
+this lineage's recorded history that removing a navigation defect **scored worse** (the bug-nav latch,
+LEARNINGS).
+
+**Before any arm is built, the required evidence is a census, not another anecdote:** count, across a
+set of replays, the robots whose position over a window visits <= 2 distinct tiles while movement is
+ready. That is mechanical, needs no new engine facts, and turns "I found one" into a rate. It is the
+first thing to do next session.
+
+**Do not skip to the fix.** A cycle-breaker is a change to `navTo`, which is the single most
+load-bearing function in the bot, and this log already contains one navigation "fix" that lost.
+
+---
+
+## Iteration 33 — **VOID**, by its own pre-registered validity condition. Run `20260908-201931`, 200 games.
+
+The registration said: *"`bob_pr0` — reserve 0. Behaviourally identical by construction. Must read
+~25/50 all-split; if it does not, the run is void."* It is read first, and it fails.
+
+```
+  arm         bot swept   split   arm swept    arm_wins_above_half
+  bob_pr0             5      19           1          -4        <- MUST be 0 / 25 / 0
+  bob_pr100           5      18           2          -3
+  bob_pr200          11      12           2          -9
+  bob_pr300          12      10           3          -9
+```
+
+**Six decisive maps on an arm that cannot decide anything.** For comparison, the null arms of
+iterations 30 and 31 both read exactly 25/50 with **all 25 maps split and zero sweeps** — that is what
+a behaviourally identical arm looks like, and I have seen it twice, so there is no ambiguity about the
+signature.
+
+### Why, and it is my own LEARNINGS entry
+
+The guard I added sits *before* the spawn location loop:
+
+```java
+if (chips >= want.moneyCost + reserve
+        && rc.getPaint() - want.paintCost >= SPAWN_PAINT_RESERVE) {
+    int start = G.rng.nextInt(8);          // <-- the draw is INSIDE the conditional
+```
+
+At `SPAWN_PAINT_RESERVE = 0` the guard is logically redundant — `canBuildRobot` already enforces
+`getPaint() >= paintCost`, which I verified in the engine bytecode before building the arms. **The
+policy really is identical. The PRNG stream is not.** Whenever chips suffice but paint does not, the
+original reaches `G.rng.nextInt(8)` and consumes a draw; my version short-circuits and does not. From
+that point the tower's RNG phase differs, every later `randomDir()` differs, and the two builds play
+different games.
+
+**LEARNINGS 35, written by me, is titled "A PRNG draw inside a conditional makes that conditional part
+of the behaviour."** I verified the *engine* precondition carefully — the right check, done properly —
+and then failed to check my own PRNG invariant, which is the one my log already warned about. Verifying
+the hard thing is not a substitute for verifying the thing you have already been burned by.
+
+### What can and cannot be salvaged
+
+**Nothing about the dose.** The null arm carries ±2.77 of pure phase noise at 50 games (my calibrated
+4.80/150 scaled), and it landed at -4. `pr200` and `pr300` at -9 are ~5 games below it, ~1.3 sd — not
+resolvable, and measured against a baseline that is itself displaced. The pre-registered ruin-poor
+subset is flatly uninformative: `pr0` and `pr200` both -4, `pr100` and `pr300` both 0, which is a
+pattern with no dose in it at all.
+
+**So this is VOID, not REJECTED**, and the distinction matters: a reject would close the direction,
+and I have not earned that.
+
+### The fix for a re-run, and why I am NOT re-running it tonight
+
+The redesign is mechanical — draw first, then guard:
+
+```java
+if (chips >= want.moneyCost + reserve) {
+    int start = G.rng.nextInt(8);                                   // always drawn
+    if (rc.getPaint() - want.paintCost >= SPAWN_PAINT_RESERVE) {    // guard after
+```
+
+That makes the zero arm exact rather than merely policy-identical.
+
+**But I am not queueing that re-run, because the hypothesis it tests was already undermined tonight by
+better evidence.** The opening dump showed bob's towers holding 200-280 paint with nobody starved
+while bob still failed to build a third tower, and the robot trace then showed why: a soldier
+oscillating between two tiles for 32 rounds until it bled out. **Tower paint was never the binding
+constraint in the phase that decides these games.** Re-running a corrected ladder would spend ~100
+minutes of shared VM time measuring the dose of a mechanism I now have direct evidence is not the
+one operating.
+
+**Next session's first task is the navigation-livelock census**, per the finding above: count the
+robots whose position over a window visits <= 2 distinct tiles while movement is ready. That turns one
+traced robot into a rate, and it is the prerequisite I set myself before any `navTo` arm gets built.
