@@ -1681,3 +1681,66 @@ measured only on losses cannot distinguish "the cause of losing" from "what losi
 and the losses/ directory quietly guarantees that sample.** One deterministic re-run of a won map
 is the cheapest bias check available in this project and I should run it every time a loss-sample
 number is about to become a mechanism claim.
+
+## A one-match PRE-FLIGHT before every gauntlet, gated on link 1 only (iteration 41)
+
+Iteration 41's first build completed 5 resource patterns and activated none. Had I gone straight
+to the gauntlet I would have spent 100 games measuring the win-rate of a mechanism that was not
+running, and the verdict would have been a true number about a false thing — "SRPs don't help"
+rather than "my SRPs never activate".
+
+One match costs ~1% of a gauntlet and answers a strictly prior question: **does the mechanism fire
+at all?** It ran four times on iteration 41 and rejected three builds. The rule I am adopting:
+
+> **Never spend a gauntlet until one match has shown link 1 firing.** The pre-flight is not a
+> weak evaluation — it is a different question, and it is the one that must be answered first.
+
+This works only because link 1 was chosen to be a *directly readable* quantity rather than an
+inference. The active-SRP counter had read 0 in every game this lineage ever played, so any
+non-zero value was proof. Pick link-1 instruments with that property on purpose.
+
+## "The counter says zero" is consistent with several faults that have DIFFERENT remedies (it 41)
+
+`completed 5, active 0` was equally consistent with: a hand-decoded pattern in the wrong
+orientation; a chip shortage at the completion gate; an enemy raid; and friendly fire. Four faults,
+four different fixes. I picked the one my pre-registration had already named ("place them deeper"),
+built it, and it was a **no-op** — every tag count came back identical to the byte.
+
+Rendering the arena settled it in one look. At round 650 the pattern read exactly
+`AAaAA/AaaaA/aaAaa/AaaaA/AAaAA`; at 680 two tiles had gone from ally SECONDARY to ally PRIMARY.
+Still our paint. **Our own splashers were bulldozing our own patterns.**
+
+> **When a counter reads zero, enumerate the faults consistent with that zero before choosing one.
+> If more than one has a different remedy, the counter cannot pick between them and you must go
+> and LOOK.** A pre-registered remedy is a hypothesis, not a diagnosis, and mine had 1-in-4 odds.
+
+Third time a rendered picture has beaten a table for me. The pattern is not that pictures are
+better; it is that a *tabulated* quantity answers the question you thought to ask, while a rendered
+one shows the quantity you did not.
+
+## Ask what your OWN units do to your own state (iteration 41)
+
+Every failure mode I had catalogued was about the opponent or about scarcity. The actual killer was
+endogenous: a splasher paints ally-primary across its whole footprint and scores centres by enemy
+and empty tiles, so a *perfectly correct* splash at a legitimate target beside a resource pattern
+converts its secondary tiles to primary and resets the 50-round activation clock. No bug, no enemy,
+no shortage — two of my own subsystems with incompatible ideas about what a tile is for.
+
+Worth generalising, because carol now has several kinds of tile with meaning beyond "painted":
+tower-pattern tiles, resource-pattern tiles, and plain territory. **Any unit that writes to a
+shared surface must know which regions carry meaning it can destroy.** I expect more of these as
+the bot gains structure, and the tell is a feature that works in isolation and dies in situ.
+
+## A cache keyed on a MUTABLE path serves stale answers silently (iteration 41)
+
+`carol-tools/mixcheck/dumpcache.sh` keyed its cache on the replay's path plus flags. But
+`vm-match.sh` writes every rerun of the same pairing+map to the *same filename*, so re-running a
+rebuilt bot and re-dumping returned the previous build's analysis — the cached file was three
+minutes **older** than the replay it claimed to describe.
+
+It cost me a wrong inference for several minutes, and it was nearly worse: two different builds
+produced byte-identical numbers, which I read as "the cache is stale" when in that instance the
+build genuinely had not changed behaviour. **Two failure modes producing the same symptom, again.**
+Fixed by keying on the content hash. The general rule: **a cache key must name the CONTENT, not a
+location that content can be replaced at** — and a filename that a tool deliberately overwrites is
+the worst possible key.
