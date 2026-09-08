@@ -8262,3 +8262,86 @@ cause no longer applies, rather than "feels under-explored".
 Stopping the design here deliberately. Pre-check 2 is the one that has caught this lineage three
 times in the "cost the price, not just the benefit" family, and it points at the payoff rather than
 the mechanism — exactly where I have historically not looked.
+
+### Pre-checks 1 and 3 settled — and the finding generalizes off the outlier map
+
+Ran the probe against `carol_iter29` on a **random 6-map sample** (run `20260908-043517`,
+`NMAPS=6`, maps drawn by the tool, not chosen by me) and read the decisions off two of them.
+Incidentally another no-op confirmation: `carol_i31p` went **10/12 (83%)** against `carol_iter29`,
+in line with iteration 30's accepted 84–88%.
+
+| | Parking_lot | **Snowman** | **sunrise** |
+|---|---|---|---|
+| decisions | 2,403 | 2,403 | 1,568 |
+| tower paint at decision: median / max | 38 / 215 | 0 / 250 | **192 / 1000** |
+| chips gate passes | 100.0% | 100.0% | **30.7%** |
+| builds, as share of decisions | 3.5% | 3.4% | 1.4% |
+| **no-build (chips OK) that is `tpIn < paintCost`** | **100.0%** | **100.0%** | **100.0%** |
+| realized MOPPER share (intended 10%) | **57%** | **53%** | **50%** |
+| realized SPLASHER share (intended 15%) | 0% | 0% | 23% |
+
+**Pre-check 3 (degenerate sizing map) — cleared.** Parking_lot is not special. On all three maps,
+every single build blocked while chips were available was blocked by the tower's own paint, and the
+realized mopper share is 50–57% against an intended 10%. The one thing Parking_lot *was* an outlier
+on — losing to iteration 0 — is not the thing the constant is being sized against.
+
+**Pre-check 1 (is the 215 ceiling endogenous?) — cleared, with evidence rather than argument.** On
+`sunrise` the stash reaches **1,000**. So 215 is not a cap the engine imposes; it is what the
+current spending policy leaves behind. `sunrise` also shows the other half of the mechanism: it is
+the one chips-*scarce* map here (chips gate passes on 30.7%), the stash therefore accumulates, and
+it is the only map where splashers get built at all (23%).
+
+**Pre-check 2 (the splasher price on Parking_lot) — no longer load-bearing, so I am not spending a
+run on it.** The design below does not depend on splashers. Its case is the mopper over-share,
+which is 50–57% on every map measured.
+
+## Iteration 31 — built and running: MOPPER PAINT FLOOR
+
+**Hypothesis.** The mopper is 10% of the roll and 50–57% of realized production. It wins that share
+by costing 100 paint against a soldier's 200 and a splasher's 300, so its roll clears a starved
+stash roughly 10x more often (21.1% vs 2.0% vs 0.0% on Parking_lot). Nothing chooses this; it is
+cost ordering deciding the allocation, which is §5b's "the order they fire in sets the allocation,
+by accident rather than by measurement".
+
+**Mechanism.** A mopper may be built only if the tower's own stash covers its cost *plus* a floor:
+
+```java
+final int MOP_PAINT_FLOOR = <dose>;
+if (MOP_PAINT_FLOOR > 0 && afford && want == UnitType.MOPPER
+        && tpIn < want.paintCost + MOP_PAINT_FLOOR) afford = false;
+```
+
+**The `> 0` guard is load-bearing, not decoration.** Without it, a floor of 0 would still touch
+`afford` whenever `tpIn < 100` — and since the `if (afford)` block is what draws
+`DIRS[rng.nextInt(8)]`, that would skip an rng draw and desynchronise the entire stream, so the
+"zero arm" would not be byte-identical to iteration 30 and every comparison would be against a
+different bot. Verified: 4 real rng call sites in both arms, identical.
+
+**Why this is not iteration 19a again.** 19a deleted the mopper roll and ran at 32%, with the
+recorded cause "cutting the cheap unit in a paint-starved economy *removes* production". This
+removes no spend channel: the paint is spent either way, on a soldier or splasher instead, and the
+mopper is still built whenever the stash is genuinely comfortable. **It is a mix change at constant
+paint spend, not a production cut** — which is precisely the term 19a's rejection turns on.
+
+**Price, in the binding currency, written down before the result.** Cost: the mopper builds that
+occur while the stash sits in [100, 100+dose) are foregone. Benefit: that paint instead reaches a
+soldier or splasher roll. The exchange rate is the whole bet — if moppers are worth as much per
+paint as soldiers, this is worth exactly zero. My own LEARNINGS measures moppers as idle on 95.1%
+of 78,480 turns, which is the reason to expect the exchange to be favourable; it is also a figure
+from an older iteration and I have **not** re-measured it on the current build. That is the honest
+weak point of the price argument and I am recording it as such rather than leaning on the 95.1%.
+
+**Pre-registered gate**, fixed before any game was read:
+- **Accept** if `carol_i31_100` beats `carol_iter30` head-to-head **> 50%** (the mirror null is an
+  exact even split with zero swept maps, so a margin is simply games flipped), peers hold, and
+  there is no one-directional regression.
+- **Dose ladder**: 0 (`carol_iter30`, provably byte-identical), 100, 200.
+- **Identity check** folded into the run: if the mechanism is dead, the `carol_iter30` arm returns
+  exactly 25/50 with every map split and zero sweeps.
+- **Map-level prediction**, stated so the sample can check itself: the effect should be *absent* on
+  chip-scarce maps like `sunrise`, where the stash already accumulates past the floor on its own and
+  splashers are already 23% of production, and *present* on chip-rich maps like Parking_lot and
+  Snowman, where the stash is pinned under 250 and the mopper takes half of everything.
+
+Run `20260908-044251` launched: `BOT=carol_i31_100`, opponents `carol_iter30` and `carol_i31_200`,
+fresh random 25-map sample, 100 games.
