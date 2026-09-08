@@ -8334,3 +8334,117 @@ nobody had ever re-measured turns out to have been right, which is worth its thr
   for zero games. `mask 1` was excluded on that table alone.
 - The chip-surplus *observations* stand as observations. What is refuted is the inference from
   them to "the tower mix is wrong", which is a different statement and dies alone.
+
+---
+
+## SPAWN PROBE RESULT (2026-09-08) — the binding resource FLIPS between maps, and my premise was sized on the wrong three
+
+The pre-registered fallback from iteration 23. `src/bob_sprobe` counts, at the spawn decision
+point, in-bot, before the action resolves, whether a tower's spawn was refused for chips, for
+paint, or for a free tile.
+
+**Behavioural neutrality checked first, as doctrine requires of any instrumented build.**
+`bob_c0` (a verified byte-identical package rename) and `bob_sprobe` played the same opponent
+on the same maps: **Dominoes r1504 both, memstore r785 both**, same winner. The probe does not
+change what the bot does, so its counters describe the shipping build.
+
+```
+map          r200 chipBlock   later chipBlock      paintBlock (later)
+memstore        90.0%          78.5% (r600)            17.5%
+Justice         51.3%          23.5% (r400)            74.5%
+Flower          38.8%           8.7% (r600)            88.7%
+DonkeyKong        --            7.5% (r2000)           88.6%
+Dominoes         0.0%           0.0%                   97.5%
+```
+
+**The binding resource is not a property of this bot. It is a property of the map, and it
+inverts completely.** On Dominoes the spawn decision is refused for paint 97.5% of the time and
+for chips *never*. On memstore it is refused for chips 78-90% of the time and for paint 7-18%.
+
+### This is why iteration 23 lost, and why the premise was wrong in a way no single number revealed
+
+My chip-surplus premise was sized on **DonkeyKong, Flower and Dominoes** — and on those three
+it is correct. It is exactly backwards on memstore. That is TRAINING_ALGORITHM.md §3's *"check
+your sizing map is not degenerate"* landing on me: I sized a quantity on three maps, all three
+agreed, and three agreeing maps still did not span the corpus. Iteration 23 then removed money
+towers everywhere, which is a gain where paint binds and a straight loss where chips do — and
+it came back −3 and −8.
+
+**And the time dimension confirms the hypothesis I registered rather than asserted.** I wrote,
+before running this probe, that the chip surplus might be a *post-decision artefact* — a
+correct measurement taken after the game is decided. The probe says chip-blocking is
+overwhelmingly an **early-game** phenomenon that then decays: Flower 38.8% -> 8.7%, Justice
+51.3% -> 23.5%. Coverage is what decides games (LEARNINGS §18), the map is full by ~25% of game
+length and coverage peaks near r150 — so **chips bind exactly when it matters and release
+exactly when it stops mattering.** Reading the endgame treasury and concluding "chips are
+slack" measured the second half of that sentence and missed the first.
+
+That is a sibling of doctrine 15 in a different coordinate: there the error is reading state
+*after the action*, here it is reading state *after the decision the state was supposed to
+explain*. Worth naming, because I would not have recognised it from the doctrine as written.
+
+### The far more actionable thing the probe found: the gate is MY OWN CONSTANT
+
+The spawn gate is `chips >= want.moneyCost + reserve` with `reserve = 1200` — 1450 for a
+soldier. On memstore the treasury sat at a **mean of 1000-1350 for the entire game**: pinned
+just below my own gate, never above it. With `reserve = 0` the gate is 250 and those same turns
+clear it comfortably. **So on chip-limited maps it is not the economy refusing to spawn, it is
+my reserve.** A resource pinned in a dead band is one of the two absolute degeneracy signals
+the algorithm names in Step 1, and this one is self-inflicted.
+
+`reserve = 1200` has been in `Tower.run` since iteration 0 and has never been measured.
+
+---
+
+## Iteration 24 — PRE-REGISTERED before the run returns (launched, 150 games): the spawn reserve
+
+**Functional area: tower production/economy. New area** — and the move out of tower type is
+required (3 consecutive rejects) *and* independently justified: both axes of the tower-type
+rule are now measured and the incumbent wins on both.
+
+**Hypothesis.** The 1200-chip spawn reserve refuses 38-90% of early spawn decisions on 3 of 5
+probed maps, during the window in which coverage — the thing that decides every game — is
+actually being set. It buys the ability to complete a tower pattern (1000 chips) the instant one
+is ready. Tower utilisation is already 80-92% of claimable ruins and pinned at the engine cap on
+large maps, so that insurance is being bought at a price nobody has ever checked.
+
+**The price, both halves, written before the code** (§3 requires it, and a reallocation must be
+priced against what it displaces, not against zero):
+
+```
+benefit   on memstore ~80% of tower-turns are chip-refused; converting even a fraction into
+          units is a large change in early production, which is where coverage is decided
+price     tower completion stalls when the treasury is empty. A soldier that finishes a
+          pattern and cannot pay the 1000 waits -- and iteration 17's probe showed soldiers
+          hold a ruin for 170-250 turns, so a stalled completion is not a short delay
+price     it is a REALLOCATION, not new income: every chip spent on a unit is a chip not
+          available for the next tower, and towers are permanent income while units die in
+          ~200 rounds
+```
+
+**Arms**: `bob_v12` (reserve 1200 = exact zero arm), `bob_v6` (600), `bob_v0` (0).
+
+**Gates.**
+- **Void** if `bob_v12` is not 25/50 with all 25 maps split by side.
+- **Accept-eligible** at best arm **>= 30/50**, then the frozen roster before accepting
+  (baselines: `bob_iter0` 46/50, `bob_iter1` 44/50, `bob_iter11` 35/50, `examplefuncsplayer`
+  50/50; none may regress by more than 3).
+- **Regime-matched map-level prediction, per doctrine 4, and it embeds a free identity check.**
+  The reserve can only act where the gate actually binds. On a map where `chipBlock` is 0% the
+  gate never refused anything, so lowering it is **inert and the games must be byte-identical**.
+  Dominoes is such a map. So: deviation must concentrate on chip-limited maps and be *absent*
+  on maps where the treasury never approaches the gate. If deviation is spread evenly, the
+  mechanism is not doing what the probe says it does.
+- **Dose shape.** I do *not* pre-register monotonicity. The two priced effects run in opposite
+  directions (more units vs stalled towers), so an interior peak at 600 is as plausible as a
+  monotone gain at 0, and I am recording that I cannot call it rather than claiming a
+  prediction I do not have. What I *do* predict is that **`v0` and `v6` both differ from the
+  null on chip-limited maps** — if they do not, the probe's account of the gate is wrong.
+
+**Pre-checks NOT done, named.**
+1. I have not measured how often a completed pattern actually waits on chips today. That is the
+   price half of the trade and it needs its own decision-point counter; I am running the dose
+   first because the probe already sizes the benefit half and the arms are cheap.
+2. The probe covers 5 maps of 75. That is what burned iteration 23, and 5 is better than 3 but
+   it is not the corpus. The map-level prediction above is what protects this run from the same
+   error: it checks the regime split *within* the sample rather than assuming it.
