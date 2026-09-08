@@ -9235,3 +9235,96 @@ accepts walking downhill" is exactly what a blind absolute instrument cannot det
 one question: **is `carol_racer` discriminating?** A result near 50–75% qualifies it for
 `progress/roster_extra.txt`; a result at 95%+ means it saturated on arrival and is no better than
 what the roster already has. It rides along in the same run at no extra map cost.
+
+---
+
+## INSTRUMENT FINDING (external data, zero VM cost) — carol scales *inversely* with map area, and it is getting worse
+
+Found while iteration 35 was playing, from `tournaments/*/results.csv` joined against map areas in
+the shared corpus file. Reproducible: `carol-tools/covar/sizestrat.py`, committed.
+
+Carol's win rate against alice and bob in the latest tournament, binned by map area:
+
+| area bin | maps | carol win% |
+|---|---|---|
+| tiny (<= 900) | 19 | **56.6%** |
+| small (901–1600) | 24 | 33.3% |
+| large (1601–2500) | 19 | 18.4% |
+| huge (> 2500) | 13 | **15.4%** |
+
+**rho(win%, area) = −0.546, t = −5.57 on 73 df.** This is not a marginal effect. It is the most
+significant thing this lineage has ever measured, and it is ten times better attested than any
+number in my last three accept entries.
+
+This contrast is **within one tournament** — the same two opponents on every map — so it is not
+affected by the wins-are-conserved caveat that makes cross-tournament deltas relative.
+
+### It is a trend, not a snapshot, and the trend is the indictment
+
+| tournament | carol overall | tiny | small | large | huge | rho(area) |
+|---|---|---|---|---|---|---|
+| 20260907-0100 | 19.0% | 15.8% | 20.8% | 18.4% | 21.2% | **+0.029** |
+| 20260907-1300 | 19.7% | 36.8% | 18.8% | 13.2% | 5.8% | −0.401 |
+| 20260908-0100 | 32.3% | **56.6%** | 33.3% | 18.4% | **15.4%** | **−0.546** |
+
+Two days ago carol was **flat across map size** (rho = +0.029). The headline went 19.0% → 32.3%,
+and essentially all of it is small maps: tiny went **+40.8 points** while huge went **−5.8**. My
+accepted iterations bought a large gain on small maps and paid for part of it on large ones.
+
+And the other two lineages go the *other* way — alice +0.217, bob +0.443. Whatever they are doing
+scales up with the board; carol's does not.
+
+### This is TRAINING_ALGORITHM §5b, and I predicted I could not detect it
+
+Under iteration 34 I wrote: *"§5b's 'chain of individually-positive accepts walking downhill' is
+exactly the failure I currently cannot detect."* This is that failure, and here is precisely why
+both of my instruments are blind to it:
+
+1. **The gauntlet gate is one aggregate number over a random 25-map sample.** A change worth +20
+   points on small maps and −5 on large ones clears `> 25/50` comfortably. Every such change is
+   accepted, and each one tilts the bot further. The gate is not wrong, it is *unstratified*.
+2. **The frozen roster cannot see it either, and this is the deeper problem.** Every roster member
+   is a carol snapshot, so they all share the large-map weakness and it **cancels in the
+   head-to-head**. That is not saturation from being too strong — it is saturation from measuring
+   against opponents that fail the same way I do. Adding another synthetic archetype of my own
+   construction would not fix it, because I would build that one out of the same assumptions.
+
+The tournament is the only instrument here with an opponent that does not share my blind spot, and
+this finding is the single strongest argument in this project for MULTI_AGENT.md's claim that it
+is the highest-value evidence available.
+
+### Where the games are actually lost — the losses are not close
+
+Split of carol's tournament losses by how the game ended:
+
+| area bin | median rounds | losses painted out | losses on tiebreak |
+|---|---|---|---|
+| tiny | 998 | 28 (85%) | 5 |
+| small | 1252 | 51 (80%) | 13 |
+| large | **847** | 51 (82%) | 11 |
+| huge | 1568 | 30 (68%) | 14 |
+
+The large bin is decisive: carol loses there at a **median of 847 rounds**, *faster* than it loses
+on small maps (998) and much faster than the small bin (1252), and 82% of those losses are the
+opponent painting enough of the map outright rather than a coverage tiebreak. Carol is not
+narrowly out-scored on big maps — it is **out-expanded and finished early**. On huge maps 29 of 75
+corpus maps are ones carol went 0-for-4 on, and they are overwhelmingly the big ones.
+
+### Process change, effective now (and this is the durable part)
+
+**Every future accept gate is stratified by map area.** The pre-registered condition gains a
+standing clause, in addition to whatever that iteration's own gate says:
+
+> the candidate must not lose ground on the large half of the sampled maps. Report the win rate on
+> the small half and the large half separately in every verdict. An iteration that wins overall
+> while going backwards on the large half is **not** an accept — it is the next link in the chain
+> above, and it gets logged as one.
+
+This is a change to *how I evaluate*, not to the bot, so it goes in `progress/milestones.txt` per
+the charter. Iteration 35 is already in flight with its own pre-registered gate; I will report its
+size split too, but I will not retroactively add this clause to its accept condition — moving a
+gate after the games are played is exactly the thing pre-registration exists to prevent.
+
+**The agenda this sets.** Economy-mix tuning (iterations 30–35: splasher share, mopper share, money
+share, upgrade gate) has been working an axis that the external data says is not where carol is
+losing. Iteration 36 targets large-map expansion directly.

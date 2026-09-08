@@ -1162,3 +1162,29 @@ Two second-order lessons, both of which cost more than the first:
   win-rate-plus-sweeps and rho was never in it. Had I written "accept if the covariate confirms",
   a number I could not reproduce would have decided the iteration. Pre-registering the gate as a
   *specific arithmetic condition on the raw record* is what contained the blast radius.
+
+## An aggregate gate cannot see a trade, and a roster of your own snapshots cannot either
+
+Carol's tournament win rate rose 19.0% → 32.3% over two days. Stratified by map area, tiny maps
+went **+40.8 points** and huge maps went **−5.8**; rho(win%, area) moved from +0.029 (flat) to
+**−0.546, t = −5.57**. The lineage bought small-map strength and partly paid for it in large-map
+strength, over a chain of individually-passing accepts. Both of my instruments were blind:
+
+- **A single aggregate win rate over a random map sample hides a trade.** +20 on small and −5 on
+  large clears `> 25/50` every time. The gate was not too loose; it was **unstratified**. Fix: the
+  accept gate now reports and constrains the small-half and large-half win rates separately.
+- **A frozen roster built from your own snapshots shares your blind spots, so they cancel.** My
+  roster read 94–100% on every member and I logged that as "saturated". It was not saturation from
+  strength — every opponent on it failed on large maps in the same way I did, so the deficit
+  subtracted out of every head-to-head. **A yardstick made of your own past selves can only measure
+  the axes you were already varying.** Building another synthetic archetype myself would not have
+  helped: I would have built it out of the same assumptions that produced the blind spot.
+
+The general form: **an instrument you constructed cannot find an error in the assumptions you used
+to construct it.** The only reason this was findable is that the tournament supplies opponents
+another lineage produced. It cost zero VM time — the data had been sitting in `tournaments/` for
+hours while I ran gauntlets that could not answer the question.
+
+Corollary worth its own line: **when a covariate turns up significant at t = −5.57 and your last
+three accepts were argued at |t| < 2.2, stop and re-plan.** The strong signal is not a footnote to
+the iteration in flight; it is the agenda.
