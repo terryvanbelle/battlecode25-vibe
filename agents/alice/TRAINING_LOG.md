@@ -10467,3 +10467,47 @@ without ever having verified it myself in a full run.
 Pre-registering the reading now: **12 of 12 identical -> determinism confirmed, pool over
 44 distinct maps. Any mismatch -> stop and report it**, because a non-deterministic engine
 is a bigger finding than iteration 25 either way.
+
+## Dose sizing for the refill, all three variants — and the frequency knob runs BACKWARDS
+
+`alice_i25h` = `alice_i25` with the hunger gate opened from "below half capacity" to
+"any deficit at all". Two lines differ (package + gate); the surplus reserve is untouched,
+so unlike `alice_i25r0` it cannot re-open iteration 5. One match each, UnderTheSea vs
+`alice_iter24`:
+
+| variant | reserve | hunger gate | **refills fired** | **paint delivered** | robots refilling |
+|---|---|---|---|---|---|
+| `alice_i25` | 200 | below half | 26 | **1,962 (9.8 soldiers)** | 2.4% |
+| **`alice_i25h`** | 200 | **any deficit** | **59 (2.3x)** | **865 (4.3 soldiers) — 0.44x** | 3.0% |
+| `alice_i25r0` | **0** | below half | 173 | 14,037 (70.2 soldiers) | 15.9% |
+
+**Opening the hunger gate more than doubled the firing count and more than halved the paint
+delivered.** The knob runs backwards on the quantity that matters.
+
+The reason is mechanical once seen: a nearly-full unit that tops up takes only the few paint
+it has room for (`min(capacity - paint, surplus)`), burns the **cooldown of 10**, and nibbles
+the tower's surplus. When it is *actually* hungry a little later, the big top-up it could
+have taken is smaller or gone. **The <50% gate is not a throttle — it is a rule that waits
+until a withdrawal is worth its cooldown.**
+
+And note what would have happened had I sized this by firing count, which is exactly what my
+own pre-registered gate asks for: `i25h` fires 2.3x more often and looks like the stronger
+dose on the number I told myself to watch. **A firing count answers "is this reachable?" and
+nothing else. It is not a measure of how much the mechanism does.** Tonight's third
+appearance of "the count is not the quantity", after the summed-maximum bound and the
+starvation metric.
+
+### What this settles about iteration 25
+
+`alice_i25`'s original design — reserve at `SOLDIER.paintCost`, hunger at half capacity — is
+**the best-calibrated of the three on the mechanism's own currency**, and both knobs were
+chosen from engine constants rather than searched. R=0 delivers 7x more paint and loses the
+map by draining towers; the open hunger gate delivers less than half.
+
+So there is **no easy dose rescue**. The refill is simply a small mechanism: 1,962 paint in a
+game that commits 128,000 to units — **1.5%**. That is entirely consistent with a +1 net
+swept map and +0.38 sd, and it means the honest reading of iteration 25 is *"correctly built,
+correctly aimed, and too small to measure"* rather than *"promising but under-dosed"*.
+
+Which is the argument for iteration 26 being the tower mix instead: that one reallocates
+**half of all tower production**, not 1.5% of unit paint.
