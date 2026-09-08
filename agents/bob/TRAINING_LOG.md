@@ -10084,3 +10084,71 @@ Note also that the direction is not obvious and I should not pre-judge it: `bob_
 $301k it cannot spend and **still loses on coverage** (438 vs 544). More resource income is only worth
 something to a bot that converts it. The current bot converts and is short; its ancestor hoards and is
 not. That asymmetry is the actual hypothesis, and it is about *chips*, not about SRPs.
+
+---
+
+## CORRECTION to the iteration 29 by-product, same day — both readings were confounded by SIDE
+
+I published the two observations above with hedges about what they might mean. The hedges were on the
+wrong thing. Within the hour the mirror data refuted the *attribution*, not the interpretation, and I
+am correcting it in place rather than letting a confounded number sit in the log looking measured.
+
+**What I claimed.** (1) "The current bot sustains 2–4× fewer active SRPs than its own ancestor on
+identical SRP code." (2) "On Leaf the current bot is chip-bound at ~$1,300 while `bob_iter11` ends on
+$301,529."
+
+**Both compared `T1` against `T2` — and `T1` is side A, `T2` is side B.** The comparison is
+bot-vs-bot only if side is not doing the work. It is.
+
+**The mirror settles it.** `bob` vs `bob_j0` on Leaf — `bob_j0` is the 28c null arm, verified
+behaviourally identical (25/50 with all 25 maps split by side, 0 swept, i.e. perfectly antisymmetric):
+
+```
+Leaf, MIRROR (bob side A vs bob_j0 side B, identical behaviour)
+  r750   A $1,318  srp2   |   B   $5,465  srp6
+  r1000  A $1,240  srp3   |   B $103,345  srp6
+  r2000  A $5,736  srp1   |   B $527,895  srp6
+```
+
+A **400× treasury gap and a 2–6× SRP gap between two bots that are the same bot.** The identical
+pattern (side A ≈ $1,300, side B ≈ $300–500k) then reproduces in the separate game against
+`bob_iter11`, and it tracks **side**, not winner — side A won that one and side B won this one. So
+observation (1) is not a fact about the current bot versus its ancestor at all, and observation (2)
+is not a fact about the bot's economy. Both are facts about **Leaf's spawn positions**.
+
+The algorithm states this outright and I read past it: *"in a mirror, any inter-team stat difference
+is positional, not policy."* I had the mirror replay on disk the whole time — it was in the same
+directory I pulled the numbers from.
+
+**And Leaf is a degenerate sizing map, which the multi-map census caught.** Final-phase chips across
+the baseline replays:
+
+```
+Leaf         A $5,736    B $527,895      <- extreme outlier, both directions
+FourCorners  A $21,446   B $35,160
+Bread        A $1,291    B $4,993
+Circuit      A $3,898    B $4,056
+MoneyTower   A $5,331    B $1,362
+Paintball    A $6,270    B $3,850
+Parking_lot  A $5,040    B $5,788
+Justice      A $5,830    B $6,110
+```
+
+Typical is **$1,300–$6,000 on both sides**. So the two stories Leaf tempted me into — "the bot is
+chip-starved" and "the bot hoards a fortune it never spends" — are each true of **one side of one
+map** and false of the corpus. Neither iteration 8's re-open trigger ("chips sustained below ~5,000")
+nor an "idle chips" thesis is established by this data. **No re-open. No iteration built.**
+
+This is the second time today the same discipline paid: iteration 29 died at a reachability probe
+instead of a 200-game gauntlet, and this died at an 8-map census instead of an iteration built on
+Leaf. Both were cheap. The expensive version of this mistake is the one where the outlier map is the
+one you happened to trace.
+
+**What survives as a real, unexplained observation** — recorded as an observation, with no mechanism
+claimed: on Leaf, two byte-identical bots diverge to a 400× treasury gap by spawn position alone.
+Whether that is a property of Leaf's geometry or a symmetry defect in this bot is **not determined**;
+`towerTypeFor`'s parity rule was my first suspect and the tower-type counts do not support it (side A
+16 money / 17 paint, side B 14 money / 9 paint — a mix difference far too small to produce 400×).
+The mirror-match sweep the algorithm prescribes for exactly this ("a persistent lopsided split on a
+map is a real bug") is the right instrument, and the 28c null arm already reports the headline:
+**all 25 maps split by side, none swept.** Queued, not concluded.
