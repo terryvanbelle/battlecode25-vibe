@@ -14327,3 +14327,45 @@ my current build, so it reads ~50% **by construction** and cannot arrive saturat
 
 This does not make the roster more *independent* — it still shares every blind spot I have. It
 makes it harder, which is the specific defect measured above.
+
+## Iteration 40, pre-check 1 DISCHARGED at zero game cost — the ruin choice set is a singleton
+
+Computed from `tools/mapdata/ruin_parity.txt` (the shared corpus facts) plus the engine's
+vision radius, with no games played at all.
+
+A robot's vision is `r^2 <= 20`, which is **69 tiles** including its own. Against each map's
+**claimable** ruin count — the `.map25 ruins()` vector, which excludes the four starting-tower
+tiles, and I am naming which count I used because that file warns the two differ by ~17%:
+
+| quantity | value |
+|---|---|
+| expected claimable ruins in a soldier's vision, median over 75 maps | **0.78** |
+| mean / min (`Gears`) / max (`gridworld`) | 0.80 / 0.32 / 1.51 |
+| maps where the expectation reaches 2.0 | **0 of 75** |
+| maps where it even reaches 1.0 | 15 of 75 |
+
+Under a Poisson approximation at the median density:
+
+| ruins in view | 0 | 1 | 2 | >=3 |
+|---|---|---|---|---|
+| probability | 0.457 | 0.358 | 0.140 | 0.045 |
+
+**P(>=2 ruins in view) = 0.185**, and conditional on seeing any ruin at all,
+**P(a second one to rank against) = 0.34**.
+
+> **So the "rank ruins better" version of iteration 40 is dead before it is written.** On four
+> turns in five the soldier is choosing among **one** option or none, and a ranking over a
+> singleton is not a ranking — the exact failure that gave another lineage a dose ladder of
+> byte-identical games. This is doctrine §3's "reachability means the CHOICE SET, not just the
+> guard", and it cost nothing to check because the corpus facts were already on disk.
+
+**What survives is the FILTER version**, and it survives precisely because it is well defined on
+a singleton: dropping an uncompletable ruin changes the soldier's behaviour from *walk to ruin*
+to *wander*, which is a real difference even when the set has one element.
+
+**Two honest limits on this number.** It assumes ruins are spread uniformly; real clustering
+would raise `P(>=2 | >=1)` above the Poisson figure, so 0.34 is a floor rather than a point
+estimate. And it is an expectation over map area, not over the positions soldiers actually
+occupy — LEARNINGS already carries "an instrument that samples positions your current policy
+chooses cannot price a policy that chooses different positions". Neither limit rescues the
+ranking version: it would need `P(>=2)` to be several times larger, not slightly.
