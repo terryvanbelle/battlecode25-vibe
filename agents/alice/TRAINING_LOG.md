@@ -13314,3 +13314,50 @@ self-calibrating from `UnitType` constants.
 - **Falsifier for the whole diagnosis**: if both arms lose, then splasher-only late-game is
   *better* than mixed production despite freezing tower count, and my "only soldiers complete
   patterns" reasoning is wrong about what wins those games.
+
+## Iteration 36 is CANCELLED before its screen — one game refuted the premise
+
+The pre-registration named a risk for arm A: *"late-game tower paint is ~86 per tower against
+arm A's 500 threshold, so arm A may build almost no splashers at all."* I ran **one match** to
+size that before committing 100 games. `alice_i36a` vs `alice_iter30`, `DefaultMedium`:
+
+| r | T1 `i36a` | | | | T2 `alice_iter30` | | | |
+|---|---|---|---|---|---|---|---|---|
+| | cov | sold | **spl** | towers | cov | sold | **spl** | towers |
+| 400 | 534 | 10 | **0** | 12 | 436 | 8 | 1 | 11 |
+| 600 | 467 | 15 | **0** | 12 | 495 | 6 | 2 | 11 |
+| 800 | 339 | 15 | **0** | 12 | 623 | **0** | **11** | 11 |
+| 1000 | 312 | 19 | **0** | 12 | **662** | **0** | **12** | 11 |
+
+`alice_iter30` won at r1020 on MAJORITY_PAINTED.
+
+**Arm A built ZERO splashers all game** — `+spl0` cumulative at every checkpoint. So arm A is
+not a repair of iterations 28/29, it is a **complete ablation** of them, exactly as the
+pre-registration said it would be if this happened. Under my own pre-registered terms it
+cannot be banked as a mechanism.
+
+### But the row that matters is the one that inverts the diagnosis
+
+I called *"$72,980 idle, ONE soldier, 12 splashers, tower count frozen"* a starvation
+pathology. **That is what the WINNING side looks like.** Here the baseline goes to zero
+soldiers and 12 splashers and its coverage climbs **495 -> 623 -> 662**, while my arm keeps
+making soldiers (+51 cumulative) and its coverage **falls 534 -> 312**.
+
+> **Tower count freezing after expansion is not starvation, it is expansion being FINISHED.**
+> Once every reachable ruin is taken, a soldier has nothing left to claim and paints ground it
+> cannot hold; the splasher is the only unit I field that takes enemy paint, so it is the only
+> unit whose output still converts. I read "no soldiers + huge chips + flat towers" as a
+> failure state when it is the signature of a bot that has correctly switched phases.
+
+This is the **fourth** firing of *"an unspent surplus is not evidence of waste"*, and the second
+today — iteration 34 was the same error about chips. I keep reading an idle stock plus a
+falling count as a bug rather than asking what the winning side does at that moment.
+
+**The cheap control did its job.** One game, chosen because the pre-registration named a
+specific quantity to measure (`splashers built by arm A`), refuted the whole direction for
+about 0.7% of the screen's cost. Arm B is cancelled with arm A: it also *reduces* splashers —
+from ~100% of late spawns to ~25% — and the evidence says the arrow points the other way.
+
+**Caveat, stated plainly**: this is ONE map and one game. It is decisive about arm A's
+splasher count (a count, not an outcome) and it is only suggestive about the phase story. The
+phase story is now a hypothesis to test, not a finding.
