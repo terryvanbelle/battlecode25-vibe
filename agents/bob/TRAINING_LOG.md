@@ -12887,3 +12887,48 @@ Nothing about bob's mid or late game has visibly degraded.
 The mechanism predicts these move *before* the win column does — a bot that survives the opening but
 still loses is a bot whose opening got fixed and whose other problems are now visible, which is
 progress that a standings row would hide.
+
+### The opening dump WEAKENS iteration 33's stated mechanism — recorded before the ladder reports
+
+Dumped rounds 2-28 of the same CastleDefense loss at stride 4, and it does not show what I said it
+would. bob is T2:
+
+```
+  round      2     4     8    12    16    20    24    28
+  bob twPaint   220   240   280   120   160   200   240   280      <- NOT drained; RISING
+  bob paints      2     4    16    17     8     7     1     0      <- collapses to ZERO
+  bob starved     0     0     0     0     0     0     0     0      <- NOBODY is starving
+  bob xfer        0     0     0     0     0     0     0     0      <- nobody refills either
+  bob towers      2     2     2     2     2     2     2     2
+  carol twPaint 320    40    80   120   160   594   654   836      <- LOWER than bob to r16
+  carol towers    2     2     2     2     2     3     3     4
+```
+
+**In the opening, bob's towers hold 200-280 paint, no unit is starved, and bob still stops painting
+and still never builds a tower.** Carol reaches its third tower at round 20 from a *lower* paint
+balance than bob had at the same moment.
+
+**So "tower paint is drained by over-spawning" is not the opening mechanism.** It is real *later* —
+from round 30 the `starved1/2/4` counters do appear and `twPaint` does sit at 50-200 — but the failure
+to build tower #3 happens in rounds 1-30, before scarcity exists. The thing I built a four-arm ladder
+around explains the second half of the trace and not the half that decides the game.
+
+**What the numbers point at instead**: bob's soldiers stop doing useful work around round 16-24 while
+paint is available and they are not starved, and they never withdraw (`xfer0` for 28 straight rounds
+while carol's soldiers withdraw at r20 and r28). Units alive, fed, and idle. The shape matches the
+sink this log already documented for the *tower cap* — `Soldier.chooseRuin()` releases `workRuin` on
+only two conditions, the ruin becoming visibly occupied or `completeTowerPattern` succeeding — so any
+ruin where `canMarkTowerPattern` or the completion can never succeed holds its soldier **forever**.
+At the cap that needs 25 towers; this needs only a ruin whose 5x5 cannot be marked. I have not verified
+that is what is happening, and I am not going to assert it on a fit to eight rows.
+
+**What I am doing about it, and what I am NOT.** The ladder finishes on its own; I will read it against
+the gate exactly as registered, and I am writing this down **now** so that a flat result cannot later
+be explained by "well, the mechanism was wrong anyway" as though I had known. I did not know until I
+dumped the opening, and the dump was free and available the whole time.
+
+**This is the third time tonight that the discriminating case moved the answer**, and the pattern
+across all three is one thing: I keep dumping the aggregate window that shows the *outcome* and not
+the window that contains the *decision*. Filter and CastleDefense at stride 10-15 showed a dying bot;
+at stride 4 they show a bot that was already idle before anything went wrong. **LEARNINGS candidate:
+dump the phase where the mechanism must act, not the phase where the symptom is loudest.**
