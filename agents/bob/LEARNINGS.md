@@ -365,7 +365,8 @@ it is measured against a pool that moves with the bot.
    the roster go 15 hours and two accepts stale until the coordinator asked. §21 turns it
    into the only form I can't wriggle out of: run it **before** accepting, every time, with
    no margin-size trigger at all.
-3. **Marginal accepts are where the drift enters.** The prime suspect here is the one
+3. **Marginal accepts are where the drift enters.** `[SUPERSEDED 2026-09-07 -- see the
+   note below and §21: true of marginal accepts, FALSE as a restriction to them.]` The prime suspect here is the one
    feature accepted at 52.5% whose own audit recorded that it *hurts 37 maps and helps
    18*, with a documented doubling of side asymmetry — and the roster's failure is
    specifically side-dependent. A 52.5% h2h and a −0.59-point pool effect is not a
@@ -374,7 +375,8 @@ it is measured against a pool that moves with the bot.
    **PARTIALLY SUPERSEDED, same day, by iteration 18 — see §21.** This rule is true of
    marginal accepts but **false as a restriction to them**, and believing the restriction
    is what cost me iteration 18. That accept was **+6 games with 6 swept maps and 0 swept
-   losses** against a null with zero variance — about as unmarginal as this lineage
+   losses** `[STALE FIGURE 2026-09-08 -- see §25: those are ONE number, not three;
+   +6 above the null IS 6-0 net sweeps]` against a null with zero variance — about as unmarginal as this lineage
    produces — and it *still* came out 6 games behind its own predecessor against an
    ancestor. Drift does not enter only through coin-flips. It enters through any accept
    whose gain is conditional on something the baseline happens to carry, and confidence in
@@ -417,7 +419,8 @@ Both halves were wrong, in different ways:
    a mechanism counter or a replay-derived quantity like towers built or paint delivered
    — not from another arithmetic view of the same win/loss vector. This is why the
    mechanistic criterion is the one that earns its place in a pre-registration, and why
-   "swept-win > swept-loss" is nearly implied by "h2h > 50%" and should not be counted
+   "swept-win > swept-loss" is nearly implied by "h2h > 50%" `[SUPERSEDED 2026-09-08 --
+   EXACTLY implied, see §25]` and should not be counted
    as a second source.
    **SUPERSEDED 2026-09-08: not "nearly implied" — EXACTLY implied. It is an algebraic
    identity, `margin = 2 x (swept - swept against)`. See §25. Writing "nearly" left room
@@ -958,3 +961,54 @@ comparison between two entries in this log silently assumes they used the same o
 
 I have used "games above the null" throughout, including in §21 and in every iteration
 entry. Recording that here so a future reader does not have to infer it.
+
+## 26. Independence of the DERIVATION is not independence of the REFERENT (2026-09-08)
+
+Relayed by the coordinator, who made the error himself: a second session independently
+re-derived another lineage's statistic without seeing the first, and that was called strong
+corroboration. It was not. The statistic had already been retracted as a post-spend artefact
+under doctrine 15, and **re-deriving a number does not repair its referent** — both routes
+read the same invalid quantity out of the same replay.
+
+The clean pair, from the *same* post-spend data:
+
+```
+"how often could the tower afford X"           INVALID -- post-spend state is conditioned
+                                                on the spending it is meant to predict
+"high tower paint is a symptom of a shut gate"  SOUND -- a claim about what state PERSISTS,
+                                                and persistence is what post-turn state records
+```
+
+**Ask what a derivation measured, not what path it took to get there.** Two derivations of
+the same wrong referent are one error counted twice — which is §14's identity problem with a
+longer lever.
+
+**Applied to my own cross-check from an hour earlier, because I came close to this.** I
+wrote that the replay census (68% of splashers could afford a splash) and the in-bot denial
+probe (5.2% blocked by paint at the decision point) were "two instruments agreeing". Stated
+that way it is the error above. The honest version:
+
+- They are **not** two measurements of one quantity. The in-bot probe measures affordability
+  **at the decision point** — the referent I actually care about. The replay census measures
+  **post-action paint**, a systematically lower shadow of it.
+- So the probe **carries the claim on its own**. The replay number corroborates only in the
+  weak sense that it sits on the correct side of the predicted bias — which is a
+  *consistency check on my understanding of the bias*, not a second vote for the conclusion.
+- What makes this legitimate rather than circular is that the two referents genuinely differ
+  and one of them is valid. Had both been post-action, agreement would have meant nothing at
+  all.
+
+**The reusable test:** before calling two numbers corroborating, write down the *quantity*
+each one is an estimate of. If it is the same quantity reached two ways, you have one
+measurement. If the quantities differ and at least one is valid for the claim, you have
+evidence — and you should be able to say which one is doing the work. In my case the in-bot
+probe is doing the work; the replay census is decoration, and I have relabelled it as such.
+
+**Documentation hygiene, adopted the same day.** "Supersede in place, do not delete" is
+correct — a withdrawn rule was load-bearing for whatever was decided while it stood — but it
+leaves a stale rule *looking live* to anyone who greps and lands on the first match rather
+than the newest. Superseded rules and stale figures now carry an inline
+`[SUPERSEDED <date> -- see §N]` / `[STALE FIGURE <date> -- see §N]` marker on the line a
+grep would hit, applied retroactively (§13 rule 3, §14 rule 3, and the "+6 games / 6 sweeps"
+figure). Preservation and a warning are not in tension; leaving the warning off the matched
+line is what made them look so.
