@@ -1610,3 +1610,42 @@ because I did not know it was readable — and an inferred number then carried a
 **Rule: when a sweep is due, run it before the next hypothesis, not after.** Its whole value is
 telling you whether the space you are searching is the right space, and that question is worthless
 once you have already committed the run.
+
+## 39. I designed the protocol around who owns the radio, not around who holds the information (2026-09-08)
+
+First attempt at using the messaging mechanic: towers ingest ruin sightings, relay them over the
+tower→tower broadcast, and push them to soldiers. Measured result: **soldiers received zero messages
+for entire games.**
+
+The channel was fine — I disassembled `readMessages` to confirm `-1` means "all rounds", and
+`assertCanSendMessage` to confirm tower→robot is legal. The fault was the design. **Towers are built
+on ruins, so the ruins a tower can see are the ones already claimed.** The tower's ingest found
+nothing worth sending, and there was no other source, because soldiers — the units that actually
+discover *unclaimed* ruins, because they are the ones that move — never sent anything.
+
+I built the architecture around the **capability**: towers have the long-range broadcast, no
+connectivity requirement, and a 20-message budget against a robot's 1. All true, and all irrelevant
+to whether anyone has something to say. **Communication has a producer, a channel, and a consumer,
+and I designed two of the three.** The producer is the one that has to be sited by *where the
+information is generated*, which in this bot is exactly where the capability is weakest.
+
+**The general form: for any information-moving mechanism, name the producer, the channel and the
+consumer separately, and check each one is non-empty before building.** The channel is the one that
+feels like the hard part, so it gets the analysis; it was in fact the only part that was never in
+doubt — my own channel-sizing probe had already measured both links open at 93-100%. I sized the
+channel and the *demand*, and never once sized the **supply**.
+
+Two follow-on defects, both found the same way and worth recording as a pattern:
+
+- The first producer fix still measured `reportable = 0`, because I had it report a free ruin
+  *other than* the one being worked — while `chooseRuin` always claims the nearest free ruin it can
+  see, so nothing was ever left over. **An exclusion that seems obviously right ("don't advertise the
+  one I'm taking") can be exactly the condition that empties the set.**
+- The tower sent the *same* code to every soldier in range. Fixed by advancing the round-robin per
+  recipient. Notably this was the failure mode I had **pre-registered before the run** — so I found
+  it by re-reading my own prediction, not by seeing a bad number.
+
+**And the reason any of this was recoverable: the manipulation check ran on a probe build, not on
+the gauntlet.** Three successive designs each measured a hard zero, at the cost of one match each.
+Had I read those three as gauntlet results, each would have come back as a flat dose curve, and
+"communication does not help this bot" is a conclusion I would have believed and written up.
