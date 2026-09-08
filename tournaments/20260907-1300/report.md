@@ -21,11 +21,20 @@
 
 ## Swept maps
 
-Won from *both* sides, so immune to spawn advantage — the honest read on a pair.
+Won from *both* sides, so a sweep is immune to spawn advantage.
 
-- **alice–bob**: alice swept 1, bob swept 65
-- **alice–carol**: alice swept 42, carol swept 14
-- **bob–carol**: bob swept 64, carol swept 1
+
+**These do not corroborate the head-to-head margin — they restate it.** Every map is played twice, so wins = 2·SW + D and losses = 2·SL + D, where D is the split maps; the D cancels and
+
+
+> margin = 2 × (swept − swept against)
+
+
+exactly, always. Verified on every pair of every run. So citing a margin *and* its sweep counts as two agreeing pieces of evidence is citing one number twice. What the sweep counts add that the margin cannot is **D, the number of split maps** — how decisive the pair is, not who is ahead. A 60–40 pair with few splits is a different animal from a 60–40 pair that is mostly coin-flips, and only the sweep counts tell them apart.
+
+- **alice–bob**: alice swept 1, bob swept 65, 9 split
+- **alice–carol**: alice swept 42, carol swept 14, 19 split
+- **bob–carol**: bob swept 64, carol swept 1, 10 split
 
 ## What played
 

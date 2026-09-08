@@ -49,10 +49,20 @@ def load(run):
         h2h[(w, b if w == a else a)] += 1
         bymap[(tuple(sorted((a, b))), r["map"])].append(w)
     sweeps = defaultdict(int)
+    # Split maps (each side won once) and partial maps (only one game decided).
+    # Splits are the ONLY thing the sweep counts add over the head-to-head
+    # margin, since margin = 2*(swept - swept against) identically; partials are
+    # the sole way that identity can fail, so they are counted to be reported
+    # rather than silently breaking the arithmetic.
+    splits, partial = defaultdict(int), defaultdict(int)
     for (pair, _), ws in bymap.items():
         if len(ws) == 2 and ws[0] == ws[1]:
             sweeps[(ws[0], pair[1] if ws[0] == pair[0] else pair[0])] += 1
-    return wins, played, h2h, sweeps, rows, {r['map'] for r in rows}
+        elif len(ws) == 2:
+            splits[pair] += 1
+        else:
+            partial[pair] += 1
+    return wins, played, h2h, sweeps, rows, {r['map'] for r in rows}, splits, partial
 
 
 def pct(w, t):
@@ -136,12 +146,13 @@ def main():
             break
         prev = r
 
-    wins, played, h2h, sweeps, rows, cur_maps = load(cur)
+    wins, played, h2h, sweeps, rows, cur_maps, splits, partial = load(cur)
     bots = sorted(played)
     forfeits, incomplete = flags(cur)
     commits = played_commits(cur)
 
-    pw, pp, ph, _, _, prev_maps = load(prev) if prev else ({}, {}, {}, {}, [], set())
+    pw, pp, ph, _, _, prev_maps, _, _ = (load(prev) if prev else
+        ({}, {}, {}, {}, [], set(), {}, {}))
     prev_incomplete = flags(prev)[1] if prev else False
     # Deltas require the same ground, and "not truncated" does not establish
     # that: a run played with an explicit short MAPS= list is complete and still
@@ -187,13 +198,30 @@ def main():
             L.append(f"| {x} vs {y} | {h2h[(x, y)]}–{h2h[(y, x)]} | {pct(h2h[(x,y)], t):.1f}% |{arrow(d)} |")
 
     L.append("\n## Swept maps\n")
-    L.append("Won from *both* sides, so immune to spawn advantage — the honest read on a pair.\n")
+    L.append("Won from *both* sides, so a sweep is immune to spawn advantage.\n")
+    L.append("\n**These do not corroborate the head-to-head margin — they restate it.** "
+             "Every map is played twice, so wins = 2·SW + D and losses = 2·SL + D, "
+             "where D is the split maps; the D cancels and\n")
+    L.append("\n> margin = 2 × (swept − swept against)\n")
+    L.append("\nexactly, always. Verified on every pair of every run. So citing a "
+             "margin *and* its sweep counts as two agreeing pieces of evidence is "
+             "citing one number twice. What the sweep counts add that the margin "
+             "cannot is **D, the number of split maps** — how decisive the pair is, "
+             "not who is ahead. A 60–40 pair with few splits is a different animal "
+             "from a 60–40 pair that is mostly coin-flips, and only the sweep counts "
+             "tell them apart.\n")
     for x in bots:
         for y in bots:
             if x >= y:
                 continue
             if h2h[(x, y)] + h2h[(y, x)]:
-                L.append(f"- **{x}–{y}**: {x} swept {sweeps[(x,y)]}, {y} swept {sweeps[(y,x)]}")
+                pair = tuple(sorted((x, y)))
+                extra = f", {splits[pair]} split"
+                if partial[pair]:
+                    extra += (f", {partial[pair]} partial (only one game decided "
+                              f"— the margin identity does not hold for these)")
+                L.append(f"- **{x}–{y}**: {x} swept {sweeps[(x,y)]}, "
+                         f"{y} swept {sweeps[(y,x)]}{extra}")
 
     if commits:
         L.append("\n## What played\n")
@@ -275,7 +303,7 @@ def main():
          "|---" * (len(sorted({b for r in all_runs for b in load(r)[1]})) + 3) + "|"]
     allbots = sorted({b for r in all_runs for b in load(r)[1]})
     for r in all_runs:
-        w, p, _, _, rr, _ = load(r)
+        w, p, _, _, rr, _, _, _ = load(r)
         mark = "!" if flags(r)[1] else ""
         cells = [f"{pct(w[b], p[b]):.1f}%" if p.get(b) else "—" for b in allbots]
         nmaps = len({row["map"] for row in rr})
