@@ -102,6 +102,13 @@ one is the trap, because it looks reasonable: a never-changing external bot is
 exactly what a frozen yardstick is made of. You may read a benchmark *score* if
 one appears in a committed file; that is all. See your AGENT.md.
 
+**Probe the engine only through `tools/engine-jar.sh`.** battlecode-dev's gradle
+cache holds a stale `battlecode25-java-1.0.0.jar` beside the real `3.1.0`, so a
+bare `find -name 'battlecode25*.jar' | head -1` can decompile the WRONG engine
+and yield confident, false facts. Use
+`javap -p -c -cp "$(tools/engine-jar.sh)" ...`, or `--remote` for the VM path; it
+refuses to print a jar whose version does not match `arena/engine_version.txt`.
+
 **Report tooling bugs, don't work around them.** `tools/` is coordinator-owned.
 Several real bugs have been found and fixed this way; a silent workaround leaves
 the trap in place for the other two lineages.
