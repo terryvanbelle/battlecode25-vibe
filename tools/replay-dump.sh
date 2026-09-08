@@ -27,6 +27,9 @@ source "$HERE/lib.sh"
 REPLAY="$1"; shift
 [ -f "$REPLAY" ] || { echo "no such file: $REPLAY" >&2; exit 1; }
 
+WANT_VER="$(cat "$HERE/../arena/engine_version.txt" 2>/dev/null)"
+[ -n "$WANT_VER" ] || { echo "!! cannot read arena/engine_version.txt" >&2; exit 1; }
+
 ensure_vm
 RUN_DIR="replaydump/run-$$-$(date +%s%N)"
 gssh "mkdir -p ~/$RUN_DIR" >/dev/null
@@ -36,7 +39,18 @@ gscp "$REPLAY" "$USER_NAME@$IP:$RUN_DIR/in.bc25" >/dev/null
 
 gssh "
   export JAVA_HOME=\$HOME/jdk21 PATH=\$HOME/jdk21/bin:\$PATH
-  BC_JAR=\$(find ~/.gradle -name 'battlecode25-java-*.jar' | grep -v source | sort -V | tail -1)
+  # Pinned to arena/engine_version.txt, NOT 'highest version wins'. The gradle
+  # cache holds a stale battlecode25-java-1.0.0.jar beside the real one, so
+  # sorting by version and taking the last gives the right answer only while the
+  # newest jar present happens to be the wanted one -- right by luck of a flag,
+  # not by a check. This tool produces the census and arena data all three
+  # lineages reason from, so a silently wrong engine here contaminates their
+  # verdicts, not merely its own output.
+  # NOTE every inner quote below must stay escaped: this whole block is inside a
+  # double-quoted gssh argument, and a bare quote ends it (that broke the tool
+  # once, with 'syntax error: unexpected end of file' and no other clue).
+  BC_JAR=\$(find ~/.gradle -name 'battlecode25-java-$WANT_VER.jar' | grep -v source | head -1)
+  if [ -z \"\$BC_JAR\" ]; then echo \"!! no battlecode25-java-$WANT_VER.jar on the VM\" >&2; exit 1; fi
   cd ~/$RUN_DIR
   javac -d . -classpath \"\$BC_JAR\" ReplayDump.java
   java -classpath \".:\$BC_JAR\" com.google.flatbuffers.ReplayDump in.bc25 $*
