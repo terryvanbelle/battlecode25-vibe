@@ -7118,6 +7118,11 @@ that — not per-attack efficiency — is where the 8x sits.
 
 #### The build mix carol *intends* is not the build mix she *gets*
 
+**[PARTLY SUPERSEDED 2026-09-08 by the doctrine-15 audit at the end of this log: the realized-vs-
+intended mix below SURVIVES (it is a direct count of SPAWN events), but the affordability-filter
+EXPLANATION of it is REFUTED, and the `SPLASHER_IN_20` retrodiction is WITHDRAWN. Read the audit
+before citing anything in this subsection as a cause.]**
+
 Constants: `SPLASHER_IN_20 = 3`, `MOPPER_IN_20 = 2` → **intended 75% soldier / 15% splasher /
 10% mopper**. Realized, counting every unit actually built:
 
@@ -7182,7 +7187,9 @@ mechanism from 19a, not a silent revert of it.
 
 Two independent artefacts agree, which is what licenses reading anything off this. From the
 lifetime budget: 200 paint − 19 on attacks − 1.5 on marks over 52.8 turns = **3.40/turn** on
-DefaultMedium. From differencing the per-turn `p=` in the indicator stream and subtracting that
+DefaultMedium. **[SUPERSEDED 2026-09-08: both figures below are WRONG — the true drain is
+1.20–1.58/turn. Both routes shared one false assumption (that paint leaves a robot only via drain
+or a logged action) and so were one method twice, not two. See "The discriminating case" below.]** From differencing the per-turn `p=` in the indicator stream and subtracting that
 turn's logged attacks: **3.46/turn**. Agreement to 2%.
 
 Terrain drain is capped at 2/turn by the rules (−1 neutral, −2 enemy, 0 ally), so **at least 1.4 of
@@ -7343,14 +7350,14 @@ with its unit type, and every refill as a TRANSFER with its amount, so the decis
 
 | map | basis | tp<100 | **tp 100–199 (dead band)** | tp≥200 | tp≥300 |
 |---|---|---|---|---|---|
-| Bunny | post-spend (invalid) | 49.0% | 48.6% | 2.1% | 0.3% |
-| Bunny | **decision-point** | 40.7% | **52.4%** | 6.4% | **0.6%** |
-| DefaultMedium | post-spend (invalid) | 41.7% | 43.0% | 5.7% | 9.6% |
-| DefaultMedium | **decision-point** | 38.2% | **44.7%** | 7.4% | 9.8% |
-| Fossil | post-spend (invalid) | 24.8% | 26.5% | 8.0% | 40.7% |
-| Fossil | **decision-point** | 22.6% | **27.2%** | 9.1% | **41.1%** |
-| Mirage | post-spend (invalid) | 28.5% | 36.9% | 13.4% | 21.2% |
-| Mirage | **decision-point** | 25.9% | **37.3%** | 14.9% | 21.9% |
+| Bunny | post-spend (valid for PERSISTENCE) | 49.0% | 48.6% | 2.1% | 0.3% |
+| Bunny | **decision-point (for AFFORDABILITY only)** | 40.7% | **52.4%** | 6.4% | **0.6%** |
+| DefaultMedium | post-spend (valid for PERSISTENCE) | 41.7% | 43.0% | 5.7% | 9.6% |
+| DefaultMedium | **decision-point (for AFFORDABILITY only)** | 38.2% | **44.7%** | 7.4% | 9.8% |
+| Fossil | post-spend (valid for PERSISTENCE) | 24.8% | 26.5% | 8.0% | 40.7% |
+| Fossil | **decision-point (for AFFORDABILITY only)** | 22.6% | **27.2%** | 9.1% | **41.1%** |
+| Mirage | post-spend (valid for PERSISTENCE) | 28.5% | 36.9% | 13.4% | 21.2% |
+| Mirage | **decision-point (for AFFORDABILITY only)** | 25.9% | **37.3%** | 14.9% | 21.9% |
 
 The bias is real but small here (+1.7 to +3.8 points), and it widens the dead band rather than
 narrowing it — towers build rarely relative to how many turns they take, so little is spent down.
@@ -7452,3 +7459,40 @@ result and recording the attribution as open rather than back-filling it from th
 Snapshot `src/carol_iter29`; `src/carol` promoted; `src/carol_mirror` regenerated from the new
 baseline (the accept moves the null, and reading a candidate against a mirror of the *previous*
 build credits it with games the accepted mechanism flipped).
+
+### Doctrine 14 extended — and it corrects my own doctrine-15 audit, one entry above
+
+**Independence of the derivation is not independence of the referent.** Re-deriving a number by a
+different route does not repair it if both routes read the same invalid quantity. I reached the
+same conclusion from the other side earlier today (two offline drain estimates agreed to 2% and
+were both wrong by 2x because they were one method twice), and the extension makes the general form
+explicit: **ask what a derivation measured, not what path it took there.**
+
+The usable distinction, applied to my own tower-paint numbers — and it changes how I should read my
+own correction table:
+
+- **"How often could the tower afford a soldier"** — invalid from post-spend state, because the
+  turns where it *did* build are exactly the turns whose recorded stash was spent down. This is
+  what I retracted, correctly.
+- **"The paint tower persists in the [100,200) band"** — **sound from post-spend state**, because
+  persistence is precisely what post-turn state records.
+
+**So my two columns answer different questions, and I mislabelled them.** I headed them "post-spend
+(INVALID)" and "decision-point (corrected)", as though one were a repaired version of the other.
+They are not:
+
+- For the **persistence** claim, the *post-spend* column is the correct referent, not a biased one.
+  27–49% is the right number for "how much of its life does the tower spend holding 100–199".
+- For the **affordability** claim, the reconstructed column is the right referent — and that claim
+  then dies anyway on the count reconciliation (2,059 implied vs 101 built on Fossil).
+
+Neither column is "the corrected one". Correcting the header rather than the numbers, because the
+numbers were right and the framing was wrong — which is exactly the failure the extension names.
+
+**Ledger and figure hygiene (adopted from another lineage's fix).** "Supersede in place, do not
+delete" preserves history correctly but leaves stale text *looking live*, because a reader who
+greps lands on whichever row matches first rather than the newest. Superseded figures in this log
+now carry an inline `**[SUPERSEDED <date>: …]**` marker at the point of the stale number, applied
+retroactively to the 3.40/3.46 drain figures and to the build-mix subsection whose explanation was
+refuted. Preserving the old text is right; leaving it indistinguishable from live text is the
+defect.

@@ -435,7 +435,9 @@ Three iterations (5, 8, 10) raised carol's unit production by three different ro
 10 fielded **4.1x the soldier-turns** and the head-to-head moved from 50.0% to 47.5%. I
 summarised that, correctly, as "unit production is not the binding constraint" — and then used
 it to justify iteration 12b, which **withheld** spawning to fund tower upgrades. It lost 32
-points (62.5% -> 30.0%), with 12 swept-losses to 4 swept-wins.
+points (62.5% -> 30.0%), with 12 swept-losses to 4 swept-wins. **[SUPERSEDED 2026-09-08: the
+sweep clause is NOT independent support — margin = 2*(swept - swept-against) identically. The
+32-point drop stands, measured once. See the audit at the end of this file.]**
 
 Those three iterations measured the **upward** direction only. A plateau in one direction says
 nothing about the gradient in the other, and a bot sitting at the *edge* of a plateau looks
@@ -526,7 +528,9 @@ than re-roll a local step every turn, because "a local random walk cannot find t
 a 40x40+ map once home is painted" (`NOTGT` on ~57% of soldier turns). Iteration 15b returned
 the **nearest** unvisited cell — a few turns away, so `moveExploring` re-rolled it constantly
 and the persistent target collapsed straight back into the random walk iteration 3 deleted.
-11/40, swept 3-14.
+11/40, swept 3-14. **[SUPERSEDED 2026-09-08: the swept-loss count is a miscount; the identity
+margin = 2*(swept - swept-against) determines SL = 12, not 14. See the audit at the end of this
+file. The rejection itself is unaffected.]**
 
 The rationale was in a comment **directly above the function I was editing**. I had read that
 comment. I had quoted its 57% figure in my own notes one iteration earlier. I still missed it,
@@ -993,3 +997,41 @@ picking the number I liked: SW was independently attested by an enumeration of n
 game count was fixed, and SL followed. Had SW been the uncertain one, the honest answer would have
 stayed "unresolved". The conclusion of the entry (iteration 15b rejected at 27.5%, prediction
 inverted) is untouched.
+
+
+## Independence of the DERIVATION is not independence of the REFERENT
+
+Doctrine 14's extension, and I met it from both sides in one day. I had two offline estimates of
+soldier paint drain agree to within 2% and read that as corroboration; both were wrong by a factor
+of two, because both assumed paint leaves a robot only via drain or via a logged action. Different
+arithmetic, same false referent. Separately, a second session elsewhere re-derived a statistic
+without having seen the first derivation, and that too was worth nothing, because both routes read
+the same post-spend quantity.
+
+**Ask what a derivation measured, not what path it took there.** Agreement between two routes
+bounds arithmetic error only; it says nothing about whether the quantity was the right one.
+
+The sharp version, because the same data can be valid or invalid depending on the question:
+
+| question asked of post-spend replay state | verdict |
+|---|---|
+| "how often *could* this tower have afforded a soldier?" | **invalid** — the turns it did build are exactly the turns recorded low; conditioned on the outcome |
+| "how much of its life does this tower *persist* at 100–199 paint?" | **sound** — persistence is exactly what post-turn state records |
+
+Same table of numbers, opposite verdicts. So the label to attach to a measurement is not
+"valid/invalid" but "valid *for which question*". I had headed my own two columns "INVALID" and
+"corrected", implying one repaired the other; in fact each is correct for a different question and
+neither supersedes the other.
+
+## Superseding in place must LOOK superseded
+
+"Supersede in place, do not delete" is right — a withdrawn rule was load-bearing for whatever was
+decided while it stood, so deleting it makes the older entries unreadable rather than merely wrong.
+But it has a failure mode: a reader who greps lands on whichever row matches first, not the newest,
+so **stale text keeps reading as live**. Nearly cited a superseded figure as current for exactly
+this reason.
+
+The fix is cheap and mechanical: every superseded figure or rule carries an inline
+`**[SUPERSEDED <date>: what replaced it, and where]**` marker *at the point of the stale text*, not
+only in a correction appended elsewhere. Applied retroactively here and in `TRAINING_LOG.md`.
+Preserving the old text is right; leaving it indistinguishable from live text is the defect.
