@@ -62,6 +62,23 @@ public class RobotPlayer {
      */
     static final String BUILD = "i35";
 
+    // ---- Iteration 34: fewer MONEY towers, because paint binds and chips do not -------------
+    // towerTypeFor makes a ruin a money tower when k % MONEY_MOD == 0, so MONEY_MOD sets the
+    // money share (~1 in MONEY_MOD). The incumbent value is 3, and it was fixed in ITERATION 5
+    // from ITERATION 3's trace ("chip income is exactly 30/turn"). That is a constant from
+    // iteration 3 still setting the build mix at iteration 30 -- precisely the stale-constant
+    // failure LEARNINGS recorded an hour ago, and the binding resource has been re-measured
+    // since, on THIS build, three separate ways:
+    //   - 100.0% of chips-available no-builds are `tpIn < paintCost` (iteration 31 probe)
+    //   - 63% of idle soldier turns are below half paint (iteration 32 probe)
+    //   - iteration 33's tower stash collapsed to 4.4x below baseline as spending rose, while
+    //     BOTH teams' chips sat idle above $2,200 (Snowglobe, round 400)
+    // And RULES.md gives the mechanism: a money tower has paintPerTurn == 0, so it gains paint
+    // from nothing -- not mining, and not from SRPs either. It can spawn ~2 robots from its 500
+    // starting stash and is then a dry build site forever. A paint tower makes 10/turn into its
+    // own stash, and buildRobot draws paint from the BUILDING tower's stash.
+    static final int MONEY_MOD = 4;
+
     /**
      * Consecutive turns this tower has seen the team treasury EXACTLY unchanged, and the count
      * after which CHIP_RESERVE is treated as unreachable and dropped to zero.
@@ -229,22 +246,24 @@ public class RobotPlayer {
         String upg = "";
         if (rc.getType().getBaseType() == UnitType.LEVEL_ONE_PAINT_TOWER
                 && rc.getType().canUpgradeType()) {
-            // Iteration 35: the CHIP_RESERVE term is GONE. Measured on this build, from a
-            // replay already on disk at zero VM cost: the old gate (1200 + 2500 = 3700) fired
-            // 4 times against 9,147 `upgPoor` on Snowglobe -- 0.04% of eligible tower turns --
-            // because the treasury is measured to oscillate in roughly [1600, 2450] and simply
-            // never reaches 3700. This is the SAME fault iteration 30 fixed for splashers and
-            // was accepted on at 44/50: "50-95% of splasher rolls die at the chips gate because
-            // cheaper units drain the shared treasury below it first, pinning the realized share
-            // at 1.2-2.7% against an intended 15%". A gate above where the treasury actually
-            // sits is not a policy, it is an off switch.
+            // Iteration 35: the CHIP_RESERVE term is GONE. Measured on the iteration-33 build
+            // from a replay already on disk at zero VM cost: the old gate (1200 + 2500 = 3700)
+            // fired 4 times against 9,147 `upgPoor` on Snowglobe -- 0.04% of eligible tower
+            // turns -- because the treasury is measured to oscillate in roughly [1600, 2450]
+            // and simply never reaches 3700. This is the SAME fault iteration 30 fixed for
+            // splashers and was accepted on at 44/50: "50-95% of splasher rolls die at the
+            // chips gate because cheaper units drain the shared treasury below it first,
+            // pinning the realized share at 1.2-2.7% against an intended 15%". A gate above
+            // where the treasury actually sits is not a policy, it is an off switch.
             //
-            // Why dropping the reserve specifically, rather than adding a floor: CHIP_RESERVE
-            // exists to protect a 1000-chip ruin completion from robot production. An upgrade is
-            // not robot production -- it is the same class of investment the reserve protects --
-            // so charging it the reserve ON TOP of its own 2500 cost double-counts. There is no
-            // dose below this: canUpgradeTower checks affordability itself, so `need` under 2500
-            // is identical to `need` at 2500.
+            // Why drop the reserve rather than add a floor: CHIP_RESERVE exists to protect a
+            // 1000-chip ruin COMPLETION from robot production. An upgrade is not robot
+            // production -- it is the same class of investment the reserve protects -- so
+            // charging it the reserve on top of its own 2500 cost double-counts. There is no
+            // dose below this: canUpgradeTower checks affordability itself, so any `need`
+            // under 2500 is identical to 2500. And there is effectively no dose above it
+            // either: the measured p99 treasury is 2,600 and the max 2,800, so 3,000 would be
+            // back to near-off. This axis has exactly one reachable setting.
             int need = rc.getType().getNextLevel().moneyCost;
             if (chips >= need && rc.canUpgradeTower(rc.getLocation())) {
                 rc.upgradeTower(rc.getLocation());
@@ -452,7 +471,10 @@ public class RobotPlayer {
     static UnitType towerTypeFor(MapLocation ruin) {
         int k = Math.min(ruin.x, rc.getMapWidth() - 1 - ruin.x)
               + Math.min(ruin.y, rc.getMapHeight() - 1 - ruin.y);
-        if (k % 3 != 0) return UnitType.LEVEL_ONE_PAINT_TOWER;
+        // Iteration 34: MONEY_MOD replaces the literal 3. k is invariant under both map
+        // symmetries and k % MONEY_MOD is a pure function of k, so the play-symmetry and
+        // every-soldier-agrees properties this method depends on are both preserved.
+        if (k % MONEY_MOD != 0) return UnitType.LEVEL_ONE_PAINT_TOWER;
         mixAsk++;
         // Override ONLY toward paint, and only on a local sample big enough to mean something.
         // Paint is the binding resource and RULES.md records losing the last paint tower as an

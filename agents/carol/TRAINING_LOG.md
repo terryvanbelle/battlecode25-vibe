@@ -9070,3 +9070,85 @@ the only measurement here taken against opponents this lineage did not produce.
 walking downhill" is exactly the failure I currently cannot detect — and a +0.92 sd accept is
 precisely the kind of link such a chain is made of. `src/carol_racer` is built and compiles for
 this reason; validating it as a roster yardstick is the outstanding process task.
+
+---
+
+## Iteration 35 — PRE-REGISTERED. Un-gate the paint-tower upgrade (rebuilt on the iteration-34 baseline)
+
+Registered before any game of run is played. The iteration-35 direction was written up under
+iteration 34's entry and explicitly **held** until 34 resolved, because 34 moved the baseline. 34
+was accepted, so `src/carol_i35` has been **rebuilt from the current `src/carol` (iteration 34,
+`MONEY_MOD = 4`)** rather than from the pre-34 build the earlier draft sat on. Verified by diff:
+the only three lines that differ from `src/carol` are the package name, the `BUILD` string, and
+
+```java
+-            int need = CHIP_RESERVE + rc.getType().getNextLevel().moneyCost;
++            int need = rc.getType().getNextLevel().moneyCost;
+```
+
+**One mechanism.** Nothing else moves.
+
+### Hypothesis
+
+The lv1->lv2 paint-tower upgrade is not a tuned policy, it is an **off switch**. On the
+iteration-33 build the gate `CHIP_RESERVE + 2500 = 3700` fired **4 times against 9,147 `upgPoor`**
+on Snowglobe (0.04% of eligible tower-turns) because the treasury is measured to oscillate in
+[1600, 2450] and never reaches 3700. Dropping the reserve term puts the gate at 2,500, which the
+chip distribution (12,932 tower-turns) says is reached on **3.21%** of tower-turns — ~415
+opportunities per game, ample for a handful of upgrades. The payoff is permanent: 5 -> 10
+paint/turn on that tower, and paint is the resource three independent measurements on this lineage
+call binding while chips sit idle above $2,200.
+
+**The axis has exactly one reachable setting**, stated so no one asks for a dose ladder later:
+`canUpgradeTower` checks affordability itself so any `need` below 2,500 is identical to 2,500,
+and the measured p99 treasury is 2,600 / max 2,800 so anything at 3,000 or above is back to
+near-off. There is no ladder to walk.
+
+### The cost, quantified in advance
+
+An upgrade takes 2,500 from a treasury whose p99 is 2,600, draining the team to ~100 chips and
+blocking **all** robot production (250 each) and any ruin completion (1,000) until income rebuilds
+— several rounds at 30–60 chips/turn. This is a real measured cost, not a rounding error, and it
+is the first term to inspect if the iteration fails.
+
+### Accept gate (pre-registered, binding)
+
+`BOT=carol_i35 OPPONENTS="carol_iter34 carol_racer"`, `MAPS` unset (fresh random 25-map sample),
+both sides = 50 games per arm.
+
+1. **`carol_i35` vs `carol_iter34` > 25/50**, and
+2. **swept wins >= swept losses** on that arm.
+
+Both must hold. Iteration 34 was accepted on a +0.92 sd margin whose CI spanned the null, so I am
+*not* loosening the gate to match it.
+
+### Pre-registered mechanism prediction (this is what separates cause from noise)
+
+**Manipulation check**: the realized upgrade count per game must be **> 0**. If the gate is still
+never reached the iteration is inert and any win-rate difference is noise by construction — that
+reading voids the arm regardless of the headline.
+
+**Outcome covariate: map area.** The mechanism buys +5 paint/turn amortized over the *remaining*
+rounds and pays an immediate 2,500-chip drain up front, so its net value rises with the payback
+horizon. Bigger maps run longer and support more towers, so:
+
+> the gain should be **larger on large-area maps than on small ones**, and rho(wins, map area)
+> should be **positive**.
+
+Map area is known from the corpus before the sample is drawn, so this is exogenous — unlike game
+length, which is endogenous (winning quickly shortens the game and would fake the correlation in
+the direction I want). **Stated honestly in advance: area and ruin count are collinear in this
+corpus, so a positive rho cannot separate "longer payback horizon" from "more towers to upgrade".
+It can only confirm that the effect scales with map size, not which of the two channels carries
+it.** If the gain is instead uniform across area, the attribution is OPEN and the accept rests on
+the head-to-head alone.
+
+### Second arm is a process task, not a dose
+
+`carol_racer` is the coverage-race synthetic archetype built for the saturation problem logged
+under iteration 34: the frozen roster reads **94–100% on every member** (last roster run at
+iteration 30), which makes it blind, and TRAINING_ALGORITHM §5b's "chain of individually-positive
+accepts walking downhill" is exactly what a blind absolute instrument cannot detect. This arm asks
+one question: **is `carol_racer` discriminating?** A result near 50–75% qualifies it for
+`progress/roster_extra.txt`; a result at 95%+ means it saturated on arrival and is no better than
+what the roster already has. It rides along in the same run at no extra map cost.
