@@ -9401,3 +9401,109 @@ that works, and this session showed it answers questions no gauntlet of mine can
 
 `src/carol` is now iteration 35; frozen as `src/carol_iter35`. **16 accepted iterations**,
 `carol_iter0..35`. Both charts regenerated.
+
+---
+
+## Iteration 36 — PRE-REGISTERED. A PAINT floor: the build roll is unchecked on paint, and it inverts the unit mix
+
+Registered before any game is played. Found from tournament replays while iteration 35 was in
+flight, at zero extra VM cost.
+
+### The fault
+
+The tower build gate reads, in full:
+
+```java
+boolean afford = chips >= reserve + want.moneyCost;      // CHIPS ONLY
+...
+if (rc.canBuildRobot(want, loc)) rc.buildRobot(want, loc);   // paint checked HERE, silently
+```
+
+Paint is never tested. A roll the tower cannot pay for **in paint** dies inside
+`canBuildRobot` with no branch, no counter, and no trace. This is the third instance in this
+lineage of "a gate that is an off switch" (iteration 30, splasher chips; iteration 35, upgrade
+chips) — and the first on the paint axis, which is why it survived two hunts for exactly this
+shape. **Both previous hunts audited `afford`; the bug is in the line after it.**
+
+### Why it inverts the mix rather than thinning it — and this is the part that matters
+
+Tower paint accrues at 5/turn (10 after iteration 35's upgrade), capped at 1000. A mopper costs
+100 paint, a soldier 200. From a dry tower the 100 line is crossed at turn ~20, and from then on
+every mopper roll (10%) succeeds and resets the stash toward zero. To ever reach 200 the tower
+must go ~40 consecutive turns without rolling a mopper: **0.9^40 = 1.5%.** The cheap unit does not
+merely get built more often — **it prevents the expensive one from ever being afforded.**
+
+The chips gate cannot produce this and never could: a mopper costs **more** chips than a soldier
+(300 vs 250). Only the unchecked paint gate favours it. That asymmetry is why the two earlier
+chip-gate fixes left this untouched.
+
+### Measured, from tournament replays (intended: 75% soldier / 10% mopper / 15% splasher)
+
+| game | carol tower-paint median | soldier | mopper |
+|---|---|---|---|
+| alice–carol UglySweater (2500) | 100 | 35.0% | **60.0%** |
+| bob–carol Gears (3025) | 438 | 27.6% | **71.4%** |
+| alice–carol Gears (3025) | 507 | **24.7%** | **74.8%** |
+| bob–carol DefaultSmall (400) | 974 | 66.7% | 25.0% |
+| bob–carol DonkeyKong (3600) | 2535 | **83.9%** | 13.8% |
+
+**The realized mix is set by tower paint, not by `MOPPER_IN_20`.** Where paint is scarce it inverts
+outright — 360 moppers against 119 soldiers in one game, from a constant that asks for the reverse
+ratio at 7:1. Where paint is plentiful it lands near the intended mix. Note DonkeyKong is the
+largest map in the table and behaves *well*: the driver is paint, not area directly, and I state
+that because it constrains the covariate prediction below rather than helping it.
+
+**Why this is the coverage story.** `workOnRuin` is called only from `runSoldier` — moppers cannot
+claim ruins. Every displaced soldier is a ruin never claimed, hence a tower never built, hence
+less paint: the ratchet feeds itself. In the UglySweater game carol finished with **4 towers to
+alice's 19** while sitting on **$2,480 of unspent chips**. Carol was never short of money. It was
+short of soldiers, because its towers kept buying the cheap unit.
+
+### The change
+
+One mechanism, the exact analogue of iteration 30's `SPLASH_FLOOR` one resource over:
+
+```java
+final int PAINT_FLOOR = <dose>;
+if (afford && want.paintCost < UnitType.SOLDIER.paintCost
+        && rc.getPaint() - want.paintCost < PAINT_FLOOR) {
+    afford = false;
+}
+```
+
+Written as a cost comparison rather than `want == MOPPER` so it states its intent: protect the
+expensive unit from the cheap one. Banking is safe — the floor is 100–200 against a 1000 cap, so
+it cannot idle a tower into wasting income.
+
+**Doses**: `carol_i36_200` (protect a full soldier) and `carol_i36_100`, against the incumbent,
+which is exactly `PAINT_FLOOR = 0`. So the ladder is 0 / 100 / 200 with the zero arm free.
+
+### Accept gate (pre-registered, binding — now with the standing size clause)
+
+`BOT=carol_i36_200 OPPONENTS="carol_iter35 carol_i36_100"`, `MAPS` unset, 100 games.
+
+1. **`carol_i36_200` vs `carol_iter35` > 25/50**, and
+2. **swept wins >= swept losses**, and
+3. **the standing clause adopted this session**: the candidate must **not lose ground on the
+   large-area half** of the sample. Explicitly: large-half win rate >= 45%. This is the first
+   iteration the clause binds on, and I am stating the threshold as a number now so it cannot be
+   argued afterwards.
+
+### Manipulation check (can void the arm regardless of the headline)
+
+The realized **soldier share** in `carol_i36_200`'s games must be **materially above** the
+incumbent's in the same replays. If the floor does not move the mix, it is inert and any win-rate
+difference is noise. Measured the same way as the table above, from this run's own loss replays.
+
+### Pre-registered covariate, with the reason it may fail
+
+> rho(wins, map area) > 0 — the gain should be larger on large maps.
+
+The mechanism is paint starvation; starvation is worst where towers are fewest; towers are fewest,
+relative to the ground to be covered, on large maps. **But the table above already contains a
+counterexample I am not hiding**: DonkeyKong is the largest map there and had the healthiest mix,
+because carol happened to get 13 towers. So the real driver is tower paint and area is only a
+proxy for it. If rho comes back flat, the honest reading is *"area is a poor proxy for paint
+starvation"*, **not** that the mechanism is absent — the manipulation check is what settles
+whether the mechanism fired. My last area prediction (iteration 35) failed at +0.009, so I am
+registering this one with lowered confidence and saying so in advance.
