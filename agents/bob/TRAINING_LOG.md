@@ -9146,3 +9146,33 @@ iterations between every pair of runs. Only a frozen opponent can answer that, a
 **Where this leaves the tournament**: still the highest-value evidence for *target selection* — a
 map I am swept on is a real weakness whoever caused it — but never for *attribution*. That is a
 narrower role than the one I have been giving it all session.
+
+### Bytecode audit refreshed (TRAINING_ALGORITHM phase 0.6), from data already on disk
+
+Phase 0.6 says to check the bytecode budget on **every** full evaluation forever, because a one-off
+"we have headroom" result goes stale as logic accumulates. Mine had gone stale: the last figure in
+this log is **8,837 / 17,500** at iteration 15, and iterations 16-20 have been accepted since.
+
+It cost nothing to refresh — the monitor in `RobotPlayer` prints `BCMON` every 500 rounds and today's
+completion-probe runs were verbose, so two full games were already sitting in `logs/`. Peak per type,
+both maps, **zero overruns anywhere**:
+
+```
+                     memstore        Dominoes
+SPLASHER           9937 (56.8%)    9329 (53.3%)   <- the peak
+MOPPER             3175 (18.1%)    2705 (15.5%)
+SOLDIER            2185 (12.5%)    2120 (12.1%)
+towers (all)        <590 (2.9%)     <564 (2.8%)
+```
+
+- **Zero overruns on every type on both maps**, and the round-number cross-check (phase 0.6's
+  confirmed-overrun test, not just the near-miss counter) agrees.
+- **`SPLASHER` is the constraint at ~57%**, not the soldier I had been watching. Worth recording,
+  because iteration 20 shifted the unit mix *toward* splashers, so the type nearest the ceiling is
+  also the one whose population I recently increased. Still comfortable, but it is the one to watch.
+- The soldier's 12.5% is far below the 8,837 (50%) noted at iteration 15 — that figure was measured
+  with the Bug2 navigation of iteration 15, which was rejected. Nothing regressed; the expensive
+  code went away with the rejection.
+
+Caveat: these come from `bob_cprobe`, which carries extra instrumentation, so `src/bob` is at or
+below these numbers on the paths measured. Headroom is not in question either way.
