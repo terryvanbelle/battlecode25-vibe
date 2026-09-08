@@ -10321,3 +10321,53 @@ increment does not, and the shape of the failure — sweeps in *both* directions
 exactly what a mechanism that perturbs without improving looks like. If I had reported
 only the headline (**81.3% overall**, which is what this run's three opponents average to)
 I would have described a triumph.
+
+### Resampling over maps — the correct error model, and it says +0.38 sd
+
+`tools/map-resample.py` on the completed run (bootstrap and jackknife over **maps**,
+which is the unit that actually varies between one estimate and the next):
+
+| opponent | score | boot se | 95% CI | distance from mirror null (25/50) | per-map wins {0,1,2} |
+|---|---|---|---|---|---|
+| `alice_flood` | 44/50 | 2.13 | [40, 48] | **+8.93 sd** | {1: 6, 2: 19} |
+| **`alice_iter24`** | **26/50** | **2.65** | **[21, 31]** | **+0.38 sd** | **{0: 3, 1: 18, 2: 4}** |
+| `alice_iter7` | 49/50 | 0.98 | [47, 50] | **+24.41 sd** | {1: 1, 2: 24} |
+
+**The gate interval [21, 31] straddles the null.** +0.38 sd is as close to nothing as
+this instrument reports, and it agrees with the sweep decomposition (4-3) that I reached
+independently — two readings of the same run that could have disagreed and did not.
+
+I want to be careful about *which* doctrine this run illustrates, because the ledger
+carries a warning in both directions. `MULTI_AGENT.md` records a case where an sd-style
+argument **under-sold** a real accept, and the fix was to resample over maps rather than
+quote a binomial. That fix is exactly what produced the +0.38 here — this is the corrected
+instrument, not the discredited one. And the per-map histogram is the reason: **18 of 25
+maps split 1-1 and contributed literally nothing**, so the effective sample is 7 maps, not
+50 games, and 4-3 on 7 maps is what it looks like.
+
+The two flanking rows are the calibration that makes this readable. The same instrument,
+on the same 25 maps, returns **+8.93 sd** and **+24.41 sd** against older builds. It is
+perfectly capable of resolving an effect. It resolves nothing here.
+
+**Confirmation launched** anyway, per the pre-registered action — 50 games, fresh random
+25-map sample, vs `alice_iter24`. Pooled verdict on 100 games: net swept > 0 accepts,
+<= 0 rejects. I am not cancelling it on the strength of +0.38 sd, because the pre-registered
+rule said *measure again*, and quietly substituting *"the statistic already convinced me"*
+for the measurement I promised is the same move as moving a goalpost, just in the
+direction that happens to look rigorous.
+
+### Absolute-strength instrument updated
+
+Roster points recorded from the completed run and both charts regenerated:
+
+| frozen opponent | `alice_i24` (previous) | **`alice_i25`** |
+|---|---|---|
+| `alice_iter7` | 88.0% | **98.0%** |
+| `alice_flood` | 90.0% | 88.0% |
+
+Read with the charter's own caveat: **these two runs used different random map samples**,
+so 88 -> 98 against `alice_iter7` is a delta across samples and is noisier than it looks.
+The within-run comparison is the sound one, and within *this* run the ordering is
+`alice_iter7` 49/50, `alice_flood` 44/50, `alice_iter24` 26/50 — a clean monotone ladder
+down the lineage's own history, which is what an improving bot should produce and is
+independent of whether iteration 25 itself is real.
