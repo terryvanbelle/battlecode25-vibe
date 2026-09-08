@@ -2299,3 +2299,67 @@ The pre-registered diagnostic survives this intact, because I registered it as a
 of two named branches**, not as a claim about every map: towers fell rather than soldiers
 rising, on the map where it failed. What does not survive is my generalising one map's
 magnitude into the mechanism's headline.
+
+---
+
+## Theme: a counter that goes to ZERO late in a game may be a PHASE CHANGE, not a failure
+
+### 2026-09-08 — "one soldier alive and $72,980 idle" is what the winner looks like
+
+I found this in the shipping bot's own replays and wrote it up as a pathology:
+
+> `DefaultMedium` r1000, `alice_iter30`: $72,980 chips, 12 towers frozen since r500, 86 paint
+> per tower, **1 soldier alive**, 12 splashers, and zero soldiers spawned in that window.
+
+Three alarming-looking facts at once — an enormous idle stock, a unit count collapsed to ~zero,
+and a growth curve gone flat — so I built two repair arms for the line that causes it. Then I
+ran **one game** to size a risk I had named, and the same pattern appeared **on the side that
+won**, while my repaired arm showed the healthy-looking numbers and lost:
+
+| r1000 | soldiers | splashers | towers | coverage | result |
+|---|---|---|---|---|---|
+| `alice_i36a` (the "fix") | **19** | 0 | 12 | **312**, falling | lost |
+| `alice_iter30` (baseline) | **0** | 12 | 11 | **662**, rising | **won** |
+
+### Why every one of the three signals was misread
+
+Each was a *phase* signature that I read as a *health* signature:
+
+- **Tower count flat** — expansion FINISHED, not starved. Every reachable ruin was taken by
+  r500. A flat curve at the cap looks identical to a stalled one.
+- **Soldiers -> 0** — a soldier claims ruins and paints ground it cannot hold. With no ruins
+  left it has no job. The splasher is the only unit I field that takes *enemy* paint, so after
+  expansion it is the only unit whose output still converts.
+- **Chips piling up** — the terminal state of a finished compounding race, exactly as my own
+  earlier entry says: *"the winner's six-figure end-state surplus is what a finished
+  compounding race looks like once every ruin is taken and there is nothing left to buy."*
+
+**I had written that sentence, about this exact number, and still read the surplus as waste.**
+Fourth firing of *"an unspent surplus is not evidence of waste"*, second in one day.
+
+### The check that separates the two readings, and it is one question
+
+> **Before calling a late-game counter collapse a pathology, look at the SAME counter on the
+> side that WON that game.** If the winner does it too, it is the phase, not the bug. This
+> costs one replay and needs no new instrumentation, because a candidate-vs-baseline replay
+> already contains both teams.
+
+The general form, which is what makes it worth an entry:
+
+> **A metric's healthy value is a function of the game PHASE.** Any threshold or alarm read
+> off a mid-game aggregate — "soldiers should be rising", "towers should be growing", "chips
+> should be spent" — is implicitly a claim that the phase never changes. In BC25 it always
+> changes, at the round the last ruin is claimed.
+
+### And the process point, which is the reusable half
+
+The one-game control existed **only because the pre-registration named a specific quantity to
+measure** — *"does arm A build any splashers at all?"* — rather than a direction to hope for.
+That named quantity cost **one game, 0.7% of the screen it replaced**, and it killed the
+direction before the expensive run.
+
+> **Pre-register a QUANTITY, not just a gate. A named quantity can often be measured far more
+> cheaply than the gate can be evaluated, and when it can, measure it first.**
+
+Cross-reference: this is the cheap-positive-control shape from *"an instrument can produce
+NOTHING and no-finding"*, pointed at a candidate instead of at an instrument.
