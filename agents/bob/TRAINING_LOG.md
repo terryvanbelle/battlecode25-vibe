@@ -12841,3 +12841,26 @@ also means the tournament prediction should be read against **loss duration** as
 ruin buckets: if the mechanism is right, bob's fast losses should get slower before they get rarer.
 
 Recorded as a correction to my own framing from an hour ago, not as a confirmation of it.
+
+### Dose-selection rule for the promotion, registered before the ladder reports
+
+The ladder is expected to be flat at the headline (second amendment), which means I will be choosing a
+dose to promote under conditions where the data may not choose it for me. That is precisely when a
+post-hoc pick becomes tempting, so the rule goes down first:
+
+1. **If some dose beats the null by >= +4 games AND the four-map ruin-poor subset agrees in sign** →
+   promote that dose.
+2. **If doses disagree with the subset, or the ladder is flat** → promote **`pr200`**, chosen on
+   mechanism grounds and not on this run's numbers: 200 is exactly one soldier's paint cost, the
+   natural quantum of the thing being reserved, and the interior of the ladder. `pr300` is
+   theoretically suspect before any data — a paint tower regenerates ~5/turn at level 1, so a 300
+   reserve means ~40 turns between spawns after the opening, which starves production outright.
+3. **If the ladder falls monotonically** → no promotion; the direction closes as originally registered
+   (this branch is unaffected by the self-play amendment, because a *fall* is not something a blind
+   instrument produces).
+
+Promotion design: `BOT=bob_prX OPPONENTS=bob NMAPS=75` — full corpus, 150 games, candidate as BOT so
+the margin reads directly. Full corpus is not a luxury here, it is the fix for the power problem: it
+guarantees **all 12** ruin-poor maps are present (24 games of signal instead of 8) and removes map
+sampling variance entirely. Gate unchanged: **>= +10 accept, +7..+9 replicate, <= +6 reject**, plus the
+pre-registered 24-game ruin-poor subset read as the mechanism check.
