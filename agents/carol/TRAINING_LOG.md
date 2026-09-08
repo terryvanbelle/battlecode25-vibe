@@ -8854,3 +8854,56 @@ after a session death — the case `gauntlet-collect.sh` exists for — sees `bo
 reasonably conclude the run was a mirror of the baseline against itself, then discard a valid
 100-game run or re-run it and pay for shared VM time twice. `bot.txt` already holds the correct
 label, so the fix is to read it there. Reported rather than worked around.
+
+## Iteration 34 — fewer MONEY towers: the constant is from iteration 3 and the binding resource moved
+
+**Target.** `towerTypeFor` makes a ruin a money tower when `k % 3 == 0`, i.e. ~1 ruin in 3. That
+literal 3 was fixed in **iteration 5**, from **iteration 3's** galaxy trace ("chip income is
+exactly 30/turn"). It is a constant from iteration 3 setting the build mix at iteration 30, and it
+has never been re-measured — the exact stale-constant failure LEARNINGS recorded this session after
+it killed iterations 31 and 32.
+
+**Why the direction is paint-ward, on three measurements all taken on THIS build:**
+
+| evidence | source | says |
+|---|---|---|
+| **100.0%** of chips-available no-builds are `tpIn < paintCost` | iteration 31 probe (built from iteration 30) | the build gate is paint, never chips |
+| **63%** of idle soldier turns hold < 100 paint | iteration 32 probe (`SRPpoor` 65 of 104) | soldiers live below the 50% cooldown cliff |
+| tower stash **4.4× below** baseline as spending rose, while **both** teams' chips idled above **$2,200** | iteration 33 trace, Snowglobe r400 | chips accumulate unspent while paint collapses |
+
+**And RULES.md gives the mechanism, not just the correlation.** A money tower has
+`paintPerTurn == 0`, so it gains paint from *nothing* — not from mining, and not from SRPs either,
+because the SRP bonus sits inside the same `if (type.paintPerTurn != 0)` guard. `buildRobot` draws
+paint from the **building tower's own stash**. So a money tower spawns ~2 robots from its 500
+starting stash and is then a **dry build site for the rest of the game**, while a paint tower makes
+10/turn into the stash it builds from. One ruin in three is currently spent on that.
+
+**Mechanism.** One constant: `MONEY_MOD` replaces the literal 3. `k` is invariant under both map
+symmetries and `k % MONEY_MOD` is a pure function of `k`, so the two properties `towerTypeFor`
+depends on — play-symmetry, and every soldier agreeing on every ruin every turn — are preserved
+exactly. Iteration 25's census override (flip money→paint when `seenPaint*2 < seenMoney`) is
+untouched and still acts as the one-sided safety net.
+
+**Price, in the binding currency, written down before the result.** Cost: chip income falls by
+roughly one money tower in three-to-four. Chips fund robots (250/400), ruins (1000) and upgrades,
+so if chips become binding this reverses. **That is the honest weak point and it is the term I
+expect to fail if this fails** — the evidence above says chips are idle *now*, at the current money
+share, which is not the same as saying they would stay idle at a lower one. Benefit: each converted
+ruin becomes +10 paint/turn into a stash that can actually build, instead of +30 chips/turn into a
+treasury already sitting above $2,200 unspent.
+
+**Dose ladder**, so the curve is measured rather than a single guess: `carol_iter30` (MONEY_MOD 3,
+the incumbent, provably byte-identical since it is the accepted snapshot), `carol_i34_4` (~1 in 4),
+`carol_i34_5` (~1 in 5). If chips are genuinely slack the ordering should be 5 ≥ 4 > 3; if the
+ordering inverts, chips bind sooner than the evidence suggests and the direction is wrong.
+
+**Pre-registered gate, fixed before any game is read:**
+- **§4 engagement check first, on an 8-game repro sample**: the realized mix must actually move —
+  `sm=` (money towers seen) must fall relative to `sp=` versus `carol_iter30` in the same games.
+  A pure-function change on a coordinate that happens not to vary would be inert.
+- **Accept** if `carol_i34_4` beats `carol_iter30` head-to-head **> 50%** on a fresh random 25-map
+  sample, swept wins exceeding swept losses, no one-directional regression.
+- **Map-level prediction**: the gain should be largest on **ruin-rich** maps, where the money share
+  costs the most absolute paint towers (`tools/mapdata` gives ruin density independently of any
+  game: gridworld 21.9/1000 tiles, median 11.4, Gears 4.6). If the gain is uniform across ruin
+  density, the attribution is OPEN.
