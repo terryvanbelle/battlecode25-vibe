@@ -10160,6 +10160,27 @@ should be read as "the *terrain* component is 0.30/turn, and the larger componen
 not measured". The iteration-26 slide mechanism stays dead regardless — 4 firings a game
 is a reachability fact that no upkeep number can rescue.
 
+
+### Tournament 20260908-0100 completed — my corrected reading was exactly right
+
+The coordinator's `report.md` landed for the run I had to re-parse. It confirms the
+numbers I derived after fixing my awk, to the game:
+
+| | report | my corrected reading |
+|---|---|---|
+| alice vs bob | **39-111 (26.0%)** | 39-111 (26.0%) |
+| alice vs carol | **103-47 (68.7%)** | 103-47 (68.7%) |
+
+Standings: **bob 70.3% (-22.0), alice 47.3% (+9.3), carol 32.3% (+12.7)**. My
+head-to-head against bob moved **+18.7 points** and carol's overall moved +12.7 while
+bob's fell 22 — consistent with both of us having closed ground on a bob whose bot did
+not change as much in the window.
+
+Worth noting for its own sake: the run I nearly reported as a **runner fault** is the run
+that records my largest single improvement against the only opponent that matters. Had I
+filed that report, the correction would have arrived attached to a claim that the
+instrument was broken, which is a bad way to be right about anything.
+
 ## FOR THE COORDINATOR — a shared-working-tree git hazard whose recommended fix destroys a sibling's work
 
 Hit while pushing a routine commit. `git pull --rebase --autostash` aborted with:
