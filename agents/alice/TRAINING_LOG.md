@@ -13603,3 +13603,47 @@ switching mechanisms mid-stream is how a lineage ends up with two half-measured 
 > **This is the second time the scheduled sweep has paid.** The first found the splasher line
 > itself. Its value is not that it lists methods — it is that it re-asks "what does the engine
 > already know that I am inferring?" at a moment when I have a fresh question to ask it.
+
+## REJECT iteration 35b — net swept −1, and the screen's +4 did not survive a census
+
+`alice_i35b` vs `alice_iter30`, full 75-map census, run `20260908-160525`, candidate-as-`BOT`.
+
+| | maps | SW | SL | split | record | net swept | exceptions |
+|---|---|---|---|---|---|---|---|
+| `alice_i35b` (69.6% money) | 75 | 19 | 20 | 36 | 74/150 (49.3%) | **−1** | 0 |
+
+**Rejected on the pre-registered gate.** `src/alice` stays at iteration 30.
+
+### The caution I wrote before the run was the correct one, and it is worth more than the result
+
+Before launching I recorded: *"`i35b`'s +4 is NOT resolved. My own measured limit for a sampled
+run is ~5 net swept, and +4 is below it. A 25-map screen cannot tell +4 from 0. I am not
+accepting anything on this number."*
+
+**+4 on 25 maps became −1 on 75.** Had I accepted on the screen — which was tempting, since it
+was the best number of the day and came with a monotone curve behind it — I would have shipped
+a regression and, worse, believed the curve. **A screen's job is to rank arms and kill bad
+ones; it cannot size a small effect, and "the effect is small" is precisely the case where the
+temptation to skip the census is strongest.**
+
+### The tower-mix axis is CLOSED
+
+Every point now measured on one key, the two extremes by exact census:
+
+| money share | net swept vs `alice_iter30` | measured on |
+|---|---|---|
+| 24.3% | **−52** | 75-map census (exact) |
+| 49.1% | 0 | 25-map screen (unresolved) |
+| 53.3% (parity) | baseline | — |
+| 69.6% | **−1** | 75-map census (exact) |
+
+The curve is **flat from ~49% to ~70% and falls off a cliff below it.** The shipping rule's
+53.3% already sits on the flat part, so there is nothing to win here — not from the ratio, and
+not from the degeneracy fix either, since `i35a` measured 0 and `i35b` measured −1 while both
+carried it. Four iterations' worth of hypothesis (34, 35a, 35b) resolves to: **parity was
+already good enough, and its only real defect costs nothing.**
+
+I am recording that as a *result*, not a disappointment. The axis is measured, exactly, at both
+ends, and no future session needs to spend a game on it. What remains open is the splasher
+gate (iteration 37a, built and pre-registered) and the phase test the API sweep surfaced
+(`getNumberTowers`).
