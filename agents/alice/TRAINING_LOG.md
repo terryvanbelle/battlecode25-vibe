@@ -10371,3 +10371,69 @@ The within-run comparison is the sound one, and within *this* run the ordering i
 `alice_iter7` 49/50, `alice_flood` 44/50, `alice_iter24` 26/50 — a clean monotone ladder
 down the lineage's own history, which is what an improving bot should produce and is
 independent of whether iteration 25 itself is real.
+
+## Iteration 26, replacing the dead slide mechanism — the tower MIX is allocating 50% of my production to the resource I have $36,830 of
+
+### The mismatch, stated from measurements already taken
+
+| | mine | bob's |
+|---|---|---|
+| chips at r1200-1600 (bob replay) | **$36,830 unspent** | $1,447 |
+| total tower paint at r1600 | **680 across 10 towers (68 each)** | 2,072 |
+| tower type split | **~50/50 money/paint** | — |
+
+`RULES.md`: a money tower produces **20/30/40 chips** by level; a paint tower produces
+**5/10/15 paint**. My soldiers each cost 200 paint and 250 chips, and the census showed the
+chip gate open on 80-94% of tower-turns while paint-affordability sat at 6-11%. **Paint is
+the binding resource by every measurement I have, and I am spending half my tower slots on
+the other one.**
+
+Sizing, on the late-game state in that replay: shifting 4 of 16 towers from money to paint
+adds roughly **40-60 paint/turn**, against a *whole-team* unit-paint budget of ~128,000
+over 2,000 rounds (=64/turn). That is not a marginal adjustment — it is on the order of
+**doubling** the paint income that feeds unit production, paid for with chips I demonstrably
+cannot spend.
+
+### The mechanism, and the trap I must not walk into
+
+The obvious change — "decide the tower type from current money" — is **exactly what a
+previous iteration removed**, and the code says why:
+
+```java
+// parity: ~50/50 money/paint mix, decided by the map (identical for
+// both teams), immune to the money-at-mark-time timing artifact that
+// made every early mark a money tower.
+UnitType wantTower = ((ruin.x + ruin.y) & 1) == 0 ? MONEY : PAINT;
+```
+
+A ruin is *marked* long before its pattern is *completed*, so a money-sensitive rule reads
+the wrong moment and collapsed to all-money early. That property was bought and must be
+kept.
+
+**So the trigger stays map-decided and only the RATIO moves** — one knob, one line, and the
+timing-artifact immunity is preserved exactly:
+
+```java
+((ruin.x + ruin.y) & 3) == 0   ->  25% money / 75% paint
+```
+
+Still a function of ruin coordinates alone, still identical for both teams, still immune.
+
+### Pre-registered, before any run
+
+- **Reachability is not in question for once**: this fires on every tower mark, 13-16 times
+  a game, and changes roughly a quarter of them. That is the first mechanism this session
+  whose firing rate needs no pre-check — worth noting, because the three that did all died.
+- **Gate**: >50% head-to-head vs the accepted baseline read as **net swept maps**, with `SW`
+  and `SL` reported separately per tonight's rule; 0 exceptions; 0 overruns.
+- **Named risk, and it is the real one**: chips are abundant *late* and tight *early* — at
+  round 40 of the bob replay I held **$370**. Iteration 2's `CHIP_RESERVE` exists because
+  greedy spending stalls tower completions permanently. So the failure mode is an early-game
+  stall that never recovers, and **the diagnostic must be tower count at round 200**, not the
+  end-state economy. If tower count at r200 regresses, the dose is wrong regardless of the
+  win rate.
+- **Dose discipline**: `& 3` (25% money) is one step. If it wins, the next question is `& 7`
+  (12.5%), and that is a *separate* iteration — not a search run in the same breath.
+
+Not started: the iteration 25 confirmation owns the VM, and starting a second candidate
+before the first has a verdict is how a lineage ends up unable to attribute either.
