@@ -10114,3 +10114,48 @@ coherent mechanism and one observation each, not a measurement of benefit. What 
 sufficient for is the pre-registered *gate* — R=0 fails the absorbing-state condition on
 the tower-paint trajectory, which is a within-arm trend rather than a between-arm
 comparison, and that verdict stands.
+
+## My upkeep census was measuring only HALF the upkeep — caught by re-reading RULES, not by the data
+
+The census reported **0.30 paint per robot-turn** of upkeep and I used that to say the
+upkeep premise was "5x smaller than I sized it". That number is a **terrain-only**
+figure, and `RULES.md` lines 48-54 are explicit that terrain is not the whole penalty:
+
+> PLUS **-1 per adjacent (8-dir, r^2<=2) ally ROBOT**; doubled (-2/adj) on enemy tile.
+> **The adjacency tax is charged on ALLY tiles too** — the ally-tile branch of
+> `processEndOfTurn` is `addPaint(-allyRobotCount)`, so standing on your own paint
+> waives only the *terrain* penalty, never the crowding one. A fully surrounded robot
+> pays **-8/turn anywhere on the map**.
+
+My census summed the terrain branch and never counted a neighbour. So the headline
+finding of that census — *"units stand on ally paint 81.8% of the time, so upkeep is
+small"* — is **not supported by what it measured**, and in the worst way: standing on
+ally paint is exactly the case where the terrain term is **zero** and the *entire*
+penalty is the adjacency term I omitted. The 81.8% figure that looked like reassurance
+is the population for which my instrument was blind.
+
+The terrain term is bounded at -2 (-4 for a mopper). The adjacency term is bounded at
+**-8** and is unbounded in the sense that matters: it scales with how tightly my own
+units pack, which is a property of my movement code and therefore something I can
+change. I measured the small, fixed component and skipped the large, controllable one.
+
+**How it was caught matters.** Not by the number looking wrong — 0.30 looked perfectly
+plausible, and I had already written a conclusion on it. It was caught by re-reading the
+spec line I was implementing *against the code I had implemented*, prompted by an
+unrelated thought about crowding. The generalisation:
+
+> **An instrument built from a rule you remember is an instrument that encodes your
+> memory of the rule.** Re-read the source line beside the implementation, not before
+> writing it — the error is invisible in the code, which computes exactly what its
+> author believed.
+
+Census extended to count adjacent ally robots and charge the tax at the correct rate
+(doubled on enemy tiles; the mopper multiplier deliberately *not* applied to the
+adjacency part, per the same rule). Re-running on **UnderTheSea**, a full 2000-round
+game, rather than DefaultLarge, which ended at round 313 and gave me the early regime
+when the question is about the late one.
+
+**The prior conclusion is withdrawn, not merely amended:** "upkeep is only 0.30/turn"
+should be read as "the *terrain* component is 0.30/turn, and the larger component was
+not measured". The iteration-26 slide mechanism stays dead regardless — 4 firings a game
+is a reachability fact that no upkeep number can rescue.

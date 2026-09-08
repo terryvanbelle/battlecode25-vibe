@@ -102,6 +102,14 @@ public class RobotPlayer {
     //      candidates almost never differ in paint type, the mechanism is thin
     //      however good the upkeep argument is.
     static int uT, uAlly, uEmpty, uEnemy, uWall, uUpkeep;
+    // The ADJACENCY tax was missing from the first version of this census, and
+    // RULES.md line 48-54 is explicit that it is charged on ALLY tiles too:
+    // processEndOfTurn's ally-tile branch is addPaint(-allyRobotCount). So
+    // standing on your own paint waives only the TERRAIN penalty, never the
+    // crowding one, and a fully surrounded robot pays -8/turn anywhere on the map.
+    // Measuring terrain alone under-counts upkeep by exactly the component that
+    // has no upper bound in the terrain term.
+    static int uAdjSum, uAdjTax, uCrowd3;
     static int wCalls, wBlocked, wSlideOk, wDiffer;
     static String uStr = "";
 
@@ -113,8 +121,17 @@ public class RobotPlayer {
         if (pt.isAlly()) uAlly++;
         else if (pt.isEnemy()) { uEnemy++; uUpkeep += 2 * mult; }
         else { uEmpty++; uUpkeep += 1 * mult; }
+        // adjacency tax: -1 per adjacent ally ROBOT (towers are free), doubled on
+        // an enemy tile. The mopper multiplier does NOT apply to this part.
+        int adj = 0;
+        RobotInfo[] nb = rc.senseNearbyRobots(2, rc.getTeam());
+        for (int i = 0; i < nb.length; i++) if (nb[i].getType().isRobotType()) adj++;
+        uAdjSum += adj;
+        uAdjTax += pt.isEnemy() ? 2 * adj : adj;
+        if (adj >= 3) uCrowd3++;
         uStr = " UK t=" + uT + " a=" + uAlly + " e=" + uEmpty + " x=" + uEnemy
-                + " up=" + uUpkeep + " wc=" + wCalls + " wb=" + wBlocked
+                + " up=" + uUpkeep + " aj=" + uAdjSum + " at=" + uAdjTax
+                + " c3=" + uCrowd3 + " wc=" + wCalls + " wb=" + wBlocked
                 + " ws=" + wSlideOk + " wd=" + wDiffer;
     }
 
