@@ -13665,3 +13665,49 @@ the twice-daily tournament at once, and because the only remaining places to rec
 ones I must not touch. `tools/driver-prune.sh` and `tools/vm-prune.sh` exist and are
 coordinator-owned. Recording it here so it is on the record with a timestamp if a run does
 fail on ENOSPC later.
+
+## Iteration 38, drafted while 37a is measured — replace the chip PROXY with the engine's own phase signal
+
+Not built yet, deliberately: if 37a is accepted the baseline moves, and building against a
+baseline that is under measurement is how a lineage ends up rebasing a candidate it never
+measured. Recording the design now so the reasoning is on the record before the number that
+would motivate it.
+
+**The observation.** Iterations 28, 29 and 37 all answer one question — *has expansion
+finished?* — and all three answer it with the same proxy: **chips have piled up**, which is
+true only because there is nothing left to buy. That proxy is map-dependent. Chips accumulate
+at a rate set by how many money towers a map's ruins happened to yield and how fast the
+opponent contests them, so the round at which the gate opens varies for reasons that have
+nothing to do with whether expansion is actually over.
+
+**The direct signal exists and this bot has never called it.** `rc.getNumberTowers()` — found
+by the scheduled API sweep this session, one of 38 uncalled methods. It is free, team-wide, and
+it *is* the quantity the proxy stands in for.
+
+**The formulation I want, because it introduces no searched constant.** A robot keeps static
+state across its own turns, so each tower can remember the round at which the team's tower
+count last increased, and the **longest gap between increases seen so far this game**.
+Expansion is declared finished when the current dry spell exceeds every previous one:
+
+```
+if (towers > lastTowers) { longestGap = max(longestGap, round - lastGrowthRound);
+                           lastGrowthRound = round; lastTowers = towers; }
+expansionFinished = (round - lastGrowthRound) > longestGap;
+```
+
+Self-calibrating from the game's own history rather than from a threshold I picked — the same
+move as iterations 5, 25 and 33, and the same move that iteration 34 *failed* to make when it
+derived a ratio from constants that were not commensurable.
+
+**Pre-registered risks, before any run.**
+- **It can fire early.** On a map where two towers land close together, the first gap is short,
+  so a modest dry spell beats it. A minimum floor would fix that and would be a searched
+  constant, which is exactly the thing to avoid — so the honest first arm is the floorless one,
+  and if it fires early the *measurement* says so.
+- **It cannot fire at all** on maps where towers keep being destroyed and rebuilt, since the
+  count keeps moving. That is a regime where "expansion finished" is genuinely false, so
+  arguably correct behaviour rather than a defect — but it must be measured, not assumed.
+- **QUANTITY to name in advance**, per the practice that killed iteration 36 for one game:
+  **the round at which `expansionFinished` first becomes true, against the round the chip gate
+  opens on the same map.** One replay, both numbers, and it says immediately whether the new
+  signal is earlier, later, or merely different.
