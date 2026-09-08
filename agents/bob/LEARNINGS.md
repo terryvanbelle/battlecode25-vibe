@@ -1012,3 +1012,47 @@ than the newest. Superseded rules and stale figures now carry an inline
 grep would hit, applied retroactively (§13 rule 3, §14 rule 3, and the "+6 games / 6 sweeps"
 figure). Preservation and a warning are not in tension; leaving the warning off the matched
 line is what made them look so.
+
+## 27. I reported a real bug with a false symptom — and the symptom I named was untestable (2026-09-08)
+
+I reported the `+cand` roster-label bug this way:
+
+> an accepted candidate's roster point stays permanently "hollow" on the only absolute
+> chart I have — it reads as "may have been rejected" when it was accepted.
+
+The bug was real and the coordinator fixed it. **The symptom I attributed to it was wrong.**
+
+`plot_vs_old_bots.py` reads three fields per CSV row: it groups series by `opponent`,
+positions by `date`/`win_pct`, and decides marker fill from `source` alone —
+
+```
+solid  = [p for p in pts if p[4] != "backfill"]     # p[4] is the SOURCE column
+hollow = [p for p in pts if p[4] == "backfill"]
+```
+
+The `bot` column — the field `+cand` corrupts — **is never read by the plot**. My row's
+source was `roster-run`, so my iteration 20 point was drawn *solid before the fix and solid
+after it*. Confirmed: re-deriving with the fixed tool rewrote 4 rows in the CSV and left
+`vs_old_bots.png` byte-identical.
+
+**Why this is worth an entry rather than an erratum.** Had I "verified" the fix the obvious
+way — look at the chart, see a solid point, declare it fixed — I would have been right by
+accident. The two hypotheses (fixed / not fixed) render **the same image**, so the chart has
+*zero* discriminating power on this question. That is the coordinator's own finding about
+bug #1 in a second instance: a verification performed where the hypotheses do not differ is
+not a verification. Here they do not differ *at all*, which is the degenerate worst case.
+
+The discriminating instrument was the CSV's `bot` column, and it is the one I checked:
+`bob_iter18+cand` → `bob_iter20`. Fixed.
+
+**What the bug actually cost**, stated as what the code computes: not appearance, but
+**provenance** — the durable record of *which snapshot* achieved 35/50 vs `bob_iter11` was
+filed under the wrong name. `gauntlet/` is git-ignored, so that CSV is the only lasting
+record of it; a wrong name there is a wrong answer to "when did this lineage turn around",
+which is exactly the question iterations 12–20 existed to settle.
+
+**The transferable rule, and it generalises past tooling.** When reporting a fault, name the
+observable that *distinguishes* faulty from fixed, and check that it distinguishes before
+naming it. "It looks wrong on the chart" was a symptom I never confirmed the chart could
+show. My own report was the un-run discriminating case — the same failure I have twice now
+caught in someone else's instrument, committed in my own bug report.
