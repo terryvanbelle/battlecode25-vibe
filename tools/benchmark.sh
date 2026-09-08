@@ -23,6 +23,7 @@
 set -euo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$HERE/lib.sh"
+source "$HERE/benchmark-collate.sh"
 
 BOTS="${BOTS:-alice bob carol}"
 BENCH="${BENCH:-TSPAARKHS v3}"      # staged on the VM under ~/bc25-benchmarks/bench/src
@@ -123,30 +124,13 @@ while true; do
   [ "$(date +%s)" -gt "$deadline" ] && { echo "!! poll deadline" >&2; break; }
 done
 
-{ echo "agent,benchmark,map,agent_side,winner_side,rounds,agent_result"
-  grep '^RESULT ' "$OUT/raw.txt" | while read -r _ A K MAP SIDE W R; do
-    [ "$W" = "$SIDE" ] && r=win || { [ "$W" = "?" ] && r=unknown || r=loss; }
-    echo "$A,$K,$MAP,$SIDE,$W,$R,$r"
-  done; } > "$OUT/scores.csv"
-rm -f "$OUT/raw.txt"
+# Collation lives in benchmark-collate.sh so that this path and
+# benchmark-collect.sh (recovery) cannot drift apart -- a recovered run has to be
+# comparable with a live one or it is not worth recovering.
+RAW="$OUT/raw.txt"
+collate_benchmark
+rm -f "$RAW"
 gssh "rm -f ~/$RES ~/$RTAG.sh" >/dev/null 2>&1 || true
 
-{ echo "# Benchmark $RUN_ID"
-  echo
-  echo "Each agent's committed bot against downloaded BC25 finalist bots, all maps, both sides."
-  echo "Scores only — no replays were written and none exist."
-  echo
-  echo "| agent | benchmark | won | played | win% | swept | swept against |"
-  echo "|---|---|---|---|---|---|---|"
-  for A in $BOTS; do for K in $BENCH; do
-    awk -F, -v a="$A" -v k="$K" 'NR>1 && $1==a && $2==k {
-        t++; if ($7=="win") w++; r[$3]=r[$3] $7 ";" }
-      END { for (m in r) { if (r[m] ~ /win;.*win;/) sw++; else if (r[m] ~ /loss;.*loss;/) sl++ }
-        printf "| %s | %s | %d | %d | %.1f%% | %d | %d |\n", a, k, w+0, t+0, (t?100*w/t:0), sw+0, sl+0 }' "$OUT/scores.csv"
-  done; done
-  echo
-  echo "## What played"; echo
-  sed 's/^/- /' "$OUT/bots.txt"
-} > "$OUT/summary.md"
 cat "$OUT/summary.md"
 echo "wrote $OUT/"
