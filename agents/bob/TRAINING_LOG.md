@@ -7452,3 +7452,104 @@ statement about an instrument costs more than a false statement about the bot, b
 instrument is what adjudicates everything after it. My accept decision itself is untouched —
 the roster it ran against was `bob_iter0/1/11/examplefuncsplayer`, which is what the tool
 actually selected and what the results table reports.
+
+---
+
+## Iteration 21 — RESULT: REJECTED. The migration beacon is worth zero, and both of my pre-registered predictions came out wrong
+
+Run `20260908-015815`, 150 games, 25 maps resampled, `BOT=bob` (= `bob_iter20`, `dirty=0`).
+Scored with `bob-tools/arm_eval.py`, which prints the **arm's** score (not the reference's):
+
+```
+arm             score  vs null     sd  swept  swept-against  split
+bob_m0        25/50         +0  +0.00      0              0     25
+bob_mA        24/50         -1  -0.28      4              5     16
+bob_mB        26/50         +1  +0.28      4              3     18
+```
+
+### The identity control passed, and passed perfectly
+
+`bob_m0` is a package rename of the baseline and came back **25/50 with all 25 maps split by
+side and zero swept in either direction**. That is the third time this lineage has measured
+its own null and the third time it has come back with **no variance at all**, not binomial
+spread. The run is valid and the comparisons below are exact, not estimates.
+
+### The gate, applied
+
+Pre-registered: *accept-eligible requires the best arm at >= +7 games over the null (>= 32/50)
+and swept-against <= 3.* Best arm is `bob_mB` at **26/50, +1**. That is not a near miss
+(`NearMissMargin` is 5 points and this is 1 game); it is a flat zero. **Iteration 21 is
+rejected outright.** No refinement is earned — there is no directionally-correct effect to
+refine.
+
+The shape is the churn signature from doctrine 10, unusually cleanly. Against the null every
+one of 25 maps splits by side; migration converts 9 maps (arm A) and 7 maps (arm B) into
+decisive pairs, and they come out **4–5 and 4–3** — mixed direction, scattered, near-perfectly
+balanced. The mechanism unambiguously *changed the games*. It did not change who won them.
+
+### Prediction 1 — the arm ordering — REFUTED, and I said in advance I would say so
+
+I pre-registered `mA > null` and `mB < mA`, from the §24a mopper→soldier chain: a marching
+mopper manufactures neutral tiles no soldier will arrive to claim. I wrote: *"If `mB > mA`
+instead, the chain story is weaker than §24a claims and I will say so."*
+
+**`mB` (26) came in above `mA` (24).** So I say it: this run gives no support to the chain
+story as an *ordering* prediction. But I am not going to overclaim the refutation either,
+because 2 games is exactly the scale at which this run cannot discriminate anything — the
+honest statement is that **the run cannot tell arm A from arm B**, and my prediction was that
+it would be able to. A prediction that the difference would be visible is refuted by the
+difference not being visible, and that is the whole of what died here. §24a itself is
+untouched; what died is my belief that it was worth 5+ games in this configuration.
+
+The redone affordability pre-check (mopper arrives at ~32/100 paint, below
+`INCREASED_COOLDOWN_THRESHOLD`, dead on long maps) predicted `mB` should be *clearly worse*
+than `mA` for a second, cruder reason. That is refuted too, and by the same 2 games. Two
+different mechanisms both predicted `mB < mA`; neither happened. Since both predicted the same
+sign, the run was never able to separate them — which I wrote down at the time — and now
+neither is supported.
+
+### Prediction 2 — the map-size gradient — came out the WRONG SIGN
+
+This one I had not pre-registered as sharply, but the mechanism's entire motivation is
+`VISION_RADIUS_SQUARED = 20` (radius 4.47) against maps up to 60 wide: the bigger the map, the
+larger the fraction of enemy territory a unit cannot see, and the more a long-range objective
+should be worth. So the mechanism predicts **gain concentrated on large maps**.
+
+```
+arm              small <2500    large >=2500  gain small  gain large
+bob_m0           19/38            6/12                +0          +0
+bob_mA           21/38            3/12                +2          -3
+bob_mB           22/38            4/12                +3          -2
+```
+
+Both arms gain slightly on small maps and lose on large ones — **the reverse of the
+mechanism's own rationale, and both arms agree in sign on both halves.** With 12 large cells
+this is thin (a 3-game move on 12 games), so I am not claiming migration actively hurts big
+maps. What I *am* claiming is that the one place the mechanism story says the effect must live
+is the one place the sign is negative, and that is a positive disconfirmation rather than an
+absence of evidence.
+
+### What this closes, and what it does not
+
+**Closed direction (ledger):** *"give the denial units a long-range objective by beacon, so
+they stop random-walking in friendly paint."* Measured at **+1 and -1 games on 25 resampled
+maps against a zero-variance null**, with the map-level gradient the wrong sign. This is the
+attack on the largest un-acted-on number I own (splashers idle 56.7% of turns, moppers 97.6%)
+and it converts to nothing.
+
+Re-opening requires a specific reason the above no longer applies — and note the obvious
+"reason" is already refuted: *"the beacon is the wrong target, a better target would work"*
+is not licensed by this run, because the run does not show units failing to reach a bad
+target, it shows arriving somewhere changing nothing about the score.
+
+**Not closed:** the 56.7% / 97.6% idle rates themselves. Those are measured at the decision
+point and stand. What is now known is that **idleness is not costing games through the
+mechanism I proposed** — the units being somewhere else does not, on its own, buy anything.
+That is a genuinely different fact from "the idleness is harmless", and I do not yet have the
+second one.
+
+**Explicitly moot, per its own registration:** the note above titled *"Why iteration 15
+(bug navigation) may have been tested in a regime where it could not pay"*. I wrote: *"If arm
+A is flat or negative, this note is moot and stays moot — there is no version of it that
+survives arm A failing."* Arm A came in at **-1**. The note is moot. Bug navigation stays
+rejected, and iteration 15's two rejections stand at three.
