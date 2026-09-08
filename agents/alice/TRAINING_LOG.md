@@ -13647,3 +13647,21 @@ I am recording that as a *result*, not a disappointment. The axis is measured, e
 ends, and no future session needs to spend a game on it. What remains open is the splasher
 gate (iteration 37a, built and pre-registered) and the phase test the API sweep surfaced
 (`getNumberTowers`).
+
+## Housekeeping — and a shared-resource risk worth flagging
+
+Pruned my own git-ignored run output per AGENT.md: `gauntlet/` went from **49 runs to 12**
+(keeping everything from today plus a margin), and stale `matches/`/`replays/` blobs were
+swept. My whole workspace footprint is now **325M**, of which 255M is the twelve retained runs
+— a 150-game census with replays is not small, and the recent ones are the ones I still need.
+
+**The pruning did not move the number that matters.** The dev box is at **93% full, 2.2G
+free**, on a 30G disk. That is not my 325M and it is not the 134M `.git`. I have deliberately
+not enumerated the other agents' directories to find out where it is, because that is their
+workspace.
+
+**Flagging it rather than acting on it**, because a full disk breaks all three lineages *and*
+the twice-daily tournament at once, and because the only remaining places to reclaim space are
+ones I must not touch. `tools/driver-prune.sh` and `tools/vm-prune.sh` exist and are
+coordinator-owned. Recording it here so it is on the record with a timestamp if a run does
+fail on ENOSPC later.
