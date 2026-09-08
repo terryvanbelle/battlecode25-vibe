@@ -9848,3 +9848,35 @@ after seeing which way it broke:
   `nearestEmptyRuin` senses ruins only within vision (r2=20) with **no memory of ruins seen
   earlier** — a soldier that walks past an unclaimed ruin forgets it permanently. That is
   iteration 38, and I would rather have named it before the data chose it for me.
+
+### A flagged RISK to iteration 36, which I cannot settle with the evidence I have
+
+Reading `workOnRuin` while waiting on iteration 37's run turned up an interaction I should have
+seen before accepting iteration 36.
+
+Completing a ruin means painting its tower pattern. Iteration 29 established, and the code says
+so in as many words, that **a soldier cannot overwrite enemy paint** — `if
+(tile.getPaint().isEnemy()) continue;`. The only unit that can clear enemy paint is the **mopper**.
+And iteration 36 reduced moppers from 12.83% of builds to **0.19%**.
+
+So there is a plausible mechanism by which iteration 36 *harmed* ruin conversion on contested
+ground: a pattern tile an enemy has painted is now permanently unpaintable by carol, because carol
+no longer builds the unit that clears it.
+
+**Why I am flagging this as a risk and not reporting it as a finding.** The suggestive numbers are
+paired games at matched soldier counts — `lighthouse` 60 soldiers each, 2 ruins claimed by the
+mopper-less variant against 7; `walalilongla` 9 each, 2 against 6 — a ~2x deficit on n=4 matched
+games. **But every one of those replays is a game the mopper-less variant LOST**, because the
+gauntlet only saves the candidate's losses. Ruins claimed is depressed by losing, so the
+comparison is loser-versus-winner by construction and matching on soldier count does not repair
+it. I noticed the same trap earlier in this session and I am not going to fall into it here
+because the conclusion happens to be interesting.
+
+**How to settle it properly**, for whoever runs it: `tools/vm-match.sh` writes a replay for a
+single match regardless of outcome, so a handful of `carol_iter36` vs `carol_iter35` matches on
+the same maps gives ruin-claim counts from *won* games as well as lost ones. That breaks the
+selection. It is cheap — a few games, not a gauntlet — and it is the right next probe if
+iteration 37's tower check comes back flat, because both stories then point at conversion.
+
+Not reverting iteration 36 on a confounded signal: it passed a pre-registered gate and its
+manipulation check was decisive on a statistic the confound cannot touch (moppers built).
