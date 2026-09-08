@@ -8578,3 +8578,83 @@ tower-saturation argument was wrong about the margin.
 on chips — the price half of the reserve's trade. Iteration 24 rejected on the benefit half
 alone, which was enough to reject but is not enough to *explain*, and if 2400 wins here that
 missing counter is the first thing to instrument rather than a third dose.
+
+---
+
+## Iteration 25 — RESULT: the curve has an interior peak, **at 2400, not where I predicted**. Not accepted: +2 against a gate of +5.
+
+Run `20260908-070613`, 150 games, 25 maps resampled.
+
+```
+arm       reserve   score  vs null     sd  swept  swept-against  split
+bob_w12     1200   25/50         +0  +0.00      0              0     25
+bob_w24     2400   27/50         +2  +0.57      5              3     17
+bob_w36     3600   18/50         -7  -1.98      1              8     16
+```
+
+Control `bob_w12`: 25/50, all 25 maps split, zero swept — seventh consecutive zero-variance null.
+
+### My pre-registered prediction was wrong, and it was the comfortable one
+
+I predicted an **interior peak at or near 1200** — both new arms at or below the null — and
+argued it from tower saturation: the reserve insures completion, utilisation is already 80-92%
+of claimable ruins and capped on large maps, so raising it buys readiness for towers that
+mostly cannot be built. I also wrote, before the run: *"this prediction is the comfortable one.
+It ends with my existing bot being right... the number decides, and if 2400 clears 30/50 I
+accept it and write down that my tower-saturation argument was wrong about the margin."*
+
+**2400 beat the null by 2 games.** So the saturation argument is wrong, and I can now say where:
+**utilisation counts towers EVENTUALLY built and says nothing about WHEN.** A tower finished 200
+rounds late, on a game decided by round ~500, is most of a tower wasted — and it still counts as
+utilised. My argument treated a stock as if it were a flow. The number caught what the argument
+elided.
+
+### But the gate is the gate
+
+Pre-registered accept-eligibility was **>= 30/50**. `bob_w24` is **27/50** — short by 3 games,
+and also just outside the `NearMissMargin` band (54% against a 60% `WinPct`, where the allowance
+is 5 points). **Not accepted.** I wrote "I am not relaxing a gate because I found an extra
+argument after launching" in the iteration-22 amendment, and it binds here, where the temptation
+is live rather than hypothetical: +2 against a zero-variance null *is* a real +2 games, and that
+is exactly the sort of true statement that gets used to walk a threshold backwards.
+
+### What is genuinely new: the curve doctrine 2 asks for
+
+```
+reserve      0     600    1200    2400    3600
+vs null     -7      -3      +0      +2      -7
+```
+
+Concave, interior optimum near 2400, both tails falling away hard. Two cautions on the record
+rather than left implicit:
+
+1. **The two halves come from different runs with different map samples.** The ladder is exactly
+   comparable only *within* each run; each is anchored at 1200 as its own zero arm, which is what
+   makes the shape readable, but `600` and `2400` have never met on one sample and **I will not
+   quote a difference between them.** Doctrine 6: a flagged caveat has to constrain what I do
+   with the number, not decorate it.
+2. **`+2` is one point on one sample.** The peak's *location* is far better supported than its
+   *height* — location rests on a sign pattern across five doses, height on two games.
+
+## Iteration 26 — PRE-REGISTERED, launched (200 games): locate the peak on ONE sample
+
+`MaxNearMissRefinements = 3`; this is refinement 1 of a directionally-correct mechanism. Arms
+`bob_w12` (1200, exact zero arm), `bob_x18` (1800), `bob_w24` (2400), `bob_x30` (3000) — all on
+**one shared 25-map sample**, which repairs caveat 1 across the entire right-hand side of the
+curve and re-measures 2400 on a *fresh* sample, the only way to learn whether its +2 replicates.
+
+- **Void** if `bob_w12` is not 25/50 with all 25 maps split.
+- **Accept-eligible** at best arm **>= 30/50**, then the frozen roster before accepting
+  (`bob_iter0` 46/50, `bob_iter1` 44/50, `bob_iter11` 35/50, `examplefuncsplayer` 50/50; none
+  regressing by more than 3).
+- **Prediction**: peak somewhere in 1800-2400, with 3000 falling between 2400 and 3600's −7.
+  I am explicitly **not** predicting that 2400 reproduces +2 — a single 2-game margin is the
+  least reliable thing on the table. If 2400 returns 0 while 1800 returns positive, that is the
+  curve relocating its optimum, not the effect vanishing; if *both* return ~0, the +2 was the
+  sample and the whole right-hand rise is in doubt.
+
+**Pre-check still NOT done, third time named**: how often a *finished* pattern waits on chips —
+the price half of this trade. `src/bob_cprobe` is now built and compile-checked to count exactly
+that at the decision point (pattern verified complete tile-by-tile, then `canCompleteTowerPattern`
+false, split by whether chips < 1000). It has not been run. If iteration 26 produces an accept,
+this probe is what turns it from a tuned constant into an explained one.
