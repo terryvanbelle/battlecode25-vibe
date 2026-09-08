@@ -6781,3 +6781,82 @@ Anyone censusing towers or units from the arena grid gets a 2x–4x overcount. `
 safe (defense towers only) and `s`/`S` are safe (the soldier glyph is not a tower glyph),
 which is why the soldier-dispersion figures earlier in this entry are unaffected. Suggested
 fix: give towers a disjoint alphabet from mobiles, or print team as a separate layer.
+
+### CORRECTION to the saturation table above, and a second tooling bug (2026-09-08, run still in flight)
+
+While reading tournament replays I hit a coverage sum that is **impossible**: on
+`boxofchocolates` (19.5% walls) the two teams' engine coverage sums to 984 per-mille. If
+the denominator were total map area — which is what `tools/engine-facts.md` states, and it
+explicitly warns *against* using passable area — the maximum possible sum is
+1000 x (1 - 0.195) = **805**. Three maps, and the excess tracks the wall fraction:
+
+```
+map               walls    max sum under the DOCUMENTED denominator   observed sum
+boxofchocolates   19.5%                 805                               984
+Piglets2          15.3%                 847                               975
+Gears              4.6%                 954                               989
+```
+
+A sum exceeding its own maximum is a proof, not a fit, so the documented denominator is
+**refuted** regardless of anything else. Excluding walls fits: on Gears r800 the exact census
+gives T1 1661 painted of 2885 non-wall = 576 per-mille against the engine's 573 (off by 3),
+where the documented denominator gives 549 (off by 24). **I cannot fully explain the
+residual 3**, so I am reporting the refutation as certain and the replacement as best-fit,
+not as closed.
+
+Why `engine-facts.md`'s own verification passed: it was done on a map with **32 walls of
+1225 (2.6%)**, where the two candidate denominators differ by 2 per-mille and rounding hides
+it. It is a real check performed on the one kind of map that cannot discriminate — the same
+shape as LEARNINGS §22, a quantity sized on an unrepresentative case.
+
+**And the retraction audits harder than the claim.** My first table divided per-mille by
+passable tiles (134% — LEARNINGS §23). My second divided correctly but set the saturation
+ceiling to `1000 x (1-wallfrac)`, inheriting the documented denominator. **What both versions
+took for granted is that a coverage *sum* is the right instrument for saturation at all.** It
+is not: it needs a denominator, and the denominator was the thing in doubt. The paint-only
+grid counts unpainted tiles directly and needs no denominator:
+
+```
+map            % of paintable tiles still UNPAINTED, counted from the grid
+               r100    r200    r300    r400    r600    r800     game ends
+Money          29.9%    1.6%    0.1%    1.1%    1.1%    0.9%      r1549
+DefaultLarge   48.7%   20.2%    3.1%    1.1%    1.4%    1.1%      r1398
+rain           33.6%   11.7%    5.0%    5.2%    1.6%    3.2%      r1507
+Gears          37.4%   30.4%   16.6%    5.8%    0.6%    0.1%      r1832
+```
+
+**The map is >=95% painted by 13-22% of the way into the game, on all four maps measured
+with no denominator at all.** That is the claim iteration 20 rests on, and it is now
+independent of both bugs. The cov-sum table above is superseded: read it as a weak proxy
+whose "never saturates" rows are an artifact of a strict threshold, not evidence.
+
+Reported to the coordinator: `tools/engine-facts.md`'s coverage-denominator section states
+the opposite of what the engine does, and it is load-bearing — it is written as a warning
+that would actively push a reader into the wrong referent.
+
+### What the tournament replays say my two independent lineages do (stall-protocol #1)
+
+Sanctioned channel only: replays from `20260907-1300`, Gears, all three pairings.
+
+```
+                        soldiers  splashers  moppers   coverage
+alice  @r600 vs bob        18         0         4        338
+bob    @r600 vs alice     119        35        24        646     (won r690)
+alice  @r1400 vs carol     52         0         9        554     (won on AREA_PAINTED)
+carol  @r1400 vs alice      7         0        22        382
+carol  @r1000 vs bob        2         0         8        244
+bob    @r1000 vs carol     83        21        14        656
+```
+
+**Neither alice nor carol builds a single splasher, in any window of any game I sampled.**
+Carol drifts to a near-pure mopper composition late (7 soldiers, 22 moppers, +53 moppers
+per 200 rounds). I am the only lineage of the three fielding the one unit that can convert
+enemy paint outright.
+
+Two things follow. First, this is direct support for iteration 20's direction rather than a
+coincidence: my one structural difference from both independent lineages is the unit whose
+share I am now increasing. Second — and this is the self-referential blind spot pointing the
+other way — **all three of us starve**: alice's deaths are ~95% starvation (37 of 39 per 200
+rounds), carol's are lower but large, and mine are ~95%. A weakness all three lineages share
+is exactly what none of our instruments can see, and the tournament cannot reveal it either
+because it is zero-sum. Logging it as an open question, not a candidate.
