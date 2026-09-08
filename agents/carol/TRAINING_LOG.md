@@ -7924,3 +7924,128 @@ So the attribution stays **OPEN**, with the record showing it was examined rathe
 labelled: the cheapest available test was run, it came out the right way, and it is not sufficient.
 What would settle it is a coordinator-run tournament with an instrumented carol, which I am noting
 as a possible request rather than assuming.
+
+---
+
+## Iteration 30 — ACCEPTED: the splasher floor (`SPLASH_FLOOR = 2000`)
+
+### Session recovery first: two complete runs that the log never recorded
+
+Resumed after a session death. `git status` was clean and `src/carol` was still byte-identical to
+`carol_iter29`, so from the log alone iteration 30 looked unbuilt. It was not: `src/carol_i30_1600`,
+`src/carol_i30_2000` and `src/carol_i30_2600` were committed at `dcb7f3e`, and
+`gauntlet-collect.sh --list` showed **both** of the iteration's runs finished on battlecode-dev and
+already collated locally. What died was the *decision*, not the games — the exact casualty
+MULTI_AGENT.md's "If your session dies mid-run" describes, in its least visible form, because the
+collation had already succeeded and nothing looked missing.
+
+Recording the shape so a future session recognises it: **a clean working tree is not evidence that
+an iteration was never run.** The snapshot directories and the run list are, and they disagreed with
+the log. Checked both before touching anything.
+
+### The candidate, verified as a single mechanism
+
+`diff` of `carol_iter29` against `carol_i30_2000`, package line normalised, is exactly two hunks:
+the `BUILD` string, and the affordability predicate in `runTower`:
+
+```java
+final int SPLASH_FLOOR = 2000;
+boolean afford = chips >= reserve + want.moneyCost;
+if (afford && want != UnitType.SPLASHER && chips - want.moneyCost < SPLASH_FLOOR) afford = false;
+```
+
+No bundling. `SPLASH_FLOOR = 0` never blocks and is provably the previous code, so **`carol_iter29`
+IS the zero arm** rather than a separate build that has to be trusted to be equivalent.
+
+### Result — two independent map samples, both decisive
+
+**Run `20260908-013505`** (dose sweep, 25 maps, bot = the working tree, which `bot_identity` resolved
+as content-identical to `carol_i30_2000`):
+
+| opponent | bot wins | swept-win | swept-loss | D (split) |
+|---|---|---|---|---|
+| `carol_iter29` (**the zero arm**) | **42/50 (84%)** | 17 | **0** | 8 |
+| `carol_i30_1600` | 29/50 (58%) | 8 | 4 | 13 |
+| `carol_i30_2600` | 25/50 (50%) | 7 | 7 | 11 |
+
+**Run `20260908-021045`** (full gauntlet + frozen roster, a *fresh* 25-map sample, `head=12239ce`,
+`dirty=0`, played as the `carol_i30_2000` package): overall **383/400 (95.8%)**.
+
+| opponent | bot wins | swept-win | swept-loss | D |
+|---|---|---|---|---|
+| `carol_iter29` (**accept gate**) | **44/50 (88%)** | **19** | **0** | 6 |
+| `carol_iter0` | 48/50 (96%) | 24 | **1** | 0 |
+| `carol_iter1` | 49/50 (98%) | 24 | 0 | 1 |
+| `carol_iter7` | 48/50 (96%) | 23 | 0 | 2 |
+| `carol_iter21` | 47/50 (94%) | 22 | 0 | 3 |
+| `carol_rush` | 47/50 (94%) | 23 | **1** | 1 |
+| `carol_turtle` | 50/50 (100%) | 25 | 0 | 0 |
+| `examplefuncsplayer` | 50/50 (100%) | 25 | 0 | 0 |
+
+Doctrine 14 discharged rather than cited: sweeps and margin are **one number**, not two, and the
+identity checks out — vs `carol_iter29`, `wins − losses = 44 − 6 = 38 = 2 × (19 − 0)`. So the sweeps
+are quoted for **D**, the decisiveness, not as corroboration. D = 6 of 25 means this pair is mostly
+*not* coin-flips: 19 of 25 maps went one way from both spawns.
+
+Against the measured mirror null — identical code splits every map, **0 swept maps, se = 0** — a
+19–0 sweep count is not a margin to be hedged. It is 19 maps the mechanism decided.
+
+### Accept, against the pre-registered gate
+
+- Head-to-head vs the last accepted snapshot > 50%: **88%** and **84%** on two disjoint map samples.
+- Peer `WinPct` 60%: every peer ≥ 88%.
+- No unresolved one-directional regression against `carol_iter29`: **zero swept losses in either
+  run.** The 6 splits are single-side games spread over 6 different maps.
+
+Promoted to `src/carol` and snapshotted as `src/carol_iter30` (verified byte-identical to
+`src/carol` apart from the package line). Compile-checked with `javac` against
+`battlecode25-java-3.1.0.jar` on battlecode-dev, in a scratch directory rather than the workspace
+build tree, so no in-flight gauntlet could load half-written classes.
+
+### What the dose ladder does and does NOT establish
+
+It establishes that **2000 is a local maximum among {1600, 2000, 2600}** and that it beats the zero
+arm by a wide margin on two samples. It does **not** give a full curve against zero: 1600-vs-zero
+and 2600-vs-zero were never played, so the ladder is pinned to zero only at 2000 and is otherwise
+measured *relative to 2000*. Stating that rather than drawing a curve through points I do not have.
+
+2000 and 2600 are **dead even** (25/50, swept 7–7). The tiebreak is outstanding pre-check (1) —
+"does the floor starve early production on maps where chips are genuinely scarce", where the
+`<1200 chips` share runs 10–26%. With the head-to-head unable to separate them, the lower floor is
+the conservative choice, and I took it for that stated reason rather than because it scored higher.
+
+Pre-check (2), bytecode: one integer comparison in a branch that already existed; no new loop, no
+new sensing call. Pre-check (3), the one-map identity check: subsumed — the arms disagree on 30+
+games in both runs, so the mechanism demonstrably executes.
+
+### The attribution, and the honest size of it
+
+The mechanism story is the one registered before the run: 50–95% of splasher rolls were dying at
+the chips gate because cheaper units drained the shared treasury below it first, pinning the
+realized splasher share at 1.2–2.7% against an intended 15%. The floor makes every tower compute
+the same predicate off the shared `rc.getChips()`, so they coordinate with no communication —
+RESEARCH.md §7's "emergent, not commanded" shape.
+
+**I have not verified that the realized splasher share actually moved**, and I am not going to
+assert it from the win rate. That is the back-fill this project keeps punishing (§5b/3b). It is
+also cheap to close by instrumentation rather than argument, and it is the first thing I would
+measure if the next result is confusing. Registering it as **OPEN**, examined-but-unclosed.
+
+### The one degeneracy signal in 400 games, and it is a good target
+
+Only two swept losses in the whole roster run, and one of them is a genuine absolute signal rather
+than an opponent-relative one:
+
+**`carol_iter0` sweeps `Parking_lot` against iteration 30, both sides.** Generation 30 loses a map
+from both spawns to the minimal first bot of its own lineage. Parking_lot also went A=loss against
+`carol_iter1`, `carol_iter7` and `carol_iter29` — so it is not a single fluke game, it is a map this
+build is broadly bad on, and losing it to iteration 0 needs no opponent model to be wrong.
+
+Registering as the iteration 31 target. **First question is discriminating, not descriptive: is
+this new?** Parking_lot was not in the `carol_i29` roster sample (`20260908-000327`), so I cannot
+subtract across runs to find out — and per doctrine 6 I am not going to reason from a subtraction I
+have just called unsound. Instead: pinned `MAPS="Parking_lot"` and launched
+`BOT=carol_iter29 OPPONENTS="carol_iter0 carol_iter21 carol_iter25"` — 6 games. If iteration 29
+also loses Parking_lot to iteration 0, this is a long-standing lineage-wide weakness and the
+splasher floor is exonerated; if iteration 29 wins it, the floor caused it and the accept carries a
+map-shaped regression I should price. Two hypotheses, visibly different numbers, six games.
