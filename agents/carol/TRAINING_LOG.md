@@ -9328,3 +9328,76 @@ gate after the games are played is exactly the thing pre-registration exists to 
 **The agenda this sets.** Economy-mix tuning (iterations 30–35: splasher share, mopper share, money
 share, upgrade gate) has been working an axis that the external data says is not where carol is
 losing. Iteration 36 targets large-map expansion directly.
+
+## Iteration 35 — ACCEPT. 33/50, swept 9–1, the strongest margin since iteration 30
+
+Run `20260908-091804`, fresh random 25-map sample, 100 games.
+
+| arm | result | swept-win | swept-loss | split | |
+|---|---|---|---|---|---|
+| `carol_i35` vs **`carol_iter34`** (the accept gate) | **33/50 (66.0%)** | **9** | **1** | 15 | **+2.26 sd**, one-sided p = 0.016, 95% CI [26, 40] |
+| `carol_i35` vs `carol_racer` (process arm) | 50/50 (100%) | 25 | 0 | 0 | — |
+
+**The pre-registered gate is met on both clauses**: 33/50 > 25/50, and swept wins (9) exceed swept
+losses (1) nine to one. Unlike iteration 34, **the CI excludes the null** — this is the first accept
+since iteration 30 whose headline stands on its own.
+
+### The pre-registered manipulation check passes
+
+I registered that a zero upgrade count voids the arm regardless of the win rate, so I ran it even
+though the result was favourable — a check you only run when you expect to fail it is not a check.
+Counting non-initial `UPGRADE` events in this run's own loss replays (the round-1 upgrades of
+`id1`–`id4` are engine initialization, not the gate):
+
+| replay | `carol_i35` upgrades | `carol_iter34` upgrades |
+|---|---|---|
+| `SMILE` (i35 = T2) | **3** (r180, r358, r931) | 1 (r1270) |
+| `DonkeyKong` (i35 = T1) | **1** (r395) | 0 |
+
+The mechanism fires, and fires more in the candidate than the incumbent. Worth recording that the
+incumbent gate is **rare, not literally never**: iteration 34 did manage one upgrade at round 1270
+on SMILE. My earlier "exactly off (0.00%)" was measured on one Snowglobe game and is too strong as
+a general claim; "0.04% of eligible tower-turns" is the defensible version. These are loss replays,
+so if anything they understate the candidate.
+
+### The pre-registered covariate FAILED, and that is recorded as a failure
+
+I predicted rho(wins, map area) > 0, on the reasoning that a +5 paint/turn annuity paid for with an
+up-front 2,500-chip drain is worth more the longer the payback horizon.
+
+> **rho(wins, area) = +0.009, t = +0.04.** Low-area half 16/24 (66.7%), high-area half 17/26
+> (65.4%). Flat to three decimal places.
+
+The prediction is wrong. Per my own pre-registration — *"If the gain is instead uniform across
+area, the attribution is OPEN and the accept rests on the head-to-head alone"* — **the attribution
+is OPEN.** The iteration is accepted on its head-to-head, which is strong enough alone, and I am
+**not** substituting the ruin covariate (rho = −0.163, also null) or any other post-hoc story for
+the one I registered and lost. Given that I spent this session retracting a covariate that was
+argued after the fact, back-filling a new one here would be the identical error committed twice in
+one sitting.
+
+What the flat result does tell me, read against the new area finding below, is that **the upgrade
+gate is not the thing that makes carol scale badly** — it helps uniformly, so it moves the whole
+curve up and leaves the slope alone.
+
+### Under the new standing clause: no ground lost on the large half
+
+66.7% small / 65.4% large. Reported per the process change committed this session. The clause was
+adopted while this run was in flight and was deliberately **not** added to its gate; it passes
+anyway.
+
+### `carol_racer` is REJECTED as a roster yardstick
+
+**50/50, 25 maps swept to zero.** It saturated on arrival and is strictly worse than the roster
+members it was built to replace, which at least sit at 94–100%. It does not go in
+`progress/roster_extra.txt`.
+
+This is worth more than the null result it looks like, because it is the *second* confirmation of
+this session's instrument finding: I built `carol_racer` myself, out of my own model of what a
+coverage race is, and it inherited my blind spots exactly as a snapshot would. **A yardstick I
+construct cannot be independent of me.** The saturation problem is therefore not solvable by
+building better synthetic archetypes, and I should stop trying — the tournament is the instrument
+that works, and this session showed it answers questions no gauntlet of mine can.
+
+`src/carol` is now iteration 35; frozen as `src/carol_iter35`. **16 accepted iterations**,
+`carol_iter0..35`. Both charts regenerated.
