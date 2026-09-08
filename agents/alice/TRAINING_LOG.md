@@ -13217,3 +13217,100 @@ With iteration 34's censused 24.3% this gives **three points on one curve** — 
   towers means less tower paint, and iteration 5 measured that a paint-starved tower falls
   into an absorbing state where only moppers are affordable. If `i35b` loses while `i35a` does
   not, the optimum is at or below parity's share and the curve has an interior peak.
+
+### Pre-run check on the arrangement hypothesis — it does NOT survive, and cost zero games
+
+Before spending 100 games to distinguish "ratio" from "arrangement", the arrangement half is
+checkable from the ruin coordinates alone. For every map, the mean distance from a ruin to the
+**nearest paint-assigned ruin** — the quantity the refill walk and `tryRefill`'s `r^2 <= 2`
+search actually care about:
+
+| assignment | mean distance to nearest paint ruin | money share |
+|---|---|---|
+| parity (checkerboard) | 4.48 | 53.7% |
+| hash `T=52` | **4.19** | 49.1% |
+
+Hash is **closer** on 39 maps, farther on 30, tied on 3. (`Filter`, `Snowman` and `gridworld`
+are excluded because parity gives them **no paint ruins at all** — which is the degeneracy,
+and it is why those maps are iteration 34's swept wins.)
+
+**So the checkerboard is not buying spatial access to paint towers, and my rival hypothesis is
+weakened before the run rather than after it.** Part of the 4.48 -> 4.19 gap is simply that
+the hash arm has more paint towers at `T=52`, so this is an upper bound on any arrangement
+penalty — and the sign is still the wrong way for the hypothesis.
+
+I am leaving the discriminating branch in the pre-registration rather than deleting it, because
+"weakened" is not "excluded" and the run reports it either way. But I will not read a neutral
+`i35a` as evidence for arrangement, and I have written down *before the run* that the
+geometry says it should not be.
+
+## Iteration 36 — the splasher override starves soldiers, measured in the SHIPPING bot
+
+**Iteration 35 is deferred, and I am saying why rather than quietly dropping it.** The
+tower-mix decomposition prices the degeneracy fix at roughly **0 to +3 net swept**. What
+follows is a pathology in `src/alice` *as it plays in the tournament today*, found in the
+baseline half of iteration 34's own replays. It is worth more, so it goes first. The
+iteration 35 arms are built, committed and still valid.
+
+### The defect
+
+```java
+UnitType want = (rnd(4) == 0) ? UnitType.MOPPER : UnitType.SOLDIER;
+if (want == UnitType.MOPPER && rc.getPaint() < UnitType.SOLDIER.paintCost) want = SOLDIER;  // iter 5
+if (rc.getMoney() >= CHIP_RESERVE + 2500) want = UnitType.SPLASHER;                          // iter 28/29
+```
+
+The splasher line overrides `want` **unconditionally** — including over iteration 5's paint
+guard, whose entire purpose is to stop a tower spending scarce paint on a unit it can afford
+more often than a soldier. And **the chip gate never closes once it opens**, because chips
+only accumulate after expansion ends. So from that round on, *every tower builds only
+splashers, forever*.
+
+The resource ordering is the wrong way round. `SPLASHER.paintCost` is **300**, against
+`SOLDIER` 200 and `MOPPER` 100 — **the splasher is the most paint-expensive unit I field**, and
+iteration 28 gated it on the resource it had a runaway surplus of while leaving the scarce one
+ungated.
+
+### Measured, in `alice_iter30`, from replays this session already produced
+
+| | chips | towers | tower paint | soldiers alive | splashers | that window |
+|---|---|---|---|---|---|---|
+| `DefaultMedium` r1000 | **$72,980** | 12 (frozen since r500) | 1,036 = **86/tower** | **1** | 12 | +soldiers **0**, +splashers 20 |
+| `Barcode` r1100 | $16,890 | 15 (frozen since r500) | 511 | 9 | 18 | — |
+
+**Only soldiers paint tower patterns in this bot**, so "no soldiers" means "no new towers" —
+and on both maps the tower count freezes at exactly the point the gate opens. This is
+iteration 5's absorbing state, re-entered through a door iteration 28 opened after iteration 5
+had shut it. $72,980 idle beside one soldier is not a bot short of chips.
+
+### Two defensible repairs, so it is a screen and not a guess
+
+| arm | change | reading of the defect |
+|---|---|---|
+| `alice_i36a` | add `&& rc.getPaint() >= SPLASHER.paintCost + SOLDIER.paintCost` | the splasher needs a PAINT surplus too, exactly as iteration 5 requires of the mopper |
+| `alice_i36b` | fire only when `want == MOPPER` | the bug is that the override is TOTAL; spend only the quarter already going to a mopper |
+
+Both are one conjunct, both leave iteration 29's chip threshold untouched, and both are
+self-calibrating from `UnitType` constants.
+
+### Pre-registered
+
+- **Convention**: two-arm screen, so **baseline in `BOT`** (`BOT=alice_iter30
+  OPPONENTS="alice_i36a alice_i36b"`), 25 shared maps, 100 games. **An arm is good when the
+  BOT loses.** The survivor gets a decisive 75-map census with **candidate-as-`BOT`** before
+  anything is accepted.
+- **Gate (census)**: net swept > 0, `SW` > `SL`, 0 exceptions, 0 overruns.
+- **Named risk on arm A, and it is the reason B exists**: late-game tower paint is ~86 per
+  tower against arm A's 500 threshold, so **arm A may build almost no splashers at all** and
+  amount to ablating accepted iterations 28/29 rather than repairing them. If arm A wins *and*
+  its splasher count is near zero, I must report it as an ablation of 28/29 and re-run those
+  on their own terms — **not** bank it as a new mechanism.
+- **Named risk on arm B**: it caps splashers at ~25% of spawns forever, so on the maps where
+  iteration 28's surplus is genuinely enormous it may under-spend chips that have no other use.
+- **Mechanism check**: against the mirror null (0 decisive maps under byte-identical code), the
+  decisive set must be non-trivial. Both arms only act once chips exceed `CHIP_RESERVE + 2500`,
+  and iteration 28's own probe found that gate never fires on some maps — so a map where
+  neither arm differs from the baseline is expected and is **not** evidence of a broken arm.
+- **Falsifier for the whole diagnosis**: if both arms lose, then splasher-only late-game is
+  *better* than mixed production despite freezing tower count, and my "only soldiers complete
+  patterns" reasoning is wrong about what wins those games.
