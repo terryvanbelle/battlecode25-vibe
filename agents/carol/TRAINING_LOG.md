@@ -10372,3 +10372,99 @@ asks and goes on nearly every turn. A per-robot position track over ~40 rounds s
 Also to check on the same dumps, because the new scan is not free: `ov=` (bytecode overruns) in
 the indicator string. `nearestKnownTower` walks up to 64 entries on every low-paint turn, and a
 silent mid-turn truncation would corrupt the arm without any other symptom.
+
+## Iteration 38 RESULT — **REJECT** at 17/50, −3.10 sd. The price I pre-registered is exactly what came due.
+
+Run `gauntlet/20260908-121614`, `BOT=carol_i38_50`, opponents `carol_iter36` and `carol_i38_25`,
+100 games, fresh random 25-map sample.
+
+| gate (pre-registered, first use of the re-set gate) | required | measured | |
+|---|---|---|---|
+| `carol_i38_50` vs `carol_iter36` | >= 29/50 | **17/50**, −3.10 sd | **REJECT** |
+| area split (reported, not gated) | — | small 36.1%, large **28.6%** | — |
+| D, split maps (reported, not gated) | — | 13 of 25 (52%) | — |
+
+The dose ladder is monotone and points at zero: `carol_i38_25` beats `carol_i38_50` **37–13**, so
+returning *less* is better at every dose I tested, and the incumbent (RETURN_PCT = 0) is better
+still. That is a gradient, not noise.
+
+### The manipulation check: link 1 passed 50-fold, and the PRICE ate it
+
+Paired within-game, both bots in the same replay (mit / lighthouse / TheBest, pooled):
+
+| | `carol_i38_50` | `carol_iter36` | |
+|---|---|---|---|
+| **paint transfers (`xfer`)** | **4,758** | **94** | **50x — the mechanism ran** |
+| tower paint stash (mean) | 2,853 | **9,748** | **−71%** |
+| towers alive (mean) | 15.3 | 20.1 | −24% |
+| splashers built | 286 | 404 | −29% |
+| soldiers built | 128 | 64 | +100% |
+| deaths | 361 | 413 | −13% |
+| **starvation deaths** | **347** | **374** | **−7%** |
+| **coverage** | **852** | **1,748** | **−51%** |
+
+Link 1 fired perfectly: `hg/ha = 93.0%` from the indicator counters (5,007 asks, 4,656 goes over
+60 robots), and refills rose **fiftyfold**. `ov=0` on every robot inspected, peak bytecode 6,875
+of 17,500, so the new scan is not the problem either.
+
+**And it bought a 7% reduction in starvation deaths.** Fifty times the refilling, and the units
+starved anyway. Meanwhile the tower stash fell 71%, and tower paint is what *builds* units — so
+splasher production fell 29%, tower count fell 24%, and coverage halved.
+
+The causal chain is closed end to end:
+
+> refill 50x -> tower paint −71% -> splashers −29% and towers −24% -> coverage −51% -> 17/50
+
+**This is the price I named in the pre-registration, in the words I named it in**: "returning
+units drain tower stashes... this is the *two consumers of one budget must partition it by an
+explicit decision* failure from my own LEARNINGS — `refillIfPossible` takes
+`min(cap - paint, ally.paintAmount)`, i.e. everything the tower has, with no floor left for
+building." I chose deliberately not to fix it in the same iteration, so that if the price came due
+I would know that it had. It did, at roughly twice the size of any benefit available.
+
+### What did NOT happen, said plainly because I pre-registered it as an excuse
+
+Addendum 3 predicted a period-2 oscillation beside dry towers, and named it as the reading under
+which a rejection would leave the hypothesis *untested* rather than refuted. **It is not
+supported.** The robot I traced does orbit a fixed point — but at paint 168-200, which is *above*
+the 50% gate, so the homing branch was not running; that orbit is pre-existing `workOnRuin`
+behaviour present in the incumbent too. The rejection is real, and I do not get to keep the
+hypothesis.
+
+### Link 2 was never reached, and I should not claim it was tested
+
+I pre-registered link 2 — fewer starvation deaths becoming more coverage — as the weak one. It was
+never put to the test: starvation deaths barely moved (−7%), so link 2's input never materialised.
+**The arm failed at the price, upstream of the weak link.** My addendum's prediction ("link 1
+passes, link 2 fails, arm at or below the null") got the arm right for a reason that was not the
+one I gave, and saying so is worth more than claiming the call.
+
+### The finding worth more than the run: carol's refill loop already exists, and it is LOCAL
+
+Tracing incumbent soldier `id10270` on `mit`:
+
+```
+round 39  (9,35)  paint=7    SPAWN id12046(T1,PAINT_TOWER) at (9,34)
+round 41  (10,35) paint=199
+```
+
+The soldier spends itself down to 7 paint building a ruin into a paint tower, and refills from the
+tower it just built, two rounds later. **Carol's soldiers do not return to refill points — they
+manufacture them.** That is why the incumbent needs only 94 transfers to my 4,758, and it is a far
+better loop: the walk is zero, and the trip produces a tower.
+
+My change pulled low-paint soldiers *away* from the ruins they were converting, and the numbers
+show exactly that shape: **soldiers built doubled (64 -> 128) while towers alive fell 24%.** More
+soldiers, fewer ruins finished. I replaced an efficient local loop that creates infrastructure
+with an expensive global one that consumes it.
+
+### DECISION: REJECT
+
+`src/carol` is untouched and remains iteration 36. HEAD compiles and is what plays in the
+tournament. Cost: one 100-game run and five cached dumps.
+
+**Iteration 39 is now evidenced rather than guessed**, and it is *not* "partition the paint budget
+and try again" — that would rescue a mechanism whose own best case bought 7%. The measurement that
+matters is that soldier-to-tower conversion is carol's paint pump, and this run priced it: pulling
+soldiers off ruins costs 24% of the tower count and half the coverage. **The direction is to feed
+that pump, not to bypass it.**
