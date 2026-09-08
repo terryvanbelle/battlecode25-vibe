@@ -9174,3 +9174,307 @@ displaced soldiers. Over 10% and the positioning census is the next question.
 I am explicitly **not** carrying the 0.05% figure into that pre-registration as a
 prior, because it is the artefact above and would bias the reading of a number it
 cannot inform.
+
+### The in-bot tower census — built, and it answers the pre-registered question
+
+`src/alice_towercensus` (never `src/alice`), byte-identical to `src/alice` apart
+from the package line plus one instrumentation block. It counts, **at the spawn
+decision point and before any spend**, what the tower could actually have built.
+`canBuildRobot` is a pure query — no cooldown, no spend — so the census cannot
+perturb the trajectory it is measuring. It also separates two predicates that my
+earlier reasoning had run together:
+
+- **engine-allowed** — `canBuildRobot(type, loc)` true on some legal tile: paint,
+  chips, free tile, cooldown, all of it, as the engine judges it;
+- **policy-permitted** — engine-allowed **and** `money >= CHIP_RESERVE`, which is
+  my own gate, not the engine's.
+
+And it evaluates the tile set two ways: the **8 adjacent** tiles my bot actually
+tries, and the **12 tiles at r^2 <= 4** the engine actually permits (`RULES.md`:
+"tower builds robots within r^2 <= 4"). My build loop has always tried only 8 of
+the 12 legal tiles; this prices that gap for the first time.
+
+#### FIRST, a silent-instrument failure that nearly cost me the whole measurement
+
+The first run emitted **nothing**. 188,514 indicator lines in the replay, not one
+of them from the census. No exception, no bytecode overrun, no error anywhere.
+
+The cause: `run()`'s `finally` block writes the standing bytecode diagnostic with
+`setIndicatorString` **after** `runTower` returns, and the engine records only the
+**last** indicator string of a turn. My census wrote into a channel that my own
+code overwrites microseconds later. The census now hands its payload to that
+`finally` block instead of competing with it.
+
+The transferable rule, and it generalises past indicator strings: **an instrument
+that writes into a shared single-slot channel is silently erased by whoever writes
+last, and the failure mode is an empty result rather than an error.** "The census
+found nothing" and "the census emitted nothing" are indistinguishable downstream.
+So *verify the instrument produced output before drawing any inference from what
+it did not show* — I would otherwise have been one step from concluding "towers
+never reach the splasher price", which is the answer I was already half expecting
+and would have accepted without a fight.
+
+#### Result — UnderTheSea, 13 towers, 23,704 tower-turns
+
+| at the spawn decision point | count | share |
+|---|---|---|
+| action ready (cooldown) | 23704 | **100.00%** |
+| `money >= CHIP_RESERVE` (1450) — my policy gate | 19127 | 80.69% |
+| paint >= 300 | 1610 | 6.79% |
+| **engine** would allow SPLASHER — 8 adjacent tiles | 1547 | **6.53%** |
+| **engine** would allow SPLASHER — 12 tiles, r^2 <= 4 | 1547 | **6.53%** |
+| engine would allow SOLDIER — 8 / 12 tiles | 2521 / 2521 | 10.64% / 10.64% |
+| engine would allow MOPPER — 8 / 12 tiles | 16643 / 16643 | 70.21% / 70.21% |
+| **policy-permitted SPLASHER** (the pre-registered quantity) | 59 | **0.25%** |
+| policy-permitted SOLDIER | 735 | 3.10% |
+
+**The pre-registered rule fires on the low branch: 0.25%, against a threshold of
+2%.** The splasher is unreachable under the current spend policy, and iteration 25
+is therefore *"change the spend policy"*, priced in displaced soldiers — not
+"add SPLASHER to the spawn choice", which would have been a no-op mechanism
+shipped on the strength of a ceiling table.
+
+#### Three findings, and the second and third were not what I went looking for
+
+**1. Cooldown never binds.** 100.00%, every tower, every turn. A tower's build
+cooldown is 10 and cooldowns shed 10/turn, so it is always ready. Dead variable.
+
+**2. Placement NEVER binds — and the 8-vs-12 gap is worth exactly zero.** The
+12-tile and 8-tile columns are **identical on every tower, every unit type, all
+23,704 turns**. Not "close": equal. In no single turn of the game did a legal
+build tile exist in the engine's outer ring while none existed among the 8 my code
+tries.
+
+This kills two things at once. It finishes off the "the tower is walled in by its
+own units" story I had already refuted from the replay — now refuted at the
+decision point, which is the only place it could have hidden. And it pre-emptively
+kills an *obvious-looking micro-optimisation* — "try all 12 legal tiles, it's free"
+— which I would have written on sight, would have cost bytecode, and provably
+cannot change a single build in a whole game. A cheap negative on a change I had
+not yet proposed is the best value this census returned per line of code.
+
+**3. The real finding: `CHIP_RESERVE` manufactures the state it then forbids.**
+
+Money is above the gate on **80.69%** of all tower-turns. But among the 1,547 turns
+where a splasher was engine-affordable, money was above the gate on **59 — 3.8%**.
+Independence would predict ~1,248. That is not a coincidence to be noted; it is a
+mechanism, and it runs through my own code:
+
+> A tower's paint only climbs toward 300 during a stretch in which it is **not
+> spending**. The only thing stopping it spending is the money gate. So "this
+> tower holds 300 paint" is, mechanically, *evidence that money has been below
+> 1450 for the last several dozen turns.* The condition that makes a splasher
+> affordable in paint is the same condition that makes it forbidden by policy.
+
+The soldier row says the same thing more loudly: engine-allowed on 10.64% of
+tower-turns, policy-permitted on 3.10%. My reserve refuses roughly **seven of every
+ten engine-legal soldier moments**.
+
+**And here is where I stop myself, because the exciting reading of that is wrong.**
+Refusing a build is **not** the same as losing it. The paint is *conserved* — the
+tower keeps it and builds later — and I have already measured the only channel by
+which it could actually be destroyed: paint sitting at the 1000 cap, at **0.4%**
+of tower-turns pooled. So the reserve **delays** builds; it does not throw them
+away. "71% of soldiers refused" is a true sentence about moments and a false one
+about throughput, and it is exactly the sort of number I would have quoted as a
+headline a few iterations ago.
+
+What the reserve *does* do is push tower paint into a **high, idle band it would
+not otherwise occupy** — which is precisely why a 300-paint unit is engine-legal
+on 6.5% of turns at all. The splasher's paint price is, in this specific sense,
+already being paid and left on the table.
+
+#### Replicated on three maps of very different size — the result is not map-specific
+
+| quantity | UnderTheSea (13 towers) | DefaultSmall (6) | DefaultHuge (25) |
+|---|---|---|---|
+| tower-turns | 23,704 | 11,731 | 45,317 |
+| money >= CHIP_RESERVE | 80.7% | 92.0% | 94.0% |
+| paint >= 300 | 6.79% | 3.22% | 3.02% |
+| engine would allow SPLASHER | 6.53% | 2.98% | 2.79% |
+| **policy-permitted SPLASHER** | **0.25%** | **0.18%** | **0.15%** |
+| policy-permitted SOLDIER | 3.10% | 3.73% | 2.78% |
+| **12-tile minus 8-tile opportunities, all types** | **0** | **0** | **0** |
+
+**80,752 pooled tower-turns and the 12-tile footprint never once beat the 8-tile
+one**, for any unit type, on any map. And the pre-registered quantity is 0.15-0.25%
+everywhere — an order of magnitude under the 2% branch, on maps whose money
+behaviour differs a lot (the chip gate is open 80.7% of the time on UnderTheSea and
+94.0% on DefaultHuge, and the verdict does not move).
+
+Note the direction of that last comparison, because it is the interesting one: the
+map where money is *most* often available is the map where the splasher is *least*
+often policy-permitted. That is the anticorrelation again, and it rules out the
+lazy reading "just a poor economy on one map".
+
+### The splasher direction is PARKED, with its exact next step recorded
+
+The pre-registered rule sent iteration 25 to "change the spend policy". I am not
+taking that branch immediately, and I want the reason on the record rather than
+discovered later as drift:
+
+- the splasher's *measured* positioning value is still `alice_splashcensus`'s
+  **1.37 of 13 tiles** against a nominal break-even of 10, and the ceiling table
+  (3.85 paint/tile empty, 5.56 enemy) is a ceiling, not a measurement;
+- so relaxing `CHIP_RESERVE` to afford splashers would buy a unit whose value is
+  unmeasured at the positions a *splasher* would occupy — the exact gap I already
+  wrote down as "the whole question";
+- and the same census that closed the reachability question handed me a **larger
+  and cheaper** target, below.
+
+**Parked with its next step intact**, so a later session does not have to
+re-derive it: field splashers in a census build with the spend gate relaxed *in
+that build only*, record `splashScore` at the centre the splasher actually
+chooses, and compare the median against break-even 10 and against the price of
+1.5 soldiers. Nothing about that plan is invalidated by parking it.
+
+---
+
+## Iteration 25 (redirected) — the tower paint withdraw, an engine mechanic the bot has never called
+
+### Where this came from
+
+The tower census was built to answer a splasher question. What it actually
+established is that **towers hold paint they cannot spend**: paint >= 300 on 6.79%
+of tower-turns, and on 96.2% of those turns the chip gate forbids any build. My
+first reading of that was "the reserve delays builds, which is nearly free" — and
+that reading is correct *for builds*. But building is not the only way paint leaves
+a tower.
+
+`RULES.md`, line 96, engine-verified previously and re-verified by `javap` today:
+
+> **transferPaint** r^2 <= 2: moppers give to ally robots/towers; **ANY robot can
+> withdraw from ally towers** (negative amount). CD 10. ... withdraw capped by the
+> tower's current paint.
+
+`grep transferPaint src/alice/RobotPlayer.java` returns **nothing**. Twenty-four
+accepted iterations and the bot has never called it. This is precisely the failure
+TRAINING_ALGORITHM.md Phase 0.2 warns about — *"a whole game mechanic sat unused for
+81 iterations once"* — and I found it by sweeping `RobotController` for methods the
+bot never calls, which is the sweep that doctrine prescribes.
+
+Three measured facts line up on it, and none of them was collected to support it:
+
+| fact | source | value |
+|---|---|---|
+| units die of paint starvation | iteration 24 verification | **31.1%** of all deaths |
+| towers hold unspendable paint | tower census, today | paint >= 300 on **6.79%** of tower-turns |
+| a withdraw costs chips | engine | **zero** — it bypasses `CHIP_RESERVE` entirely |
+
+A withdraw converts the idle band directly into unit lifetime, at no chip cost,
+against the largest single death cause in my own bot.
+
+### The reachability pre-check comes FIRST — that is what this iteration already taught me
+
+I will not build this and hope. The splasher work established the discipline the
+hard way: I predicted from reading my own source that towers never reach 300 paint,
+and the measurement refuted me because my enumeration covered what the code would
+*choose* and not what could stop the choice taking effect.
+
+So the same question, asked before any mechanism: **is a hungry robot ever actually
+within r^2 <= 2 of an ally tower?** Soldiers wander outward from spawn; there is a
+perfectly plausible world in which they are only ever near a tower in their first
+few turns, while full, and starve far away where no withdraw is legal.
+
+`src/alice_refillcensus` (never `src/alice`), byte-identical to `src/alice` apart
+from the package line and one pure-query block, counts per robot-turn *before any
+action*: paint, whether an ally tower is in transfer range, whether
+`canTransferPaint(tower, -1)` is actually legal, and how much paint could have been
+drawn (`min(capacity - paint, towerPaint)`, respecting the clamp TRAP in RULES.md
+line 99 — asking for more than you can hold silently burns the tower's paint).
+
+### Pre-registered decision rule — written before the data exists
+
+Deciding quantity: **`l50c / l50`** — of the robot-turns spent below half paint,
+the share on which a withdraw was legal. The *coverage* of the mechanism, not its
+raw frequency, because a mechanism that is legal often but never when it is needed
+is worthless.
+
+- **`l50c/l50` < 2%** -> passive withdrawal is unreachable. Hungry units are simply
+  not near towers. The iteration is then *not* "withdraw when adjacent" but "route
+  hungry units to a tower" — a movement change with a real cost in displaced
+  painting turns, which must be priced separately and is a different iteration.
+- **`l50c/l50` > 15%** -> reachable. Iteration 25 is "withdraw when hungry and
+  legal": one mechanism, one threshold, zero arm = `alice_iter24`.
+- **between** -> reachable but thin; decide on `gain` (total recoverable paint)
+  against 200 paint = one soldier, and say so explicitly rather than splitting the
+  difference silently.
+
+**Instrument-validity check, pre-registered because it just cost me a run:** `tp`
+(the largest ally-tower `paintAmount` any robot ever saw) must be **> 0**. If it is
+0, `RobotInfo.paintAmount` is not populated for allied towers, every `gain` figure
+is garbage, and the correct response is to fix the instrument — not to report a
+small number as a finding. "The census found nothing" and "the census measured
+nothing" are the same output, and telling them apart is my job, not the reader's.
+
+### Census result — reachable but THIN, and the middle branch fires
+
+| | UnderTheSea | DefaultSmall |
+|---|---|---|
+| robot-turns | 76,105 (735 robots) | 19,713 (438 robots) |
+| **instrument check** — max ally-tower `paintAmount` seen | **1000 (OK)** | **730 (OK)** |
+| paint == 0 (starving outright) | 1.64% | 1.69% |
+| paint < 50% capacity (hungry) | 26.89% | 15.48% |
+| ally tower within r^2 <= 2 | 7.83% | 14.48% |
+| withdraw LEGAL | 6.61% | 11.14% |
+| **coverage `l50c/l50`** | **4.91%** | **4.13%** |
+
+`RobotInfo.paintAmount` **is** populated for allied towers, so the pre-registered
+instrument-validity check passes and the numbers may be read.
+
+**4.91% and 4.13% — the middle branch.** Reachable, but hungry units are usually
+*not* near a tower, which is the honest shape of it: soldiers starve at the
+frontier, not at home. My rule says decide on the recoverable-paint figure and say
+so explicitly, so:
+
+**I am NOT quoting the census's own `gain` total, because it is inflated and I built
+it wrong.** It sums `min(capacity - paint, towerPaint)` over *every* hungry-and-legal
+turn — 98,773 paint on UnderTheSea, which reads as "494 soldiers of paint". That is
+nonsense: transfer has a cooldown of 10, and a robot loitering beside a tower for
+ten hungry turns contributes ten full tank-fills to the sum while it could actually
+have taken one. The sum double-counts by roughly the dwell time, and the same tower
+paint is counted once per adjacent robot on top of that. A per-turn maximum summed
+over turns is not a total; it is an upper bound on each turn, added up.
+
+I am recording that rather than quietly dropping the number, because I *wrote the
+counter that way* and only caught it when 494 soldiers of paint failed a
+plausibility check against the 572 soldiers actually built in a whole game. Same
+shape as the post-spend affordability artefact earlier this iteration: **a statistic
+that is a maximum per observation does not become a total by summation.**
+
+### Iteration 25 — the mechanism, and the gate, pre-registered before any evaluation
+
+`src/alice_i25`: **a robot below half paint, with an unused action, withdraws a
+tower's surplus paint above one soldier's cost.**
+
+Two design choices that make the price genuinely near-zero rather than merely small,
+each of which I would otherwise have had to measure:
+
+1. **It runs AFTER the unit's normal logic.** `canTransferPaint` is false once the
+   action is spent, so it can consume only an action the unit did not use. A soldier
+   that painted, marked, or completed a pattern this turn is untouched — and a unit
+   at 0 paint, the one this is for, *cannot paint at all* and had nothing to spend.
+   That is iteration 24's winning shape: capability preserved at zero marginal cost.
+2. **It takes only the tower's surplus above `SOLDIER.paintCost`.** It can never
+   consume the paint a soldier build needed; it drains only the idle band the tower
+   census measured. Self-calibrating, in the same form as iteration 5's "only build
+   a mopper if a soldier was affordable too" — **no tuned dose**, so nothing here can
+   be overfitted to a map sample.
+
+Zero arm = `alice_iter24`, which `src/alice` is behaviourally identical to (their
+only diff is dormant `runSplasher` code, and splashers are never built — the spawn
+choice is MOPPER/SOLDIER only).
+
+**Pre-registered accept gate** (written now, before a single evaluation game):
+
+- **> 50% head-to-head vs `alice_iter24`** on a fresh random 25-map sample, read as
+  **net swept maps** (SW − SL), not as a win percentage, since margin over 50% =
+  SW − SL exactly and split maps carry no signal.
+- **No unresolved one-directional regression**: swept losses must be explainable.
+- **Exceptions: 0**, and **no bytecode overruns**.
+- **Mechanism verification, and it is a real risk here**: the census says this can
+  fire on at most ~5% of hungry turns. So I must report `i25Refills` — a firing
+  count — and if the mechanism fires **zero or near-zero** times, then any win is
+  *not* this mechanism and the correct verdict is REJECT-as-unattributable, however
+  good the score looks. A low firing rate is not by itself evidence of no effect
+  (rare and high-value is a real profile), but a *zero* firing rate is.
