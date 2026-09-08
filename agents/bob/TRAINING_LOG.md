@@ -10682,3 +10682,109 @@ those are small-effect candidates and my own instrument says I cannot see them:
 
 Markers and mopper share are **deferred, not closed**: they are small-effect and I would be measuring
 noise.
+
+---
+
+## API sweep (iteration 30 + stalled loop — both triggers fired), and what it found: THE TOWER CAP
+
+The algorithm schedules this sweep "at iteration 5, every 10 iterations after that, and whenever the
+loop stalls." I am at iteration 30 with zero accepts in 13.5 hours, so both triggers were live.
+
+**First, a wrong-referent error I caught mid-sweep and nearly published.** I ran `javap` on the first
+`battlecode25-java` jar `ls` returned — **1.0.0**. `engine_version.txt` says **3.1.0**, and both jars
+are in the gradle cache. The tell was doctrine 5's exact signature, two artefacts that should agree and
+didn't: my bot calls `rc.getChips()` and `getChips` did not appear in the dumped API. Had that method
+existed in both versions, the sweep would have silently reported the wrong surface. **Always dump the
+jar named by `engine_version.txt`, never the first one `ls` returns.**
+
+Against the correct 3.1.0 `RobotController`, **27 of 68 methods are never called anywhere in
+`src/bob`**:
+
+```
+adjacentLocation  broadcastMessage  canBroadcastMessage  canMark  canPaint  canRemoveMark
+canSendMessage  canSenseRobot  canSenseRobotAtLocation  disintegrate  getActionCooldownTurns
+getMoney  getMovementCooldownTurns  getNumberTowers  getResourcePattern  getTowerPattern
+isLocationOccupied  mark  onTheMap  readMessages  removeMark  resign  sendMessage
+sensePassability  senseRobot  setIndicatorDot  setIndicatorLine
+```
+
+Most are utility or debug. Three are mechanics: the free-form markers (`mark`/`removeMark`, already
+queued), messaging (`sendMessage`/`readMessages`/`broadcastMessage` — unused because iteration 28c was
+rejected and reverted), and **`getNumberTowers`**.
+
+### `getNumberTowers` — my bot cannot see a capped team resource, and the cap BINDS
+
+`RULES.md` line 114: **`MAX_NUMBER_OF_TOWERS` = 25.** The algorithm's §4 warning is verbatim about this
+situation: *"if the change alters who draws on any shared/capped team resource (a build cap, a shared
+treasury, comm slots), instrument the pool itself — three iterations once failed identically because a
+global cap, visible in the data the whole time, was never printed."*
+
+It is visible in the data. It is the `tw` column my own dumper has printed all along. On
+`matches/bob-vs-bob_iter11-on-Leaf.bc25` (Leaf, 56 header ruins):
+
+```
+round  250   T1 tw15   T2 tw22
+round  500   T1 tw25   T2 tw25     <- BOTH TEAMS AT THE CAP
+round 1000   T1 tw25   T2 tw25
+round 1500   T1 tw25   T2 tw25
+round 2000   T1 tw25   T2 tw23
+```
+
+**Pinned at 25 from round 500 to the end — 75% of the game.**
+
+### The defect this exposes is not the wasted paint, it is a PERMANENT SOLDIER SINK
+
+`Soldier.chooseRuin()` releases `workRuin` on exactly two conditions: the ruin becomes visibly
+occupied by a robot, or `completeTowerPattern` succeeds. At the tower cap **neither can ever happen**
+on an unoccupied ruin — nobody can build there, so it stays empty forever, and
+`canCompleteTowerPattern` is permanently false.
+
+So a soldier that locks onto an unclaimed ruin while the team is at 25 towers:
+
+1. navigates to it (`Nav.navTo(workRuin)`) and stays,
+2. spends 25 paint on `markTowerPattern` (marks are a separate layer — that paint does **not** reach
+   the board as coverage),
+3. paints the 5x5 pattern **down to zero paint**, because iteration 18 set `RUIN_FLOOR = 0` precisely
+   so the last point is spent on tower-pattern work,
+4. **never releases the ruin**, and re-selects it next turn.
+
+The paint-loop guard is `rc.getPaint() > RUIN_FLOOR` and the mark guard is `canMarkTowerPattern`.
+**Neither consults the tower count**, and the engine's own `canCompleteTowerPattern` only blocks step
+4 — the step that costs nothing — while leaving steps 1–3 running forever.
+
+**Honest accounting of what is and is not waste** (doctrine: price the reallocation, not the gain):
+the *pattern painting* in step 3 does put ally paint on the board and coverage is the win condition,
+so it is **not** pure waste — it is ordinary painting done on tiles chosen by a dead goal instead of by
+`paintSomething`. What is genuinely destroyed is the 25 paint per marking, the travel, and above all
+the soldier's **remaining career**, which is spent servicing a task with a structurally impossible
+completion condition. Iteration 18 makes this maximally expensive by driving the soldier to 0 paint.
+
+This is the recurring winner's profile the algorithm names — *capability preserved at zero marginal
+cost, removing pure waste* — and it is one `getNumberTowers()` call.
+
+### Pre-checks: this is REGIME-DEPENDENT and must not be measured on a random sample
+
+Doctrine 4 governs. The guard can only fire where a team actually reaches 25 towers, and a random
+25-map draw would average a fixed zero over the maps where it cannot.
+
+**Upper bound, free, already on disk.** A team can hold 25 towers only if ~25 ruins are available to
+it. From `tools/mapdata/ruin_parity.txt`, **20 of 75 maps have >= 23 claimable ruins** (+2 starting
+towers). So the cap is reachable on at most **27% of the corpus** — and Leaf, where I measured it, is
+the ruin-richest map at 52 and is flagged in this log as a two-order-of-magnitude outlier. **Sizing on
+Leaf alone would be exactly the degenerate-sizing-map error §3 warns about.** Gears (14 claimable)
+reached only `tw8`; the cap cannot bind there.
+
+Probe matches are running now on `DefaultHuge DonkeyKong TheBest SMILE headphones maze UglySweater`
+(49/46/44/38/32/28/28 claimable) to convert that upper bound into an observed rate. **Pre-registered
+before the probes land**: I expect the cap to bind on the 40+-ruin maps, to be marginal near 28, and
+never to bind below ~23. If it binds on fewer than three of the seven, the regime is too narrow to
+carry an iteration and I will say so rather than running it anyway.
+
+**Pre-checks NOT yet done, named explicitly so the next session does not inherit my momentum:**
+- Trigger frequency *within* a binding map: what fraction of soldier-turns have `workRuin != null`
+  while at cap? The sink's size is that number, and I have not measured it.
+- Whether `canMarkTowerPattern` already returns false at the cap. If the engine blocks the mark, step 2
+  costs nothing and only steps 1 and 3 remain. **This changes the size of the claim and I have not
+  checked it** — it needs a `javap`/probe, not an assumption.
+- History: iteration 18 deliberately established `RUIN_FLOOR = 0`. A fix here does not revert it, but
+  the interaction is real and must be stated, not discovered later.
