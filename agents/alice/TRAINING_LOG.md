@@ -9573,3 +9573,140 @@ holding station there is not stagnation.
 
 Bob is still the target: 23 split maps out of 75 means that matchup has most of its
 resolution intact, and 44 swept losses are real losses, not spawn luck.
+
+### The headroom probe — the reserve IS the limiter, and taking the headroom would re-open iteration 5
+
+`alice_i25r0` is `alice_i25` with the surplus reserve set to 0 (a bound, never a
+shipping candidate). Same map, same opponent, same everything else:
+
+| | R = 200 (shipping) | **R = 0 (bound)** |
+|---|---|---|
+| refills fired | 26 | **173** (6.7x) |
+| paint withdrawn | 1,962 (9.8 soldiers) | **14,037 (70.2 soldiers)** (7.2x) |
+| robots that ever refilled | 19 of 776 (2.4%) | **118 of 740 (15.9%)** |
+
+So the answer to "is the reserve set too conservatively?" is **yes, mechanically** —
+the reserve, not the cooldown and not the adjacency, is what holds firing down. The
+direction is not thin. There is a 7x dose ladder sitting there.
+
+**And I am not going to climb it, for a reason that is worth more than the ladder.**
+
+`R = SOLDIER.paintCost` is not a cautious round number I picked. It is exactly the
+value that guarantees **a tower can always still afford a soldier**, and iteration 5
+exists because tower paint falling below that point is an **absorbing state**:
+
+> once tower paint reaches 0 only the 100-paint mopper is affordable, moppers
+> complete no tower patterns, so paint income never recovers (Mirage: dead at r200,
+> coverage 132 -> 15 per-mille).
+
+At R = 0 a single passing soldier can drain a tower to empty. That is not a dose of
+the same mechanism; it is a re-opening of a failure mode this lineage already
+measured, fixed, and accepted. R = 100 (mopper cost) is softer but sits *inside* the
+same trap — it guarantees only the unit that cannot escape the absorbing state.
+
+**The transferable form:** *the headroom in a mechanism is not free capacity if the
+thing capping it is a previously accepted fix.* A 7x firing increase reads as
+"under-dosed" only if you look at the mechanism alone; read against the ledger it is
+"correctly dosed at the boundary of a known cliff". Before spending headroom, check
+what put the cap there — and if the answer is an earlier accepted iteration, the
+dose search is not a dose search, it is an **ablation of that iteration**, and it
+must be gated on *that* iteration's metric (the mopper/soldier spawn mix and the
+paint-income trajectory) rather than on a win rate.
+
+So R=100 is recorded here as a **legitimate future ablation with a named gate**, not
+as a tuning knob: it may be run only with the absorbing-state instrumentation from
+iteration 5 attached, and it must clear that gate *before* its win rate is looked at.
+
+## Replay evidence from the tournament — I do not plateau, I COLLAPSE, and bob uses the exact mechanic I just built
+
+Non-blocking work while the iteration 25 gauntlet ran. Source:
+`arena/tournaments/20260908-0100/replays/alice-vs-bob-on-DefaultLarge.bc25` — a
+sanctioned cross-lineage channel, and the only games here against an opponent my
+lineage did not produce. T1 is alice, T2 is bob. Bob won at round 1746,
+`MAJORITY_PAINTED`.
+
+| round | alice cov | bob cov | alice $ | bob $ | alice twPaint | bob twPaint | alice tw | bob tw | alice spl | bob spl | alice xfer | bob xfer |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 40 | 146 | 178 | 370 | 500 | 1300 | 380 | 4 | 3 | 0 | 0 | 0 | 2 |
+| 280 | **589** | 390 | 3,690 | 1,225 | 1,205 | 2,516 | 15 | 8 | 0 | 5 | 0 | 0 |
+| 400 | 562 | 418 | 1,320 | 1,245 | 1,335 | 2,366 | 14 | 8 | 0 | 8 | 0 | 18 |
+| 800 | 494 | 484 | 1,860 | 1,295 | 1,000 | 3,410 | 13 | 9 | 0 | 7 | 0 | 3 |
+| 1200 | 461 | 505 | **36,630** | 1,445 | 810 | 3,126 | 12 | 10 | 0 | 9 | 0 | 70 |
+| 1600 | **349** | **627** | **36,830** | 1,447 | **680** | 2,072 | 10 | 12 | 0 | 10 | **0** | 65 |
+
+**I had the shape of this game wrong.** I have been describing my weakness as a
+*plateau* — "the map saturates and I cannot take enemy ground". It is not a plateau.
+**Coverage peaks at 589 per-mille around round 280 and then falls monotonically to
+349.** I lose ground I already painted, for 1,300 rounds, while bob climbs from 390
+to 627. The crossover is at round ~800.
+
+That is a different defect with a different cause, and the previous framing would
+have sent me looking for a way to *take* new ground when the actual failure is that
+I cannot *hold* what I have.
+
+### The mechanism is visible in the same table, and it is a paint-logistics failure
+
+- **My chips balloon to $36,830 unspent** while bob sits at $1,447. Chips are not
+  the constraint and have not been since iteration 2 — but this is a new extreme.
+- **My total tower paint falls to 680 across 10 towers — 68 each**, against bob's
+  2,072 across 12. My towers are too poor to build anything, which is why the chips
+  pile up. **This is iteration 5's absorbing state re-emerging in the late game**,
+  where I only ever looked for it early.
+- Per 400-round window at round 1600: I spawn 130 soldiers and 47 moppers and lose
+  **198 units, 116 of them to starvation**. Bob spawns 111 and 38 and loses 161, 88
+  starved.
+- And the payoff line: **my paint actions are 734 in that window against bob's
+  1,608.** Similar unit counts, similar spawn rates, *less than half the painting*.
+
+So I am converting tower paint into soldiers that walk out, starve, and die without
+painting much, and then spending another 200 tower paint on a replacement that does
+the same. Bob is not out-producing me — **bob's units simply paint more than twice
+as much each.**
+
+### Bob uses `transferPaint`. I use it zero times, in every window, all game.
+
+`xfer` counts paint-transfer actions. Bob: 2, 18, 3, **70, 65**. Me: **0, 0, 0, 0, 0**.
+
+This is independent corroboration of iteration 25's direction from a source that
+had nothing to do with it — I found the unused mechanic by sweeping
+`RobotController`, and bob was already using it heavily. But the replay also
+sharpens *why* it matters, in a way my own censuses could not:
+
+> **A refill is strictly cheaper than a replacement.** Both cost the same 200 tower
+> paint. The replacement additionally costs 250 chips, a walk from the tower to the
+> frontier, and the death of a unit that had already made that walk. The refill
+> keeps a unit that is *already in position*.
+
+That is the loop bob is in and I am not: refill -> fewer deaths -> less tower paint
+churn -> towers stay rich -> more refills. Mine runs the other way, and the $36,830
+and the 68-paint towers are what the bottom of it looks like.
+
+### Which makes my R=200 reserve look like the wrong call, for a NEW reason
+
+I argued above that `R = SOLDIER.paintCost` is correct because dropping below it
+re-opens iteration 5's absorbing state. The replay says the absorbing state
+**arrives anyway** — my towers reach 68 paint each by round 1600 with the reserve
+fully in place. The reserve is not preventing the collapse; it is only preventing
+the withdrawal that might have averted it.
+
+And the argument that draining a tower re-opens iteration 5 is weaker than I
+credited: iteration 5's failure was tower paint being **burned on moppers that
+cannot paint**. My spawn rule already refuses a mopper unless a soldier was
+affordable, so a tower under 200 paint builds *nothing* rather than spamming
+moppers. Paint moved into an existing soldier is not burned — it is in a unit that
+paints. Those are different fates for the same paint, and I conflated them.
+
+**I am not changing the dose on this reasoning alone** — that would be fitting the
+knob to a story from one replay of one map, which is exactly the error this log is
+full of. It is recorded as the pre-registered ablation below, with its gate.
+
+### Two more mechanics I field at zero and bob fields
+
+- **Splashers**: bob 5 by round 280, 10 by round 1600. Me: **0**, all game, every
+  game. My tower census says why (unreachable under the chip gate at 0.15-0.25%).
+- **SRPs**: bob completes 4 resource patterns. Me: **0**. Never touched.
+
+I am recording these as observations, not adopting them: what an opponent does is
+evidence that something is *possible and survivable*, never evidence that it is
+right for my bot. But "zero, all game, every game" for three separate mechanics is a
+pattern about my lineage rather than about any one of them.
