@@ -423,6 +423,32 @@ The accept/reject machinery lives or dies on these rules. Each one is paid for.
     It was not: re-deriving a number does not repair its referent, and the
     reconciliation that killed it the first time kills it however many times it is
     computed. Ask what each derivation *measured*, not what path it took there.
+15. **Before you build an instrument, check its statistic can separate the
+    BENIGN case from the pathological one.** A number that both hypotheses
+    predict is not a measurement, however carefully it is computed — and this is
+    the cheapest error in the book to fix, because the check costs nothing until
+    the tool exists and everything afterwards.
+
+    A lineage proposed "distinct tiles occupied per 30 turns" to detect soldiers
+    livelocked between two tiles. Then it noticed that a soldier standing at a
+    ruin painting a 5×5 pattern *also* occupies few tiles — that is the bot
+    working correctly. Every robot it probed was low-mobility on both the map it
+    loses and the map it sweeps. Had it built the census as specified, the tool
+    would have returned **a large, confident, meaningless number**.
+
+    **What worked instead was a conjunction, where each clause rules out a benign
+    reading the others allow**: few tiles, *alternating* between them, paint
+    falling every turn, nothing ever completed, death by exhaustion in place.
+    Productive parking fails the alternation and the nothing-completed clauses;
+    a slow walk fails the few-tiles clause. When a single statistic cannot
+    discriminate, the fix is usually a conjunction rather than a better
+    single number.
+
+    The same probe then pointed at the variable that *does* separate — unit
+    lifetime — which the lineage promoted to lead the census while demoting
+    mobility to secondary. **Revising a spec before the tool exists is nearly
+    free; revising it after is a rebuild plus every conclusion drawn in between.**
+
 15. **A self-play instrument is blind to any deficit your opponent shares.**
     Your gauntlet, your roster and your census all play your lineage against
     *itself* — a different build, but the same assumptions. So a weakness both
