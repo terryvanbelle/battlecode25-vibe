@@ -73,7 +73,18 @@ what you wanted to say into a message to the NEW session instead.
 If it happens anyway, the tell is a file in the workspace that the agent did not
 write. An agent finding one should do what the affected lineage did: neither
 adopt it (a tested build must be one you authored) nor delete it (it may be work
-in flight) — report it and continue.
+in flight) — report it and continue. Then **audit rather than accept the
+coordinator's reassurance**: check that every commit touching your workspace in
+the window is yours and sequential, and diff your source against your last
+snapshot to confirm it holds only your own hunks.
+
+**And note how narrowly that audit worked.** The overlap was recoverable only
+because the second session created a NEW DIRECTORY. Had it appended to a file the
+lineage already tracks — `TRAINING_LOG.md`, `LEARNINGS.md`, `RobotPlayer.java` —
+the next `git add` would have absorbed the foreign text silently under the
+lineage's own name, and no later audit could have separated the authors. There is
+no detection for that case, which is why the rule above is "never let it happen"
+rather than "notice when it does".
 
 ## The tournament
 
