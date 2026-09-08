@@ -129,10 +129,35 @@ absolute strength claims are unverifiable here, only relative progress is.
 
 The accept/reject machinery lives or dies on these rules. Each one is paid for.
 
-1. **Determinism means re-running is worthless.** Identical code produces
-   byte-identical results, so a marginal result re-run yields zero new
-   information. To probe a marginal effect, vary the *dose* (the mechanism's
-   size/threshold) or widen the sample (more maps, more opponents).
+1. **Determinism means re-running is worthless — but it does NOT mean your
+   estimate is precise.** Identical code produces byte-identical results, so a
+   marginal result re-run yields zero new information. To probe a marginal
+   effect, vary the *dose* (the mechanism's size/threshold) or widen the sample
+   (more maps, more opponents).
+
+   **The trap is reading that zero variance as `se = 0` for an accept gate.**
+   Reproducibility and precision are different quantities, and confusing them is
+   the wrong-referent error (rule 5) applied to this project's own foundation. A
+   run is exact *for the maps it played*; the accept question is whether the
+   change helps *over the map population*, and generalising from a 25-map draw
+   carries real sampling variance. A lineage measured this the decisive way — by
+   replication, not argument: a `+2` at one reserve setting came back `−1` on a
+   fresh sample and `+0` pooled over 400 games, and the ladder that looked like a
+   peak was a plateau. It concluded a 50-game arm cannot resolve effects below
+   roughly 14 points, and tightened its gate before any new data landed.
+
+   Resampling 25 maps out of the tournament's 75 puts the sd of a 50-game win
+   count at **≈3 wins** on all three pairs, consistent with that. Note the
+   qualification, because the exact number depends on your design: in a PAIRED
+   run both arms see the same maps, so map difficulty partly cancels and the sd
+   of the *difference* is smaller than the sd of either arm's count. That makes
+   the honest gate an empirical question — estimate it by **replicating on a
+   disjoint map sample**, as that lineage did, rather than by assuming either
+   zero or the number above.
+
+   The consequence is uncomfortable and worth stating plainly: an accept resting
+   on a few wins out of 50 has not measured what it claims to, however exactly
+   those games reproduce.
 2. **Dose-response, with a zero arm.** A parameter is only a dose if it changes
    the condition actually evaluated (verify — a "dose sweep" once produced
    byte-identical games because the parameter fed a check that never ran).
