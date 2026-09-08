@@ -202,9 +202,20 @@ and is its marked center. 24 paintable tiles per tower pattern, 25 for SRP.)
 **Economic consequence**: paint is the binding resource. A lv2 paint tower makes 10
 paint/turn; a soldier costs 200 paint to build and 5 paint per tile painted. Money towers
 generate no paint, so a money tower can spawn ~2 robots from its 500 starting stash and
-then goes dry until a mopper refills it. Chips accumulate uselessly unless spent on towers
-/upgrades/SRPs. Each active SRP adds +3/turn to EVERY paint tower and EVERY money tower,
-so SRP value scales with tower count.
+then goes dry until a mopper refills it. Each active SRP adds **+3 paint/turn to every PAINT
+tower and +3 chips/turn to every MONEY tower** -- NOT +3 paint to both. The paint half sits
+inside the `type.paintPerTurn != 0` guard, so a money tower gets no paint from an SRP at all
+[E, and see the HARD LOSS section above, which turns on exactly this]. An earlier wording here
+said "+3/turn to EVERY paint tower and EVERY money tower", which read as paint to both and
+contradicted that section; corrected at iteration 40.
+
+**Chips are not inert, and this is the trap iteration 40 fell into.** It is tempting to
+summarise the above as "chips accumulate uselessly", and then to treat converting paint income
+into chips as a trade of a useful resource for a harmless one. It is not. Chips clear the
+soldier/splasher build gates, and **a robot's build cost is 200 paint drawn from the building
+tower's own stash**. So chips convert straight back into demand on the paint account. Any
+change that buys chips with paint income is charged twice: once for the income forgone, and
+again when the chips are spent. Price both halves before proposing one.
 
 ## Pattern completion is exact [E: GameWorld.checkPattern]
 

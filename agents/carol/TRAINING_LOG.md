@@ -10844,3 +10844,129 @@ Stated as a falsifiable difference rather than an assurance: **if iteration 40 f
 iteration 37 did, the splasher build count will fall.** If splashers hold and soldiers rise, the
 two iterations are doing different things and iteration 37's result does not transfer. That is a
 cheap check on a real risk, and it goes on the record now.
+
+## Iteration 40 RESULT — **REJECT** at 22/50, −1.10 sd. Chips bought soldiers, and soldiers are paid for in paint.
+
+Run `gauntlet/20260908-133202` (finished and collated before the session died; only the verdict
+was lost). `carol_i40_3` (MONEY_MOD 3) vs `carol_iter36` (MONEY_MOD 4): **22/50, −1.10 sd**,
+SW 4 / SL 7 / D 14, small 17/30 = 56.7%, large 5/20 = 25.0%.
+
+**The dose ladder is monotone toward FEWER money towers, for the fourth iteration running:**
+`carol_i40_3` beats `carol_i40_2` (MONEY_MOD 2) **30/50, +2.11 sd**, so
+`iter36 (mod 4) > i40_3 (mod 3) > i40_2 (mod 2)`. Iterations 37, 38, 39 and now 40 have all
+produced a ladder monotone toward zero dose. That is now a pattern about my hypothesis
+generation, not about four separate mechanisms, and I take it up at the end.
+
+**DECISION: REJECT.** `src/carol` remains iteration 36 (MONEY_MOD 4); HEAD compiles.
+
+### Link 1 (channel A — chips -> paint-tower upgrades) fired, weakly and with inconsistent sign
+
+Real paint-tower upgrades, round 1 excluded, paired within one game:
+
+| map | `carol_i40_3` | `carol_iter36` |
+|---|---|---|
+| TheBest | **7** | 2 |
+| Piglets2 | **5** | 2 |
+| gridworld | 1 | **2** |
+| sayhi | 1 | **3** |
+| total | 14 | 9 |
+
+So the first link is not cut — more money towers do buy some upgrades — but the effect is small
+and reverses on two maps of four.
+
+**This also corrects my own addendum.** I wrote that "the current build barely upgrades", from a
+single self-play `galaxy` game that showed 0 real upgrades for both arms. `carol_iter36` upgrades
+**2-3 paint towers per game** on these four maps. The zero was a property of that map, not of the
+build — the same over-generalisation from one map as the `twPaint~` reading, made three hours
+after I logged that lesson.
+
+### Channel B (chips -> soldiers -> ruins become towers) did NOT fire as designed. It is the failure.
+
+Whole-game build counts and fleet-summed tower paint (median over rounds), paired within a game:
+
+| map | arm | soldiers built | splashers built | paint towers built | median tower paint | end coverage |
+|---|---|---|---|---|---|---|
+| TheBest | `i40_3` | **153** | 173 | 7 | **993** | 417 |
+| TheBest | `iter36` | 25 | 180 | **10** | **3082** | **452** |
+| Piglets2 | `i40_3` | **78** | 106 | 3 | 650 | 394 |
+| Piglets2 | `iter36` | 28 | 111 | 2 | **1680** | **499** |
+| gridworld | `i40_3` | 22 | 6 | **0** | 199 | 183 |
+| gridworld | `iter36` | 13 | **18** | **3** | **436** | **702** |
+| sayhi | `i40_3` | 18 | 28 | 4 | 2861 | 151 |
+| sayhi | `iter36` | **55** | **57** | **9** | 593 | **702** |
+| **rain (a WIN)** | `i40_3` | **8** | **46** | **2** | **974** | **702** |
+| **rain (a WIN)** | `iter36` | 29 | 30 | 1 | 388 | 234 |
+
+The four losing maps came from the run's `losses/`, so they are a biased sample; I reproduced the
+swept-win map `rain` with a single deterministic re-run specifically to break that bias, and it is
+the row that decides the reading.
+
+**On the map it WON, the candidate built the FEWEST soldiers (8 vs 29) and the MOST splashers
+(46 vs 30).** The soldier surge is therefore not the mechanism working — it appears only where the
+candidate loses. It is not a cause I can credit and not a symptom I can ignore, because the
+arithmetic says which way it runs.
+
+### The mechanism, and it is the second-order cost I failed to price
+
+**A soldier costs 200 paint, drawn from the building tower's own stash** (`RULES.md`: build cost
+is paint from the TOWER's stash, not team-wide). So:
+
+> `MONEY_MOD` trades a tower's **paint income** for **chips**. The chips then clear the soldier
+> gate. Each soldier so bought is **paid for in paint** — 200 of it — out of the reduced pool.
+> Every link moves supply off the binding resource and then converts the non-binding resource
+> back into demand on the binding one.
+
+On `TheBest` that is 153 x 200 = **~30,600 tower paint spent on soldiers** against the incumbent's
+25 x 200 = ~5,000, and the candidate's median tower paint is **993 against 3,082**. Soldiers and
+tower paint are anticorrelated in all five games, in both directions of outcome (on `rain` the
+arm with fewer soldiers held more tower paint, and it was the candidate that time).
+
+**My pre-registered weak link priced only half of this.** I wrote that the trade was "roughly one
+ruin sacrificed per upgrade bought" — 5 paint/turn forgone against 5 paint/turn gained. That
+prices the *income* ledger and nothing else. It misses that the chips do not sit idle: they buy
+units, and units are billed to the paint account. My own `RULES.md` had the fact written down
+already — *"money towers generate no paint... chips accumulate uselessly unless spent on towers
+/upgrades/SRPs"* — and I read that sentence as a statement about chips being useless rather than
+about what happens when they stop being useless.
+
+### The pre-registered iteration-37 discriminator RESOLVES — and its value was in being wrong
+
+I put on record before the run: *"if iteration 40 fails the same way iteration 37 did, the
+splasher build count will fall."* It did not. Splashers held on the losing maps where soldiers
+surged (`TheBest` 173 vs 180; `Piglets2` 106 vs 111) and **rose** on the winning one (46 vs 30).
+So iteration 37's displacement mechanism — cheap units crowding out splashers when the team is
+poor — is genuinely not operating here, and iteration 37's result does not transfer.
+
+That is worth stating plainly because the check earned its keep by clearing the hypothesis it was
+aimed at. Without it I would have filed "money towers = iteration 37 again", which is tidy,
+plausible, and wrong. The real failure was a third thing neither iteration had met before. **A
+discriminator that exonerates its suspect is not a wasted check; it is the one that forces you to
+go and find the actual mechanism.**
+
+### What this says about the tether, and about four monotone ladders in a row
+
+The tether finding said: reach further by moving the anchors outward, and only soldiers convert
+ruins into towers. Iteration 40 tried to buy more soldiers and found the catch:
+
+> **Extending the tether costs the resource the tether rations.** A soldier is 200 paint; a tower
+> pattern is another ~120 paint of attacks. The anchors that would relieve the paint constraint
+> can only be paid for out of the paint constraint.
+
+And the conversion is appallingly lossy, which is the number I did not expect and the one I intend
+to chase next. Paint spent on soldiers per paint tower actually completed, on `TheBest`:
+
+- `carol_i40_3`: 153 soldiers -> 7 paint towers = **~4,370 paint per tower**
+- `carol_iter36`: 25 soldiers -> 10 paint towers = **~500 paint per tower**
+
+A tower pattern is 24 tiles x 5 paint = **~120 paint** of attacks. So even the *incumbent* pays
+about **4x** the theoretical cost of a tower, and the candidate pays **36x**. Whatever the right
+mechanism is, there is a factor of four sitting in the incumbent's own soldier economy that no
+iteration has touched, and it is not a matter of buying more soldiers — it is that soldiers, once
+bought, mostly fail to finish a ruin.
+
+**On the four monotone ladders.** Iterations 37 (soldier gate), 38 (drag to towers), 39 (steer to
+frontier) and 40 (more money towers) all landed monotone toward zero dose. Every one of them was a
+*parameter or policy change applied to the existing unit economy*. None of them changed the thing
+the last two results both point at: the per-unit efficiency with which paint becomes territory. I
+am going to stop proposing doses of existing knobs.
+

@@ -1628,3 +1628,56 @@ later). **Two consecutive iterations tried to out-think a loop that was already 
 margin, the variable is not the lever — something *else* is holding the outcome fixed, and the
 next iteration must name what. I spent two runs establishing this and could have spent one, had I
 asked after iteration 38 what the *opposite* change would predict.
+
+## Price the SECOND-ORDER cost of a resource trade, not just the ledger entry (iteration 40)
+
+Iteration 40 raised the money-tower share to buy chips, and I pre-registered the trade honestly as
+an income ledger: each money tower forgoes 5 paint/turn, each upgrade it funds adds 5 paint/turn,
+so the trade is roughly break-even and wins only if the chips buy more than one upgrade per
+forgone paint tower. That arithmetic was correct and it was less than half the cost.
+
+**What it missed: the chips do not sit in the treasury. They buy units, and a unit's build cost is
+200 PAINT drawn from the building tower's own stash.** So the trade is charged twice — once for
+the paint income forgone, and again when the chips it bought are spent back against the paint
+account. On `TheBest` the candidate built 153 soldiers to the incumbent's 25: ~30,600 tower paint
+against ~5,000, and its median tower paint ran at 993 against 3,082.
+
+The generalisation, and it is not specific to money towers:
+
+> **When you trade supply of a binding resource for supply of a non-binding one, ask what the
+> non-binding resource is spent ON. If spending it creates demand on the binding resource, the
+> trade is charged twice and your income ledger prices one of them.**
+
+The galling part is that I had the fact written down. `RULES.md` said money towers generate no
+paint and that "chips accumulate uselessly unless spent on towers/upgrades/SRPs". I read that
+sentence as *chips are useless* and never read the subordinate clause as *here is what happens
+when they stop being useless*. **A note that states a fact conditionally is only as good as the
+condition you remember to check** — I have now rewritten that passage to state the second-order
+cost as its own paragraph rather than as a dependent clause.
+
+## A pre-registered discriminator that CLEARS its suspect has done its job (iteration 40)
+
+Before the run I registered: *if iteration 40 fails the way iteration 37 did, splasher builds will
+fall.* They did not fall — they held on the losing maps and rose on the winning one. The tidy
+story ("cheap units crowd out splashers, same as 37") was available, plausible, and false, and I
+would have filed it, because iteration 40 also failed and a ready-made mechanism for a failure is
+very hard to decline.
+
+**The check's whole value was in coming back negative.** It removed the explanation I was going to
+reach for and left me with no account at all, which is the only state in which I actually go and
+measure. I have been writing weak links as *predictions of how the candidate might fail*; the more
+useful framing is *predictions that will stop me reusing last iteration's explanation*. Register
+the discriminator against your own most likely misdiagnosis, not only against the mechanism.
+
+## Reproduce one WIN before reading a loss sample as a mechanism (iteration 40)
+
+The gauntlet pulls back only the candidate's losses. I analysed four of them and found a 2-6x
+soldier surge in the candidate, which looked exactly like a mechanism firing. The engine is
+deterministic, so reproducing a swept-WIN map costs one match; I ran it, and the sign flipped —
+on the map it won, the candidate built the *fewest* soldiers and the *most* splashers.
+
+So the surge was not the mechanism operating; it was a marker of the games it lost. **A quantity
+measured only on losses cannot distinguish "the cause of losing" from "what losing looks like",
+and the losses/ directory quietly guarantees that sample.** One deterministic re-run of a won map
+is the cheapest bias check available in this project and I should run it every time a loss-sample
+number is about to become a mechanism claim.
