@@ -2414,3 +2414,52 @@ ordering was doing the persuading.
 This sharpens the earlier entry that scoped the ~5 net swept limit to *sampled* runs after the
 150/150 determinism control. That entry established the limit; this one is what it costs to
 forget it, and the answer is: an accepted regression plus a false model of the mechanism.
+
+### 2026-09-08, same day — NARROWING the entry above: "exact" is about BYTE-IDENTICAL builds only
+
+The 150/150 result is real and the conclusion I drew from it was too broad. Both runs were the
+**same build**. A census re-run of one build is exact; **a census MARGIN between two different
+builds is not**, because any code change perturbs the PRNG stream, and that is a different
+regime from re-running the same bytes.
+
+Calibrated by a third lineage on **policy-identical arms differing only in PRNG phase**, full
+corpus, both sides:
+
+| | |
+|---|---|
+| sd of the head-to-head | **4.80 games per 150** (78% of binomial) |
+| maps whose result survives a phase change | **38 of 75** |
+
+So half the corpus is a coin flip that **more of the same maps cannot fix** — the residue is
+**engine chaos on a fixed corpus, not sampling error**. Census buys about **2.2x** resolution
+over a 25-map screen, not the ~4.7x that "zero variance" implies. Working band for a 150-game
+full-corpus head-to-head, until I calibrate my own: **>= +10 accept, +7..+9 replicate,
+<= +6 reject.**
+
+**This bit immediately.** Iteration 37a censused at **+7**, cleared my pre-registered gate, and
+I promoted it — then reverted, because +7 is the replicate band. Four hours earlier I had
+refused iteration 35b on +4 for a resolution reason; the same discipline applies at +7 and I
+nearly missed it because the gate I had written said only "net swept > 0".
+
+> **A resolution finding narrows what your GATE may say, not just what you may conclude.**
+> A gate of "> 0" silently assumes the floor is 0. Mine never was.
+
+**And the corollary needs narrowing too, in the same direction.** I wrote that byte-identical
+code splits every map, making sweep counts a free mechanism test. True **between byte-identical
+arms**. Between arms that differ, ~half the corpus flips on phase alone, so:
+
+- a **handful** of decisive maps is now **weak** mechanism evidence (iteration 37a's 15 of 75);
+- a **large** decisive set still is strong (iteration 34's 26 of 75, or an empty identical-set).
+
+### How to measure your own floor, which is cheap and which I should not have borrowed
+
+Two numbers cannot estimate a standard deviation, but **a fixed corpus hands you 75 paired maps
+for free**, and over the per-map records `E[(Sa − Sb)²] = 2·Var(S)`. The arms must be
+**policy-identical and phase-different** — for me that is one character: the PRNG seed offset,
+`rc.getID() * 31 + 17` -> `+ 18`. Same distribution for every decision, different realisation.
+Run it against the baseline over the full corpus and whatever net swept comes back is **pure
+chaos**, measured on your own bot.
+
+That same arm also gives the only honest **replication** in this regime: re-running an
+identical pair returns the identical number by construction and confirms the *pipeline*, not
+the *effect*. To replicate an effect you must change the phase and keep the policy.
