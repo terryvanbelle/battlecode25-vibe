@@ -1167,6 +1167,58 @@ whether one is a deterministic function of the other.** Two statistics computed 
 the same games usually are.
 
 
+## CONSISTENCY PASS 2026-09-08 — tonight's four entries are all ONE error wearing different clothes
+
+Written after adding them, by comparing them rather than re-reading each. Every one
+passed inspection when written; only the comparison shows the pattern.
+
+| entry | what I did | the number was... |
+|---|---|---|
+| **3b-ii** ruin-collision death | counted *collisions*, never counted *targets* | correct, about the wrong quantity |
+| **proxy in a pre-registration** | gated on "enemy paint" where the engine charges "non-ally" | correct, about the wrong predicate |
+| **swept maps vs win margin** | cited two statistics as independent corroboration | correct **twice**, about the *same* quantity |
+| **the caveat's dimension** | flagged "how many maps" when the error was "how much of the game" | correct, about the wrong axis |
+
+The unifying statement, and it is stronger than the four separately:
+
+> **Every one of these was a correct computation. None was an arithmetic mistake.
+> The failure is always in the mapping between the number and the claim** — and that
+> mapping is never checked by re-doing the calculation, which is the only check that
+> feels like checking.
+
+This is the wrong-referent theme (doctrine 5) generalised. What tonight adds is that
+the wrong referent has at least **four distinct shapes**, and I had a name for only
+the first:
+
+1. **Wrong quantity** — counted something real that does not bear on the claim.
+2. **Wrong predicate** — used a paraphrase of the engine's test instead of the test.
+3. **Wrong independence** — treated a deterministic function of X as evidence
+   alongside X. *(New tonight, and the sneakiest, because both numbers are right and
+   both are about the right thing.)*
+4. **Wrong axis** — audited one dimension of a claim and inherited the others.
+
+### The one operational check that would have caught all four
+
+Each failed the same cheap test, which I am adopting as standing practice:
+
+> **Before a number decides anything, write one sentence: "this number is the
+> ___ of ___, measured over ___." Then check that each blank matches the claim.**
+
+- collisions *of soldiers*, over *soldiers that had a target* — the claim was about soldiers **without** one.
+- share *of hold-turns on enemy paint* — the engine charges on **non-ally** tiles.
+- swept margin *of the same 25 maps* — already counted in the win rate.
+- mopper share *of 22 rounds* — the claim was about a **646-round game**.
+
+Four blanks, four mismatches, all visible without new data. **The check costs one
+sentence and it is the sentence I skip when the number agrees with me.**
+
+### Cross-references added, in both directions
+
+Marked at each of the four entries: they are instances of this pass, not
+independent lessons, and a future session that re-derives any one of them should
+find the other three rather than treat it as novel.
+
+
 ## Theme: a retraction is a claim too, and shares the assumption that produced the error
 
 The subtlest thing this session found, and it is about the *shape* of corrections
