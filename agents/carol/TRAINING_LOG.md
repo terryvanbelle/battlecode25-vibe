@@ -8417,3 +8417,145 @@ of a stale idle figure, and both failed — 19a at 32%, this at exactly the null
   each active SRP adds +3/turn to *every* tower, so its value scales with tower count. Registering
   it as the next candidate to size, with iteration 26's recorded failure (gate set at the cost of
   the first step, 59–88% of marks abandoned) as the specific thing a design must fix.
+
+## Iteration 32 — opportunistic LATTICE SRP: re-opening iteration 26 on the ledger's own terms
+
+**Where this came from.** Iteration 31's ledger registered the next candidate as *"raising tower
+paint income — rather than re-dividing a starved stash"*, naming the SRP as the instrument
+(+3 paint/turn to every paint tower per active SRP, so its value scales with tower count) and
+iteration 26's failure as the specific thing a design must fix. This is that candidate.
+
+**The closed direction, and the clause that re-opens it.** Iteration 26 closed *"SRPs as
+currently designed"* — but explicitly **"on the commitment model, not on the mechanic"**. The
+mechanic is *proven*: 88 patterns completed across one run, on a build that had never laid one in
+26 iterations. What was refuted is **per-soldier commitment with navigation capture**: once
+`srpCenter` was set, `SRPfar` fired 573–4,583 times a game steering the soldier, which then
+arrived back below the release threshold. The ledger wrote its own re-opening condition, and I am
+taking it verbatim: *"an opportunistic version with no `srpCenter` at all — complete any pattern
+that happens to be finishable from where the soldier already is ... That has no in-transit spend
+to lose."*
+
+**The missing piece was coordination, and a LATTICE supplies it.** With no per-robot target,
+soldiers must agree on *where* a pattern goes without communicating. `cell(x,y)` centred at
+`(5*(x/5)+2, 5*(y/5)+2)` is a **pure function of the tile**, so every soldier that ever stands
+there computes the same centre with nothing exchanged, and 5×5 blocks on a 5-stride lattice tile
+the plane exactly with no overlap. This is the same device `towerTypeFor()` has used since
+iteration 5 — *"must be a pure function of the ruin so that every soldier agrees every turn"*.
+
+**The property that makes this not iteration 26 again**, and it is the whole bet: because the
+target is a function of the **map** rather than of the **robot**, *partial work is never lost*.
+Paint already laid stays on the ground, and the next soldier to stand in that cell — any soldier,
+any number of rounds later — continues from where the last one stopped. Iteration 26 discarded
+every partially-built pattern the moment its owner was distracted; this holds no state at all, so
+there is nothing to drop. It also pays **no 25-paint deposit**: RULES.md records that marks are
+optional and "pattern match is on paint only", so iteration 26's non-refundable entry cost — the
+thing I priced wrongly and which killed it — does not exist in this design.
+
+### Two probes, and the first one was a FALSE NEGATIVE I nearly acted on
+
+**Probe p (`carol_i32p`, run `20260908-054603`, 8 games).** Identity check exact: 4/8, all four
+maps split by side, every map ending on the same round as iteration 30 — a confirmed no-op.
+Pre-registered kill condition: *if `srpOk` is ~0 the design is unreachable.*
+
+| map | idle turns | ruin-blocked | dirty | **`srpOk`** |
+|---|---|---|---|---|
+| Parking_lot | 137 | 5 (3.6%) | 132 (96%) | **0** |
+| sunrise | 46 | 31 (67%) | 15 | **0** |
+| gridworld | 44 | 44 (100%) | 0 | **0** |
+| DefaultLarge | 67 | 62 (93%) | 5 | **0** |
+
+`srpOk = 0` everywhere. **The kill condition fired — and it was wrong.** Probe p tested a
+condition *wider than the mechanism needs*, which is precisely the error iteration 26a wrote the
+rule against: *"check that the counter's condition is the same width as the decision the bot would
+actually get to make. A narrower proxy can only produce false negatives, and a false negative here
+reads exactly like a refutation."* I wrote that rule, then broke it in the other direction — p's
+condition was **wider**, which produces false negatives just as effectively. Two guards were too
+wide, both provably:
+
+1. **Full-cell sensing.** p required all 25 cell tiles to be sensable. Vision is r²=20 and a cell
+   corner sits at (4,4) = r² 32 from the opposite corner, so **only 13 of the 25 standing
+   positions inside a cell can see the whole cell** — ~48% of turns failed on geometry, not on the
+   map. Worse, p folded that into the *same counter* as real dirt, so p cannot say how much of
+   Parking_lot's 96% was ever real. That conflation is the actual defect.
+2. **The ruin guard.** p vetoed any cell overlapping *any* visible ruin. But RULES.md: *"tower
+   survives even if its pattern is later painted over"* — a ruin that **already has a tower** is
+   not a conflict at all.
+
+**Probe q (`carol_i32q`, run `20260908-055828`, 8 games)** re-asked the question at the width of
+the *tile-local* decision the shipping mechanism actually makes. Identity check exact again (4/8,
+same four splits, same end rounds).
+
+| map | idle turns | **turns with an actionable tile** | firing rate | tiles available | of which p vetoed on a BUILT ruin |
+|---|---|---|---|---|---|
+| Parking_lot | 137 | **137** | **100%** | 1485 | 39 |
+| sunrise | 46 | **24** | **52%** | 153 | 39 |
+| gridworld | 54 | **53** | **98%** | 383 | **378** |
+| DefaultLarge | 67 | **37** | **55%** | 39 | 5 |
+
+The direction is reachable on **52–100%** of idle turns, not 0%. On gridworld the built-ruin
+distinction alone accounts for 378 vetoed tiles — p's blanket guard was the whole of its "100%
+ruin-blocked" result. **Had I stopped at probe p I would have closed a live direction on my own
+instrument's artefact**, and the run that would have proved it never happens.
+
+### The ceiling, measured off the map corpus for ZERO VM game time
+
+Cell viability is a *static* property of the map — walls and ruins never move — so it can be read
+straight out of the `.map25` flatbuffers with no games at all. `carol-tools/latticescan/`
+(modelled on the shared `tools/mapdata/ruinscan`, and reading only the official 75-map corpus):
+
+```
+TOTAL cells=5072 viable=1491 (29.4%) ruin-free=726 (14.3%)
+per-map viable%: min 4.0  median 25.0  max 63.6
+maps with ZERO viable cells: 0
+```
+
+**29.4% of lattice cells corpus-wide can host an SRP** (wholly on-map, no wall, no ruin), median
+25% per map, and no map is dead. A median 40×40 map has ~16 hostable cells. This is a hard ceiling
+no in-game tuning can raise, and it is comfortably high. It also says what the mechanism must
+avoid: **70.6% of cells can never complete**, so recolouring inside one is pure loss — hence the
+viability filter, which exists for a measured reason rather than as decoration.
+
+### Price, in the binding currency, written down before the result
+
+Our soldiers paint everything primary, so a viable cell needs its **13 secondary tiles** recoloured:
+13 × 5 = **65 paint**, plus 200 chips at completion. Return is **+3 paint/turn to every paint tower
+and +3 chips/turn to every money tower, forever**, after a 50-round activation hold. At carol's
+observed 3–6 paint towers that is +9…18 paint/turn for 65 paint — payback in ~4–7 rounds of
+holding. The 200 chips are close to free: this lineage measured **100.0% of chips-available
+no-builds as paint-limited**, so chips are not the constraint.
+
+**The honest weak points, named in advance** (iteration 31's rejection turned on exactly the term
+I had flagged, so this is where the attention belongs):
+
+- **The 50-round hold.** An SRP pays nothing until it has sat undisturbed for 50 rounds. Our own
+  splashers paint **primary only** and cannot choose per-tile colour, so a splasher crossing a
+  completed cell breaks it. Iteration 30 raised splasher production, which makes this *more*
+  likely than it was, not less. The mechanism is self-healing — the next soldier repaints — but
+  self-healing costs paint, and a cell that is broken every 40 rounds pays out never while still
+  charging 65 paint a cycle. **This is the term I expect to fail if the iteration fails.**
+- **Paint spent is real even when the turn was worthless.** The turns are measured waste, but the
+  *paint* is not: a soldier that recolours 20 tiles arrives at the frontier 100 paint lighter.
+  That is what the dose is for.
+
+**The dose is not arbitrary.** RULES.md: below 50% of capacity a robot takes a `(100 − 2·X)%`
+cooldown penalty, and at 0 paint it takes −20 HP/turn and cannot act at all. A soldier holds 200,
+so a floor of **100** means SRP work can never push a soldier across the 50% cooldown cliff — the
+mechanism is structurally barred from inflicting the penalty on itself. Dose **0** is the
+aggressive arm testing whether that safety costs completions.
+
+### Pre-registered gate, fixed before any game of the evaluation is read
+
+- **Accept** if `carol_i32_100` beats `carol_iter30` head-to-head **> 50%**, with swept wins
+  exceeding swept losses and no one-directional regression.
+- **Dose ladder**: `carol_iter30` (floor ∞ — the mechanism absent, and provably byte-identical
+  since it is the accepted snapshot itself), `carol_i32_100`, `carol_i32_0`.
+- **Identity check** folded in: the `carol_iter30` arm must return exactly 25/50 with every map
+  split by side and zero sweeps if the mechanism is inert.
+- **§4 engagement check, run FIRST on an 8-game repro sample**: `SRPdone` must be > 0. Iteration
+  26 completed 88 patterns; if this completes ~0 the lattice never closes a cell and the design is
+  refuted *before* a 100-game run is bought, not after.
+- **Map-level prediction**, stated so the sample can check itself: the effect should scale with
+  **viable-cell density**, which `latticescan` gives per map independently of any game. It should
+  be strongest on high-viability maps (`sunrise` 36.4%, `gardenworld` 34.7%) and near-absent on
+  `gridworld` (11.1%) and `roads` (5.6%). If the gain is uniform across viability, the mechanism
+  is not working through the channel I claim and the attribution is OPEN regardless of the result.
