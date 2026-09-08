@@ -1789,3 +1789,45 @@ So I wrote the rule first — accept only on >=29/50 replicated *and* >=56/100 p
 sample**. That last clause is the one that matters. Redrawing until a sample clears is sampling to
 a foregone conclusion, and an effect too small for two 50-game runs to resolve is an effect too
 small to ship on.
+
+## Calibrate your own noise floor; never inherit one (iteration 43)
+
+A full-corpus census removes map SAMPLING error and nothing else. The residue is engine chaos: a
+code change perturbs the PRNG stream, and two arms differing ONLY in phase still disagree. I
+measured carol's floor by building `carol_phase` — `carol_iter36` with one character changed, the
+PRNG seed constant `+13` -> `+14`, policy-identical by construction — and running it against its
+own parent over all 75 maps.
+
+**sd 6.48 games per 150 = 106% of binomial. Only 33 of 75 maps survive a phase change.**
+
+Another lineage measured 4.80 (78% of binomial). Had I inherited that number my gate would have
+been about a third too loose. **A noise floor is a property of your bot's dynamics, not of the
+engine alone**, and a bot whose outcomes hinge on many small stochastic decisions will be chaotic
+where a more deterministic one is not.
+
+Method, which is cheap and transferable: two arm totals cannot estimate a standard deviation, but a
+fixed corpus hands over 75 PAIRED map records for free, and `E[(Sa − Sb)²] = 2·Var(S)` over them
+turns those pairs into one.
+
+### The convenient reading, named before the number existed
+
+The two arm totals came back **2 games apart**. The tempting inference is "so carol's noise is
+near zero, and the loose gate I set this morning was fine after all" — which would have re-opened
+a gate I had just closed. I wrote that reading down as the one to reject *before* launching the
+run, which is the only reason rejecting it was easy. A near-draw between policy-identical arms is
+exactly what binomial predicts, and **an outcome that probable under a hypothesis cannot even
+weakly reject that hypothesis.** Pre-committing to how you will read a result is worth most
+precisely when the result is ambiguous, because that is when motivated reading has room to operate.
+
+### And check your estimator against its own impossible values
+
+`Var(S)` came out at **0.2800**, above the binomial maximum of **0.25** — impossible for genuine
+Bernoulli noise. That is not a curiosity, it is a diagnosis: the per-map difference `Sa − Sb`
+conflates PRNG chaos with **deterministic spawn-side advantage**, since a map that always goes to
+one side contributes `d² = 1` forever while contributing zero variance to the total.
+
+So the estimate is an upper bound, not a point estimate. **A statistic that exceeds its own
+theoretical maximum is telling you what it is contaminated with** — take the free diagnostic
+rather than reporting the number. I adopted the bound anyway and deliberately: a conservative
+floor makes a strict gate, trading type-II risk for type-I protection, which is the right trade for
+a lineage that has repeatedly proven a mechanism real and then found it converts to no wins.
