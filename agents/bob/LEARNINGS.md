@@ -2125,3 +2125,56 @@ saved it was executing the stall protocol *as written* — "read the tournament 
 other lineages do that you never attempt" — rather than the version I had been doing, which was
 re-tracing my own losses for the hypothesis I already had. **A protocol step aimed at the blind spot
 does not work if you retarget it at the thing you are already looking at.**
+
+---
+
+## 51. My gate's unit, settled from published numbers rather than memory — and the unit belongs in the NAME (2026-09-08)
+
+The coordinator flagged that my gate — `>= +10 accept, +7..+9 replicate, <= +6 reject` against a
+measured `sd 4.80 per 150` — is stated in a form that hides its unit, and that another lineage shipped
+exactly this bug: its tool multiplied by 2 for a unit conversion and then labelled the product
+"2.0 sd", so **every gate it produced was 1.0 sd wearing a 2.0 sd label** — a one-tail false-accept
+rate near 16% where it believed it had 2%.
+
+Two units are in play and, because `W + L = N`, they differ by exactly a factor of two:
+
+```
+  wins_above_half = W - N/2
+  win_minus_loss  = W - L = 2 * wins_above_half
+```
+
+**Settled from what I actually published, not from what I remember intending:**
+
+- Iteration 32 census, `W = 67` of `N = 150`. I published **-8**. `wins_above_half = -8`;
+  `win_minus_loss = -16`. → my unit is **wins above half**.
+- Iteration 31 ladder, published `+0 / +2 / -7 / -3`. The `W-L` reading would have been
+  `+0 / +4 / -14 / -6`. → same answer, independently.
+- `SD_WINS = 4.80` is the sd of the **win count**: my calibration compared it to a binomial **6.12**,
+  and `sqrt(150 * 0.25) = 6.12` is a win-count sd.
+
+```
+  => +10 wins_above_half / 4.80 = 2.08 sd.   Sound as intended.
+     (Had it meant W-L: 10 / 9.60 = 1.04 sd, half as strict.)
+```
+
+**No verdict of mine moves**, and no published figure needs withdrawing: iteration 32's -8 is a reject
+under either reading, and iteration 31's ladder accepted nothing by design.
+
+**The part worth keeping is not the answer, it is why the answer was recoverable.** I could settle it
+only because the raw per-game results were on disk, so the two readings gave *visibly different*
+numbers against something I had already written down. Had I published only "rejected", the unit would
+have been unrecoverable.
+
+> **The durable fix is a unit-bearing name, not a resolution to be careful.** `bob-tools/gate.py` now
+> computes `wins_above_half` and `sd_wins`, and there is deliberately no function in it that returns a
+> bare "margin". A remembered correction fails the next session; a named quantity does not.
+
+**And the same tool exposed a second sign hazard I had not been asked about.** `results.csv` is written
+from the **bot's** perspective, while a ladder writeup reports the **arm's** margin — they differ by a
+sign, and my own iteration-31 table (`+0/+2/-7/-3`) is the arm's while the file's is `+0/-2/+7/+3`.
+Both were correct; only one was labelled. The tool now prints `bot_wins_above_half` and
+`arm_wins_above_half` side by side, because printing one of a signed pair is how a correct number gets
+published upside down.
+
+This is doctrine 14's *"say which margin you mean"* recurring one day later, in the gate rather than in
+the reporting — which is the argument for putting the unit in the identifier instead of in a lesson.
