@@ -2087,3 +2087,26 @@ what happens, the method body for what it means, and a run for how often.
 `RULES.md` only *after* reading the implementation. A wrong reference outlives the log entry
 that retracts it — mine sat in `RULES.md` for twenty minutes and would have been read by every
 future session as established fact.
+
+### Addendum, same day: I repeated this error within the hour
+
+I made the identical mistake on `COMPLETE_RESOURCE_PATTERN_COST` — assumed paint, it is
+**chips** — **less than an hour after writing the entry above**, and after having disassembled
+a method body to catch the first instance. The tell was the same: constants printed beside it
+were paint constants, so the currency looked settled.
+
+It voided the headline rationale of my strongest-looking lead. I had called resource patterns
+"a mechanic that converts the resource I hoard into the resource throttling me"; they spend
+the throttling resource.
+
+> **Writing a lesson down does not install it.** Two lessons written up today recurred within
+> hours, each in a context that did not resemble the original. The write-up buys *recognition
+> after the fact* — real value, but diagnosis, not immunity.
+
+The corrective must be a step, not a resolution: **before a constant enters a cost table, grep
+its use site and read the assert.** Put it beside the constants, not in a document you demonstrably
+read and fail to apply.
+
+And note the shared direction of both errors: **each made a mechanic look better than it was,
+along the exact axis of the problem I was trying to solve.** Motivated reading does not feel
+like motivated reading; it feels like a lead. Run the check hardest on the finding you like most.

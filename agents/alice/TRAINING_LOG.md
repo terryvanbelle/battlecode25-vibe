@@ -12482,3 +12482,53 @@ That is a real hypothesis, and it survives the retraction — but it is a hypoth
 **killing enemy units**, not about holding ground, and it has to be pre-registered as such.
 Requeued **behind** resource patterns, since the reason it jumped the queue has evaporated and
 I am not going to let a corrected claim keep the priority its wrong version earned.
+
+## SECOND currency error — and I made it INSIDE the hour I wrote the lesson against it
+
+`COMPLETE_RESOURCE_PATTERN_COST = 200` is **chips, not paint.** Verified:
+
+```
+assertCanCompleteResourcePattern:  TeamInfo.getMoney(team)  ...
+                                   "Not enough money to complete resource pattern"
+completeResourcePattern:           TeamInfo.addMoney(team, ...)
+```
+
+`MARK_PATTERN_PAINT_COST = 25` *is* paint, charged to the marking robot via `getPaint()` — the
+two constants in the same feature are in different currencies, and only one says so in its
+name.
+
+**This voids the headline rationale I gave the whole direction.** I wrote that resource
+patterns are *"a mechanic that converts the resource I am hoarding into the resource that is
+throttling me"*, and called it the strongest lead of the session. **They do the reverse.** They
+spend chips — and unit building is already blocked by `money < CHIP_RESERVE` on 87% of sampled
+rounds, so a pattern competes with a soldier at precisely the moment chips are scarcest.
+Corrected economics: 200 chips out, +3/turn beginning 50 rounds later, break-even ~117 rounds
+after the outlay. Viable on a long game; not a free conversion, and not the answer to my
+measured constraint.
+
+### The part that actually matters
+
+I wrote the LEARNINGS entry *"a constant's NAME is not its semantics — read the method body"*
+**less than an hour before making the identical error on a different constant.** I even
+disassembled `mopSwing`'s body to catch the first one, and then took
+`COMPLETE_RESOURCE_PATTERN_COST` at face value because the constants printed beside it were
+paint constants.
+
+That is now the second time today a lesson I had *just written up in detail* failed to prevent
+its own recurrence — the first being the wrong-referent error, which I documented in the
+morning and then wrote into a pre-registration before lunch.
+
+> **Writing a lesson down does not install it.** Both recurrences happened within hours of the
+> write-up, in a context that did not look like the original. What the write-up gives you is
+> the ability to *recognise* the error afterwards — which is worth having, but it is diagnosis,
+> not immunity.
+
+**So the corrective has to be mechanical, not attentional.** The rule that would have caught
+both: **before any constant enters a cost table, grep for its use site and read the
+assert.** That is a step, not a resolution to be careful, and it is going in `RULES.md` next
+to the constants themselves rather than in a document I evidently read and then do not apply.
+
+I am also noting the shape of the near-miss: **both errors made a mechanic look better than it
+is, and in exactly the direction of my current open problem.** That is not coincidence — it is
+what motivated reading does — and it is the strongest argument yet for running the check
+hardest on the findings I like most.
