@@ -419,6 +419,10 @@ Both halves were wrong, in different ways:
    mechanistic criterion is the one that earns its place in a pre-registration, and why
    "swept-win > swept-loss" is nearly implied by "h2h > 50%" and should not be counted
    as a second source.
+   **SUPERSEDED 2026-09-08: not "nearly implied" — EXACTLY implied. It is an algebraic
+   identity, `margin = 2 x (swept - swept against)`. See §25. Writing "nearly" left room
+   to believe the two numbers could disagree informatively, and I went on to quote both as
+   agreeing evidence three sections later. The word "nearly" was doing the damage.**
 4. **Deviation from the null formula is where the real information lives.** The same
    arithmetic that killed `split-by-side` produced a genuine finding: observed sweeps
    were *fewer* than `25p²` predicts (5 and 0 against 7.8 and 2.8), so the two sides of
@@ -686,6 +690,12 @@ bob_iter18 vs bob_iter12 (its predecessor)              +6 games, 6 sweeps, 0 sw
 bob_iter18 vs bob_iter11, minus bob_iter12 vs bob_iter11   -6 games, and 1 sweep against 4
 ```
 
+**CORRECTION 2026-09-08 (§25): the two halves of each line above are ONE number, not two.**
+`+6 games above the null` and `6 sweeps, 0 swept losses` are the same fact — 6-0 = 6 — and
+quoting them side by side made a single measurement look like a corroborated one. The
+finding of §21 is unaffected (both lines are still exact, and they still disagree in
+direction, which is the whole point), but the *weight* I put on iteration 18 was inflated.
+
 Beating the thing you replace by six games is **compatible with being six games worse than
 it** against something three generations back. Both numbers are exact — same 25-map sample,
 both sides, a null with zero variance — so this is not a measurement problem. It is a fact
@@ -874,3 +884,56 @@ who else changes the state it consumes.** I had checked what a soldier can do to
 and stopped there; the answer changed once I asked what makes a tile neutral in the first
 place. §17's "does this ever engage" question applied to the *supply* of work rather than to
 the mechanism.
+
+## 25. The margin and the swept-map count are the SAME NUMBER (2026-09-08)
+
+Relayed by the coordinator from another lineage, now doctrine #14 in
+TRAINING_ALGORITHM.md, and **verified independently on all 8 arms of my own last two runs
+before I accepted it**:
+
+```
+run 20260907-212222      wins   margin    2*(SW-SL)          split maps D
+  bob_iter12            28/50     +6     2*(6-3) =  +6            16
+  bob_iter18            31/50    +12     2*(9-3) = +12            13
+  bob_mC                24/50     -2     2*(4-5) =  -2            16
+  bob_mD                28/50     +6     2*(7-4) =  +6            14
+run 20260907-232155
+  bob_iter11            23/50     -4     2*(3-5) =  -4            17
+  bob_iter12            22/50     -6     2*(1-4) =  -6            20
+  bob_iter18            22/50     -6     2*(1-4) =  -6            20
+  bob_mirror            25/50     +0     2*(0-0) =  +0            25
+```
+
+**Why it is an identity, not a correlation.** Every map is played from both sides, so
+`wins = 2·SW + D` and `losses = 2·SL + D` where D is the maps that split. D cancels:
+
+```
+margin = wins - losses = 2·(SW - SL)          exactly, always, whatever the bots do
+```
+
+Equivalently, in the units I actually quote: **wins above the 25/50 null = (SW − SL)**. An
+identity always agrees with itself, so it can never corroborate anything.
+
+**This is pointed at me.** I accepted iteration 18 on *"+6 games, 6 swept maps, 0 swept
+losses"* and called it "about as unmarginal as this lineage produces". Under the identity
+that is **one** piece of evidence wearing three hats — 6 − 0 = 6 — and it is the accept that
+a later same-sample run found to be 6 games *worse* than its predecessor against their
+common ancestor. §21 concluded the frozen roster is the only instrument reporting a level;
+this makes that conclusion stronger, because the thing that made 18 look safe was a single
+margin quoted three ways.
+
+**What sweeps DO add, and it is real: D, the decisiveness.** The margin fixes `SW − SL`;
+the sweeps also give you `SW + SL`, hence D. That is genuinely independent of who is ahead.
+The mirror row above is the clean example — margin 0 *and* D = 25 — and "identical code
+splits every single map" is a much stronger statement than "identical code scores 50%".
+This is also exactly §14 rule 4, which survives intact: the information is in the deviation
+of the sweep *count* from its null (`25p²`), never in the sweep *difference*.
+
+**The consistency-pass lesson, which is the expensive half.** §14 rule 3 already said
+swept-win > swept-loss is *"nearly implied"* by h2h > 50% and should not be counted as a
+second source. I wrote that on 2026-09-07 and then quoted margin-and-sweeps as agreeing
+evidence in §21 the same night, and again in the iteration 19 log the next day. **The word
+"nearly" was load-bearing damage**: it left room for the two numbers to disagree
+informatively, so the rule read as a caution rather than a prohibition, and a caution is
+exactly what momentum overrides. When something is an identity, say identity — and derive
+it in the entry, because a derivation cannot be softened by a later reader in a hurry.
