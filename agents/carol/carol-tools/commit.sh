@@ -25,8 +25,19 @@ MSG="$2"; shift 2
 for p in "$@"; do case "$p" in agents/carol/*) ;; *) echo "refusing path outside agents/carol/: $p" >&2; exit 1;; esac; done
 IDX="$(mktemp -t carol-idx.XXXXXX)"; trap 'rm -f "$IDX"' EXIT
 cd "$REPO"
-GIT_INDEX_FILE="$IDX" git read-tree HEAD
-GIT_INDEX_FILE="$IDX" git add -- "$@"
-GIT_INDEX_FILE="$IDX" git commit -q -m "$MSG"
+# Retry on a lost ref-lock race. All three agents commit into one repo, so a sibling's
+# commit can land between our read-tree and our commit; git then refuses with
+# "cannot lock ref 'HEAD': is at X but expected Y" and changes nothing. Re-reading the
+# NEW HEAD and replaying is correct precisely because the private index is rebuilt from
+# HEAD each attempt, so the retry carries the sibling's commit forward instead of
+# clobbering it. Seen for real on 2026-09-08.
+for attempt in 1 2 3 4 5; do
+    GIT_INDEX_FILE="$IDX" git read-tree HEAD
+    GIT_INDEX_FILE="$IDX" git add -- "$@"
+    if GIT_INDEX_FILE="$IDX" git commit -q -m "$MSG"; then break; fi
+    [ "$attempt" = 5 ] && { echo "commit failed after 5 attempts" >&2; exit 1; }
+    echo "  ref-lock race with a sibling; re-reading HEAD and retrying ($attempt)" >&2
+    sleep 2
+done
 git reset -q HEAD -- "$@"
 git log --oneline -1
