@@ -11535,3 +11535,81 @@ uncontrolled.
 
 Cost: one grep. Value: it would have been a 150-game arm answering a different question than the one
 asked, and I would have believed it.
+
+---
+
+## 2026-09-08 ~17:20 UTC — FULL-CORPUS CALIBRATION, run `20260908-160234`, 300 games. Verdict: outcome 3, near the binomial end.
+
+`bob` vs `bob_n1`/`bob_n2` on all 75 corpus maps, both sides. The arms are policy-identical to `bob`
+and differ only in PRNG phase, so each arm's deviation from 75/150 is one draw of the full-corpus noise
+floor.
+
+```
+bob_n1   bot 75/150 (50.0%)   ARM 75/150   dev  +0
+bob_n2   bot 71/150 (47.3%)   ARM 79/150   dev  +4
+```
+
+**The aggregate is two numbers, and two numbers cannot estimate a standard deviation.** Read naively,
+|dev| of 0 and 4 looks like outcome 1 ("<= 2 games") and would have handed me the loosest, most
+convenient reading — the one that re-opens the tower cap and declares 3-point resolution. My own
+pre-registration warned about exactly this: *do not let the candidate I want to run pick the
+calibration I believe.* Under a pure binomial (sd 6.12), P(both arms land within 4) is about 0.34, so
+this draw does not even weakly reject binomial.
+
+**The fixed corpus gives a far better instrument than the aggregate, for free: 75 PAIRED maps.** Both
+arms played the same 75 maps, both sides. For each map take the two arms' bot-records
+`S in {0,1,2}` and use `E[(S_a - S_b)^2] = 2 Var(S_m)`:
+
+```
+per-map difference (n1 - n2):   -2: 2   -1: 14   0: 38   +1: 20   +2: 1     (75 maps)
+sum of squared differences = 46   ->   Var(total) = 46/2 = 23   ->   sd = 4.80 games / 150
+```
+
+Checks: the differences sum to +4, which reproduces the aggregate 75 vs 71 exactly; bot-swept 15 and
+arm-swept 15 against `n1` is the symmetry two policy-identical arms must show.
+
+**So the full-corpus noise floor is sd = 4.8 games of 150**, against a binomial 6.12 — **78% of
+binomial**, not the near-zero the "shared map sample" reasoning of LEARNINGS 43 predicted. Only 38 of
+75 maps give the same result under a mere PRNG-phase change; **half the corpus is still a coin flip.**
+
+### Reading it against the three pre-registered outcomes, in the order I registered them
+
+- **Outcome 1 (`<= 2 games`)** — NOT met. The paired-map estimate is 4.8, and the two aggregate
+  deviations that superficially suggested it are one lucky draw.
+- **Outcome 2 (`~6 games`, binomial)** — nearly met, and this is the one to act on.
+- **Verdict: outcome 3, interpolating close to outcome 2.** Saying which, as registered.
+
+**Consequences, binding:**
+
+1. **The tower-cap guard STAYS CLOSED.** Its re-opening was conditional on outcome 1 and nothing else.
+   Its 5 binding maps are 10 games of 150 = 2.1 sd — nominally at the bar, but that is the *best case*
+   of a direction already rejected once, and the pre-registration did not offer it this door.
+2. **Full-corpus runs are still worth their cost, just not as much as hoped.** 2 sd = **+10 games of
+   150** (6.4 percentage points), against the 50-game arm's +7 games of 50 (14 points). **Resolution
+   improves 2.2x, not 4.7x.**
+3. **The new accept gate for a 150-game full-corpus head-to-head: `>= +10` accepts, `+7..+9`
+   replicates, `<= +6` rejects.** Registered now, before the ablation reports.
+4. LEARNINGS 43 needs qualifying: map sampling is most of the *cross-run* noise, but removing it leaves
+   78% of binomial standing, because the residue is not sampling — it is the engine's own chaos
+   re-rolling on a fixed map. §46's churn finding is the same fact from the other side.
+
+### Iteration 18 ablation LAUNCHED — run `20260908-172346`, 150 games, and it is UNDERPOWERED. Saying so first.
+
+```
+gauntlet 20260908-172346  bot=bob  opponents=[bob_abl18]  maps=75 pinned  games=150  jobs=3
+```
+
+`bob_abl18` is the one-line revert of iteration 18 (`workOnRuin`'s guard back from `RUIN_FLOOR` to
+`PAINT_FLOOR`), compile-checked. The suspected effect from the earlier 2x2 is **-3/-4 games of 50**,
+i.e. **-9 to -12 games of 150**. Against sd 4.8 that is **1.9 to 2.5 sd**, so a single run has roughly
+coin-flip power at my own +10 bar.
+
+**Pre-registered, before the result exists:**
+- `abl18 >= +10` — iteration 18 is a genuine negative; revert it.
+- `abl18 +7..+9` — suggestive at the size predicted; **replicate on a fresh 25-map draw** rather than
+  accepting or dismissing. This is the likeliest outcome and I am naming it in advance so that a
+  borderline number does not get argued into whichever conclusion I prefer at 18:00.
+- `abl18 <= +6` — iteration 18 is not the carried negative I suspected; close it and stop paying
+  attention to it.
+
+Collate with `../../tools/gauntlet-collect.sh 20260908-172346`.
