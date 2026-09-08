@@ -9944,3 +9944,56 @@ expensive) rather than testing only the aggressive end.
 
 **Prediction, recorded now:** s1 > 0 and small (waste removal), s2 ≈ s1, s3 < 0. If s3 is the best arm
 my model of the tower/SRP trade is wrong and I should say so plainly.
+
+---
+
+## Methodology correction 2026-09-08 — `cmp` on replay bytes is NOT a valid arm-to-arm identity check
+
+This one nearly cost me a rebuilt probe and a wrong conclusion, and the false claim is in **my own
+log's Phase 0 block**, where every resuming session reads it.
+
+Phase 0 established, correctly: *"Same match run 4x: identical outcome, and replay files are
+BYTE-IDENTICAL for identical games."* It then drew the conclusion — *"arm-to-arm identity checks can
+`cmp` replays directly"* — **which does not follow.** The 4x determinism test ran the *same match*,
+so both replays carried the *same team names*. An arm-to-arm check does not: the arms are different
+Java packages, so they play under different team names, and **the team name is recorded in the
+replay.** Different names produce different bytes for a game that is otherwise identical.
+
+**Measured today.** `bob_srpgate` (baseline + counters) vs `bob_iter11` on Thirds, against `bob` vs
+`bob_iter11` on the same map:
+
+- raw `cmp`: **DIFFER** (1,907,765 vs 1,907,251 bytes — and 1,516,581 vs 1,515,476 on Portal)
+- same winner, same `winType`, same round count (1374)
+- full event stream from `replay-dump.sh --quiet`, team-name line excluded: **66 lines vs 66 lines,
+  `diff` clean — identical.**
+
+So the game is bit-for-bit the same game and only the recording differs. Had I trusted `cmp` I would
+have voided a behaviour-neutral probe as "the instrumentation changed the game", rebuilt it smaller,
+and still failed the same check forever.
+
+**The discriminating case that made this safe to call.** Two hypotheses produce identical `cmp`
+output — *"the probe changed behaviour"* and *"only the recording differs"* — so I did not name the
+fault from the symptom. First I re-ran the baseline **alone** against the saved concurrent one: it
+reproduced **byte-for-byte**, which cleared the competing worry that two concurrent
+`vm-verbose-match.sh` runs sharing one remote build dir had corrupted the results (they had not —
+both jobs compile the same source tree, so the race is benign). Only then did the event-stream diff
+identify the recording as the sole difference.
+
+**Standing rule, replacing the Phase 0 sentence.** To check an arm is behaviour-identical to
+baseline, compare **event streams, not bytes**:
+
+```bash
+tools/replay-dump.sh <armA>.bc25 --quiet | grep -v GameHeader > a.txt
+tools/replay-dump.sh <base>.bc25 --quiet | grep -v GameHeader > b.txt
+diff a.txt b.txt          # clean == behaviour-identical
+```
+
+`cmp` remains valid for one thing only: **re-running the identical pairing** to test determinism or
+detect a corrupted run, where the team names are the same by construction.
+
+**Still-open item, deliberately not claimed as measured.** I attribute the byte delta to the team-name
+strings, but 514 bytes is more than the 8 extra characters, so the remainder may be per-turn profiler
+or bytecode data. `bob_namectl` — a copy of `src/bob` identical modulo the package line, with **no
+probe code** — is built and compile-checked to settle it: if it differs from baseline by a similar
+amount with an identical event stream, the name alone explains it and no instrumentation is implicated.
+Until that runs, the attribution is a hypothesis; **the standing rule above does not depend on it.**
