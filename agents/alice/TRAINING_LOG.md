@@ -12872,3 +12872,73 @@ hours.
 been told to run rather than by tripping over a contradiction.** It is also the cheapest kind:
 140 games to find out that a lesson I had already written into `LEARNINGS.md` was a third as
 strong as I had claimed.
+
+## REJECT iteration 32 — −1 net swept, and the mechanism was NOT inert
+
+`alice_i32` vs `alice_iter30`, full 75-map census, run `20260908-124227`.
+
+| | maps | SW | SL | split | record | net swept |
+|---|---|---|---|---|---|---|
+| `alice_i32` vs `alice_iter30` | 75 | 8 | 9 | 58 | 74/150 (49.3%) | **−1** |
+
+0 exceptions in 150 games, margin identity exact (−2 = −2). **Rejected on the pre-registered
+gate.** `src/alice` stays at iteration 30.
+
+**The pre-registered mechanism check is the interesting part.** I said a large
+identical-to-baseline set would mean moppers rarely reach the "no enemy paint in range but
+enemy robots present" state, making the result uninformative. **The identical set is 1 of 75.**
+The mechanism fires on 74 of 75 maps, so −1 is a genuine reading of what mop-swinging on the
+spare action is worth: **essentially nothing, very slightly negative.**
+
+**The risk I named in advance is the likely explanation and I am not going to pretend it is
+confirmed.** `mopSwing` hard-codes +20 action cooldown against the mopper's own 30, so the
+action is spare *this* turn while the cooldown is borrowed from the next two. A drain of 5 per
+enemy robot, on a mopper that then cannot clear a tile for two turns, apparently trades about
+even. **The pre-registered failure diagnostic — comparing mopper tile clears — I am
+deliberately NOT running**, because at −1 on a full census the effect is too small for that
+diagnostic to separate anything, and the VM time buys more elsewhere. Recording the choice
+rather than quietly skipping it.
+
+**What is worth keeping**: this was a *strict addition* to an otherwise-discarded action, with
+the same "consume only what was going spare" shape as three accepted iterations — and it still
+did not pay. That shape is a heuristic for where to look, **not** a guarantee, and iteration
+31 said the same thing from the other direction. Two results in one day against my most
+trusted design pattern.
+
+## Iteration 33, launched — reserve exactly ONE TOWER COMPLETION, not a flat 1450
+
+Run `20260908-133435`, `alice_i33` vs `alice_iter30`, full 75-map census, candidate as `BOT`.
+
+**This targets the largest single throttle I have measured**: my money is below `CHIP_RESERVE`
+on **60 of 69 sampled rounds (87%)**, and money is a *team-wide* pool, so below it **every
+tower stops building at once**.
+
+**Verified from the engine rather than from my own comment** (I checked the comment, and this
+time it was right): `LEVEL_ONE_MONEY_TOWER.moneyCost` and `LEVEL_ONE_PAINT_TOWER.moneyCost` are
+both **1000**, and `RobotControllerImpl.completeTowerPattern` charges exactly
+`TeamInfo.addMoney(team, -type.moneyCost)`. So the thing `CHIP_RESERVE = 1450` was hand-set in
+iteration 2 to protect **costs 1000**, and the honest reserve is *"leave one tower completion
+funded"* — `1000 + the unit's own moneyCost` — not a flat number 450 chips above it.
+
+```
+SOLDIER  1000 + 250 = 1250       MOPPER  1000 + 300 = 1300
+SPLASHER 1000 + 400 = 1400       (all below 1450; none dips under the 1000 reserve)
+```
+
+Self-calibrating from engine constants, not a searched value — the same discipline as
+iterations 5, 25 and 28. `CHIP_RESERVE` is left untouched everywhere else (tower upgrades, the
+splasher gate), so the diff is one mechanism.
+
+### Pre-registered
+
+- **Gate**: net swept > 0, `SW`/`SL` separately, 0 exceptions, 0 overruns, full 75-map census.
+- **Mechanism check**: the identical-to-baseline set must be **small**. A large one would mean
+  money rarely sits in the 1250-1450 band and the gate seldom differs — in which case any
+  margin is not this change.
+- **Named risk**: iteration 26 lost −21 net swept by starving tower construction. The 1000
+  invariant is preserved *exactly*, so a failure would have to be indirect — more units
+  competing for the same tower **paint**, which is the resource iteration 5 showed is actually
+  scarce.
+- **Failure diagnostic, named in advance**: if it loses, compare **tower count at r200-400**
+  and **soldier paint-starvation deaths**. A fall in towers is iteration 26's cliff; a rise in
+  starvation is the paint-competition path, and those imply opposite fixes.
