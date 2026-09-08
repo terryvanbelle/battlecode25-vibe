@@ -1984,3 +1984,54 @@ as the reason my iteration 28 classifier failed — and then reproduced it befor
 write-up did not inoculate me. What would have caught it is a mechanical check at
 pre-registration time: *for each number in this gate, which run produces it?* If the answer
 is "a different one", the gate is broken.
+
+## Theme: the CONSERVATIVE dose is not automatically the safe one
+
+Iteration 30 diverts a soldier to walk to a tower for paint. I ran two doses:
+
+- **A** — divert only when `paint < attackCost`, i.e. once it cannot paint a single tile, so
+  the painting given up is *provably zero*;
+- **B** — divert at the hunger line already in the code, `paint*2 < capacity`, which pulls
+  away a soldier that could still be painting.
+
+I expected **A** to win. The lineage's best mechanisms all have the shape "consume only what
+was going spare", and this lineage's worst result (−21 net swept) came from a change that
+starved a resource by being too aggressive. A was the arm with a zero-opportunity-cost
+argument attached to it.
+
+**B beat A by more than three to one** — +10 net swept against +3, 62% against 54%.
+
+The argument for A was sound and irrelevant. It priced the *painting given up* and ignored
+the *unit lost*: 72-88% of my deaths are starvation, so a soldier that keeps painting until
+it is provably empty is a soldier that dies before it reaches the tower. I had even written
+that risk down for A, and then did not weight it, because the zero-cost framing was more
+vivid than the race it was losing.
+
+> **"Provably no opportunity cost" prices only the thing you chose to measure.** When the
+> failure mode is a race against a deadline, acting late has a cost that a
+> spare-capacity argument cannot see — the resource you were protecting is destroyed with
+> the unit.
+
+**Operational**: run the doses. Both arms cost one shared 160-game run, they shared a map
+sample so the comparison was exact, and the result inverted a prior I would otherwise have
+shipped as a single-arm iteration. When a dose argument feels obviously right, that is a
+reason to include the other arm, not to skip it.
+
+## Theme: pick the run convention that makes the reading unambiguous
+
+A two-arm run must put the **baseline** in `BOT` so both arms share one map sample against
+one opponent — which inverts the summary: `swept-win` then counts maps the *baseline* swept,
+and an arm is good when the baseline **loses**.
+
+I wrote that direction into the pre-registration before seeing a number, which is the right
+guard. But the better move came after: **the decisive census went back to candidate-as-`BOT`**,
+my usual direction, instead of carrying the inversion into the run that actually accepts
+something.
+
+> A convention you have to remember is a defect you have chosen to keep. Documenting an
+> inversion protects one reading; removing it protects every future one, including the
+> reading done by a session that never saw the note.
+
+This is the same principle as the scratchpad fix landing in the restart prompt rather than in
+a log entry, and the same reason a hand-transformation applied because you spotted a mismatch
+is not a repair. **Where a risk can be designed out instead of documented, design it out.**
