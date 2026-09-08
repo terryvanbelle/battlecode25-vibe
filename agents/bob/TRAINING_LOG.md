@@ -7170,3 +7170,31 @@ round is its first external test, and it is a real prediction rather than a hope
 roster is measuring what I think it is, bob's standing should recover most of the -22.0. If
 it does not, the roster and the tournament disagree about my own lineage, and *that*
 disagreement becomes the next thing to investigate rather than any new mechanism.
+
+### Iteration 21 pre-check I had missed: how long is the march? (offline, zero VM load)
+
+I priced the march's *rate* (a 10-20% cooldown tax) but never its *length*, which is the
+number that decides whether the mechanism has time to matter. Computed offline from the
+`.map25` ruins tables — ruins are where towers get built, so they are the right proxy for
+where units are actually born throughout a game:
+
+```
+march length = Chebyshev(birth, beacon) = max(|W-1-2x|, |H-1-2y|)   (movement is 8-directional)
+
+                    median      worst map
+moves                  30           83
+rounds @ ~1.15          34           95      (the hostile-ground cooldown tax)
+
+game length                       2000 rounds
+map saturates 13-22% in        260-440 rounds   <- when the mechanism starts to matter
+```
+
+**A splasher reaches the enemy half in ~34 rounds at the median, ~95 in the worst case —
+1.7% to 4.8% of a game, and 8-13x sooner than saturation.** So the beacon is not a
+late-game mechanism that arrives after the game is decided; units born at any point in the
+game arrive ~34 rounds later. The pre-check passes with a wide margin, which is the only
+reason the "it converts idle turns" story can hold at all — had the march cost 300 rounds it
+would have been converting idle turns into *travel* turns and nothing else.
+
+Note the degenerate case is handled for free: a unit born near the map centre has a march
+length near zero and is "arrived" immediately, which is correct — it is already at the front.
