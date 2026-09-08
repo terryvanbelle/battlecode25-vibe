@@ -6955,3 +6955,68 @@ examplefuncsplayer"`. The number that matters is **`bob_iter11`**, where the lin
 recorded 25/50 for iteration 12 and **20/50 for iteration 18** — the drop that started all
 of this. **Pre-registered: if this candidate does not beat iteration 18's 20/50 against
 `bob_iter11`, I do not accept it on the head-to-head alone.**
+
+## Iteration 20 — **ACCEPTED**. Spawn 2 splashers per 5 units instead of 1.
+
+Frozen roster `20260908-005627` (200 games, complete), run **before** the accept decision:
+
+```
+opponent              candidate    vs null    iter18 was    iter12 was    per-map (0/1/2)
+bob_iter0               46/50     +11.52 sd     46/50           --        {1:4, 2:21}
+bob_iter1               44/50      +8.93 sd     43/50           --        {1:6, 2:19}
+bob_iter11              35/50      +3.53 sd     20/50         25/50       {0:1, 1:13, 2:11}
+examplefuncsplayer      50/50    +25 vs null    50/50           --        {2:25}
+```
+
+**`bob_iter11` is the number this whole investigation has been about.** The lineage went
+25/50 -> 20/50 across iterations 12 and 18, which is the drop that triggered the §5b
+pairwise ablation, the refuted destructive-pair nomination, and the rejected iteration 19.
+Iteration 20 puts it at **35/50 — +15 games over iteration 18 and +10 over iteration 12.**
+No roster member regressed. The decline is not merely halted, it is reversed past where it
+started.
+
+### The full accept case
+
+1. **Head-to-head vs the snapshot it replaces: +8** (17/50 for the zero arm), 8 maps swept,
+   **0 maps swept against**. Established through a *verified behavioural identity* — the
+   zero arm scored exactly 25/50 against `bob_iter18` with all 25 maps split and se = 0 —
+   not by chaining margins, which §21 says does not work.
+2. **Dose curve with an interior peak**, pre-registered mechanistically before the run:
+   `3:1:1 -> 0`, `2:2:1 -> +8`, `1:3:1 -> +4`. Doctrine #2's strongest available shape.
+3. **Frozen roster run before accepting**, per §21 rule 2 — the rule I wrote after
+   iteration 18 and whose whole point is that it applies when the margin feels too strong to
+   need it. It did feel that strong. It also came back +15.
+4. **Both controls exactly at the null**, se = 0, every map split.
+5. Mechanism traced at the **decision** level before a single game was played, and the two
+   pre-checks that could have killed it were run first (one of them did kill the design I
+   started with).
+
+### What the mechanism actually is
+
+The map is >=95% painted by 13-22% of the way into a game (denominator-free tile counts, four
+maps). A soldier **cannot overwrite enemy paint**; only splashers and moppers can. So for
+roughly three-quarters of every game, most of a soldier's turns have no legal scoring move —
+0.4-5.2% action rates, while ~95% of soldier deaths are starvation and each replacement
+costs the tower a full 200-paint stash. Moving one spawn slot in five from soldier to
+splasher redirects that paint into the only unit that can convert enemy territory.
+
+Why it stops at 2:2:1 and reverses by 1:3:1: a mopper turns enemy paint **neutral**, and only
+a soldier can then claim it, so soldiers are **demand-limited rather than useless** (§24a).
+Cut them too far and the mopper->soldier chain starves. I wrote that prediction down before
+the run and the curve came back that shape.
+
+### Post-accept routine (atomic, this commit)
+
+- `src/bob_iter20/` snapshotted and compile-checked in isolation.
+- `progress/vs_old_bots_history.csv` +4 rows; both charts regenerated.
+- `replays/iter20_bob_iter18_Gears_botB_WIN.bc25` — a swept win on `Gears`, the map every
+  mechanism measurement in this iteration was taken on.
+- Iteration 20 is a multiple of 5, so it **joins the frozen roster** from here.
+
+**Tooling note (not worked around, reported):** the four new roster rows are labelled
+`bob_iter18+cand` because `bot.txt` is written at launch, before the snapshot exists.
+Re-running `track_vs_old_bots.py` after creating `src/bob_iter20` replaces the rows but
+keeps the old label, so an accepted candidate's roster point stays permanently "hollow" on
+the only absolute chart I have — it reads as "may have been rejected" when it was accepted.
+I am **not** hand-editing the CSV, which the docs say is derived and never hand-edited, and
+a hand-fix would hold only as long as I remembered it. Reported to the coordinator.

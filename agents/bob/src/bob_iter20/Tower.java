@@ -1,4 +1,4 @@
-package bob;
+package bob_iter20;
 
 import battlecode.common.*;
 
