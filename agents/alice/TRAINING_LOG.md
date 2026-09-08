@@ -13450,3 +13450,41 @@ behaviour I want, and it falls out of the existing structure.
   been made, and this iteration makes it.
 - **Falsifier**: if both arms lose, the gate is already at or past its optimum and the
   splasher line is finished as an axis — iterations 28 and 29 took what there was.
+
+## Iteration 35 screen — the curve is MONOTONE, and it points the opposite way to iteration 34
+
+Run `20260908-153806`, `BOT=alice_iter30` (baseline), 25 shared maps, 100 games. Reading under
+the pre-registered inversion: **an arm is good when the BOT loses.**
+
+| arm | money share | arm record | baseline swept | arm swept | split | **arm net swept** |
+|---|---|---|---|---|---|---|
+| `alice_i35a` | 49.1% | 25/50 (50.0%) | 5 | 5 | 15 | **+0** |
+| `alice_i35b` | 69.6% | **29/50 (58.0%)** | 5 | 9 | 11 | **+4** |
+
+Placed against iteration 34's censused point, the dose curve on **one key** is:
+
+| money share | net swept vs `alice_iter30` | measured on |
+|---|---|---|
+| 24.3% | **−52** | 75-map census (exact) |
+| 49.1% | **0** | 25-map screen |
+| 69.6% | **+4** | 25-map screen |
+| *(parity, 53.3%, degenerate on 4 maps)* | *baseline* | — |
+
+**Monotone increasing in money share across the whole range I have measured.** Iteration 34
+moved this dial the wrong way and the correction is not "back to parity" — it is *past* it.
+
+### Two things the screen settles, and one it does NOT
+
+- **The ratio was the whole story.** `i35a` matches parity's ratio on a different key and lands
+  at **exactly 0** — the prediction I pre-registered, hit on the nose.
+- **The arrangement hypothesis is dead.** `i35a` changes tower *arrangement* while holding the
+  ratio, and it is neutral. That agrees with the pre-run geometry check (hash spreads paint
+  towers slightly *better* than parity's checkerboard, 4.19 vs 4.48), which I ran before the
+  games and recorded before the result. Parity's checkerboard was not load-bearing.
+- **`i35b`'s +4 is NOT resolved.** My own measured limit for a *sampled* run is ~5 net swept,
+  and **+4 is below it.** A 25-map screen cannot tell +4 from 0. I am not accepting anything on
+  this number; it earns a census, which is exact, and nothing more. Writing that down here
+  rather than after seeing whether the census agrees.
+
+Launching the decisive run: `alice_i35b` vs `alice_iter30`, full 75-map census,
+**candidate-as-`BOT`**, per the pre-registration.
