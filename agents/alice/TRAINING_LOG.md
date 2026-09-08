@@ -9891,3 +9891,85 @@ merge them.
 tournament runs my last committed `src/alice`, so this costs one commit of a census
 build — which also means shipping instrumentation into a rated game, and that trade
 needs deciding on purpose rather than in passing.
+
+### Control: the upkeep census did NOT perturb the game
+
+The census game ended at round 313 with my own bot winning on MAJORITY_PAINTED, which
+is not what a mirror-shaped matchup usually looks like, so I checked rather than
+assumed. `alice_mirror` (byte-identical to `alice_iter24`) vs `alice_iter24` on the same
+map: **alice_mirror (A) wins at round 313, same reason.** Identical winner, identical
+round count.
+
+So round 313 is a property of DefaultLarge's side asymmetry, not an artefact of the
+instrumentation, and the census's counters describe the shipping bot's real behaviour.
+That is the positive control this session's first LEARNINGS entry demands, run on an
+instrument whose *output* was fine but whose *fidelity* was unverified — a different
+question from "did it emit anything", and one I would not have asked a day ago.
+
+## Iteration 25 result vs the accept gate — it passes the letter, and the letter is not enough
+
+The gate opponent's 50 games completed first, so this is final for the gate:
+
+| | |
+|---|---|
+| head-to-head vs `alice_iter24` | **26-24 (52%)** |
+| swept wins / swept losses / split | **4 / 3 / 18** |
+| net swept maps (= margin over 50% = wins − N) | **+1** |
+| identity check | 26 − 25 = +1 = 4 − 3 ✓ |
+| exceptions | **0** |
+| bytecode overruns | **0** |
+| side balance | as A 12-13, as B 14-11 |
+| swept losses | DefaultSmall, defensetower, galaxy |
+| swept wins | Filter, MoneyTower, catface, starburst |
+| mechanism firing count | 26 refills/game, 1,962 paint |
+
+Against my pre-registered gate: **>50% read as net swept maps** — +1, passes. **No
+unresolved one-directional regression** — the three swept losses are spread across map
+types and the side split is 12-13 / 14-11, so there is no direction to it; passes.
+**Zero exceptions, zero overruns** — passes. **Non-zero firing count** — 26, passes.
+
+**So it passes, and I am not going to snapshot it on that basis.** Here is the reason,
+and I want it stated as a rule rather than as a feeling about this number.
+
+### Sweeps measure SENSITIVITY; the sweep DIFFERENCE measures benefit, and I nearly conflated them
+
+My mirror null sweeps **nothing** — identical code splits every map, measured twice in
+this project. So *any* swept map is proof that the mechanism really changed that game.
+Here there are **seven** swept maps (4 + 3). That is decisive evidence the refill has a
+real effect on outcomes.
+
+It is **not** evidence that the effect is good. Four went my way and three did not.
+
+> **`SW + SL` measures how much the mechanism perturbs; `SW − SL` measures whether the
+> perturbation helps. A zero-variance null makes the first large and significant while
+> the second stays a coin flip, and quoting the first as if it supported the second is
+> the error the whole swept-map doctrine is otherwise designed to prevent.**
+
+This is the sharp form of something my ledger already half-contains. The doctrine says
+"a swept map is a near noise-free instrument" and "swept-map counts deserve more weight
+than headline win rates" — both true, and both about `SW − SL`. Read carelessly they
+license "seven maps swept, that is a strong signal", which is exactly backwards here.
+
+### The pre-registered criterion I am adding, stated so it binds future runs too
+
+> **When `|SW − SL|` is small relative to `SW + SL`, the run has measured sensitivity
+> rather than benefit, and a second fresh map sample is required before accepting.**
+
+Here `SW + SL = 7` and `|SW − SL| = 1`. Compare iteration 24, which was `8` and `8` —
+eight swept wins against **zero** swept losses. That is what a directed effect looks
+like in this instrument, and iteration 25 does not look like it.
+
+**This is a new hurdle and I am adding it after seeing the data, which is exactly the
+move I criticise elsewhere — so I am being explicit about why it is legitimate here.**
+It does not change the accept threshold and it cannot rescue or condemn this candidate
+on its own; it demands *more evidence* rather than a different reading of the same
+evidence, and it is stated in a form that binds every future iteration including ones
+that would otherwise pass more easily. A goalpost that moves toward "measure again" is
+different in kind from one that moves toward "and therefore I was right".
+
+**Action: a confirmation gauntlet vs `alice_iter24` on a fresh random 25-map sample.**
+Verdict on the pooled 100 games. Pre-registered now: pooled net swept maps > 0 accepts;
+<= 0 rejects; and I will report the pooled `SW + SL` alongside, because if it stays
+large with a small difference, the honest conclusion is *"this mechanism perturbs
+outcomes without improving them"*, which is a finding about the refill and not a
+failure of the experiment.
