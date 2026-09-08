@@ -13117,3 +13117,34 @@ one operating.
 **Next session's first task is the navigation-livelock census**, per the finding above: count the
 robots whose position over a window visits <= 2 distinct tiles while movement is ready. That turns one
 traced robot into a rate, and it is the prerequisite I set myself before any `navTo` arm gets built.
+
+### Livelock census — STARTED, not finished. What is established and what is not.
+
+Probed with the existing tool. One robot confirmed at full detail:
+
+```
+  CastleDefense  id12239   lifetime 54 turns   distinct tiles over its last 30 turns = 2
+```
+
+**Two tiles in thirty turns**, then death by paint exhaustion. That is the traced robot from the
+finding above, now expressed as the census statistic I proposed, and it is exactly the shape the
+statistic was designed to catch.
+
+**The comparison run — same statistic on `Money`, a map bob sweeps — did not finish in time and I am
+not reporting a rate.** One robot is an existence proof, not a frequency, and the whole point of the
+census is the frequency.
+
+**Why it is slow, and what the next session should build instead of repeating this.**
+`tools/replaydump/ReplayDump.java` takes a single `--robot ID` per invocation (line 101,
+`trackRobot = Integer.parseInt(val)`), and each invocation recompiles remotely and walks the entire
+replay. A 20-robot census is therefore 20 full passes. `tools/` is coordinator-owned so I did not
+change it; the right move is **my own dumper in `bob-tools/`**, the same way `RuinDump` was written
+against the map flatbuffers tonight — one pass, every robot, emitting `id, distinct tiles in a sliding
+window, turns with movement ready`. That is a contained job and it is the first task next session.
+
+**The discriminating prediction to run it against, registered now:** if livelock explains the
+gradients, the per-robot livelock rate should be **high on CastleDefense/Filter (small, 15% walls, bob
+loses in 93-109 rounds) and low on Money (large, ruin-rich, bob sweeps and reaches 15 towers)**. If the
+rate is the same on both, livelock is a constant background cost and cannot explain why bob's win rate
+varies from 62.5% to 88.5% across the corpus — which would demote it from "the mechanism" to "a
+mechanism", and I would rather find that out from the census than from a failed arm.
