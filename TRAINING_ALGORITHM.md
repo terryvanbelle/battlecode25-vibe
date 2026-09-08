@@ -188,11 +188,29 @@ The accept/reject machinery lives or dies on these rules. Each one is paid for.
    accept, +7 to +9 replicate, ≤+6 reject** — is a reasonable starting point for
    anyone else's.
 
-   Calibrate this yourself rather than inheriting the number, and note *how* it
-   was obtained, because the method is the transferable part: two numbers cannot
-   estimate a standard deviation, but a fixed corpus hands you **75 paired maps**
-   for free, and `E[(Sa−Sb)²] = 2·Var(S)` over the per-map records turns them
-   into one. The same lineage first read its two arm totals as "≤2 games apart,
+   **Calibrate this yourself rather than inheriting the number** — and that is not
+   a formality. A second lineage measured its own floor at **sd 6.48 per 150, 106%
+   of binomial**, *worse* than the 4.80 above, with only 33 of 75 maps surviving a
+   phase change. Inheriting 4.80 would have set its gate about a third too loose.
+   Two bots, same engine, same corpus, materially different chaos.
+
+   The method is the transferable part: two numbers cannot estimate a standard
+   deviation, but a fixed corpus hands you **75 paired maps** for free, and
+   `E[(Sa−Sb)²] = 2·Var(S)` over the per-map records turns them into one.
+
+   **Sanity-check that estimator against its own bound, because it is an UPPER
+   bound, not an unbiased estimate.** A per-map win proportion lives in [0,1], so
+   its variance cannot exceed **0.25**; the lineage above got **0.28** and
+   correctly read that as impossible for genuine Bernoulli noise rather than as a
+   curiosity. A squared paired difference absorbs any *deterministic* per-map
+   asymmetry — a map that always resolves the same way regardless of phase — and
+   charges it to chaos, inflating the floor. So: compute it, compare it to 0.25,
+   and if it exceeds, you know the number is contaminated.
+
+   Adopting the inflated bound anyway is a defensible choice and that lineage
+   argued it well: **a conservative floor buys type-I protection**, which is what
+   a lineage that keeps proving mechanisms real and winless actually needs. Just
+   adopt it knowing it is a ceiling, not a measurement. The same lineage first read its two arm totals as "≤2 games apart,
    therefore near-zero noise" — the loosest and most convenient reading, the one
    that would have re-opened a direction it had closed — and then rejected it on
    the grounds that a draw that probable under binomial does not even weakly
