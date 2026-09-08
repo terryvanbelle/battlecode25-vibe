@@ -243,7 +243,11 @@ while read m; do grep -q "rc\.$m(" src/alice/RobotPlayer.java || echo "  $m"; do
 
 - `markResourcePattern(loc)` / `completeResourcePattern(loc)` / `canCompleteResourcePattern`
   / `getResourcePattern()` -> `boolean[][]`.
-- `COMPLETE_RESOURCE_PATTERN_COST = 200` paint; `EXTRA_RESOURCES_FROM_PATTERN = 3` chips/turn;
+- `COMPLETE_RESOURCE_PATTERN_COST = 200` **CHIPS, not paint** (verified: 
+  `assertCanCompleteResourcePattern` reads `TeamInfo.getMoney(team)` and errors *"Not enough
+  money to complete resource pattern"*; `completeResourcePattern` calls `TeamInfo.addMoney`).
+  `MARK_PATTERN_PAINT_COST = 25` IS paint, charged to the marking robot
+  (`assertCanMarkResourcePattern` reads `getPaint()`). `EXTRA_RESOURCES_FROM_PATTERN = 3` chips/turn;
   `RESOURCE_PATTERN_ACTIVE_DELAY = 50` rounds; `RESOURCE_PATTERN_RADIUS_SQUARED = 8` (5x5).
 - **Needs no ruin** — placeable on any 5x5 block of own paint, so uncapped by map features,
   unlike towers.
@@ -260,10 +264,19 @@ while read m; do grep -q "rc\.$m(" src/alice/RobotPlayer.java || echo "  $m"; do
   only a clear 5x5 block.
 - Still unchecked: whether `assertCanMarkResourcePattern` forbids overlapping an existing
   centre (`hasResourcePatternCenter(loc, team)` exists and is presumably used for this).
-- **COST/BENEFIT**: +3/turn against a money tower's 20-40, so one pattern is ~1/10 of a tower;
-  200 paint is one soldier. The catch is that a pattern pays rent only while it stays intact,
-  and this bot's measured failure is *losing painted ground* (coverage ends below its own peak
-  on 5 of 7 maps).
+- **COST/BENEFIT, corrected**: a pattern costs **200 chips** and returns **+3 chips/turn**
+  starting 50 rounds later, so break-even is ~67 rounds of income, ~117 rounds after the
+  outlay. It is a CHIP investment, not a paint-to-chip converter.
+- **This kills the headline rationale I first gave it.** I claimed patterns "convert the
+  resource I hoard (paint) into the resource throttling me (chips)". They do the opposite:
+  they spend chips, and unit building is already blocked by `money < CHIP_RESERVE` on 87% of
+  sampled rounds. A pattern competes with a soldier at exactly the moment chips are scarcest.
+- Still viable on a long game, and the marking paint (25) is cheap. But it must be
+  pre-registered as a chip investment with a ~117-round payback, and the second catch stands:
+  a pattern pays rent only while intact, and this bot's measured failure is *losing painted
+  ground* (coverage ends below its own peak on 5 of 7 maps).
+- `assertCanCompleteResourcePattern` also calls `hasResourcePatternCenter(loc, team)`, so
+  there IS a centre-already-exists check on completion (none on marking).
 
 ### MOPPER `mopSwing` (unused through iteration 30) — drains ROBOTS, does NOT clear tiles
 
