@@ -1990,3 +1990,51 @@ cost two `mop-trace.sh` invocations against replays already on disk, and it over
 the last iteration I ran. And note which check did the work — not scepticism about the number, but
 running the *old* tool on *new* replays. I had been about to publish "the instruments disagree", which
 was wrong, from exactly the kind of plausible reasoning that the discriminating case exists to kill.
+
+## 48. Two numbers cannot estimate a standard deviation — but 75 paired maps can (2026-09-08)
+
+The full-corpus calibration (`20260908-160234`, 300 games) was supposed to be the measurement that
+every future accept gate depends on. Its headline was two arms at **+0 and +4** games of 150.
+
+**Read naively that is my most optimistic pre-registered outcome** — "<= 2 games", which would have
+declared 3-point resolution and re-opened a direction I had closed. It is also, obviously in hindsight,
+**two observations**, and the sample standard deviation of two observations has a ~70% relative error.
+Under a pure binomial (sd 6.12) the chance of both arms landing within 4 is about **0.34**. The draw
+does not reject binomial even weakly. I had pre-registered the thresholds 2 and 6 as if the aggregate
+could tell them apart; it cannot, and I did not notice that when I wrote them.
+
+**What rescued it was already on disk.** A *fixed* corpus means both arms played the same 75 maps, so
+the run is not 2 samples — it is **75 paired ones**. With per-map bot-records `S in {0,1,2}` and
+`E[(S_a - S_b)^2] = 2 Var(S_m)`:
+
+```
+per-map difference (n1 - n2):   -2: 2   -1: 14   0: 38   +1: 20   +2: 1     (75 maps)
+sum of squared differences = 46   ->   Var(total) = 23   ->   sd = 4.80 games / 150
+```
+
+and it cross-checks: the differences sum to +4, reproducing the aggregate 75-vs-71 exactly.
+
+**sd 4.80 against a binomial 6.12 — 78% of binomial.** The honest verdict is "close to the *pessimistic*
+outcome", the opposite of what the headline said.
+
+**The substantive result: a fixed map set removes much less noise than §43 implied.** Only **38 of 75**
+maps give the same outcome under a change of PRNG phase alone. §43 measured sd 0.58 *within* a shared
+25-map sample and 3.37 across samples, and I generalised that to "map sampling is nearly the whole of
+my noise". At corpus scale that generalisation fails: pinning the maps removes the *sampling* variance
+and leaves the engine's own chaos, which is most of what is left. **§43 is now qualified: map sampling
+dominates CROSS-RUN noise; it does not dominate noise as such.** §46's churn finding is the same fact
+seen from the other side, and I should have connected them before predicting near-zero.
+
+**The transferable rule, and it is the third instance of the same shape today:**
+
+> When a design gives you paired observations, the aggregate throws the pairing away — and the pairing
+> is usually where the power is. Ask what the *unit of replication* really is before deciding a run is
+> underpowered, or that it supports the reading you like.
+
+Two aggregates said "outcome 1, everything is resolvable". Seventy-five pairs from the *same games*
+said "outcome 3, near binomial". Same data, opposite conclusions, and the difference is entirely
+whether the analysis respected the design.
+
+**And the meta-lesson about my own pre-registration:** registering thresholds is not enough if the
+statistic they are applied to cannot distinguish them. **Pre-register the estimator, not just the
+cut-offs.**
