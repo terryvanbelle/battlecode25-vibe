@@ -12532,3 +12532,73 @@ I am also noting the shape of the near-miss: **both errors made a mechanic look 
 is, and in exactly the direction of my current open problem.** That is not coincidence — it is
 what motivated reading does — and it is the strongest argument yet for running the check
 hardest on the findings I like most.
+
+## REJECT iteration 31 — −7 net swept, and my pre-registered falsifier called it exactly
+
+`alice_i31a` vs `alice_iter30`, full 75-map census, run `20260908-111422`, candidate as `BOT`.
+
+| | maps | SW | SL | split | record | net swept |
+|---|---|---|---|---|---|---|
+| `alice_i31a` vs `alice_iter30` | 75 | 9 | **16** | 50 | **68/150 (45.3%)** | **−7** |
+
+0 exceptions in 150 games, 0 overruns, margin identity exact (68 − 82 = −14 = 2 × (9 − 16)).
+**Rejected on the pre-registered gate.** `src/alice` stays at iteration 30. The mechanism check
+also passed — the identical-to-baseline set is **0 of 75**, so the builds diverged everywhere,
+exactly as a change that touches only the *cost* of an already-universal mechanism should.
+
+### This refutes a claim I made about iteration 30, in the direction that costs me
+
+When I logged the "defect" before iteration 30's verdict I wrote:
+
+> *"iteration 30b won its arm while paying a cost that is not intrinsic to the mechanism. The
+> measured +12 net swept is a **lower bound** on what 'walk to the tower' is worth."*
+
+**That is now refuted.** Removing the supposed cost made it **worse by 19 net swept** (+12 →
+−7 against successive baselines). Iteration 30b's discarding of the commuting soldier's action
+was not a defect at all — **it was load-bearing**, and I had it filed as an obvious
+improvement waiting to be collected.
+
+My pre-registered falsifier said precisely this, and I am glad it is on the record in advance
+because I would not otherwise have believed it:
+
+> *"net swept <= 0 means the action was not worth preserving, and iteration 30b's pre-emption
+> was accidentally correct — a soldier whose paint is low enough to send home is one whose
+> remaining paint is better saved than spent."*
+
+### The mechanism I think explains it — split into what I know and what I don't
+
+**What is certain, because it is static control flow:**
+
+```java
+// iteration 30 (accepted)          // iteration 31 (rejected)
+if (goRefill(rc)) return;           goRefill(rc);
+                                    ... runSoldier continues, may paint ...
+// then, in run():  tryRefill(rc) -> `if (!rc.isActionReady()) return;`
+```
+
+In iteration 30 a commuting soldier returns before its role can spend the action, so when
+`tryRefill` runs at the end of the turn the action is **ready**. In iteration 31 the soldier
+paints on the way, spending the action, and `tryRefill`'s first guard **rejects it**. So
+iteration 31 does not merely add painting — **it can disable the refill at the moment of
+arrival**, which is the entire point of walking there.
+
+**What is NOT established** is how often that actually bites. That is a runtime frequency, and
+today has taught me twice over that source cannot supply one: my whole reading of the refill
+guards was wrong until a probe measured them. So the above is a **hypothesis with a certain
+static component and an unmeasured dynamic one**, and I am labelling it that way rather than
+promoting it to the explanation.
+
+**The cheap test exists and is already built.** `alice_refillprobe` counts `did=` refills; the
+same instrumentation applied to `i31a` would show the refill rate collapsing if this is right.
+That is the iteration-32 probe, and it costs six games.
+
+### What this does to the queue
+
+- **Iteration 30 stands** at +12, and that figure is no longer a lower bound — it is the value
+  of the mechanism *including* a pre-emption that turns out to be part of it.
+- **The `tryRefill` action guard is now interesting for the opposite reason.** I spent this
+  morning proving it was *not* the binding guard on the refill (adjacency was, at 0.0-1.0%).
+  It now looks like it is doing real work as a *protection*: the thing that keeps a
+  soldier's action free for the refill that follows. A guard can be non-binding and still be
+  load-bearing, which is a distinction I did not have this morning.
+- Resource patterns and `mopSwing` keep their places behind the probe.
