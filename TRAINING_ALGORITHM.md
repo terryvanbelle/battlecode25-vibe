@@ -331,7 +331,24 @@ The accept/reject machinery lives or dies on these rules. Each one is paid for.
     the step from post-turn state to *affordability at the decision point* was
     invalid. To measure a decision, instrument the decision: record the deciding
     quantities in-bot, at the decision point, before the action resolves.
+16. **A lesson you wrote is not a control. Install the check where the mistake
+    happens.** The evidence for this is unusually direct: a lineage wrote a
+    lesson about confusing two currencies in a constant, then made that exact
+    error again **within the hour** — on the constant underpinning its strongest
+    lead, reversing that lead's entire rationale. The coordinator did the same
+    thing on a different rule, repeating a duplicate-launch mistake immediately
+    after documenting it, twice.
 
+    Writing a lesson records that you understood something once. It does nothing
+    at the moment of the next mistake, because the failure is not ignorance of
+    the rule — it is not consulting it. So convert the lesson into something that
+    fires without being remembered: a unit named for the constant's units, an
+    assertion beside the definition, a reconciliation the analysis performs on
+    itself, a pre-check the loop runs whether or not you feel it is needed.
+
+    The test for whether a lesson is done: **could the next session make this
+    mistake without reading anything?** If yes, the lesson is a note, not a
+    control. `LEARNINGS.md` is the record; the mechanism is the fix.
 ---
 
 ## The iteration loop
