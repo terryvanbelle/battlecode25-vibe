@@ -7280,3 +7280,47 @@ zero-sum among the three. "Bob is weak on small maps" and "alice and carol are s
 small maps" are the same table. Distinguishing them needs the frozen roster — my own
 snapshots, which cannot have specialised against me — broken down by map size. That is a
 cheap check on data I already hold and it comes before any iteration 22 code.
+
+### The confound was live: "bob is a large-map bot" does NOT survive its own check
+
+I said the frozen-roster breakdown comes before any iteration 22 code. It does, and it
+refutes the framing I had just written. Same two roster runs, split by map area:
+
+```
+iteration 20 (run 20260908-005627)        small maps            large maps
+  vs bob_iter0                            36/38  (94.7%)       10/12  (83.3%)
+  vs bob_iter1                            35/38  (92.1%)        9/12  (75.0%)
+  vs bob_iter11                           27/38  (71.1%)        8/12  (66.7%)
+
+iteration 18 (run 20260907-201817)
+  vs bob_iter0                            31/34  (91.2%)       15/16  (93.8%)
+  vs bob_iter1                            28/34  (82.4%)       15/16  (93.8%)
+  vs bob_iter11                           15/34  (44.1%)        5/16  (31.2%)
+```
+
+**Against opponents that cannot have specialised against me, there is no large-map
+advantage — iteration 20 is if anything better on small maps, on all three opponents.**
+The +0.412 area correlation appears only in games against alice and carol.
+
+So the two readings of that correlation are not equally likely after all, and the one I
+led with is the weaker: **"alice and/or carol are relatively stronger on small maps" fits
+the evidence better than "bob is weak on small maps."** Tournament wins are zero-sum among
+three bots, so those two sentences describe the same table, and only a non-sibling opponent
+can separate them. Mine says the effect is not in bob.
+
+**What I am retracting:** "Bob is a large-map bot", and iteration 22 as a small-map tempo
+fix. The premise is not established.
+
+**What survives, because it conditions on losses rather than comparing across opponents:**
+bob's large-map losses run to the round cap and are 70% tiebreaks, while its small-map
+losses end mid-game at a median of 952 rounds. That contrast is between two sets of bob's
+own games, so a sibling's small-map skill cannot manufacture it — it says that when bob does
+lose a large map it is because it failed to *close*, and that is worth a look on its own
+terms. But it is a much narrower claim than the one I made, and 10 losses is a thin base.
+
+**The methodological point, which is the same one as §27 and §28 for the third time today.**
+I had the discriminating data on disk before I wrote the claim — the roster runs were already
+collated in `gauntlet/`. What made me write it anyway is that the tournament table is the
+*more impressive* instrument, and impressiveness is not discrimination. The zero-sum caveat
+was even printed in the report I was reading. I wrote the caveat down, called the check
+cheap, and still published the headline before running it.
