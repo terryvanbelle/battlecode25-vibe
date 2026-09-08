@@ -8678,3 +8678,95 @@ and *that* is not derivable from the win rate.
 
 I have recorded the identity in my own `LEARNINGS.md` either way, so nothing is
 blocked on this.
+
+---
+
+# ITERATION 24 — ACCEPTED
+
+`src/alice_i24` → `src/alice_iter24`, promoted into `src/alice`. Run
+`20260907-234431`, 150 games, 25 random maps, both sides.
+
+## The mechanism
+
+In `runMopper`'s hold branch (`bd <= 2`, "already in mopping range"), the mopper
+used to stand still and **spend its movement on nothing**. It now steps to an
+adjacent **ally-painted** tile from which the chosen target is still within
+`r²<=2`. One mechanism; nothing bundled.
+
+Why it pays, from the engine's own numbers: a mopper's attack costs **0 paint**
+and a mopper has **no income**, so end-of-turn upkeep is its *only* paint sink —
+and upkeep is set by the tile underneath (0 on ally, −2 on empty, −4 on enemy).
+Measured beforehand: **64.7% of my moppers died at exactly 0 paint**, median
+lifespan 80 rounds. The movement was already being wasted, so the step is a
+reallocation of nothing: *capability preserved at zero marginal cost*.
+
+## Results
+
+| opponent | win rate | swept-win | swept-loss | split-by-side | net |
+|---|---|---|---|---|---|
+| **alice_iter23** (accept gate) | **33/50 (66%)** | **8** | **0** | 17 | **+8** |
+| alice_flood | 45/50 (90%) | 21 | 1 | 3 | +20 |
+| alice_iter7 | 44/50 (88%) | 19 | 0 | 6 | +19 |
+| overall | 122/150 (81.3%) | | | | |
+
+Gate is >50% head-to-head vs the last accepted snapshot: **passed at 66%**, also
+clearing `WinPct` = 60%. **No unresolved one-directional regression** — swept
+losses are 0, 1, 0.
+
+**But the honest size of the result is +8 net swept maps out of 25, not "66%".**
+Those are the same number (see LEARNINGS: margin over 50% = SW − SL, exactly), and
+**17 of 25 maps split by side and carry no signal at all**, so the effective
+sample is nearer 8 maps than 50 games.
+
+## Standing checks
+
+- **Exceptions: 0** across all 150 games.
+- **Bytecode:** peak **4092**, **0 overruns, 0 near-misses**. (The census build's
+  13,760 peak was instrumentation; the shipping build is nowhere near the limit.)
+- **Play-symmetry:** 68% as A vs 64% as B against `alice_iter23`; the 17 split maps
+  break **9 A / 8 B**. That is churn, not the compounding side bias the audit hunts.
+
+## Mechanism verification, and what I am NOT claiming
+
+Verified on the step-0 pair (same map, both arms): **starvation deaths fell from
+48.8% to 31.1% of all deaths**, against an opponent control that moved only
+38.7% → 35.4%. Downstream, mopper spawns fell 195 → 156 while soldier spawns rose
+520 → 572 — the §3c absorbing state running backwards.
+
+**The last link of that chain is OPEN, and I am recording it as open rather than
+back-filling it.** The chain "less upkeep → longer-lived moppers → fewer respawns →
+freed tower paint → more soldiers" is verified at every step. The final step,
+"more soldiers → more coverage", is **not**: on the one map where I have both arms,
+the candidate's coverage was *lower* (635m → 570m) while it still won. Per step 3b
+I accept the result and leave the attribution unresolved.
+
+What the result does say: **14 of the 16 swept-win games ended at round 2000**, on
+the paint tiebreaker — which is where a per-turn paint saving would accumulate. But
+the split maps are *also* mostly 2000-round games (25/34), so round length does not
+separate them. **Consistent with, not evidence for.** The separating experiment,
+when I want it, is per-map final coverage for both arms on this run's pinned maps.
+
+## Tooling note — the roster rows this run wrote are labelled `[roster-run]`
+
+`track_vs_old_bots.py` recorded the three rows as `[roster-run]` (solid points).
+By `AGENT.md`'s convention they arguably belong as `backfill` (hollow), because
+this was a **pre-accept head-to-head** and the bot measured was a candidate. It
+happens to have been accepted, so the points are honest either way — but the tool
+appears to classify by "were the opponents roster members" rather than by "was
+this a deliberate roster run". Flagging rather than hand-editing, since the CSV is
+specified as derived automatically and never hand-edited.
+
+Also note the roster has now grown to include `alice_iter23` (7 tracked opponents).
+
+## Where this leaves the loop
+
+Functional area for iterations 22–24 has been **paint efficiency**, and it is
+now three accepts deep. Next targets are already selected and ranked from
+tonight's tournament analysis, in a *different* area:
+
+1. **Splashers** — attack branch is dead code (`bestScore=3`, `score` maxes at 2),
+   so nothing this lineage has recorded is evidence about them; bob builds 43 on
+   one map, I have never built one. First step is repairing the scoring, not
+   building splashers.
+2. **Tower count / economy** — bob finished 16 towers to my 6, 234 units to my 84,
+   701‰ coverage to my 281‰. The master variable, and a ~3:1 production gap.
