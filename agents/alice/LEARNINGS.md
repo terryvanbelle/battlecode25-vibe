@@ -1104,6 +1104,57 @@ half of a future destructive pair nobody thinks to suspect. Recorded here so tha
 if a frozen-roster reading ever drops, this clause is on the list of things to
 ablate first.
 
+## Theme: a REPLAY's per-robot state is post-decision by construction, so it cannot price affordability
+
+Doctrine already says *instrument the decision, not the outcome*, and I had read
+that as being about where to put an in-bot counter. On 2026-09-08 it bit me from a
+direction I had not considered: a statistic derived entirely from the **replay**,
+with no in-bot instrument at all, was post-decision by construction.
+
+I traced a tower's paint with `replay-dump --robot <id>` and crossed it with team
+money to ask "how often could this tower afford each unit":
+
+| unit | cost | ends turn with paint >= cost | AND money >= reserve |
+|---|---|---|---|
+| MOPPER | 100 | 59.6% | 32.50% |
+| SOLDIER | 200 | 10.3% | **0.10%** |
+| SPLASHER | 300 | 5.3% | **0.05%** |
+
+That reads as a spectacular result — a soldier affordable on one turn in a
+thousand, the absorbing state finally measured. **It is an artefact.** The replay
+records each robot's state *after* its turn, so the paint is **post-spend**: every
+turn on which the unit *was* affordable and *was* bought appears in the data as a
+low-paint turn. The statistic is conditioned on the very outcome it purports to
+predict, and it under-counts affordability by exactly the cases of interest.
+
+**What caught it was a reconciliation, not suspicion.** 0.10% of 2000 turns is ~2
+opportunities for one tower and ~24 across the team, while **572 soldiers were
+actually built in that same game**. Two artefacts that had to agree, didn't.
+
+### The rules this sharpens
+
+> **A replay tells you what a unit ENDED UP with. It can never tell you what the
+> unit COULD HAVE AFFORDED**, because the affording and the spending happen inside
+> the same turn and only the residue is recorded.
+
+- **Any "how often was X possible" question needs a decision-point instrument.**
+  Post-hoc state answers "how often did X remain unused", which is a different and
+  usually much smaller number.
+- **Suspect any statistic whose denominator is a state the mechanism itself
+  changes.** Paint is spent by the decision being measured; so is a treasury, a
+  cooldown, a build slot. Anything the decision consumes is disqualified as a
+  conditioning variable.
+- **The cheap check is a reconciliation, and it is available almost always.** If a
+  rate implies N opportunities, find the count of realised events and compare. Here
+  24 versus 572 settled it in one line, with no new games.
+
+Note what survived the correction, because discarding the whole analysis would have
+been the lazy response: the *separate* finding that high-paint turns are turns when
+money blocked the spawn is a claim **about post-turn state**, which is exactly what
+post-turn state supports. Only the step from there to affordability was invalid.
+**When part of an analysis fails, find the boundary rather than binning all of it.**
+
+
 ## Theme: swept maps and the head-to-head margin are THE SAME NUMBER, not two signals
 
 Discovered 2026-09-08 while accepting iteration 24, in the act of citing both as
