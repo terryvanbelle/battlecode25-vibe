@@ -7787,3 +7787,63 @@ price MEASURED in both currencies above; history CHECKED against iterations 4, 2
 sweep. Outstanding and named: (1) does the floor starve early production on maps where chips are
 genuinely scarce — the `<1200` share is 10–26%, so the floor must not bite there; (2) bytecode
 (trivial, one comparison); (3) the one-map identity check.**
+
+### Audit: the coverage-denominator correction, and the two tooling fixes
+
+**Coverage denominator — my figures are UNAFFECTED, checked rather than assumed.**
+`tools/engine-facts.md` previously said `teamCoverageAmounts` divides by *total* map area and
+warned against passable area; it is now corrected to **passable area, walls excluded**. My sizing
+pre-check computed `passable = w*h - walls` and multiplied per-mille by that — i.e. it used the
+now-correct denominator throughout. So the ×9.3 (DefaultMedium) and ×0.2 (Fossil) prize-to-margin
+figures, and the "868–1,193 passable tiles" map sizes, all stand as written.
+
+One residual I am naming rather than hiding: ruins are also unpaintable (RULES: paintable = not
+wall, not ruin) and my denominator subtracted only walls. On DefaultMedium the exact census gives
+3 ruins against 1,194 non-wall tiles, so the error is 0.25% — irrelevant to a ×9.3 vs ×0.2
+comparison, but it is an error and it would matter on a ruin-dense map.
+
+**The lesson attached to the correction is the valuable part, and it indicts a habit of mine.**
+The wrong version survived because its verification ran on a 2.6%-wall map, where the two candidate
+denominators differ by 2 per-mille — inside the noise the check already tolerated. *A verification
+performed where the hypotheses barely differ is not a verification.* I have the same exposure: my
+own identity checks and probes all run on the same four maps (DefaultMedium, Fossil, Bunny,
+Mirage), chosen because they were the diagnosis maps, not because they discriminate anything.
+**Registering as a standing practice: when a quantity depends on a fraction, pick the probe map by
+where that fraction is LARGE, not by where the trace came from.**
+
+**`replaydump` glyph collision** (`M` meant a team-1 money tower or a team-2 mopper): I have not
+counted units from arena glyphs in this session — the unit counts here come from `SPAWN` events and
+the per-turn indicator stream, neither of which is affected. The one arena-grid census I inherited
+(the 116/149 bracket) was already superseded by the exact array census.
+
+**`track_vs_old_bots` `+cand` resolution**: re-ran it; **0 new rows, 7 replaced, no diff.** The fix
+targets labels ending `+cand`, and my roster run is labelled `carol_i29` — the directory that
+played, which is unambiguous and content-identical to `carol_iter29`. So my absolute-progress chart
+was never carrying a stale hollow point. Charts regenerated regardless.
+
+### Tournament `20260908-0100` — first external read on iteration 29, and it is SPLIT
+
+| pair | iteration 25 (prev tournament) | **iteration 29** |
+|---|---|---|
+| carol vs alice | 47/150 = 31.3% | **47/150 = 31.3%** (complete) |
+| carol vs bob | 12/150 = 8.0% | **7/14 = 50%** (early, incomplete) |
+
+**The identical 47/150 is a coincidence, and I checked rather than assuming.** An identical total
+from a changed bot on a deterministic engine is exactly the shape of a stale build being exported,
+so I diffed the per-map results: **120 of 150 (map, side, winner) rows are identical and 30 flipped
+— 15 each way.** Real games changed; the net happens to be zero. Not a tooling fault.
+
+Two things follow, and the first is uncomfortable:
+
+- **Against alice, iteration 29 is worth 0 net games**, with the mixed-direction scatter that is
+  the churn signature — despite being worth +88% against my own predecessor. That is
+  TRAINING_ALGORITHM §5b exactly: **a head-to-head margin is a partial derivative and does not
+  transfer to an opponent it was not measured against.** My within-lineage instruments said this
+  was the biggest accept the lineage has made; against an independent opponent it moved nothing.
+  Both readings are true and they are about different questions.
+- Attribution is not clean either way: **alice changed too** between the two tournaments
+  (`688a75b` → `25c3160`), so the 30 flipped games carry both lineages' changes and I cannot
+  isolate mine.
+
+The bob pair is the one to watch (8% → 50% on 14 of 150 games) and it is far too early to read.
+Polling it rather than concluding.
