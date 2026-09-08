@@ -13210,3 +13210,47 @@ numbers known beforehand).
 already in the trace I published as confirmation), 51 (my gate's unit is *wins above half*; put units
 in names), 52 (I verified the engine precondition and skipped the PRNG invariant my own entry 35 is
 about).
+
+---
+
+## CORRECTION, same session: the livelock probe's first real data does NOT show the separation I predicted
+
+The two probes finished after I wrote the state of play. I registered the discriminating prediction
+before they did — *"high rate on CastleDefense/Filter, low on Money; if the rate is the same on both,
+livelock is a constant background cost and cannot explain the gradient"* — so this is read against that,
+not around it.
+
+```
+  CastleDefense (bob LOSES, 93 rounds)     distinct tiles over last 30 turns:  2,  8,  5,  5
+  Money         (bob SWEEPS, 1696 rounds)  distinct tiles over last 30 turns:  4,  8
+```
+
+**The two sets span the same range.** One robot of four on the losing map is a hard 2-cycle; the rest
+sit at 5-8, and the winning map's robots sit at 4 and 8. n = 4 versus 2 is far too small to claim the
+rates are *equal* — but the separation I predicted is **not visible in the first data**, and that is
+the honest headline. My closing report called livelock "the diagnosis". **On this evidence it is not;
+it is one confirmed instance and no established rate.** Correcting that here rather than leaving the
+stronger claim standing.
+
+### And the statistic itself is wrong, which matters more than the n
+
+A soldier standing at a ruin painting the 5x5 pattern **should** occupy few tiles. That is the bot
+working correctly. So "distinct tiles per window" cannot separate *productively parked* from
+*livelocked* — and every robot probed here, on both maps, is low-mobility. The statistic I proposed
+would have flagged the whole population.
+
+What actually distinguished `id12239` was never the tile count alone. It was the **conjunction**:
+2 tiles, *alternating* between them, paint draining 5/turn the whole time, no tower ever completed, and
+death by exhaustion in place. **The census must test that conjunction** — low mobility AND no
+productive action AND monotonically falling paint — not a mobility threshold. Had I built the census as
+written in the state of play, it would have produced a large, confident, meaningless number.
+
+**This is the fourth time today that the check I registered in advance overturned the reading I had
+already formed**, and the first time it did so *after* I had written the conclusion up. The
+pre-registration is the only reason the correction was forced rather than optional: I had written down
+what would demote the hypothesis, so the data could demote it.
+
+**Revised next-session task**: build the census around the conjunction above, and treat the navigation
+livelock as **one confirmed instance with no established rate** until it reports. The `Nav.java` stuck
+detector is still, on inspection, unable to fire on a moving robot — that code fact stands on its own
+and is not affected by any of this. What is not established is how often it costs anything.

@@ -2221,3 +2221,47 @@ covered.
 **Cheap detector, and I already had it**: the null arm's sweep count. It cost one line of analysis and
 caught the fault before a single conclusion was drawn from the doses — which is the entire reason the
 condition was pre-registered and read first.
+
+---
+
+## 53. A statistic that flags the whole population is not a detector (2026-09-08)
+
+I proposed a livelock census keyed on "distinct tiles occupied over a 30-turn window", with a
+threshold of `<= 3`, after tracing one soldier that oscillated between exactly two tiles for 32 turns
+and then starved to death.
+
+The first six robots probed:
+
+```
+  CastleDefense (bob loses)   2,  8,  5,  5
+  Money         (bob sweeps)  4,  8
+```
+
+**Everything is low.** And it should be: a soldier standing at a ruin painting the 5x5 tower pattern
+occupies one or two tiles for many turns, and that is the bot working *correctly*. The statistic
+cannot separate "productively parked" from "cycling to death", because both look like a robot that
+does not go anywhere.
+
+> **Before building a detector, ask what the statistic reads on the population you are NOT hunting.**
+> If it reads the same, it is not a detector — it is a description of the population. A threshold set
+> from the one example that motivated it will then flag most of the population and return a large,
+> confident, meaningless rate.
+
+The real signature was never the tile count on its own. It was a **conjunction**: few tiles, *alternating*
+between them, paint falling 5/turn throughout, nothing ever completed, death by exhaustion in place.
+Each clause rules out a benign explanation the others admit — the paint drain rules out an idle unit,
+"nothing completed" rules out a working one.
+
+**Two things made this recoverable, and both were set up in advance.** I had registered the
+discriminating prediction (*high rate on the maps I lose, low on the map I sweep*) before the probes
+ran, so when the two distributions overlapped, the demotion was forced rather than optional. And I had
+run only 6 probes rather than building the full census first — the cheap version of an instrument is
+also the cheap version of finding out the instrument is wrong.
+
+**The uncomfortable half.** This landed *after* I had written the session conclusion calling the
+livelock "the diagnosis". The pre-registration did its job at the cost of contradicting me in public,
+which is exactly what it is for; a conclusion already written up is the one you least want to test and
+the one most worth testing. **Note also what survives**: the `Nav.java` code fact — a stuck detector
+that can only fire on a robot that does not move, inside a policy that always moves — is unaffected. A
+mechanism can be certainly present and of entirely unmeasured importance, and those are two claims,
+not one.
