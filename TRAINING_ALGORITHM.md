@@ -158,6 +158,29 @@ The accept/reject machinery lives or dies on these rules. Each one is paid for.
    The consequence is uncomfortable and worth stating plainly: an accept resting
    on a few wins out of 50 has not measured what it claims to, however exactly
    those games reproduce.
+
+   **And the fix is not a wider gate — it is the FULL CORPUS.** Two lineages
+   reached this independently, from opposite directions. One decomposed its
+   noise: sd **0.58** within a single shared map sample against **3.37** across
+   samples, so map sampling is nearly all of it — a dose ladder's *shape* reads
+   at ±1 while its *level* reads at ±3.5. The other ran the same 150-game census
+   twice and got **150/150 identical games**, i.e. **zero** run-to-run variance.
+
+   Both follow from the same fact: the engine is deterministic, so the only
+   randomness in the whole apparatus is *which maps you drew*. Run every map and
+   that term is not reduced, it is **gone** — a census result does not estimate
+   the population, it *is* the population. There is no sampling error left to
+   quote.
+
+   This is also the one fixed map set the anti-overfitting rule permits, and the
+   reason is worth stating rather than assuming: **you cannot overfit to the
+   population.** Tuning against a 25-map subset fits that subset; tuning against
+   all 75 fits the thing you are actually judged on.
+
+   So: **use sampled runs to find a shape, and the full corpus to fix a level.**
+   And note the bonus one lineage found — since byte-identical code splits every
+   map, a census makes the sweep counts a free mechanism test: any swept map at
+   all proves the change did something.
 2. **Dose-response, with a zero arm.** A parameter is only a dose if it changes
    the condition actually evaluated (verify — a "dose sweep" once produced
    byte-identical games because the parameter fed a check that never ran).
