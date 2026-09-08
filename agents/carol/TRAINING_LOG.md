@@ -8666,3 +8666,57 @@ capable of costing an iteration, and I have now paid for each.
 still compiles. Cost: three 8-game samples (24 games) and two no-op probe runs, against the
 **100-game run the pre-registered engagement check prevented me from buying**. That check is the
 cheapest thing in this log and it has now paid for itself outright.
+
+## Iteration 33 — iteration 14's frontier-seeking is switched OFF on the largest block of idle turns
+
+**Target, and it came free out of iteration 32's failure.** Tracing why the SRP mechanism found no
+friendly ground to stand on turned up a much larger fact about the *current* build: the idle budget
+is dominated by IDLE-ENEMY, and iteration 14's frontier-seeking is gated `if (foe == 0)` — so it
+does not run there at all.
+
+| map | IDLE-ENEMY | IDLE-ALLY | share of idle budget where iteration 14 is DISABLED |
+|---|---|---|---|
+| DefaultLarge | **1,424** | 20 | **98.6%** |
+| gridworld | **7,099** | 3,480 | **67.1%** |
+| Parking_lot | 1,980 | 6,597 | 23.1% |
+
+**Measured on this build** (`carol_i32b`, run `20260908-062421`), not inherited from an earlier
+iteration — this is the standing pre-condition LEARNINGS acquired an hour ago, applied.
+
+**Hypothesis.** Reaching that line means nothing paintable inside the action radius r²=9. When
+`foe > 0` that is a **capability** wall, not a navigation one: RULES.md, a soldier's attack "paints
+the tile ONLY if empty or already own-team paint", so it can *never* convert the enemy paint it is
+standing beside, no matter how long it waits. Meanwhile vision is r²=20 — more than twice the
+action area — so genuinely EMPTY ground is usually in sight, and `newExploreTarget()` instead sends
+the soldier to a **random map coordinate**. Un-gating costs nothing: it spends no paint and no
+action, it only redirects a move that was already going to happen. That is the same
+"capability at zero marginal cost" shape iteration 14 itself was accepted on.
+
+**Why the gate existed, and why that is not a defence of it.** The ally/foe census arrived with
+iteration 14 to *diagnose* the two kinds of idleness — "ally paint everywhere = nav problem; enemy
+paint in reach = capability problem". The diagnosis was then reused as a *policy* without ever
+being tested as one. Nothing in the log measures the gate; it has simply never been touched.
+
+**Price, in the binding currency.** Paint: **zero** — no attack is added or removed. Chips: zero.
+The only cost is the counterfactual value of the move the soldier would otherwise have made, which
+is `newExploreTarget()`'s random coordinate. The honest weak point: a soldier at the enemy frontier
+may be there for a *reason* the census cannot see — chipping a tower (handled earlier in
+`runSoldier`, so unaffected) or holding contested ground (not modelled anywhere in this bot). If
+carol is quietly relying on soldiers loitering at the frontier, this removes it, and that is the
+term I expect to fail if the iteration fails.
+
+**Same-width discipline, applied deliberately.** The probe and the shipping decision are the
+*same expression* — `nearestVisibleEmpty()` is called once and both the counter and the redirect
+read that one result. Iteration 32 was killed twice by width mismatches between probe and build;
+here there is no separate probe to mismatch.
+
+**Pre-registered gate**, fixed before any game is read:
+- **§4 engagement check first, on an 8-game repro sample**: `ideFound` must be > 0 and a
+  substantial fraction of `ideTurns`. If the empty ground I claim is visible is not actually
+  visible, the mechanism is inert and no full run is bought — the check that saved 100 games on
+  iteration 32.
+- **Accept** if `carol_i33` beats `carol_iter30` head-to-head **> 50%** on a fresh random 25-map
+  sample, swept wins exceeding swept losses, no one-directional regression.
+- **Map-level prediction**, stated so the sample can check itself: the gain should track the
+  IDLE-ENEMY share, i.e. be largest on DefaultLarge-like maps (98.6% disabled) and smallest on
+  Parking_lot-like maps (23.1%). If the gain is uniform, attribution is OPEN.
