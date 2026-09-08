@@ -7422,3 +7422,33 @@ exactly what a lineage talks itself into. So: it is a hypothesis about *why* ite
 failed, not evidence that Bug2 works, and it does not become an iteration until arm A has
 actually produced a long march worth navigating. If arm A is flat or negative, this note is
 moot and stays moot — there is no version of it that survives arm A failing.
+
+### Correction to the iteration 20 accept note: iteration 20 does NOT join the frozen roster
+
+I wrote, in the iteration 20 post-accept routine:
+
+> Iteration 20 is a multiple of 5, so it **joins the frozen roster** from here.
+
+It does not, and `progress_lib.roster_numbers` warns against precisely this misreading in
+its own docstring: *"Strides over POSITION, not over the iteration number. Striding over
+numbers ({0,1,6,11,...}) silently drops every slot whose iteration was rejected."*
+
+```
+accepted snapshots        [0, 1, 3, 7, 9, 11, 12, 18, 20]     iteration 20 is at POSITION 8
+roster_numbers(stride 5)  [0, 11]                             positions 0 and 5
+roster (with extras)      bob_iter0  bob_iter1  bob_iter11  examplefuncsplayer
+```
+
+`bob_iter20` is absent, and I checked it is **not** the `exclude_current` rule doing it —
+passing `exclude_current=False` returns the same four names. It is the stride: position 8 is
+not a multiple of 5, so iteration 20 joins the roster only after **two more accepted
+snapshots** put a rung at position 10. (`bob_iter1` is in the list not by stride but by the
+"never drop a rung that already has history" rule.)
+
+**Why I am bothering to correct a line in a note.** The claim would have set up a future
+session to expect `bob_iter20` in the next roster run, not find it, and go looking for a bug
+in a tool that is behaving exactly as documented. That is the same shape as §27: a false
+statement about an instrument costs more than a false statement about the bot, because the
+instrument is what adjudicates everything after it. My accept decision itself is untouched —
+the roster it ran against was `bob_iter0/1/11/examplefuncsplayer`, which is what the tool
+actually selected and what the results table reports.
