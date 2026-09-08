@@ -3964,7 +3964,7 @@ variable iteration 17 was pre-registered against, before this run finished.
 ### Closed-directions ledger
 | direction | closed by | can re-open if |
 |---|---|---|
-| Lowering `CHIP_RESERVE` (the spend gate) | iteration 16: doses 1250 and 1000 both **11/24**, identical, one game below a zero-variance null; mechanism gate failed with soldier count *falling* | the tower mix is fixed first and chips are then shown to bind with soldiers idle for want of them. Not before — a flat response across a 450-chip range says the parameter is not live. |
+| **[SUPERSEDED 2026-09-08 — see the iteration-18 row below; its re-open condition, not this one, is binding]** Lowering `CHIP_RESERVE` (the spend gate) | iteration 16: doses 1250 and 1000 both **11/24**, identical, one game below a zero-variance null; mechanism gate failed with soldier count *falling* | the tower mix is fixed first and chips are then shown to bind with soldiers idle for want of them. Not before — a flat response across a 450-chip range says the parameter is not live. |
 
 **Cost: one 48-game run and one replay dump.** Iterations 12 and 14 were accepted
 on this loop and 15 and 16 rejected; the two rejects together consumed less than
