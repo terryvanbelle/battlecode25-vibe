@@ -7378,3 +7378,11 @@ meaning. A constant dump gives values, never units — and the unit was recovera
 very same dump. Reading the *name* of the neighbouring constant would have caught it, and so
 would opening `RULES.md`, which is my own javap-verified digest and the file I skipped
 because I "already knew" the mechanic.
+
+**Knock-on to the march-length pre-check.** That entry priced rounds at `moves x 1.15`,
+where the 1.15 was the "hostile-ground cooldown tax" that does not exist. Terrain costs
+paint, not cooldown, so the march is **~30 rounds at the median, not ~34** — the error was in
+the conservative direction and the pre-check passes by slightly more than I claimed. The one
+cooldown effect that is real is `INCREASED_COOLDOWN_THRESHOLD = 50`, which bites *below* 50%
+paint — irrelevant to a splasher arriving at ~57% of capacity, and precisely the trap for a
+mopper arriving at ~32%.
