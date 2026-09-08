@@ -11422,3 +11422,80 @@ It also names the measurement I should have made first and had not: **the round 
 the gate first fires**. I have never recorded it. `alice_splashprobe2` should carry it, and
 until I have it, "iteration 29 fires earlier" is an assumption about a constant rather than
 an observation. Adding it before that probe runs.
+
+## Replay forensics on the tournament games — and I have been optimising the wrong resource
+
+Still non-blocking; no new games. Aggregate dumps (`--every 50`, aggregates only, no action
+log) of three maps bob sweeps in the mid-game band: `UnderTheSea`, `TheBest`, `DefaultMedium`.
+T1 = alice, T2 = bob.
+
+```
+UnderTheSea      ALICE                          BOB
+  round     cov  tw  spl sold   $$$$      cov  tw  spl sold
+    200     325   7    0    5   1320      339   7    2   14
+    300     363  10    0    9   1330      465  11    5   23
+    400     395  12    0   13   1030      576  13   10   40
+    500     348  10    0   21   1270      636  16   11   53
+    650     281   8    0   11   1270      679  16   20   66
+```
+
+Three things, all three consistent across all three maps.
+
+1. **My coverage PEAKS and then FALLS.** 401 -> 281 on UnderTheSea, 391 -> 288 on
+   DefaultMedium, 237 -> 218 on TheBest. Bob's rises monotonically throughout. I am not
+   failing to gain ground; **I am losing ground I already painted.**
+2. **Bob fields splashers from ~r200 on every map**, growing to 20-51. I field `spl0`
+   forever. A splasher is the only unit that overwrites enemy paint, which is exactly what
+   a falling coverage curve means is happening to me.
+3. **I am not short of chips.** My money sits at $1,000-$3,700 idle while my soldier count
+   stalls at 10-23 and bob's reaches 157. Chips are not the binding resource. They have not
+   been since iteration 2, and I keep building mechanisms that spend them.
+
+### The finding that actually matters, and it is about a mechanism I ALREADY ACCEPTED
+
+The dump has a `xfer` column (`TransferAction` count) and a `starved` column (died with
+paint <= 0). I checked both against `tools/replaydump/ReplayDump.java` rather than trusting
+the labels — `starved[dt]++` fires on `DieAction` when `lastPaint <= 0`, and `xfers[tid]++`
+on `TransferAction`. They compute what they say.
+
+Summed over the **whole** UnderTheSea game, not sampled windows:
+
+```
+alice: transfers=    0   deaths= 116   starved=  83 (72%)
+bob:   transfers=   62   deaths= 152   starved= 115 (76%)
+```
+
+**Zero.** Across an entire 660-round game, `alice_iter25`'s paint refill — an accepted
+iteration, +11 net swept, the mechanism whose "consume only what was going spare" shape I
+have twice cited as this lineage's best idea — **calls `transferPaint` not once.**
+
+Reading the code rather than guessing why:
+
+```java
+if (p * 2 >= cap) return;               // only below half paint
+if (!rc.isActionReady()) return;        // never displace an action
+RobotInfo[] near = rc.senseNearbyRobots(2, rc.getTeam());   // distance^2 <= 2: ADJACENT
+```
+
+`runSoldier` spends the action painting on essentially every turn it has paint. So the
+refill can only fire on a turn where the soldier did *not* act — and it must **also** be
+standing next to a tower at that moment, with that tower holding 200 spare paint. A soldier
+that has wandered off to paint and run dry is nowhere near a tower. The three conditions
+are jointly almost unsatisfiable in a real game.
+
+**I do not yet know whether this is also true in self-play, and that is the whole question.**
+Two possibilities with completely different consequences:
+
+- **Inert everywhere** — then iteration 25's +11 net swept was produced by something other
+  than the mechanism I credited, and an accepted iteration in my ledger is mis-attributed.
+- **Fires in self-play, not against bob** — then it is regime-dependent, and my census
+  selects for mechanisms that only work against opponents that behave like me.
+
+The second is the null branch I pre-registered this morning for iteration 28, arriving early
+and attached to a different mechanism. Either way it is an indictment of the instrument, not
+of the idea. **The iteration 29 census now running writes replays; I will count transfers in
+one of its self-play games and settle it there, at no extra VM cost.**
+
+I am deliberately not drawing the "starvation is my unique weakness" conclusion that the
+numbers invite: bob starves at 76% of deaths and I starve at 72%, so starvation per se is
+not what separates us. What separates us is that bob has 62 transfers and I have none.
