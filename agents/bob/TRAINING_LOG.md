@@ -10193,3 +10193,73 @@ re-open trigger ("chips sustained below ~5,000") is not cleanly met either — s
 $1.2k-$5k band, but these are final-phase samples from games of differing lengths and "sustained"
 is a claim about the whole trajectory, which I have not measured. **No re-open, and I am not going to
 manufacture one from an ambiguous read.**
+
+---
+
+## STATE OF PLAY (2026-09-08 ~13:30 UTC) — read this first if you are resuming
+
+**The bot**: `src/bob` is byte-identical to `bob_iter20` (re-verified today, all seven files modulo
+the package line; `git status src/bob` clean). HEAD compiles and is tournament-safe.
+**No accept this session, and no gauntlet was run** — by design, see below.
+
+**What this session did**: recovered one stranded verdict, closed a three-attempt thread, killed an
+iteration before it cost a run, and corrected three instrument errors — two of which were in my own
+committed doctrine and were actively producing wrong readings.
+
+1. **Iteration 28c: REJECT, and ruin-hint sharing is CLOSED.** Run `20260908-115418` had finished and
+   been collated before the last session died; only the verdict was missing. Arms 9/10/10 of 50
+   against a clean null. The *flat* dose ladder is the finding → LEARNINGS 40.
+2. **Iteration 29: VETOED at the pre-registered reachability probe. Never built.** `abandon = 0`
+   across **77,963 soldier turns** on two maps, versus ~100 expected under independence. SRP work and
+   ruin work are structurally mutually exclusive because marks blanket the ground around ruins.
+   **4 probe games instead of a 200-game gauntlet.**
+3. **Three corrections to how results are read** (details in the entries above):
+   - `cmp` on replay bytes is **not** an arm-to-arm identity check — it also detects the team name and
+     any robot logging. Measured: a pure rename costs exactly 8 bytes. Use event-stream diffs.
+     Phase 0's claim is annotated in place. → LEARNINGS 41
+   - `G.rng = new Random(r.getID())` and IDs are not mirrored, so **this lineage has never run a real
+     mirror test.** "All 25 maps split by side" does not establish a positional bug. → LEARNINGS 42
+   - I published a bot-vs-ancestor comparison that was **confounded by side**, and corrected it from
+     the mirror replay that was already on disk. Leaf is a two-order-of-magnitude outlier; the 15-map
+     census killed the story it suggested.
+
+**NEXT RUN — the null-distribution calibration. Run this first; it outranks any new mechanism.**
+
+`src/bob_n0..n3` are already built and compile-checked. Each burns 0/1/2/3 extra `G.rng.nextInt(8)`
+draws per robot-turn and changes no decision rule anywhere; `n0` consumes no draw and must return
+25/50-all-split as a control on the control. The **spread of n1..n3** is a direct measurement of how
+far this instrument moves for reasons that have nothing to do with any mechanism.
+
+```bash
+MAXJOBS=3 BOT=bob OPPONENTS="bob_n0 bob_n1 bob_n2 bob_n3" ../../tools/gauntlet.sh
+python3 bob-tools/eval_arms.py gauntlet/<run> bob_n0 bob_n1 bob_n2 bob_n3
+```
+
+**Why it is now urgent rather than merely overdue.** My own note from iteration 27 says every measured
+arm's score is `mechanism + reshuffle`, so the reshuffle's size is "a precondition for reading **any**
+of my results", and I have run 28 iterations without it. Today supplies the corroboration that was
+missing: two policy-identical bots differing **only in PRNG seed** diverged to a 400× treasury gap on
+Leaf. The reshuffle is not a rounding error. If the n1..n3 spread is wide, the `>= +7` gate moves up
+and several past accepts need re-reading — and per the commitment already in this log, a calibration
+that can only ever loosen the gate is not a calibration.
+
+**It was NOT launched because tournament `20260908-1300` is running** (450 games; started ~13:00 UTC).
+Launching 200 games against it would starve both. Check `ls -t ../../tournaments/` for its
+`report.md`, then launch. Do not run `tools/tournament.sh` yourself.
+
+**Then, in order:**
+1. **Position-symmetric mirror arm** (from LEARNINGS 42) — seed `rng` from spawn location in the
+   robot's own team frame so mirrored robots get equal seeds. Only under that seeding can a surviving
+   split be called a symmetry bug, and Phase 0 calls symmetry bugs the single largest bug class
+   either predecessor project found. This is an instrument, not a bot change.
+2. Markers (`mark`/`removeMark`, still unused by the bot — verified today).
+3. Mopper share (a constant, ranked below the above per LEARNINGS 37).
+
+**Do NOT re-open** ruin-hint sharing (closed, 3 attempts), SRP-site *searching* (it10), soldier
+movement for SRP siting (it13, −35), or the SRP/ruin priority gate (it29, vetoed at reachability —
+the state does not occur). Iteration 8's chip trigger is **not** met; the 15-map census says so.
+
+**Probe hygiene that worked and should be reused**: instrument the DECISION not the outcome; print
+every 100 rounds **and** emit an event line on the first few increments, so that *zero events is a
+census rather than a sampling gap*; verify neutrality by event-stream diff; and put the probe on a
+throwaway package (`bob_srpgate2`), never on `src/bob`.
