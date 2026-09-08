@@ -10653,3 +10653,149 @@ one opponent, no other rows.** Reasons, in order: it is the only row that gates 
 it has the worst resolution of any row I can run; the census is its maximum resolution; and
 a single-opponent census costs less than the 3-opponent runs I was doing, which spent most
 of their games on lopsided rows that rule 9 forbids deciding on anyway.
+
+## Iteration 26, re-based and re-registered BEFORE the run returns
+
+Accepting iteration 25 invalidated the candidate I had already built. `src/alice_i26` was
+`alice_iter24` + the tower mix, and iter24 is no longer the baseline. Running it against
+`alice_iter25` would have measured **two** changes at once — adding the tower mix *and
+removing the refill* — and whichever way it came out I could not have attributed it.
+
+So the candidate under test is `src/alice_i26b` = `alice_iter25` + the ratio change, and
+nothing else. Verified as a diff, not by intention: `alice_i26b` vs `alice_iter25` is 22
+lines, of which 21 are the explanatory comment and **one is the mechanism**:
+
+```java
+UnitType wantTower = ((ruin.x + ruin.y) & 3) == 0 ? MONEY : PAINT;   // was & 1
+```
+
+`src/alice_i26` is left in place as the dead-end it is, rather than deleted, so a future
+session that finds it in the tree can see from this entry why it was not the one that ran.
+
+### The gate, restated for the census
+
+- **Instrument**: `alice_i26b` vs `alice_iter25`, **all 75 maps, both sides, 150 games**.
+  One opponent. This is the new standing gate recorded in `progress/milestones.txt`.
+- **Accept iff net swept maps > 0** over the census, `SW` and `SL` reported separately,
+  0 exceptions, 0 overruns.
+- **No confidence interval will be quoted**, for the reason the iteration 25 entry gives:
+  over a census there is no sampling distribution to have an interval on.
+
+### The named risk stands, and it is the one to check FIRST
+
+Chips are abundant late and tight *early* — at round 40 of the bob replay I held **$370**,
+and iteration 2's `CHIP_RESERVE` exists precisely because greedy spending stalls tower
+completions permanently. Cutting money towers to 25% is a bet that the late-game surplus
+of $36,830 is not paid for by the early-game squeeze.
+
+**Pre-registered diagnostic, independent of the win rate: tower count at round 200.**
+If that regresses, the dose is wrong *even if the census comes out positive*, because a
+mechanism that wins while damaging the thing it was predicted not to damage is winning for
+a reason I have not identified — and doctrine rule 13 says a real effect shows up in more
+than one place, which cuts both ways.
+
+### Dose discipline, stated before I can be tempted by the result
+
+`& 3` is **one step**. If it wins, `& 7` (12.5% money) is a *separate* iteration with its
+own census, not a search run bolted onto this one. If it loses, the zero arm is already
+measured — `alice_iter25` itself is `& 1` — so a loss gives me a two-point dose-response
+curve (50% money vs 25% money) rather than a single dead candidate, and the next question
+is whether the optimum is interior at some ratio between them.
+
+## REJECT iteration 26 — decisively, and the premise was backwards
+
+| | maps | SW | SL | split | record | net swept |
+|---|---|---|---|---|---|---|
+| `alice_i26b` vs `alice_iter25`, census | 75 | **8** | **29** | 38 | **54/150 (36.0%)** | **−21** |
+
+0 exceptions. Margin identity OK. The gate asked for net swept > 0 and got **−21**: this is
+not a near miss and not noise — it is the largest margin either direction I have measured
+against my own predecessor. `src/alice` stays at `alice_iter25`.
+
+That is a good outcome for one specific reason: **a −21 tells me something a −1 would not.**
+It says the mechanism is large and aimed the wrong way, which makes the diagnostic worth
+running. So I ran the pre-registered one.
+
+### The diagnostic said "tower count at r200", and tower count was the least of it
+
+Paired round-200 state, candidate against baseline **inside the same game** — the cleanest
+comparison available, since both bots are in one replay under identical map and identical
+opponent pressure. Side mapping verified from each replay's own `GameHeader` rather than
+assumed, because `botB` files swap team1/team2 and eyeballing it would have inverted five
+rows:
+
+| map (side) | towers c/b | **tower paint c/b** | **coverage c/b** | soldiers c/b |
+|---|---|---|---|---|
+| AlarmClock (A) | 7 / 8 | **3869 / 725** | **303 / 448** | 6 / 9 |
+| Barcode (A) | 4 / 8 | 1875 / 1290 | 355 / 500 | 6 / 7 |
+| BatSignal (B) | 5 / 8 | **3347 / 697** | **288 / 618** | 3 / 14 |
+| Brat (A) | 5 / 8 | **2951 / 1039** | **330 / 527** | 4 / 14 |
+| Bread (A) | 6 / 6 | 347 / 2819 | 462 / 377 | 16 / 3 |
+| BunnyGame (B) | 4 / 6 | **2910 / 18** | **220 / 292** | 8 / 3 |
+
+**These six games are all LOSSES, and that is a selection, not a sample.** `gauntlet.sh`
+pulls back only the losing replays, so every game I can inspect locally is one the candidate
+lost. That is fine for "why did it lose" and it is *not* fine for "what does the mechanism
+do on average" — the winning games would have to say something different, or the record
+would not be 54-150. I am reading these as a mechanism trace, not as an effect size, and
+the effect size comes from the census above, which has no such selection.
+
+Tower count at r200 does regress (5.2 vs 7.3 mean over these six) so the pre-registered
+diagnostic fires.
+But it is a symptom, and two other columns say what of.
+
+**The candidate sits on a mountain of paint it cannot spend, and loses the map.** Tower
+paint runs 3-160x the baseline's while coverage runs *below* it — and coverage is the win
+condition. A soldier costs **250 chips AND 200 paint**; a tower needs both. Converting
+money towers to paint towers did not relieve a paint constraint, it **created a chip one**,
+and the surplus simply moved from the chip column to the paint column while unit production
+fell.
+
+### The premise was a reverse-causation error, and I can now name it exactly
+
+Iteration 26 rested on "$36,830 unspent chips at r1200-1600 of the tournament replay vs
+bob". **That was measured in a game I was losing badly.** A bot that is losing has few
+units and few places to put them, so its chips pile up. The surplus was a *consequence* of
+losing, not a cause of it, and I read a symptom as a diagnosis.
+
+The test that would have caught it costs nothing and I did not run it: **would the surplus
+still be there in a game I was winning?** A resource that accumulates only when you are
+behind is not a resource you are failing to exploit.
+
+And the census gave me the mirror image as proof. Swap the mix and the pile does not
+disappear — **it changes currency.** Whichever resource I over-produce accumulates, because
+the constraint is the *ratio*, and iteration 25's 50/50 was already close to the soldier's
+own 250:200 cost ratio. That is why `& 1` is hard to beat from this direction.
+
+### The census measurement that misled me was pooled over heterogeneous producers
+
+The other pillar was the tower census: "the chip gate is open on 80-94% of tower-turns
+while paint-affordability sits at 6-11%". Both numbers are correct. Neither is a
+**team-level** constraint, because the pool is half money towers — which by construction
+almost never hold paint. Pooling affordability over producers that specialise in different
+resources measures the *specialisation*, not the shortage.
+
+This is doctrine rule 5's wrong-referent error again, in the one form the ledger had not
+yet recorded: not a number computed against the wrong object, but a rate **averaged over a
+population that the rate is not homogeneous across**. The tell was available and I missed
+it: if paint were team-binding at 6-11% affordability, tower paint stocks would be near
+zero, and the same census reported towers holding **>= 300 paint on 3.0-6.8% of
+tower-turns**. Stock and shortage cannot both be true. Two artefacts that should have
+reconciled, didn't, and I used both in the same argument.
+
+### What iteration 26 leaves behind, which is more than it cost
+
+A **two-point dose-response curve on a knob I had never treated as one**, with the zero arm
+already accepted:
+
+| money share | build | census vs iter25 |
+|---|---|---|
+| 50% (`& 1`) | `alice_iter25` | — (baseline) |
+| 25% (`& 3`) | `alice_i26b` | **36.0%, −21 swept** |
+
+The curve is steeply downhill toward paint. Per my own pre-registered dose discipline the
+next step *was* to be `& 7` if this won; it lost, so `& 7` is dead on arrival and running it
+would be a search for a worse point on a slope I have already measured. **The interesting
+direction is the other one** — more money towers than 50%, which no iteration has tested and
+which this result points at. That is iteration 27, and it needs its own census, not a
+narrative extension of this one.
