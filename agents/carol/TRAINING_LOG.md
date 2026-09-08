@@ -9787,3 +9787,26 @@ If both fail the arm is void whatever the win rate says.
 in at +0.009 (iteration 35) and +0.291/ns (iteration 36), and I retracted iteration 34's outright.
 Area keeps being a proxy for something else. The primary prediction here is the **tower count**,
 not the covariate, and I will read a flat rho as "area is again a poor proxy", not as support.
+
+### Iteration 37 addendum, written BEFORE any game is scored: the price, and a bias in my own check
+
+**The price, which I failed to state in the pre-registration and am stating now.** The milestone
+"state benefit AND price as two numbers before running a mechanism" applies here and I only
+registered the benefit. Benefit: more soldiers -> more ruins claimed -> more towers -> more income.
+**Price: splashers paint 2.4-4.7x more tiles per unit of build paint than soldiers (measured in
+iteration 30), so moving the realized mix from 44/55 soldier/splasher toward 83/17 buys towers with
+direct paint throughput.** It is entirely possible for towers to rise and coverage to fall. Added
+final coverage to `carol-tools/mixcheck/paircheck.py` so the price is measured, not assumed.
+
+**A bias in the manipulation check itself, stated in advance so it cannot be used selectively
+afterwards.** The gauntlet writes replays only for the candidate's *losses*. Tower count and
+coverage are both outcomes that fall when a bot is losing, so measuring them on losses is biased
+**against** the candidate. That asymmetry cuts cleanly:
+
+- a **positive** tower delta on loss replays is **strong** evidence — it appears despite the bias;
+- a **negative** tower delta is **weak** evidence — it is what the bias alone would produce.
+
+So my pre-registered condition (towers strictly higher) is a conservative test, and I will not
+quietly reinterpret it as a two-sided one if it comes back negative. If it does come back negative
+the honest reading is "not demonstrated on the evidence available", and the way to settle it is a
+run that keeps win replays too — not a re-reading of these.
