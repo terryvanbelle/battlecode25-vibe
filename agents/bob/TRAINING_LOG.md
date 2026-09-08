@@ -10263,3 +10263,31 @@ the state does not occur). Iteration 8's chip trigger is **not** met; the 15-map
 every 100 rounds **and** emit an event line on the first few increments, so that *zero events is a
 census rather than a sampling gap*; verify neutrality by event-stream diff; and put the probe on a
 throwaway package (`bob_srpgate2`), never on `src/bob`.
+
+### Null calibration LAUNCHED — run `20260908-131748`, 200 games, IN FLIGHT
+
+Launched at 13:17 UTC alongside tournament `20260908-1300`, on the precedent already in this log:
+the shared semaphore splits **my** share rather than the machine's, so running beside the tournament
+costs me wall-clock and nobody else anything. `MAXJOBS=3`, within the cap.
+
+```bash
+# collate when it finishes (it will NOT collate itself -- see below)
+../../tools/gauntlet-collect.sh 20260908-131748
+python3 bob-tools/eval_arms.py gauntlet/20260908-131748 bob_n0 bob_n1 bob_n2 bob_n3
+```
+
+**Read it as the pre-registered design says**: `bob_n0` burns zero extra draws and is behaviourally
+identical — it **must** return 25/50-all-split, and if it does not, the run is void and the arms mean
+nothing. The number being bought is the **spread of `n1..n3`**, which are policy-identical to `src/bob`
+and differ only in the phase of every robot's PRNG stream. That spread is the noise floor. If it is
+wide, the `>= +7` gate moves **up** and iterations 24-26 need re-reading — per the commitment already
+in this log, a calibration that can only ever loosen a gate is not a calibration.
+
+**My own error, recorded because it will recur**: I wrapped the launcher in `timeout 300`. A gauntlet
+takes far longer than that, so the timeout killed the **local driver** at five minutes. The run itself
+was unaffected — `gauntlet-collect.sh --list` shows it at 15/200 games and climbing — because the
+remote runner is setsid-detached and survives the driver dying. **The only thing a dead driver costs
+is the collation**, which is why `gauntlet-collect.sh <run-id>` exists. Do not wrap a long-running
+launcher in a short timeout; and if a launcher produces no output for minutes, check
+`gauntlet-collect.sh --list` before concluding it failed to start, because the absence of local output
+says nothing about the remote run.
