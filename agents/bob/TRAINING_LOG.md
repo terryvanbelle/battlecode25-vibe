@@ -9673,3 +9673,39 @@ cannot see distant entries go stale, and nothing expires them.
 `src/bob_j0..j3` built from the **verified** v3 mechanism with the counters stripped (assertion-
 checked that none remain), compile-checked. Iteration 28c launches when the void run releases the VM
 — I am not killing it; the shared-VM rule is absolute and it costs only wall-clock.
+
+## Iteration 28c — PRE-REGISTERED (the v1 registration does not carry over; this is a different build)
+
+Arms `bob_j0` (0), `bob_j1` (400), `bob_j2` (1600), `bob_j3` (6400), built from the **v3 mechanism
+whose manipulation check passed**, counters stripped and asserted absent, all four compile-checked.
+200 games, one shared 25-map sample.
+
+**Zero arm.** `bob_j0` runs the full protocol — soldiers report, towers ingest, relay and push — and
+simply never *accepts* a hint. So `chooseRuin` returns what it always returned and `Nav.wander()` is
+reached on exactly the same turns, keeping each robot's PRNG in phase. Comm work costs bytecode only
+(no PRNG draw, no control-flow change on the spawn or wander paths). **Void if `bob_j0` is not 25/50
+with all 25 maps split** — and note this is a *stronger* test here than usual, because it also
+certifies that the entire messaging layer is behaviourally inert when its output is ignored.
+
+**Gates unchanged** from the tightened rule: accept-eligible at margin **>= +7 (32/50, 2 se)** then
+the frozen roster (weakest rung quoted, none regressing by more than 3); **+5/+6** requires
+replication on a fresh sample; **<= +4** rejects.
+
+**Revised prediction, and it moved because of a measurement.** v1's registration predicted an
+interior peak at 1600. The v3 probe measured something I did not have then: **`seenTaken` is large —
+14 of 21 on one memstore soldier, 4 of 12 on Dominoes.** Many hints point at ruins that were claimed
+after the broadcast, nothing expires them, and a soldier only adopts a hint it *cannot yet verify*,
+so it pays the full walk and discovers the ruin is taken on arrival. **A longer acceptance radius
+therefore buys both more directed travel and more wasted travel**, and the wasted half grows faster,
+because a distant ruin has had longer to be claimed and costs more to reach.
+
+**So I now predict the peak at 400, the SHORTEST non-zero dose, with 1600 lower and 6400 clearly
+negative** — possibly below the null. That is a different prediction from the one I registered this
+morning and I am flagging the change rather than quietly substituting it: it is driven by a number I
+did not have (`seenTaken`), not by a preference for being right.
+
+**If all three doses come back at or below the null**, the mechanism as built is refuted and
+staleness is the pre-named cause — the fix would be expiry (towers dropping an entry when they
+observe a tower on it, and a round-stamp so old entries age out), not abandoning ruin sharing. I am
+writing that down now so that a negative result does not get read as "communication does not help",
+which is the over-general conclusion this experiment is most likely to produce.
