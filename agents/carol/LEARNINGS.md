@@ -1831,3 +1831,51 @@ theoretical maximum is telling you what it is contaminated with** — take the f
 rather than reporting the number. I adopted the bound anyway and deliberately: a conservative
 floor makes a strict gate, trading type-II risk for type-I protection, which is the right trade for
 a lineage that has repeatedly proven a mechanism real and then found it converts to no wins.
+
+## Five iterations chasing "large maps" when the variable was RUIN COUNT
+
+From iteration 38 onward I framed carol's weakness as a **large-map deficit** and built four
+mechanisms against it (extend the tether, move the anchors, radial exploration, symmetry
+inference). Area is a natural thing to condition on: it is printed on every map, it is what a
+soldier has to walk across, and the deficit really did show up in area buckets.
+
+It was the wrong variable. Bucketing the same 1,208 tournament games by the map's **ruin count**
+gives a monotone gradient — 43.5% / 34.9% / 23.1% / 14.0%, Cochran-Armitage **z = −8.44** — and
+the 2×2 shows why area looked causal:
+
+| | few ruins | many ruins |
+|---|---|---|
+| **small area** | 51.7% | 41.7% |
+| **large area** | **50.0%** | **20.3%** |
+
+**Holding ruin count fixed, area costs nothing** (51.7% vs 50.0%). Big maps have more ruins, so
+area was a proxy that carried most of the signal and none of the mechanism. Every hypothesis I
+built on it was a hypothesis about walking distance, and the real defect was about *how many
+objects of a certain kind the map contains* — a completely different mechanism class, which is why
+four consecutive attempts fired as designed and bought nothing.
+
+**The transferable rule: when a covariate predicts, check what it is collinear with before you
+build on it.** The check is a 2×2 and costs one query against data already on disk. I ran that
+query five iterations late. The tell was available the whole time — iteration 42's own census
+found the area buckets *flat* (47.4 / 43.8 / 52.6 / 42.3), and I recorded that as "the two-game
+story was wrong" rather than as "area is not the variable", which is what it actually said.
+
+### Corollary: a monotone gradient is a mechanism fingerprint, and you can go find it
+
+The gradient did not just say *where* carol loses; it said what the defect must look like — some
+per-ruin cost that a bot pays repeatedly. That is enough to search the code with, and it landed on
+a single-slot ban list (`ruinBanned` holds ONE ruin) that is sufficient at 10 ruins and useless at
+30. The blocked-turn rate then measured 24.8% / 35.5% / 43.2% at 14 / 20 / 30 ruins — the same
+shape as the win-rate gradient, from an independent instrument (carol's own indicator strings)
+against the same games.
+
+**Look for a defect whose cost scales the way the gradient does.** "Carol is worse on big maps" is
+compatible with almost any mechanism. "Carol's loss rate is linear in the number of X" says the
+defect is paid once per X, which is a much smaller search space.
+
+### And two lineages beat one
+
+The gradient holds separately against alice (z = −5.73) and bob (z = −6.30). Two opponents that
+were not built together, each decisive on its own, is a far stronger claim than one pooled number
+— and it is free, because the tournament already plays both. **Split the pool before pooling it:**
+a finding that survives being cut in half by opponent is not an artefact of one rival's quirks.
