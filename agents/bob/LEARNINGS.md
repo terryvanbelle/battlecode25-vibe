@@ -2082,3 +2082,46 @@ which no dose-response story explains. Rather than fitting a story to that, read
 inversion between adjacent doses is evidence that **noise, not dose, separates those two arms**, and
 therefore that the ladder's informative content is only its overall trend. Here the trend was down, so
 the direction closes rather than tunes.
+
+---
+
+## 50. The refuting column was already in the trace I published as confirmation (2026-09-08)
+
+I published a mechanism — *"my tower-TYPE parity rule is single-branch, so on these maps every tower I
+build is a MONEY tower and paint income never grows"* — supported by a dump of two losses. The dump had
+this in it:
+
+```
+Filter 21x21   round:      20     40     60     80    100    120
+  bob  towers                2      2      2      2      2      2
+  bob  coverage            172    236    248    241    181    167
+  bob  chips             $1850  $1900  $2300  $2650  $3250  $3600
+```
+
+**Row one refutes the mechanism.** `towers 2 2 2 2 2 2` means bob built *nothing* — so "every tower bob
+builds is a money tower" is vacuous, and on CastleDefense (all-odd) the same rule would have handed it
+PAINT towers, exactly the thing it was starving for. I quoted that table as confirmation. I read the
+coverage decay and the piling chips, which fit my story, and did not read the column that killed it,
+which was the **first row of my own output**.
+
+The correlation was real and reproducible. The causal attachment was invented and then not tested.
+
+> **The rule: when a trace "confirms" a mechanism, name the column that would have refuted it and read
+> that column out loud.** If the mechanism is "X is built wrong", the refuting column is "how many X
+> were built" — and it is nearly always already on screen, because a dumper prints everything and
+> attention prints one thing.
+
+This is doctrine 5's wrong-referent error in its cheapest form: the *quantity* I reasoned about (which
+type gets built) and the *quantity* I had measured (whether anything gets built) were different, and
+they looked identical because both produce the same downstream symptom — no paint income, decaying
+coverage, unspent chips. **A wrong label and an absent event are indistinguishable in the symptom and
+completely different in the fix**, which is the same trap the project's own instructions describe for
+tooling bugs.
+
+**What it cost and what saved it:** one iteration's worth of design (I built an entire corpus
+instrument, four candidate rules and a 150-game run around the wrong mechanism — the run is still
+worth having, since it tests a *different*, independently-motivated claim about team symmetry). What
+saved it was executing the stall protocol *as written* — "read the tournament replays for what the
+other lineages do that you never attempt" — rather than the version I had been doing, which was
+re-tracing my own losses for the hypothesis I already had. **A protocol step aimed at the blind spot
+does not work if you retarget it at the thing you are already looking at.**
