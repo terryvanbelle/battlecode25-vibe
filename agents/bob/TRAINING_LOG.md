@@ -7895,3 +7895,119 @@ every one of the 22 iterations so far. The reason it never happened is that noth
 *failed* in a way that pointed at it: an unused API method produces no error, no bad number,
 and no losing replay to trace. It is invisible to every instrument I own except this one, which
 is exactly why the algorithm makes it a scheduled sweep rather than a response to a symptom.
+
+---
+
+## Iteration 22 — RESULT: **REJECTED at −4**. The pre-registered prediction came out EXACT, and the offline closure I re-derived was right all along.
+
+Run `20260908-043525`, 160 games, 40 maps resampled, `BOT=bob` (= `bob_iter20`, `dirty=0`).
+
+```
+arm             score  vs null     sd  swept  swept-against  split
+bob_tp0       40/80         +0  +0.00      0              0     40
+bob_tp1       36/80         -4  -0.89      3              7     30
+```
+
+Identity control `bob_tp0`: **40/80, all 40 maps split by side, zero swept in either
+direction.** Fourth consecutive zero-variance null. The run is valid and every comparison
+below is exact rather than estimated. (Sweep identity holds as always: 36 − 44 = −8 =
+2 × (3 − 7).)
+
+Gate was `bob_tp1 >= 45/80`. It came in at **36/80**. Rejected, and on the wrong side of the
+null rather than short of the bar.
+
+### The map-level prediction was exact, and that is the most important line in this entry
+
+```
+odd x odd cells        30   deviations  0     <- PREDICTED 0
+even-dimension cells   50   deviations 40     <- all change predicted here
+```
+
+**Zero deviations in 30 odd x odd cells; 40 of 50 even-dimension cells changed.** The
+identity `min(x, W-1-x) ≡ x (mod 2) when W is odd` held on every single game, and 80% of the
+cells where the fold *could* act did change. Validated beforehand as a negative control on
+iteration 21's migration arm, where the same categorisation gave 89% and 84% — i.e. no
+spurious predictive power — so the clean split here is real.
+
+This matters more than the headline because it settles what usually stays open. The mechanism
+did not fail to engage (doctrine 5 step 0), it did not engage somewhere unexpected, and there
+is no room to wonder whether I measured the thing I built: the change fired exactly where the
+arithmetic said it must, nowhere else, on 80% of eligible games, **and lost 4 games doing it.**
+
+### What this establishes, and what it does not
+
+**Established, with games rather than a three-minute offline table:** the iteration-14 closure
+of "make the tower-type rule symmetry-invariant by folding coordinates" was correct. I
+re-derived that direction from scratch today, spent 160 games on it, and got the same verdict
+the closure reached for free. **CLOSED, re-affirmed, now with a price attached.**
+
+The run also converts a weakly-founded belief into a firmly-founded one, which is the
+algorithm's own definition of a rejection that paid for itself. The 2026-09-07 entry concluded
+"no rule dominates" from arithmetic; it now has a measured sign.
+
+**The trade, restated with the numbers that actually moved:**
+
+```
+                       team gap   mix deviation   measured
+iteration 7  -> 12       24.0 -> 11.0   9.9 -> 9.3     +26 pts  (+13 games of 50)
+iteration 20 -> 22       11.0 ->  0.0   9.3 -> 15.6     -4 games of 80
+```
+
+**And here is where I stop, rather than fit a story.** Two equations, two unknowns
+(games per point of gap, games per point of mix deviation) — I can solve it exactly, and the
+solution is worthless, because a two-parameter fit to two data points has **zero degrees of
+freedom** and therefore cannot be wrong. It is interpolation wearing the clothes of a
+measurement. I am recording that I did the algebra (it yields mix deviation ~2.2x dearer per
+point than team gap, which would leave iteration 12's recorded mechanism *vindicated* rather
+than refuted) and that **it is not evidence**, precisely because it is the comfortable
+correction — doctrine's "the dangerous corrections are the comfortable ones", and I pre-
+registered a reading of this branch ("iteration 12's recorded mechanism is wrong") that the
+algebra happens to reverse in my favour. Attribution: **OPEN.**
+
+### The genuinely new structural finding, which is not a fit
+
+**Perfect team symmetry and low mix variance are in unavoidable tension, and the tension is
+structural rather than a property of my rule.** Under any of the three map symmetries the
+ruins come in mirrored pairs. A rule with zero team gap must assign both members of a pair the
+same type — so it has at most **n/2 independent draws instead of n**, and the whole-map mix
+variance rises by sqrt(2) *by construction*, for every symmetric rule, not just this one. There
+is no coordinate rule that gets both.
+
+That reframes the whole functional area. Of the three coordinate-based rules now measured:
+
+```
+rule                  all-one-type   mix deviation   team gap   measured
+avalanche hash (i7)         0              9.9         24.0     worse than parity
+plain parity (i12)          4              9.3         11.0     the incumbent
+folded parity (i22)         4             15.6          0.0     -4 vs the incumbent
+```
+
+**Parity dominates on the axes that turned out to matter, and the two directions away from it
+have now both been measured and both lost.** This area is a local optimum for
+coordinate-keyed rules, and I should stop searching it: `MaxConsecutiveRejects` aside, the
+remaining gain cannot come from a better function of `(x, y)`, because the constraint binding
+it is a property of symmetric maps and not of the function.
+
+**Where the next gain would have to come from**: a rule that is not coordinate-keyed at all.
+Today's API sweep found `getNumberTowers` (the team's own tower count, free, no comms) and
+`getTowerPattern` (which lets `workOnRuin` read the intended type back off the marks instead
+of recomputing it, dissolving the "must not depend on time" constraint). Together those make a
+*self-calibrating* mix possible — one that reads the team's actual position instead of
+hashing a coordinate — and self-calibrating thresholds beating fixed constants is a design
+preference both prior projects arrived at independently. That is iteration 23, and note it is
+a different mechanism in the same area rather than another coordinate function, which is what
+the functional-area rule requires after a reject.
+
+### Functional-area accounting
+
+Tower type: 1 reject (this one). Not yet at `MaxConsecutiveRejects`. But the finding above is
+a stronger reason to leave coordinate rules than the counter is — the area is closed by
+argument, not by budget.
+
+### The chip-surplus premise is untouched
+
+Nothing here bears on it. $132,014 unspent at r2000 on DonkeyKong, ~75% of unit deaths by
+starvation, tower paint pools at 8-10% of capacity, and the SRP arithmetic (verified from
+bytecode today) putting the production-balanced money share at 43% against 53.3% today. That
+premise is about the *share*, and this run deliberately held the share fixed (53.3% -> 55.6%)
+so it could price symmetry alone. It priced it at −4. The share is still unpriced.
