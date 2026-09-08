@@ -12417,3 +12417,114 @@ argued from the randomness of the explore target and the 98.3% call-site split, 
 directly measured as forgone coverage; (c) no check yet that the deviation does not simply
 oscillate a soldier back and forth across a paint boundary, which is the specific way this
 mechanism could be churn rather than saving.
+
+---
+
+# !! TWO CAROL SESSIONS ARE RUNNING CONCURRENTLY IN THIS WORKSPACE (2026-09-08 ~21:25 UTC)
+
+Recorded by the session that accepted iteration 44 (census `20260908-200140`, ablation
+`20260908-202103`, roster `20260908-204845`). **This is not a bot finding; it is a coordination
+hazard, and I am flagging it rather than working around it.**
+
+## Evidence
+
+| fact | value |
+|---|---|
+| `src/carol_i44_a`, `_ban`, `_den` created by me | 19:51 / 20:03 |
+| **`src/carol_i44_c32` (`BAN_CAP = 32`) — I did not create it** | **20:46:10** |
+| **gauntlet `20260908-204655` (`bot=carol_i44_a` vs `carol_i44_den`, `carol_i44_c32`)** | **launched 20:46:55, not by me** |
+| my roster gauntlet `20260908-204845` | launched 20:48:45, by me |
+| both `results.txt` files still being appended | mtimes seconds apart, live |
+| commits `8bb71ef` (iteration 45 pre-registration, "DRAIN-AWARE EXPLORE STEP") and `d40ad0d` | not mine |
+
+`src/carol_i44_c32` is a sensible follow-up to my ablation — a `BAN_CAP` dose above my 8 — so the
+other session has read this log and is building on it in good faith. Nothing here suggests a fault
+in either session's reasoning.
+
+## What is NOT damaged
+
+I checked before writing anything else. **All of my entries survive** (iteration 44 result, the
+census-gate correction, the splasher closure, the ruin-count finding), the other session's
+iteration 45 entry coexists with them, `carol-tools/noisefloor.py` still carries my units fix, and
+`carol-tools/ruingradient/` is intact. `git status` on `agents/carol` is clean. **Both sessions are
+using `git commit --only`, which is exactly the discipline that prevented a clobber here** — this
+is the rule earning its keep, not failing.
+
+## What IS a problem
+
+1. **Shared-VM job discipline.** Two concurrent gauntlets from one lineage means up to **6**
+   simultaneous jobs against a `MAXJOBS <= 3` rule, on a VM that also serves a live BC26 project
+   and two other lineages. Neither session can see the other's `MAXJOBS`.
+2. **A forked ledger.** Two sessions will pre-register two different iteration 45s against the same
+   `carol_iter44` baseline and write both verdicts into one `TRAINING_LOG.md`.
+3. **Wasted shared VM time**, since both are re-deriving from the same iteration 44 result.
+
+## What I am doing about it, and the assumption I am making
+
+I **cannot** resolve this myself: killing a process is forbidden by `MULTI_AGENT.md`, and that
+applies to the other session's runs exactly as it applies to a sibling lineage's.
+
+So, assumption stated rather than hidden: **the other session is legitimate and I should not
+duplicate its threads or add VM load on top of it.** Concretely —
+
+- **I will launch no further gauntlets this session.** Two are already in flight for this lineage.
+- I will let my roster run `20260908-204845` finish and collate it, because it is already running,
+  it is the lineage's only absolute-strength instrument, and stopping it is both forbidden and
+  wasteful.
+- I am **not** starting an iteration 45. The other session has pre-registered one
+  ("DRAIN-AWARE EXPLORE STEP") and a `BAN_CAP` dose that subsumes my own queued
+  `i44_a` vs `i44_den` replication. Duplicating either would burn shared time to answer a question
+  already being asked.
+
+**For the coordinator**: two sessions of one agent sharing a workspace is not something either can
+arbitrate, because neither can verify the other is not a stale duplicate. If a watchdog relaunch
+can produce this, the guard belongs in `tools/` — a workspace lock, or a check that no live driver
+already exists for the workspace before `gauntlet.sh` starts one. I have not touched `tools/`.
+
+## BAN_CAP dose census RESULT (cap-1 arm complete) — the extra slots ARE load-bearing, +18
+
+Run `20260908-204655`, full corpus, 75 maps both sides. `carol_i44_a` (`BAN_CAP = 8`) vs
+`carol_i44_den` (`BAN_CAP = 1`), both carrying early denial.
+
+| | |
+|---|---|
+| **84/150 = 56.0%** | margin **+18** = **+2.8 sd** of carol's measured floor (6.48) |
+| swept W / swept L / split | 14 / 5 / **56** |
+
+`2 x (14 - 5) = +18` exactly, so the sweeps restate the margin and corroborate nothing extra; what
+D = 56 adds is that the pair is a coin flip on three quarters of the corpus with a real tilt on the
+rest. Pre-registered gate was **ACCEPT >= +13**. This clears it.
+
+**So the multi-slot ban set is worth +18 given early denial, and my ablation write-up an hour ago
+was too quick to write it off.** I said there that `bp = 6` proved only occupancy, not value, and
+that +4 at 0.7 sd "does not establish that the extra slots buy anything". That was the right call
+*on that evidence* — and the two numbers do not actually conflict: +4 per 50 games and +18 per 150
+are +4 and +6 per 50, comfortably inside each other's error. The sampled arm was simply
+under-powered, which is the census argument in miniature: **the same quantity read 0.7 sd at n=50
+and 2.8 sd at n=150 on the full corpus.**
+
+I am flagging that this correction runs in my favour — it restores value to a feature I ship — and
+that is the kind my own LEARNINGS says is least likely to be audited. What both versions took for
+granted is that the question has one answer; the honest statement is a conjunction:
+
+- **without early denial the ban set is a no-op** — 31 of 50 byte-identical games vs the pre-44
+  incumbent;
+- **with early denial, 8 slots beat 1 by +18 over the full corpus.**
+
+Iteration 44's attribution is therefore no longer open in this respect: both halves are load-bearing
+and neither is dead weight. The `BAN_CAP = 32` arm is still playing and will say whether 8
+saturates, closing the constant on the upper side too.
+
+### Iteration 45 link 1, measured on the stage-0 replays at zero extra cost
+
+Peak `ds` (drain-aware deviations actually taken by a single robot) on Gears, and the bytecode
+monitor on the same games:
+
+| arm | peak `ds` | peak bytecode / 17,500 | overruns | near-misses |
+|---|---|---|---|---|
+| `carol_i45_a` (fallback-only) | 59 | 6,733 (38%) | 0 | 0 |
+| `carol_i45_b` (main) | 280 | 6,886 (39%) | 0 | 0 |
+| `carol_i45_c` (ally-first) | 301 | 6,972 (40%) | 0 | 0 |
+
+The doses are ordered as designed, and no arm is near the limiter, so nothing here is measured at
+the edge where a silent truncation could forge the result.
