@@ -11918,3 +11918,65 @@ which is not obvious on a map whose symmetry is rotational versus reflective.
 **What survives regardless:** `Sym.java` is correct, cheap, and now validated at 459/459 — so whenever a
 mechanism does need the symmetry, the inference itself is built and does not have to be re-derived or
 re-trusted.
+
+---
+
+## STATE OF PLAY — end of session 2026-09-08 ~18:30 UTC
+
+**The bot**: `src/bob` unchanged, still byte-identical to `bob_iter20` (verified this session, 7/7
+files). HEAD compiles (`compile-check.sh bob`). Last accept remains **iteration 20**. No accept today.
+
+**Two runs completed and read, both against pre-registered gates:**
+
+1. **Full-corpus calibration** `20260908-160234` (300 games). Noise floor **sd 4.80 per 150**, 78% of
+   binomial, from **75 paired maps** rather than the 2-arm aggregate. Now project doctrine. New gate for
+   a 150-game full-corpus head-to-head: **>= +10 accept, +7..+9 replicate, <= +6 reject**.
+2. **Iteration 18 ablation** `20260908-172346` (150 games). `bob_abl18` **-7** where the hypothesis
+   predicted **+9..+12** — wrong sign, 3.3-4.0 sd from prediction. **CLOSED.** Do not conclude
+   iteration 18 is positive: bob's +7 is 1.5 sd, inside the replicate band.
+
+**Four things closed today**, none of which cost a full iteration:
+
+- "Denial units run at 1% of capacity" — **RETRACTED** (LEARNINGS 47). Truth is 19-43% of ceiling.
+- Iteration 18's suspected negative — **not there**.
+- Symmetry inference, per-robot full-resolution form — **CLOSED**: correct 459/459 but only **16.6%** of
+  robots ever resolve (moppers **11.5%**). Towers are not an escape hatch, by geometry.
+- `getMoney` / `sensePassability` / `disintegrate` / comms — **all discharged**, three by engine probe.
+
+**The queue is now nearly empty, and that is the honest headline.** Everything I inherited has been
+closed. What remains:
+
+1. **The candidate-set variant of symmetry steering** — the one live new idea, flagged as needing its
+   **own** pre-registration rather than inheriting the closed one's. Steer by the *surviving* hypothesis
+   set (2 or 3 alive) instead of waiting for uniqueness; fires on 100% of turns instead of 16.6%.
+   **Do the arithmetic first**: moppers attack at r^2<=2 so they need not *stand* on enemy paint, but
+   202/202 mopper deaths are starvation and enemy ground costs them 4/turn, so "send moppers deeper"
+   has a measured price. Rough figures: ~25 turns of life in enemy territory x 0.33 = ~8 actions,
+   against ~12 actions per mopper life today. **That is not obviously a win and may kill the idea for
+   the price of one division** — which is the check LEARNINGS says I keep skipping.
+2. **The side asymmetry from the ablation** — bob 48/75 as A vs 34/75 as B (~2.3 sd), where the null run
+   on the *same 75 maps* showed ~0. Uninterpretable until a real mirror instrument exists.
+3. **Whether the 4.80 floor holds for non-self-play arms.** Still unmeasured, now more urgent: another
+   lineage measured 6.48 on the same corpus, so the floor is a property of the **bot**.
+
+**Do NOT re-open**: denial-unit navigation (it30); ruin-hint sharing / any comms (28c, 3 attempts);
+SRP-site searching (it10); soldier movement for SRP siting (it13); the SRP/ruin priority gate (it29);
+the tower cap (**stays closed** — its re-opening was conditional on calibration outcome 1, which was not
+met); wall-density navigation; iteration 18 / `RUIN_FLOOR`; symmetry inference in its per-robot
+full-resolution form; the four API methods above.
+
+**New instruments built today, all committed and reusable:**
+`bob-tools/denialprobe/DenialProbe.java` + `denial-probe.sh` + `denial_agg.py` (denial utilisation, with
+the correct unit-round denominator); `bob-tools/sym_eval.py` (symmetry, correctness-before-timing);
+`src/bob_symprobe/Sym.java` (symmetry inference, validated 459/459).
+
+**Permanent engine facts pinned today** (LEARNINGS 47: these do not expire):
+`MapSymmetry` ordinals are `0 ROTATIONAL`, `1 HORIZONTAL` = mirror **Y**, `2 VERTICAL` = mirror **X** —
+measured, and the opposite of the natural reading. `disintegrate()` constructs and throws
+`RobotDeathException` and does nothing else. `Turn.actionCooldown()` in a replay is the **post-action**
+value.
+
+**Fifth consecutive non-accept.** The loop-stall protocol is in force and being executed by the book
+(feature ablation, then the algorithm's own first-listed stalled-lineage entry). The bot has not
+regressed — `src/bob` is untouched — but the loop has not produced an accept today, and the next
+session should weigh **protocol item 2, high-risk structural exploration**, over another small knob.
