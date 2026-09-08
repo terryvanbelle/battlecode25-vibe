@@ -229,6 +229,22 @@ SRP        PAINT_TWR   MONEY_TWR   DEFENSE_TWR
 
 ## UNUSED API — standing check (run it every ~10 iterations; it found a whole mechanic)
 
+> **BEFORE A CONSTANT ENTERS A COST TABLE, GREP ITS USE SITE AND READ THE ASSERT.**
+> This is a step, not a resolution to be careful. It exists because on 2026-09-08 I got the
+> currency of two constants wrong in one session — `MOPPER_SWING_PAINT_DEPLETION` (drains
+> *robot* paint, not tile paint) and `COMPLETE_RESOURCE_PATTERN_COST` (**chips**, not paint) —
+> the second within an hour of writing up the first as a lesson. Both errors made a mechanic
+> look better than it was, along the exact axis of the problem I was then trying to solve.
+> A name that is *nearly* right defeats suspicion in a way a wrong one does not.
+>
+> ```bash
+> # what actually charges this?  read the assert, not the name
+> javap -c -p -cp $BC_JAR battlecode.world.RobotControllerImpl | grep -B20 '<CONSTANT>'
+> javap -c -p -cp $BC_JAR battlecode.world.InternalRobot     # for the effect body
+> ```
+> `getPaint()` / `addPaint` in the assert means paint. `TeamInfo.getMoney` / `addMoney` means
+> chips. Neither is inferable from the constant's name.
+
 Phase 0 item 2 requires periodically sweeping `RobotController` for methods the bot never
 calls. First run of this project was at iteration 29 and found **37 of 68 unused**, including
 one entire mechanic. Reproduce with:
