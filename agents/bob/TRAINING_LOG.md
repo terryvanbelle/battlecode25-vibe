@@ -9497,3 +9497,55 @@ therefore ahead of the mopper share in the queue.
 cap" was inferred, when `getNumberTowers()` would have measured it. That is a small instance of the
 sweep's general lesson — I reasoned about a quantity rather than reading it, because I did not know
 it was readable.
+
+## COMMUNICATION CHANNEL-SIZING PROBE (2026-09-08) — the channel is wide open and the demand is enormous
+
+Doctrine 4 says size the condition before building the mechanism. `src/bob_commprobe` (instrumentation
+only; counters placed where they touch no PRNG draw and change no control flow), vs `bob_iter11`, on
+one map from each resource regime.
+
+**Tower→tower broadcast — the backbone:**
+
+```
+map        tower-turns   canBroadcast      numberTowers
+Dominoes      53 / 38      53 / 38  =100%       15
+memstore     372 / 250    372 / 250 =100%        6
+```
+
+**`canBroadcastMessage()` is true on 100% of tower turns on both maps.** As documented, it needs no
+paint connectivity. There is no gating condition to engineer around — the backbone is simply available
+and has been for 27 iterations.
+
+**Soldier→tower — the access link:**
+
+```
+map        soldier-turns   tower in vision   canSend   idle (no ruin)   idle AND canSend
+Dominoes      20/10/2          18/10/2       18/10/2      20/10/2          18/10/2
+memstore     212/37/26        121/4/6        113/4/5      212/7/7          113/4/5
+```
+
+Two things, and the second is the one that matters:
+
+1. **When a tower is in vision, the soldier can almost always message it** — 100% on Dominoes,
+   113/121 = **93%** on memstore. The ally-paint connectivity requirement, which I expected to be the
+   binding constraint, essentially never bites, because the ground around a tower is painted.
+2. **`idleNoRuin` is 212 of 212 turns for one memstore soldier and 20 of 20, 10 of 10, 2 of 2 on
+   Dominoes.** These soldiers hold **no ruin target at all**, for their entire lives, and on 113 of
+   those 212 turns that soldier was in message contact with a tower. The demand side is not a trickle;
+   idle soldiers are the normal state, and they are in contact.
+
+**So the mechanism is not gated by the channel.** Both links are open far more often than any
+mechanism needs. That is an unusually clean pre-check: the usual outcome (iterations 13, 22, 23) is
+that the enabling condition turns out to be rare.
+
+### And it settles the iteration 25 claim the sweep flagged
+
+`getNumberTowers()` — never called before today — returns **15 on Dominoes and 6 on memstore**, against
+`MAX_NUMBER_OF_TOWERS = 25`. Iteration 25 asserted tower utilisation was *"pinned at the engine cap on
+large maps"* and built a tower-saturation argument on it. **It is not pinned at the cap. It is at 60%
+and 24%.** The argument was already refuted by iteration 26's replication; it is now refuted a second
+time, by a direct reading of the quantity it was about. I inferred a number the engine hands over in
+one call — LEARNINGS 38's smaller instance, now with figures.
+
+**This also removes the reason iteration 25 gave for not expecting gains from more towers**, and more
+towers is exactly what better ruin discovery would buy.
