@@ -12344,3 +12344,37 @@ should swing toward `bob_fold4` and starburst toward `bob`. Filter is the single
 changes, so any difference there is pure engine chaos.
 
 Registered before launch.
+
+### Written while the run is in flight, before the result is known: iteration 32 generalizes to the WHOLE family
+
+Because *any* function of `(u,v)` is provably team-symmetric, the entire family costs nothing to
+search offline. I swept 28 members — `bit b` of `a*u + c*v` for small coefficients, plus a hash and
+some XOR combinations — and every one scores **0/75 broken symmetry** by construction. So the family
+members differ only on the two *measurable* tie-breakers:
+
+```
+  rule                 degenerate maps   mean dist to paint   |balance-50|
+  bit2(u+v)                  1                 3.89              1.6%
+  bit1(u+v)  <- THIS ARM     2                 3.81              0.1%
+  bit1(u+2v)                 2                 4.13              1.8%
+  bit1(u+3v)                 3                 4.17              0.5%
+  bit0(u+v)  (iter 22)       4                 4.46              5.6%
+  bit1(v)                    9                 3.36              8.2%
+```
+
+`bit2(u+v)` beats my launched arm by exactly **one degenerate map**. By this iteration's own Term-1
+arithmetic that map is worth **+0.23 games per 150** — half of an already-unmeasurable term. Selecting
+on it would be fitting a rule to the corpus on a criterion whose value I have already shown is below
+my resolution, which is the hand-picked-map-list error wearing different clothes.
+
+**So the launched arm is a representative of the family, not a tuned point in it, and that is the
+point of writing this down now:**
+
+> If `bit1(u+v)` fails its gate, the fold-symmetric family fails with it. There is no better member to
+> retreat to, because the only property that separates the family from parity is the symmetry
+> restoration (Term 2), and every member has it identically.
+
+That makes the pending result a clean close either way, and forecloses the "try another variant"
+move that kept this area alive for three iterations already. If this loses, the tower-type coordinate
+rule is closed for good and the 0.47-points-per-mismatched-map slope from A7 is refuted as a
+generalisation — which would itself be worth knowing, since I have been treating it as a fact.
