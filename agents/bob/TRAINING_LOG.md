@@ -12058,3 +12058,97 @@ peak?*
   and closes the direction in the opposite direction.
 
 Registered before launch. The x0-must-split check is the run's own validity condition and is read first.
+
+---
+
+## FINDING (tournament channel): my tower-TYPE rule is single-branch on 4 of 75 maps, and I lose those maps 25% of the time
+
+Found by doing what `TRAINING_ALGORITHM.md`'s stall protocol says to do first — re-examine the
+tournament replays, the only games against opponents my lineage did not build. It took two replays.
+
+### How it was found
+
+bob's losses to carol in the 13:00 tournament are **fast**: 93, 97, 109, 130, 139, 140, 151, 170
+rounds, against wins that take **453-487**. A 93-round loss by "painted enough of the map" is not a
+close game. Dumping two of them:
+
+```
+Filter 21x21   round:      20     40     60     80    100    120
+  bob  towers                2      2      2      2      2      2
+  bob  coverage            172    236    248    241    181    167     <- peaks at 60, then DECAYS
+  bob  chips             $1850  $1900  $2300  $2650  $3250  $3600     <- piling up, unspent
+  bob  tower paint         200    100    210    210    290    180     <- always near-empty
+  bob  paint actions/20     69     38     13      3      2      1     <- painting stops
+  carol towers               2      3      3      4      4      5
+  carol coverage           263    399    439    477    599    678
+```
+
+`CastleDefense` 20x20 shows the same shape: bob stuck at 2 towers with $2,900 idle while carol reaches
+4 by round 30.
+
+### The mechanism, and it is arithmetic rather than inference
+
+`Soldier.java` picks the tower type to build as a pure function of the ruin's coordinates:
+
+```java
+return ((ruin.x + ruin.y) & 1) == 0
+    ? UnitType.LEVEL_ONE_MONEY_TOWER : UnitType.LEVEL_ONE_PAINT_TOWER;
+```
+
+The shared corpus data (`tools/mapdata/ruin_parity.txt`, contributed by another lineage precisely
+because "the trap is live for anyone") says four maps have **all their claimable ruins on one parity**:
+
+```
+  gridworld      31x31 ruins=21 even=21 odd= 0    -> every tower bob builds is a MONEY tower
+  Filter         21x21 ruins= 5 even= 5 odd= 0    -> every tower bob builds is a MONEY tower
+  Snowman        25x25 ruins= 6 even= 6 odd= 0    -> every tower bob builds is a MONEY tower
+  CastleDefense  20x20 ruins= 6 even= 0 odd= 6    -> every tower bob builds is a PAINT tower
+```
+
+**On three of the 75 maps my bot cannot build a paint tower at all.** That is not a statistical claim;
+it follows from the code and the map file. And it exactly predicts the Filter trace — chips accumulate
+because money towers are the only thing being built, while paint income stays at the one starting paint
+tower, the soldiers run dry, painting stops, and coverage decays.
+
+### The effect size, stated honestly, because it is much weaker than the mechanism
+
+Pooled across all five tournaments on disk:
+
+```
+                        wins/games      win%
+degenerate (4 maps)        42/64       65.6%
+all other maps            882/1144     77.1%
+                                        -2.18 sd
+```
+
+**-2.18 sd is suggestive, not decisive**, and the per-tournament series shows the gap only opening
+recently (100%, 87.5%, 50%, 25% against baselines of 95.4%, 92.6%, 71.5%, 49.6%).
+
+**Two honest arguments against, and one rebuttal:**
+
+1. *Post-hoc map selection.* I noticed these maps because I lose on them. **Mitigated but not
+   eliminated**: the four maps were named in `ruin_parity.txt`, an independent document written before
+   I looked and for this exact trap, so the hypothesis is mechanism-led rather than dredged.
+2. *No dose-response.* The 7 maps at skew 0.5-0.99 show **50.0%**, indistinguishable from the 64
+   low-skew maps at 49.6%. If parity skew were harmful you might expect a gradient. **Rebuttal: a
+   gradient is the wrong prediction.** At skew 0.9 you still build *both* tower types, just in a
+   lopsided ratio, and a few paint towers is all the economy needs. The harm is specifically at
+   skew = 1.0, where the count of one type is **zero**. A threshold at exactly 1.0 is what the
+   mechanism predicts, so the flat middle is consistent with it rather than against it.
+
+### What I am NOT doing about it tonight
+
+The obvious fix — pick the tower type by *current need* (build a paint tower when paint is short) — is
+**blocked by a constraint my own code documents**: the type must be a pure function of the ruin, because
+`workOnRuin`'s "already marked?" probe deadlocks if a ruin's intended type changes over time. And the
+coordinate-rule space is already well explored and closed: iteration 7's avalanche hash lost by 20
+points in the presence of SRPs, iteration 22's folded parity lost too, and parity dominated both.
+
+So the fix is genuinely constrained and needs its own design, not a quick edit. **Pre-registering it
+properly is the next iteration**, not tonight's. What I have tonight is a certain mechanism, a
+matching trace on two maps, and a 2.18 sd tournament signal — which is exactly the state where my own
+LEARNINGS says to write it down and measure it deliberately rather than ship a fix on a good story.
+
+**Reported to the coordinator**: `ruin_parity.txt`'s README says the trap is live for anyone. It is no
+longer hypothetical — a lineage walked into it, and the file's warning is what let me identify it in
+minutes rather than never.
