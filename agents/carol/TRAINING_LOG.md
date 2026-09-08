@@ -7328,3 +7328,127 @@ than who is ahead. Stated correctly, on the four diagnosis maps:
 That contrast is the real content and it is not a restatement of the margin: on the same four maps,
 the side-dependence that fully determined the null's outcome disappeared entirely. It remains a
 first read on the diagnosis maps, not the accept.
+
+### DOCTRINE 15 AUDIT — my tower dead-band figure was post-spend, and the reconciliation partly refutes my story
+
+New engine fact (`tools/engine-facts.md`): **replay per-robot state is written AFTER the robot's
+turn resolves**, so anything phrased as "could this robot have afforded X" is conditioned on the
+outcome it is predicting. My `tp=` figures come from carol's own tower indicator, which
+`monitorAndYield` prints *after* `runTower()` has already called `buildRobot`. **Same class, same
+bias.** Auditing rather than assuming I was outside it.
+
+**First: I could correct it exactly rather than only retract it.** Every build is logged as a SPAWN
+with its unit type, and every refill as a TRANSFER with its amount, so the decision-point stash is
+`tp_recorded + everything that tower spent that round`. Reconstructed:
+
+| map | basis | tp<100 | **tp 100–199 (dead band)** | tp≥200 | tp≥300 |
+|---|---|---|---|---|---|
+| Bunny | post-spend (invalid) | 49.0% | 48.6% | 2.1% | 0.3% |
+| Bunny | **decision-point** | 40.7% | **52.4%** | 6.4% | **0.6%** |
+| DefaultMedium | post-spend (invalid) | 41.7% | 43.0% | 5.7% | 9.6% |
+| DefaultMedium | **decision-point** | 38.2% | **44.7%** | 7.4% | 9.8% |
+| Fossil | post-spend (invalid) | 24.8% | 26.5% | 8.0% | 40.7% |
+| Fossil | **decision-point** | 22.6% | **27.2%** | 9.1% | **41.1%** |
+| Mirage | post-spend (invalid) | 28.5% | 36.9% | 13.4% | 21.2% |
+| Mirage | **decision-point** | 25.9% | **37.3%** | 14.9% | 21.9% |
+
+The bias is real but small here (+1.7 to +3.8 points), and it widens the dead band rather than
+narrowing it — towers build rarely relative to how many turns they take, so little is spent down.
+**So the dead-band measurement survives, corrected.** Recording that because the comfortable move
+would have been to bin the number, and the correction runs *against* me.
+
+**Second, and this is the part that hurts: the reconciliation test refutes the story I built on it.**
+Multiplying the corrected rate back into a count and comparing with a directly observed count:
+
+| map | implied soldier-affordable tower-turns | **soldiers actually built** | ratio |
+|---|---|---|---|
+| Bunny | 100 | 66 | **1.5x — consistent** |
+| DefaultMedium | 1,840 | 218 | 8.4x |
+| Mirage | 1,103 | 88 | 12.5x |
+| Fossil | 2,059 | 101 | **20x — not consistent** |
+
+On Bunny paint really is close to binding. **On Fossil it plainly is not**: the tower could afford
+a soldier on 2,059 turns and built 101, and could afford a *splasher* on 41.1% of its turns and
+built four. Something else limits building there — the chips gate, the roll, or `canBuildRobot`'s
+placement check — and it is not paint.
+
+**Scoping the damage precisely, which is the part worth copying:**
+
+- **SURVIVES** — the realized-vs-intended build mix (218 soldiers / 3 splashers / 220 moppers on
+  DefaultMedium against an intended 75/15/10). That is a direct count of SPAWN events, not a rate
+  from post-turn state, and no bias touches it.
+- **SURVIVES, CORRECTED** — the tower paint distribution, as reconstructed above.
+- **REFUTED** — "the affordability filter explains the mix divergence." It is consistent on Bunny
+  and clearly false on Fossil and Mirage. The filter demonstrably *exists* in the code
+  (`canBuildRobot` fails silently on paint), but it does not carry the explanation, and I had
+  generalised from a map where it fits.
+- **WITHDRAWN** — my retrodiction of the `SPLASHER_IN_20` sweep anomaly, which rested on "the tower
+  can afford a splasher on 0.3% of turns". That is a Bunny number. On Fossil the figure is 41.1%
+  and only four splashers were built, so affordability was not saturating the knob. **A
+  retrodiction that explains an old anomaly is seductive precisely because it feels free, and I
+  called it "the strongest single piece of support for the direction". It was the weakest.**
+
+**Iteration 29 is NOT affected, checked rather than asserted.** Its evidence is per-turn paint
+*differences* and direct action counts, never a conditional affordability rate: the probe reads
+paint in-bot at the top of the turn (before any action) and again at the end, and the discarded
+attacks are the residual of a conservation identity. Post-turn state is the correct referent for a
+difference. Running the same reconciliation on iteration 29's own headline, on DefaultMedium:
+5,615 attacks (4,789 discarded + 826 landed) over 11,519 soldier turns is 48.7% of turns, plausible
+for a unit whose action cooldown lets it act every turn; and 5,615 x 5 = 28,075 paint, plus drain
+14,449, plus 1,320 held at death = **43,844 against 44,904 issued — closes to 2.4%.**
+
+## Iteration 29 RESULT — **ACCEPT** at 88%, 19 swept wins to zero, on a fresh random sample
+
+Run `20260908-000327`: `carol_i29` vs `carol_iter25` + the full frozen roster, **25 maps drawn
+fresh at random from the 75** (not the four the diagnosis was made on), both sides, 8 opponents,
+400 games.
+
+| instrument | result |
+|---|---|
+| **h2h vs `carol_iter25`** (accept gate) | **44/50 = 88%** |
+| swept-win / swept-loss / **split maps (D)** | **19 / 0 / 6** |
+| overall | 381/400 = 95.2% |
+
+Per doctrine 14 the margin and the sweeps are one number (44−6 = 38 = 2×19), so the independent
+content is **D = 6**: nineteen of twenty-five maps were decided by the code rather than by which
+side carol spawned on, and **not one map swept against**. Against a null that swept nothing and
+split every map, on ground the mechanism was never tuned against.
+
+**Frozen roster, run *before* the accept per measurement doctrine 12** — and it is the strongest
+absolute reading this lineage has recorded:
+
+| opponent | iteration 29 | swept-win / swept-loss |
+|---|---|---|
+| `carol_iter0` | **100%** | 25 / 0 |
+| `carol_iter1` | **100%** | 25 / 0 |
+| `carol_iter7` | 94% | 22 / 0 |
+| `carol_iter21` | 88% | 19 / 0 |
+| `carol_rush` | 92% | 23 / 2 |
+| `carol_turtle` | **100%** | 25 / 0 |
+| `examplefuncsplayer` | **100%** | 25 / 0 |
+
+**Zero swept losses against every self-lineage opponent.** The only swept losses anywhere in 400
+games are two maps against `carol_rush` (DefaultSmall and `giver`, both lost fast — r166–r341 —
+i.e. a genuine rush that ends before carol's economy exists). That is a clean, specific, unrelated
+weakness and it is now the obvious next target.
+
+**Pre-registered predictions, scored honestly:**
+1. *Discarded-attack share falls toward 0* — **not yet verified.** `src/carol_i29q` (the candidate
+   plus the drain counters) is built for exactly this and has not been run. Registering it as
+   outstanding rather than letting the win rate imply it: the result is accepted on the gate, and
+   the mechanism check is a separate claim that I have not made yet.
+2. *Soldier median life rises* — same, outstanding, same probe.
+3. *h2h > 50% on a fresh sample* — **met, 88%.**
+4. *Gains concentrate where the discarded share was highest* — **cannot be scored.** The four maps
+   I measured the discarded share on are not in this run's random sample. Stating that plainly
+   rather than substituting a different covariate after the fact; the honest status is that the
+   map-level prediction went untested, and the follow-up run will pin the maps to test it.
+
+So: accepted on the gate and on the roster, with the **mechanism attribution OPEN** — the change is
+one line whose effect is forced by the engine's own rule, but "the engine discards these attacks"
+is a code-and-rules argument, not yet a measurement of this build. Per rule 3b I am accepting the
+result and recording the attribution as open rather than back-filling it from the win rate.
+
+Snapshot `src/carol_iter29`; `src/carol` promoted; `src/carol_mirror` regenerated from the new
+baseline (the accept moves the null, and reading a candidate against a mirror of the *previous*
+build credits it with games the accepted mechanism flipped).

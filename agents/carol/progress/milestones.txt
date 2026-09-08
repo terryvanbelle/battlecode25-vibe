@@ -10,3 +10,4 @@ e6ad3ae|split a losing bundle to ablate the baseline for free
 9376e6d|eval-run.sh drops the binomial floor for map-resampling (7 zero-variance mirrors)
 4af02c2|resampling sign convention pinned in the tool, not in a note the reader must recall
 1eb2e1f|probes self-limit on Clock.getBytecodesLeft() -- an overrun makes numbers unreadable
+33bf800|closed the paint accounting: discarded attacks found
