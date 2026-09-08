@@ -1205,6 +1205,14 @@ a warning is not the same as auditing your own instrument against it.*
 direction. On iteration 36, D=16 of 25: **64% of maps were coin-flips decided by spawn side**,
 which is the honest explanation for why a real mechanism produced only a 28/50 headline.
 
+> **SUPERSEDED (2026-09-08, see "My gates were set against se = 0" below).** The floor adopted
+> here is *algebraically* independent of the margin, which is what this paragraph checked, and
+> that is not the same as being *statistically* resolvable. Measured on my own 59 arms, a
+> dead-even arm reached SW=9; five of the nine arms at 24-26/50 clear SW >= 5. The floor is
+> passed by a majority of bots that are exactly as good as their opponent, so it excludes
+> nothing. It is retired as a gate and kept as a descriptive statistic. The reasoning below is
+> left intact because the algebraic half of it is correct and still worth having.
+
 **Replacement, and the check that it is not post-hoc rationalisation.** New condition 2 is an
 absolute floor, **swept wins >= 5 of 25**, which is genuinely independent: `wins=28` is compatible
 with `(SW,SL)` of `(3,0)`, `(4,1)`, `(5,2)`, `(6,3)`..., so the floor constrains D and is not
@@ -1322,3 +1330,91 @@ the rejection came with its diagnosis attached instead of needing a second run t
 Also worth keeping: the registered **price** came due at twice the size of the benefit. Coverage
 289 against 612 — 53% less ground painted, in 0 of 6 games more. 41 splashers produced 289
 coverage; 338 produced 612. Registering a price turns "it lost" into a number that explains why.
+
+## My gates were set against `se = 0`, and the tool that says so was already in the repo
+
+Flagged by the coordinator after another lineage hit it; I checked the magnitude on my own runs
+rather than take the number on trust, because the honest value is empirical and lineage-specific.
+
+**The error, stated precisely.** The engine is deterministic, so a rerun on the same maps
+reproduces byte-for-byte. That is true, and it makes `se = 0` for the question *"what happened on
+these 25 maps"*. An accept asks a different question — *"does this change help over the map
+population"* — and generalising from a 25-of-75 draw carries real sampling variance. Same numbers,
+two referents; I had been quoting the precision of the first as if it licensed the second. This is
+the wrong-referent error applied to the project's foundational assumption, which is why it survived
+37 iterations: the premise it rests on is *correct*.
+
+**The estimator.** Each map is played both sides, so per-map wins `w in {0,1,2}` is the natural
+unit and it is *paired by construction* — map difficulty and spawn advantage live inside `w` and
+cancel, which is why the sd of the difference is smaller than the sd of either arm's raw count.
+A 50-game head-to-head is `sum(w)` over `n=25` maps drawn without replacement from `N=75`:
+
+    Var(count) = n * s^2 * (N - n)/(N - 1)
+
+The `(N-n)/(N-1) = 50/74` finite-population term cuts the sd by 18% and is not a nicety: a third
+of the corpus is in every sample. `carol-tools/gatepower.py` computes this over every arm I have
+ever run.
+
+**The measurement (59 arms, all my own runs).** Pooled median sd = 1.79 wins, but that pools
+lopsided arms where `w` is pinned at 0 or 2 and the variance is structurally small. **The accept
+question is only ever asked of a near-even arm**, and restricted to the 18 arms at 20-30/50 the
+median sd is **2.21 with fpc, 3.00 without** — and the without-fpc figure reproduces
+`tools/map-resample.py`'s jackknife to two decimals, which cross-validates both estimators.
+
+    a one-sided 95% accept needs >= 28.6/50, against the >25/50 I had been using.
+
+**What that does to my own history.** `tools/map-resample.py` prints the distance from the mirror
+null in sd *directly on the run I accepted from*, and I had not been reading that line:
+
+| iteration | h2h | distance | resolved by the margin? |
+|---|---|---|---|
+| 35 | 33/50 | **+2.91 sd** | yes, comfortably |
+| 36 | 28/50 | **+1.03 sd** | **no** — one-sided p ~ 0.15 |
+| 34 | 28/50 | ~+1 sd | **no** |
+
+Iterations 34 and 36 sit inside the band where a 50-game arm cannot separate an effect from a map
+draw. In both I declined to let the margin carry the accept and rested it on independent evidence
+instead — a pre-registered covariate, and a manipulation check showing 5 moppers against 367.
+**That instinct was right, and this is the reason it was right rather than merely cautious.** Both
+accepts stand, but they stand on the mechanism evidence alone; the headline never supported them.
+
+**The floor I adopted eleven iterations too late was also inside the band.** I replaced
+"SW >= SL" (algebraically implied by the margin) with "SW >= 5 of 25", checking only that it was
+*algebraically* independent. It is. It is not *statistically* resolvable: among my nine arms at
+24-26/50 — bots dead even with their opponent — SW ran 1, 2, 3, 4, 4, 4, 6, 7, **9**, and five of
+the nine clear 5. A floor a majority of null arms passes excludes nothing. **Algebraic
+independence is not evidential independence, and I checked only the half that was easy to check.**
+
+### The gate I am adopting, and the one number that makes it cheap
+
+The corpus is finite and small, and the fpc has a consequence worth stating plainly:
+
+| maps played | games | sd(count) | margin needed |
+|---|---|---|---|
+| 25 | 50 | 2.4 | 28.6/50 (57.8%) |
+| 40 | 80 | 2.5 | 44.2/80 (55.3%) |
+| 50 | 100 | 2.4 | 53.9/100 (53.9%) |
+| **75** | **150** | **0** | **any margin > 0** |
+
+**At `n = N` the map-sampling error is exactly zero** — not small, zero — because there is no
+longer a sample: you hold the population, and the engine's determinism then leaves no other noise
+source at all. 150 games buys an *exact* answer to "does this beat the incumbent over the corpus".
+
+The over-claim to avoid, stated before I am tempted by it: that is exact **for the corpus**, not
+for maps in general. The 75 maps are themselves a sample of the space of maps, and no within-
+corpus design can measure that residual — the tournament is the only instrument that touches it.
+Playing all 75 is not the hand-picked map list my charter forbids: a complete population has no
+selection to bias. The real cost is that repeated full-corpus tuning makes the corpus a training
+set, which resampling at least dilutes.
+
+**Standing gate from iteration 38 on:**
+
+1. **Screen at 25 maps / 50 games.** `>= 29/50` accepts (clears +1.645 sd with the fpc,
+   +1.34 sd without — I take the conservative form and require 29). `<= 25/50` rejects.
+2. **26-28/50 is UNRESOLVED, not accepted.** Confirm on a *disjoint* map sample by pinning the
+   complement of the screening run's `maps.txt`, and pool. A replication on disjoint maps is the
+   coordinator's test and it is the only one that estimates the true se rather than assuming one.
+3. **Report `D`, the split count, always; gate on it never.** It is the one thing the sweep
+   counts carry that the margin does not, and it is descriptive.
+4. **Quote the sd distance from `tools/map-resample.py` in every verdict.** The line was always
+   printed. Not reading it is what this entry is about.
