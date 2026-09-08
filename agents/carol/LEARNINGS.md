@@ -1556,3 +1556,38 @@ loop, the new mechanism must be argued against *it*, not against nothing.
 and mine was a *drain* (a soldier trip consumes tower paint). When a bot has a mechanism that
 creates the scarce resource, a mechanism that merely moves it around is competing for the same
 unit-turns at strictly worse value.
+
+## Three times in one session: a column whose NAME implied a normalisation it did not have
+
+1. **`p` counts painted tiles, not painting units.** I divided it by a unit count and printed a
+   "soldier paint rate" of 3163%.
+2. **`twPaint~` and `tw~` in my pooled table were sums of per-map means, not means.** I quoted
+   "towers alive 20.1" and "9,748 tower paint" and reasoned from both.
+3. **`sd(win count)` pooled over all arms was not the sd of the arms that gate an accept** —
+   lopsided arms have structurally tiny variance, so pooling understated it exactly where the
+   gate lives (1.79 pooled against 2.21 for near-even arms).
+
+Same defect three times: **a label that reads as normalised over something it was never divided
+by.** All three produced numbers that were plausible enough to quote, and in two of the three the
+plausible rows were as wrong as the absurd one — it was only the absurd row (3163%, an arena that
+disagreed with a table) that made me look.
+
+**What actually caught them was never re-reading the code.** It was an external check each time:
+an impossible ratio, a rendered arena that contradicted a table, and splitting a population that
+should have been split from the start. Re-reading a script that computes what you told it to
+compute cannot surface an error in what you told it.
+
+**Two habits adopted, both cheap:**
+- **State the denominator in the header, not the quantity.** `tiles/soldier-turn`, not `paints`;
+  `sum of per-map means`, not `twPaint~`. A header that names the normalisation cannot silently
+  imply the wrong one.
+- **Render the thing once before trusting a table of it.** One ASCII arena at one round cost a
+  cached dump and caught an error I had already committed to the training log.
+
+**And the ratios were fine all three times.** In the pooled-sums case both arms were summed
+identically, so every ratio — tower paint −71%, towers −24%, coverage −51% — was exactly right
+and the verdict never depended on the broken absolutes. Worth stating because the instinct on
+finding an error like this is to distrust the whole table, and the disciplined move is to work out
+which claims actually rested on the broken quantity. Here it was one inference (that tower paint
+is abundant late), and the per-map spread — 7,813 against 423, an 18-fold range — refuted it
+outright.
