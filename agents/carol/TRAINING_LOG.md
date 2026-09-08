@@ -10616,3 +10616,29 @@ every splasher turn matched and the tool reported all 607 turns as firing shots 
 1.3". The number was absurd enough to catch, which is the same luck as the `p`-counts-tiles trap:
 the guard is a stated ceiling, not vigilance. Fixed by filtering the extracted state fragment
 rather than the line. Recorded in the tool.
+
+## CORRECTION to the iteration 38 verdict table — two numbers were sums of means, not means
+
+Caught while rendering the arena: the round-900 map on `mit` shows only a handful of towers, which
+does not fit the "towers alive (mean) 20.1" I wrote in the verdict.
+
+My pooling script summed the *time-averaged* columns across the three games instead of averaging
+them. Per map, `carol_iter36`'s tower count is **4.7 / 2.5 / 12.9**, which sums to the 20.1 I
+printed; tower paint is **1,512 / 423 / 7,813**, which sums to 9,748.
+
+**What survives unchanged:** every ratio in that table. Both arms were summed identically, so
+tower paint −71%, towers −24%, splashers −29% and coverage −51% are all exactly as reported, and
+the verdict rests entirely on those ratios. The rejection is unaffected.
+
+**What does not survive:** any absolute reading of those two columns, and one inference I drew
+from it. I wrote in the iteration-39 analysis that carol has "9,748 tower paint banked late", and
+used it to argue tower paint is abundant in the late game. It is not a mean, and the per-map
+spread makes the point badly: 7,813 on `TheBest` against **423** on `lighthouse`, an 18-fold
+range. **Tower paint abundance is map-dependent, not a general late-game property**, and I had
+generalised from a number that was mostly one map.
+
+The label is the whole defect — the column header said `twPaint~`, which reads as an average.
+This is the same class as `p`-counts-tiles from earlier today: a quantity whose *name* implies a
+normalisation it does not have. Both were caught by an external check (an impossible ratio; an
+arena that disagreed with a table), not by re-reading the code, which is the argument for
+rendering the thing at least once rather than only tabulating it.
