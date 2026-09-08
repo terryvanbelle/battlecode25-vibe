@@ -230,6 +230,17 @@ The accept/reject machinery lives or dies on these rules. Each one is paid for.
     metric is computed from the same games as the first, work out whether it is
     a genuinely new projection of the data or an algebraic restatement. An
     identity always agrees with itself, so it can never be evidence.
+
+    **The same trap wearing a disguise: independence of the DERIVATION is not
+    independence of the REFERENT.** Two people computing a number by different
+    routes, without seeing each other's work, feels like the strongest
+    corroboration available — and is worth nothing if both routes read the same
+    invalid quantity. A lineage retracted a statistic as a post-spend artefact
+    (doctrine 15), a second session re-derived the same number independently from
+    the same replay, and the coordinator relayed the agreement as confirmation.
+    It was not: re-deriving a number does not repair its referent, and the
+    reconciliation that killed it the first time kills it however many times it is
+    computed. Ask what each derivation *measured*, not what path it took there.
 15. **Replay per-robot state is recorded POST-action. Never use it to estimate
     whether an action was possible.** The paint and money a replay shows for a
     robot on turn N are what it had *after* spending, so "how often could this
