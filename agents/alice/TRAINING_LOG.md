@@ -13849,3 +13849,53 @@ here, because it **re-rolls a fixed opening** rather than shuffling a long rando
 - **The real iteration this exposes** is not a seed choice — tuning the offset would be
   overfitting to a fixed opening, and fragile. It is to make the opening unit mix **explicit**:
   a per-tower counter giving exactly 1 mopper in 4, removing the hidden parameter entirely.
+
+## Iteration 38 — delete the hidden opening parameter (pre-registered under the NEW threshold)
+
+**The defect, discovered by the floor experiment rather than looked for.** `rngState` is seeded
+from `rc.getID()`; starting-tower IDs are fixed per map; the engine is deterministic. So the
+line
+
+```java
+UnitType want = (rnd(4) == 0) ? UnitType.MOPPER : UnitType.SOLDIER;
+```
+
+is **not "25% moppers"** for the towers that matter most — it is a **fixed sequence per map**,
+selected by one constant nobody chose deliberately. One starting tower draws **5 moppers of 12**
+under the shipping offset and **0 of 12** under `+1`. Iteration 5 measured early moppers
+crowding out soldiers as an **absorbing state**, so this constant silently sets the opening.
+
+**The fix deletes the parameter instead of tuning it**: a per-tower counter, so the rate is
+exactly 1 in N by construction, independent of ID and of the seed. Tuning the offset instead
+would be overfitting to a fixed opening and would break under any change to spawn order.
+
+| arm | rate | reading |
+|---|---|---|
+| `alice_i38a` | exactly 1 in 4 | preserve the *intended* rate, remove the ID dependence |
+| `alice_i38b` | exactly 1 in 8 | remove it **and** lower the rate |
+
+### The limit on my own inference, stated before the run
+
+The seed change moves **all eight `rnd()` call sites** — mopper choice, spawn direction, and
+five in wander and tie-breaking. **So the +12 is an aggregate and I cannot attribute it to the
+mopper rate.** Iteration 38 rests on the *mechanism* — an opening that is a fixed draw nobody
+selected — which stands regardless of where the +12 came from. If it fails, that is evidence
+the +12 lives in the wander call sites, and the next probe is there.
+
+### Pre-registered
+
+- **Convention**: two-arm screen, **baseline in `BOT`**, 25 shared maps, 100 games; an arm is
+  good when the BOT loses. Survivor gets a 75-map census with candidate-as-`BOT`.
+- **Gate — and this is the change that matters — `net swept >= +12`** on the census, not `> 0`.
+  My measured floor is **sd 5.29**, and a **policy-free** change reached **+12**. Anything below
+  that is reachable without changing behaviour at all. This is roughly *twice* as strict as
+  every gate I have written before today.
+- **Named risk**: `i38b` halves the mopper supply, and moppers are the only unit that clears
+  enemy paint from a tile. Iteration 19 accepted mopper-driven pattern clearing; if `i38b`
+  loses while `i38a` does not, the mopper rate is already at or below its optimum.
+- **QUANTITY named in advance, measurable on one game** (the practice that killed iteration 36
+  for 0.7% of a screen): **moppers spawned in the first 200 rounds, per arm, against the
+  baseline on the same map.** If `i38a` does not differ from the baseline there, the mechanism
+  is not reaching the opening and the run is uninformative.
+- **Falsifier**: if both arms land inside ±5 (1 sd), the opening mopper rate is not where the
+  +12 lives, and I will probe the wander call sites instead of iterating here again.
