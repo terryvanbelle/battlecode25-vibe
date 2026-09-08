@@ -8217,3 +8217,29 @@ bob_k3   mask 3   33.3% money -- deliberate overshoot
    games capture different ruins) but it does mean **realized share is not a valid read-out of
    the dose**, and I will not quote it as one when the result comes back. The dose is the
    policy, verified per-ruin above.
+
+### Pre-check supporting iteration 23's premise: tower COUNT is near-saturated, so the MIX is what is left
+
+Before spending a run on the mix I should rule out the obvious rival explanation — that the
+lever is simply *more towers*. Claimable ruins come from `tools/mapdata/ruin_parity.txt`
+(the `.map25` `ruins()` vector, which excludes the four starting-tower tiles, so a replay
+header reads four higher — that distinction is in the file's own preamble and I am using the
+claimable number here).
+
+```
+map           claimable   towers built (both teams, end of game)   utilisation
+Flower            12                 15 - 4 = 11                      92%
+Dominoes          20                 20 - 4 = 16                      80%
+DonkeyKong        46                 41 - 4 = 37                      80%   T1 at tw25 = the ENGINE CAP
+```
+
+**80-92% of buildable ruins get a tower, and on the large map my own side is pinned at
+`MAX_NUMBER_OF_TOWERS = 25`.** So "build more towers" has at most a fifth of a map's worth of
+headroom on the small maps and *literally none* on the big ones. Whatever is wrong with the
+economy cannot be fixed by expanding, which is what makes the composition of those towers the
+remaining lever — and it is the lever nobody has touched since iteration 1.
+
+Worth stating explicitly because it also **retires a hypothesis I would otherwise have reached
+for after a failed dose**: if iteration 23 comes back flat, "we just need more towers" is not
+the fallback. The fallback is the spawn probe (`src/bob_sprobe`, built and unrun), which asks
+whether the spawn decision is chip-limited or paint-limited at the decision point.
