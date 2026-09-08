@@ -7585,3 +7585,123 @@ assume: the build site is a single `DIRS[rng.nextInt(8)]` cell with no retry, so
 neighbour discards the whole build. That would hit every type, so on its own it cannot explain a
 splasher-specific shortfall — which is exactly why the decision counter has to separate the two
 failure modes instead of my guessing between them.
+
+## Iteration 30 pre-checks — the splasher shortfall is FULLY explained, and my suspicion was wrong
+
+`gauntlet/20260908-010951`, `carol_i30p` vs `carol_iter25`, four pinned maps. **Identity check
+passes**: 8/8 with end rounds byte-identical to the accepted `carol_i29` run (r1087, r873, r1107,
+r1846...). Verified no-op, so the counters describe iteration 29's own play.
+
+Every counter is read **at the decision point, before `buildRobot` resolves** — which is what
+doctrine 15 requires. Counting the outcome is what I had been doing all along and it is exactly
+what could not answer this.
+
+| map | type | rolls | **rejected: chips** | rejected: paint | **cell blocked** | built | free neighbours /8 |
+|---|---|---|---|---|---|---|---|
+| Bunny | SPLASHER | 616 | **311 (50.5%)** | 303 (49.2%) | **0** | 2 | 8.00 |
+| DefaultMedium | SPLASHER | 1,546 | **1,471 (95.1%)** | 70 (4.5%) | **0** | 5 | 8.00 |
+| Fossil | SPLASHER | 1,172 | **1,086 (92.7%)** | 81 (6.9%) | **0** | 5 | 7.60 |
+| Mirage | SPLASHER | 2,026 | **1,400 (69.1%)** | 622 (30.7%) | **0** | 4 | 7.75 |
+| DefaultMedium | SOLDIER | 7,820 | **6,688 (85.5%)** | 953 (12.2%) | 7 | 172 | 7.86 |
+
+**My registered suspicion is REFUTED, and I am glad I registered it as a suspicion.** I wrote that
+the single no-retry `DIRS[rng.nextInt(8)]` build cell might be discarding builds. It is not:
+**5.77–8.00 of the 8 neighbours would have worked**, and blocked draws total 0–7 across thousands
+of rolls. The build site is a non-issue. Had I "fixed" it I would have spent an iteration on a
+branch that discards ~0.1% of builds.
+
+**The chips gate is the whole story, and it is map-dependent** — which is why no single-map
+diagnosis would have been safe:
+
+- **DefaultMedium and Fossil are chips-bound**: 93–95% of splasher rolls die at the chips gate,
+  only 4–7% at paint.
+- **Bunny is jointly bound**: 50.5% chips, 49.2% paint.
+- **Mirage is mostly chips-bound**: 69% / 31%.
+
+And the arithmetic closes on the chips-bound maps. On DefaultMedium the treasury is ≥1600 (the
+splasher gate) on 1.1% of tower-turns and ≥1450 (the soldier gate) on 11.5%; weighting by the roll
+shares gives a predicted realized splasher share of
+`0.15x1.1 / (0.15x1.1 + 0.75x11.5 + …)` ≈ **1.9%**, against **2.3% observed.** The shortfall needs
+no new mechanism: it is the chips gate, and nothing else.
+
+### The treasury dwells in a dead band — the same shape one level up
+
+`chips` is captured at the top of `runTower` before any build, so the indicator's `chips=` is a
+decision-point value, not post-spend. Gates: soldier 1450, mopper 1500, splasher 1600.
+
+| map | median chips | <1200 | **[1200, 1450) — above the reserve, below every gate** | ≥1600 |
+|---|---|---|---|---|
+| Bunny | 1,580 | 10.3% | 28.4% | 48.2% |
+| DefaultMedium | 1,300 | 25.2% | **63.3%** | 1.1% |
+| Fossil | 1,300 | 25.7% | **61.3%** | 2.7% |
+| Mirage | 1,360 | 17.6% | 43.1% | 27.9% |
+
+**On two maps the treasury spends ~62% of the game above `CHIP_RESERVE` and below the cheapest
+build gate.** That is the identical degeneracy iteration 6 diagnosed and iterations 7 and 18 built
+escapes for — and the escape *does* fire, but only on ~5% of the pinned turns (321 tower-turns at
+`rsv=0` against 6,567 pinned, on DefaultMedium), because `pinnedTurns` resets the moment chips
+leave the band and must then re-accumulate ten consecutive turns.
+
+**History pre-check, and it forbids the obvious move.** Iteration 4 lowered/disarmed the reserve
+early and was **rejected with a trace**: the 1,980 starting chips are exactly the first tower
+completion (`completeTowerPattern` costs 1,000), and spending them on ~7 early soldiers left the
+bot a tower behind by round 300 and never catching up. "The early reserve is load-bearing after
+all." So **"lower `CHIP_RESERVE`" is a known-rejected direction** and I am not proposing it.
+
+What is new and does not revert it: the reserve is armed *for the whole game* whereas its evidenced
+job — protecting the first completions — is an *early* job, and the escape built to handle the late
+case is measurably reaching only 5% of it. **Registered as the next candidate: fix the escape's
+duty cycle, not the reserve's value.** Pre-checks still outstanding and named rather than assumed:
+(1) price what the reserve buys late — does a late tower completion actually get missed when the
+reserve is off, or is that purely an early-game effect; (2) check the bytecode; and (3) size
+whether more units is even the binding constraint, since three iterations (5, 8, 10) already
+raised production and my own LEARNINGS records that "unit production is not the binding
+constraint" — that entry must be superseded with evidence, not ignored.
+
+### The tournament replays REFUTE the candidate I registered above, before it cost a run
+
+Per the stall protocol ("re-examine the old tournament games — read them for what the *other*
+lineages do that you never attempt"), pulled three `bob-vs-carol` replays from tournament
+`20260907-1300` (carol was iteration 25 there). This is the only evidence in the project produced
+by an opponent my lineage did not build.
+
+| map | | units built | towers built | **paint tiles** | **tiles per unit** | splasher share |
+|---|---|---|---|---|---|---|
+| Brat | bob | 131 | 7 | **1,151** | **8.8** | **18%** |
+| | carol | **159** | 3 | 473 | 3.0 | 1% |
+| DefaultMedium | bob | 90 | 10 | **1,057** | **11.7** | **18%** |
+| | carol | 54 | 5 | 347 | 6.4 | 2% |
+| Fossil | bob | 127 | 9 | **1,486** | **11.7** | **18%** |
+| | carol | **166** | 7 | 692 | 4.2 | 1% |
+
+**Carol builds MORE units than bob on two of three maps and paints 2.2–3.0x fewer tiles.**
+
+So the candidate I registered one entry above — "fix the escape's duty cycle so more units get
+built" — is attacking a constraint that **is not binding**, and I would have spent a run proving it.
+Withdrawing it now, unrun.
+
+**And this does not supersede my old LEARNINGS entry, it CONFIRMS it.** That entry says three
+iterations (5, 8, 10) raised production by three different routes and none helped: "unit production
+is not the binding constraint". I had just written that it "must be superseded with evidence, not
+ignored" — and the evidence arrived pointing the other way, from an opponent my lineage never
+produced. The pre-check I named as outstanding (#3, "size whether more units is even the binding
+constraint") is the one that killed the candidate, which is exactly what naming outstanding
+pre-checks is for.
+
+**What the comparison does say, and it is the sharpest target this lineage has had:**
+
+1. **bob gets 2.8–3.9x more painted tiles per unit built.** The gap is per-unit productivity, not
+   unit count.
+2. **bob's splasher share is 18% on all three maps** — remarkably stable — against carol's 1–2%.
+   Carol's own *intended* share is 15%. bob is running roughly the mix carol's constants ask for
+   and carol cannot reach.
+3. bob builds more towers (7–10 vs 3–7) on the same maps, which is plausibly upstream of the chips
+   that buy splashers — so tower count, chips, and splasher share may be one chain rather than
+   three targets. **Not asserting that; naming it as the thing to decompose.**
+
+**Deliberately NOT designing a candidate on this yet, and the reason is dated evidence.** These
+games are iteration 25. Iteration 29 raised carol's landed attacks by 1.2–3.3x and lifted the
+soldier mix to nearly its intended share, so an unknown part of this gap is already closed. The
+tournament now running (`20260908-0100`) is the *same instrument* measuring iteration 29 against
+the *same* bob, and it is the correct thing to read before committing a design. Polling it rather
+than designing against superseded numbers.
