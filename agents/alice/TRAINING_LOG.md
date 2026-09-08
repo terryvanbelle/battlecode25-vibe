@@ -11164,3 +11164,104 @@ introduced it was explicitly accepted as *inert*. It is now the single most-exer
 untested constant in the bot. `alice_splashprobe` already carries the telemetry to measure
 `splashScore` at the centres a splasher actually chooses (the quantity the iteration-24
 census parked as unmeasurable), and reading it needs a replay dump, not a census.
+
+## Roster run after iteration 28 — and the roster is SATURATED, exactly as warned
+
+Full frozen roster, `alice_iter28`, 350 games. Reporting the **weakest rung**, not the mean,
+because a mean over saturated rungs describes the ceiling rather than the bot:
+
+| rung | record | win% | swept W/L | previous |
+|---|---|---|---|---|
+| `alice_iter0` | 50-0 | **100.0%** | 25 / 0 | 100% |
+| `alice_iter1` | 50-0 | **100.0%** | 25 / 0 | 100% |
+| `alice_iter4` | 50-0 | **100.0%** | 25 / 0 | 98% |
+| `alice_flood` | 49-1 | 98.0% | 24 / 0 | 88-92% |
+| `alice_iter7` | 48-2 | 96.0% | 23 / 0 | 88-98% |
+| `alice_iter12` | 48-2 | 96.0% | 23 / 0 | 96% |
+| **`alice_iter23` (weakest)** | **40-10** | **80.0%** | 16 / 1 | **66%** |
+
+**Weakest rung: 80.0%.** Every rung is now at or above 80%, and three are at *exactly*
+50-0 — a rung that has lost every game of 50 cannot register an improvement **or a
+decline**, so it contributes literally zero information about the next iteration.
+
+Iteration 28 did this in one step: it moved `alice_iter23` from 66% to 80% and `alice_flood`
+from ~90% to 98%. **A result that sweeps almost everything is precisely the result that
+saturates a roster fastest**, which makes the danger worst at the moment it is least
+visible — a chain of thin accepts walking downhill is undetectable when every line is
+pinned at the top.
+
+I am **not** retiring any rung. A retired rung destroys the long-run trend that is the whole
+value of the chart, and the saturation is a statement about the *set*, not about any member.
+The fix is a harder fixed reference.
+
+## `alice_paintthief` — a harder rung, aimed at the blind spot this session exposed
+
+The self-referential blind spot is not abstract for me; I can name my instance of it exactly:
+
+> For **25 accepted iterations this bot could not take enemy-painted ground at all** — a
+> soldier cannot overwrite enemy paint, a mopper only clears to EMPTY — **and no opponent
+> in my pool ever did it to me either, because every one of them is me.** Iteration 28
+> finally fields splashers, but only above a runaway chip surplus: it fired on 44 of 75
+> maps and never fired on the other 31.
+
+So "what happens when the opponent takes *my* paint, early and constantly" is a question
+none of my instruments can currently ask. That is the archetype's job, and it is the reason
+it qualifies as a rung rather than as a bot I happen to have written.
+
+Two changes from `alice_iter28`, both making it aggressive in the dimension I am blind to:
+
+- **splashers whenever affordable**, not only out of surplus — the gate iteration 28 keeps
+  is removed, so it contests ground from the early game;
+- **`MIN_SPLASH_TILES` 6 → 2**, so it attacks on almost any conversion rather than only a
+  profitable one.
+
+It is **frozen on commit and never edited**, for the same reason an old snapshot is: a rung
+that changes cannot carry a trend. Calibration run in flight — a rung is only worth adding
+if it is not *also* at ceiling, and I will report where it lands before adding it to
+`progress/roster_extra.txt` rather than assuming the design made it hard.
+
+### Calibration verdict: `alice_paintthief` is ADMITTED — 74.0%, the hardest rung I have
+
+`alice_iter28` vs `alice_paintthief`, 25 sampled maps, 50 games, run `20260908-080826`,
+0 exceptions across all 50:
+
+| | record | win% | swept W | swept L | split |
+|---|---|---|---|---|---|
+| `alice_iter28` vs `alice_paintthief` | **37/50** | **74.0%** | 14 | **2** | 9 |
+
+**74.0% against the current accepted snapshot, versus 80% for the weakest existing rung.**
+It is not at ceiling, so it carries information the saturated rungs cannot. Admitted to
+`progress/roster_extra.txt` and **frozen** — the source is committed and will never be
+edited again, for exactly the reason a snapshot is never edited.
+
+It is also the **first rung in the history of this roster to take a swept map off the
+accepted bot** — 2 of them. Every previous rung's losses were split-by-side, i.e. spawn
+advantage; these are not.
+
+#### And the two swept losses land somewhere very specific
+
+The maps `alice_paintthief` swept are **`Barcode`** (r229 / r500) and **`memstore`**
+(r555 / r577) — all four games decided early, none near the round-2000 tiebreak.
+
+Cross-referencing the iteration 28 census (run `20260908-061818`), both maps are **splits**:
+
+```
+RESULT alice_iter25 Barcode  A B 2000   RESULT alice_iter25 Barcode  B B 1059
+RESULT alice_iter25 memstore A B  479   RESULT alice_iter25 memstore B B  479
+```
+
+Under the one-line-diff logic of iteration 28, **a split is a map where the splasher gate
+never fired** — `memstore` is one of the two maps I verified on the ground (`spl0`
+throughout, chips flat at $1,200-1,420). So **both of the archetype's swept wins sit inside
+the 31-map set where iteration 28 reverts to iteration 25 behaviour.**
+
+I want to be honest about the strength of this: **n=2**. Two maps is a direction, not a
+result, and I am recording it as a hypothesis rather than a finding. But it is a direction
+that points the same way as iteration 29's premise, and it was produced by an instrument
+built for an entirely different purpose, which is the only kind of corroboration worth
+much. The 31 non-firing maps are not merely *unimproved* — on the evidence available they
+are where a paint-denial opponent actually beats me, and they were invisible for 25
+iterations because every opponent I had was myself.
+
+If iteration 29 reduces the split count, this rung is the instrument that should register
+it, and it is the only one on the roster with the headroom to do so.
