@@ -13968,3 +13968,77 @@ produce.
 What `alice_phase` *is* good for is what I built it for — measuring the floor — and as the
 motivation for iteration 38, which attacks the same opening **with** a mechanism by deleting
 the hidden parameter rather than choosing a lucky value for it.
+
+## REJECT iteration 38 — recovered from run `20260908-182400`, and the falsifier fired
+
+The screen completed and was never adjudicated (the session died between collation and the
+verdict). Recovering it rather than re-running it: the games are on disk and re-running would
+pay for shared VM time to re-learn what was already measured.
+
+**Convention check first**, because this is the run type where I have inverted the sign before:
+`bot.txt` says `bot=alice_iter30`, i.e. the **baseline is in `BOT`** and the arms are the
+opponents, so *an arm is good when the BOT loses*. Both readings below are from the arm's side.
+
+| arm | rate | arm record | SW | SL | split | net swept | sd = sqrt(decisive) | in sd |
+|---|---|---|---|---|---|---|---|---|
+| `alice_i38a` | exactly 1 in 4 | 28/50 (56%) | 5 | 2 | 18 | **+3** | 2.65 | +1.13 |
+| `alice_i38b` | exactly 1 in 8 | 26/50 (52%) | 4 | 3 | 18 | **+1** | 2.65 | +0.38 |
+
+**Arm-to-arm identity check (doctrine 3): 10 of 50 cells identical, 40 differ.** The mechanism
+executed and the two arms are genuinely different builds. This is not a dead-branch result.
+
+**Scaling the gate to the screen, which is the step that decides it.** My accept gate is
+`net swept >= +12` on a 75-map census whose null sd is 5.29 — that is **2.27 sd**. A 25-map
+screen with 7 decisive maps has null sd 2.65, so the same gate is **+6.0 net swept** here.
+`i38a` reaches half of it; `i38b` reaches a sixth.
+
+> **Iteration 38 is REJECTED, both arms.** Neither reaches the screen-scale equivalent of my
+> own accept threshold, and my pre-registered falsifier — "if both arms land inside ±5 (1 sd),
+> the opening mopper rate is not where the +12 lives" — fires as written.
+
+**The rate axis is closed as well, and that is the more durable half.** `i38a` and `i38b`
+differ by a genuine *halving* of the opening mopper rate, and they differ in result by **2 net
+swept games — well inside one sd.** Between 1-in-4 and 1-in-8 the opening mopper rate is a
+**plateau, not a peak**. Nobody should spend games there again.
+
+**What survives.** The *mechanism* claim stands independently of the number: `rnd(4)` on a
+starting tower with a fixed ID is a fixed draw, so the shipping bot's opening mix was set by a
+constant nobody chose. Deleting that parameter is still correct. It is simply worth less than
+my instrument can resolve — the "correct but small" case I flagged when I set the +12 floor.
+I am not shipping it on a within-noise margin; doctrine 5b calls a marginal accept an unpriced
+liability, and this is exactly one.
+
+## The PRNG audit — `alice_phase`'s +12 has no mechanism behind it, and the wander probe is dead
+
+My falsifier's consequence was "probe the wander call sites instead". I ran that probe
+**offline, at zero game cost**, by re-implementing the bot's xorshift32 in Python with Java's
+`int` and `%` semantics. If seeds `rc.getID()*31 + K` were correlated across nearby IDs, then
+soldiers spawned consecutively would wander alike and the bot would have a real exploration
+defect worth chasing.
+
+| test | result | verdict |
+|---|---|---|
+| marginal dist. of first `rnd(8)`, IDs 1..2000 | 249–251 per bucket | uniform |
+| **lag-1 agreement of first `rnd(8)` across consecutive IDs** | **0.016** vs chance 0.125 | **better than random** |
+| longest run of equal first-draws over consecutive IDs | 2 | no clumping |
+| long-run `P(rnd(4)==0)` per stream, 2000 draws, 12 seeds | 0.239–0.260, mean 0.2498 | unbiased |
+| long-run `rnd(2)`, `rnd(8)` per stream | flat | unbiased |
+
+Consecutive IDs do not merely fail to clump — they **cycle through a permutation of the eight
+directions**, so eight consecutively-spawned robots take eight *different* first headings. The
+seeding is accidentally better than i.i.d. for spawn spread.
+
+> **Closed direction: "the PRNG is biased / clumps" is REFUTED at every scale I can test —
+> marginal, per-stream long-run, and consecutive-ID.** The wander call sites hold no defect,
+> and the follow-up probe my falsifier pointed at is cancelled before it cost a run.
+
+**So `alice_phase`'s +12 is finite-sample realisation luck and nothing else.** Not a biased
+generator, not a broken call site: the same clean distributions, re-rolled, landing better on
+*these* 75 maps. That is the strongest form of the argument I made when I declined to ship it,
+and it now rests on measurement rather than on principle.
+
+It also sharpens what the floor *is*. My census floor of sd 5.29 with a mean 2.3 sd from zero
+is not measuring a defect I could fix — it is measuring how much of this bot's outcome is
+decided by short realisations on a deterministic engine. That number is a property of the
+apparatus, and the only response to it is the one I already took: a gate large enough that
+realisation luck cannot clear it.
