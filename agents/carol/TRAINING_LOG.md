@@ -8559,3 +8559,110 @@ aggressive arm testing whether that safety costs completions.
   be strongest on high-viability maps (`sunrise` 36.4%, `gardenworld` 34.7%) and near-absent on
   `gridworld` (11.1%) and `roads` (5.6%). If the gain is uniform across viability, the mechanism
   is not working through the channel I claim and the attribution is OPEN regardless of the result.
+
+## Iteration 32 — REFUTED at the §4 engagement pre-check. Zero completions, and the 100-game run was never bought
+
+The pre-registered engagement check was: **`SRPdone` must be > 0** on an 8-game repro sample,
+*before* a full run is paid for. It is 0. On every arm, on every map.
+
+| arm | run | h2h | `SRPpnt` (tiles recoloured) | **`SRPdone`** | dominant veto |
+|---|---|---|---|---|---|
+| `carol_i32_100` (floor 100) | `20260908-061042` | 5/8 | 0 in the sampled windows | **0** | `SRPpoor` 65, `SRPfoe` 39 |
+| `carol_i32_0` (floor 0) | `20260908-061552` | 5/8 | **10** / 900 rounds | **0** | `SRPwall` 3591 (93%) |
+| `carol_i32b` (widened) | `20260908-062421` | 5/8 | **14** / 900 rounds | **0** | `SRPdead` 3837 |
+
+**The 5/8 is not evidence of anything and I am not treating it as such.** All three arms scored
+identically while taking 0, 10 and 14 SRP actions respectively across a whole game. A change that
+touches ~10 of ~30,000 robot-turns cannot be what moved three games; reading that 5/8 as support
+would be exactly the back-filled mechanism story rule 3b forbids. (Bytecode was checked first and
+ruled out as the cause: max 6,515 of 17,500, `ov=0 nm=0`.)
+
+### Why it completed nothing, and the answer is different on different maps — which is the finding
+
+A cell needs **13 recolours by soldiers standing in it**. We got 14 across an entire map in 900
+rounds. That is not a tuning gap, it is two orders of magnitude, and tracing it map by map gives
+two *different* blockers that turn out to be the same problem:
+
+**1. Where the idle budget is plentiful, the cells are not viable.** Parking_lot: 6,597 IDLE-ALLY
+turns, and 93% of firings died on a wall or ruin inside the cell. Parking_lot's own viability is
+**19.8%** (`latticescan`), so a uniformly-scattered robot would pass 19.8% of the time; carol's
+soldiers passed **6.8%** — they are **~3× under-represented in viable cells**. That is not the
+map, it is carol: `nearestEmptyRuin`/`workOnRuin` park soldiers next to ruins by design, and a
+ruin is precisely what makes every overlapping cell non-viable. **The bot's own accepted
+navigation denies this mechanism its ground.**
+
+**2. Where the cells are plentiful, the idle budget is not ally-side.** DefaultLarge has the
+highest viability of the four (**46.7%**) and there the veto flips entirely: 1,166 `SRPnone` — the
+cell was fine and there was simply no ally tile worth recolouring. The reason is in the idle
+census: **IDLE-ENEMY 1,424 vs IDLE-ALLY 20**, i.e. 98.6% of that map's idle budget is a soldier
+parked at a ruin beside enemy paint it cannot overwrite (`ruin=[27, 17]` on every one of those
+turns). There is no friendly ground under it to recolour.
+
+**So the two things this mechanism needs — clean ally ground to stand on, and a wall/ruin-free
+cell to stand in — are anti-correlated across the corpus.** Parking_lot has the first and not the
+second; DefaultLarge has the second and not the first. That is why the completion count is zero on
+all four maps despite the local cause being different on each, and it is a stronger statement than
+either blocker on its own.
+
+### The idle budget I designed against was measured on a different bot
+
+Iteration 26 measured the idle budget as **72–88% `frontNone`** — deep inside saturated ally
+territory, which is exactly the right ground for a pattern. I built iteration 32 on that figure.
+On the current build it is **map-dependent and often nothing like it**: IDLE-ALLY is 77% on
+Parking_lot, 33% on gridworld, and **1.4% on DefaultLarge**. Iterations 29 and 30 pushed carol's
+soldiers toward the frontier, and the waste moved with them.
+
+**This is the third iteration in a row killed by a stale measurement.** Iteration 31 died on a
+95.1%-idle mopper figure taken from an older build; iteration 32 dies on an idle-composition
+figure taken from iteration 25. The pattern is now unmistakable and it is a property of my *loop*,
+not of any one mechanism: **a measured constant is only valid for the build it was measured on,
+and this lineage keeps re-using them across accepts that specifically changed the thing measured.**
+Recorded in LEARNINGS as a standing pre-condition rather than as a third anecdote.
+
+### The width error, twice more in one iteration, and my own rule was only half right
+
+Iteration 26a wrote: *"a NARROWER proxy can only produce false negatives."* That is the half I had
+seen. This iteration produced both halves inside one hour:
+
+- **Probe p was WIDER than the mechanism needed** (full-cell sensing, blanket ruin guard) and
+  returned `srpOk = 0` on all four maps — a **false negative** that would have closed a live
+  direction on my own instrument's artefact, had I stopped there.
+- **Probe q was WIDER than the code I then shipped** (tile-local across the whole action radius,
+  versus own-cell-only in the build) and returned 52–100% firing — a **false positive** that sent
+  me to a build which engaged 0.26% of the time.
+
+The corrected rule, which supersedes 26a's: **a probe is only informative when its condition is
+the SAME width as the shipping decision; any mismatch invalidates it, and the direction of the
+mismatch decides whether you are handed a false negative or a false positive.** Both are equally
+capable of costing an iteration, and I have now paid for each.
+
+### Closed-directions ledger
+
+- **"SRPs" — CLOSED on the mechanic now, not merely on the commitment model.** The two possible
+  designs have been built and measured, and they fail for *opposite* reasons that cannot be
+  satisfied together:
+  - **With navigation** (iteration 26): the soldier reaches viable cells, and `srpCenter` captures
+    it for 573–4,583 turns a game; it arrives back below the release threshold. Rejected on
+    evaluation, 3/8 and 4/12 across two doses.
+  - **Without navigation** (iteration 32, two builds and a widening refinement): nothing is
+    captured and nothing is lost, and the soldier is essentially never standing in a completable
+    cell — 14 recolours and **0 completions** in 900 rounds. Refuted at the engagement pre-check.
+
+  **The dilemma is the closure**: reaching a viable cell requires steering, and steering is the
+  thing that was already measured to kill it. Re-opening now requires *neither* — a design that
+  puts the pattern where soldiers already are rather than moving soldiers to the pattern. The one
+  candidate of that shape, recorded for whoever re-opens it: **anchor the pattern to ruins**
+  (a fixed offset from each sensed ruin is still a pure function of the map, so it still needs no
+  communication) *because soldiers already cluster at ruins* — that inverts blocker 1 instead of
+  fighting it. It is not free: `latticescan` says only 14.3% of cells are both viable and clear of
+  a ruin's tower pattern, so the offset would have to thread that gap, and blocker 2 (enemy-side
+  idle turns) is untouched by it.
+
+- **NOT closed, and now better supported: "raise tower paint income."** Iteration 31 registered
+  this and named the SRP as the instrument. The *instrument* is what failed here, not the target.
+  The arithmetic that motivated it is unchanged and was never the weak link.
+
+**DECISION: REJECT.** `src/carol` is untouched and remains iteration 30; nothing to revert, HEAD
+still compiles. Cost: three 8-game samples (24 games) and two no-op probe runs, against the
+**100-game run the pre-registered engagement check prevented me from buying**. That check is the
+cheapest thing in this log and it has now paid for itself outright.

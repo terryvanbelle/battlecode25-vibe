@@ -1045,3 +1045,57 @@ The fix is cheap and mechanical: every superseded figure or rule carries an inli
 `**[SUPERSEDED <date>: what replaced it, and where]**` marker *at the point of the stale text*, not
 only in a correction appended elsewhere. Applied retroactively here and in `TRAINING_LOG.md`.
 Preserving the old text is right; leaving it indistinguishable from live text is the defect.
+
+## A measured constant is only valid for the build it was measured on
+
+Three consecutive iterations died on this, and the third one made it a pattern rather than bad luck:
+
+| iteration | constant relied on | measured on | what it was on the current build | outcome |
+|---|---|---|---|---|
+| 31 | moppers idle on **95.1%** of turns | an older build | moppers **active**: 112 unpaints, 28 swings in one window | REJECT at exactly the null |
+| 32 | idle budget is **72–88% `frontNone`** (deep ally ground) | iteration 25 | IDLE-ALLY is 77% / 33% / **1.4%** on three maps | REFUTED, 0 completions |
+
+Both figures were sound when taken. Both were quoted, in good faith, about a bot that no longer
+existed — and in both cases *the accepted iterations in between had specifically changed the thing
+the constant described* (iteration 30 raised splasher production; 29 and 30 pushed soldiers to the
+frontier). That is the tell: **the more relevant an old measurement is to a direction, the more
+likely the accepts since then have invalidated it**, because relevance is what made it a target.
+
+**Standing pre-condition, not an anecdote: before a constant from an earlier iteration is allowed
+to carry a design argument, re-measure it on the current build, or state in the pre-registration
+that it was not re-measured and treat that as the term most likely to fail.** Iteration 31 did
+write that caveat down and it was precisely the term that failed — so writing it down is necessary
+but is *not* a substitute for the re-measurement. The re-measurement is cheap: both figures above
+were recoverable from a single 8-game probe already being run for another purpose.
+
+## A probe must be the SAME WIDTH as the shipping decision — both mismatches are fatal
+
+Iteration 26a recorded half of this: *"a narrower proxy can only produce false negatives."*
+Iteration 32 produced **both** halves within one hour, which is what makes the rule general.
+
+- **Probe wider than the mechanism → FALSE NEGATIVE.** Probe p demanded a fully-sensable, wholly
+  clean cell and a blanket ruin guard, and returned `srpOk = 0` on all four maps. Its
+  pre-registered kill condition fired and I was one decision away from closing a live direction on
+  my own instrument's artefact. Two guards were provably too wide: full-cell sensing is impossible
+  from 12 of the 25 standing positions in a cell at vision r²=20, and a ruin that already has a
+  tower is not a conflict at all ("tower survives even if its pattern is later painted over").
+- **Probe wider than the code you then SHIP → FALSE POSITIVE.** Probe q measured the tile-local
+  decision across the whole action radius and returned 52–100% firing. The build I wrote from it
+  considered only the soldier's own cell — a narrowing I made for bytecode economy, without
+  measuring — and engaged on **0.26%** of turns.
+
+So: **any width mismatch invalidates a probe; the direction of the mismatch only decides which way
+you are fooled.** The practical guard is to write the probe's condition and the shipping condition
+as the *same expression* wherever possible, and when they must differ, to say in the
+pre-registration exactly how and why. A narrowing introduced after the probe — even one that looks
+like pure optimisation — is a new, unmeasured hypothesis.
+
+## Zero completions with a non-zero win rate is a trap, not a hint
+
+Iteration 32's three arms all scored 5/8 while taking 0, 10 and 14 mechanism actions per game.
+It was tempting to read the identical 5/8 as "the direction is worth a full run". It is the
+opposite: a change touching ~10 of ~30,000 robot-turns *cannot* have moved three games, so the
+5/8 is measuring something else — and had I bought the 100-game run on it, whatever that something
+else was would have been attributed to the mechanism. **When the engagement counter says the
+mechanism barely ran, the win rate is evidence about the baseline, not about the change.** Check
+engagement *before* looking at the score, and check bytecode overruns before believing either.
