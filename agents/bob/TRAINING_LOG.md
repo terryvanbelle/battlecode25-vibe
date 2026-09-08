@@ -10788,3 +10788,79 @@ carry an iteration and I will say so rather than running it anyway.
   checked it** — it needs a `javap`/probe, not an assumption.
 - History: iteration 18 deliberately established `RUIN_FLOOR = 0`. A fix here does not revert it, but
   the interaction is real and must be stated, not discovered later.
+
+### Tower-cap pre-checks CLOSED: the mechanism is real, the regime is 6.6% of the corpus, and it cannot clear my gate
+
+**Pre-check A — does the engine already prevent the waste? NO.** `javap -c` on
+`battlecode.world.RobotControllerImpl` 3.1.0:
+
+- `assertCanMarkTowerPattern` checks robot type, tower type, act location, `hasRuin`,
+  `isValidPatternCenter`, and paint >= cost. **There is no tower-count check.** So at the cap a soldier
+  can still spend 25 paint marking a 5x5 that can never become a tower.
+- `GameConstants.MAX_NUMBER_OF_TOWERS = 25`, confirmed from the jar rather than from `RULES.md`.
+
+So the sink is real and the engine does not guard it. That pre-check is discharged.
+
+**Pre-check B — regime size. This is what kills it.** Seven probe matches (`bob` vs `bob_iter20`),
+T1 tower count sampled every 250 rounds:
+
+```
+map           claimable ruins   trajectory                          binds?
+Leaf                52          tw25 from r500 to r2000             YES  (75% of game)
+DefaultHuge         49          tw25 from r750                      YES  (63%)
+DonkeyKong          46          tw25 from r1000                     YES  (50%)
+TheBest             44          tw25 from r500, game ended r808     YES  (37%)
+SMILE               38          peaks tw20, declines to 18          no
+headphones          32          peaks tw16, declines to 13          no
+maze                28          tw4 flat all game                   no
+UglySweater         28          tw6 at r250, game ended r377        no
+```
+
+**My pre-registered prediction — binds on the 40+-ruin maps, marginal near 28, never below ~23 — came
+out right, and the boundary is sharper than I guessed: it sits between 38 and 44 claimable ruins, not
+at 23.** The naive upper bound (25 towers needs ~25 ruins) was wrong by a factor of two, because a team
+never claims anywhere near all the ruins on a map.
+
+**Corpus-wide, only 5 of 76 maps have >= 44 claimable ruins.** So:
+
+```
+regime                       5/76 = 6.6% of maps
+expected binding maps in a random 25-map draw     1.6
+maximum possible effect if the fix flipped EVERY game on them   ~3 games of 50
+noise floor (LEARNINGS 43, measured today)                      +-3.5 games
+accept gate                                                     +7
+```
+
+**The largest effect this change could possibly have is smaller than the noise floor, and half the
+gate.** It cannot be accepted on a random sample no matter how right the mechanism is. Killed at
+pre-check, for **seven probe matches and a javap**, not a 200-game gauntlet.
+
+**A tidy reconciliation I checked and had to discard.** At the cap chips have no tower sink, so I
+expected the chip-hoard maps from my 21-map census to *be* the cap-binding maps. They are not:
+
+```
+hoard map      claimable ruins        cap-binding?
+Leaf                 52                  YES
+mit                  24                  no
+shell                20                  no
+FourCorners          10                  no
+```
+
+Three of the four cannot reach the cap. **The story is refuted, not supported** — the hoards have some
+other cause, and Leaf is on both lists because Leaf is an outlier on every list. I record this because
+it is exactly the shape of thing I would otherwise have published as "two independent measurements
+meeting": it was one measurement and a coincidence.
+
+**Disposition — CLOSED, with the measurement that closed it.** Not "under-explored"; the regime is
+6.6% and the ceiling is below the noise floor. Re-open only if the map pool changes to include more
+40+-ruin maps, or if a corpus-wide version of the defect is found — the cap is one instance of
+`workRuin` having **no abandonment condition at all**, and a broader version might reach further. Note
+before anyone reaches for that: iteration 29 was vetoed at reachability with `abandon = 0` across
+77,963 soldier turns, so the broader version has already failed once and needs a specific reason that
+finding no longer applies.
+
+**What this cost and what it bought.** Cost: 7 probe matches, two javap calls, no gauntlet. Bought: a
+mechanically-confirmed engine fact (no cap check in the mark path), a sized regime, a refuted
+reconciliation, and the knowledge that my sweep's most promising hit is unmeasurable by my instrument.
+That last point is the same wall as this morning's throughput finding — **my binding constraint is not
+ideas, it is that a 50-game random-sample instrument cannot see anything acting on under ~15% of maps.**
