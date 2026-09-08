@@ -206,7 +206,27 @@ RESOURCE      PAINT tower   MONEY tower   DEFENSE tower
 - Start: 2500 chips + 30 chips/turn (money L2) + 10 paint/turn (paint L2), 500 paint per tower.
 - Soldier = 250c+200p; new tower = 1000c (+ ~30-50 paint for the pattern, 25 mark).
 - A 3rd tower (money L1, 20c/t) repays 1000 chips in 50 turns. Money L2 upgrade (2500c, +10c/t)
-  repays in 250 turns — expansion-to-new-ruins dominates upgrades early; SRPs (200c → +3/t per
-  mining tower!) repay extremely fast once tower count grows: with T mining towers, an SRP is
-  +3T/turn... (verify: is it +3 per tower per SRP? spec says "all allied mining towers will mine
-  3 more resources per turn" per active pattern — yes, scales with tower count).
+  repays in 250 turns — expansion-to-new-ruins dominates upgrades early.
+- **SRP bonus — VERIFIED from bytecode 2026-09-08, no longer inferred.**
+  `InternalRobot.processBeginningOfRound` reads:
+
+  ```
+  if (type.paintPerTurn != 0) addPaint(type.paintPerTurn + world.extraResourcesFromPatterns(team));
+  if (type.moneyPerTurn != 0) teamInfo.addMoney(team, type.moneyPerTurn + world.extraResourcesFromPatterns(team));
+  ```
+  with `extraResourcesFromPatterns(team) = getNumResourcePatterns(team) * 3`.
+
+  So with `S` active SRPs each tower gets **+3S of its own resource per turn**, once per tower
+  — and the `!= 0` guards mean a MONEY tower (paintPerTurn 0) gets **no paint bonus at all**,
+  and a PAINT tower (moneyPerTurn 0) gets no chip bonus. Per-turn yields:
+
+  | | L1 | L2 | L3 |
+  |---|---|---|---|
+  | PAINT tower | 5+3S | 10+3S | 15+3S |
+  | MONEY tower | 20+3S | 30+3S | 40+3S |
+
+  **SRPs are disproportionately a PAINT multiplier**, because the flat +3S is a larger share of
+  the smaller base: at L3 and S=4 a paint tower goes 15→27 (**+80%**) and a money tower 40→52
+  (**+30%**). This is the engine fact behind iteration 12's mechanism ("an SRP's return is
+  multiplied by your paint-tower count"), and that note stated only the paint half — the same
+  +3S also lands on every money tower as chips.
