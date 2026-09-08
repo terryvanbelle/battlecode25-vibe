@@ -49,13 +49,26 @@ def main(run, opp):
     print(f"  maps split by side (still a coin flip)                     {split}/{n} = {100*split/n:.0f}%")
     print()
     print(f"  Var(single-game S) from per-map pairs   {varS:.4f}   (binomial max 0.25)")
-    print(f"  ==> sd of a {2*n}-game total            {sd_total:.2f} games"
+    print(f"  ==> sd of the {2*n}-game WIN COUNT       {sd_total:.2f} games"
           f"   = {100*sd_total/binom:.0f}% of binomial ({binom:.2f})")
+
+    # UNITS. Fixed 2026-09-08 after this tool set a gate half as strict as it claimed.
+    # sd_total is the sd of the WIN COUNT W. The gate below is quoted on the MARGIN
+    # M = W - (N - W) = 2W - N, and Var(M) = 4*Var(W), so sd(M) = 2*sd(W). The original
+    # version multiplied sd_total by 2 and called the result "2.0 sd" -- but that factor
+    # of 2 is the win-count-to-margin conversion, so it was quoting a 1.0 sd threshold as
+    # a 2.0 sd one. Every census gate derived from it was half as strict as advertised.
+    # No verdict moved (iteration 42 was -0.77 sd and rejected; iteration 44 was +3.39 sd
+    # and accepted on either gate), but the published effect sizes were inflated 2x.
+    sd_margin = 2 * sd_total
+    print(f"  ==> sd of the {2*n}-game MARGIN (wins-losses)  {sd_margin:.2f} games")
     print()
-    m1, m2, m3 = 2*sd_total, 1.4*sd_total, sd_total
     print(f"  suggested census gate on MARGIN (wins-losses), from this floor:")
-    print(f"    ACCEPT     >= +{2*sd_total:.0f}   (2.0 sd)")
-    print(f"    REPLICATE  +{1.4*sd_total:.0f} .. +{2*sd_total-1:.0f}")
-    print(f"    REJECT     <= +{1.4*sd_total-1:.0f}")
+    print(f"    ACCEPT     >= +{2*sd_margin:.0f}   (2.0 sd)")
+    print(f"    REPLICATE  +{1.4*sd_margin:.0f} .. +{2*sd_margin-1:.0f}   (1.4 - 2.0 sd)")
+    print(f"    REJECT     <= +{1.4*sd_margin-1:.0f}")
+    print()
+    print(f"  to score a result:  z = margin / {sd_margin:.2f}"
+          f"   (NOT margin / {sd_total:.2f} -- that is the win-count sd)")
 
 main(sys.argv[1], sys.argv[2])

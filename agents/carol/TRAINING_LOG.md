@@ -11983,3 +11983,163 @@ caught only because the total is *impossible* — the summary says 97. The lesso
 **check a derived table against a total you already know before reading anything into its shape.**
 Had the bug been subtler than "everything is zero" — a mis-joined bucket rather than a missing
 column — the shape would have looked plausible and I would have read a story out of it.
+
+---
+
+## Iteration 44 ABLATION RESULT — the two halves are NOT symmetric: early denial is the mechanism, the ban set is its storage
+
+Run `20260908-202103`, 25 sampled maps pinned and shared by all three arms, `BOT=carol_i44_a`,
+150 games. Collated after a session death; the run itself was setsid-detached and survived.
+
+| arm | what it removes | i44_a's record | margin | swept W/L/split |
+|---|---|---|---|---|
+| `carol_iter36` | everything (the pre-44 incumbent) | 32/50 | **+14** | 8 / 1 / 16 |
+| `carol_i44_ban` | early denial (8 slots kept, filled only by the 40-turn timeout) | 30/50 | **+10** | 7 / 2 / 16 |
+| `carol_i44_den` | the extra slots (early denial kept, `BAN_CAP = 1`) | 27/50 | **+4** | 3 / 1 / 21 |
+
+Margin sd on a 50-game arm is ~6 (2 x the ~3-win sd of a 50-game count), so **+14 is ~2.3 sd,
++10 is ~1.7 sd, and +4 is 0.7 sd — indistinguishable from zero.**
+
+### The decisive number is not the margin, it is the identity check
+
+Per-cell `(map, side) -> (winner, rounds)` agreement between arms, which costs nothing and does
+not depend on any win-rate resolution:
+
+| pair | identical games (winner AND round count) | same winner |
+|---|---|---|
+| `i44_ban` vs `iter36` | **31/50** | 48/50 |
+| `i44_den` vs `iter36` | 13/50 | 37/50 |
+| `i44_ban` vs `i44_den` | 12/50 | 39/50 |
+
+**The 8-slot ban set, without early denial, is very nearly a no-op**: it plays the *identical game*
+to the pre-44 incumbent in 62% of cells. That is the mechanistic explanation of its +10 and it is
+not a statistical claim. The reason is structural — the only thing that fills the set in `i44_ban`
+is the old 40-turn timeout, which almost never fires twice on one soldier, so slots 2..8 stay
+empty and 8 slots behave as 1.
+
+**Early denial is what fills the set.** `i44_den` diverges from the incumbent in 37 of 50 cells
+with a single slot, i.e. it is doing the work on its own.
+
+### So the pre-registered prediction was HALF right, and I am recording which half
+
+I wrote: *"neither arm recovers most of `i44_a`'s margin — the two halves are one mechanism."*
+
+- For `i44_ban`: **confirmed, and more strongly than predicted** — it is not merely weaker, it is
+  mostly the incumbent wearing the candidate's name.
+- For `i44_den`: **not supported.** +4 at 0.7 sd does not establish that the extra slots buy
+  anything. The probe's `bp = 6` proved the slots get *occupied*; occupancy is not value, and I
+  should not have read it as value. That is a reachability fact being quietly promoted to an
+  effect-size fact.
+
+The honest summary is a **conjunction, not two halves**: early denial is the mechanism, the ban
+set is the storage it needs, and the storage is worthless without the mechanism. What remains
+unmeasured is how much storage — whether 8 slots beat 1 given early denial.
+
+## PRE-REGISTERED: BAN_CAP dose census (written before the run is launched)
+
+**Instrument**: full-corpus census, all 75 maps both sides, `BOT=carol_i44_a` (`BAN_CAP = 8`),
+opponents `carol_i44_den` (`BAN_CAP = 1`) and `carol_i44_c32` (`BAN_CAP = 32`). 300 games.
+Everything else byte-identical to `src/carol`; the only edit in `c32` is the constant, verified by
+diff. This is a dose ladder 1 / 8 / 32 read against a common reference, with the zero-ish arm
+(cap 1) included per the zero-arm rule.
+
+**Noise floor**: carol's own measured chaos floor, sd **6.48 on the margin per 150 games**
+(run `20260908-173918`), not an inherited number.
+
+**Gate on the cap-1 arm (what the extra slots are worth):**
+
+- margin **>= +13** (2.0 sd): the multi-slot set is load-bearing; `BAN_CAP = 8` stays and is
+  priced for the first time.
+- **+9 .. +12**: ambiguous, replicate.
+- margin **<= +8**: the extra slots are **not measurably worth anything given early denial**. I do
+  not then rip them out — a null is not a negative, and `MaxConsecutiveRejects` does not apply to
+  a feature that is already accepted — but the attribution of iteration 44's +44 collapses onto
+  early denial alone, and the log must say so.
+
+**Gate on the cap-32 arm (is 8 saturating?):**
+
+- If `c32` beats `i44_a` by **>= +13**, 8 slots are too few on ruin-rich maps and the cap rises.
+  That would be a free win and is the reason this arm is in the run.
+- If the margin is within +/- 8, the ladder is flat above 8 and the cap is settled on both sides,
+  which closes the constant permanently per the closed-directions rule.
+
+**Pre-registered identity check, to be read BEFORE the margins** (rule: a dose that changes nothing
+is a dead run): `i44_a` vs `c32` must differ in a non-trivial share of the 150 cells. If they come
+back near-identical, the cap-32 arm proves only that 8 is never exceeded — which is still a real
+answer (the ladder is flat because the dose does not exist above 8), and I will report it as that
+rather than as "32 is no better than 8".
+
+## CORRECTION — my census gate was HALF as strict as it claimed. `noisefloor.py` had a units bug.
+
+Found while scoring the iteration 44 ablation, by re-deriving the sd instead of reusing the
+number. `carol-tools/noisefloor.py` computed
+
+    sd_total = sqrt(150 * Var(S)) = 6.48
+
+which is the sd of the **WIN COUNT** `W`. It then printed a gate quoted on the **MARGIN**
+`M = W − (N − W) = 2W − N`. But `Var(M) = 4·Var(W)`, so **sd(M) = 2·sd(W) = 12.96**. The tool
+multiplied `sd_total` by 2 and labelled the product "2.0 sd" — except that factor of 2 is the
+win-count-to-margin conversion, not a confidence multiplier. **Every census gate it produced was
+1.0 sd wearing a 2.0 sd label.**
+
+### The discriminating check, and what actually moved
+
+|  | as claimed | corrected |
+|---|---|---|
+| ACCEPT | >= +13 ("2.0 sd") | **>= +26** |
+| REPLICATE | +9 .. +12 | **+18 .. +25** |
+| REJECT | <= +8 | **<= +17** |
+
+| verdict | margin | claimed | corrected | changes? |
+|---|---|---|---|---|
+| iteration 42 | −10 | −1.54 sd | **−0.77 sd** | no — reject either way |
+| iteration 44 | **+44** | 6.8 sd | **+3.39 sd** | **no — +44 clears the corrected +26** |
+
+**No verdict moves, and iteration 44's accept is safe on the corrected gate** (+44 against a true
+2.0 sd threshold of +26). But **the "6.8 sd" I put in the log and in the accept commit is inflated
+exactly 2x and is withdrawn**; the correct figure is **+3.39 sd**. And the loose gate was live for
+every census since I adopted it — iteration 44 happens to clear the strict version by a wide
+margin, which is luck, not diligence. This is the second time this lineage has published an effect
+size that no computation over the data supports (the first was iteration 34's rho = +0.624).
+
+**Fixed in the tool, not by hand.** `noisefloor.py` now prints sd of the win count AND sd of the
+margin, derives the gate from the margin sd, and prints the divisor to score with. A correction I
+merely remember fails the first session that resumes without re-reading this entry.
+
+## Iteration 44 ABLATION — my pre-registered prediction was HALF WRONG
+
+Run `20260908-202103`, 25-map sample shared by all three opponents, every opponent played every
+map, 50 games each. `sd(margin)` at 50 games = **7.48**.
+
+| `carol_i44_a` vs | record | margin | sd | swept |
+|---|---|---|---|---|
+| `carol_iter36` (incumbent) | 32/50 = 64% | +14 | **+1.87** | 8–1 |
+| `carol_i44_ban` (8-slot ban only) | 30/50 = 60% | +10 | **+1.34** | 7–2 |
+| `carol_i44_den` (early denial, 1 slot) | 27/50 = 54% | +4 | **+0.53** | 3–1 |
+
+I pre-registered: *"neither arm recovers most of `i44_a`'s margin — the two halves are one
+mechanism."*
+
+**Wrong.** `carol_i44_den` — early denial detection with the ban list back to a SINGLE slot —
+is statistically indistinguishable from the full change (+0.53 sd). The 8-slot ban set,
+which I argued was load-bearing, recovers much less on its own (+1.34 sd against it) and adds
+little on top of early denial.
+
+### Why I predicted the wrong half, which is the useful part
+
+I reasoned from the probe's `bp = 6` — six bans live simultaneously — and concluded the single slot
+must be the defect. **`bp` measures the mechanism FIRING, not the mechanism MATTERING.** That is
+the iteration 42 lesson recurring in miniature, one iteration after I wrote it down: a decision
+counter licenses spending a gauntlet, and nothing more. With early denial in place a soldier leaves
+a denied ruin in ~1 turn instead of 40, so it barely matters whether it remembers the ruin
+afterwards — it re-detects the denial immediately on arrival and leaves again. The ban set was
+solving a problem that early detection had already dissolved.
+
+**What I am NOT doing: churning HEAD on a +0.53 sd result.** That difference is inside the noise at
+50 games, and "indistinguishable" is not "worse". The honest status is:
+
+- **Attribution: early denial detection carries iteration 44.** The 8-slot ban set is unproven.
+- The ban set costs ~7 int-comparisons per ruin check and no paint, so carrying it is nearly free.
+- **Queued: re-measure `i44_a` vs `i44_den` at full census power (150 games)** before either
+  removing the ban set or claiming it earns its place. At 50 games this run could not have detected
+  a genuine +1 sd effect.
