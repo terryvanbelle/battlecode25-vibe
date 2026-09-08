@@ -51,6 +51,17 @@ OPPONENTS="$(awk '/^RESULT /{if(!($2 in s)){s[$2]=1; printf "%s ", $2}}' "$OUT/r
 if [ -s "$OUT/maps.txt" ]; then SAMPLED=1; MAPTAG="$(wc -w < "$OUT/maps.txt" | tr -d ' ') sampled"
 else SAMPLED=0; MAPTAG="$(awk '/^RESULT /{m[$3]=1} END{print length(m)}' "$OUT/results.txt") played"; fi
 
+# Prefer what the run RECORDED about the build that played. $BOT defaulted to
+# the WORKSPACE name (alice/bob/carol), which is never what played: a roster run
+# tests a snapshot or a candidate, and bot.txt has held the right value all
+# along. This is not merely a console cosmetic -- $BOT is also printed by
+# collate_run into summary.txt, so a recovered run PERSISTED the workspace name
+# as the build under test, misleading exactly the session-death recovery this
+# script exists for. No number changes; the label does.
+if [ -f "$OUT/bot.txt" ]; then
+  lbl="$(sed -n 's/^label=//p' "$OUT/bot.txt" | head -1)"
+  [ -n "$lbl" ] && BOT="$lbl"
+fi
 echo "collecting $RUN_ID  ws=$WS_REL bot=$BOT  opponents=[$OPPONENTS]"
 collate_run
 echo
