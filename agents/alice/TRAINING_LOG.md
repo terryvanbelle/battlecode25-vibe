@@ -10015,3 +10015,102 @@ by, the wrong population — and the tell was available without new data: **"act
 spawn" mixes a flow with a flow over different populations, while "actions per
 soldier-turn" divides a flow by the stock that produced it.** When a ratio's numerator
 and denominator are counted over different sets, the ratio names nothing.
+
+## Mechanism verification for iteration 25 — the ENDS are verified, the proposed MIDDLE is not
+
+Same map (UnderTheSea), same opponent (`alice_iter24`), baseline arm =
+`alice_towercensus` (behaviourally the shipping bot; its instrumentation is
+query-only and its fidelity was separately controlled above).
+
+| T1 measure | baseline | **alice_i25 (R=200)** |
+|---|---|---|
+| coverage r500 / r1000 / r1500 / r2000 | 522 / 460 / 481 / **476** | 526 / 546 / 543 / **544** |
+| tower paint r500 / r2000 | 1,260 / **850** | 1,620 / **2,253** |
+| towers held | 13 | **15** |
+| soldiers spawned (cumulative) | 187 | 193 |
+| starvation deaths, windows at r1000 / r1500 | 47 / 46 | **35 / 33** |
+| starvation deaths, final window | **66** | 85 |
+| outcome | **LOST** (AREA_PAINTED) | **WON** (AREA_PAINTED) |
+
+**The ends move exactly as predicted.** The baseline reproduces the decay I diagnosed
+from the bob replay — coverage 522 -> 476 and tower paint 1,260 -> 850 — and the
+candidate does not decay: coverage holds at ~544 and tower paint **rises** to 2,253,
+which is the opposite direction. It also wins the map the baseline loses.
+
+**The middle is not verified, and I am recording it open rather than asserting it.**
+My proposed chain was *refill -> fewer starvation deaths -> fewer replacement spawns ->
+tower paint accumulates*. Two of those links disagree with the data:
+
+- **Cumulative soldier spawns are slightly HIGHER (193 vs 187), not lower.** The
+  "fewer replacements" link is simply not there.
+- Starvation deaths are lower in the middle windows (35/33 vs 47/46) but **higher in
+  the final one** (85 vs 66), so even the first link is not monotone.
+
+And there is a rival explanation sitting in the same table that I cannot exclude: the
+candidate ends with **15 towers against 13**. More paint towers means more paint income,
+which would raise tower paint stock on its own, with no help from the refill at all. Two
+extra towers is also exactly the kind of difference a deterministic engine produces from
+a handful of flipped actions — this arm is one map, and the mechanism only fired 26
+times.
+
+**So what this establishes is narrower than it looks:** the candidate's game does not
+show the decay the baseline's does. It does **not** establish that 26 refills caused
+that, and the honest competing hypothesis is chaotic divergence that happened to land
+well. This is a single map chosen *because I already had its replay*, not sampled — so
+it is mechanism verification, and it is not evidence of benefit. The gauntlet is the
+only thing that speaks to benefit, and the gauntlet said **+1 net swept map with a 4-3
+split**.
+
+Both readings are now on the record and they point opposite ways. That is precisely
+what the confirmation run is for, and it is why I did not let the encouraging replay
+talk me out of running it.
+
+## The R=0 ablation, resolved from replays already on disk — and it kills my proxy metric
+
+I pre-registered that R=0 could only be judged on **iteration 5's absorbing-state
+metric** (tower paint trajectory and spawn mix), *before* its win rate was looked at.
+That gate can be evaluated entirely from replays already collected — no new games.
+
+Three arms, same map (UnderTheSea), same opponent (`alice_iter24`):
+
+| arm | refills fired | tower paint @r2000 | coverage @r2000 | starvation deaths, final window | outcome |
+|---|---|---|---|---|---|
+| baseline (R = infinity) | 0 | 850 | 476 | 66 | **LOST** |
+| **alice_i25, R = 200** | 26 | **2,253** | **544** | 85 | **WON** |
+| alice_i25r0, R = 0 | **173** | **728** | 490 | **29** | **LOST** |
+
+**The absorbing-state gate rejects R=0 on its own terms.** Tower paint at R=0 ends at
+**728 — the lowest of the three arms, below even the untreated baseline** — and its
+trajectory falls all game (1,164 -> 1,030 -> 995 -> 728). That is the drain I argued
+would happen, now measured rather than argued: withdrawing below one soldier's cost
+takes paint the towers needed. `R = SOLDIER.paintCost` is vindicated as the boundary,
+and the 7x firing headroom below it is headroom I was right not to spend.
+
+### But the row that matters most is the one I did not expect
+
+**R=0 more than halved starvation deaths — 29 against the baseline's 66 — and lost the
+map anyway. R=200 had the *most* starvation of the three at 85, and won it.**
+
+Across these three arms, **starvation deaths are anti-correlated with winning.** That is
+the metric I have been treating as the objective since iteration 24, and the metric this
+whole iteration was motivated by ("starvation is 31.1% of all deaths").
+
+> **A symptom you can measure is not the objective, and a mechanism that improves the
+> symptom most can be the one that loses.** R=0 buys unit lifetime by spending the tower
+> paint that produces units at all. The starvation count sees only the first half of that
+> trade, because the paint it consumed never became a unit that could starve.
+
+That last clause is the whole trap in one line: **the metric improves partly *because*
+the thing it measures was never created.** It is the same structure as the post-spend
+affordability artefact from earlier tonight — a count conditioned on the outcome it is
+being used to judge — arriving for the third time tonight in yet another disguise.
+
+So: starvation deaths are demoted from objective to diagnostic. The objective is
+coverage held and maps won, and on those the ordering is R=200 > R=0 > baseline.
+
+**Caveat, stated plainly: this is one map.** All three arms are single games, chosen
+because their replays already existed. The dose ordering is a hypothesis supported by a
+coherent mechanism and one observation each, not a measurement of benefit. What it is
+sufficient for is the pre-registered *gate* — R=0 fails the absorbing-state condition on
+the tower-paint trajectory, which is a within-arm trend rather than a between-arm
+comparison, and that verdict stands.
