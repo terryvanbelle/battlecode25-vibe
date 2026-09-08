@@ -12209,3 +12209,58 @@ Corrected and requeued as **iteration 32**, still behind the running census and 
 pre-registered `i31a`. The probe I said was needed has been done and cost zero games, which
 is the second time today that `javap` answered in seconds a question I had scheduled a run
 for.
+
+## `mopSwing`, read off the engine — and it may be strictly better than what I do now
+
+Continuing the free `javap` line while the census runs. `RobotControllerImpl.mopSwing`:
+
+```java
+0: assertCanMopSwing(dir)
+9: bipush 20
+11: InternalRobot.addActionCooldownTurns(20)      // exactly 20, hard-coded
+19: InternalRobot.mopSwing(dir)
+```
+
+`assertCanMopSwing` requires a **cardinal direction** (the four `getstatic` loads are
+NORTH/SOUTH/EAST/WEST, with the message *"Must pass in a cardinal direction to mop swing"*)
+and the unit to be a MOPPER. `InternalRobot.mopSwing` builds `new int[4][]`, each a
+`new int[6]` — **four directions, three coordinate pairs each, so the swing hits 3 tiles.**
+
+Against the constants:
+
+| | tiles | paint removed per tile | total | action cooldown |
+|---|---|---|---|---|
+| single-target attack | 1 | `MOPPER_ATTACK_PAINT_DEPLETION = 10` | **10** | `MOPPER.actionCooldown` |
+| `mopSwing` | **3** | `MOPPER_SWING_PAINT_DEPLETION = 5` | **15** | **20**, hard-coded |
+
+From `UnitType`'s static initialiser, MOPPER is constructed with
+`(100, 300, 0, 50, -1, 100, 30, 2, -1, -1, 0, 0, 0)`, which against the field declaration
+order gives `paintCost=100, moneyCost=300, attackCost=0, health=50, paintCapacity=100,
+actionCooldown=30, actionRadiusSquared=2`.
+
+**If that mapping is right, `mopSwing` dominates on every axis** — 3 tiles instead of 1, 15
+paint removed instead of 10, and a **20** cooldown against **30**. My moppers have used only
+the single-target attack for 29 iterations.
+
+### The two things I have NOT verified, stated plainly
+
+1. **The field mapping is inferred from declaration order**, not read from a labelled source.
+   Thirteen consecutive ints matched against thirteen consecutive field declarations is
+   convincing but not proof, and `health=50` for a mopper is low enough to make me want a
+   second look.
+2. **I did not confirm the normal attack applies `actionCooldown` unmodified.** The `attack`
+   path is a two-argument dispatch and my disassembly window landed on the wrong method. Until
+   that is read, "20 vs 30" is a strong inference, not a measured fact.
+
+Both are answerable with `javap` in minutes and neither costs a game. **I am recording the
+inference as an inference** — twice today a confident reading of source was refuted by
+measurement, and the correct response to that is not to stop reading source but to stop
+promoting readings to facts.
+
+**Where this leaves the splasher premise.** My 25-iteration blind spot was stated as *"a
+soldier cannot overwrite enemy paint and a mopper only clears ONE tile to EMPTY"*, and the
+whole splasher line — iterations 28, 29, and the `alice_paintthief` archetype — rests on it.
+The second half of that premise is **wrong**: the mopper has always had a 3-tile area clear.
+That does not invalidate iterations 28 and 29, which were measured and won on their own
+census. It does mean the *reason* I gave for them was incomplete, and that a cheaper answer to
+the same problem was one API call away the entire time.
