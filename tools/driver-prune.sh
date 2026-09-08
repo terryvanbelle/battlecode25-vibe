@@ -90,5 +90,36 @@ TOMB
     done
 done
 
+# --- ad-hoc match traces -----------------------------------------------------
+# agents/*/matches/ holds one-off trace games named <bot>-vs-<opp>-on-<map>.bc25.
+# The gauntlet prune above never touched these, so they grew without bound and
+# were the residual leak after gauntlet/ was capped: 264M across three
+# workspaces, against a 30G root shared with an 18G sibling project.
+#
+# Pruned by AGE, not by count, and with a deliberately generous floor: the name
+# records the exact matchup, and the engine is deterministic, so any of these is
+# one command away from being recreated. Twelve hours is far longer than a trace
+# stays interesting, which keeps a lineage from losing something it is mid-way
+# through analysing.
+#
+# agents/*/replays/ is deliberately NOT pruned. Those carry curated names like
+# iter24_alice_iter23_UnderTheSea_A.bc25, lineages cite them hours later, and
+# the whole set is only ~65M -- it is not the leak, and it is the one place an
+# agent stores a game on purpose.
+MATCH_AGE_MIN="${MATCH_AGE_MIN:-720}"
+for ws in "$REPO"/agents/*/; do
+    mdir="$ws/matches"
+    [[ -d "$mdir" ]] || continue
+    bytes=$(find "$mdir" -type f -name '*.bc25' -mmin "+$MATCH_AGE_MIN" \
+                 -printf '%s\n' 2>/dev/null | awk '{s+=$1} END{print s+0}')
+    (( bytes )) || continue
+    n=$(find "$mdir" -type f -name '*.bc25' -mmin "+$MATCH_AGE_MIN" 2>/dev/null | wc -l)
+    printf '%s %s/matches: %d traces, %s\n' \
+           "$( ((DRY)) && echo would-prune || echo prune )" \
+           "$(basename "$ws")" "$n" "$(numfmt --to=iec "$bytes")"
+    (( DRY )) || find "$mdir" -type f -name '*.bc25' -mmin "+$MATCH_AGE_MIN" -delete
+    total=$(( total + bytes ))
+done
+
 printf '%s total: %s\n' "$( ((DRY)) && echo would-reclaim || echo reclaimed )" \
        "$(numfmt --to=iec "$total")"
