@@ -8960,3 +8960,39 @@ reserve could simply park paint in a tower nobody comes back to, buying nothing 
 the forgone unit. If all three arms read null, this is the first thing to check, **not** an excuse
 to re-run. Checking it is a probe (count refill attempts that found no tower with >=100 paint versus
 soldiers that starved with no tower in vision at all), not another gauntlet.
+
+### Tournament loss-shape analysis (local, zero VM cost, while iteration 27 runs)
+
+The round-length distribution of my tournament games, which I had never looked at, dates the
+iteration-18 regression precisely and names its signature:
+
+```
+tournament        bob record     losses <r500   losses at r2000    wins <r500   wins at r2000
+20260907-0100     287W- 13L          0.0%           61.5%             19.9%          8.4%
+20260907-1300     277W- 23L         17.4%           30.4%             20.6%          5.8%
+20260908-0100     211W- 89L         25.8%           25.8%             10.4%         16.1%
+```
+
+**A loss mode that did not exist appeared and then grew.** Two tournaments ago bob had *zero*
+losses inside 500 rounds; it now loses 23 games that way, a quarter of all losses. Symmetrically,
+fast wins halved (19.9% -> 10.4%) and grind-to-r2000 wins doubled (8.4% -> 16.1%). The bot did not
+merely get worse — **it got slower, and it acquired an early-collapse mode.**
+
+That signature fits iteration 18 (`RUIN_FLOOR = 0`, "spend the last paint on the tower pattern")
+better than anything else in the window: its own source comment records that `NO_PAINT_DAMAGE`
+applies at **exactly zero** paint, and iteration 18 is the change that lets a soldier paint itself
+all the way to zero while working a pattern. Soldiers that reach zero take damage and die, which is
+an early-game effect because pattern work is an early-game activity.
+
+**PRE-REGISTERED PREDICTION for the next tournament (13:00 UTC 2026-09-08), the first to play
+iteration 20.** The 0100 tournament played `f67ac8b` = iteration 18; iterations 19 and 20 landed
+afterwards and `bob_iter11` already shows the recovery in self-play (40% -> 70%). So:
+
+1. **bob's standings win% recovers from 70.3% toward 90%+**, and
+2. **the share of losses inside 500 rounds collapses back toward 0%.**
+
+Prediction 2 is the load-bearing one. If the headline recovers but fast losses stay near 25%, then
+iteration 20 bought back the games by some other route and the early-collapse mode is still live and
+still unexplained — which would be a bigger finding than the recovery, and would become the next
+iteration's target ahead of anything else queued. Recording it now, before the result exists, so it
+cannot be read either way after the fact.
