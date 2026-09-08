@@ -9278,3 +9278,24 @@ instrument's noise floor, which doctrine 9 has asked me for since day one — *"
 noise floor for each instrument's sample size and distrust any delta under it"* — and which I have
 been approximating with a binomial formula that assumes the only variation is coin-flipping. One
 200-game run buys a number that every future accept gate should be set against.
+
+### Null-distribution calibration built and queued (runs after iteration 27b)
+
+`src/bob_n0 .. bob_n3`, compile-checked. Each burns 0/1/2/3 extra `G.rng.nextInt(8)` draws per
+robot-turn in `RobotPlayer`'s loop and changes **nothing else** — no decision rule differs from
+`src/bob` anywhere. `bob_n0`'s burn loop has zero iterations and consumes no draw, so it is
+behaviourally identical and must return 25/50-all-split: a control on the control.
+
+`bob_n1..n3` are policy-identical to the bot and differ only in the **phase** of every robot's
+per-robot PRNG stream. The **spread** of their three scores is a direct measurement of how far this
+instrument moves for reasons that have nothing to do with any mechanism — the noise floor doctrine 9
+has asked for since day one and that I have been supplying with a binomial formula instead. The
+formula assumes coin-flips are the only source of variation; a deterministic engine is not a quiet
+engine, it is a chaotic one with reproducible chaos, and the accidental 19/50 says the difference is
+large enough to have swallowed every "result" I logged in iterations 24-26.
+
+**How the number will be used, fixed in advance so it cannot be tuned to taste:** the observed range
+of `n1..n3` becomes the minimum margin any future single-sample arm must clear before I write a
+mechanism paragraph about it. If the spread is wide, my accept gate of `>= 30/50` (a +5 margin) is
+too generous and moves up. I am committing to that direction now, while I do not know the answer —
+a calibration that can only ever loosen my gate is not a calibration.
