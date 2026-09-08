@@ -11587,3 +11587,67 @@ I am therefore out of a working theory rather than out of ideas, which is the ho
 Per TRAINING_ALGORITHM's "when the loop stalls", the next move is not another mechanism: it is to
 re-examine the cross-lineage tournament replays and `reference/` before proposing anything, since
 every theory I currently hold has now been tested and at least partly falsified.
+
+## CORRECTION to the census gate — a census removes SAMPLING error, not all error
+
+The coordinator's qualification, received an hour after I adopted the census doctrine and acted on
+it. The zero-variance result that motivated "a census has no error left to quote" was measured
+between **byte-identical** builds. Any real candidate differs in code, which perturbs the PRNG
+stream, and that is a different regime: a third lineage calibrated two **policy-identical** arms
+differing only in PRNG phase at **sd 4.80 games per 150 — 78% of binomial**, with only 38 of 75
+maps surviving a phase change. So the residue on a fixed corpus is **engine chaos, not sampling**,
+and more of the same maps does not remove it. A census buys about **2.2x** resolution, not 4.7x.
+
+**My iteration 42 verdict under the corrected gate.** 70/150 is a margin of wins − losses =
+**−10**, against a suggested band of >= +10 accept / +7..+9 replicate / <= +6 reject. It sits
+outside that band in the reject direction, so **the rejection stands and stands more firmly**.
+Nothing I concluded today needs revisiting — but my pre-registered gate said "ACCEPT above 75/150",
+i.e. any margin at all, and had iteration 42 come back at +6 or +8 I would have accepted a result
+the noise floor does not support. **My gate was wrong in a way the result happened not to expose**,
+which is the most dangerous kind of wrong and worth recording as loudly as a failed verdict.
+
+### Calibrating carol's OWN floor rather than inheriting 4.80
+
+Run `20260908-173918`: `carol_phase` vs `carol_iter36`, full corpus, 150 games. `carol_phase` is
+`carol_iter36` with **one character changed** — the PRNG seed constant `rc.getID() * 7919 + 13`
+becomes `+ 14`. Policy-identical by construction; only the stream differs.
+
+Two arm totals cannot estimate a standard deviation, but a fixed corpus hands over **75 paired map
+records for free**, and over those pairs `E[(Sa − Sb)^2] = 2·Var(S)` turns them into one. That is
+the transferable part of the method, and carol's chaos need not match another lineage's.
+
+**And the trap the coordinator flagged, named here before I have the number**: if the two arm
+totals come back close — say within a game or two — the *convenient* reading is "carol's noise
+floor is near zero, so my original gate was fine after all". That reading is wrong, and I am
+committing to rejecting it now rather than when it is in front of me. A near-draw between two arms
+is *exactly what binomial predicts*; an outcome that probable under a hypothesis cannot even weakly
+reject it. The estimate must come from the **per-map variance**, which is the whole reason to
+compute it that way, not from the totals.
+
+## Iteration 43 (symmetry inference) — link 1 is WEAK, and it will not get a census
+
+Built and pre-flighted per §6 of `reference/RESEARCH.md`. First, the check the short list actually
+asks for: **carol has no map symmetry inference at all.** Every `symmetr` match in the bot before
+today was about *play*-symmetry — a fairness constraint on my own build mix — not about the map.
+`battlecode.world.MapSymmetry{ROTATIONAL, HORIZONTAL, VERTICAL}` is engine-side only, confirmed by
+`javap` through `tools/engine-jar.sh`, so it must be inferred.
+
+I verified the inference against ground truth I computed myself rather than trusting the bot. On
+`TheBest` the true transform is the up-down flip (0 wall mismatches out of 3,600; the other two
+candidates each mismatch 440). The bot killed the left-right candidate and kept up-down — **correct
+refutation, no false kill of the truth**. But it is far too slow:
+
+| map | most common state | pinned? |
+|---|---|---|
+| `TheBest` | `symRHV` 1,321 turns, `symR-V` 204 | never to one |
+| `DefaultMedium` | `symRHV` 9,324 turns, `sym-H-` 259 | briefly |
+
+Adding ruin-based refutation (a ruin's *absence* where a candidate predicts one is decisive,
+because ruins are sparse) helped only marginally. The mechanism spends nearly the whole game with
+all three candidates alive, because refutation needs a tile and its mirror sensible *at the same
+time*, which requires standing near an axis.
+
+**By my own pre-flight rule — never spend a gauntlet until link 1 fires — this does not get a
+census.** The fix is a terrain memory so refutation does not require simultaneous visibility, which
+is a real piece of infrastructure (§2: "infrastructure first") and the right next build. Carrying
+it forward rather than evaluating a mechanism I have measured as barely running.
