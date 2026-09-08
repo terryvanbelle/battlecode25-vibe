@@ -8978,3 +8978,32 @@ rounds at 30–60 chips/turn. Against that: +5 paint/turn on that tower for the 
 which over 1,000+ remaining rounds is 5,000+ paint, or ~25 soldiers' worth of build paint. The
 trade looks strongly favourable, but **the drain is a real, measured cost and not a rounding
 error**, and it is the term to watch if the iteration fails.
+
+#### The realized dose, computed off the map corpus before the run is read (zero VM game time)
+
+`k = min(x, W−1−x) + min(y, H−1−y)` is a distance-from-edge sum and is **not uniform**, so "1 ruin
+in `MONEY_MOD`" was an assumption, not a fact. `carol-tools/mixscan/` reads the real ruin
+coordinates out of the official 75-map corpus (1,374 ruins) and reports what the constant actually
+delivers:
+
+| `MONEY_MOD` | money ruins | realized share | nominal | **maps with ZERO money ruins** |
+|---|---|---|---|---|
+| 3 (incumbent) | 447 | 32.5% | 33.3% | 5 |
+| **4** (`carol_i34_4`) | 373 | **27.1%** | 25.0% | 6 |
+| **5** (`carol_i34_5`) | 242 | **17.6%** | 20.0% | **18** |
+
+Two things this changes, both stated before any result is read:
+
+1. **Dose 4 is a smaller step than it looks** — 32.5% → 27.1%, not 33% → 25%. If the effect is
+   real but the step is small, a near-miss should be read as "go further", not "the axis is wrong".
+2. **Dose 5 carries a specific, quantified hazard on 18 of 75 maps (24%)**, where it leaves the
+   team *no* money-tower ruins at all — only the single starting money tower at 30 chips/turn.
+   That is precisely iteration 3's diagnosed failure state ("chip income is exactly 30/turn ...
+   one soldier per 8.3 rounds forever"), which is what put money towers in the mix in the first
+   place. So a dose-5 collapse would **not** refute the direction; it would confirm the floor.
+   The incumbent already has 5 such maps, so the failure mode is not new, only more frequent.
+
+**Sharpened map-level prediction**: dose 5 should lose specifically on its 18 zero-money maps and
+be neutral-to-better elsewhere. That is checkable against `mixscan` per map without any extra games,
+and it separates "the direction is wrong" from "the dose overshot" — which the win rate alone
+cannot do.
