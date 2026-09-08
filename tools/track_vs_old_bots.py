@@ -37,6 +37,7 @@ gauntlet/ is git-ignored, so this file is the only durable record.
 """
 import argparse
 import csv
+import pathlib
 import re
 from collections import defaultdict
 from pathlib import Path
@@ -125,6 +126,57 @@ def bot_label(rundir):
     return fields.get("label", "").strip()
 
 
+def resolve_cand(label, rundir, repo_root, ws_dir, agent):
+    """Turn a stale `X+cand` label into the snapshot that candidate became.
+
+    bot.txt is written at LAUNCH, when the build under test has no snapshot name
+    yet, so a roster run records `<agent>_iterN+cand`. That is exactly right at
+    the time. But it never updates: if the candidate is then ACCEPTED and frozen
+    as `<agent>_iter(N+1)`, re-running the tracker keeps the `+cand` label and the
+    accepted iteration stays permanently "hollow" on the only chart that measures
+    absolute progress -- the accept is invisible on the plot that exists to show
+    accepts.
+
+    Resolution, deliberately conservative: a `+cand` run becomes snapshot Y only
+    if it is the LAST such run before Y was created. Two runs can carry the same
+    `X+cand` label and be different builds -- dose arms of one iteration, or a
+    rejected candidate followed by an accepted one -- and only the final one is
+    what got frozen. Resolving them all would file a rejected candidate's scores
+    under an accepted snapshot's name, which corrupts the absolute chart in a way
+    that is worse than the hollow point it fixes. bot.txt cannot distinguish them
+    (candidate runs carry `dirty=1`, so `head` does not identify the build), so
+    the tie is broken on ordering rather than guessed.
+
+    Anything not resolved keeps `+cand`, which remains the truthful label for a
+    rejected or still-pending candidate.
+    """
+    if not label.endswith("+cand"):
+        return label
+    base = label[:-len("+cand")]
+    m = re.search(rf"{re.escape(agent)}_iter(\d+)$", base)
+    when = pl.run_timestamp(rundir)
+    if not m or when is None:
+        return label
+    n = int(m.group(1))
+    later = [r for r in pl.snapshot_dates(repo_root, ws_dir, agent)
+             if r[0] > n and r[2] >= when]
+    if not later:
+        return label
+    num, name, created, _ = min(later, key=lambda r: r[0])
+
+    # Is any sibling +cand run with this same base closer to `created` than we
+    # are? If so, that one is the build that became the snapshot, not this one.
+    for d in (ws_dir / "gauntlet").iterdir():
+        if not d.is_dir() or d == pathlib.Path(rundir):
+            continue
+        t = pl.run_timestamp(d)
+        if t is None or not (when < t <= created):
+            continue
+        if bot_label(d) == label:
+            return label
+    return name
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("rundir", nargs="?", help="gauntlet/<run-id> (or its results.csv)")
@@ -205,7 +257,8 @@ def main():
         if not tally:
             print(f"  skip {rundir.name} (no roster opponents in it)")
             continue
-        snap = bot_label(rundir) or pl.snapshot_as_of(repo_root, ws_dir, agent, when)
+        snap = resolve_cand(bot_label(rundir), rundir, repo_root, ws_dir, agent) \
+            or pl.snapshot_as_of(repo_root, ws_dir, agent, when)
         ts = when.isoformat()
         for opp, (wins, total) in sorted(tally.items()):
             row = {"date": ts, "current_snapshot": snap, "opponent": opp,

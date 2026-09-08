@@ -48,26 +48,51 @@ states you happened to have in mind.
 
 ---
 
-## Coverage per-mille is over TOTAL tiles, not passable tiles
+## Coverage per-mille is over PASSABLE tiles, walls excluded
 
-`Round.teamCoverageAmounts` divides by the full map area — **walls included, and
-counted as unpainted**. Using passable area as the denominator inflates every
-figure derived from it, by exactly the wall fraction.
+`Round.teamCoverageAmounts` divides by the passable area — total tiles **minus
+walls**. Using total area as the denominator deflates every figure derived from
+it, by exactly the wall fraction.
 
-**Verify** on any replay, with `tools/replay-dump.sh <replay> --map-at R`, which
-prints both an exact census and the engine's own per-mille:
+**This entry previously said the opposite.** It was corrected on 2026-09-08 after
+a lineage refuted it. The correction matters more than the fact, so the reasoning
+is kept in full below.
+
+**Verify by contradiction, not by fit.** On `Gears` (140 walls of 3025 tiles):
 
 ```
-census  1225 tiles = 174 painted (T1 83, T2 91) + 1019 unpainted + 32 wall
-coverage per-mille  T1 recon=68 engine=68
+census  3025 tiles = 2872 painted (T1 1320, T2 1552) + 13 unpainted + 140 wall
+coverage per-mille  T1 engine=454   T2 engine=535        sum = 989
 ```
 
-83 / 1225 = 67.8 → 68, matching. 83 / 1193 (passable) = 69.6 → 70, not matching.
+Total area caps the two teams' sum at 2885/3025 = **954** per-mille, because only
+passable tiles can hold paint. **989 > 954 is impossible**, so the walls are not
+in the denominator. No estimate of the painted count is needed for this argument,
+which is why it is decisive where a fit is not.
 
-**Why it matters:** one lineage combined this denominator mismatch with using
-*reconstructed* rather than engine coverage and produced an unpainted-tile
-estimate ~25% too high — a number that was plausible, defensible, and computed
-correctly from the wrong referent.
+Confirming with the reconstruction, which is an independent count:
+
+```
+denominator = total    (3025):  T1 recon 436 vs engine 454   gap -18
+denominator = passable (2885):  T1 recon 458 vs engine 454   gap  +4
+```
+
+The passable denominator leaves a residual of a few per-mille in the direction
+unmodelled splashes predict (the reconstruction over-counts paint it cannot
+attribute). The total denominator leaves a large residual in the opposite
+direction, which nothing explains.
+
+**Why the wrong version survived, which is the transferable part.** Its
+verification was run on a map with 32 walls in 1225 tiles — 2.6%. There the two
+candidate denominators differ by **2 per-mille**, well inside the gap unmodelled
+splashes already produce, so the check could not separate the hypotheses it was
+meant to decide between. **A verification performed where the hypotheses barely
+differ is not a verification.** When a quantity depends on a fraction, test it
+where that fraction is large.
+
+`tools/replaydump` used the same wrong denominator and has been fixed; its
+mismatch alarm was also set at 40 per-mille, wide enough to pass an 18-22
+per-mille systematic error in silence, and is now 15.
 
 ---
 

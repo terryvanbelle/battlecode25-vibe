@@ -261,11 +261,18 @@ public class ReplayDump {
             if (idx < 0 || idx >= paint.length) continue;
             char c;
             boolean tower = ty == RobotType.PAINT_TOWER || ty == RobotType.MONEY_TOWER || ty == RobotType.DEFENSE_TOWER;
-            if (tower) c = ty == RobotType.PAINT_TOWER ? 'P' : ty == RobotType.MONEY_TOWER ? 'M' : 'D';
+            // Tower and mobile letters MUST stay disjoint. Case encodes the team,
+            // so any letter shared between a tower and a mobile unit is ambiguous:
+            // with towers P/M/D and mobiles s/m/p, 'M' meant BOTH a team-1 money
+            // tower and a team-2 mopper. On Gears r800 ten cells rendered 'M' and
+            // only five were money towers -- the grid was not wrong, it was
+            // unreadable, which is worse because it still looks like an answer.
+            // Towers t/n/d, mobiles s/m/p: no letter appears in both sets.
+            if (tower) c = ty == RobotType.PAINT_TOWER ? 't' : ty == RobotType.MONEY_TOWER ? 'n' : 'd';
             else if (ty == RobotType.SOLDIER) c = 's';
             else if (ty == RobotType.MOPPER) c = 'm';
             else c = 'p';
-            if (team == 2) c = tower ? Character.toLowerCase(c) : Character.toUpperCase(c);
+            if (team == 2) c = Character.toUpperCase(c);   // one rule for both kinds
             Character prev = overlay.get(idx);
             if (prev == null || (tower && Character.isLetter(prev))) overlay.put(idx, c);
         }
@@ -274,8 +281,10 @@ public class ReplayDump {
         System.out.println("=== ARENA round " + round + "  " + mapWidth + "x" + mapHeight);
         System.out.println("    terrain . empty   # wall   o ruin");
         System.out.println("    paint   a/A team1 primary/secondary    b/B team2 primary/secondary");
-        System.out.println("    towers  P paint  M money  D defense    (team1 UPPER, team2 lower)");
-        System.out.println("    mobile  s soldier  m mopper  p splasher (team1 lower, team2 UPPER)");
+        System.out.println("    towers  t paint  n money  d defense");
+        System.out.println("    mobile  s soldier  m mopper  p splasher");
+        System.out.println("            team1 lower-case, team2 UPPER-CASE -- one rule for both rows,");
+        System.out.println("            and the two letter sets are disjoint so no glyph is ambiguous");
         System.out.println("            * splash centre this frame (its footprint is NOT in the paint grid)");
         System.out.println("    NOTE units OCCLUDE the paint beneath them in this grid, so an unpainted tile");
         System.out.println("         with a robot on it reads as a unit. DO NOT census paint by counting");
@@ -339,13 +348,22 @@ public class ReplayDump {
         System.out.printf("    census  %d tiles = %d painted (T1 %d, T2 %d) + %d unpainted + %d wall"
                         + "   [%d unpainted tiles are ruins]%n",
                 tiles, mine[1] + mine[2], mine[1], mine[2], empty, walls, ruins);
+        // Denominator is PASSABLE area, not total. Proved by contradiction rather
+        // than by fit: on Gears (140/3025 walls) the engine's two team figures sum
+        // to 989 per-mille, which total area caps at 2885/3025 = 954. A sum cannot
+        // exceed its own bound, so the walls are not in the denominator.
+        // The earlier claim that it was total area was "verified" on a map with
+        // 2.6% walls, where the two candidates differ by 2 per-mille -- inside the
+        // gap that unmodelled splashes already produce. A check that cannot
+        // separate the hypotheses is not a check.
+        int passable = Math.max(1, tiles - walls);
         StringBuilder sb = new StringBuilder("    coverage per-mille  ");
         boolean bad = false;
         for (int tm = 1; tm <= 2; tm++) {
-            int recon = (int) Math.round(1000.0 * mine[tm] / Math.max(1, tiles));
+            int recon = (int) Math.round(1000.0 * mine[tm] / passable);
             int eng = engineCoverage[tm];
             int gap = recon - eng;
-            if (Math.abs(gap) > 40) bad = true;
+            if (Math.abs(gap) > 15) bad = true;   // was 40, which hid the 18-22 denominator error
             sb.append("T").append(tm).append(" recon=").append(recon)
               .append(" engine=").append(eng).append(" gap=").append(gap >= 0 ? "+" : "").append(gap).append("  ");
         }
