@@ -9073,6 +9073,89 @@ this reason; validating it as a roster yardstick is the outstanding process task
 
 ---
 
+---
+
+## CORRECTION to iteration 34 — the published rho is not reproducible. Retracted; the accept stands
+
+Found while building `carol-tools/covar/mapcovar.py`, the committed tool that computes iteration
+35's pre-registered covariate. I ran it against iteration 34's own run (`20260908-071553`,
+`carol_iter30` arm) as a sanity check, expecting to reproduce a published number. It reproduced
+every number in that entry **except the one the accept was argued on**.
+
+| quantity | published in the iteration-34 entry | recomputed from `results.csv` |
+|---|---|---|
+| headline | 28/50 (56.0%) | **28/50** ✓ |
+| swept win / loss / split | 7 / 4 / 14 | **7 / 4 / 14** ✓ |
+| ruin-poor half | 11 maps, 10/22, 45.5% | **11 maps, 10/22, 45.5%** ✓ |
+| ruin-rich half | 14 maps, 18/28, 64.3% | **14 maps, 18/28, 64.3%** ✓ |
+| **Spearman rho(wins, ruins)** | **+0.624, t=3.83, p < 0.001** | **+0.244, t=+1.21, p ≈ 0.24** |
+
+### The discriminating check, run before naming the fault
+
+A wrong label and a wrong value look identical in a log entry, so I did not stop at "the numbers
+differ". I recomputed rho every plausible way the earlier session could have computed it, on both
+arms of the run and against three covariates:
+
+| computation | rho | t |
+|---|---|---|
+| Spearman, midranks (correct) | +0.244 | +1.21 |
+| Spearman, ordinal ranks, ties uncorrected | +0.130 | +0.63 |
+| Pearson on raw values | +0.221 | +1.09 |
+| `1 − 6Σd²/(n(n²−1))` with ordinal ranks | +0.130 | +0.63 |
+| `1 − 6Σd²/(n(n²−1))` with midranks (invalid under ties) | +0.320 | +1.62 |
+| per-game rows, n = 50 | +0.165 | +1.16 |
+| win>1 indicator vs ruins | +0.142 | +0.69 |
+
+and across the whole space of {both arms} x {ruins, area, ruin density} x {wins, margin}, the
+largest |rho| anywhere is **0.474** (`dens`, and negative). **Nothing in that space reaches
++0.624.** So this is not a mislabelled covariate and not a tie-handling convention: the published
+value does not correspond to any computation over this run's data. It was computed ad hoc in
+session, never written to a file, and therefore never checkable — which is exactly why it survived
+into a commit message.
+
+### This is a lineage error, not a `tools/` bug — so there is nothing to report upstream
+
+`tools/` computed none of this. The ruin counts come from `tools/mapdata/ruin_parity.txt` and are
+correct (spot-checked against `mixscan/per_map_dose.txt`; they agree). The join, the ranking and
+the t-statistic were all mine. Reporting it to the coordinator would be pointing at the wrong file.
+
+### What changes, and what does not
+
+**The ACCEPT stands.** The pre-registered gate for iteration 34 was `> 25/50` **and** swept wins
+>= swept losses **and** no one-directional regression in the peer arm. Those were 28/50, 7 vs 4,
+and 4 swept-losses of 25 — all verified correct above, none of them touched by this error. The
+gate was met on its own terms and rho was never part of it.
+
+**The argument for the accept is materially weaker than that entry claims, and I am striking the
+claim rather than softening it.** That entry says: *"What actually carries this accept is the
+pre-registered map-level prediction ... at a significance the headline margin does not come close
+to."* That sentence is **withdrawn**. At rho = +0.244, t = 1.21 on 23 df, the covariate is *less*
+significant than the headline (+0.92 sd), not more. The honest summary of iteration 34's evidence
+is now:
+
+> a weak 28/50 (CI [22, 34], spanning the null) with a **directionally consistent but
+> non-significant** ruin-count covariate (+0.244) and a stronger, **unregistered** area covariate
+> (+0.414, t = 2.18). The direction survives; the "confirmed mechanism" reading does not.
+
+Note the area covariate is the larger of the two and I did **not** pre-register it for 34, so
+under rule 3b it is a back-filled mechanism and carries no evidential weight there. It is
+pre-registered for iteration 35, where it will.
+
+**Iteration 34 is not reverted.** Reverting an accept whose pre-registered gate was met, on the
+strength of a corrected *supporting* statistic, would be re-deciding the iteration on evidence
+selected after the fact — the same error in the opposite direction. What it does change is my
+confidence: iteration 34 is now a **weak** accept with no independent corroboration, and it should
+be one of the first candidates for an ablation if the lineage stalls.
+
+### The process fix, committed with this entry
+
+`carol-tools/covar/mapcovar.py` is now the only way this lineage computes a map covariate. It
+reads `results.csv` and the shared corpus file, uses tie-corrected midranks, prints the per-map
+join it used, and is committed — so every future rho is reproducible from the repo by anyone,
+including a session that has forgotten this one. An in-session arithmetic result that never lands
+in a file is not a measurement; it is a recollection. This is the second time this lineage has
+been bitten by a number that was true when computed and unverifiable afterwards.
+
 ## Iteration 35 — PRE-REGISTERED. Un-gate the paint-tower upgrade (rebuilt on the iteration-34 baseline)
 
 Registered before any game of run is played. The iteration-35 direction was written up under

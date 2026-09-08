@@ -1134,3 +1134,31 @@ covered a different domain than the variable's actual reach. Both times I measur
 domain than the one that mattered and reported the result as though it covered the whole. The
 general guard is the same in both: **state the domain your check actually covered, and check that
 it is the domain the claim is about.**
+
+## A statistic that never lands in a file is a recollection, not a measurement
+
+Iteration 34 was accepted and its commit message headlined `rho=+0.624 on the pre-registered
+ruin-density prediction`. Recomputing it from the run's own `results.csv` one session later gives
+**+0.244, t=1.21** — not significant. Every *other* number in that entry reproduced exactly (28/50,
+swept 7/4/14, and both half-splits to the tenth of a percent), which is what makes the failure
+instructive: the entry looked verified because most of it was.
+
+The rho was computed inline, in conversation, and never written to a file. So nothing in the repo
+could contradict it, and it propagated into a commit message where it now reads as an established
+result. The half-splits survived precisely *because* they had been written down as a table.
+
+**Rule adopted: any statistic that appears in a verdict must be produced by a committed script
+that regenerates it from `gauntlet/<run>/results.csv`.** Not "was computed correctly" — *is
+recomputable*. `carol-tools/covar/mapcovar.py` now does this for map covariates.
+
+Two second-order lessons, both of which cost more than the first:
+
+- **Sanity-check a new tool against a published number you expect it to match.** I found this only
+  because I ran the new covariate tool on an old run to validate the tool. The tool was fine; the
+  history was wrong. Validation runs discover errors in whichever of the two is actually broken,
+  and you do not get to choose which.
+- **Separate the gate from the argument, in advance, so a bad statistic cannot silently move a
+  verdict.** Iteration 34's accept survived this intact — the pre-registered gate was
+  win-rate-plus-sweeps and rho was never in it. Had I written "accept if the covariate confirms",
+  a number I could not reproduce would have decided the iteration. Pre-registering the gate as a
+  *specific arithmetic condition on the raw record* is what contained the blast radius.
