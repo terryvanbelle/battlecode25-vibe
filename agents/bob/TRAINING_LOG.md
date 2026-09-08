@@ -8448,3 +8448,92 @@ price     it is a REALLOCATION, not new income: every chip spent on a unit is a 
 2. The probe covers 5 maps of 75. That is what burned iteration 23, and 5 is better than 3 but
    it is not the corpus. The map-level prediction above is what protects this run from the same
    error: it checks the regime split *within* the sample rather than assuming it.
+
+---
+
+## Iteration 24 — RESULT: **REJECTED, monotone**. Lowering the reserve is monotonically worse — so the constant was not over-bought, and the curve says to look UPWARD.
+
+Run `20260908-062158`, 150 games, 25 maps resampled, `BOT=bob` (= `bob_iter20`).
+
+```
+arm       reserve   score  vs null     sd  swept  swept-against  split
+bob_v12     1200   25/50         +0  +0.00      0              0     25
+bob_v6       600   22/50         -3  -0.85      4              7     14
+bob_v0         0   18/50         -7  -1.98      3             10     12
+```
+
+Control `bob_v12`: **25/50, all 25 maps split, zero swept.** Sixth consecutive zero-variance
+null.
+
+**Monotone in the reserve, and against me: 1200 > 600 > 0.** Removing the gate that refuses
+38-90% of early spawn decisions makes the bot *worse*, and worse in proportion to how much of
+it is removed. The reserve is not over-insurance. Its 1000-chip tower-completion readiness is
+worth more than the units the withheld chips would have bought.
+
+### The map-level prediction held EXACTLY where the probe measured, and failed where I extrapolated
+
+I predicted that on a map where `chipBlock` is 0% the gate never refused anything, so lowering
+it must be inert and **the games must be byte-identical**. Dominoes was the registered example.
+Aggregate first, which looks like a flat refutation:
+
+```
+bob_v6: 43/50 cells deviate, on 24/25 maps
+bob_v0: 45/50 cells deviate, on 25/25 maps
+```
+
+But split Dominoes by side, and the prediction is not refuted at all — it is *located*:
+
+```
+                      v12          v6           v0
+Dominoes, arm on A   A/1504      A/1504       A/1504     <- ALL THREE IDENTICAL
+Dominoes, arm on B   A/1504      B/692        A/874      <- deviates
+memstore, arm on A   A/785       B/493        B/663
+memstore, arm on B   A/785       A/645        B/1303
+```
+
+**The probe ran `bob_sprobe` as TEAM_A — side A — and measured 0.0% chip-blocking. Side A is
+exactly the side on which all three arms are byte-identical.** Three different reserves, three
+identical games, on the one (map, side) where the probe says the gate never binds. The
+mechanism account is confirmed to the game; what failed is the *scope* I gave it.
+
+**The error, named precisely: a probe figure is per (map, SIDE), not per map.** I measured one
+side of one game and wrote a prediction about the map. This is the same failure as iteration
+23's sizing error — a sample that did not span the condition — one level finer, and it is the
+third time today that "I measured it in more than one place" turned out not to mean "I measured
+it across the range that matters". Span, not count. Again.
+
+That the prediction survives when correctly scoped is worth more than if it had simply passed,
+because it converts "the reserve matters" into "the reserve matters exactly where the gate
+binds and nowhere else", which is a mechanism rather than a correlation.
+
+### Two independent runs now refute the same premise, from opposite directions
+
+```
+iteration 23   fewer MONEY towers (less chip income)        -3, -8
+iteration 24   less chip RESERVE (more chips spent)         -3, -7
+```
+
+One reduces the supply of chips, the other releases the stock of them; **both lose, monotonically.**
+The premise "chips are a slack resource" is now refuted from two directions that share no
+mechanism, which is the kind of corroboration doctrine 26 asks for — genuinely different
+referents, not a re-derivation of one number. Chips are worth *more* than this lineage has been
+treating them as, not less. The $132,014 endgame surplus was real and told me nothing.
+
+### What the curve says to do next, and it is an ACCEPT candidate rather than another refutation
+
+Doctrine 2: *"Always measure the zero arm... a curve that peaks in the middle is stronger
+evidence than any single point."* I measured the zero arm and the curve does **not** peak in
+the middle — it is monotone increasing in the reserve across the whole tested range [0, 1200],
+with 1200 the best point measured. The obvious question is the one the dose ladder cannot
+answer from inside its own range: **does it keep rising above 1200?**
+
+`reserve = 1200` was chosen in iteration 0 as "roughly the 1000 a tower costs, plus a little".
+It has never been searched upward. If 2400 beats 1200 that is an accept, and if it does not the
+curve has an interior peak at the incumbent and the constant is *validated* rather than merely
+unrefuted — which is itself worth having, because it currently rests on one endpoint of one run.
+
+Iteration 25 is that extension: `1200` (zero arm) / `2400` / `3600`.
+
+**Functional area accounting.** Tower production/economy: 1 reject. Iteration 25 stays in the
+area deliberately — it is the same dose ladder extended through its best point, not a new
+mechanism, which is what doctrine 2 asks for when a curve is monotone at its boundary.
