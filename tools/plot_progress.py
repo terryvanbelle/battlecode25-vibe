@@ -98,6 +98,13 @@ def main():
         if d is None:
             print(f"  (milestone commit {commit} not found; skipped)")
             continue
+        # A hash that exists but never touched this workspace is not this
+        # lineage's milestone -- it is a typo that happened to resolve. Refuse
+        # it loudly rather than drawing a confident line at somebody else's date.
+        if not pl.commit_touches(repo_root, commit, ws_dir.relative_to(repo_root)):
+            print(f"  !! milestone commit {commit} exists but does not touch "
+                  f"{ws_dir.name}/ -- wrong hash? skipped")
+            continue
         color = colors[i % len(colors)]
         ax.axvline(d, color=color, linestyle="--", linewidth=1.2, alpha=0.8, zorder=1)
         ax.annotate(label, (d, 0), xycoords=("data", "axes fraction"),

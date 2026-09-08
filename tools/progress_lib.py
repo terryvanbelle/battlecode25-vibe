@@ -99,6 +99,26 @@ def commit_date(repo_root, commit):
     return datetime.fromisoformat(out).astimezone(UTC) if out else None
 
 
+def commit_touches(repo_root, commit, rel_path):
+    """True if `commit` actually changed anything under `rel_path`.
+
+    `commit_date` resolves a hash REPO-WIDE, which is the right behaviour for a
+    hash you trust and the wrong one for a hash a human typed. A milestone hash
+    that is wrong but happens to exist -- a sibling lineage's commit, a
+    coordinator commit, a transposed character that still parses -- resolves to a
+    real date and plots a confident vertical line at the wrong moment. Nothing
+    looks broken, which is what makes it worth a check.
+
+    Scoping the lookup to the workspace turns a silent wrong answer into a loud
+    one, which is the only trade that matters here.
+    """
+    out = subprocess.run(
+        ["git", "show", "--name-only", "--format=", commit, "--", str(rel_path)],
+        cwd=repo_root, capture_output=True, text=True,
+    )
+    return out.returncode == 0 and bool(out.stdout.strip())
+
+
 def snapshot_dates(repo_root, ws_dir, agent):
     """[(n, name, date, committed)] for every snapshot, oldest first.
 

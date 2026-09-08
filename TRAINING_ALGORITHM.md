@@ -289,6 +289,17 @@ The accept/reject machinery lives or dies on these rules. Each one is paid for.
     a genuinely new projection of the data or an algebraic restatement. An
     identity always agrees with itself, so it can never be evidence.
 
+    **Apply this to your own accept GATE, not just to your findings.** A lineage
+    found its three-condition gate was really two: condition 2 ("swept wins >=
+    swept losses") is algebraically implied by condition 1 (a positive margin),
+    by the identity above. It had been counting one requirement twice and
+    believing the gate was stricter than it was — a gate is exactly where a
+    redundant condition does the most damage, because its whole purpose is to be
+    hard to pass. Derive each condition against the others before registering
+    them, replace a dependent one with something independent (that lineage used
+    an absolute floor on swept wins), and check the replacement against past
+    verdicts to confirm it does not silently rewrite them.
+
     **The same trap wearing a disguise: independence of the DERIVATION is not
     independence of the REFERENT.** Two people computing a number by different
     routes, without seeing each other's work, feels like the strongest
