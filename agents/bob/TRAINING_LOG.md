@@ -7553,3 +7553,148 @@ second one.
 A is flat or negative, this note is moot and stays moot — there is no version of it that
 survives arm A failing."* Arm A came in at **-1**. The note is moot. Bug navigation stays
 rejected, and iteration 15's two rejections stand at three.
+
+---
+
+## Iteration 22 — PRE-REGISTERED before the run (launched, 160 games): the tower rule is not symmetric on 31 maps
+
+**Functional area: tower type.** Last touched at iteration 12, which is the largest single
+effect this lineage has ever measured (+26 points).
+
+### How I got here, because the route matters
+
+Iteration 21 was rejected, so I went target-hunting rather than mechanism-hunting, and
+dumped the three replays the migration probe had already produced (zero extra VM cost).
+The aggregates said something I had never looked at:
+
+```
+DonkeyKong r2000   T1 $132,014 unspent   tw25 (the cap)   twPaint 1977/25000   starved 169/228 deaths
+Flower     r800    T1  $39,925 unspent   tw9              twPaint  489/9000    starved  26/34
+Dominoes   r800    T1   $7,600 unspent   tw13             twPaint 1104/13000   starved  28/58
+```
+
+Every tower upgraded by ~r600, every buildable ruin taken, and the treasury then runs away
+to six figures while ~75% of unit deaths are **starvation** and the tower paint pools sit at
+8-10% of capacity. Chips are a slack resource; paint is the binding one. That pointed me at
+the tower-type rule — and reading it turned up something sharper than the mix ratio.
+
+### The defect
+
+```java
+return ((ruin.x + ruin.y) & 1) == 0 ? MONEY : PAINT;
+```
+
+Iteration 12 adopted this rule over iteration 7's avalanche hash and was accepted on
+**+26 points**, and the recorded mechanism was *team symmetry*: "under rotation `(x+y)` and
+`(W-1-x + H-1-y)` share parity whenever `W+H` is even, so mirrored ruins agree on those maps
+and the two halves get the same mix." Iteration 7's hash was measured to raise mirror
+mismatch (mismatched mirrored pairs 40% -> 97%) and that is what cost 20 points once SRPs
+made the payoff multiplicative in paint-tower count.
+
+**The condition in that sentence is not the corpus.** `x` and `W-1-x` sum to `W-1`, so they
+share parity exactly when **W is odd**; likewise `y` needs `H` odd. On any map with an even
+dimension the rule assigns **opposite** types to mirrored ruins — and 48 of the 75 maps have
+one. Corpus scan (`bob-tools/foldscan/BobFold.java`, run against the engine jar's own
+`.map25` flatbuffers, symmetry inferred per map from the ruin set):
+
+```
+                money share     all-one-type maps     mirror-mismatched ruins
+PLAIN (today)   732/1374 53.3%          4             638/1374  46.4%   on 31 maps
+FOLD  (cand.)   764/1374 55.6%          4                    0   0.0%   on  0 maps
+```
+
+**Verified in a replay I already had, not only in simulation.** Dominoes is 44x30 with
+vertical symmetry, so W is even and the rule must flip on *every* mirrored pair. All nine
+mirrored ruin pairs that got towers in `bob_mprobe-vs-bob-on-Dominoes` came out opposite:
+
+```
+T1 ( 2,12) MONEY  <->  T2 (41,12) PAINT        T1 (10,25) PAINT  <->  T2 (33,25) MONEY
+T1 ( 3, 7) MONEY  <->  T2 (40, 7) PAINT        T1 (11,18) PAINT  <->  T2 (32,18) MONEY
+T1 ( 3,19) MONEY  <->  T2 (40,19) PAINT        T1 (18,12) MONEY  <->  T1 (25,12) PAINT
+T2 ( 9, 2) PAINT  <->  T2 (34, 2) MONEY        T1 (18,19) PAINT  <->  T1 (25,19) MONEY
+                                               T1 (18,25) PAINT  <->  T1 (25,25) MONEY
+```
+
+The last three pairs are the point: **the same team built both halves and gave them
+different types**, so this is not only a fairness problem between teams, it is the
+mix-variance problem inside one team's own economy — the exact quantity iteration 12 was
+accepted for reducing.
+
+### The change (one mechanism, one line, no new constant)
+
+Fold the coordinates into the canonical quadrant before the parity test:
+
+```java
+int a = Math.min(ruin.x, G.mapW - 1 - ruin.x);
+int b = Math.min(ruin.y, G.mapH - 1 - ruin.y);
+return ((a + b) & 1) == 0 ? MONEY : PAINT;
+```
+
+Invariant under all three candidate symmetries by construction, so it needs no symmetry
+detection — the same "weaken the claim until it is symmetry-agnostic" move as LEARNINGS 28,
+and it is exact rather than heuristic. Still a pure function of the ruin, which the marking
+protocol requires. ~6 bytecodes.
+
+### Why this supersedes iteration 12 rather than reverting it
+
+It does not restore the hash. Iteration 12's closure was *"iteration 7's avalanche hash is a
+net positive: CLOSED"*, killed by mirror mismatch; this candidate has **less** mirror
+mismatch than the rule that closed it (0% vs 46.4%), and keeps parity's lattice-following
+character and its money share (53.3% -> 55.6%). It extends iteration 12's own argument to
+the 48 maps that argument silently excluded.
+
+### The confound I deliberately controlled
+
+The chip-surplus evidence above argues the money *share* is too high (the engine's cost
+table puts the production-balanced share at 26-35%, against 53.3% today). That is a
+**different, larger iteration**, and bundling it here would make the result uninterpretable.
+The fold moves the share by 2.3 points, so this run prices symmetry and essentially nothing
+else. The share change is queued as iteration 23 whatever this returns.
+
+### Arms — `BOT=bob` (= `bob_iter20`), NMAPS=40, one shared sample
+
+```
+bob_tp0   package rename only    MANDATORY IDENTITY CONTROL: must be 40/80, every map split
+bob_tp1   the fold
+```
+
+### Pre-registered gates, and a map-level prediction that is an EXACT identity
+
+- **Void** if `bob_tp0` is not 40/80 with every map split by side.
+- **Accept-eligible** at `bob_tp1` **>= 45/80** (+5 over the null) with swept-against <= 6,
+  then the frozen roster before accepting (doctrine 12; no roster member may regress by more
+  than 3 games).
+- **The map-level prediction, and it is not a correlation but an identity.** `x` and `W-1-x`
+  share parity iff `W` is odd, so on a map with **both dimensions odd** the fold changes
+  nothing at all: `min(x,W-1-x) ≡ x (mod 2)`. 27 of the 75 maps are odd x odd, and the corpus
+  scan confirms the money count is identical on all 27 with zero counter-examples. So:
+
+  > **every odd x odd map in the sample must come back byte-identical between `bob_tp1` and
+  > `bob_tp0`, and all deviation must fall on maps with an even dimension.**
+
+  A 40-map draw should contain ~14 odd x odd and ~26 even-dimension maps. If a single
+  odd x odd map deviates, my account of the mechanism is wrong and the run is uninterpretable
+  regardless of the headline — I would be reading an effect I cannot locate. This is the
+  check doctrine 3 asks for, run *inside* the evaluation instead of alongside it, and unlike
+  a swept-map count it is not an algebraic restatement of the margin (LEARNINGS/doctrine 14):
+  it is a statement about *which* games moved, which the margin cannot express.
+
+- **What would falsify the mechanism story while the number still passes**: deviation
+  spread evenly over odd x odd and even-dimension maps. Then the fold is doing something
+  other than what I claim, and doctrine 3b applies — record the result, mark the attribution
+  OPEN, and do not back-fill a story.
+
+### Pre-checks I have NOT done, named explicitly
+
+1. **The early-game chip cost is unpriced.** The surplus is an endgame observation; at r200
+   on Dominoes one side sat at $661. The fold barely moves the share so I expect this to be
+   second-order here, but it is exactly the number iteration 23 will live or die on, and I
+   have not measured it. Doctrine 15 forbids taking it off replay post-state — it needs
+   in-bot instrumentation at the spawn decision.
+2. **`roads` swaps from mismatched to all-one-type.** The all-one-type count is 4 before and
+   4 after, so the corpus total is neutral, but the *set* changes and I have not checked
+   whether an all-money map is worse than an all-paint one. `roads` is 30x30, 8 ruins.
+3. **I have not checked whether the mopper/splasher paint accounting closes.** Summing unit
+   paint costs against paint-tower income on Flower leaves a ~3,200-per-100-round gap I
+   cannot yet explain. It does not bear on this iteration, but it is an unreconciled
+   residual and doctrine 5 says to say so rather than let it sit unnoticed.
