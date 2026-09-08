@@ -52,6 +52,10 @@ public class MixScan {
                 tot[m] += money[m];
                 if (money[m] == 0) zeroMoneyMaps[m]++;
             }
+            // Per-map line, so a run's per-map results can be joined against the realized dose
+            // without re-deriving it. "MAP <name> ruins <n> mod3 <n> mod4 <n> mod5 <n>"
+            System.out.println("MAP " + map.name() + " ruins " + n
+                    + " mod3 " + money[0] + " mod4 " + money[1] + " mod5 " + money[2]);
         }
         System.out.println("official corpus: " + fs.length + " maps, " + totRuins + " ruins");
         for (int m = 0; m < mods.length; m++) {
