@@ -11387,3 +11387,69 @@ bundling is what made the earlier result uninterpretable. One mechanism, one arm
 Queued behind the calibration, not launched: whether it is worth 150 games depends on what the
 calibration says the floor is, and running it first would be choosing the experiment before knowing
 whether the instrument can read it.
+
+---
+
+## 2026-09-08 ~16:55 UTC — the "1% of capacity" figure is retracted (LEARNINGS 47)
+
+Non-blocking work while the full-corpus calibration `20260908-160234` plays. No shipping code touched;
+`src/bob` is still byte-identical to `bob_iter20`.
+
+**Why I picked this up.** My own STATE OF PLAY, written this morning, lists "denial units run at 1% of
+capacity" under *pre-checks I did NOT do*, marked **true and unexplained**. An unexplained order-of-
+magnitude anomaly in my own shipping bot is the cheapest lead I have, it needs no VM games, and it sits
+directly under the iteration the loop just spent 250 games rejecting.
+
+**The instrument.** `bob-tools/denialprobe/DenialProbe.java` + `bob-tools/denial-probe.sh`, a private
+fork of the shared `tools/replaydump/ReplayDump.java`. **The shared tool is coordinator-owned and is
+not modified**; the fork is generated from it and carries a header saying so. The runner uses
+`tools/engine-jar.sh --remote` rather than a bare `find`, per the standing warning about the stale
+`1.0.0` jar in the gradle cache.
+
+It answers the question the raw rate cannot: for every mopper/splasher turn, was there an enemy tile in
+**action range**, was the unit **off cooldown**, and did it **act**. Those separate "no target" from
+"target present, declined".
+
+**One semantics check I had to run before believing any of it.** The first output had a ratio of
+**578%**, which is impossible, and the cause was `Turn.actionCooldown()`. Tracking one mopper across
+its actions settled it:
+
+```
+round 396  aCD=10
+round 397  aCD=30   <- id10011 UNPAINT (24,9)
+round 398  aCD=20
+round 399  aCD=10
+round 400  aCD=30   <- id10011 UNPAINT (22,10)
+round 403  aCD=30   <- id10011 UNPAINT
+```
+
+The cooldown in a `Turn` is the **post-action** value. So `aCD < 10` does not mean "could act" — it
+means "**ended the turn able to act and did not**", which makes it the count of *declined*
+opportunities and gives the correct denominator `actedInRange + readyInRange`. Note also what those
+three rounds say on their own: 397, 400, 403 is an action **every third round**, which is 100% of the
+mopper ceiling. A unit at "1% of capacity" cannot do that, and that was the first hard evidence the
+headline figure was wrong.
+
+**The finding.** Denial units run at **19-43% of ceiling**, not 1%. The old number divided by
+(units ever spawned) x (total rounds) instead of unit-rounds actually lived; I had the probe print both
+divisors on the same replay and the wrong one reproduces "~0.004" exactly. Full table and the rule in
+**LEARNINGS 47**.
+
+Moppers take **84-86%** of their opportunities and are bounded by target availability. Splashers
+decline **85%**, which is `SPLASH_MIN_VALUE = 5` behaving as designed — and that 85% independently
+reproduces the figure already measured on 2026-09-07 by a different tool, which is a good check on this
+probe rather than a new result.
+
+**What does NOT re-open.** Lowering `SPLASH_MIN_VALUE` stays closed. Its rejection rests on arithmetic
+that has nothing to do with either instrument — a splash costs 50 paint and score approximates tiles,
+so score 4 is 12.5 paint/tile against a soldier's 5 — and iteration 16 then measured the splasher slot
+at +13 games. A broken denominator elsewhere does not revive a direction killed by a division.
+
+**What this changes going forward.** Iteration 30's urgency was manufactured. The denial thread is not
+dead — moppers being target-limited is real and confirmed by two instruments — but it is a *target
+availability* question (where the units are, and how many of them there are), not an idleness one, and
+it must be priced against the fact that they are already working at a fifth to nearly a half of
+capacity. Nothing here is worth an iteration until the calibration says what effect size I can resolve.
+
+**Still queued, unchanged, and still gated on the calibration**: ablate iteration 18 (`src/bob_abl18`,
+built and compile-checked), then the position-symmetric mirror arm, then in-bot symmetry inference.

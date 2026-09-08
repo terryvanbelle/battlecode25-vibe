@@ -1879,3 +1879,72 @@ Two consequences:
 This pairs with §43: without the churn baseline measured first, `d1`'s 7 flipped cells would have read
 as "barely engaged" when it is in fact twice as concentrated an effect as anything the reshuffle does.
 Neither number means anything alone; the two together are an instrument.
+
+## 47. "Denial units run at ~1% of capacity" was a dead-unit denominator. Retracted, with the exact wrong divisor identified (2026-09-08)
+
+This number has been load-bearing in my log since 2026-09-06. It is the sole quantitative support for
+"our moppers and splashers are essentially idle", it supplied the corroborating symptom for
+**iteration 30** (250 games, rejected), and this morning's STATE OF PLAY still carried it forward as
+**"true and unexplained"**. It is wrong by a factor of 10-35, and the fault is in the divisor.
+
+**What the old figure divided by.** Total denial actions over the game, divided by
+**(every denial unit ever spawned) x (total rounds)** — which treats every unit as alive for the whole
+game. Denial units do not live that long: on `Leaf`, 209 moppers were spawned across 2000 rounds and
+lived **18,005 mopper-rounds** between them, a mean lifetime of 86 rounds. So the divisor is ~10x too
+big, and a bot at full throttle would still have scored ~1%.
+
+I did not infer this from the shape of the error. I made the probe compute both candidate divisors on
+the same replay and print them side by side, because a wrong label and a wrong result look identical
+in the output:
+
+```
+                acted   TRUE unit-rounds        spawned x rounds
+T1 MOPPER        2755   18005  -> 0.1530        209 x 2000 -> 0.0066
+T1 SPLASHER      1752   46318  -> 0.0378        427 x 2000 -> 0.0021
+T2 MOPPER        1589   44309  -> 0.0359        479 x 2000 -> 0.0017
+T2 SPLASHER      3696  163675  -> 0.0226        958 x 2000 -> 0.0019
+```
+
+The right-hand column **is** the old "~0.004". The left-hand column is the truth. Every living robot
+emits exactly one `Turn` per round, so unit-rounds are counted exactly and for free; there was never a
+need to estimate the denominator at all.
+
+**What is actually true**, over 12 games, both sides of each (`bob_d0` run `20260908-144158`):
+
+```
+side  type       games  unit-rounds   acted  util%ceil  inRange%  take-rate%  idle,noTgt%
+LOST  MOPPER        12        65160    9351       43.1      45.8        85.9         50.0
+LOST  SPLASHER      12       175504    8784       25.0      35.5        15.1         57.3
+WON   MOPPER        12       120867    8033       19.9      19.7        83.5         76.8
+WON   SPLASHER      12       380360   14426       19.0      18.3        15.8         76.9
+```
+
+Denial units run at **19-43% of their cooldown ceiling**, not 1%. And the two types fail differently:
+
+- **Moppers take 84-86% of the opportunities they get.** They are well piloted. Their ceiling is
+  bounded by *target availability* (a target in range on only 20-46% of rounds), not by policy.
+- **Splashers decline ~85% of their opportunities** — which is `SPLASH_MIN_VALUE = 5` doing exactly
+  what it was written to do. That reproduces the 85% already in §-note from 2026-09-07 from a
+  completely independent instrument, which is the one number here I did *not* overturn.
+
+**Why this matters more than the correction itself.** Iteration 30 spent 250 games testing a
+*navigation* fix for a defect whose headline magnitude was an artefact. The direction was not
+unreasonable — moppers really are target-limited — but its urgency was manufactured by a bad divisor.
+
+**The rule.** *Never publish a per-unit-per-round rate whose denominator you estimated when the replay
+records the exact one.* The dangerous form is not an obviously wrong number; it is a plausible one.
+"1% of capacity" is a shocking figure that invites action, and it survived four days and two
+iterations because nobody re-derived the divisor. §36 and §43 are the same lesson about noise; this is
+it about rates.
+
+**Unresolved, and deliberately not asserted.** The companion figure "moppers have no enemy paint
+anywhere in vision on 97.6% of their turns" (`bob-tools/BobMop.java`) is **not reproduced** by this
+probe, which puts moppers with nothing in vision at 50-77%. I checked BobMop for the same defect and
+it does **not** have it — it iterates real `Turn`s, and its team indexing is 0-based consistently
+(`sa.team() - 1`), so the obvious suspects are clear. The two tools differ in that BobMop models
+splash footprints and mine does not, while mine is validated against the engine's own coverage
+(+7 per-mille on `Leaf`). I have not run the discriminating case, so I am flagging the disagreement
+rather than adjudicating it. What makes 97.6% hard to believe on its face is coverage arithmetic: on
+`Leaf` the enemy holds 590 per-mille of the passable map, and a 69-tile vision disc that contains zero
+enemy tiles 97.6% of the time is not compatible with that unless our moppers are confined to a pocket.
+**Re-measure before any future session cites it.**
