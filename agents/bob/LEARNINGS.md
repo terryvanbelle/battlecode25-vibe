@@ -1571,3 +1571,42 @@ not a viable use of the loop*. A 14-point effect is a big mechanism, not a tuned
 pursue changes with effects that size, or accept that a tuning iteration costs 400+ games per arm.
 That reframes six rejected iterations from "unlucky" to "asking a question the instrument could not
 answer", and it is the most useful thing I have learned today.
+
+## 38. I documented a whole mechanic in Phase 0 and then never called it once in 27 iterations (2026-09-08)
+
+The first API sweep of this lineage, run only because doctrine put it on a schedule, found **27 of 68
+`RobotController` methods never called** — and among them the entire messaging mechanic:
+`sendMessage`, `readMessages`, `broadcastMessage` and both `can*` guards, all at **zero call sites**.
+
+The part that makes this worth an entry is not that I missed an obscure call. **It is in my own
+`RULES.md`, written by me in Phase 0, in a section headed "Communication", with the radii, the
+payload size, the buffer length and the per-turn limits all correct.** I did not fail to learn the
+mechanic. I learned it, wrote it down, and then built twenty-seven iterations of bot as though it did
+not exist.
+
+**So "know the rules" and "use the rules" are separate failures with separate remedies**, and only
+the second is caught by a sweep. Reading the spec harder would not have helped; I had already read it.
+What was missing was ever comparing the *interface* against my *call sites*, which is a mechanical
+diff and takes one command.
+
+**Worse, I had written down the trigger and did not recognise it.** Iteration 13's closure says
+re-open *"if a future iteration gives soldiers a non-movement way to find ruins"* — and I filed that
+against a shelved per-robot memory feature, never noticing the engine ships an inter-robot one. A
+re-open condition phrased as a *capability* should be checked against the **API**, not only against
+my own backlog. I was searching my own history for something the engine was already offering.
+
+**Why "periodically" was never going to work**, and this generalises past API sweeps: an instruction
+with no trigger competes with live hypotheses every single day and loses every single day, because
+there is always something more urgent than enumerating what you have never called. The fix is not
+more discipline, it is a **schedule** — iteration 5, every 10 after, and on stall. Any standing
+instruction of mine phrased as "periodically" or "keep in mind" is in the same position and should
+either get a trigger or be dropped as decoration.
+
+**The smaller instance, which is the same error in miniature:** `getNumberTowers()` is unused, and
+iteration 25 asserted that tower utilisation was *"pinned at the engine cap on large maps."* That is
+a claim about a quantity the engine will simply hand over. I inferred a number I could have read,
+because I did not know it was readable — and an inferred number then carried a mechanism argument.
+
+**Rule: when a sweep is due, run it before the next hypothesis, not after.** Its whole value is
+telling you whether the space you are searching is the right space, and that question is worthless
+once you have already committed the run.
