@@ -7705,3 +7705,85 @@ soldier mix to nearly its intended share, so an unknown part of this gap is alre
 tournament now running (`20260908-0100`) is the *same instrument* measuring iteration 29 against
 the *same* bob, and it is the correct thing to read before committing a design. Polling it rather
 than designing against superseded numbers.
+
+## Iteration 30 — registered: a SPLASHER FLOOR on the treasury
+
+### Re-opening a CLOSED direction, on the ledger's own stated terms
+
+The ledger says: *"**'Change the splasher share' — CLOSED.** dose 0 = 12.5% (catastrophic), dose 6
+loses to dose 3... Re-opening needs a reason the **optimum moved**, e.g. **a change to the paint
+economy large enough to alter what a 300-paint unit costs in practice.**"*
+
+**Iteration 29 is exactly that change**, and it is the largest one this lineage has made to the
+paint economy: it removed 42–55% of all soldier paint waste. The re-open condition was written
+before I knew what would satisfy it, and it is satisfied verbatim rather than by
+"feels under-explored".
+
+**And the direction I am re-opening is not the one that was closed.** The closed direction is the
+`SPLASHER_IN_20` *roll* constant. This changes the **realized** share while leaving the roll
+constant at its measured optimum. That distinction is now load-bearing, because the i30p decision
+counters show the roll and the realization are decoupled: 50–95% of splasher rolls die at the chips
+gate, so the dose sweep was moving a knob whose output was clamped.
+
+**That also explains the old sweep's shape without contradicting it** — flagged as a hypothesis,
+not a conclusion, because I withdrew a retrodiction of this exact kind three hours ago. A tower
+whose roll it cannot pay builds **nothing at all** that turn (verified by reading the code, not
+inferred). So raising `SPLASHER_IN_20` to 6 converts build-turns into idle turns, which would make
+dose 6 worse than dose 3 *even if more splashers were good*. And dose 0 being catastrophic (12.5%)
+says the 1–2% of splashers carol does field are worth an enormous amount.
+
+### The price, computed in BOTH currencies before building
+
+Iteration 29 fixed the soldier, so the splasher's advantage had to be re-measured rather than
+carried over — the soldier is what a splasher displaces, and it just got better.
+
+| map | unit | build paint → attack paint | **tiles per 100 build paint** | chips per tile |
+|---|---|---|---|---|
+| Bunny | soldier | 32.3% | **6.46** | ~19 |
+| | splasher | 125% (refills) | **30.33** | ~4 |
+| DefaultMedium | soldier | 14.5% | **2.90** | ~43 |
+| | splasher | 70.0% | **15.80** | ~8 |
+| Fossil | soldier | 28.3% | **5.65** | ~22 |
+| | splasher | 56.7% | **12.60** | ~11 |
+| Mirage | soldier | 16.8% | **3.37** | ~37 |
+| | splasher | 70.8% | **14.92** | ~9 |
+
+**A splasher paints 2.4–4.7x more tiles per unit of build paint than a soldier, and is ~4x cheaper
+per tile in chips.** Both currencies agree, on all four maps, *after* iteration 29. The advantage
+is not per-attack efficiency (they are within 10% there) — it is that a splasher's 50-paint attack
+dwarfs the ~1.5/turn it loses to drain, while a soldier's 5-paint attack does not.
+
+Small-sample caveat, stated rather than buried: only 2–5 splashers per game. But the effect is
+2.4–4.7x, consistent on four maps, and **corroborated by a source that shares none of my
+assumptions — bob runs an 18% splasher share on every map measured.**
+
+### The design, and why the obvious version fails
+
+Not "raise the roll" (closed, and clamped anyway). Not "lower `CHIP_RESERVE`" (iteration 4,
+rejected with a trace). Not "make the splasher roll sticky" — **that one fails on inspection: a
+holding tower cannot stop the other 12–18 towers from spending the shared treasury**, so it would
+lose the race it is trying to win. Recording the discarded design because the reason it fails is
+the same reason the chosen one works.
+
+**Chosen: a splasher floor.** A tower may build a *non*-splasher only if doing so leaves the
+treasury at or above `SPLASH_FLOOR`. Chips are team-shared, so every tower computes the identical
+predicate from `rc.getChips()` — **team-consistent coordination with no communication at all**,
+which is the "emergent, not commanded" shape RESEARCH.md §7 recommends.
+
+```java
+boolean afford = chips >= reserve + want.moneyCost;
+if (afford && want != UnitType.SPLASHER && chips - want.moneyCost < SPLASH_FLOOR) afford = false;
+```
+
+**Dose ladder with a byte-identical zero arm**: `SPLASH_FLOOR = 0` (never blocks — provably the
+current code), 1600, 2000.
+
+**It is aligned with iteration 4 rather than against it**: a higher treasury floor makes the
+1,000-chip `completeTowerPattern` *more* reliable, which is precisely what iteration 4 showed the
+reserve was protecting.
+
+**Pre-checks: reachability MEASURED (splasher rolls 616–2,026/game, 50–95% dying at the gate);
+price MEASURED in both currencies above; history CHECKED against iterations 4, 21 and the splasher
+sweep. Outstanding and named: (1) does the floor starve early production on maps where chips are
+genuinely scarce — the `<1200` share is 10–26%, so the floor must not bite there; (2) bytecode
+(trivial, one comparison); (3) the one-map identity check.**
