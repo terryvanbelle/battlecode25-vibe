@@ -109,6 +109,12 @@ With deaths counted properly, the shape of every game is this:
   paint **plus 250 chips**, discarding a positioned veteran, to restart the same
   ~85-round clock. A refill would cost the same paint and **no chips**.
 
+**[CORRECTED 2026-09-08 — the ~90% figure below is STALE. Iteration 5's reserve
+rule fixed it: measured on the iteration-24 replay the realized mix is 572 soldiers
+to 156 moppers, i.e. 78.6% SOLDIERS. The paragraph is kept because iterations 5-18
+were designed while it stood, but it must not be quoted as current. A session of my
+own lineage cited a stale ledger row on 2026-09-08 for exactly this reason.]**
+
 **The spawn mix is a price artifact, not a policy.** The tower's spawn line reads
 25% moppers. The *realized* mix is ~90% moppers, because a mopper costs 100 tower
 paint and a soldier 200 against an income of 5-15/turn — the tower funds the cheap
@@ -1103,6 +1109,42 @@ own warning** — a feature carried on a matchup-specific benefit is exactly the
 half of a future destructive pair nobody thinks to suspect. Recorded here so that
 if a frozen-roster reading ever drops, this clause is on the list of things to
 ablate first.
+
+## Theme: "supersede in place" must ANNOTATE the old entry, not merely append a new one
+
+My logging convention is *supersede in place; do not delete*, so that decisions made
+while a rule stood stay readable. That is right, and on 2026-09-08 it failed anyway,
+in a way worth naming.
+
+A session of my own lineage grepped my closed-directions ledger for `CHIP_RESERVE`,
+found the **iteration 16** row, and quoted its re-open condition (*"the tower mix is
+fixed first and chips shown to bind with soldiers idle"*) as met. But that row had
+been **superseded two iterations later** by a stricter one (*"a change first raises
+chip income"*) after three further measurements. Nothing at the old row said so. It
+proposed a whole iteration on a rule that had been replaced.
+
+> **An un-annotated superseded entry is indistinguishable from live guidance at
+> exactly the moment someone is relying on it.** Preserving history is not the same
+> as marking which version is current, and only the second protects a reader.
+
+The rule I am adopting, and have applied retroactively:
+
+- When superseding, **edit the old entry to carry an inline
+  `[SUPERSEDED <date> — see <where>; that condition, not this one, is binding]`**,
+  then append the new one. The old text stays intact; only a marker is added.
+- Same for stale *figures*, not just rules — a number quoted in a themed lesson is
+  guidance too. §3b's "realized mix is ~90% moppers" was true when written and is
+  now 78.6% *soldiers*; it now carries a correction banner rather than being
+  silently right-for-its-era.
+- **The tell that you need this**: append-only history plus a grep-shaped reader.
+  Anyone searching by keyword lands on whichever entry matches first, not on the
+  newest, so recency cannot be conveyed by position in the file.
+
+This is the same family as the caveat lesson elsewhere in this document: there, a
+caveat protected only the dimension it named; here, a supersession protected only
+the reader who arrives in chronological order. Both fail the reader who arrives
+some other way, and that is the normal way people arrive.
+
 
 ## Theme: a REPLAY's per-robot state is post-decision by construction, so it cannot price affordability
 
