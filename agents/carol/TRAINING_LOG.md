@@ -12217,3 +12217,203 @@ And the audit I was about to redo is already done: `5443d59` records that iterat
 accepted at +1.03 sd, unresolved on their headlines and resting on mechanism evidence. I re-derived
 that same concern from the corrected census units and found the lineage had already caught and
 recorded it — so it is not a new finding, and iteration 36's paint floor is not quietly unsupported.
+
+---
+
+# Iteration 45 — target selection: where do soldier turns actually GO on the accepted build?
+
+Not from a losing game: from an **absolute degeneracy signal**, which the algorithm prefers over an
+opponent-relative one. Measured on `carol_iter44` (= `src/carol`) with **no new games** — the
+indicator strings already carry the decomposition, and the build tag splits the two carol teams in
+a self-play replay.
+
+61 loss replays from run `20260908-202103`, **507,375 soldier turns** of the `i44a` team:
+
+| soldier turn outcome | turns | share |
+|---|---|---|
+| `IDLE-ENEMY` (enemy paint in r2=9, nothing paintable, **frontier-seek disabled**) | 282,753 | **55.7%** |
+| `IDLE-ALLY` (own paint everywhere, nothing paintable) | 152,868 | 30.1% |
+| no action-block token (ruin work consumed the action, or paint-starved) | 58,831 | 11.6% |
+| `pnt` — painted a nearby empty tile | 10,951 | 2.2% |
+| `slf` — painted the tile underfoot | 1,972 | **0.4%** |
+
+**The five categories are mutually exclusive by construction and sum to 100.0%** (55.7 + 30.1 +
+11.6 + 2.2 + 0.4). I checked that the accounting closes before reading anything off it, per the
+rule that a decomposition which does not close is not evidence.
+
+**2.6% of soldier turns paint a tile.** Coverage is the win condition in 85.3% of tournament games.
+
+Caveat stated rather than buried: these are 61 **losses**, so they oversample games where the enemy
+out-painted us. The wins are measured below and they look completely different, which is itself the
+finding.
+
+## The obvious candidate, and the pre-check that killed it for three games
+
+`runSoldier` gates the iteration-14 frontier-seek on **`foe == 0`**: a soldier that is idle *and*
+has any enemy paint within r2=9 does not retarget at all. That guard covers 55.7% of soldier turns,
+so removing it looked like a large, zero-paint capability change — the accepted shape.
+
+**Reachability of the CHOICE SET, not the guard** (the rule that a ranking over one option is not a
+ranking). `carol_i45p` computes `nearestVisibleEmpty()` in the `foe > 0` branch too, records
+whether it found anything, and **does not act on it** — reads only, so play is unchanged.
+
+Identity check first, as required for an instrumented build: `i45p` vs `carol_iter36` returned
+**Rose r494 win** and **Gears r940 loss**, matching the baseline's recorded results on those maps
+exactly. The instrument does not move the game.
+
+| map | outcome | soldier turns | `IDLE-ENEMY` | of those, a visible empty tile exists |
+|---|---|---|---|---|
+| DefaultHuge | loss | — | 14,706 turns | **92 = 0.6%** |
+| Gears | loss | 10,973 | 9,020 = 82.2% | **1,210 = 13.4%** |
+| Rose | **win** | 792 | 120 = 15.2% | 57 = 47.5% |
+
+**Killed.** On the maps where the guard covers the most turns there is nothing to steer to on
+86.6%–99.4% of them, and the few tiles that are found sit at d2 = 13–20 against a vision radius of
+r2 = 20 — the very edge of sight. This is the "chooses badly" / "never sees it" pair producing an
+identical trace, and the discriminating measurement says **never sees it**. Cost: three probe games,
+no gauntlet.
+
+## What the same three games found instead, which is much larger
+
+The win and the losses are different worlds, and the separating variable is not idleness:
+
+| map | outcome | `IDLE-ENEMY` share | ally tiles in r2=9 (median) | enemy tiles (median) | **turns with ally > enemy** |
+|---|---|---|---|---|---|
+| Rose | **win** | 15.2% | 18 | 10 | **100.0%** |
+| Gears | loss | 82.2% | 10 | 11 | **0.2%** |
+| DefaultHuge | loss | — | 7 | 20 | **0.0%** |
+
+In the two losses, carol's soldiers are **inside enemy-painted ground essentially every turn they
+are idle**, with the whole vision disc painted. In the win they are inside their own.
+
+### Why that is a paint claim and not just a positioning claim
+
+`RULES.md` [E], end-of-turn drain: **enemy tile −2, neutral −1, ally 0**, and clumping doubles on
+enemy territory. Paint is this lineage's measured binding resource — 100.0% of chips-available
+no-builds are paint-limited. So a soldier idling on enemy ground is not merely doing nothing, it is
+**paying double the neutral rate to do nothing**, and nothing in this bot has ever consulted the
+tile underfoot for that reason.
+
+### The reconciliation that stops me claiming it yet
+
+`LEARNINGS.md` records soldier paint drain measured at **1.20–1.58 per turn**. If soldiers stood on
+enemy paint most turns the drain would sit near **2.0**. Those two numbers do not reconcile, and by
+my own rule the tell for a wrong referent is exactly two artefacts that ought to agree and don't.
+
+**`IDLE-ENEMY` counts enemy tiles within r2=9. That is NOT the tile underfoot.** The drain depends
+only on the tile the robot occupies, so the table above cannot support a drain claim no matter how
+suggestive it looks. Probe `carol_i45q` measures the underfoot paint type and the adjacent choice
+set on every soldier turn, reads only, and is the thing that decides it.
+
+**Pre-checks NOT yet done, named explicitly** so a session resuming here does not inherit momentum
+without the doubt: (a) underfoot paint distribution — running; (b) whether an adjacent ally/neutral
+passable tile exists when underfoot is enemy (the choice set, which killed the first candidate);
+(c) the price of the reallocation — what a soldier that steps to cheaper ground stops doing.
+
+## The underfoot measurement — probe `carol_i45q`, and the reconciliation that licenses reading it
+
+`carol_i45q` records the tile UNDERFOOT and the adjacent passable tiles by paint type, on every
+soldier turn. Reads only. **Identity check passed on all three maps against the true baseline
+`carol`: Rose r494, Gears r940, DefaultHuge r1477 — identical for `carol`, `i45p`, `i45q` and
+`i45r`.** Peak bytecode on the heaviest probe 6,890 / 17,500 with zero overruns and zero
+near-misses, so nothing here was measured at the limiter's edge.
+
+| map | outcome | underfoot ALLY (drain 0) | NEUTRAL (−1) | **ENEMY (−2)** | of enemy-tile turns, an adjacent ally tile exists |
+|---|---|---|---|---|---|
+| Rose | **win** | 69.3% | 13.8% | **16.9%** | 85.8% |
+| Gears | loss | 59.2% | 0.1% | **40.7%** | 52.7% |
+| DefaultHuge | loss | 49.2% | 0.6% | **50.2%** | 49.4% |
+
+**The reconciliation.** `LEARNINGS.md` records soldier paint drain at 1.20–1.58/turn, which I
+flagged as inconsistent with soldiers standing on enemy paint. Expected underfoot drain from this
+table is 0·P(A) + 1·P(N) + 2·P(X) = **0.48 (Rose), 0.82 (Gears), 1.01 (DefaultHuge)**, and the
+clumping term (−1 per adjacent ally, **−2 on enemy territory**) supplies the rest. The two artefacts
+now agree once the referent is right, and the apparent contradiction was mine: `IDLE-ENEMY` counts
+enemy tiles in r2=9, which is **not** the tile the drain is charged on. Recorded because it is the
+same wrong-referent shape the log keeps catching, caught this time before it reached a claim.
+
+## The decision instrument — probes `carol_i45r` / `carol_i45s`
+
+Instrumenting the DECISION rather than the outcome: at every `stepToward` move, which drain rank was
+taken, the cheapest rank legally available among the directions the method **already** considers,
+which call site, and whether the straight direction was the one taken.
+
+| map | moves | landed on enemy paint | **improvable (a legal non-enemy option existed)** | as a share of soldier turns |
+|---|---|---|---|---|
+| Rose | 561 | 17.8% | **26.9%** | 19.1% |
+| Gears | 8,452 | 40.4% | **13.5%** | 10.4% |
+| DefaultHuge | 18,074 | 47.6% | **17.0%** | 14.7% |
+
+And the split that decides the design (Gears):
+
+| call site | moves | improvable |
+|---|---|---|
+| toward a RUIN, straight | 1.1% | 0.3% |
+| toward a RUIN, fallback | 0.6% | 0.0% |
+| **toward the EXPLORE target, straight** | **50.9%** | **10.5%** |
+| toward the EXPLORE target, fallback | 47.4% | 2.7% |
+
+**98.3% of all stepToward moves are toward the explore target**, and `newExploreTarget()` draws that
+target as the farthest of **four uniformly random map coordinates**. So the thing a deviation
+sacrifices progress toward carries no information about where useful ground is. That is the price
+side of the ledger, read off the code rather than assumed — and it is why this reallocation is cheap
+where iteration 39's steering was not.
+
+# Iteration 45 — DRAIN-AWARE EXPLORE STEP. Pre-registered before any evaluation game.
+
+**Change.** Only the `stepToward(explore)` call site is routed through a drain-aware variant. Among
+the directions the incumbent already considers, **in the incumbent's exact order** (straight, then
+left/right ordered by robot ID, then the two wider rotations), take the first legal destination that
+is not enemy paint; if none exists, take exactly what the incumbent would have taken. Zero paint,
+zero chips, no new mechanic — a re-ranking of a choice already being made.
+
+**Play-symmetry**: a tie in drain rank leaves the incumbent order untouched, so the ID-based
+left/right tie-break that Phase 0 installed is preserved intact; "prefer my own paint" is symmetric
+between teams. **History**: no prior iteration established that soldiers should step onto enemy
+paint — the existing tie-break comment is about symmetry only, so nothing is being silently
+reverted.
+
+**Dose ladder, with the zero arm being the incumbent itself (byte-identical by construction):**
+
+| arm | dose | expected trigger |
+|---|---|---|
+| `carol_iter44` | zero | — |
+| `carol_i45_a` | fires **only when the straight direction is already blocked** — no deviation cost at all | ~2.7% of moves |
+| `carol_i45_b` | avoid enemy paint on the explore step (main arm) | ~13.2% of moves |
+| `carol_i45_c` | prefer ALLY paint first, then non-enemy | ~13.2%, stronger |
+
+**Stage 0, one-map identity check — RUN AND PASSED before any gauntlet.** vs `carol_iter36` on
+Gears the baseline plays r940; `a` r662, `b` r1410, `c` r701. All three differ, so no arm is a
+dormant branch and no run is wasted on a candidate that compiles to the same behaviour.
+
+**Instrument**: 25 sampled maps, `BOT=carol_i45_b`, opponents `carol_iter44`, `carol_i45_a`,
+`carol_i45_c` — 150 games. The sample is drawn once and shared, so the three comparisons are exact
+against each other. Sampled first to find the SHAPE of the ladder; a full-corpus census against
+`carol_iter44` fixes the LEVEL for whichever arm the ladder favours.
+
+**Gate on the sampled run** (margin sd ~6 on a 50-game arm, so this stage cannot accept):
+proceed to census if `b` (or the arm the ladder favours) is at or above even vs `carol_iter44`;
+abandon if it is below −8, which would be a real regression rather than noise.
+
+**Census gate**, against carol's own measured chaos floor (sd **6.48** on the margin per 150):
+**ACCEPT >= +13**, REPLICATE +9..+12, **REJECT <= +8**.
+
+**Named weak link — the one to watch, because it is the link that killed iteration 42 and held in
+44.** The chain is: *improvable moves fall -> soldiers spend fewer turns on enemy paint -> paint
+drain falls -> coverage rises*. Link 1 is the `ds` decision counter (deviations actually taken) and
+`i45q`'s underfoot distribution re-measured on the candidate. **If `ds` fires and the underfoot
+enemy share does not fall, I REJECT** — that would mean the deviation is immediately undone and the
+mechanism is churn. If underfoot falls but coverage does not, I follow rule 3b: report the number
+honestly and record attribution as OPEN rather than back-filling a story.
+
+**Pre-registered secondary, stated in advance so it cannot be back-filled:** the margin is larger on
+maps where the incumbent's underfoot-enemy share is HIGHER, because that is where the mechanism has
+fuel. Iteration 44's secondary came back flat and I recorded the attribution as open; the same rule
+applies here whichever way it lands.
+
+**Pre-checks NOT done, named:** (a) trigger frequency is measured on three maps, not the corpus —
+Rose/Gears/DefaultHuge span win/loss and small/large, but this is not a census; (b) the price is
+argued from the randomness of the explore target and the 98.3% call-site split, and is **not**
+directly measured as forgone coverage; (c) no check yet that the deviation does not simply
+oscillate a soldier back and forth across a paint boundary, which is the specific way this
+mechanism could be churn rather than saving.
