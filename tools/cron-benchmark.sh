@@ -34,8 +34,17 @@ echo "$(date -u +%FT%TZ) benchmark: evening run (${HOUR}h Pacific) -- starting"
 
 BENCH="TSPAARKHS v3" tools/benchmark.sh || { echo "!! benchmark failed"; exit 1; }
 
-RUN=$(ls -1 benchmarks 2>/dev/null | grep -E '^[0-9]{8}-[0-9]{6}$' | tail -1)
-[ -n "$RUN" ] || { echo "!! no benchmark run directory produced"; exit 1; }
+# Newest run directory that actually holds results. Deliberately NOT a run-id
+# regex: the first version required [0-9]{8}-[0-9]{6} while benchmark.sh stamps
+# %Y%m%d-%H%M -- four digits, not six. It matched nothing, so the very first
+# real benchmark played all 900 games, wrote them, and then this wrapper
+# declared "no benchmark run directory produced" and exited 1. The measurement
+# survived only because the games were already on disk.
+# Keying on the artifact rather than on the name cannot drift apart from the
+# producer the way a duplicated format string does.
+RUN=$(ls -1t benchmarks 2>/dev/null | head -1)
+[ -n "$RUN" ] && [ -f "benchmarks/$RUN/scores.csv" ] || {
+    echo "!! no benchmark run directory with scores.csv under benchmarks/"; exit 1; }
 
 # scores.csv and summary.md only. No replay was ever written -- benchmark.sh
 # omits -Dbc.server.save-file precisely so there is nothing to discard here.
