@@ -14152,3 +14152,60 @@ refills are the obvious sink and are almost certainly most of it, but **I have n
 decomposition**, so I am recording it as an open question rather than reading anything off it.
 Doctrine §4: a decomposition that does not close is not evidence. The next step is the
 `tryRefill` transfer volume per round, which the replay's `xfer` counter already carries.
+
+## Iteration 39b/39c — the phase signal WIRED UP, pre-registered before the screen
+
+The signal measured above is now driving the splasher gate. Two arms, one mechanism:
+
+| arm | gate | property |
+|---|---|---|
+| `alice_i39b` | `expansionFinished && money >= CHIP_RESERVE + SPLASHER.moneyCost` | **replaces** the chip proxy |
+| `alice_i39c` | old proxy **OR** the phase signal | **augments** — can only add splasher production, never remove it |
+
+Arm C exists because iterations 28 and 29 are accepted work: a replacement can revert them,
+a union cannot. If B beats C, the proxy was firing too *early* somewhere; if C beats B, the
+proxy is catching cases the signal misses.
+
+### Mechanism check — the named quantity, on the map where the mechanism must bite
+
+`AlarmClock`, the diagnosed failure: baseline builds **zero** splashers there all game.
+
+| build | splashers alive (r600 / r1200 / r1500) | game ends | coverage peak |
+|---|---|---|---|
+| baseline `alice_iter30` | 0 / 0 / 0 | **r973 (loss)** | 502 -> collapses to 294 |
+| `alice_i39b` | **5 / 7 / 4** | r1579 (loss) | 541 |
+| `alice_i39c` | **5 / 6 / 10** | r1683 (loss) | 541 |
+
+**The mechanism engages as designed.** Both arms still lose this game — algorithm §4 case 2, and
+the evidenced account is that they extend it by **600-700 rounds** without closing a coverage
+deficit that was already deep. Not a flip, but not a no-op either: this is the diagnosed case
+behaving as the hypothesis said it would.
+
+**Identity check (§5 step 0): passed.** Game length 973 vs 1579 vs 1683 — the arms are not
+byte-identical to the baseline, nor to each other (B and C agree through r900, as they must
+while the phase signal leads the proxy, then diverge).
+
+### Pre-registered, before the run
+
+- **Convention**: baseline in `BOT`, arms as opponents, 25 shared maps, 100 games. **An arm is
+  good when the BOT loses.** Stated explicitly because I have inverted this before.
+- **Gate**: my accept threshold is `net swept >= +12` on a 75-map census, which is **2.27 sd**
+  against my measured floor of 5.29. Scaled to a 25-map screen the same threshold is
+  `2.27 * sqrt(decisive)` — about **+6** at a typical 7 decisive maps. An arm advances to a
+  full census only if it clears its own screen-scale equivalent; otherwise it is rejected here.
+- **Map-level prediction** (doctrine 4, and this is the part that checks itself): gains are
+  **concentrated on maps where the chip proxy fires late or never**, and near-absent where the
+  proxy already opens around the same round as the signal. On DefaultHuge the two nearly
+  coincide (C=274, E=290), so that map should move little; AlarmClock (274 vs 418, proxy
+  transient) should move a lot.
+- **Named risk**: arm B can *remove* splashers where the proxy was right and the signal has not
+  fired — that is exactly what arm C is the control for.
+- **Falsifier**: if both arms land inside their screen-scale sd, the phase signal is not worth
+  its complexity and the splasher-gate area is closed for this lineage.
+
+### Pre-checks NOT done, named explicitly
+
+- **Trigger frequency across opponents.** The signal was sized against `alice_iter30` only. A
+  different opponent contests ruins differently, which changes when growth stops.
+- **Bytecode.** The added per-turn work is small and towers have headroom, but I have not read
+  the near-miss counter on the wired arms, only on the diag.
