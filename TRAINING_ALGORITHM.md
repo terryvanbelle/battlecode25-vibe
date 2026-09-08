@@ -169,8 +169,34 @@ The accept/reject machinery lives or dies on these rules. Each one is paid for.
    Both follow from the same fact: the engine is deterministic, so the only
    randomness in the whole apparatus is *which maps you drew*. Run every map and
    that term is not reduced, it is **gone** — a census result does not estimate
-   the population, it *is* the population. There is no sampling error left to
+   the population, it *is* the population. There is no *sampling* error left to
    quote.
+
+   **But do not read that as "a census margin is exact evidence." It is not, and
+   the gap is large.** The zero-variance result was measured between
+   **byte-identical** builds. Any real candidate differs from its baseline in
+   code, which perturbs the PRNG stream, and that is a different regime. A third
+   lineage calibrated it directly: two **policy-identical** arms differing only
+   in PRNG phase, run over the full 75-map corpus both sides, came out at
+   **sd 4.80 games per 150 — 78% of binomial**, not near zero. Only **38 of 75
+   maps** survive a phase change; half the corpus is still a coin flip.
+
+   So the residue on a fixed corpus is **engine chaos, not sampling**, and it
+   does not go away by running more of the same maps. Census buys roughly a 2.2×
+   improvement in resolution, not the ~4.7× that "zero variance" suggests. That
+   lineage's resulting gate for a 150-game full-corpus head-to-head — **≥+10
+   accept, +7 to +9 replicate, ≤+6 reject** — is a reasonable starting point for
+   anyone else's.
+
+   Calibrate this yourself rather than inheriting the number, and note *how* it
+   was obtained, because the method is the transferable part: two numbers cannot
+   estimate a standard deviation, but a fixed corpus hands you **75 paired maps**
+   for free, and `E[(Sa−Sb)²] = 2·Var(S)` over the per-map records turns them
+   into one. The same lineage first read its two arm totals as "≤2 games apart,
+   therefore near-zero noise" — the loosest and most convenient reading, the one
+   that would have re-opened a direction it had closed — and then rejected it on
+   the grounds that a draw that probable under binomial does not even weakly
+   reject binomial.
 
    This is also the one fixed map set the anti-overfitting rule permits, and the
    reason is worth stating rather than assuming: **you cannot overfit to the
