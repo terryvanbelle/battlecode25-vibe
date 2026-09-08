@@ -47,5 +47,33 @@ for tdir in $SCRATCH_GLOB; do
     done
 done
 
+# --- the scratchpad ROOT is the second, worse channel -------------------------
+# tasks/ leaks transcripts; the scratchpad root leaks REPLAYS. A .bc25 is a
+# complete game record, so one opened by the wrong lineage exposes the other's
+# composition and build order in full -- and the filenames advertise ownership
+# (t_alice-vs-bob-on-Gears.bc25, carol_rush__Leaf__botA.bc25). 100 of them were
+# sitting in one shared directory when this was found, by the lineage that
+# globbed the root looking for its own dumps and got nine of somebody else's.
+#
+# Unlike the transcript symlinks these are agents' working files, so they are
+# QUARANTINED, not deleted: moved out of the shared tree into a coordinator-only
+# directory. Nothing is destroyed, the leak is closed, and the engine is
+# deterministic so a lineage that wants one back can re-dump it.
+#
+# Two hours of grace, so a dump being actively analysed is never pulled from
+# under the analysis. Agents are told to work under <scratchpad>/<name>/, which
+# this never touches -- following the rule makes you immune to the sweep.
+QUARANTINE="$HOME/.bc25-scratchpad-quarantine"
+quarantined=0
+for sp in /tmp/claude-*/-home-terryvanbelle-projects-vibe-2025/*/scratchpad; do
+    [ -d "$sp" ] || continue
+    mkdir -p "$QUARANTINE"
+    while IFS= read -r f; do
+        [ -n "$f" ] || continue
+        mv -f "$f" "$QUARANTINE/" 2>/dev/null && quarantined=$(( quarantined + 1 ))
+    done < <(find "$sp" -maxdepth 1 -type f -name '*.bc25' -mmin +120 2>/dev/null)
+done
+
 [ "$removed" -gt 0 ] && echo "$(date -u +%FT%TZ) isolation-sweep: removed $removed sibling transcript symlink(s)"
+[ "$quarantined" -gt 0 ] && echo "$(date -u +%FT%TZ) isolation-sweep: quarantined $quarantined root-level replay blob(s) from the shared scratchpad"
 exit 0

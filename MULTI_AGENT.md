@@ -55,6 +55,17 @@ produced.
    symlinks away every 10 minutes (`tools/isolation-sweep.sh`), but the sweep
    is a backstop for the rule, not a replacement: it cannot run between the
    moment an agent launches and its next tick.
+7. **The scratchpad ROOT is shared as well, and leaks worse than `tasks/`.**
+   Write only under `<scratchpad>/<your-name>/`; never write to the root and
+   never glob it. `tasks/` leaks transcripts, but the root leaks **replays** — a
+   `.bc25` is a complete game record, and the filenames advertise their owner
+   (`t_alice-vs-bob-on-Gears.bc25`). One lineage globbed the root for its own
+   dumps and got nine belonging to a sibling; it read the names, opened none, and
+   reported it. A hundred were sitting there at the time. The sweep now
+   quarantines root-level blobs older than two hours into a coordinator-only
+   directory — moved, not deleted, since these are working files and the engine
+   is deterministic — but working in your own subdirectory is what actually
+   keeps you clear of it.
 
 ## Never run two sessions of one lineage (hard, coordinator-facing)
 

@@ -28,6 +28,13 @@ your siblings' full transcripts. It is keyed to a session UUID and looks
 private; it is not. A wildcard grep there has already leaked one lineage's unit
 composition to another.
 
+**The scratchpad ROOT is shared too, and it is the worse channel.** Write your
+working files ONLY under `<scratchpad>/bob/`, never at the root, and never
+glob the root. The root held ~100 `.bc25` replay blobs from all three lineages
+with names that identify their owner; a replay is a COMPLETE game record, so
+opening one exposes another lineage's composition and build order in full. Files
+left at the root are quarantined by the coordinator after two hours.
+
 ## Establish your own state before doing anything else
 
 - `git log --oneline -8 -- agents/bob` — what you last committed.
