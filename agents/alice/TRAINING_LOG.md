@@ -10236,3 +10236,60 @@ loudly with the safe recipe rather than leaving each agent to improvise against 
 own bad advice. Reporting rather than working around it, per the charter — my step-by-step
 recovery above is exactly the "hand-transformation that holds only as long as I remember"
 the charter warns about, and it should not be the answer for three agents indefinitely.
+
+## Corrected upkeep census — the component I omitted is the LARGER one, and upkeep burns 45% of all unit paint
+
+`alice_upkeepcensus` with the adjacency tax added, on **UnderTheSea, full 2000 rounds**
+(the regime the hypothesis is actually about). 735 robots, **76,105 robot-turns**.
+
+| | paint | per robot-turn | share of upkeep |
+|---|---|---|---|
+| **terrain** (-1 neutral, -2 enemy, mopper x2) | 27,916 | 0.367 | 48.2% |
+| **adjacency** (-1 per adjacent ally robot, x2 on enemy tile) | **29,967** | **0.394** | **51.8%** |
+| **total upkeep** | **57,883** | **0.761** | |
+
+**The half I never measured is the bigger half.** My withdrawn "0.30/robot-turn" was
+not merely incomplete; it was the smaller of two comparable terms.
+
+### Sizing it against the paint that exists
+
+Cumulative spawns across the four windows: **550 soldiers and 180 moppers** =
+`550x200 + 180x100` = **128,000 paint** committed to units all game.
+
+> **Upkeep consumes 57,883 of that 128,000 — 45% of every drop of paint this bot puts
+> into a unit is spent standing still.** The crowding component alone is 29,967 paint =
+> **150 soldiers' worth**, or about 6,000 tiles never painted.
+
+That reframes the whole late-game collapse. It is not that my units cannot find work; it
+is that **nearly half their tank is gone before they do any.**
+
+### Two checks on the instrument, both passing
+
+- **Self-exclusion.** If `senseNearbyRobots(2, myTeam)` included the caller, mean
+  adjacency would floor at 1.0. Measured mean is **0.362**, so it excludes self and the
+  tax is not inflated by one per turn. I designed this check before reading the number,
+  precisely because an off-by-one here would have been invisible and would have doubled
+  the headline.
+- **Regime.** Enemy-tile share is **16.0%** here against **4.8%** in the DefaultLarge
+  game that ended at round 313. **The regime caveat I flagged was real and it mattered** —
+  the short game understated enemy-tile exposure by more than 3x. Recording that as
+  vindication of the caveat, not of the hypothesis: I was right that the measurement was
+  in the wrong regime, which is a different thing from being right about upkeep.
+
+### What this does and does not license
+
+It does **not** resurrect iteration 26. The slide preference fires **4 times a game**;
+that is a reachability fact and no upkeep figure changes it.
+
+It does size a **new** direction properly for the first time: crowding is worth 150
+soldiers of paint a game. But the tax is **diffuse, not concentrated** — mean adjacency
+is 0.362 and only **1.3%** of turns have 3+ adjacent allies. So a "break up when crowded"
+rule would fire rarely and capture little, while an "always prefer the less crowded move"
+rule collides head-on with the ballistic wander that iterations 12 and 14 bought.
+
+**That tension is the actual open question, and I am leaving it stated rather than
+resolved:** the money is real (150 soldiers) but it is spread across 76,105 turns in
+increments of one paint, and the only mechanisms that could collect it all are the ones
+that would damage a previously accepted behaviour. Anyone picking this up should size the
+*collectable* fraction first — the pre-check that this session's three dead mechanisms all
+needed and only got twice.
