@@ -12420,3 +12420,65 @@ paint on a diagonal gains nothing, and a naive "always swing" policy would swing
 of value where the single-target attack would have taken the better tile. The dose question is
 *when* to prefer the swing, and it is a comparison of counts I can compute in-bot, so it needs
 no searched constant.
+
+## RETRACTION — `mopSwing` does NOT clear tile paint. I had it wrong, and the premise stands
+
+Two entries ago I called `mopSwing` "a 3-tile enemy-paint remover I already field the units
+for", said it was "regime-matched to my measured weakness" because my coverage falls when
+enemy paint replaces mine, and concluded that the splasher line's premise — *"a mopper only
+clears ONE tile"* — was wrong. **All of that is wrong, and I caught it by disassembling the
+method body instead of reasoning from the constant names.**
+
+`InternalRobot.mopSwing` per tile in its 3-tile arc:
+
+```
+onTheMap(loc)                        -> skip if off map
+GameWorld.getRobot(loc)              -> the ROBOT standing there
+  getType().isRobotType()  /  getTeam()
+  addPaint(-MOPPER_SWING_PAINT_DEPLETION)      <-- drains that ROBOT's paint
+  matchMaker.addRemovePaintAction(id, ...)
+```
+
+**There is no tile-paint write anywhere in the method** — no `setPaint`, no paint-grid access
+at all. `mopSwing` affects **enemy robots standing on those tiles** and nothing else. It is a
+paint *drain on units*, not a ground-conversion tool.
+
+So:
+
+- **My "strictly better on every axis" table was comparing two different things.** The
+  single-target attack clears a tile *and* drains a robot; the swing only drains robots, three
+  at a time. Neither dominates — they do different jobs.
+- **The splasher premise is intact.** *"A soldier cannot overwrite enemy paint and a mopper
+  only clears one tile to EMPTY"* is still true, and iterations 28, 29 and `alice_paintthief`
+  do not rest on a false foundation. I withdraw the paragraph saying they did.
+- **`mopSwing` does not address my coverage collapse.** That was the entire reason I moved it
+  ahead of resource patterns in the queue, and that reason is void.
+
+### What I did wrong, precisely
+
+I read `MOPPER_SWING_PAINT_DEPLETION = 5` against `MOPPER_ATTACK_PAINT_DEPLETION = 10` and
+inferred "the swing removes 5 paint per tile", where the constants are **robot** paint. Then I
+built a cost table, a strategic rationale and a queue reordering on top of a constant name.
+The method body was one `javap` away the whole time — the *same* command I had already run
+twice that day and praised for closing questions in seconds.
+
+**The pattern is worth naming, because it is not the same error as this morning's.** Those
+were "source cannot tell you how often a path runs". This one is "**a constant's name is not
+its semantics**" — and it is more dangerous, because the name was *nearly* right. Five is
+indeed deducted, and it is indeed paint; it is simply deducted from a different thing than I
+assumed.
+
+> **Read the method body, not the constant that the method uses.** A constant tells you a
+> magnitude. Only the code tells you what the magnitude is subtracted from.
+
+### `mopSwing` is still interesting — for a completely different reason
+
+Draining enemy **units'** paint is an attack on the resource that kills them. My own forensics
+show **bob's robots die of starvation at 76-90% of deaths**, and mine at 72-88%. A tool that
+removes paint from three enemy robots per use, at 20 cooldown and zero paint cost, is an
+accelerant on the single largest cause of death in these games.
+
+That is a real hypothesis, and it survives the retraction — but it is a hypothesis about
+**killing enemy units**, not about holding ground, and it has to be pre-registered as such.
+Requeued **behind** resource patterns, since the reason it jumped the queue has evaporated and
+I am not going to let a corrected claim keep the priority its wrong version earned.
