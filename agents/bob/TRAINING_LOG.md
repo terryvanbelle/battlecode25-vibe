@@ -11713,3 +11713,66 @@ what knowing where the enemy half is would address. Three independent routes to 
 
 **Not launched yet, deliberately.** The ablation is using my full 3-job budget and the VM also serves
 BC26 and two siblings. Probe matches go after it finishes, not beside it.
+
+---
+
+## Iteration 18 ablation — run `20260908-172346`, 150 games, full corpus. VERDICT: the suspected negative is NOT there. CLOSED.
+
+```
+bob        82/150  (54.7%)
+bob_abl18  68/150            deviation from 75:  -7
+per-map:   bob swept 14 | split 54 | abl18 swept 7   (of 75)
+sides:     bob as A 48/75    bob as B 34/75
+```
+
+**Against the gate I registered before the run:**
+
+- `abl18 >= +10` → iteration 18 is a genuine negative, revert it. **Not met.**
+- `abl18 +7..+9` → replicate. **Not met.**
+- `abl18 <= +6` → not the carried negative I suspected; **close it.** ← **this one**
+
+**And the failure is directional, which is stronger than the threshold alone.** The hypothesis did not
+merely fail to clear a bar — it predicted the wrong *sign*. The earlier 2x2 put iteration 18's main
+effect at **-3/-4 games of 50**, i.e. abl18 should have scored **+9 to +12** on 150. It scored **-7**.
+Against sd 4.80 that is **3.3 to 4.0 sd away from the prediction**. The suspected negative is not
+merely unproven; the data actively point the other way.
+
+**What I must NOT conclude: that iteration 18 is positive.** bob's +7 is 1.5 sd — inside my own
+replicate band and not significant. The honest statement is "iteration 18 is not the carried negative I
+suspected, and its true value remains indistinguishable from zero." Closing it means *stop spending
+games on it*, not *declare it good*. This is the same discipline that made me discard the flattering
+reading of the calibration three hours ago, applied to a result that happens to flatter a shipping
+feature instead.
+
+**Why this mattered enough to spend 150 games on.** Iteration 18 was accepted on **+6** — inside the
+band my current gate sends to replication rather than accept — and justified by a "zero arm at exactly
+the null, se = 0" argument that LEARNINGS 36 has since retracted as structural. It was **the largest
+suspected negative carried in the shipping bot**. Retiring that suspicion is worth the run even though
+nothing changes in `src/bob`.
+
+### Two diagnostics, recorded rather than acted on
+
+**1. A side asymmetry that the null run does not show.** bob went **48/75 as A** and **34/75 as B**, a
+side effect of +7 games ((48-34)/2), about **2.3 sd**. The calibration on the *same 75 maps* showed
+nothing like it — vs `n1` it was 36/39, vs `n2` 36/35, i.e. ~0 both times. Since abl18 differs from bob
+by one line, a pure map-or-engine side advantage should have appeared in the null too **and did not**.
+So this is either noise at 2.3 sd or a genuine interaction between iteration 18's paint guard and spawn
+side. **Not chased today** — it is exactly the kind of lopsided split LEARNINGS 42 says I cannot
+currently interpret, because I still have no working mirror instrument. It is logged so the symmetry
+work has a concrete question waiting for it.
+
+**2. Churn is HIGHER than the null, and per LEARNINGS 46 that argues for "no effect".** Splits rose to
+**54 of 75** against ~46 in the null arms, while the score moved +7. §46's finding was that a
+behaviourally-null change perturbs *more* games than a real one and moves the score less; that is the
+signature here. Note also that the sweep counts (14 vs 7) merely restate the margin — 82 - 75 = 7 =
+14 - 7, the identity the tournament report proves — so they are not a second piece of evidence.
+
+**Closed-directions ledger, updated:** iteration 18 / `RUIN_FLOOR` — closed 2026-09-08 by a 150-game
+full-corpus ablation at -7 against a predicted +9..+12. Re-open only if a *mechanism-level* reason
+appears that the paint guard behaves differently than the 2x2 modelled; a fresh map draw is not such a
+reason, because the corpus is already every map.
+
+**This is my fourth consecutive non-accept.** `MaxConsecutiveRejects = 3` is passed, so the loop-stall
+protocol is in force — and I am already executing it rather than inventing: today's work has been
+ablating a carried feature (protocol item 1) and the symmetry-inference probe, which is the first entry
+on the algorithm's own short list for a stalled lineage.
