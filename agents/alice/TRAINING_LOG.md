@@ -12045,3 +12045,78 @@ to be.** It was aimed at starvation, which is measured on my own units.
 The reason I did not run it earlier is that the bob result was interesting and the carol
 result was not — which is the same selection pressure that skips a manipulation check on a
 favourable headline.
+
+## API SWEEP — an entire game mechanic has gone unused for 29 iterations
+
+Phase 0 item 2 requires periodically sweeping `RobotController` for methods the bot never
+calls, because "a whole game mechanic sat unused for 81 iterations once". I had not done it
+this project. Done now, from `javap` on the engine jar, cross-referenced against
+`src/alice/RobotPlayer.java`: **37 of 68 methods are never called.**
+
+Most are unremarkable (`getMapWidth`, `setIndicatorDot`, `resign`). Three groups are not.
+
+### 1. RESOURCE PATTERNS — never marked, never completed, never even queried
+
+```
+canMarkResourcePattern / markResourcePattern
+canCompleteResourcePattern / completeResourcePattern / getResourcePattern
+```
+
+Engine constants, read rather than assumed:
+
+```
+COMPLETE_RESOURCE_PATTERN_COST  = 200      (paint)
+EXTRA_RESOURCES_FROM_PATTERN    = 3        (chips per turn)
+RESOURCE_PATTERN_ACTIVE_DELAY   = 50       (rounds before it pays)
+RESOURCE_PATTERN_RADIUS_SQUARED = 8        (the 5x5 box)
+```
+
+**Pay 200 paint once, wait 50 rounds, receive +3 chips/turn for the rest of the game.** A
+pattern completed at r300 of a 2000-round game returns roughly **4,950 chips** on a 200-paint
+outlay. And unlike a tower it needs **no ruin** — it goes anywhere I hold a 5x5 block of my
+own paint, so the count is not capped by map features.
+
+**This lands exactly on top of today's two measurements, from opposite sides:**
+
+- I am blocked from building units on **87% of sampled rounds** because
+  `money < CHIP_RESERVE`. Resource patterns produce money.
+- My towers sit on **5,600 idle paint** on HungerGames while my army starves. Resource
+  patterns consume paint.
+
+**A mechanic that converts the resource I am hoarding into the resource that is throttling me
+has been sitting unused for twenty-nine iterations.** I have spent today's iterations moving
+chips around inside a budget I never tried to grow.
+
+### 2. `mopSwing` — my moppers have an AoE and only ever use the single-target attack
+
+```
+canMopSwing / mopSwing          MOPPER_SWING_PAINT_DEPLETION = 5
+                                ATTACK_MOPPER_SWING_COOLDOWN = 20
+```
+
+A directional swing that depletes enemy paint across an arc. My documented blind spot for 25
+iterations was that I *cannot take enemy-painted ground*; I concluded splashers were the only
+answer and built an entire archetype around that premise. **The mopper has had an area attack
+the whole time.**
+
+### 3. Messaging — `sendMessage`, `readMessages`, `broadcastMessage`: zero coordination
+
+Every unit in this bot acts on purely local information after 29 iterations.
+
+### What I am NOT going to do with this
+
+Not rewrite the plan on the spot. Three specific cautions:
+
+- **The 4,950-chip figure is arithmetic, not a measurement.** It assumes the pattern is
+  completed, survives, and that `EXTRA_RESOURCES_FROM_PATTERN` stacks per pattern — the last
+  of which I have **not** verified. That is an engine probe, and this lineage has been burned
+  twice today by a confident reading of source.
+- **200 paint is a soldier.** It is the same trade iteration 26 got wrong by −21 net swept,
+  in a different currency, and it must be dosed and measured, not assumed.
+- **Iteration 30b's census is running and iteration 31a is pre-registered.** Neither gets
+  jumped because something shinier appeared; that is precisely the queue discipline I wrote
+  down two entries ago and it would be worthless if a bright idea suspended it.
+
+**Queued as iteration 32, with an engine probe first**, since the stacking question decides
+whether this is worth one pattern or twenty. The sweep itself goes in `RULES.md` and becomes
+a standing check — the reason it found this is that nobody had run it, not that it was hard.
