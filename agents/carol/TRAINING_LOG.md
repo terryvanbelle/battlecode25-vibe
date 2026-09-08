@@ -11651,3 +11651,67 @@ time*, which requires standing near an axis.
 census.** The fix is a terrain memory so refutation does not require simultaneous visibility, which
 is a real piece of infrastructure (§2: "infrastructure first") and the right next build. Carrying
 it forward rather than evaluating a mechanism I have measured as barely running.
+
+## Carol's census noise floor, measured: **sd 6.48 games per 150 (106% of binomial)**
+
+Run `20260908-173918`, `carol_phase` vs `carol_iter36` — policy-identical, one character apart
+(PRNG seed `+13` -> `+14`), full corpus, 150 games.
+
+| | |
+|---|---|
+| arm total | **74/150, margin −2** |
+| maps decided the same from BOTH sides (survive a phase change) | **33/75 = 44%** |
+| maps split by side (still a coin flip) | 42/75 = 56% |
+| Var(single-game S) from the 75 paired records | **0.2800** |
+| **sd of a 150-game total** | **6.48 games = 106% of binomial** |
+
+**The trap, disarmed as pre-committed.** The arm totals came back 2 games apart. Before the run I
+wrote that this would be the convenient reading — "carol's noise is near zero, my original gate was
+fine" — and that I would reject it. I reject it. A margin of −2 between policy-identical arms is
+almost exactly what binomial predicts; an outcome that probable under a hypothesis cannot even
+weakly reject it. The floor comes from the per-map variance, which says 6.48, not from the totals,
+which say nothing at all.
+
+**Carol's chaos is WORSE than the lineage I would have inherited from** — 106% of binomial against
+their 78%, and 44% of maps surviving a phase change against their 51%. Inheriting 4.80 would have
+set my gate about a third too loose. This is why the coordinator said to calibrate rather than
+inherit, and it is the concrete payoff of having done so.
+
+### The gate, replacing the one I got wrong this morning
+
+**On MARGIN (wins − losses) over a 150-game full-corpus census:**
+
+- **ACCEPT >= +13** (2.0 sd)
+- **REPLICATE +9 .. +12**
+- **REJECT <= +8**
+
+My pre-registered census gate hours ago was "ACCEPT above 75/150" — margin >= +1, when the noise is
+±6.5. It would have accepted pure phase noise better than half the time it came up positive.
+
+### An internal check that says my own estimator is conservative
+
+`Var(S) = 0.2800` **exceeds the binomial maximum of 0.25**, which is impossible for genuine
+Bernoulli noise. So the estimator is picking up something systematic, and it is identifiable: the
+per-map difference `d = Sa − Sb` conflates PRNG chaos with **deterministic spawn-side advantage**.
+A map that always goes to the A side regardless of bot contributes `d² = 1` every time while
+contributing *zero* variance to the 150-game total.
+
+So **6.48 is an upper bound on the chaos floor, not a point estimate**, and the >100% reading is
+the tell rather than a curiosity. I am adopting it anyway and deliberately: a conservative floor
+makes a strict gate, which trades type-II risk for type-I protection — and after a day in which two
+mechanisms measured unambiguously real and converted to nothing, type-I protection is exactly what
+this lineage needs. Separating the two terms cleanly needs the same pairing run twice at different
+phase, which is another 150 games and is not worth it while the bound is this usable.
+
+### Re-scoring today's verdicts against the measured floor
+
+| iteration | margin | sd from zero | verdict then | verdict now |
+|---|---|---|---|---|
+| 42 (radial exploration) | **−10** | −1.54 | REJECT | **REJECT**, unchanged |
+| 41 (SRP, run 1) | +4 /100 | — | UNRESOLVED | rejected on replication, unchanged |
+| 41 (SRP, replication) | −6 /100 | — | REJECT | **REJECT**, unchanged |
+
+Every verdict stands. But iteration 42's −10 is **−1.54 sd**, not the crushing refutation "70/150
+on an exact census" made it sound like this afternoon, and I should say so: it is a clear reject
+under the gate and a moderate one in effect size. The falsification of the tether that came out of
+it rests on the deaths and starvation measurements, which are direct and large, not on the margin.
