@@ -10878,3 +10878,53 @@ property of the two currencies that RULES.md had recorded from the start.
 **Operational rule, added to the ledger: when the explanation of a result is a claim about a
 resource, check the resource's own production identity in `RULES.md` BEFORE reaching for a
 story about the bots.** One grep would have beaten two narratives.
+
+## REJECT iteration 27 — and the tower-mix knob is now SETTLED, with a three-point curve
+
+| money share | build | census vs `alice_iter25` | SW / SL | net swept |
+|---|---|---|---|---|
+| 25% (`& 3 == 0`) | `alice_i26b` | 54/150 = **36.0%** | 8 / 29 | **−21** |
+| 50% (`& 1 == 0`) | `alice_iter25` | — (baseline) | — | 0 by definition |
+| **75% (`& 3 != 0`)** | `alice_i27` | **73/150 = 48.7%** | 16 / 18 | **−2** |
+
+Gate is net swept > 0. **−2. Reject.** `src/alice` stays at `alice_iter25`. 0 exceptions,
+margin identity OK.
+
+Three points, each a full 75-map census, so no point on this curve is a sample. Doctrine
+rule 2 asks for a dose-response with a zero arm and says a curve that peaks in the middle is
+stronger evidence than any single point. **This one peaks in the middle**, and the knob is
+closed: there is no ratio left worth a run. `& 7` was already dead; `& 3 != 0` is now dead
+in the other direction.
+
+### But the curve is not a symmetric peak — it is a PLATEAU and a CLIFF, and that is the finding
+
+−2 on 34 decisive maps is a coin flip; −21 on 37 is not. So the shape is:
+
+```
+ money share   25% ................ 50% ......... 75%
+ net swept     -21                    0             -2
+               |<--- CLIFF --->|<---- PLATEAU ---->|
+```
+
+**Halving my money towers costs 21 swept maps. Halving my paint towers costs approximately
+nothing.** The bot is nearly insensitive to losing a quarter of its paint production and
+catastrophically sensitive to losing a quarter of its chip production.
+
+That is the compounding asymmetry showing up as a *measured slope* rather than as an
+argument from `RULES.md`: chips buy towers and towers produce both currencies, so cutting
+the compounding currency compounds the damage, while cutting the purely consumptive one is
+absorbed. **This is the corroboration doctrine rule 13 asks for, and it is genuinely a
+second place** — the RULES.md production identity and this slope are independent of each
+other in a way that swept maps and the head-to-head margin were not.
+
+### What I am NOT going to conclude from the plateau
+
+The tempting reading is "a quarter of my tower slots contribute nothing, so paint towers are
+near-worthless at the margin". I have just spent an evening on exactly that class of
+inference and been wrong twice, so: the plateau says the *optimum is flat between 50% and
+75%*, which is what a balance point looks like from one side. At 75% money the binding
+constraint has presumably moved back onto paint — that is why the curve stops rising rather
+than continuing — and pushing further would fall off the other side. A flat top is evidence
+of a balance, not of a useless input.
+
+**The knob is settled at 50/50 and iteration 28 must look somewhere else.**
