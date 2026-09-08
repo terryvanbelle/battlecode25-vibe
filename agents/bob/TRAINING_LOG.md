@@ -12760,3 +12760,45 @@ is most likely to read flat, flat now means "instrument cannot see it" rather th
 and the decision will rest on the subset read, the tower-census mechanism reading, and the tournament.
 I am recording that expectation now precisely so that a flat result cannot later be told as a clean
 close, and a positive one cannot be told as a clean win.
+
+### The tournament baseline for iteration 33's prediction, measured BEFORE the 01:00 UTC run
+
+Per doctrine `9061b80`, a claim of the form "we are worse than others at X" can only be tested in the
+tournament, so I measured X there. Pooled over all five tournaments on disk (1,208 bob games):
+
+```
+  bob win rate by map ruin count            wins/games     win%
+      <= 6 ruins                              40/64        62.5%
+      7-8                                     89/132       67.4%
+      9-14                                   224/304       73.7%
+      15-24                                  387/500       77.4%
+      25+                                    184/208       88.5%
+```
+
+**Monotone across all five buckets, 62.5% -> 88.5%, a 26-point spread.** Pooled to the cut I had
+already fixed: **65.8% on <=8 ruins vs 78.6% elsewhere, a 12.7-point deficit at z = -3.51.**
+
+**This is the check last night's parity finding FAILED and this one passes.** There I had to argue that
+a flat middle was consistent with a threshold effect at skew exactly 1.0 — a real argument, but one
+made *after* seeing that the gradient was absent. Here the gradient is present, ordered correctly, and
+across five buckets; exact monotonicity by chance alone is 1 in 120.
+
+And it is not static. Per tournament, the ruin-poor gap runs **+2.7, -10.7, -26.7, -15.4**: the deficit
+opened as the siblings improved. That is the signature of a weakness *other lineages learned to
+exploit*, which is precisely the class the doctrine says self-play cannot see and only the tournament
+can.
+
+The mechanism reading agrees with the gradient at both ends, which is what makes me believe it rather
+than the correlation: at **25+ ruins bob wins 88.5%** and the replay shows it reaching 15 towers with
+paint to spare; at **<=6 ruins it wins 62.5%** and the replay shows it pinned at the two towers it
+started with for the entire game.
+
+**So the tournament prediction registered above now has a number attached**: if iteration 33's
+mechanism is right, the <=8-ruin bucket should close some of its 12.7-point gap against the rest of the
+corpus, and the per-tournament series should stop deteriorating. I am not predicting a specific size —
+the ladder has not even reported yet, and naming a size now would be a number I could later shade.
+
+(Noted without investigating: `9061b80` describes another lineage finding a monotone map-property
+gradient at z = -8.44 and turning it into the project's largest accept. I do not know which property
+that was and will not look. The parallel is worth recording only as evidence that this *class* of
+analysis — a gradient over a map property, measured in the tournament — is where the value has been.)
