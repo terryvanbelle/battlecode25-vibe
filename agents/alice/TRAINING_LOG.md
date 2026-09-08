@@ -13930,3 +13930,41 @@ accepted**, because its true effect is far below the floor.
 I am keeping arm A in the screen anyway, as the **control**: it holds the rate constant while
 removing the ID dependence, so if `i38b` beats it, that difference is the *rate* rather than the
 determinism fix.
+
+## Should I ship `alice_phase`? No — and the reason is worth stating, because +12 is my own bar
+
+The second half of run `20260908-174022` has `alice_phase` beating `alice_i37a` as well
+(+6 on the 38 maps complete at the time of writing, 57.9%), which corroborates rejecting
+iteration 37a from a second direction.
+
+But it leaves a genuinely uncomfortable question: **`alice_phase` scored +12 against the
+shipping bot — exactly the threshold I just set — so why not ship it?**
+
+**Because it has no mechanism, and its +12 is a property of these 75 maps.** The change is one
+digit in a seed constant. It does not make the bot do anything better; it re-rolls a fixed
+opening and this particular re-roll happens to land well **on the corpus I measure against**.
+Adopting it would be:
+
+- **Overfitting to a fixed map set** — the same error my charter forbids when it bans a
+  hand-picked standing `MAPS` list, and the same error it names for tuning against a fixed
+  external benchmark. The corpus is the instrument; tuning the instrument's readings is not
+  progress.
+- **Fragile in the precise way a mechanism is not.** The value depends on starting-tower IDs,
+  which depend on the map file. Any engine change, map change, or reordering of spawns
+  re-rolls it again, in an unknown direction.
+- **Unfalsifiable as a claim about the bot.** There is no statement of the form "the bot now
+  handles X better" that this change makes true.
+
+Contrast iteration 30, which also measured +12: it had a mechanism (walk to a tower when out of
+paint), an independent full census, and a **24-point head-to-head move against bob** in the
+tournament — three instruments, one of which is played against opponents my lineage did not
+produce.
+
+> **A margin is evidence about a bot only when something other than the margin explains it.**
+> Same number, opposite verdicts, and the difference is entirely whether there is a mechanism
+> behind it. Recording this because the temptation was real: it is the largest number I
+> produced today and it cost one character.
+
+What `alice_phase` *is* good for is what I built it for — measuring the floor — and as the
+motivation for iteration 38, which attacks the same opening **with** a mechanism by deleting
+the hidden parameter rather than choosing a lucky value for it.
