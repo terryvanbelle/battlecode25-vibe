@@ -11715,3 +11715,185 @@ Every verdict stands. But iteration 42's −10 is **−1.54 sd**, not the crushi
 on an exact census" made it sound like this afternoon, and I should say so: it is a clear reject
 under the gate and a moderate one in effect size. The falsification of the tether that came out of
 it rests on the deaths and starvation measurements, which are direct and large, not on the margin.
+
+---
+
+# Iteration 44 — DENIED RUINS. The deficit tracks RUIN COUNT, not map area.
+
+## Where this came from: the stall protocol, run properly for once
+
+Iteration 43 left me with no working theory (the tether is falsified for soldiers; radial
+exploration fired tenfold and converted to nothing). TRAINING_ALGORITHM's "when the loop stalls"
+says: re-examine the cross-lineage tournament games before inventing a mechanism. I did that first
+this time, and it produced the sharpest result this lineage has had.
+
+## The finding: carol's win rate falls monotonically in RUIN COUNT
+
+Pooled over **1,208 tournament games** (every complete round-robin so far, carol vs both other
+lineages), bucketed by the map's claimable-ruin count from `tools/mapdata/ruin_parity.txt`:
+
+| ruins | carol | |
+|---|---|---|
+| <= 11 | 134/308 | **43.5%** |
+| 12-17 | 106/304 | **34.9%** |
+| 18-23 | 75/324 | **23.1%** |
+| >= 24 | 38/272 | **14.0%** |
+
+**Cochran-Armitage trend z = -8.44.** It replicates in each of the three most recent tournaments
+independently, and it holds separately against *both* other lineages (vs alice 57.9 -> 14.7%;
+vs bob 71.1 -> 23.5%), which is two independent instruments agreeing.
+
+**And it is NOT the "large map deficit" I have been chasing since iteration 38.** Holding ruin
+count fixed, area does almost nothing (latest tournament, vs alice):
+
+| | few ruins (<=16) | many ruins (>16) |
+|---|---|---|
+| small area (<=1350) | 51.7% | 41.7% |
+| large area (>1350) | **50.0%** | **20.3%** |
+
+Small-area/few-ruin 51.7% vs large-area/few-ruin 50.0% — **area alone costs nothing.** Every
+iteration from 38 onward that framed the problem as "large maps" was conditioning on the wrong
+variable, and area only looked like the cause because it is collinear with ruin count.
+
+## The mechanism, read out of the replays rather than inferred
+
+`nearestEmptyRuin()` sends a soldier to the nearest unclaimed ruin; `workOnRuin()` paints its 5x5
+tower pattern. Three engine facts already in `RULES.md` combine into a trap:
+
+1. A **soldier cannot overwrite enemy paint** (soldier attack [E]).
+2. Pattern completion is **exact** — all 24 non-centre tiles must hold the right colour
+   (`GameWorld.checkPattern`).
+3. Only a **mopper** removes enemy paint, and only a **splasher** overwrites it in bulk.
+
+So **one enemy-painted tile inside the 5x5 makes a ruin permanently impossible for a soldier.**
+carol fields `mop0` on every tournament map I sampled, and her splashers are not steered at
+patterns, so nothing ever clears it.
+
+The incumbent detects none of this. It holds the soldier there for `RUIN_PATIENCE = 40` turns and
+then remembers exactly **one** banned ruin (`ruinBanned` is a single slot), so on a ruin-rich map
+the soldier walks to the next denied ruin and the previous ban is overwritten.
+
+**Measured on carol's own indicator strings in the 20260908-1300 replays** — soldier-turns that
+are IDLE while holding a ruin target, as a share of ALL soldier turns:
+
+| map | ruins | blocked-at-ruin | painting |
+|---|---|---|---|
+| BatSignal | 14 | 24.8% | 6.4% |
+| AlarmClock | 20 | 35.5% | 6.3% |
+| Rose | 30 | **43.2%** | 12.0% |
+
+The waste scales with ruin count, which is the gradient. And **97.4% of carol's idle soldier-turns
+on Rose are IDLE-ENEMY, not IDLE-ALLY** — the soldiers are not lost, they are blocked.
+
+### The discriminating check, because "enemy paint nearby" is not "enemy paint in the pattern"
+
+`IDLE-ENEMY` counts enemy tiles within the soldier's action radius (r2=9), which is larger than the
+5x5. That is a different claim from the one I wanted to make, so I dumped the arena instead of
+naming the fault from the symptom. Ruin **(20,26) on Rose at round 176**:
+
+```
+y=28: a A A A a          a/A = carol primary/secondary
+y=27: A A s A A          b/B = alice primary/secondary
+y=26: A a o s A          o = ruin, s = carol soldier, M = alice MOPPER
+y=25: A b b A A     <--- two alice-painted tiles at (19,25) and (20,25)
+y=24: M A A A *
+```
+
+The pattern is complete carol paint **except two alice tiles**, with an alice mopper parked beside
+it. carol's soldiers orbited that ruin from round 62 to past round 210. Consequence on that game:
+**carol finished with 2 towers against alice's 18**, coverage 165 vs 667.
+
+## Iteration 44: the change
+
+A **gate correction**, not new work. `nearestEmptyRuin()` accepts ruins it can prove uncompletable.
+
+1. `workOnRuin`'s existing pattern scan (which already fetched all 25 MapInfos, and which iteration
+   29 already taught to recognise an enemy-painted tile in order to skip it) now also **counts**
+   those skips. If the pattern is marked and any tile of it holds enemy paint, the ruin is DENIED.
+2. A denied ruin is banned **immediately** instead of after 40 dead turns.
+3. `ruinBanned` (one slot) becomes an **8-slot ban set** with the same 250-round expiry.
+
+It spends **zero paint** — it only changes which ruin a soldier commits to. That matters because
+the ledger closes *"spend idle soldier turns on additional work"* as a class and permits re-opening
+only at literally zero paint cost. This does not even consume the idle turns; it prevents them.
+
+## PRE-REGISTERED GATE — written before any evaluation game was run
+
+**Instrument**: full-corpus CENSUS, 150 games, `carol_i44_a` vs `carol_iter36`.
+
+**Primary, on MARGIN (wins - losses)**, against carol's own measured chaos floor (sd 6.48/150,
+run `20260908-173918`):
+
+- **ACCEPT >= +13** (2.0 sd)
+- **REPLICATE +9 .. +12**
+- **REJECT <= +8**
+
+**Pre-registered secondary (stated in advance so it is not back-filled):** the margin on maps with
+**>= 18 ruins** exceeds the margin on maps with **<= 17 ruins**. The mechanism has no fuel on
+ruin-poor maps, so if the gain is flat in ruin count the headline is not this mechanism.
+
+**Named weak link — the one that killed iteration 42.** Link 2 is *blocked turns fall -> more
+towers completed -> more coverage*. Iteration 42 cut IDLE-ALLY 71% -> 6.8% and bought nothing.
+**If the decision counters fire but towers-built does not rise, I REJECT**, and record that
+idleness-removal converted to nothing for the SECOND time — which would be a finding about carol's
+whole loop rather than about this mechanism.
+
+## Pre-flight (link 1), before spending the census
+
+Per my own rule, no gauntlet until the mechanism is measured firing. `carol_i44_a` vs
+`carol_iter36` on **Rose** (30 ruins), one game:
+
+| | `carol_i44_a` | `carol_iter36` |
+|---|---|---|
+| towers at r450 | **8** | 2 |
+| coverage at r450 | **644** | 73 |
+| tower paint at r450 | **3,636** | 65 |
+| blocked-at-ruin (all soldier turns) | **2.8%** | 43.2% |
+| turns actually painting | **22.1%** | 12.0% |
+| result | **win, r494** | |
+
+Decision counters: `dn` (denial bans) up to **5 per soldier**, `bs` (ruins skipped as banned) up to
+**56**, and — the load-bearing one — `bp` (**peak simultaneously-live bans) = 6**. The incumbent's
+single slot would have forgotten five of those six. That is the direct evidence that the
+one-slot ban is the ruin-count-dependent defect, rather than a plausible story about one.
+
+Link 2 also moved in the probe (towers 8 vs 2), which is exactly what iteration 42 never had.
+One self-play map is not the evaluation; the census is.
+
+### Ablation arms built and PRE-REGISTERED now, before the census returns
+
+Both compile; neither has been run. Queued behind the census and conditional on it accepting.
+
+- `carol_i44_ban` — the 8-slot ban set **only**. The denial test still runs and still increments
+  `dn`, but does not ban; the only thing that fills the set is the old 40-turn timeout.
+- `carol_i44_den` — early denial detection **only**, `BAN_CAP = 1`. Bans the instant a pattern is
+  denied, but remembers one ruin, so it can ping-pong between two denied ruins forever.
+
+**Pre-registered prediction: neither arm recovers most of `i44_a`'s margin — the two halves are
+one mechanism.** The probe's `bp = 6` says at least two slots are genuinely needed, which cripples
+`i44_den`; and the 40-turn park is the direct waste, which cripples `i44_ban`. If instead one arm
+matches `i44_a`, the other half is dead weight and should be removed rather than carried.
+
+### Tooling report — `replay-dump.sh` resolves the engine jar by HIGHEST VERSION, not by `engine_version.txt`
+
+`tools/replay-dump.sh:39` resolves the engine as
+
+```bash
+BC_JAR=$(find ~/.gradle -name 'battlecode25-java-*.jar' | grep -v source | sort -V | tail -1)
+```
+
+This is the exact pattern `RULES.md` records as a hazard and that `tools/engine-jar.sh` was written
+to remove: battlecode-dev's gradle cache holds **both** `1.0.0` and `3.1.0`.
+
+**Discriminating check before naming it, because "wrong resolver" and "wrong result" are different
+claims.** The cache today holds exactly those two jars; `sort -V | tail -1` returns `3.1.0`; and
+`arena/engine_version.txt` says `3.1.0`. So the two agree, and **the defect is latent, not live**:
+every replay measurement in this iteration was taken on the correct engine, and none of today's
+findings is in doubt. It diverges only if a jar higher than the pinned version ever lands in the
+cache, or if `engine_version.txt` is pinned below the highest cached jar — at which point it fails
+**silently**, which is the property that makes it worth reporting rather than watching.
+
+`engine-jar.sh` itself is sound: it searches for the exact filename `battlecode25-java-${WANT}.jar`
+derived from `engine_version.txt`, so it cannot resolve a mismatched version. The one-line fix is
+for `replay-dump.sh` to use the same exact-version name (or `engine-jar.sh --remote`) instead of
+`sort -V | tail -1`. Not patched here: `tools/` is coordinator-owned.
