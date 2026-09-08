@@ -1499,3 +1499,60 @@ did not produce, is the strongest support that accept has ever had. It still doe
 **Rule: read the "What played" section of the tournament report before reading its numbers.** A
 lineage that commits several accepts between tournaments is always looking at a stale bot, and the
 staler it is the more confidently it reads as a live finding.
+
+## A gate that FIRES is not a gate that MATTERS — 50x the mechanism, 7% of the outcome
+
+My reachability doctrine says: before building a mechanism, check the gate can actually fire.
+Iteration 38 passed that check twice over — the decision fired 5,007 times at a 93% hit rate, and
+paint transfers rose **fiftyfold**, from 94 to 4,758.
+
+It reduced starvation deaths by **7%**.
+
+Fifty times the refilling, and the units starved anyway. The doctrine answered "can this run?"
+and I heard it as "is this the constraint?" Those are different questions and only the first is
+cheap. **Reachability is necessary and nowhere near sufficient**, and the gap between them is
+where a 100-game run goes.
+
+The tell was available in advance and I did not compute it: the mechanism's *ceiling*. A refill
+moves paint from a tower to a unit. It creates no paint. So the most it could ever do is
+re-allocate a fixed budget — and re-allocating a budget cannot increase the total work done
+unless the old allocation was wasting some. I never asked what the ceiling was, only whether the
+gate would open.
+
+**Rule: alongside "can this gate fire?", compute "if this gate fired on every eligible turn, how
+much could the outcome move?" If that number is small, the reachability check is irrelevant.**
+
+## Ask how the bot ALREADY solves the problem before adding a second mechanism for it
+
+Iteration 38 added return-to-refill because 88% of carol's deaths are starvation. What I never
+asked is how carol's units get paint *today*. The answer was two lines of a replay trace:
+
+```
+round 39  soldier id10270  (9,35)  paint=7    SPAWN id12046(T1,PAINT_TOWER) at (9,34)
+round 41  soldier id10270  (10,35) paint=199
+```
+
+The soldier spends itself down to 7 paint converting a ruin into a paint tower, then refills from
+the tower it just built. **Carol's soldiers do not travel to refill points; they manufacture
+them.** The loop is local, the walk is zero, and the trip leaves a tower behind. That is why the
+incumbent needs 94 transfers where my version needed 4,758 to do worse.
+
+My mechanism did not fill a gap. It **competed with a better mechanism already in place**, pulling
+low-paint soldiers off the ruins they were converting — soldiers built doubled (64 -> 128) while
+towers alive fell 24%, which is that displacement written in numbers.
+
+**The generalisation is uncomfortable, because I have a routine for the opposite error.** The
+Phase 0 API sweep is a disciplined search for capabilities the bot *never uses* — and it found
+messaging, correctly. There is no matching routine for capabilities the bot *already uses well*,
+and that asymmetry biases every iteration toward addition. An unused API method is visible in a
+grep; a working loop is invisible unless you trace a single robot for forty rounds, which costs
+one cached dump and which I had never once done before this iteration.
+
+**Rule adopted: before adding a mechanism for problem X, trace one robot end-to-end and write
+down how the bot solves X today — even if the answer is "it doesn't".** If there is an existing
+loop, the new mechanism must be argued against *it*, not against nothing.
+
+**Corollary that sizes it:** the incumbent's loop is a *pump* (a soldier trip produces a tower)
+and mine was a *drain* (a soldier trip consumes tower paint). When a bot has a mechanism that
+creates the scarce resource, a mechanism that merely moves it around is competing for the same
+unit-turns at strictly worse value.
