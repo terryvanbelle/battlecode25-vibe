@@ -1260,3 +1260,59 @@ ruin and never of time" — true only because `workOnRuin` *recomputes* the type
 `canCompleteTowerPattern`. `getTowerPattern` lets the type be read back off the marks already
 on the ground, which is where the decision was recorded in the first place. **Before treating a
 constraint as binding, find the line that imposes it.**
+
+## 31. The binding resource is a property of the MAP, and it inverts (2026-09-08)
+
+Measured at the spawn decision point, in-bot (`src/bob_sprobe`), share of tower-turns on which
+the spawn was refused for want of chips:
+
+```
+map          r200    later             paintBlock (later)
+memstore     90.0%   78.5% (r600)         17.5%
+Justice      51.3%   23.5% (r400)         74.5%
+Flower       38.8%    8.7% (r600)         88.7%
+DonkeyKong     --     7.5% (r2000)        88.6%
+Dominoes      0.0%    0.0%                97.5%
+```
+
+On Dominoes the bot is **never** chip-limited and almost always paint-limited. On memstore it is
+the reverse for the whole game. This is not a fact about the bot; it is a fact about the map,
+and any global constant that assumes one regime is wrong on the other.
+
+**Three consequences, in increasing order of how much they cost me.**
+
+**1. A strategy fact.** A single global tower-mix or reserve constant cannot be right, because
+the resource it trades against is not the same resource on every map. This is the strongest
+case this lineage has yet produced for the design preference both predecessor projects reached
+independently: *self-calibrating thresholds beat fixed constants for opponent- and map-variable
+behaviour*. Deriving the threshold from what a tower can observe about its own refusals is
+strictly better than searching over more constants, and the refusal counter is already written.
+
+**2. Three agreeing maps are not a corpus.** I sized "chips are slack" on DonkeyKong, Flower and
+Dominoes. All three agreed. All three were right. **memstore is the exact opposite** and the
+premise died on a 150-game run. TRAINING_ALGORITHM.md §3 says *"a quantity measured on one map is
+a statement about that map until you check it elsewhere"* — I read that as "use more than one
+map" and satisfied it. The real content is **span**, not count: three maps that agree tell you
+less than two that disagree, because agreement among a small sample is exactly what a
+regime-dependent quantity produces when the sample lands inside one regime.
+
+**3. Post-decision measurement: doctrine 15 in a different coordinate.** My premise rested on
+$132,014 of chips unspent at r2000. That number is correct. It is also taken **after the game is
+decided** — the map is full by ~25% of game length, coverage peaks near r150 (§18: every game is
+settled on coverage), and the probe shows chip-blocking is an early phenomenon that decays as
+the game goes on. So chips bind exactly when it matters and release exactly when it stops
+mattering, and measuring the endgame captures only the half where the answer is "slack".
+
+Doctrine 15 warns about reading robot state recorded *after the action*. This is the same error
+one level up: reading team state *after the decision that state was supposed to explain*. The
+tell is identical — a quantity that looks abundant precisely because the thing that consumes it
+has already finished. **When a resource looks free, ask when it looked free, and compare that to
+when the game was decided.**
+
+**And the finding that came out of it is worth more than the iteration was.** The spawn gate is
+`chips >= cost + reserve` with `reserve = 1200` (1450 for a soldier), and memstore's treasury
+sat at a mean of 1000-1350 for the entire game — **pinned just below my own gate**. On
+chip-limited maps it is not the economy refusing to spawn, it is a constant I wrote in iteration
+0 and never measured. A resource pinned in a dead band is one of the two absolute degeneracy
+signals the algorithm names, and it took a decision-point probe to see it, because from outside
+the bot "treasury sits at 1200" and "treasury cannot afford anything" look the same.
