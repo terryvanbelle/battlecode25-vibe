@@ -11148,3 +11148,78 @@ monotone `iter36 > i41_a > i41_b` says SRPs cost more than they pay and the mech
 Honest caveat carried into the verdict: one pre-flight game is a mechanism check, **not** evidence
 of strength, and I am not counting that round-867 win as anything.
 
+## Standing target, established from the sanctioned channel: carol is a SMALL-MAP bot
+
+Computed while the iteration-41 gauntlet ran, from `tournaments/20260908-1300/results.csv` — 300
+carol games against opponents this lineage did not produce.
+
+| | vs alice | vs bob | all |
+|---|---|---|---|
+| small maps (area < 2000) | 42/94 = 44.7% | 61/94 = **64.9%** | 103/188 = **54.8%** |
+| large maps (area >= 2000) | 14/56 = **25.0%** | 19/56 = **33.9%** | 33/112 = **29.5%** |
+
+**Carol is above 50% on small maps and under 30% on large ones**, and the ~25-point gap reproduces
+independently against both opponents, which rules out its being a quirk of one rival's style. My
+own gauntlets have shown the same split repeatedly (iteration 40: 56.7% small, 25.0% large) but
+those are self-play; this is the cross-lineage version and it agrees.
+
+This is the largest, best-measured, most durable deficit the lineage has, and it is exactly what
+the tether account predicts: carol's territory is bounded by refill range, so on a bigger board the
+same reachable area is a smaller *fraction*, and coverage is what decides 99.7% of games. It is the
+standing target from here.
+
+Noted as a reading instruction for the iteration-41 verdict: SRP paint income should help *most*
+where paint is spread thinnest, so **if iteration 41 works at all, the large-map arm should move
+more than the small-map arm.** If it improves only on small maps it is not touching this problem.
+
+## Groundwork for the standing target: on a large map, carol's soldiers PAINT on 6% of their turns
+
+Measured locally from `carol_iter36`'s indicator strings on `TheBest` (60x60, 48 ruins), the
+incumbent build, no VM cost:
+
+| | `carol_iter36` |
+|---|---|
+| soldier-turns | 5,484 |
+| turns with a ruin targeted | 1,778 = **32.4%** |
+| distinct ruins ever targeted | **21 of 48** (11 towers actually built) |
+| **IDLE-ALLY** (nothing paintable in r^2=9, surrounded by OUR paint) | 2,697 = **49.2%** |
+| IDLE-ENEMY | 1,663 = 30.3% |
+| actually painting (`pnt` + `slf`) | 315 = **5.7%** |
+
+**Half of every soldier's life is spent standing inside our own finished territory with nothing to
+do, and under 6% of turns produce paint.** That is the large-map deficit stated as a mechanism.
+
+The cause is in `newExploreTarget()`: it samples **four uniformly random map coordinates and keeps
+the farthest**. It has no notion of where unpainted ground is. On a small map a random target is
+near, so the dead walk is short; on a 60x60 board the soldier crosses dozens of turns of its own
+paint to reach a point chosen for no reason. **This is why the deficit scales with map area** —
+the same mechanism, priced by the length of the walk.
+
+Iteration 14 already identified idleness and added the persistent far target, which fixed
+*local* random-walking. It did not make the target *informative*, and the measurement above is what
+is left over.
+
+Two consequences worth recording now:
+
+1. **Iteration 41 should reduce IDLE-ALLY as a side effect**, because an idle soldier standing in
+   our own territory is exactly the soldier that can lay a resource pattern. That is an
+   independent, pre-registered-in-advance reason to expect the large-map arm to move more than the
+   small-map arm, and it is checkable in the verdict.
+2. **Iteration 42's target is the explore target itself** — making it point at the frontier rather
+   than at a random coordinate. Noting the trap in advance: iteration 39 steered *splashers* to the
+   frontier and stranded them beyond refill range. Soldiers carry their own pattern work and are
+   the unit that must be at the frontier, but the paint tether applies to them too, so the dose
+   must be on *target selection*, not on pushing units past their refill range.
+
+**And it scales with area, which is the claim that matters.** Same build (`carol_iter36`), same
+instrument, two maps:
+
+| map | area | IDLE-ALLY share of soldier turns |
+|---|---|---|
+| `rain` | 30x30 = 900 | **1.4%** |
+| `TheBest` | 60x60 = 3,600 | **49.2%** |
+
+Four times the area, thirty-five times the idleness. Two points is not a curve, and I am not
+claiming the exponent — but the *direction* is the one the mechanism predicts, and it agrees with
+the 300-game cross-lineage small/large split (54.8% vs 29.5%) that was measured on completely
+independent ground. Three instruments, one story.
