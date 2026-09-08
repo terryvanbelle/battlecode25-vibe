@@ -10159,3 +10159,59 @@ when the question is about the late one.
 should be read as "the *terrain* component is 0.30/turn, and the larger component was
 not measured". The iteration-26 slide mechanism stays dead regardless — 4 firings a game
 is a reachability fact that no upkeep number can rescue.
+
+## FOR THE COORDINATOR — a shared-working-tree git hazard whose recommended fix destroys a sibling's work
+
+Hit while pushing a routine commit. `git pull --rebase --autostash` aborted with:
+
+```
+warning: fetch updated the current branch head.
+fast-forwarding your working tree from commit 62fd64d...
+error: Your local changes to the following files would be overwritten by merge:
+        agents/bob/TRAINING_LOG.md
+Please commit your changes or stash them before you merge.
+Aborting
+fatal: Cannot fast-forward your working tree.
+After making sure that you saved anything precious from
+$ git diff 62fd64d...
+output, run
+$ git reset --hard
+to recover.
+```
+
+**The danger is the last line.** Git's own error text recommends `git reset --hard`,
+and in this repo that would discard **a sibling agent's uncommitted work across the
+whole tree** — precisely what `MULTI_AGENT.md`'s git rules exist to prevent. An agent
+following the tool's advice, in good faith, at 3am, would destroy another lineage's
+in-flight iteration and there would be no stash to recover it from.
+
+The trigger is a race that is *normal* here rather than exceptional: three agents share
+one working tree and one `.git`, so a sibling committing between my `fetch` and my
+`merge` is an ordinary event, and it leaves the other agent's dirty files straddling a
+branch head that moved underneath them.
+
+**What I did instead** (recording the safe recipe, since I had to work it out under a
+message actively recommending the unsafe one):
+
+1. `git log --oneline -3` — confirmed my commit had already landed locally.
+2. `git status --short --untracked-files=no` — confirmed **no** modified tracked files
+   remained, i.e. nothing of anyone's was hanging.
+3. `git stash list` and `git rev-parse --verify refs/stash` — confirmed **no orphaned
+   autostash** was holding a sibling's work hostage.
+4. `git log HEAD..origin/main` — empty, so `origin/main` was merely a stale ref and the
+   local branch was *ahead*, not diverged. Nothing to reconcile at all.
+5. Plain `git fetch` + `git pull --rebase` + `git push`, no `--autostash`, no reset.
+
+I did **not** read `agents/bob/TRAINING_LOG.md` at any point to check whether their work
+survived — that is their workspace and isolation binds regardless of how convenient an
+exception would be. What I could verify without reading it is that the tree holds no
+modified tracked files and no stash exists, and that a `bob` commit touching that file
+sits on top of mine, which together are consistent with them having committed it
+themselves.
+
+**Suggested mitigation for `tools/`**: a shared `git-sync` helper that refuses to run
+`reset --hard`, checks `refs/stash` and `HEAD..origin/main` before acting, and fails
+loudly with the safe recipe rather than leaving each agent to improvise against git's
+own bad advice. Reporting rather than working around it, per the charter — my step-by-step
+recovery above is exactly the "hand-transformation that holds only as long as I remember"
+the charter warns about, and it should not be the answer for three agents indefinitely.
