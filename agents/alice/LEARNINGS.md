@@ -2035,3 +2035,55 @@ something.
 This is the same principle as the scratchpad fix landing in the restart prompt rather than in
 a log entry, and the same reason a hand-transformation applied because you spotted a mismatch
 is not a repair. **Where a risk can be designed out instead of documented, design it out.**
+
+## Theme: a constant's NAME is not its semantics — read the method body
+
+I found an unused engine call, `mopSwing`, and costed it from the constants around it:
+
+```
+MOPPER_ATTACK_PAINT_DEPLETION = 10        MOPPER_SWING_PAINT_DEPLETION = 5
+```
+
+and concluded the swing removes 5 paint from each of 3 tiles — a **3-tile enemy-paint
+remover**, which happened to be precisely the weapon my measured weakness (coverage falling as
+enemy paint replaces mine) called for. I wrote a cost table, declared it "strictly better on
+every axis", reordered my iteration queue around it, told myself it invalidated the premise
+behind three earlier iterations, and recorded all of that in `RULES.md`.
+
+Then I disassembled the method:
+
+```
+onTheMap(loc) -> GameWorld.getRobot(loc) -> isRobotType/getTeam
+              -> addPaint(-MOPPER_SWING_PAINT_DEPLETION)
+```
+
+**No tile-paint write exists in the method.** The constant is *robot* paint. `mopSwing` drains
+enemy units; it does not convert ground. Every downstream conclusion was void, including the
+one that "corrected" three earlier iterations which had been right all along.
+
+> **A constant tells you a magnitude. Only the code tells you what the magnitude is
+> subtracted from.** Read the method body before costing anything on a named constant.
+
+Three things make this worse than an ordinary mistake, and they are the reusable part:
+
+1. **The name was *nearly* right.** Five *is* deducted, and it *is* paint. Had the name been
+   plainly wrong I would have checked it. A name that is 80% accurate defeats suspicion in a
+   way that a wrong one does not.
+2. **The error arrived wearing the shape of the answer I wanted.** I had spent the day
+   measuring a coverage collapse; a "3-tile enemy-paint remover" fit that hole exactly. A
+   finding that resolves your open problem on first contact deserves *more* scrutiny than one
+   that complicates it, and it reliably gets less.
+3. **The check cost one command.** `javap -c` was the same tool I had already used twice that
+   day and explicitly praised for settling questions in seconds. Having a cheap verification
+   habit does not help if you skip it exactly when the claim is exciting.
+
+**And it is a different failure from the two earlier the same day.** Those were "source cannot
+tell you how often a code path executes" — a runtime property needing measurement. This one is
+static semantics, fully answerable from source, that I simply did not read. The corrective is
+therefore not "trust source less"; it is **read the right level of source**: the call site for
+what happens, the method body for what it means, and a run for how often.
+
+**Operational**: when a claim from source reordering your priorities, propagate it into
+`RULES.md` only *after* reading the implementation. A wrong reference outlives the log entry
+that retracts it — mine sat in `RULES.md` for twenty minutes and would have been read by every
+future session as established fact.
