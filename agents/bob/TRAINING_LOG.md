@@ -8996,3 +8996,56 @@ iteration 20 bought back the games by some other route and the early-collapse mo
 still unexplained — which would be a bigger finding than the recovery, and would become the next
 iteration's target ahead of anything else queued. Recording it now, before the result exists, so it
 cannot be read either way after the fact.
+
+### CORRECTION, issued before the 13:00 tournament lands: that −22 is CONFOUNDED
+
+I wrote the prediction above treating bob's 92.3% -> 70.3% standings drop as a measurement of bob.
+Checking what actually played in each tournament shows it is not:
+
+```
+tournament       bob                 alice                carol
+20260907-1300    iteration 12        iteration 14         iteration 12
+20260908-0100    iteration 18        (later build)        iteration 29
+```
+
+**Carol advanced seventeen accepted iterations between those two tournaments.** The head-to-head
+deltas say the same thing directly: `alice vs bob` moved **+18.7 points in alice's favour** and
+`bob vs carol` moved **−25.3**. A standings delta is a joint measurement of my bot *and* both
+opponents, and here both opponents moved a long way.
+
+So "bob dropped 22 points" is a wrong-referent error of exactly the shape doctrine 5 describes — a
+number correctly computed against the wrong thing. The tell was available and I walked past it: the
+report prints *"What played"* with a commit per bot, and I read only my own line.
+
+**This also corrects something I committed earlier today.** The roster saturation audit says
+`bob_iter11` caught iteration 18 sliding *"which the tournament then confirmed independently with a
+22-point standings drop."* **That confirmation is not independent and not clean.** What survives is
+the frozen-rung evidence alone: `bob_iter11` cannot change, so bob going 50% -> 40% against it is an
+unconfounded regression. The tournament number is consistent with that but does not corroborate its
+size, and I should not have quoted the two together.
+
+**Revised prediction for 13:00 UTC, replacing prediction (1) above.** I am *withdrawing* the
+"recovers toward 90%+" claim: it is unscoreable, because carol and alice will have moved again and I
+cannot separate their movement from mine. Predicting a confounded number is how a lineage talks
+itself into credit for an opponent's bad day.
+
+**Prediction (2) stands and is now the whole of it**, because it is a *shape*, not a level: the
+share of bob's losses that end **inside 500 rounds**, which was 0.0% -> 17.4% -> 25.8%. A shape is
+far more robust to opponent drift than a rate — an opponent that got broadly stronger lengthens and
+shortens games roughly in proportion, whereas a specific early-collapse mode is a spike at one end
+of the distribution. I predict it **falls below 15%**. If it stays at or above 25%, bob has a live
+early-collapse mode that six accepted iterations have not touched, and that becomes the next target
+ahead of anything queued.
+
+**And the mechanism candidate is already in the current bot.** `RUIN_FLOOR = 0` (iteration 18) is
+still live in `src/bob`. RULES.md line 82: at **exactly zero** paint a robot *cannot move* and loses
+`NO_PAINT_DAMAGE = 20` HP/turn — 250 HP soldier, dead in 12.5 turns, unable to walk to a tower.
+`Soldier.run` calls `tryRefill` below 50 paint, but when no tower within vision holds >= 100 paint
+`tryRefill` returns false and the soldier **falls through to ruin work and paints itself to zero**.
+Soldier paint cost is 5 and stashes start at 200, so exact zero is reachable, not a corner case.
+
+**Note the convergence with iteration 27, which I did not design for.** The reason no tower has
+>= 100 paint in vision is that towers spend their paint spawning — which is precisely the trade
+iteration 27's `PAINT_RESERVE` throttles. The spawn-side probe and the tournament loss-shape arrived
+at the same trade from opposite directions. That raises my prior on iteration 27, and it does not
+lower the gate.
