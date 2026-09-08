@@ -8976,3 +8976,201 @@ The alice–bob split count of **9** is also directly useful to me: it says that
 matchup is decided by side on only 9 of 75 maps, so unlike my near-mirror gauntlet
 (17 of 25) the tournament against bob has **most of its resolution intact** — the
 losses there are real, not spawn noise. That sharpens the bob gap as a target.
+
+---
+
+## Iteration 25 — splashers. Reachability pre-check FIRST, pre-registered before the data.
+
+Binding-doc updates absorbed: `MULTI_AGENT.md` now carries the concurrent-session
+rule and records "neither adopt nor delete, report and continue" as the expected
+response to a foreign artefact; `TRAINING_ALGORITHM.md` doctrine 14 now states both
+margin forms. My `LEARNINGS.md` already matches both. Nothing else to do there.
+
+### The question, and why it comes before any census of splash value
+
+I have a repaired scorer and a favourable *ceiling* (3.85 paint/tile on empty
+ground, 5.56 on enemy, against a soldier's 5.00 and impossible-at-any-price). None
+of that matters if a tower can never afford the unit. So the first check is
+reachability of the **spend gate**, not of the splash.
+
+**Reading the code first**, `runTower`'s spawn block:
+
+```java
+if (rc.getMoney() >= CHIP_RESERVE) {
+    UnitType want = (rnd(4) == 0) ? MOPPER : SOLDIER;
+    if (want == MOPPER && rc.getPaint() < SOLDIER.paintCost) want = SOLDIER;   // 200
+    ... canBuildRobot(want, loc) -> buildRobot
+}
+```
+
+The tower **spends the moment it can**: at 200 paint it builds a soldier (or a
+100-cost mopper 25% of the time). Paint above 200 is therefore transient, and
+chips sit at ~$290k so the `CHIP_RESERVE` guard almost never blocks a spawn. The
+prediction that follows: **a single tower's paint oscillates below ~200 and
+essentially never reaches the splasher's 300.**
+
+If that holds, then "add SPLASHER to the spawn choice" is **not** a small change:
+the tower would have to *decline* affordable soldiers and idle while paint climbs
+to 300. The splasher's price is therefore **1.5 soldiers plus the foregone turns
+spent waiting**, and pricing it against zero would be the reallocation error
+doctrine warns about.
+
+### Wrong-referent trap I am deliberately avoiding
+
+The dumper prints `twPaint`, which is the **sum over all of a team's towers**
+(`towerPaint()` sums `lastPaint` for non-robot types). A splasher is built by **one
+tower**, so team-sum is the wrong referent: 16 towers holding 165 each sums to 2640
+while **no single tower can afford anything**. I am measuring a **single tower's**
+paint trace via `--robot <id>`, not the sum.
+
+Naming this in advance because it is exactly the shape that has cost me numbers
+before, and the team-sum figure is the one that happens to be printed.
+
+### Pre-registered decision rule
+
+- **If a single tower's paint essentially never reaches 300** → the splasher is
+  unreachable under the current spend policy, and iteration 25 becomes *"change the
+  spend policy"*, whose cost is measured in displaced soldiers. The splash-value
+  census is then premature and I do not run it.
+- **If it does reach 300 with useful frequency** → the gate is not the obstacle,
+  and the next question is the positioning census (median chosen-centre
+  `splashScore` against the nominal break-even of 10).
+
+Either way the answer is cheap and comes from a replay already on disk.
+
+### My enumeration was REFUTED by the measurement — and it was an enumeration over my OWN code
+
+I predicted, from reading `runTower`, that *"a single tower's paint oscillates below
+~200 and essentially never reaches the splasher's 300"*, reasoning that the tower
+spends the moment it can afford a soldier. Measured on tower `id1` over its full
+2000 turns (`replays/iter24_alice_iter23_UnderTheSea_A.bc25`, `--robot 1`):
+
+| paint | min | p50 | p90 | p99 | max |
+|---|---|---|---|---|---|
+| tower `id1` | 0 | **110** | 200 | **500** | **630** |
+
+| threshold | turns at or above | share |
+|---|---|---|
+| 100 (mopper) | 1192 | 59.6% |
+| 200 (soldier) | 207 | 10.3% |
+| **300 (splasher)** | **106** | **5.3%** |
+
+**Wrong.** The tower is above the splasher's price on 5.3% of turns and reaches
+630. My pre-registered rule says that is the "gate is not the obstacle" branch.
+
+**Why the error matters more than the number.** This was not an inference about
+the engine or the opponent — it was an enumeration over **my own source**, the
+kind of reasoning doctrine explicitly prefers to an experiment ("try to close it by
+enumeration… prefer it to an experiment"). It still failed, because the enumeration
+was over the *code path* and ignored the two conditions that make the build fail
+without spending: `rc.getMoney() >= CHIP_RESERVE` (1450) and `canBuildRobot`
+needing a **free adjacent tile**. Neither is visible in the spend arithmetic I did.
+
+The transferable form: **an enumeration is only as complete as the set of ways the
+branch can fail, and "the action succeeded" is an assumption, not a case.** I
+enumerated what the tower would *choose*; I did not enumerate what could stop the
+choice from taking effect. That is the same gap as instrumenting an outcome instead
+of a decision, running the other way round.
+
+**And the more interesting question is now the one I did not ask.** Paint above 200
+means the tower *wanted* to spend and could not. Two candidate causes, and they have
+very different consequences:
+
+- **chip drought** (`money < 1450`) — an economy problem, and CHIP_RESERVE is mine to tune;
+- **no free adjacent tile** — the tower is **walled in by its own units**, which is a
+  degeneracy ("resource pinned in a dead band") and would connect to the crowding I
+  already measured around moppers.
+
+Pre-registering before I look, so this cannot be fitted afterwards: **if team money
+is comfortably above 1450 during the high-paint turns, the cause is placement
+blocking, not economy.** I have team `$` on the same summary lines, so this costs
+nothing.
+
+### The discriminator answers cleanly — chip drought, not placement
+
+Joining tower `id1`'s paint to team money on the same rounds (2000 rounds, both
+present):
+
+- On the **106 turns the tower ended holding ≥300 paint, team money was below
+  `CHIP_RESERVE` (1450) on 105 of them — 99.1%.** Median money on those turns:
+  1000.
+- For contrast, on turns ending below 200 paint, money was ≥1450 on **65.3%**.
+
+**So the pooling is economic, not placement.** The tower is not walled in by its
+own units; it simply never attempts a spawn, because `rc.getMoney() >= CHIP_RESERVE`
+gates the whole spawn block, and paint accrues untouched while that holds. My
+appealing "walled in by its own crowd" story — which would have tied neatly to the
+mopper crowding I measured earlier tonight — is **refuted**, and I am glad I
+pre-registered the discriminator before looking at it.
+
+### The cap-waste hypothesis: DEAD, sized before it cost anything
+
+`RULES.md`: *"Towers store up to 1000."* Two towers peaked at exactly 1000, so I
+checked whether income was being thrown away at the cap:
+
+| tower | turns at cap (≥1000) |
+|---|---|
+| id1 | 0 (0.0%) |
+| id10276 | 19 (1.0%) |
+| id10934 | 5 (0.3%) |
+| **pooled** | **24 / 5582 = 0.4%** |
+
+At 5–15 paint/turn that is **0.4–1.2 splashers' worth across three towers over a
+whole game.** Negligible. The "removing pure waste" story is the recurring winner's
+profile and it is exactly why I wanted it to be true; the count says no. Fourth
+hypothesis killed by a count today.
+
+## CAUGHT ERROR — my buildability statistic measured POST-SPEND state
+
+I then computed what looked like the decisive number, and it is wrong. Recording it
+because I came within one reconciliation of publishing it.
+
+| unit | cost | ends turn with paint ≥ cost | **AND** money ≥ 1450 |
+|---|---|---|---|
+| MOPPER | 100 | 59.6% | 32.50% |
+| SOLDIER | 200 | 10.3% | **0.10%** |
+| SPLASHER | 300 | 5.3% | **0.05%** |
+
+Read naively this says a soldier is buildable on 1 turn in 1000 — a dramatic
+"absorbing state, measured at last" result. **It is an artefact.**
+
+**The reconciliation that killed it**, run because the two artefacts had to agree:
+0.10% of 2000 turns is 2 opportunities for one tower, ~24 across the team — and
+**572 soldiers were actually built in that same game** (against 156 moppers, a
+78.6% soldier mix). Both cannot be true.
+
+**The defect:** the replay records each robot's state *after* its turn, so paint is
+**post-spend**. Every turn on which a unit *was* affordable and *was* built shows up
+in the data as a low-paint turn. The statistic is therefore conditioned on the
+outcome it is trying to predict, and it systematically under-counts affordability by
+exactly the cases that matter.
+
+This is **"instrument the DECISION, not the outcome"** — my own ledger's rule —
+arriving from a direction I had not seen before: not an in-bot counter placed at the
+wrong point, but a *replay-derived* statistic that is post-decision by construction.
+A replay's per-robot state is an outcome record. It can tell me what a tower *ended
+up* holding; it cannot tell me what it *could have afforded*.
+
+Note also that the chip-drought conclusion above **survives** this correction, and
+it is worth being precise about why rather than discarding the whole session's work:
+"turns that ended rich in paint were turns money blocked the spawn" is a statement
+*about* post-turn state, and is exactly what post-turn state can support. Only the
+inference from it to *buildability* was invalid.
+
+### What iteration 25 actually needs next
+
+An **in-bot tower census** (`src/alice_towercensus`, never `src/alice`) recording, at
+the moment of the spawn decision and before any spend: paint, money, which unit types
+were affordable, which was wanted, and whether `canBuildRobot` succeeded — plus the
+reason it failed. That is the decision, and nothing derived from a replay's
+post-state can substitute for it.
+
+**Pre-registered, before that census is built:** the deciding quantity is
+**P(paint ≥ 300 AND money ≥ CHIP_RESERVE AND a free adjacent tile exists)** evaluated
+*at the decision point*. Under 2% and the splasher is unreachable without changing
+the spend policy, and iteration 25 becomes "change the spend policy", priced in
+displaced soldiers. Over 10% and the positioning census is the next question.
+
+I am explicitly **not** carrying the 0.05% figure into that pre-registration as a
+prior, because it is the artefact above and would bias the reading of a number it
+cannot inform.
