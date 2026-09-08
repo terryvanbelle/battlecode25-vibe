@@ -73,6 +73,21 @@ Still open and unmeasured: `Nav.navTo` tries `rotateLeft` before `rotateRight` �
 a fixed handedness, the same bug class, never tested. Mirror-match is the
 instrument.
 
+> **AMENDED 2026-09-08 by the corpus scan — see §29. The counts above are not
+> corpus facts and they overstate the degeneracy.** `bob-tools/foldscan` read all
+> 75 official `.map25` files and found the parity rule is all-one-type on **4
+> maps, not "every even ruin spacing"**, with a corpus money share of 53.3%. The
+> numbers quoted above (`gridworld 0/9`) cannot be ruin-set counts at all —
+> gridworld has **21** ruins, all even — so they are towers actually built in one
+> game, presented here as a property of the map. The synthetic lattice simulation
+> beside them was over *hypothetical* spacings, never the real corpus. Left in
+> place because iteration 7 replaced parity with an avalanche hash partly on the
+> strength of this paragraph, and that cost 20 points (§13); a reader arriving at
+> that decision needs to see what it was resting on. The *general* lesson — a
+> coordinate expression is not a mixing function — survives; the sizing does not.
+> And note what this paragraph never mentions, which turned out to be the larger
+> defect by an order of magnitude: **mirror symmetry**, 46.4% of all ruins.
+
 ## 4. Measurement discipline
 
 **A strict-majority gate means strict.** Iteration 2 came back at exactly 12/24 =
@@ -1126,3 +1141,57 @@ never tabulated — and the consequence: because rotational symmetry is the *min
 while anything that needs only the enemy half can skip inference entirely. The first tool
 needed the mirror (a ruin and its counterpart), so it had to infer. The beacon does not, so
 it must not.
+
+
+
+## 29. Closing the FIX is not closing the DEFECT (2026-09-08)
+
+Iteration 12 replaced iteration 7's avalanche hash with `((x+y)&1)` and is the largest
+effect this lineage has measured, **+26 points**, justified by team symmetry: "under
+rotation `(x+y)` and `(W-1-x + H-1-y)` share parity **whenever `W+H` is even**." Every clause
+is true, and the conditional is not the corpus — `x` and `W-1-x` share parity iff `W` is odd,
+and **48 of the 75 maps have an even dimension**, where the rule assigns opposite types to
+*every* mirrored ruin.
+
+**I did not discover that today. I measured it at iteration 14 and wrote it in my own log:**
+`bob-tools/BobSym.java`, 30 maps (40%) with a mismatched mirrored pair, team gap 11.0 points.
+Then I built the obvious fix — fold the coordinates into the canonical quadrant — measured it
+offline in three minutes, found it doubled whole-map mix variance, and **closed it**. The
+entry reads, correctly, "no rule dominates."
+
+Eight iterations later I re-derived the entire thing from scratch: same defect, same fix,
+same corpus, a scanner that reproduces the old numbers exactly. I found the old entry only
+after the replacement run was already in flight, by grepping for the *tool's* name.
+
+**The lesson is about the shape of the ledger, not about symmetry.** A closed-directions
+ledger records the *fix* that was killed. But closing a fix quietly retires the *defect* too,
+because the defect now lives only inside an entry whose headline is a rejection — and nobody
+re-reads a rejection looking for an open problem. The 40%-of-maps asymmetry had been measured,
+priced, and abandoned, and no artefact anywhere said "this is still broken".
+
+Three things that follow:
+
+- **Grep the ledger by MECHANISM, not by functional area.** I searched for the iteration
+  number and the area ("tower type") and found nothing; searching for what the change *does*
+  ("fold", "symmetr", "mirror") found it instantly. Closed entries are named after their
+  mechanism.
+- **When you close a fix, state separately whether the DEFECT is closed.** "No rule
+  dominates" closes a fix and leaves a defect standing; those need different words, and one
+  of them should end up in a standing list of known-open problems.
+- **An audit tool is a regression test, not a one-time verdict.** `BobSym` exists precisely
+  to audit `towerTypeFor`. It was run on the hash, and never re-run when iteration 12 put a
+  different rule in the same function. The moment to re-run an audit is when the audited code
+  changes.
+
+**What legitimately re-opens it** (recorded because "I forgot" is not a re-open reason): the
+iteration-14 closure weighed an *unpriced* team gap against an *unpriced* mix deviation.
+Iteration 12 then priced one side and not the other — its +26 was attributed to mix
+mismatch. So the trade the closure adjudicated has since acquired a number on one arm. That
+is new information about the closure's own reasoning, which is the only thing that ever
+justifies re-opening.
+
+**And read this with §3, which it amends.** §3 condemned this same function for a *different*
+defect (mixing), sized that defect from a synthetic lattice simulation plus four per-game
+tower counts rather than the corpus, and never mentioned symmetry. §3 and §28 are about the
+same function and the same corpus and had never cited each other before today — the "two
+rules that ought to cite each other and never do" tell from TRAINING_ALGORITHM.md.

@@ -7698,3 +7698,85 @@ bob_tp1   the fold
    paint costs against paint-tower income on Flower leaves a ~3,200-per-100-round gap I
    cannot yet explain. It does not bear on this iteration, but it is an unreconciled
    residual and doctrine 5 says to say so rather than let it sit unnoticed.
+
+### AMENDMENT to the iteration 22 pre-registration, written BEFORE the run returned: I re-derived a CLOSED direction and mis-stated my own history
+
+Two corrections, and the second is a cost I failed to price.
+
+**1. "Nobody ever evaluated it against the map corpus" is FALSE. I did, at iteration 14.**
+`bob-tools/BobSym.java` measured exactly this and the number is in this log:
+
+```
+                                        old parity rule    new hash
+maps with a mismatched mirrored pair      30 (40%)          73 (97%)
+mean money%-gap between the two halves    11.0 pts          24.0 pts
+```
+
+My fresh scan says 31 maps and a team gap of 46.4% *of ruins*; the older one says 30 maps
+and 40% *of maps* (mine is 41.3% on that denominator). Two implementations written a day
+apart, reading the same flatbuffers by different routes, differing by one map — that is
+corroboration of the parser, and the one-map gap is a symmetry-inference tie-break on a map
+that admits more than one transform. Both say the same thing. **What is new today is not the
+measurement. It is only the replay confirmation and the exact odd/even identity.**
+
+**2. Folding the coordinates is a CLOSED direction, and I did not find the closure.**
+
+> **CLOSED: "make the tower-type hash symmetry-invariant by folding coordinates."**
+> Killed by the table above. Cost: about three minutes and no games.
+
+The closure's kill argument: folding halves the number of independent draws, so whole-map
+mix variance rises by sqrt(2). I had not measured that for my variant, so I measured it
+before reading any game:
+
+```
+rule                  all-one-type maps   mean mix deviation   team gap
+plain parity (today)        4                    9.3             11.0
+folded hash (CLOSED)        6                   16.0              0.0
+folded parity (mine)        4                   15.6              0.0
+```
+
+My scanner reproduces the logged 9.3 and 4 for plain parity **exactly**, which is the check
+that licenses reading the third row at all. And the third row says the closure's central
+argument **applies to my variant too**: I buy a perfect team gap and pay 9.3 -> 15.6 in
+whole-map mix skew. What folded *parity* does not inherit is the closure's other half — the
+catastrophe count stays at 4, where the folded *hash* went to 6.
+
+**So iteration 22 is a re-open, and here is the specific reason the recorded cause no longer
+applies** (the ledger requires one, and "I forgot" is not it). The closure was written at
+iteration 14, and it weighed an unpriced team gap against an unpriced mix deviation —
+correctly concluding "no rule dominates". **Iteration 12 then put a price on one side of
+that trade and not the other**: hash -> parity was +26 points, and the mechanistic account
+was mix *mismatch* (multiplicative SRP payoff in paint-tower count). Since iteration 14 the
+team-gap side of the trade has a measured price and the mix-deviation side still has none.
+That is new information about the closure's own trade, which is what a re-open needs.
+
+**What the run now measures, restated.** It is no longer "does symmetry help". It is a
+decomposition of iteration 12's +26 between two quantities that moved together there and
+move in *opposite* directions here:
+
+```
+                       team gap      mix deviation
+iteration 12 (+26)     24.0 -> 11.0   9.9 -> 9.3     both improved -- cannot separate
+iteration 22           11.0 ->  0.0   9.3 -> 15.6    opposed -- this run separates them
+```
+
+- `tp1` clearly ahead  => the team gap dominates, and iteration 12's +26 is mostly that.
+- `tp1` clearly behind => mix deviation dominates, and **iteration 12's recorded mechanism is
+  wrong** even though its accept was right. That is the more valuable outcome of the two and
+  I would rather have it than the accept.
+- `tp1` flat => the two roughly cancel at these magnitudes, which is the iteration-14
+  conclusion ("no rule dominates") confirmed with games instead of arithmetic.
+
+**The pre-registered gate is unchanged** (>= 45/80, swept-against <= 6, roster before
+accepting) and the odd x odd byte-identity prediction is unchanged. I am not relaxing a gate
+because I found an extra argument after launching — that is the iteration-14 entry's own
+closing line, and it applies to me here.
+
+**What I actually did wrong, for the ledger.** TRAINING_ALGORITHM.md §3 says to check the
+evidence already on disk before spending a run, and I checked `tournaments/` and the
+gauntlet history and never grepped my own closed-directions ledger for the *mechanism*. I
+searched the log for "A7" and for "BobSym" only after the run was in flight, and the second
+search is the one that found this in ten seconds. **I searched by functional area and the
+ledger is keyed by mechanism.** The run is not wasted — it is a better-designed run than the
+one I registered, because it now has a decomposition to report either way — but it went out
+under a justification that was partly false, and the false part was recoverable for free.
