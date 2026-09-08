@@ -8945,3 +8945,36 @@ checks affordability itself, so any `need` under 2,500 is identical to 2,500.
 
 Held until iteration 34 resolves, since if 34 is accepted the baseline moves and this must be
 rebuilt on top of it. Registered here so the measurement is durable regardless.
+
+#### Reachability of iteration 35's new gate, checked before building on it (and it disproved my worry)
+
+I suspected the 2,500 gate might be unreachable too, because `SPLASH_FLOOR = 2000` caps the
+treasury by design: it blocks non-splasher builds below `2000 + cost`, so soldiers fire whenever
+chips reach ~2,250 and pull them straight back down. If the ceiling were under 2,500, iteration 35
+would be inert and I would have shipped a second off switch to replace the first.
+
+The chip distribution over **12,932 tower-turns** in one Snowglobe game settles it:
+
+| | chips |
+|---|---|
+| min | 0 |
+| p50 | 1,710 |
+| p90 | 2,350 |
+| p99 | 2,600 |
+| max | 2,800 |
+
+- **share ≥ 3,700 (the incumbent gate): 0.00%** — the mechanism is not rare, it is *exactly off*.
+- **share ≥ 2,500 (iteration 35's gate): 3.21%** — ~415 qualifying tower-turns in one game.
+
+So the worry was wrong and the direction survives: an upgrade needs to happen a handful of times,
+not constantly, and 415 opportunities is ample. Worth noting that I checked rather than redesigning
+on the strength of the suspicion — a floor-based redesign would have added a second constant to fix
+a problem that does not exist.
+
+**The price this measurement also exposes, and it belongs in the pre-registration.** An upgrade
+costs 2,500 out of a treasury whose p99 is 2,600, so it drains the team to ~100 chips and blocks
+*all* robot production (250 each) and any ruin completion (1,000) until income rebuilds — several
+rounds at 30–60 chips/turn. Against that: +5 paint/turn on that tower for the rest of the game,
+which over 1,000+ remaining rounds is 5,000+ paint, or ~25 soldiers' worth of build paint. The
+trade looks strongly favourable, but **the drain is a real, measured cost and not a rounding
+error**, and it is the term to watch if the iteration fails.
