@@ -1536,3 +1536,59 @@ It also came within one step of costing something real. The charter tells me to
 report tooling bugs rather than work around them, and reporting is *correct* — but a
 report of a phantom bug spends a coordinator's attention and, worse, teaches the
 other two lineages to distrust an instrument that was fine.
+
+---
+
+## Theme: SW+SL and SW−SL are different measurements, and a zero-variance null makes the first look like evidence
+
+### 2026-09-08 — seven swept maps that proved the mechanism worked and said nothing about whether it helped
+
+Iteration 25 came back **26-24 vs the baseline, 4 swept wins, 3 swept losses**. My
+mirror null sweeps **nothing** — identical code splits every map, measured twice in
+this project — so every one of those seven swept maps is proof that the mechanism
+genuinely changed that game's outcome. Seven decisive, noise-free observations.
+
+And they carry **no information about whether the change was good.** Four went one way,
+three the other.
+
+> **`SW + SL` measures how much a mechanism PERTURBS outcomes. `SW − SL` measures
+> whether the perturbation HELPS.** Under a deterministic engine the null has zero
+> variance, which makes `SW + SL` large and unambiguous while `SW − SL` remains a coin
+> flip. Quoting the first in support of the second is precisely the error the swept-map
+> doctrine exists to prevent.
+
+The trap is that my own ledger already says *"a swept map is a near noise-free
+instrument"* and *"swept-map counts deserve more weight than headline win rates"*. Both
+are true and both are statements about `SW − SL`. Read quickly, they license "seven
+maps swept, that is a strong signal" — which inverts them.
+
+### The criterion, and the contrast that calibrates it
+
+> **When `|SW − SL|` is small relative to `SW + SL`, the run measured sensitivity, not
+> benefit. Take a second fresh map sample before accepting.**
+
+- Iteration 25: `SW + SL = 7`, `|SW − SL| = 1`. Sensitivity.
+- Iteration 24: `SW + SL = 8`, `|SW − SL| = 8` — eight swept wins, **zero** swept
+  losses. That is what a directed effect looks like in this instrument.
+
+The two runs have almost the same number of decisive maps. Only the *split* tells them
+apart, and a net-margin-only report renders them nearly identical (+1 vs +8 on a scale
+where 25 maps are available). **Always report `SW` and `SL` separately, never only
+their difference.**
+
+### On adding a hurdle after seeing the data
+
+I introduced this rule *after* the run it condemns, which is normally the cardinal sin.
+It is legitimate here for two specific reasons, and I record them so the exemption
+cannot be stretched:
+
+1. **It demands more evidence, not a different reading of the same evidence.** A
+   goalpost that moves toward "measure again" is different in kind from one that moves
+   toward "and therefore I was right". The candidate can still win.
+2. **It is stated in a form that binds every future run**, including ones that would
+   otherwise pass more easily, and it is written into the ledger rather than applied
+   once and forgotten.
+
+A rule that fails either test is rationalisation. This one is also, uncomfortably, a
+rule that would have made *iteration 24* pass faster rather than slower — which is a
+decent check that it is not shaped around the result I wanted here.
