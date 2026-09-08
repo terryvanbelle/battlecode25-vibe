@@ -289,3 +289,48 @@ official 75-map corpus and gets **29.4% of 5-stride lattice cells viable** (medi
 4.0%, max 63.6%, no map at zero) — and because the predicate is the engine's own, that number is
 exact rather than a model of it. Anyone re-opening the SRP direction should start from there
 instead of buying games to discover it.
+
+## Messaging (BC25) — read off `battlecode.world.RobotControllerImpl`, not assumed
+
+Found by the Phase 0 API sweep at iteration 37: carol had never called any of these in 37
+iterations. Constants from `GameConstants`, preconditions disassembled from the engine jar
+(`javap -p -c battlecode.world.RobotControllerImpl`).
+
+| constant | value |
+|---|---|
+| `MAX_MESSAGE_BYTES` | 4 (a full 32-bit int payload; a MapLocation needs 12 bits) |
+| `MESSAGE_RADIUS_SQUARED` | 20 (robot -> tower), same as a unit's vision |
+| `BROADCAST_RADIUS_SQUARED` | 80 (tower -> robots), **4x the area of a unit's vision disc** |
+| `MESSAGE_ROUND_DURATION` | 5 rounds |
+| `MAX_MESSAGES_SENT_ROBOT` | 1 per round |
+| `MAX_MESSAGES_SENT_TOWER` | 20 per round |
+
+**`sendMessage(MapLocation, int)` — `assertCanSendMessage` enforces, in the engine's own words:**
+
+- `"Only (robot <-> tower) communication is allowed!"` — **there is no robot-to-robot channel.**
+- `"Location specified is not connected to current location by paint!"` (`GameWorld.connectedByPaint`)
+- `"Location specified is not within the message radius!"` (r2=20)
+- `"Robot has already sent too many messages this round!"` / the tower equivalent
+- `"Cannot send messages to robots of the enemy team!"`
+
+**`broadcastMessage(int)` — `assertCanBroadcastMessage` enforces ONLY:**
+
+- `"Only towers can broadcast messages"`
+- `"Tower has already sent too many messages this round!"`
+
+and the body then calls `getAllLocationsWithinRadiusSquared` (r2=80) and delivers to every ally
+robot found there.
+
+### The asymmetry, which is the whole design constraint
+
+> **The uplink is gated on paint connectivity. The downlink is not.**
+
+A tower broadcasts to everything within r2=80 **regardless of paint**, 20 messages a round. But a
+robot can only report back to a tower if it stands on a contiguous path of its own team's paint
+back to that tower — and a soldier out exploring unpainted ground is, by definition, exactly the
+robot that is *not* connected.
+
+**This kills the obvious design before it costs a run.** "A soldier that finds a distant unclaimed
+ruin tells a tower, which broadcasts it to the team" is infeasible: the discovering soldier is off
+the painted network precisely when it has something new to report. Any messaging iteration in this
+lineage must be built on the **downlink**, which is unconditional, and must not assume the uplink.
