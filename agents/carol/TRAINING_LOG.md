@@ -9810,3 +9810,41 @@ So my pre-registered condition (towers strictly higher) is a conservative test, 
 quietly reinterpret it as a two-sided one if it comes back negative. If it does come back negative
 the honest reading is "not demonstrated on the evidence available", and the way to settle it is a
 run that keeps win replays too — not a re-reading of these.
+
+### Iteration 37 addendum 2, still BEFORE any game is scored: the second link is the weak one
+
+Measured from the same cached dumps, no VM cost. Across 20 team-games (both teams of 10 games,
+tower claims counted from `SPAWN ... TOWER` events, soldiers from `+sold` deltas):
+
+| | soldiers built | ruins claimed | per 100 soldiers |
+|---|---|---|---|
+| `carol_iter35` | 356 | 54 | 15.2 |
+| `carol_i36_200` | 213 | 32 | 15.0 |
+
+The pooled rates match almost exactly, which looks like a clean constant conversion — and it is
+**not one**, because a rate with soldiers in its denominator is anti-correlated with soldiers by
+construction. The claim that matters is the numerator:
+
+> **rho(soldiers built, ruins claimed) = +0.199, t=+0.86, df=18 — not significant.**
+> Team-games with >10 soldiers claimed 5.88 ruins on average; those with <=10 claimed 3.25.
+
+**So the second link of my causal chain is the weak one, and I am saying so before the run lands.**
+The chain is: soldier gate reachable -> more soldiers -> more ruins claimed -> more towers ->
+more income. Link 1 is arithmetic and certain. Link 2 is directionally right and statistically
+weak on the evidence I have.
+
+The worst case is concrete and already on disk: on **Brat**, `carol_i36_200` built 37 soldiers,
+banked **14,150 chips**, and claimed **exactly one ruin in the whole game** (round 15) on a map
+with 15 ruins, while its opponent claimed 6. Soldiers in abundance converted to nothing there.
+
+**This is what pre-registered manipulation check #2 exists for**, and it is now clearly the
+condition most likely to fail. Stating the consequence in advance so the next step is not chosen
+after seeing which way it broke:
+
+- **If soldier share rises AND towers rise** — the chain holds, accept on the gate.
+- **If soldier share rises and towers do NOT** — the arm is void by the pre-registered rule, and
+  the fault is *ruin conversion*, not ruin *affordability*: a soldier that reaches a ruin fails to
+  finish it. The candidates there are `RUIN_PATIENCE = 40` with a 250-round ban, and the fact that
+  `nearestEmptyRuin` senses ruins only within vision (r2=20) with **no memory of ruins seen
+  earlier** — a soldier that walks past an unclaimed ruin forgets it permanently. That is
+  iteration 38, and I would rather have named it before the data chose it for me.
