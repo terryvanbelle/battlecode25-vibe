@@ -68,6 +68,13 @@ collate_benchmark () {
     fi
   } > "$OUT/summary.md"
 
+  # Rebuild the cross-run history. Called from HERE rather than from
+  # cron-benchmark.sh so that a run recovered by benchmark-collect.sh updates it
+  # too -- a history only the happy path maintains would silently omit exactly
+  # the runs a session death made hardest to reproduce.
+  "$(dirname "${BASH_SOURCE[0]}")/benchmark-history.py" >/dev/null \
+      || echo "!! benchmark history regeneration failed (scores still written)" >&2
+
   [ "$complete" = 0 ] && echo "!! run $RUN_ID is INCOMPLETE — collated anyway" >&2
   return 0
 }
