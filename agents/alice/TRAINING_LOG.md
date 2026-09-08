@@ -13488,3 +13488,30 @@ moved this dial the wrong way and the correction is not "back to parity" — it 
 
 Launching the decisive run: `alice_i35b` vs `alice_iter30`, full 75-map census,
 **candidate-as-`BOT`**, per the pre-registration.
+
+### Iteration 37's named quantity, measured on two games before any screen
+
+The pre-registration named **the round the gate first fires** and **tower count at r400/r800**,
+because both are readable from one replay and both distinguish the cliff from success.
+`DefaultMedium`, T1 = arm, T2 = `alice_iter30`:
+
+| | gate fires | towers r400 | towers r800 | towers r2000 | coverage trend | result |
+|---|---|---|---|---|---|---|
+| `alice_i37b` (+500) | **r200-400** (200 rounds early) | **9** vs 12 | **10** vs 13 | 10 vs 13 | 474 -> **386**, falling | **lost** |
+| `alice_i37a` (+1500) | ~r400-600 (modestly early) | **11** vs 11 | **12** vs 11 | **12** vs 10 | 454 -> **672**, rising | **won** |
+
+**Arm b fired the named risk exactly.** The gate opens earlier as designed and pays for it by
+starving tower construction — three towers down at r400 and never recovered. A splasher costs
+400 chips against a 1,000-chip tower completion, and at `+500` the threshold sits at $1,950,
+so it funds splashers out of expansion money. That is iteration 26's cliff.
+
+**Arm a did not.** Tower count is level at r400 and *ahead* by r800 and r2000, and its coverage
+climbs 454 -> 672 while the baseline's decays 433 -> 308.
+
+> This is the **interior peak I pre-registered**: *"If 37b loses while 37a does not, that is the
+> cliff and the curve has an interior peak between +500 and +2500."* It landed exactly there,
+> for two games instead of a hundred.
+
+**Arm b is dropped.** Arm a goes forward — but on the strength of a *quantity* (tower count,
+a direct mechanism reading) plus one game's outcome on a map I have used repeatedly, which is
+**not** evidence of benefit. It earns a proper run and nothing more.
