@@ -9345,3 +9345,73 @@ still do not know the outcome, is that it is not **sufficient**:
 This only ever makes acceptance harder, which is the direction a mid-flight clarification is allowed
 to run. I committed one paragraph ago that a calibration which can only loosen a gate is not a
 calibration; this is that commitment being spent rather than quoted.
+
+---
+
+## Iteration 27b — RESULT: **REJECTED**, monotone in the wrong direction, and the premise is refuted
+
+Run `20260908-101158`, 200 games, one shared 25-map sample. Arms `bob_r0..r3`.
+
+```
+arm      PAINT_RESERVE   score   vs null   swept  sweptAg  split   diff-from-null
+bob_r0             0     25/50      +0       0        0      25        0/50   <- NULL
+bob_r1           100     18/50      -7       2        9      14       13/50
+bob_r2           200     19/50      -6       2        8      15       16/50
+bob_r3           300     10/50     -15       0       15      10       17/50
+```
+
+**The zero arm is EXACT this time: 25/50, all 25 maps split, zero swept.** That is the fix to the
+run-1 void confirmed directly — moving the paint test after `G.rng.nextInt(8)` restored byte-exact
+behaviour, exactly as diagnosed. The void was called correctly and for the right reason.
+
+**Manipulation check: PASSED**, and I ran it because I expected to pass, per the rule adopted this
+session. `src/bob_qprobe` (rebuilt on the corrected `bob_r2`, not the broken `q2`) counts spawns the
+zero arm makes that the dosed arm does not:
+
+```
+                blockedOnlyByDose (per tower)     paintShortAnyway
+Dominoes            30, 88, 1                       569, 0, 60
+memstore            30, 3, 11                       155, 33, 0
+```
+
+Non-zero and substantial — **119 blocked spawns on Dominoes, 44 on memstore.** The dose bites, so
+the numbers above measure my mechanism rather than something else. (`paintShortAnyway` is large,
+confirming the 8-10% pooling figure: towers are usually below `paintCost` regardless. But a live band
+exists and the reserve acts in it.)
+
+### Verdict and what it refutes
+
+**Monotone decreasing across the whole tested range**, and `bob_r3` at **−15** is far outside the
+±7 band that `se ≈ 3.5` gives at 2 se. This is not a null — it is a clear, well-measured result in
+the **opposite** direction to my prediction, which was an interior peak at 100-200.
+
+The premise is refuted, and precisely: I argued *"one spawn (200 tower paint) = up to four refills
+forgone, and ~95% of soldier deaths are starvation, so the tower is spending on new units the paint
+its existing units are dying for."* Every step of that is true and the **conclusion is still wrong**.
+Withholding paint to fund refills loses games, harder the more you withhold. **A new unit is worth
+more than keeping an old one alive.** In hindsight the reason is not subtle: a refilled soldier
+resumes a job the map may no longer have, while a new soldier is a fresh action budget — and
+iteration 20 already measured that late-game soldiers act on 0.4-5.2% of their turns. I priced the
+paint and never priced what the two purchases *buy*.
+
+### The genuinely valuable part: the spawn rate is now BRACKETED
+
+Two independent knobs, pushed in opposite directions, both worse:
+
+```
+iteration 24   chip reserve -> 0     spawn MORE than baseline    -7
+iteration 27   paint reserve -> 100+ spawn LESS than baseline    -7, -6, -15
+```
+
+So the current spawn policy sits at an **interior optimum on the spawn-rate axis, measured on both
+sides** rather than assumed. The two knobs are not the same quantity — the chip reserve moves when
+chips permit, the paint reserve moves which towers can afford the paint — so I am claiming the
+bracket only at the level of *spawn rate*, which is what they share. That caveat is the whole of my
+claim's fine print and I am not quoting a combined magnitude.
+
+This is the second constant this week to go from unexamined guess to measured optimum (the other
+being `reserve = 1200`), and per LEARNINGS 37 that is the right use of a 50-game instrument: it
+cannot resolve a small win, but it resolves a **−15** without difficulty. Both tails here are far
+outside noise; it is only the middle that this instrument cannot read.
+
+`src/bob/` unchanged. **`bob_iter20` remains the bot.**
