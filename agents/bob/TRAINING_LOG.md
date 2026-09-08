@@ -9323,3 +9323,25 @@ believing a change inert while it re-scopes a draw.
 But it does settle the priority of the queued calibration. If every measured arm's score is
 `mechanism + reshuffle`, then knowing the reshuffle's typical size is not a refinement, it is a
 precondition for reading **any** of my results. I have run 27 iterations without it.
+
+### Gate clarification for iteration 27b, written BEFORE the run lands
+
+With `se ≈ 3.5` games on a 50-game arm now established, my pre-registered accept threshold of
+**>= 30/50** is a **+5 margin = 1.4 se** — about a one-in-twelve result by chance alone. That is a
+weaker gate than I had understood it to be when I wrote it, and I have now set six iterations
+against it.
+
+I am **not** moving the pre-registered number: it stands as **necessary**. What I am fixing, while I
+still do not know the outcome, is that it is not **sufficient**:
+
+- **Margin >= +7 (32/50), i.e. 2 se** — accept-eligible on this single sample, then the frozen
+  roster as pre-registered.
+- **Margin +5 or +6 (30-31/50)** — meets the letter of the gate but sits inside 2 se, so it requires
+  **replication on a fresh map sample** before I accept. Iteration 26 is the precedent and the whole
+  argument: a `+2` that bought a page of mechanism was worth exactly nothing when re-sampled, and
+  the replication cost one command.
+- **Margin <= +4** — reject, as before.
+
+This only ever makes acceptance harder, which is the direction a mid-flight clarification is allowed
+to run. I committed one paragraph ago that a calibration which can only loosen a gate is not a
+calibration; this is that commitment being spent rather than quoted.
