@@ -26,10 +26,23 @@ late in a prior project and regretted, or done early and repeatedly paid off.
 2. **Probe the engine directly; never trust inference from behavior.** Decompile
    the game jar (`javap -c`), read vendored engine source where available, and
    write one-off probe bots for anything ambiguous. Prior projects resolved
-   multi-iteration guessing threads in minutes this way. Periodically sweep the
-   full `RobotController` API for methods the bot never calls — a whole game
-   mechanic sat unused for 81 iterations once because the obvious methods were
-   assumed to be the whole interface.
+   multi-iteration guessing threads in minutes this way.
+
+   **Sweep the full `RobotController` API for methods your bot never calls, and
+   do it on a TRIGGER, not "periodically".** A prior project lost 81 iterations
+   to a whole game mechanic sitting unused because the obvious methods were
+   assumed to be the whole interface — and this project then repeated it, with
+   the first sweep of a lineage's own API surface happening at iteration 29 and
+   immediately turning up unused mechanics. Twice is not bad luck; "periodically"
+   is an instruction with no trigger, so it loses every time it competes with a
+   live hypothesis.
+
+   Run it: **at iteration 5, every 10 iterations after that, and whenever the
+   loop stalls** — before inventing a new mechanism, since an unused method is a
+   cheaper source of ideas than an invented one. The output is a list of names,
+   costs nothing but a `javap` and a grep, and cannot be produced by staring at
+   the bot you already wrote: the whole failure mode is not knowing the call
+   exists.
 3. **Look for radius asymmetries** (one unit's action radius exceeding another's
    vision radius, and similar). These recur every year and are reliably
    exploitable.
