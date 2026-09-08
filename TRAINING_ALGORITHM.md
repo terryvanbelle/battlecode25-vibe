@@ -209,6 +209,23 @@ The accept/reject machinery lives or dies on these rules. Each one is paid for.
 13. **Don't let pre-registered metrics decide when a cheap unrun instrument
     could reverse them.** A real effect big enough to accept on usually shows
     up in more than one place.
+14. **Check that two agreeing numbers are actually two numbers.** Rule 13 says a
+    real effect shows up in more than one place — which makes it tempting to
+    treat any second agreeing statistic as that confirmation. Derive the algebra
+    before you do. Swept maps and the head-to-head margin *look* independent, and
+    are not: with every map played twice, wins = 2·SW + D and losses = 2·SL + D
+    where D is the split maps, so D cancels and
+
+        margin = 2 × (swept − swept against)
+
+    identically, on every pair of every run. Citing a margin and its sweep counts
+    as corroboration is citing one number twice, and the agreement is guaranteed
+    whatever the bots did. What the sweeps *do* add is D itself — how decisive a
+    pair is, not who is ahead; a 60–40 pair with few splits is a different animal
+    from a 60–40 pair that is mostly coin-flips. The general form: when a second
+    metric is computed from the same games as the first, work out whether it is
+    a genuinely new projection of the data or an algebraic restatement. An
+    identity always agrees with itself, so it can never be evidence.
 
 ---
 
