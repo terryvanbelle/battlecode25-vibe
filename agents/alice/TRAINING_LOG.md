@@ -14295,3 +14295,35 @@ accumulates paint and was my wrong-referent error this session.
 If soldier-turns spent on enemy-blocked ruins are a small fraction of soldier-turns on typical
 maps, the capture is not happening at a scale worth an iteration, and this direction closes
 without a gauntlet ever running.
+
+## Roster maintenance — three rungs are SATURATED, and my newest accept was not on it
+
+Checked while the iteration 39 screen ran. The derived roster was
+`iter0 iter1 iter4 iter7 iter12 iter23 iter28 iter29 flood paintthief` — and
+**`alice_iter30`, my current shipping bot and newest accept, was not on it.** The stride rule
+picks every 5th *accepted snapshot by position*, which does not land on iteration 30.
+
+From the last full roster run (`alice_iter28`, 2026-09-08):
+
+| rung | win% | reads as |
+|---|---|---|
+| `alice_iter0` / `iter1` / `iter4` | **100 / 100 / 100** | **dead — cannot register a decline** |
+| `alice_iter12` | 96 | near-dead |
+| `alice_iter7` | 96 | near-dead |
+| `alice_flood` | 98 | near-dead |
+| `alice_iter23` | 80 | live |
+| `alice_paintthief` | 74 | live |
+
+Three rungs are at ceiling and three more are within 4 points of it. Doctrine 12's warning
+applies exactly: a saturated line **looks identical whether I am improving, flat, or sliding**,
+so the roster reads like my strongest instrument while having become my least informative one —
+and that is the condition in which §5b's downhill-walking chain is undetectable.
+
+**The fix is to add a harder reference, never to retire the old ones**, and to use my newest
+accepted snapshot rather than a hand-built archetype (two lineages tried the archetype and it
+landed at a ceiling and a floor respectively). `alice_iter30` added to
+`progress/roster_extra.txt`. It is scored before promotion in the only way that matters: it is
+my current build, so it reads ~50% **by construction** and cannot arrive saturated.
+
+This does not make the roster more *independent* — it still shares every blind spot I have. It
+makes it harder, which is the specific defect measured above.
