@@ -11650,3 +11650,66 @@ is the durable kind of knowledge.
 **Net: three closed by engine probe, one already closed by experiment. No new lever, and the sweep item
 is now discharged rather than carried forward again.** Recording the negative result matters as much as
 a positive one would have: the next session should not re-derive it.
+
+### Caveat on my own sd 4.80, now that it is project doctrine
+
+The coordinator has promoted the full-corpus calibration to `TRAINING_ALGORITHM.md`. Two limits of the
+number should travel with it, because I would rather they be known now than rediscovered by whichever
+lineage it misleads:
+
+1. **It is measured on self-play arms only.** `n1`/`n2` are policy-identical to `bob` and differ only
+   in PRNG phase. Whether the same floor holds when the two sides are *different bots* — the case every
+   accept gate actually uses — is untested. My own STATE OF PLAY already listed this as a pre-check I
+   did not do, and promoting the number does not discharge it. A lineage whose candidate differs
+   structurally from its baseline may face a wider floor than 4.80.
+2. **`Var = 23` is itself an estimate from 75 paired maps**, so it carries roughly +/-16% relative
+   error (chi-square on 75 df). sd 4.80 is really "about 4.4 to 5.3". The gate +10 is ~2 sd at the
+   point estimate and ~1.9 sd at the pessimistic end, which is fine — but +10 should not be treated as
+   a sharp boundary, and a result at +9 or +11 is not meaningfully different from one at +10. That is
+   exactly why the band +7..+9 says *replicate* rather than *decide*.
+
+Neither weakens the doctrine's main claim — a census kills sampling error and leaves engine chaos —
+which is the part that came from the paired-map structure and is not sensitive to either caveat.
+
+### Symmetry inference: probe built, and PRE-REGISTERED before it runs
+
+`src/bob_symprobe` compiles. It is **measurement only** — `Sym.observe()` maintains the candidate set
+and nothing reads it, so the arm's play is unchanged apart from bytecode.
+
+**Engine ground truth (permanent, per LEARNINGS 47):** `battlecode.world.MapSymmetry` has exactly three
+values — `ROTATIONAL`, `HORIZONTAL`, `VERTICAL`. It is in `battlecode.world`, **not**
+`battlecode.common`, so it is genuinely not exposed to bots. I index by *transform*, not by the
+engine's name, because "HORIZONTAL" is ambiguous between "mirror across the horizontal axis" and
+"mirror horizontally" and the bot only ever needs the transform.
+
+**The question the probe exists to answer, and why it is not obvious.** Memory is **per robot**. A
+mopper lives ~86 rounds (measured today), and a robot can only eliminate a hypothesis once it has seen
+a tile *and* that tile's image. It is entirely possible that a short-lived robot never resolves the
+symmetry at all, in which case the whole direction is dead before any game is played. **Bytecode is not
+the constraint** — observed usage is 1,600-1,900 against a 17,500 limit, and `observe()` returns on its
+first line once resolved.
+
+**Pre-registered readings, written before the probe has run:**
+- **Median resolve-life <= 100 rounds, on most maps** — the mechanism fires within a typical unit's
+  lifetime. Build the treatment arm.
+- **Median resolve-life 100-300 rounds** — it fires only for long-lived units. Then the treatment must
+  be attached to **towers** (stationary, long-lived) rather than to moppers, which changes the design;
+  do not paper over it by using it in moppers anyway.
+- **Frequently never resolves** — the direction is dead in its per-robot form and needs shared state to
+  live. Shared state means comms, which is a closed direction (28c, 3 attempts). **Then I close it and
+  say so**, rather than re-opening comms through the back door.
+
+**Correctness check, and it is separate from the timing one.** The probe prints `which=` per robot;
+`BobMop` prints the engine's own `symmetry=N` per map. Across maps the two must form a **consistent
+bijection**. If they do not, the inference is wrong and no timing number means anything — so the
+bijection is checked FIRST. A probe that resolves fast and resolves wrongly looks identical in the
+output to one that works, which is the same trap as the "1% of capacity" divisor.
+
+**Why this direction and not another.** It is not invented: `TRAINING_ALGORITHM.md`'s "when the loop
+stalls" names symmetry inference as the most load-bearing entry of its short list, my queue correction
+today made it a prerequisite for the mirror arm, and today's denial measurement independently says
+moppers are bounded by *target availability* (nothing in vision on 50-77% of rounds) — which is exactly
+what knowing where the enemy half is would address. Three independent routes to the same mechanism.
+
+**Not launched yet, deliberately.** The ablation is using my full 3-job budget and the VM also serves
+BC26 and two siblings. Probe matches go after it finishes, not beside it.
