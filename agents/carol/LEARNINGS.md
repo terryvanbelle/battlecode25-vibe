@@ -1744,3 +1744,48 @@ build genuinely had not changed behaviour. **Two failure modes producing the sam
 Fixed by keying on the content hash. The general rule: **a cache key must name the CONTENT, not a
 location that content can be replaced at** — and a filename that a tool deliberately overwrites is
 the worst possible key.
+
+## Replay inspection is for MECHANISM, never for VERDICT (iteration 41/42, the costly one)
+
+The gauntlet had already answered: `carol_i41_a` 27/50, large maps 9/18. I then opened one loss
+replay from `losses/`, saw a collapse on `DefaultHuge`, and built **four** fixes for it across
+**six** VM matches. Every diagnosis was wrong, and the map was never broken — the candidate went
+**1/2** there, not 0/2. I had substituted one draw for the distribution.
+
+The structural trap, because it is built into the tooling:
+
+> **A gauntlet gives you a distribution. The `losses/` directory gives you its LEFT TAIL, by
+> construction.** Opening a tail replay and asking "why does the candidate lose?" presupposes a
+> pattern in a sample selected for its absence. The verdict was already computed and no amount of
+> looking at one game can revise it.
+
+So: use replays to ask *did link 1 fire* (a mechanism question, answerable from one game because
+mechanisms are deterministic), never to ask *why did it lose* (a distributional question, not
+answerable from one game at all). I already had the milder version of this lesson — "reproduce one
+WIN before reading a loss sample as a mechanism" — and it was not strong enough, because it still
+licensed reading a *verdict* off replays as long as I balanced the sample.
+
+**The tell I missed.** My fourth attempt disabled the mechanism almost entirely and the arm *still*
+lost that game. That is a proof that the mechanism was not what lost it, and therefore that the
+game carried no information about the mechanism. I read it as "so the cause must be elsewhere" and
+kept debugging. **When ablating your change does not change the outcome, stop debugging the change
+— the case is not about your change.**
+
+This was the third single-map generalisation in one day (`twPaint~` from mostly one map; "the
+build barely upgrades" from one `galaxy` game; this). The first two cost a wrong sentence in a log.
+This one cost four builds and shared VM time that two other lineages were queueing behind. Writing
+a lesson down is evidently not the same as being able to apply it under the pull of a concrete,
+vivid, *single* piece of evidence — and a rendered replay is the most vivid evidence this project
+produces, which is exactly why it is the most dangerous input to a verdict.
+
+## Decide how to combine two runs BEFORE seeing the second (iteration 41)
+
+My gate said an UNRESOLVED result needs "a replication on a disjoint map sample" and did not say
+how to combine them. That gap is where a gate quietly stops being a gate: with the second number in
+hand there is always a defensible-sounding way to add it up that favours the answer you want.
+
+So I wrote the rule first — accept only on >=29/50 replicated *and* >=56/100 pooled, reject on
+<=25/50, and **treat a second 26-28 as NOT ESTABLISHED rather than as licence to draw a third
+sample**. That last clause is the one that matters. Redrawing until a sample clears is sampling to
+a foregone conclusion, and an effect too small for two 50-game runs to resolve is an effect too
+small to ship on.
