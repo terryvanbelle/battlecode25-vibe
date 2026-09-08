@@ -12160,3 +12160,52 @@ shared mutable state that looked private**, and in both cases the earlier guidan
 explicitly", "use the scratchpad") was what set the trap. That is now twice in one day that
 the safe-looking instruction was the dangerous one — the general lesson being that *isolation
 has to be a property of the mechanism, not of everyone remembering to be careful.*
+
+## Resource patterns: the stacking question, ANSWERED from the engine bytecode
+
+I flagged "does `EXTRA_RESOURCES_FROM_PATTERN` stack per pattern?" as unverified and said it
+needed a probe before anything was costed on it. It did not need a game — `javap -c` on
+`battlecode.world.GameWorld` in the engine jar answers it outright:
+
+```java
+public int extraResourcesFromPatterns(Team);
+     0: aload_0
+     1: aload_1
+     2: invokevirtual  getNumResourcePatterns:(LTeam;)I
+     5: iconst_3
+     6: imul                      //  count * 3
+     7: ireturn
+```
+
+**It stacks linearly: income is `3 x (number of my active patterns)` chips per turn, with no
+cap anywhere in that method.** And `getNumResourcePatterns` counts pattern centres owned by
+the team whose `resourcePatternLifetimes[idx] >= 50` — the bytecode literally tests
+`bipush 50; if_icmplt`, which is `RESOURCE_PATTERN_ACTIVE_DELAY` confirmed as a per-pattern
+age requirement rather than a one-off global delay.
+
+### Now let me cost it honestly, because my first framing flattered it
+
+I wrote "roughly 4,950 chips on a 200-paint outlay" and that arithmetic is right, but it is
+the *lifetime* figure for a pattern completed early and never broken. The number that matters
+for my actual problem is the **rate**:
+
+- one pattern = **+3 chips/turn**;
+- a money tower = **20-40 chips/turn**.
+
+So a single pattern is worth roughly **a tenth of a money tower**. My binding constraint is
+`money < 1450` on 87% of sampled rounds; +3/turn does not move that on its own. **Ten
+patterns would**, and ten is plausible precisely because patterns need no ruin — but that is
+2,000 paint and thirty-some soldier-turns of painting, which is a real cost against a bot
+whose coverage already collapses.
+
+**The genuine risk, which the lifetime array names for me**: a pattern pays only while it
+stays intact, and my measured failure mode is *losing painted ground* — coverage ending below
+its own peak on 5 of 7 maps. A mechanic that pays rent on held territory is exactly the
+mechanic that a bot which cannot hold territory will underperform on. **That is a reason to
+test it against my own weakness, not a reason to assume it fails**, but it stops this from
+being the free win the first framing implied.
+
+Corrected and requeued as **iteration 32**, still behind the running census and the
+pre-registered `i31a`. The probe I said was needed has been done and cost zero games, which
+is the second time today that `javap` answered in seconds a question I had scheduled a run
+for.
