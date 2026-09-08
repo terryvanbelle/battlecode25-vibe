@@ -8813,3 +8813,111 @@ reason, and the check that separated benign from real cost one command.
 
 `gauntlet.sh` reports the **bot's** score; this log reports the **arm's**. Stated here so a future
 session does not re-derive it under pressure.
+
+---
+
+## COMPLETION PROBE RESULT (2026-09-08) — the spawn reserve insures against an event that never happens
+
+Named as a missing pre-check **four times** across iterations 24-26 and finally run. `src/bob_cprobe`
+= `src/bob` plus counters only (verified: 32 added lines in `Soldier.java`, zero diff in the other
+six files). Peer opponent `bob_iter11`, one map from each resource regime per LEARNINGS 31's
+*span, not count* rule: **memstore** (chip-bound, 90% of early tower-turns refused for chips) and
+**Dominoes** (paint-bound, 0% chip-refused, 97.5% paint-blocked).
+
+```
+map        ruin-turns sampled   turns unable to complete   ...for want of CHIPS   ...other
+memstore          ~250                     ~14                      0               14
+Dominoes         ~1100                    ~1000                     0             ~1000
+```
+
+**`waitingOnChips` is ZERO in every single sample, on both maps, in both resource regimes.**
+Across roughly a thousand ruin-turns on which the bot stood at a ruin and could not complete the
+tower, it had **at least 1000 chips every time**.
+
+The reserve's stated purpose is written in the source, one line above it: *"keep a reserve so
+soldiers can complete new towers (1000 chips) the moment a pattern is done."* **That event does not
+occur.** The 1200 chips withheld from spawning on every tower-turn from round 31 onward buy
+insurance against a contingency that never arises.
+
+### The probe's own definitional flaw, reported rather than papered over
+
+`patternDone` is computed as *"no marked tile in the 5x5 mismatches its mark"*, which is **vacuously
+true when nothing is marked**. On Dominoes it reads `patternDone=330` out of `ruinTurns=331` — a
+soldier cannot have held a genuinely finished pattern for 330 consecutive turns, so the flag is
+mostly firing on unmarked ruins. That is a wrong-referent error (doctrine 5) in my own probe, and
+it is mine, not the shared tooling's — nothing to report to the coordinator.
+
+**It does not touch the conclusion, and here is exactly why.** The flaw makes `patternDone` a
+*superset* of the intended condition, so `waitingOnChips` was evaluated over **more** ruin-turns
+than intended, not fewer. A count of zero over a superset is zero over the subset. The claim the
+probe supports is therefore the weaker but sufficient one, and it is the one I am asserting:
+**whenever this bot was at a ruin and could not complete a tower, chips were never the reason.**
+What the probe *cannot* do is measure the rate of genuine completion-waits, because it cannot tell
+"pattern finished" from "pattern never marked". I am not quoting a rate.
+
+### The puzzle this creates, stated because it is the whole reason iteration 27 exists
+
+If the reserve insures nothing, `reserve = 0` should have been free. Iteration 24 measured it at
+**−7 games**, with 600 at −3, monotone. So the reserve **is** doing something real — it is simply
+not doing the thing its comment claims. The remaining candidate: it is not insurance, it is an
+accidental **spawn-rate throttle**, and it works because spawning is being *over*-done.
+
+That reframes the constant entirely, and it points at the resource the gate has never looked at.
+
+---
+
+## Iteration 27 — PRE-REGISTERED: the spawn gate has never tested PAINT
+
+**The mechanism, and it is one line.** `Tower.run` step 3 gates spawning on
+`chips >= want.moneyCost + reserve`. **Chips only.** But a soldier costs the *tower* **200 paint**
+(`UnitType.paintCost`, javap-confirmed), and `Soldier.tryRefill` will only draw from a tower holding
+**>= 100 paint**, drawing it down to 50. So:
+
+> **One spawn (200 tower paint) = up to four refills forgone**, and my own iteration-20 note records
+> that **~95% of soldier deaths are starvation**, with tower paint pools measured at **8-10% of
+> capacity**.
+
+The tower is spending on new units the exact paint its existing units are dying for want of, and no
+line of code has ever compared the two. Add the missing conjunct:
+
+```java
+final int PAINT_RESERVE = <dose>;
+if (chips >= want.moneyCost + reserve
+        && rc.getPaint() >= want.paintCost + PAINT_RESERVE) {
+```
+
+**Arms** (one shared 25-map sample, 200 games): `bob_q0` (0), `bob_q1` (100), `bob_q2` (200),
+`bob_q3` (300).
+
+**`bob_q0` is an EXACT zero arm, and this one is checkable rather than asserted.** `javap` of
+`RobotControllerImpl.assertCanBuildRobot` shows its four conditions, the first being *"Not enough
+paint to build new robot!"* — so at `PAINT_RESERVE = 0` the added conjunct is *implied by a check the
+engine already performs*, and the games must come out **byte-identical** to the incumbent. That is a
+stronger null than the mirror-arm nulls I have been using: those are 25/50 by symmetry, this one is
+25/50 *and* every game identical. If `bob_q0` is not 25/50 with all 25 maps split, something is
+wrong with my reasoning about the engine and the run is void.
+
+**Dose scale is derived, not guessed.** 100 = the exact threshold below which a tower can no longer
+refill anyone. 200 = one further soldier's worth. 300 = a hard throttle.
+
+**Gates.**
+- **Void** if `bob_q0` is not 25/50 with all 25 maps split.
+- **Accept-eligible** at best arm **>= 30/50**, then the frozen roster before accepting
+  (`bob_iter0` 46/50, `bob_iter1` 44/50, `bob_iter11` 35/50, `examplefuncsplayer` 50/50,
+  `bob_iter20` ~25/50; none regressing by more than 3). Per the saturation audit I will quote the
+  **weakest** rung, never the mean.
+
+**Prediction, and I am committing to a shape rather than a height** — LEARNINGS 33 says a
+three-point ladder cannot tell a peak from a plateau, so I am running three non-zero doses on one
+sample and predicting **an interior peak at 100 or 200**, with 300 falling back toward or below the
+null as the throttle starts starving unit production outright.
+
+**Map-level prediction (doctrine 4), so the sample checks itself.** The mechanism can only act where
+towers are paint-poor. LEARNINGS 31 puts Dominoes/DonkeyKong/Flower at 88-97% paint-blocked and
+memstore at ~0%. So I predict **gains concentrated on paint-bound maps and approximately nothing on
+memstore-like chip-bound maps.** If the gain is uniform across regimes, my mechanism story is wrong
+even if the headline is positive, and I will say so.
+
+**What would falsify the whole framing**: if all three non-zero arms sit at the null, then spawning
+is not over-done, the reserve's −7 at zero has some third explanation, and I stop theorising about
+that constant and go back to the tournament maps for a target.
