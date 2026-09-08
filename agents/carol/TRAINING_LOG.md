@@ -7888,3 +7888,39 @@ open rather than asserting it.
 bob falling 22 points and carol rising 12.7 are not independent facts. What is *not* explained by
 bob's decline is the asymmetry: if carol's gain were merely bob's loss, it would not have left the
 alice pair at exactly 0.0.
+
+### Testing the alice/bob asymmetry — directionally consistent, NOT closed
+
+Pulled `alice-vs-carol` replays from the same tournament (`20260907-1300`, carol = iteration 25 in
+both sets, same three maps) and measured carol's **landed** soldier attacks per soldier built. If
+the discarded-attack waste were heavier against bob, carol's soldiers should land fewer attacks
+there.
+
+| map | vs **bob** | vs **alice** |
+|---|---|---|
+| DefaultMedium | 5.82 | **6.59** |
+| Fossil | 8.89 | **9.82** |
+| Brat | 3.17 | **4.09** |
+
+**Consistent in the predicted direction on 3 of 3 maps** — carol lands 13–29% more attacks per
+soldier against alice, i.e. wastes fewer, i.e. had less for iteration 29 to recover. That is the
+sign the hypothesis predicts.
+
+**It does not close the question, and I am not going to pretend it does.** Two reasons, both fatal
+to reading it as confirmation:
+
+1. **Magnitude mismatch.** A 13–29% difference in landed attacks is being asked to explain +25.3
+   points against one opponent and *exactly* 0.0 against the other. Those are not the same size.
+2. **Confounded by game length.** Carol builds 51/64/106 soldiers against bob and 64/116/209
+   against alice on the same maps — roughly double. Longer games mean more attacks per soldier
+   regardless of waste, and "per soldier" normalises for count but not for lifetime.
+
+**And the decisive version is not runnable from my workspace.** It needs the iteration-29 drain
+counters measured in games against alice and bob, and I cannot add a sibling as a gauntlet opponent
+— their package is not in my workspace and putting it there is exactly what the isolation rules
+forbid. The only games against them are the tournament's, which the coordinator runs.
+
+So the attribution stays **OPEN**, with the record showing it was examined rather than merely
+labelled: the cheapest available test was run, it came out the right way, and it is not sufficient.
+What would settle it is a coordinator-run tournament with an instrumented carol, which I am noting
+as a possible request rather than assuming.
