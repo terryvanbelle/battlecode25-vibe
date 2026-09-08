@@ -11306,3 +11306,49 @@ exactly the condition under which a post-hoc reading is useless. So, on the reco
   iterations.
 
 Recording all three branches in advance so that whichever lands, I cannot claim I expected it.
+
+## `alice_splashprobe2` — measuring `MIN_SPLASH_TILES` properly, and why the first probe cannot
+
+`MIN_SPLASH_TILES = 6` now gates every splasher attack in the accepted bot. It was written
+when splashers were never built, and the commit that introduced it was accepted **as
+explicitly inert**. It has never been evaluated on a live unit, and iteration 28 made it the
+most-exercised untested constant I have.
+
+**`alice_splashprobe` cannot measure it, and the reason is structural rather than a bug.**
+Its histogram `spHist` records `splashScore` at the centre the splasher *chose* — and the
+choice is made by `int bestScore = MIN_SPLASH_TILES;`, so **every sample in that histogram
+has already passed the threshold**. A distribution conditioned on passing a test says
+nothing about the test. This is the wrong-referent error again (doctrine rule 5), and I only
+caught it by reading the selection line rather than the histogram's label.
+
+The quantity that actually reads the dose is the best score **available** on a ready turn,
+unfiltered. Then:
+
+- `P(best available in 1..6)` is exactly the fraction of attacks the constant suppresses;
+- the shape of that lower tail says what a smaller threshold would buy;
+- `P(best available = 0)` separates "the threshold blocks me" from "there was nothing there
+  anyway", which are opposite conclusions that the current probe reports identically.
+
+`alice_splashprobe2` is `alice_iter28` plus that counter. It is **behaviourally identical**:
+`bestAny` is computed inside the loop that was already scoring every centre, it feeds no
+decision, and the attack still fires on exactly the same centre. Verified by diffing against
+`alice_iter28` with comments stripped — every hunk is a counter, a histogram, or the
+indicator string.
+
+One engine detail, checked rather than assumed: `GameConstants.INDICATOR_STRING_MAX_LENGTH`
+is **256** (javap'd on the engine jar). A 19-bucket histogram plus the standard `i25`/`bc`
+tail overflows that, so a splasher emits the probe string alone and the string is truncated
+defensively at 255.
+
+### Pre-registered reading, written before the run
+
+- **Instrument**: `alice_splashprobe2` vs `alice_iter28`, replay dump of the splasher
+  indicator strings on maps where the gate is known to fire.
+- **If `P(best available in 1..6)` is small** (say < 15% of ready turns), the threshold is
+  nearly inert, lowering it is not a dose knob at all, and **iteration 30 must go elsewhere**
+  — I will not spend an iteration on a constant that gates nothing.
+- **If it is large**, the threshold is suppressing real attacks and the tail shape picks the
+  dose — that becomes a one-constant iteration with the same structure as iteration 29.
+- **Deliberately not launched yet**: the iteration 29 census holds all three job slots, and
+  `MULTI_AGENT.md` caps MAXJOBS at 3 across a VM shared with two siblings and a live BC26
+  project. Queued behind it, not run alongside it.
