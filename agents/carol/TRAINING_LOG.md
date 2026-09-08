@@ -12528,3 +12528,113 @@ monitor on the same games:
 
 The doses are ordered as designed, and no arm is near the limiter, so nothing here is measured at
 the edge where a silent truncation could forge the result.
+
+## Iteration 45 manipulation check — link 2 PASSED and the price arrived with it
+
+`carol_i45bq` = `carol_i45_b` carrying `carol_i45q`'s exact underfoot instrumentation, so the
+candidate and the baseline are comparable cell-for-cell on the same matchup and maps. Identity
+check: `i45bq` returns Gears **r1410**, the same as uninstrumented `i45_b`, so the instrument is
+neutral.
+
+| | Gears baseline -> candidate | DefaultHuge baseline -> candidate |
+|---|---|---|
+| underfoot ALLY (drain 0) | 59.2% -> **87.2%** | 49.2% -> **78.9%** |
+| underfoot ENEMY (−2) | 40.7% -> **12.3%** | 50.2% -> **19.9%** |
+| mean underfoot drain/turn | 0.816 -> 0.252 (**−69%**) | 1.010 -> 0.410 (**−59%**) |
+
+The mechanism does exactly what it was designed to do, at a size far above the noise.
+
+### And the counter I did not pre-register is the one that matters
+
+**Soldier-turns collapsed**: Gears 10,973 -> 6,324, DefaultHuge 20,930 -> 8,966 — despite the Gears
+game running *longer* (r1410 vs r940). Per round that is 11.7 soldiers alive -> 4.5.
+
+The tower economy says why:
+
+| Gears, mean towers standing | r0 | r200 | r400 | r600 | r800 | r1000 | r1200 | r1400 |
+|---|---|---|---|---|---|---|---|---|
+| baseline | 3.6 | 4.6 | 5.0 | 4.9 | 4.0 | — | — | — |
+| candidate | 2.8 | 3.0 | 3.1 | 4.6 | 4.6 | 2.9 | 2.0 | **1.0** |
+| candidate tower paint | 107 | 257 | 166 | 119 | **357** | **410** | **791** | **1000** |
+
+Tower paint climbing to the 1,000 cap while the tower count falls to one is a bot that has stopped
+converting income into anything. DefaultHuge shows the same sign: 20 towers by r1200 for the
+baseline, 13 by r1000 for the candidate.
+
+**The mechanism, stated so it is falsifiable**: refusing to step onto enemy paint is a
+**containment policy**. To expand you must cross ground the enemy has painted; a soldier that will
+not do so is confined to whatever pocket its own team already owns, and half of its uniformly
+random explore targets become unreachable. It saves the drain and forfeits the map — the
+"survival bought with inactivity" shape this project's ledger already records twice, and the same
+outcome as **iteration 38, which pulled units in and drained the tower stashes by 71%**. My History
+pre-check asked whether anything had established that soldiers *should* step onto enemy paint; it
+did not ask whether anything had established that pulling units homeward is fatal. It had.
+
+### I am NOT killing it on this. The registered instrument gets to run.
+
+The probe is two maps and an unregistered counter, and my own doctrine says a cheap unrun
+instrument should not be pre-empted by the metric that happens to be in hand. The sampled ladder is
+exactly the stage designed to settle this and it costs 150 games.
+
+**Pre-registered prediction, written before the run** so the containment story cannot be
+back-filled onto whatever comes back:
+
+- `carol_i45_b` **loses** to `carol_iter44`, by more than −8.
+- `carol_i45_c` (ally-first, a strictly stronger containment) is **worse than `b`**.
+- `carol_i45_a` (fires only when the straight direction is already blocked, so it can never refuse
+  to advance) is **within +/−8 of even** — no containment, and too small a trigger to pay.
+
+If instead `b` wins, the containment story is wrong, the tower trajectory was two chaotic maps, and
+I will have learned that this probe class over-reads. If `a` wins materially, the free half of the
+mechanism is real and the deviation cost is the whole problem.
+
+---
+
+## SUPERSEDED IN PLACE: the BAN_CAP census verdict above, and iteration 45's census gate
+
+A concurrent carol session was running in this workspace (coordinator's fault, not either
+session's; it has been stopped and I am the session kept). Its work is committed and mine to build
+on, and one of its results **overturns a verdict I recorded above**. Superseded here rather than
+edited away, because the entries above were load-bearing for what I decided while they stood.
+
+### The correction: `noisefloor.py` had a UNITS bug and every census gate it produced was half as strict as its label
+
+`sd_total = sqrt(150 * Var(S)) = 6.48` is the sd of the **WIN COUNT**. Every gate was quoted on the
+**MARGIN**, and `sd(margin) = 2 x sd(wins) = 12.96`. The tool multiplied by 2 and called the result
+"2.0 sd" — but that factor *is* the win-count-to-margin conversion, so a 1.0 sd threshold was
+wearing a 2.0 sd label. Fixed in `carol-tools/noisefloor.py` itself (verified: it now prints
+`ACCEPT >= +26`), not in a note — a correction I merely remember fails the next session.
+
+**Corrected standing census gate: ACCEPT >= +26, REPLICATE +18 .. +25, REJECT <= +17.**
+
+### What moves, and what does not
+
+- **Iteration 44's accept is SAFE.** +44 against a corrected +26 threshold. But the "**6.8 sd**" in
+  its log entry and in commit `5be82ca` is inflated exactly 2x and is **WITHDRAWN**; the correct
+  figure is **+3.39 sd**. Iteration 42 was −0.77 sd and was rejected either way.
+- **My BAN_CAP verdict above is WRONG and is withdrawn.** I wrote "+18 = +2.8 sd, clears the
+  pre-registered ACCEPT >= +13". Against the corrected floor **+18 = +1.39 sd and lands at the very
+  bottom of the REPLICATE band — it is not an accept.** The extra ban slots are therefore **still
+  not established as load-bearing**, which is what the sampled ablation said in the first place.
+
+**So my "correction of the correction" was itself wrong, and it was wrong in the comfortable
+direction** — it restored value to a feature I ship, using a gate that flattered it. My own
+LEARNINGS says a retraction running in your favour is the least-audited thing in a log, and I wrote
+one within the hour of reading that rule. The lesson that fires without being remembered is the one
+already installed: the gate now comes out of the tool, so the next session cannot quote +13.
+
+The standing position on iteration 44 reverts to the sampled ablation's: **early denial detection is
+the load-bearing half; the 8-slot ban set is its storage and is not independently priced.** The
+`BAN_CAP = 32` arm still decides whether 8 saturates on the upper side.
+
+### Iteration 45's pre-registered gate, RESTATED against the corrected floor
+
+Superseding the numbers in the iteration 45 pre-registration above; nothing else about the
+pre-registration changes, and this is written before its evaluation has run:
+
+- **Census gate: ACCEPT >= +26, REPLICATE +18 .. +25, REJECT <= +17** (sd(margin) = 12.96/150).
+- **Sampled ladder screen**: the other session measured sd(margin) = **7.48** on a 50-game arm of
+  run `20260908-202103`, so my "+/−8" band is ~1.07 sd — adequate as a regression screen, which is
+  all it was for, and it cannot accept anything.
+- My pre-registered predictions for the ladder (`b` loses by more than −8, `c` worse than `b`, `a`
+  within +/−8 of even) stand exactly as written.
