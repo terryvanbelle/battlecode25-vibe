@@ -1999,7 +1999,16 @@ was going spare", and this lineage's worst result (−21 net swept) came from a 
 starved a resource by being too aggressive. A was the arm with a zero-opportunity-cost
 argument attached to it.
 
-**B beat A by more than three to one** — +10 net swept against +3, 62% against 54%.
+**B beat A** — +10 net swept against +3, 62% against 54%.
+
+> **CORRECTED the same day by replication on a disjoint 35-map sample** (the 35 maps the
+> dose run did not use). The arms came back **+2** and **0**: the *ordering* holds and A never
+> beat B in either sample, but the gap fell from +13 to +4 on a common 75-map scale. **The
+> "three to one" was a sample-specific ratio read as a property of the mechanism**, and I had
+> already written it here as a general lesson. Two paired samples of the same quantity
+> disagreed by ~9 net swept on a 75-map scale, so **a 35-40 map dose comparison here cannot
+> resolve below roughly 5 net swept.** What follows below survives as an ORDERING claim; the
+> magnitude does not.
 
 The argument for A was sound and irrelevant. It priced the *painting given up* and ignored
 the *unit lost*: 72-88% of my deaths are starvation, so a soldier that keeps painting until
