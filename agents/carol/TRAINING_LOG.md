@@ -10814,3 +10814,33 @@ too (64, 19, 8, 3 against carol's 0 everywhere). Noted, not acted on — one mec
 not have (`p` = tiles not units; `twPaint~` = sum not mean; `UPGRADE` = includes a constant
 baseline). All three were caught by building the *next* tool rather than by re-reading the last
 one, which is now the pattern rather than the exception.
+
+## Iteration 40 ADDENDUM 2 — how this connects to the tether finding, and why it is not iteration 37 again
+
+Written with the run in flight, because the connection sharpens what link 2 should be checked
+against and I do not want to discover it afterwards.
+
+The tether finding says the way to reach further is to **move the anchors** — more towers, further
+out — and only soldiers convert ruins into towers. So the chain that matters most here may not be
+the one I led with:
+
+> more money towers -> more chips -> **the treasury clears 2250 more often -> soldiers actually
+> get built -> ruins become towers -> anchors move outward**
+
+alongside the one I registered (chips -> upgrades -> paint income). Both run off the same
+constant, so this is still one mechanism, but the *soldier* channel is the one the tether finding
+predicts will matter, and the upgrade channel is the one the cross-lineage table measures. I will
+report both and let them separate.
+
+**Why this is not iteration 37 repeated.** Iteration 37 lowered the soldier gate — 2250 -> 1850 ->
+1600 — and lost catastrophically (3/50, 5/50, monotone). That changed **who gets built when the
+team is poor**, letting cheap units displace splashers, and splashers are what carry carol.
+
+Iteration 40 does not touch the gate. It changes **how often the team is rich.** The floor stays
+at 2000, so a splasher still has first call on every treasury below 2250 and the displacement
+mechanism that killed iteration 37 cannot operate. Soldiers appear only out of surplus.
+
+Stated as a falsifiable difference rather than an assurance: **if iteration 40 fails the same way
+iteration 37 did, the splasher build count will fall.** If splashers hold and soldiers rise, the
+two iterations are doing different things and iteration 37's result does not transfer. That is a
+cheap check on a real risk, and it goes on the record now.
