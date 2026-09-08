@@ -11776,3 +11776,52 @@ reason, because the corpus is already every map.
 protocol is in force — and I am already executing it rather than inventing: today's work has been
 ablating a carried feature (protocol item 1) and the symmetry-inference probe, which is the first entry
 on the algorithm's own short list for a stalled lineage.
+
+### Applying the other lineage's Var > 0.25 caveat to my own 4.80 — it does NOT bind here, and the bound is sharper than "upper bound"
+
+The coordinator relayed that another lineage's paired estimator returned `Var(S) = 0.28` against a
+0.25 per-game maximum — impossible for genuine Bernoulli noise — and asked whether mine is inflated the
+same way. Computed on my own per-map records, at zero cost:
+
+```
+sum of squared paired differences   46 over 75 maps
+Var(S_m), S in {0,1,2}              0.3067     (max 0.5 = 2 x 0.25)
+  as a PER-GAME Bernoulli variance  0.1533     (max 0.25)      -> 61.3% of maximum
+```
+
+**Mine does not exceed the bound**, and is not close to it. The floor of 4.80 shows none of the
+contamination that made theirs impossible.
+
+**Watch the scale when comparing these.** `S_m in {0,1,2}` is a *count over two games*, so its ceiling
+is **0.5**, not 0.25; the 0.25 ceiling belongs to the per-game proportion. Quoting 0.3067 against 0.25
+would look like a violation and is not one. Whichever lineage compares next should say which scale it
+is on, because the two differ by exactly the factor that decides whether you think you have an
+impossible number.
+
+**And I think "upper bound, not unbiased estimate" is very slightly the wrong diagnosis, in a way worth
+handing back.** For two *exchangeable* arms, `E[(Sa - Sb)^2] = 2 Var(S)` is **unbiased**, not an upper
+bound. A deterministic map — one that resolves the same way regardless of phase — contributes
+`(Sa - Sb)^2 = 0` **and** has `Var(S_m) = 0`, so it deflates both sides equally and biases nothing.
+
+The term that actually makes it an upper bound is the arms not being exchangeable: if they differ
+systematically by `d` per map, the sum absorbs `N * dbar^2` and charges a real effect to chaos. That
+term is **measurable**, so the bound's tightness need not be guessed:
+
+```
+systematic component  N*dbar^2 = 0.213 of 46   (0.46%)
+noise-only sd = 4.785   against 4.796 uncorrected
+```
+
+**0.46%.** My arms differ in PRNG phase alone, so they are exchangeable by construction and the
+estimator is essentially unbiased — the correction is in the third decimal. A lineage whose per-game
+Var exceeds 0.25 has arms that are **not** exchangeable, and that is a diagnosable fault in the
+calibration design rather than an irreducible property of the estimator: compute `N*dbar^2` and it
+names how much was borrowed from a real difference.
+
+**The genuinely important part of their result is not the caveat — it is 6.48 vs my 4.80.** Same
+engine, same 75 maps, 33 of 75 surviving a phase change against my 38, and a floor **35% wider**. So
+**the noise floor is a property of the bot, not only of the game**, and no lineage may inherit
+another's. That also sharpens my own caveat from earlier: I flagged that 4.80 is measured on
+*self-play* arms and may not hold when the two sides are different bots. If the floor varies this much
+between two bots that are merely *different lineages*, the case for it varying between a baseline and a
+structurally different candidate is stronger, not weaker. **My +10 gate stays, and stays provisional.**
