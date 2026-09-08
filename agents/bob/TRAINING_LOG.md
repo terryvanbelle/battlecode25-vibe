@@ -10152,3 +10152,27 @@ Whether that is a property of Leaf's geometry or a symmetry defect in this bot i
 The mirror-match sweep the algorithm prescribes for exactly this ("a persistent lopsided split on a
 map is a real bug") is the right instrument, and the 28c null arm already reports the headline:
 **all 25 maps split by side, none swept.** Queued, not concluded.
+
+### Closing the byte-delta attribution: measured, not assumed
+
+The correction above left one item explicitly open — I attributed the replay byte delta to the team
+name but flagged that 514 bytes is far more than the 8 characters involved, so the remainder was
+unexplained. `bob_namectl` (a copy of `src/bob` identical modulo the package line, **no probe code**)
+settles it on Leaf:
+
+```
+bob          vs bob_iter11   19,650,643 bytes   (baseline)
+bob_namectl  vs bob_iter11   19,650,651 bytes   +8      <- pure rename
+bob_srpgate2 vs bob_iter11   19,663,986 bytes   +13,343 <- rename + 1,041 printed probe lines
+```
+
+**A pure rename costs exactly 8 bytes — the length difference between `bob` and `bob_namectl`,
+appearing once.** Everything above that is the probe's own `System.out.println` output, which the
+engine records into the replay when run with `-PoutputVerbose=true`.
+
+So `cmp` on replays is sensitive to two things that are not behaviour: **the team name, and any robot
+logging.** Both differ by construction for every instrumented arm — the name because arms are separate
+packages, the logging because instrumenting is the point. That is why the check could never have been
+cleared by making the probe smaller: shrinking a probe reduces the printed volume but never removes
+the 8 bytes, and the check would have kept failing at the end of it. LEARNINGS 41 stands as written and
+is now measured rather than inferred.
