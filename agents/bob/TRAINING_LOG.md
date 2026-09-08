@@ -9796,3 +9796,79 @@ any single iteration and are easy to lose:
 inside conditions, three of them governed by constants this lineage tunes. **Narrowing an `if` that
 wraps a draw is never a no-op** — it desynchronises that robot for the rest of the game. Put a new
 guard *after* the draw. This voided a 200-game run today.
+
+---
+
+## Iteration 28c — REJECT (decisive). Run `20260908-115418`, 200 games, collated 2026-09-08.
+
+This is the run that finished after the previous session died; the games were complete and collated,
+only the verdict was missing. Recovered rather than re-run.
+
+**Design.** One mechanism, one constant. `HINT_MAX_D2` = the largest r² at which a soldier will
+accept a broadcast ruin hint. Arms `bob_j0/j1/j2/j3` = 0 / 400 / 1600 / 6400 (d = 0 / 20 / 40 / 80).
+Diff between arms is literally one line, verified with `diff` modulo the package statement.
+
+**Null arm clean.** `bob_j0` read 25/50 with all 25 maps split by side and 0 swept either way — the
+signature of behavioural identity to baseline. The `HINT_MAX_D2 = 0` arm therefore reaches
+`Nav.wander()` on exactly the same turns as `bob` and the per-robot PRNG stays in phase, which is
+what LEARNINGS 35 demands. The dose ladder is measured against a sound zero.
+
+**Result** (`eval_arms.py`, arm's own score = 50 − bot):
+
+| arm | HINT_MAX_D2 | score | vs null | swept for | swept against |
+|---|---|---|---|---|---|
+| j0 | 0    | 25/50 |  +0 | 0 | 0  |
+| j1 | 400  |  9/50 | −16 | 1 | 17 |
+| j2 | 1600 | 10/50 | −15 | 1 | 16 |
+| j3 | 6400 | 10/50 | −15 | 1 | 16 |
+
+−15/−16 is >4 se against (se ≈ 3.5), one-directional across all three doses, and corroborated by the
+sweep counts: 16–17 maps lost from *both* sides against 1 won from both. **Ruin-hint sharing is
+rejected, and this is the third and final attempt at it** (v1 void by manipulation check, v2 producer
+measured reportable=0, v3 = this). Closing it.
+
+**The flatness is the finding, not the sign.** 400 → 6400 is a 16× change in accepted radius, d=20 to
+d=80 (whole-map). It moved the score by **one game**. A knob on the causal path shows a gradient; this
+one shows none. **`HINT_MAX_D2` is not on the causal path of the damage.** I pre-registered a dose
+sweep over a constant that does not control the mechanism it was meant to titrate, which means the
+sweep spent 150 games re-measuring one arm three times.
+
+**What the knob missed.** The damage is not *how far* a soldier walks to a hint. It is that
+`workRuin` becomes non-null **at all**. Two behaviours in `Soldier.run()` are gated on it:
+
+- `if (workRuin == null && workOnSrp()) return;` — SRP construction is switched off for any soldier
+  holding a hint. SRP is the compounding economy (+3/turn per mining tower per active SRP,
+  multiplicative in tower count).
+- `if (workRuin != null) Nav.navTo(workRuin); else Nav.wander();` — wander is the paint-expansion and
+  ruin-discovery behaviour, and the win condition is painting 70% of the map.
+
+Both saturate at the smallest dose, because `hint` is **sticky**: `readHints()` overwrites it when a
+message arrives and never clears it. Once a soldier has been within d=20 of any hint it holds one
+essentially permanently, so at every dose ≥400 the army has SRP and wander suppressed nearly always.
+That is exactly the shape the data has: a large step at the first nonzero dose and a flat line after.
+
+**A hypothesis I checked and dropped.** "Soldiers are getting stuck on phantom/occupied ruins and
+functionally dying" predicts a change in *how* games end — annihilations, timeouts, more tiebreakers.
+Reason breakdown is null 40 paint / 10 tiebreak vs arms 42 / 8, i.e. **unchanged**. Games end the same
+way and at the same rate; only the winner moves. This is an ordinary strategic deficit, not a crash,
+a freeze or an exception loop. Stated because the displacement account above is an inference from
+code reading plus flatness, and this is the one competing account the run can actually discriminate.
+
+**Secondary contributor, not measured.** `Tower.known[]` is never pruned: a ruin code enters and stays
+after a tower is built there, and towers cross-feed codes to each other. So a share of hints steer at
+ruins that are already claimed. This makes the displacement worse but cannot explain the flatness, so
+it is not the primary fault and I am not testing it separately — the mechanic is closed.
+
+### LEARNINGS 40 — a dose sweep is only informative if the knob controls the damage
+
+A flat sweep across three doses over a clean null is **not** evidence of a robust effect. It is
+evidence the knob is **off the causal path**, and it converts an n-arm experiment into a 1-arm
+experiment at n× the price. Before pre-registering a dose ladder, state in one sentence *the physical
+quantity the constant is supposed to titrate*, then check that quantity is the one doing the work. Here
+the constant titrated "distance a soldier will travel for a hint" while the damage was done by "fraction
+of turns `workRuin` is non-null" — a quantity `HINT_MAX_D2` barely touches, because stickiness pins it
+near 1 at every nonzero dose.
+
+Corollary, and the reason this is worth a numbered entry: the same flat ladder would have been read as
+*"robust across doses, the effect is real"* had the sign been positive. The failure mode is symmetric
+and it is not detectable from the numbers alone — only from re-deriving what the knob controls.

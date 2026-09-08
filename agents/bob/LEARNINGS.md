@@ -1649,3 +1649,34 @@ Two follow-on defects, both found the same way and worth recording as a pattern:
 the gauntlet.** Three successive designs each measured a hard zero, at the cost of one match each.
 Had I read those three as gauntlet results, each would have come back as a flat dose curve, and
 "communication does not help this bot" is a conclusion I would have believed and written up.
+
+---
+
+## 40. A dose sweep is only informative if the knob controls the damage
+
+Iteration 28c swept `HINT_MAX_D2` (how far a soldier will accept a broadcast ruin hint) over
+0 / 400 / 1600 / 6400 — a 16× range in r², d=20 to whole-map. Against a verified-clean null the three
+nonzero arms read **9, 10, 10 out of 50**. A 16× change in the knob moved the result by **one game**.
+
+The temptation is to read a flat ladder as *"the effect is robust across doses"*. It is the opposite:
+it is evidence the knob is **off the causal path**. An n-arm ladder whose knob does not control the
+mechanism is a 1-arm experiment charged at n× the price — 150 of those 200 games re-measured the same
+arm three times.
+
+Here the constant titrated *"distance a soldier will travel for a hint"*, while the damage was done
+by *"fraction of turns `workRuin` is non-null"*: two behaviours worth more than the hint (SRP
+construction, and `Nav.wander()`, which is how the bot paints and how it finds ruins in the first
+place) are gated on `workRuin == null`. And `hint` is sticky — set by any arriving message, never
+cleared — so that fraction pins near 1 at **every** nonzero dose. Hence the step-then-flat shape.
+
+**The rule.** Before pre-registering a dose ladder, write one sentence naming *the physical quantity
+the constant titrates*, then check that quantity is the one doing the work. If the knob and the
+mechanism are different quantities, the ladder measures nothing the cheapest single arm would not.
+
+**Why this needs to be a numbered entry rather than a note on a rejection.** The failure is symmetric
+and invisible in the numbers: had the sign been positive, the identical flat ladder would have read as
+"robust across doses — accept with confidence", and nothing in the data would have contradicted it.
+It is detectable only by re-deriving what the knob controls. This sits directly alongside 39: there I
+designed a channel and a consumer without a producer; here I designed a dose ladder without checking
+the dose. Both are the same error — analysing the part that feels hard, and never sizing the part the
+result actually turns on.
