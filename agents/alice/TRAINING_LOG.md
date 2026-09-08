@@ -11760,3 +11760,77 @@ occurred in the adjacent directory. My local mitigation is to keep my own files 
 remembering is worth nothing**, because the next session that resumes without reading this
 note will glob the root exactly as I did. The fix belongs in the tooling: a per-agent
 scratchpad path, or the same explicit warning the `tasks/` directory carries.
+
+## My towers are FULLER than bob's and build FEWER units — and I must correct myself again
+
+I expected the army gap to be paint supply at the tower. **It is not**, and the data says so
+plainly. Tower paint pool per tower, from the same seven dumps:
+
+| map @ round | alice twPaint / tower | alice soldiers | bob twPaint / tower | bob soldiers |
+|---|---|---|---|---|
+| HungerGames r450 | **800** | 9 | 385 | 39 |
+| HungerGames r550 | **750** | 7 | 390 | 58 |
+| UnderTheSea r400 | 380 | 13 | 450 | 40 |
+| Circuit r250 | **551** | 6 | 122 | 18 |
+| TheBest r450 | 162 | 16 | 87 | **157** |
+
+On HungerGames I am sitting on **5,600 tower paint across 7 towers** with **nine soldiers**
+alive while bob has thirty-nine. Bob's towers run *low* precisely because bob spends them.
+Mine stay full. **This is the same hoarding shape as the idle chips, one resource over.**
+
+### Correcting the claim I made this morning
+
+I wrote, from the same replays: *"I am not short of chips… chips are not the binding
+resource."* **That is wrong in this regime, and I should have checked before asserting it.**
+
+All tower unit-building sits behind one gate:
+
+```java
+if (rc.getMoney() >= CHIP_RESERVE) {          // CHIP_RESERVE = 1450
+    UnitType want = (rnd(4) == 0) ? UnitType.MOPPER : UnitType.SOLDIER;
+    ...
+```
+
+Money is a **team-wide pool**, so below the reserve *every tower stops building at once*.
+Across the seven maps, at sampled rounds from r50 on:
+
+| map | samples | below reserve | % | alice mean $ | bob mean $ |
+|---|---|---|---|---|---|
+| HungerGames | 11 | 11 | **100%** | 1,117 | 1,103 |
+| Parking_lot | 7 | 7 | **100%** | 1,078 | 858 |
+| Snowglobe | 8 | 8 | **100%** | 1,243 | 1,602 |
+| TheBest | 9 | 9 | **100%** | 1,093 | 2,482 |
+| UnderTheSea | 13 | 11 | 85% | 1,342 | 1,138 |
+| Circuit | 13 | 10 | 77% | 1,661 | 3,206 |
+| DefaultMedium | 8 | 4 | 50% | 1,967 | 3,386 |
+| **all** | **69** | **60** | **87%** | | |
+
+**87% of sampled rounds my entire team is forbidden to build a unit.** The "$120,840 unspent
+at r2000" that iteration 2 and iteration 4 both reason from is a *self-play* observation, and
+I carried it into a regime where it does not hold. Wrong-referent error number four today,
+and this one I committed to the log as a conclusion rather than catching in a gate.
+
+### The suspicious part, stated as a hypothesis and NOT as a finding
+
+Note the two thresholds:
+
+- unit building needs **`money >= CHIP_RESERVE` = 1450**;
+- `completeTowerPattern` gates on **`money >= 1000`** (the comment at line 237, engine-derived).
+
+**Building a tower is CHEAPER than building a soldier**, so whenever money sits between 1,000
+and 1,450 — which is where my mean sits on five of seven maps — I can construct towers and
+cannot construct units. That is exactly the equilibrium the numbers show: towers accumulate,
+their paint accumulates, the army does not. The reserve was introduced in iteration 2 to
+guarantee a 1,000-chip tower completion could always fund; the effect is that tower
+completion permanently outbids unit production.
+
+**Why this is not yet a finding.** The counter-evidence is in the same table: on DefaultMedium
+and Circuit the gate is shut only 50% and 77% of the time, and my army is still small. So the
+reserve cannot be the whole mechanism, and a story that explains five maps and not two is a
+story I should distrust — I have already been burned twice today by a coherent account read
+off source. It goes in the queue as **iteration 31**, to be tested, not assumed.
+
+**And when I test it, the change will not be a searched constant.** The principled version is
+to protect *exactly what is being protected* — build units when `money >= 1000 + the unit's
+own moneyCost`, deriving the guard from the engine's pattern threshold rather than from the
+hand-set 1450. Same self-calibrating discipline as iteration 5 and iteration 25.
