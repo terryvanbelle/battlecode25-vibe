@@ -10928,3 +10928,96 @@ than continuing — and pushing further would fall off the other side. A flat to
 of a balance, not of a useless input.
 
 **The knob is settled at 50/50 and iteration 28 must look somewhere else.**
+
+## Iteration 28 — the coverage stall, and the unit I have never once built
+
+### How I got here, including the lever I killed on the way
+
+With the tower-mix knob settled I went looking for the next lever and nearly picked the
+wrong one twice more. Both were killed by checking an artefact instead of telling a story,
+which is the discipline the retraction above cost me.
+
+**Killed lever 1 — "upgrade more towers with the idle chips".** Upgrades cost 2,500/5,000
+chips and the winner had $154,040 doing nothing, so this looked obvious. The replay says the
+winner had **all 15 of its towers at level 3 by round 1055** and never upgraded again. There
+was nothing left to buy. Refuted in one dump, before a line of code.
+
+**Killed lever 2 — my own rediscovery.** I had already investigated and *parked* the
+splasher direction, with the exact next step written down. Checking the log before building
+saved me from re-deriving it — and told me what had changed since: the parked reason was
+"chips are needed elsewhere", and I now know chips are worthless after roughly round 1000.
+
+### The stall, which is the actual defect
+
+`Barcode`, the **winning** side, sampled every 250 rounds:
+
+| round | 1 | 250 | 500 | 750 | 1000 | 1250 | 1500 | 1750 | 2000 |
+|---|---|---|---|---|---|---|---|---|---|
+| coverage | 163 | 586 | 630 | 611 | 621 | 621 | 638 | 616 | **638** |
+| chips | $2,030 | $1,340 | $2,700 | $2,370 | $2,310 | $32,140 | $71,840 | $113,040 | **$154,040** |
+| splashers | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | **0** |
+
+**Coverage is flat from round 500 to round 2000** — 1,500 rounds, three quarters of the
+game, oscillating 611-638 with no trend — while chips rise 57-fold. The bot finishes its
+expansion by r500 and then accomplishes nothing for the rest of the game, and it cannot buy
+its way out.
+
+`RULES.md` says why, and it is structural rather than a tuning matter:
+
+- a soldier **"cannot overwrite enemy paint"**;
+- a mopper only clears a tile to EMPTY;
+- **only a splasher takes enemy-painted ground** (overwritten within r^2 <= 2 of the centre).
+
+Once the map is carved up, every tile I do not hold is enemy paint, and **I field nothing
+that can take it.** `spl0` on every sampled round of every game I have traced, across 25
+accepted iterations.
+
+### The probe, run BEFORE the candidate, because three of my mechanisms have died unfired
+
+`alice_splashprobe` = iteration 25 with the spend gate relaxed and telemetry. This is
+verbatim the next step the iteration-24 tower census parked, and the reachability check that
+the tower census itself demanded: it measured the *policy-permitted* splasher rate at
+**0.15-0.25% of tower-turns**, so an unrelaxed gate would field almost none and measure
+nothing.
+
+| map | outcome | splashers built | probe coverage | baseline coverage |
+|---|---|---|---|---|
+| AlarmClock | probe won r1229 | **0** | — | — |
+| Castle | probe won r1385 | **0** | — | — |
+| Circuit | probe lost r2000 | **0** | — | — |
+| **DefaultHuge** | **probe won r1757** | **30 by r1000, 48 by r1500** | 438 → 556 → **688** | 538 → 413 → **282** |
+
+Two things in that table matter more than the win/loss column.
+
+**First, the mechanism is inert where it cannot help.** On three of four maps the gate never
+fired at all, so the build is byte-for-byte iteration 25 there — those three results carry
+no information about the mechanism and I am not counting them as evidence for it. The wins
+on AlarmClock and Castle are side-B effects of a bot that did not differ.
+
+**Second, where it did fire the two coverage curves cross.** The probe climbs 438 → 688
+while the baseline *collapses* 538 → 282. That is the stall being broken in the only way
+the rules permit.
+
+### Pre-registered, before the census returns
+
+- **Instrument**: `alice_i28` vs `alice_iter25`, all 75 maps, both sides, 150 games.
+- **Gate**: net swept maps > 0, `SW`/`SL` separately, 0 exceptions, 0 overruns.
+- **Map-level prediction, which is the part that can falsify the *reason* even if the gate
+  passes** (doctrine rule 4 asks for exactly this): gains must be **concentrated on maps
+  whose games run long enough to accumulate a surplus**, and **absent on maps that end
+  early**, where the gate cannot fire. If the census comes out positive but the wins are
+  spread evenly across short and long games, the mechanism is not what won and I must find
+  out what did before accepting.
+- **Named risk**: a splasher costs **300 paint** against a soldier's 200, and paint is the
+  scarce currency — iteration 5's ledger entry records tower paint draining to an absorbing
+  state at 0, from which only 100-paint moppers are affordable and paint income never
+  recovers. The gate is chip-conditioned, not paint-conditioned, so it does **not** protect
+  against that. **Diagnostic if the census fails: tower paint and soldier count in the
+  fired regime** — if soldiers collapse where splashers appear, the dose is displacing the
+  unit that does the painting, and the fix is a paint-side condition rather than abandoning
+  the mechanism.
+- **Dose discipline**: this converts *every* spawn to a splasher above the threshold. That
+  is one step and a large one. If it wins, the next question is a mix rather than a switch;
+  if it loses on the paint-displacement diagnostic, the next question is the same mechanism
+  with iteration 5's paint guard attached. Both are separate iterations with their own
+  censuses.
