@@ -1752,3 +1752,69 @@ is a genuine bug with nowhere left to hide.
 control if every input is mirrored, and a per-entity random seed derived from an engine-assigned
 identifier is an input that silently is not. The failure is invisible — the control runs, produces
 plausible numbers, and answers a different question than the one asked.
+
+## 43. The noise floor is binomial after all — and it is nearly ALL map sampling (2026-09-08)
+
+§36a left one question open: *does the real spread exceed binomial, which would mean cross-map chaos
+is correlated and even ±7 is too tight?* Run `20260908-131748` answers it. Three arms policy-identical
+to `src/bob`, differing only in the phase of every robot's PRNG stream, scored **26, 25, 26** of 50
+against it, with the zero-draw control returning a clean 25/50-all-split.
+
+Pooling with the fourth PRNG-phase-only arm §36 already recorded (19/50, from a different run):
+
+```
+19, 26, 25, 26     mean 24.0   sd 3.37      binomial sqrt(50 x 0.25) = 3.54
+```
+
+**No excess over binomial. `±7 = 2 se` is the right gate**, and §37's "cannot resolve under ~14
+points" stands.
+
+**The decomposition is the part worth carrying:**
+
+```
+three arms, ONE shared map sample     sd 0.58    reshuffle only
+all four, across map samples          sd 3.37    reshuffle + map sampling
+```
+
+Underneath that 0.58, **14–19 of 50 (map,side) cells flip** — ~30% churn producing almost no aggregate
+movement, because the flips come back balanced (8/7, 7/7, 10/9). Under an independent-flip model the
+score would scatter by √k ≈ 3.7–4.4 and all three landing within 1 has p = 0.029, so the balance is
+real: map difficulty is shared by both arms of a paired run and cancels.
+
+**Consequence — LEVEL and SHAPE are read at different precisions, from the same run:**
+
+- **Within one run on its own map sample**: arm-to-arm differences carry reshuffle noise only, ±1.
+  A dose ladder's *shape* — monotone, non-monotone, where it peaks — resolves finely.
+- **Across map samples**, and for any claim a change helps over the map *population* (which is what an
+  accept asserts): the full ±3.5 applies and the +7 gate governs.
+
+Conflating the two is the wrong-referent error at its cheapest. Doctrine 2 says a curve peaking in the
+middle beats any single point; this is *why*, in games — the curve is read at ±1, the point at ±3.5.
+
+**And the meta-lesson, which cost nothing only because the pass got run:** I wrote "the floor is ±1"
+from three arms and missed a fourth sitting in my own `LEARNINGS.md`. The comfortable reading was
+"my instrument is sharper than I thought"; the correct one was "the floor is the binomial number I
+already had." **A calibration that comes back narrower than assumed is the one to audit hardest**,
+because its error runs in the direction you want.
+
+## 44. Swept-map counts are NOT noise-immune — 5–6 each way is what pure noise looks like (2026-09-08)
+
+Every summary I produce labels sweeps *"won from both sides, so immune to spawn advantage"*. True, and
+I let it slide into "immune to noise", which is false.
+
+In run `20260908-131748` the arms changed **nothing but PRNG phase**, and produced:
+
+```
+n1  swept 6 / swept-against 5      n2  3 / 3      n3  6 / 5
+```
+
+Six swept wins, manufactured out of a change with no behaviour in it. So:
+
+- **The information in a sweep count is the ASYMMETRY, not the magnitude.** "9 swept wins, 0 swept
+  losses" is strong because of the **zero**; "9 and 7" is nothing.
+- **An absolute floor on swept wins must clear ~6 before it says anything.** §25 already showed that a
+  positive margin algebraically implies `swept >= swept-against`, so I replaced that condition with an
+  absolute floor on swept wins — this run sizes where that floor has to sit.
+- What sweeps genuinely add over the margin is **D, the split count** — how decisive a pair is. Here D
+  ran 14–19 of 25 between policy-identical bots, which is the honest picture of how much of my
+  instrument is coin-flip.

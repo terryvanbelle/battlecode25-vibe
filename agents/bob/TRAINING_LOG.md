@@ -10457,3 +10457,155 @@ and the games were won by something else.
 
 **Prediction, recorded now**: `d1` positive and small, `d2` > `d1`, `d3` uncertain and possibly
 negative as the paint price bites.
+
+---
+
+## Null calibration — VERDICT. Run `20260908-131748`, recovered 2026-09-08 14:40 UTC.
+
+**Recovery note first.** The run finished remotely long ago; the local `gauntlet/20260908-131748/`
+directory held a **15-game stub** (46 lines of `results.txt`, no `results.csv`, no `summary.txt`) —
+the partial the `timeout 300` driver left behind before it was killed. `gauntlet-collect.sh --list`
+reported it `complete`, and `gauntlet-collect.sh 20260908-131748` pulled the full 200 games. **A local
+run directory that exists is not a collated run**; check for `summary.txt`/`results.csv`, not for the
+directory. Nothing was re-run and no shared VM time was spent re-learning this.
+
+### The numbers
+
+```
+arm          score  vs null  swept  sweptAg  split  diff-from-null
+bob_n0       25/50       +0      0        0     25           0/50   <- NULL, zero extra draws
+bob_n1       26/50       +1      6        5     14          15/50
+bob_n2       25/50       +0      3        3     19          14/50
+bob_n3       26/50       +1      6        5     14          19/50
+```
+
+**The control on the control is clean**: `n0` returned 25/50 with all 25 maps split by side and zero
+sweeps either way. The run is valid and the arms mean what they were designed to mean.
+
+**Reconciliation, run because I expected it to pass (doctrine 13).** `eval_arms.py` reports the
+**arm's** score; `summary.txt` reports **bob's**. They read 26/25/26 and 24/25/24 — complementary to
+exactly 50 on every pair, no residual. Two opposite referents, each correctly labelled for its own
+convention; this is *not* the inverted-tool bug, and I checked rather than assumed. The sweep identity
+`wins − losses = 2·(swept − sweptAgainst)` also holds exactly on all four arms (n1: 26−24 = 2 = 2·(6−5)).
+
+### What was bought
+
+**1. The PRNG-reshuffle floor on this design is ±1 game.** Three arms that are policy-identical to
+`src/bob` and differ *only* in the phase of every robot's PRNG stream scored 26, 25, 26 of 50. That is
+the entire spread. The reshuffle, on a fixed map sample, does not move the aggregate.
+
+**2. But the churn underneath is large: 14–19 of 50 (map,side) cells flip.** ~30% of games change
+outcome and the total barely moves, because the flips come back balanced (8/7, 7/7, 10/9).
+
+**3. That balance is itself the finding, and it is not what an independent-flip model predicts.** If
+each of `k` flipped cells resolved as an independent coin, the score difference would have
+sd = √k ≈ 3.7–4.4 games, and all three arms landing within 1 of the null has probability
+
+```
+P(|delta|<=1):  n1 (k=15) 0.393   n2 (k=14) 0.209   n3 (k=19) 0.352   joint = 0.029
+```
+
+So the paired design is materially **more powerful** than counting flips would suggest: map difficulty
+is shared by both arms and cancels, and what is left over largely self-cancels too. Recorded as an
+observation on **n = 3 arms**, not as a variance estimate.
+
+**4. Swept-map counts are NOT noise-immune, and I have been treating them as though they were.** A
+change that alters *nothing but PRNG phase* manufactured **6 swept wins and 5 swept losses** on a
+25-map sample. `n2` produced 3 and 3. So a sweep count of 5–6 in each direction is what pure noise
+looks like here, and the information in a sweep count is the **asymmetry**, not the magnitude. "Nine
+swept wins and zero swept losses" is strong precisely because of the zero. A gate condition phrased as
+an absolute floor on swept wins must clear ~6 before it is saying anything at all.
+
+### What was NOT bought — and why the gate does not move
+
+This run held the **map sample fixed**. It therefore measures exactly one of the two noise sources, the
+reshuffle, and says **nothing whatever** about the other: sampling 25 maps out of 75, which is the
+variance that governs whether a result generalises — and which is the *larger* of the two (doctrine 1
+puts its sd near 3 wins on a 50-game arm).
+
+I pre-registered: *"if the noise floor is wider, the gate moves UP."* The component I measured came
+back **narrower** than assumed. The temptation is to bank that and lower the bar. **I am not doing
+that, and the reason is not caution, it is that the arithmetic does not support it**: the unmeasured
+component is the dominant one and it is untouched by this run. Per the commitment already standing in
+this log, a calibration that only ever loosens a gate is not a calibration — and that binds hardest
+when the loosening is the answer I would prefer.
+
+**So: iteration 30's gate stands unchanged at `>= +7` accepts, `+5/+6` replicates on a fresh sample,
+`<= +4` rejects.**
+
+Equally, iterations 24–26 are **not** vindicated. The flag on them was "the reshuffle may be wide
+enough to have produced these"; the reshuffle is now shown to be ±1, so *that* source is eliminated,
+but the map-sampling source is exactly as live as it was this morning. The flag is **narrowed from two
+causes to one, not discharged**. (Doctrine 6: a flagged caveat is not a discharged one — and neither
+is a half-answered one.)
+
+### The operational consequence — LEVEL and SHAPE have different resolutions
+
+This is the part that changes how I work, and it applies to the run in flight right now.
+
+- **Within one run, on its own pinned map sample**, arm-to-arm differences are contaminated only by
+  the reshuffle. Floor ±1. A dose ladder read *internally* — is it monotone, does it peak in the
+  middle, where is the maximum — resolves far finer than +7.
+- **Across map samples**, and for any claim that a change helps over the map *population* — which is
+  what an accept asserts — the map-sampling variance applies in full and the +7 gate governs.
+
+A single gauntlet therefore yields two readings at two different precisions, and conflating them is
+the wrong-referent error in its cheapest form. Doctrine 2 already says a curve peaking in the middle
+beats any single point; this run says **why**, in games: the curve is read at ±1 and the point is read
+at ±3.
+
+**Control installed, not just a lesson (doctrine 16).** `eval_arms.py` prints `diff-from-null`, so
+every future ladder shows its own churn beside its own score, and the ±1 / 5–6-sweep floors above are
+in `LEARNINGS.md` next to the gate they qualify — not only here in the chronology.
+
+### CORRECTION, same session, before this entry was committed — I dropped a fourth arm that was already in my own LEARNINGS
+
+I wrote "the PRNG-reshuffle floor on this design is ±1 game" from the three arms in *this* run. Then I
+ran the consistency pass against `LEARNINGS.md` §36, which records a **fourth** PRNG-phase-only arm —
+behaviourally neutral, no rule changed — that scored **19/50** with 8 maps swept against. That number
+has been in my log all day and I did not reach for it while writing a calibration whose entire subject
+is that quantity. This is precisely the failure the algorithm names: *entries are checked when written,
+so a per-entry review passes everything; only comparing entries fails.*
+
+Pooling every PRNG-phase-only arm this lineage has ever run:
+
+```
+19, 26, 25, 26        mean 24.0   sample sd 3.37
+binomial prediction   sqrt(50 x 0.25) = 3.54
+```
+
+**§36a asked the sharp question — "does the real spread EXCEED binomial, which would mean cross-map
+chaos is correlated and even ±7 is too tight?" The answer is no. It matches binomial almost exactly
+(3.37 vs 3.54), and ±7 = 2 se is the right bar.** That question has been open since iteration 18 and
+is now closed by measurement rather than by formula, which is what doctrine 9 asked for from day one.
+
+**The two readings do not conflict — they decompose, and the decomposition is the real result.**
+
+```
+three arms sharing ONE map sample      sd 0.58   <- reshuffle only
+all four arms, across map samples      sd 3.37   <- reshuffle + map sampling
+```
+
+The 19/50 came from a **different run on a different 25-map draw**. So the near-total stability of
+n1/n2/n3 is not evidence that this instrument is quiet; it is evidence that **map sampling is nearly
+the whole of its variance**, with the reshuffle contributing almost nothing once the maps are held
+fixed. Which is exactly the conclusion I reached above from doctrine — the gate stays at +7 because
+the unmeasured component dominates — except that it is now a measurement instead of an argument, and
+it is *stronger* than the version it replaces.
+
+Caveat held to standard, in both directions: the across-sample sd rests on **one** differing-sample
+draw, so 3.37 is not a precise estimate — it is a demonstration that the across-sample spread is of
+binomial size and not of the ±1 size the within-sample arms suggest. And the within-sample ±0.58 rests
+on 3 arms. Neither number deserves a third significant figure.
+
+**What both versions took for granted (doctrine: audit the retraction harder than the claim).** My
+first draft and this correction both assume the four arms are *the same kind of object*. They are not
+quite: the 19/50 arm was voided for a different reason and played a different opponent set. It is a
+PRNG-phase-only arm, which is the property that matters here, but pooling four numbers from three
+designs is the loosest step in this entry and I am naming it rather than letting the arithmetic imply
+more precision than it has.
+
+**The correction that runs against me is the one I nearly missed**: the comfortable version of this
+entry was "the floor is ±1, my instrument is sharper than I thought." The uncomfortable version is
+"the floor is the binomial ±3.5 I already had, and §37's finding that a 50-game arm cannot resolve
+anything under ~14 points stands untouched." The second is correct.
