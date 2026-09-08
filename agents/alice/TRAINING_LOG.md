@@ -10751,6 +10751,13 @@ money towers to paint towers did not relieve a paint constraint, it **created a 
 and the surplus simply moved from the chip column to the paint column while unit production
 fell.
 
+### RETRACTED BELOW — I named this fault before running the discriminating case
+
+*The section that follows called the premise a reverse-causation error. **It is wrong**, and
+the data that refutes it was already on my disk when I wrote it. It is kept verbatim, with
+the correction after it, because a retraction that deletes its own error hides the shape of
+the mistake.*
+
 ### The premise was a reverse-causation error, and I can now name it exactly
 
 Iteration 26 rested on "$36,830 unspent chips at r1200-1600 of the tournament replay vs
@@ -10799,3 +10806,75 @@ would be a search for a worse point on a slope I have already measured. **The in
 direction is the other one** — more money towers than 50%, which no iteration has tested and
 which this result points at. That is iteration 27, and it needs its own census, not a
 narrative extension of this one.
+
+## CORRECTION — the surplus is a symptom of WINNING, and chips are the compounding currency
+
+I wrote, an hour ago and in a committed message, that the $36,830 chip surplus was "a
+consequence of losing" and that the free test I never ran was *"would the surplus still be
+there in a game I was winning?"*
+
+**I then ran it, and it demolished my correction as thoroughly as it demolished the original
+premise.** The test cost one replay dump. The games were already on disk: `gauntlet.sh`
+returns the candidate's *losses*, and a loss for `alice_i26b` is a game `alice_iter25`
+**won**, so every local replay from the iteration 26 census contains my baseline winning.
+
+`Barcode`, side A, the winner being `alice_iter25` (T2):
+
+| round | i26b (lost) | **iter25 (WON)** |
+|---|---|---|
+| 1200 | $2,310 · 7 towers · cov 345 | $23,740 · 15 towers · cov 633 |
+| 1600 | $1,460 · 7 towers · cov 327 | **$88,940** · 15 towers · cov 650 |
+| 2000 | $1,510 · 7 towers · cov 340 | **$154,040** · 15 towers · cov 638 |
+
+**The winner ends with $154,040 unspent — four times the surplus I built an entire iteration
+to eliminate — and the loser ends with $1,510.** A large chip pile is not the signature of
+waste and not the signature of losing. It is what winning looks like.
+
+### What is actually true, from RULES.md rather than from a story
+
+`assertCanCompleteTowerPattern` gates on **`getMoney() >= 1000`**. Upgrades cost **2,500 /
+5,000 chips**. A spawn costs **250 chips + 200 paint**. So:
+
+> **Chips COMPOUND and paint does not.** Chips buy towers; towers produce both chips *and*
+> paint; so a chip spent early returns more chips *and* more paint forever. Paint is purely
+> consumptive — it pays for spawns and for painting tiles, and buys nothing that produces.
+
+That single asymmetry explains every column in the census diagnostic without any appeal to
+who was winning:
+
+- **Tower count is the discriminator**, and it is the one thing consistent across every game
+  I traced: 4 vs 8, 5 vs 8, 7 vs 15. Cutting money towers to 25% cut the compounding rate,
+  and the gap widens monotonically with round number because that is what compounding does.
+- **Cash *stocks* were similar early** ($1,200 vs $1,070 at r200 on Barcode; $1,300 vs
+  $1,270 on Brat) — which is exactly why a stock reading misled me. The candidate was not
+  visibly poor. It was *earning* less and therefore *building* less, and a stock cannot show
+  a rate.
+- **The paint pile is the residue**, not the cause: paint accumulates in towers because
+  paint cannot be reinvested into anything that produces.
+- **The late-game surplus is the end state of a won compounding race.** Once every ruin is
+  taken there is nothing left to buy, so the winner's chips pile up. The pile appears
+  *because* the compounding finished, not because it was never needed.
+
+### The methodological failure, which is the part worth keeping
+
+I was told, in this session's own briefing, to *run the discriminating case before naming
+the fault*. I named two faults in a row from plausible stories:
+
+1. "chips are surplus, so move slots to paint" — refuted by the census, −21 swept.
+2. "the surplus was a symptom of losing" — refuted by a replay I already had, in the
+   opposite direction, and committed to git before I checked.
+
+Both stories were coherent, both explained the data I had looked at, and **both were
+available to be falsified by an artefact already on disk.** The second is worse than the
+first: the first was a hypothesis I paid a census to test, which is the loop working; the
+second was an explanation I asserted in a commit message *while writing the sentence that
+named the test I had not run*.
+
+`LEARNINGS.md` already says "a retraction is a claim too, and shares the assumption that
+produced the error". It does. My retraction shared the original's assumption — that the
+surplus needed a *behavioural* explanation at all — when the answer was an accounting
+property of the two currencies that RULES.md had recorded from the start.
+
+**Operational rule, added to the ledger: when the explanation of a result is a claim about a
+resource, check the resource's own production identity in `RULES.md` BEFORE reaching for a
+story about the bots.** One grep would have beaten two narratives.

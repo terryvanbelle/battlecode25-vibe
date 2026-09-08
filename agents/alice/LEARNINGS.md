@@ -1688,3 +1688,139 @@ matters is a coin flip. The strong rows are strong *because* they are irrelevant
   `alice_iter7` row, which has plenty of resolution. That is exactly the chaining this
   ledger already forbids — *head-to-head margins do not chain* — and the resolution
   argument makes the temptation stronger, not weaker.
+
+## Theme: an UNSPENT SURPLUS is not evidence of waste — and my first correction was ALSO wrong
+
+> **SUPERSEDED, SAME DAY, BY ITS OWN PRESCRIBED TEST.** This entry originally concluded that
+> the surplus was "a symptom of losing" and prescribed the contrast case as the missing
+> check. I ran the check. **The winner's surplus was 4x the loser's** ($154,040 vs $1,510),
+> so the entry's own conclusion is false in the opposite direction. The corrected mechanism
+> is in the section "The resolution: chips COMPOUND, paint does not" at the end. The
+> original text is kept because the prescribed test was right even though the conclusion
+> drawn without it was not — the failure was asserting the conclusion *before* running it.
+
+## (original, retained) an unspent surplus measured in a losing game
+
+### 2026-09-08 — $36,830 of unspent chips, and the mechanism I built to spend them lost by 21 swept maps
+
+Iteration 26 shifted the tower mix from ~50/50 money/paint to 25/75, on this reasoning:
+at rounds 1200-1600 of a tournament game against `bob` I held **$36,830 unspent chips**
+while my ten towers held 680 paint between them. Half my tower slots were producing the
+resource I demonstrably could not spend, so I moved them to the one I could.
+
+Census over all 75 maps: **54-96, net swept −21.** Not a near miss — the largest margin in
+either direction I have ever measured against my own predecessor.
+
+The paired replay trace says why, and it is the mirror image of the premise. At round 200
+the candidate holds **3-160x the baseline's tower paint** while trailing it on **map
+coverage**, which is the win condition. The pile did not go away. **It changed currency.**
+
+> **The game I measured the surplus in was a game I was losing badly.** A bot that is
+> losing has few units, few ruins and few tiles to act on, so whatever it produces
+> accumulates. The surplus was a *consequence* of losing. I read it as a cause.
+
+### The check, which costs nothing and which I did not run
+
+**Would the surplus still be there in a game I was WINNING?**
+
+A resource that accumulates only when you are behind is not a resource you are failing to
+exploit — it is the accounting shadow of having nothing to spend it on. One dump of a won
+game would have settled it before I wrote a line of code. I had won games available in the
+same run and never looked, because the losing game was the one I was investigating for
+*other* reasons and the surplus was simply the most striking number in it.
+
+Generalised: **any "we have too much X" claim needs the same statistic from a game with the
+opposite outcome before it becomes a hypothesis.** Otherwise it is conditioned on losing,
+and the mechanism you build from it will be aimed at a state you only reach when it is
+already too late.
+
+### The trap has a positive-control shape, which is how it connects to the rest of the ledger
+
+This is the same defect as "an instrument can produce NOTHING and no-finding, and the two
+are indistinguishable downstream": a measurement taken in exactly one condition cannot tell
+you whether it is describing the mechanism or describing the condition. There the fix was a
+positive control; here it is a **contrast case** — the same number under the opposite
+outcome. Same remedy, different axis.
+
+---
+
+## Theme: a rate pooled over HETEROGENEOUS producers measures specialisation, not shortage
+
+### 2026-09-08 — "paint affordability 6-11%" was a fact about money towers
+
+The second pillar under iteration 26 was my own tower census, over 80,752 tower-turns:
+
+> the chip gate is open on **80-94%** of tower-turns, while paint-affordability sits at
+> **6-11%**
+
+Both figures are correctly computed. Neither is a **team-level** constraint, because the
+population they average over is **half money towers, which by construction almost never
+hold paint**. Pooling an affordability rate across producers that specialise in different
+resources measures how specialised they are. It cannot measure which resource the *team* is
+short of, and I used it as though it could.
+
+### The tell was in the same census, and I quoted both halves in the same argument
+
+The census also reported towers holding **>= 300 paint on 3.0-6.8% of tower-turns**.
+
+**Stock and shortage cannot both be true of the same resource.** If paint were the binding
+team constraint at 6-11% affordability, stocks would sit near zero — instead they were
+large enough that iteration 25 was built specifically to *withdraw* from them, and iteration
+25 worked. I had two artefacts that should have reconciled, they didn't, and rather than
+reconcile them I cited both as support for the same conclusion.
+
+That is `CONSISTENCY PASS 2026-09-08`'s operational check — "when two figures ought to
+reconcile, reconcile them exactly and account for the residual" — failing on numbers I had
+myself collected, in a document where I had already written the rule down.
+
+### The operational form
+
+- **Before quoting a pooled rate as a constraint, ask what the denominator is made of.**
+  If the population is heterogeneous *in the thing being measured*, the pool measures the
+  heterogeneity. Split by producer type first and see whether the split rates say the same
+  thing; if they don't, there is no pooled number to quote.
+- **A constraint claim and a stock claim about the same resource must be reconciled**, and
+  if they cannot be, at most one of them is about the quantity you think it is.
+
+### Cross-references
+
+- Doctrine rule 5 (wrong-referent) — this is a new member of that family: not a number
+  computed against the wrong object, but a rate averaged over a population it is not
+  homogeneous across.
+- "an exactly symmetric statistic is a hypothesis about the FILE FORMAT" — same instinct
+  applied to a different artefact: interrogate what the measurement is *of*, not just
+  whether the arithmetic is right.
+
+### The resolution: chips COMPOUND, paint does not
+
+Both the original premise and its first correction reached for a *behavioural* story about
+the bots. The answer was an accounting property of the two currencies, sitting in `RULES.md`
+the whole time:
+
+- `assertCanCompleteTowerPattern` gates on **`getMoney() >= 1000`**; upgrades cost
+  **2,500 / 5,000 chips**; a spawn costs **250 chips + 200 paint**.
+- So **chips buy towers, and towers produce both chips and paint.** A chip spent early
+  returns more of *both* currencies forever. Paint buys nothing that produces — it pays
+  spawns and paints tiles, and is purely consumptive.
+
+Everything the iteration 26 census showed follows from that with no reference to who was
+ahead: tower count diverges monotonically (4 vs 8 at r200, 7 vs 15 at r1200) because
+compounding rates diverge; **cash stocks looked similar early** because a stock cannot show
+a rate; the paint pile is residue, since paint cannot be reinvested; and the winner's
+six-figure end-state surplus is what a *finished* compounding race looks like once every
+ruin is taken and there is nothing left to buy.
+
+> **A stock is not a rate, and for a compounding resource the stock is at its most
+> misleading exactly when the compounding has succeeded.**
+
+### The operational rule, which would have prevented all three errors
+
+**When the explanation of a result is a claim about a resource, check that resource's own
+production identity in `RULES.md` before reaching for a story about the bots.** One grep
+beats any number of coherent narratives, and I ran two narratives past a census and a
+retraction before running the grep.
+
+And the sharper form of the process failure: I wrote the sentence naming the test I had not
+run, and committed the conclusion in the same breath. **Naming a missing check is not
+performing it** — if the check is cheap enough to name, it is cheap enough to run before the
+claim ships.
