@@ -11980,3 +11980,81 @@ value.
 (feature ablation, then the algorithm's own first-listed stalled-lineage entry). The bot has not
 regressed — `src/bob` is untouched — but the loop has not produced an accept today, and the next
 session should weigh **protocol item 2, high-risk structural exploration**, over another small knob.
+
+---
+
+## Iteration 31 — PRE-REGISTERED 2026-09-08 ~18:45, before the run exists. Anti-crowding: the adjacency penalty is 80% of my passive paint drain.
+
+**This is protocol item 2 (structural), and it is not invented** — it is `reference/RESEARCH.md` §7's
+*emergent rather than commanded* coordination (wololo's repulsion fields), pointed at a cost that my own
+traces measured today. Three independent measurements meet:
+
+1. **Every unit death in this lineage is paint starvation.** `BobMop` on today's Leaf replay:
+   SOLDIER 438/439 starved, MOPPER **202/202**, SPLASHER 370/409. Combat kills: **10**.
+2. **The engine charges adjacency unconditionally.** `RULES.md`: end turn on neutral -1, enemy -2,
+   **PLUS 1 x (# adjacent allied robots in the 8 neighbours)**, doubled in enemy territory. It applies
+   *on our own paint too*, and 82% of our unit-turns are on ally paint — where it is therefore the
+   **only** drain.
+3. **It is the dominant controllable sink, and partly recoverable:**
+
+```
+ally-neighbour instances (= paint at +1 each)   56,394
+passive drain                                   70,110   -> adjacency is 80% of it
+single-step reducible                            9,999   (18% of adjacency, 8.5% of tower income)
+adjacency paint per unit-turn                     0.459
+  over a mopper's 83-round life                    38.1 paint of its 100-paint stash
+```
+
+**A mopper spends 38% of its entire paint budget standing next to its friends, and then dies of paint
+starvation 202 times out of 202.**
+
+### The arithmetic BEFORE the run, because this is the check I keep being told to do
+
+The honest ceiling is **9,999 paint per game = 8.5% of tower income**, and that is the *myopic* bound
+(what one best step per turn recovers). A policy that maintains spacing rather than fixing crowding
+one step at a time could beat it; a policy that pays progress for spacing will not reach it. Against
+that, the cost is real: a step spent avoiding an ally is a step not spent approaching an objective, and
+**LEARNINGS records that "fair" fixes which destroy formation cohesion have already burned this lineage
+once** (the bug-nav latch, where removing the defect scored worse). That is precisely why `x3` is in
+the ladder rather than assumed best, and why I expect the ladder to be **non-monotone at the top**.
+
+So: plausible, bounded, and genuinely uncertain. **I am not predicting an accept.**
+
+### Arms — one mechanism, exact zero arm, verified minimal
+
+`navTo` scores each candidate step as `progressRank + CROWD_W * adjacentAllies`. All three unit types
+route through `navTo`, so one edit covers the lineage.
+
+- `bob_x0` — **CROWD_W = 0. Behaviourally identical by construction**: the score collapses to the
+  candidate index and the strict `<` keeps the earliest movable non-enemy-paint candidate, which is
+  exactly the original first-match loop. **Must read ~25/50 all-split; if it does not, the run is void.**
+- `bob_x1` — 1 rank of detour per ally avoided.
+- `bob_x2` — 2 ranks.
+- `bob_x3` — 4 ranks (crowd term dominant).
+
+**Verified minimal**: `x1`/`x2`/`x3` differ from `x0` by exactly one line (`CROWD_W`), and all six
+non-`Nav` files are byte-identical to `src/bob` in every arm. **The ally sense runs in every arm
+including the null**, so bytecode is matched across the ladder and only the *decision* differs —
+learning from LEARNINGS 40 that the knob must sit on the causal path and nothing else may move.
+`wander()` is deliberately **untouched**: a positive result stays attributable to `navTo`, and a null
+one is not confounded by two mechanisms moving at once.
+
+**Bytecode is not a risk**: measured usage is 1,600-1,900 against a 17,500 limit, and the change adds
+one sense plus ~50 arithmetic ops.
+
+### Gate
+
+This is a **25-map SHAPE ladder** (4 opponents x 50 = 200 games), per my own doctrine that the full
+corpus measures LEVELS and 25-map draws measure SHAPE. A 50-game arm cannot resolve below ~14 points,
+so **this run does not accept anything**. It answers only: *is there a dose response, and where does it
+peak?*
+
+- **Monotone rise across x1->x3, or a clear interior peak** → promote the best dose to a **full-corpus
+  150-game head-to-head** and judge it there against the real gate (>= +10 accept, +7..+9 replicate,
+  <= +6 reject).
+- **Flat, or all arms within noise of x0** → the myopic bound was the whole story; **close it** and do
+  not re-run at corpus scale hoping the instrument was the problem.
+- **Monotone fall** → crowding is load-bearing (cohesion), which is a *finding* about the current bot
+  and closes the direction in the opposite direction.
+
+Registered before launch. The x0-must-split check is the run's own validity condition and is read first.
