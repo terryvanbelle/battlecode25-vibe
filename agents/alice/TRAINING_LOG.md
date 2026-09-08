@@ -12002,3 +12002,46 @@ The chip-reserve direction (`alice_chipprobe`, built and compile-checked) is the
 more interesting and the one whose story I have already half-written. **That is exactly why
 it waits.** `i31a` is one line, follows directly from a defect I found in a candidate that
 was already winning, and its falsifier is sharper. Interest is not evidence.
+
+## Control on the mid-game finding: it is BOB-SPECIFIC, and I had over-generalised it
+
+I described "r500-1200" as *my* weakness. The obvious control was sitting in the same file
+and I had not run it: does the same sag appear against carol?
+
+Alice's win share by the round the game was decided in, both pairs, nothing conditioned on
+the winner:
+
+| decided in | vs bob | vs carol |
+|---|---|---|
+| r < 500 | 48% (n=25) | 73% (n=22) |
+| r500–799 | **19%** (n=32) | 74% (n=27) |
+| r800–1199 | **7%** (n=29) | 68% (n=22) |
+| r1200–1998 | **9%** (n=22) | 62% (n=29) |
+| r2000 | 40% (n=42) | 68% (n=50) |
+| **overall** | **26%** | **69%** |
+
+**Against carol the line is flat** — every bucket sits within a few points of the 69% overall
+rate, which is what "no phase structure" looks like. **Against bob it is a deep U**: near
+parity at both ends (48%, 40%) and 7-19% through the middle.
+
+The comparison is sound because a flat profile is exactly the null: if the decision round
+carried no information, every bucket would sit at the overall rate. Carol's does. Bob's does
+not, by 30+ points in both directions.
+
+**So the correct statement is "against bob, something happens between r500 and r1200",
+not "I am weak in the mid-game."** The first is a claim about a matchup; the second is a claim
+about my bot, and I made the second one. It is the wrong-referent error in its most ordinary
+dress — a real effect, correctly measured, attached to the wrong subject — and I have now
+made it in some form five times today.
+
+**What survives.** The replay evidence is unaffected: my coverage still ends below its own
+peak on 5 of 7 maps, my towers are still fuller than bob's while my army is a fraction of the
+size, and the refill still fires at ~1% of opportunities. Those are properties of my bot,
+measured directly, and they do not depend on the bucket analysis. What does *not* survive is
+using the r500-1200 band as a target — **iteration 30 was not aimed at it and does not need
+to be.** It was aimed at starvation, which is measured on my own units.
+
+**And the control cost nothing.** It was one pass over a file I had already parsed twice.
+The reason I did not run it earlier is that the bob result was interesting and the carol
+result was not — which is the same selection pressure that skips a manipulation check on a
+favourable headline.

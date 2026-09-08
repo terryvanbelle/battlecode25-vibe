@@ -9655,3 +9655,135 @@ That is a more useful finding than the accept itself, and it is what iteration 3
   the tower spawns, the per-round economy and the coverage series. Every later question about the
   same games would have paid the VM again. Dumps are now cached on disk under the git-ignored
   `gauntlet/.dumpcache` and keyed by replay path plus flags. Dump once, parse many times.
+
+---
+
+## Iteration 37 — PRE-REGISTERED. The splasher floor is an off switch for the soldier, and I built it
+
+Registered before any game is played. Found entirely from replays and committed tournament results
+at **zero extra VM cost**, during iteration 36's write-up.
+
+### How I got here, including the hypothesis I killed on the way
+
+Iteration 36 proved the build mix was a real fault and fixed it, and its own biggest map showed the
+mix was **not** the binding constraint. So I went looking for what is.
+
+First hypothesis: **long games**. Realized soldier share correlates with game length far more
+strongly than with map area — rho(soldier share, rounds) = **-0.654, t=-3.87** against
+rho(soldier share, area) = -0.389. Games reaching round 2000 average **5.1%** soldier share;
+games ending early average **68.2%**.
+
+**I killed it with the tournament rather than believing it.** If long games were where carol dies,
+carol's win rate should sag in them. It does not: **31.9% in decisive games, 33.8% in tiebreaks** —
+flat. And splitting carol's area deficit by game length:
+
+| subset | rho(win%, area) | t | maps |
+|---|---|---|---|
+| all games | -0.490 | -4.81 | 75 |
+| **decisive only (<2000)** | **-0.463** | **-4.43** | 74 |
+| tiebreak only (=2000) | -0.045 | -0.27 | 39 |
+
+Game length does not mediate the area deficit — and length is itself barely related to area
+(rho=+0.165, ns). **Carol loses big maps by being beaten outright before round 2000.** The
+long-game correlation is real and is a symptom, not the disease. Recording the killed hypothesis
+because it cost nothing and would have cost a 100-game run.
+
+### What the deficit actually is
+
+| map size | carol won | of those, by painting enough | carol lost | of those, opponent painted enough |
+|---|---|---|---|---|
+| <= 900 tiles | 43 | **93.0%** | 33 | 84.8% |
+| >= 2500 tiles | 9 | **22.2%** | 55 | 69.1% |
+
+**On maps >= 2500 tiles carol reaches the paint threshold in 2 of 64 games. On maps <= 900 it does
+so in 40 of 76.** Carol's coverage engine does not scale with area. The engine is towers.
+
+### The fault, stated as what the code computes
+
+`reserve` is `CHIP_RESERVE = 1200`, or `0` when `freed`.
+
+```
+splasher passes at  chips >= reserve + 400                  = 1600   (400 when freed)
+soldier  passes at  chips >= max(reserve + 250, 2000 + 250) = 2250   (ALWAYS)
+```
+
+The `2000` is `SPLASH_FLOOR`, an absolute constant I introduced in iteration 30. **It does not
+track `reserve`**, so the `freed` escape hatch — whose entire purpose is to *unblock* spending —
+drops the splasher gate to 400 and leaves the soldier's at 2250, widening the gap from 650 chips
+to 1850.
+
+**Measured, 9 games, `carol-tools/mixcheck/trajectory.py`, from cached dumps at no VM cost:** the
+treasury sawtooths between ~1200 and ~1750 for the entire game and **never reaches 2250**, because
+splashers at 400 chips drain it as fast as it fills. In **7 of 9 games carol builds zero soldiers
+from round ~600 to round 2000**, while building a metronomic 13–16 splashers per 200 rounds, and
+the tower count freezes at 4–5. Representative, one game end to end:
+
+```
+round |  carol s/m/p  sold%  chips  tw
+  400 |     0/0/15      0%   1350   4
+  600 |     4/0/9      31%   1750   5
+  800 |     0/0/16      0%   1350   5
+ 1000 |     0/0/15      0%   1350   5
+ ...  |     (identical to round 2000)         5
+```
+
+**Why this closes a ratchet rather than merely skewing a mix.** `workOnRuin` is called only from
+`runSoldier`, so **soldiers are the only unit that claims ruins**. No soldiers → no new towers →
+no new income → the treasury stays under 2250 → no soldiers. Pooled over 22 games the realized mix
+is **44% soldier / 55% splasher against an intended 75/10/15**: iteration 30 overshot its own
+target by 3.7x, turning a 1.2–2.7% splasher share into 55%.
+
+This is the **fourth** gate-as-off-switch in this lineage (30 splasher chips, 35 upgrade chips,
+36 build paint) and **the first one I created myself while fixing the previous one.** The lesson I
+am writing down before the result arrives: *a floor added to protect a starved unit is a floor
+that can starve a different one, and iteration 30 never measured the other side of its own gate.*
+
+### The change — one mechanism, two doses
+
+Stop comparing against a magic `2000` and compare against **the price of the thing the floor
+exists to protect**. Iteration 30's intent is preserved exactly; only the number it is measured
+against changes, and it now tracks `reserve` for free.
+
+```java
+// carol_i37_eq  -- EQUAL GATES: a non-splasher passes exactly where a splasher does (1600)
+if (afford && want != UnitType.SPLASHER
+        && chips < reserve + UnitType.SPLASHER.moneyCost) afford = false;
+
+// carol_i37_res -- KEEP A SPLASHER IN RESERVE: non-splasher gate 1850
+if (afford && want != UnitType.SPLASHER
+        && chips - want.moneyCost < reserve + UnitType.SPLASHER.moneyCost) afford = false;
+```
+
+Ladder on the soldier gate: **1600 (eq) / 1850 (res) / 2250 (incumbent)**.
+
+### Accept gate (pre-registered, binding) — with condition 2 replaced
+
+`BOT=carol_i37_eq OPPONENTS="carol_iter36 carol_i37_res"`, `MAPS` unset, 100 games.
+
+1. **`carol_i37_eq` vs `carol_iter36` > 25/50**, and
+2. **swept wins >= 5 of 25** — the *new* condition adopted this session, replacing "swept wins >=
+   swept losses", which iteration 36 showed is algebraically implied by condition 1 and therefore
+   was never independent evidence. An absolute floor constrains the split count D and is not
+   implied by the margin, and
+3. **large-area half win rate >= 45%** (the standing size clause).
+
+### Manipulation check — CAN VOID THE ARM regardless of the headline
+
+Both must hold, measured from this run's own loss replays, paired within each game:
+
+1. **realized soldier share materially above the incumbent's** — pooled incumbent is 44%; the arm
+   must clear **>= 60%** pooled, and
+2. **mean tower count from round 800 onward strictly higher than the incumbent's in the same
+   games** — this is the link the whole story turns on, and if towers do not move then the mix
+   changed without unlocking the ratchet and the mechanism is not the one I named.
+
+If both fail the arm is void whatever the win rate says.
+
+### Pre-registered covariate, with my confidence stated in advance
+
+> rho(wins, map area) > 0.
+
+**Low confidence, and I am saying so before the number arrives.** My last two area predictions came
+in at +0.009 (iteration 35) and +0.291/ns (iteration 36), and I retracted iteration 34's outright.
+Area keeps being a proxy for something else. The primary prediction here is the **tower count**,
+not the covariate, and I will read a flat rho as "area is again a poor proxy", not as support.
