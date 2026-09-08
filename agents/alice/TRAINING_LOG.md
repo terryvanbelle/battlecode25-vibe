@@ -12772,3 +12772,50 @@ of bob's deaths and 72-88% of mine**, so draining unit paint attacks the largest
 of death in these games. That is a claim about killing units, and my self-play census can test
 it *only* because my census opponent starves at a similar rate to bob — which I checked rather
 than assumed.
+
+## `mopSwing` corrected a THIRD time — 6 tiles, and it out-ranges the mopper's own attack
+
+I read the offset tables as one `int[4][6]` = four directions of three coordinate pairs. Going
+back to read how the arrays are **consumed** rather than how they are built:
+
+```
+x = getLocation().x + arr2[dir][k]      // aload_2, aaload [iload_4], iaload [iload_6]
+y = getLocation().y + arr3[dir][k]      // aload_3, same indices
+                                        // loop bound: if_icmpge at 6
+```
+
+**Two tables, not one** — `astore_2` is dx and `astore_3` is dy, each `int[4][6]`, and the
+loop runs k = 0..5. So the swing hits **6 tiles**, and the rows I had already read decode
+cleanly: NORTH is dx `{-1,0,1,-1,0,1}`, dy `{1,1,1,2,2,2}`, i.e.
+
+```
+        . X X X .        <- dy = 2   (dist^2 = 4-5)
+        . X X X .        <- dy = 1
+        . . M . .        <- the mopper
+```
+
+**a 3-wide by 2-deep block in front.** Two things follow that I did not have:
+
+1. **Up to 30 paint drained** (6 robots x 5) against the single-target attack's 10 on one.
+2. **It out-ranges the mopper's own attack.** The far row sits at `dist^2` 4-5 while
+   `MOPPER.actionRadiusSquared = 2`. **The swing reaches tiles the mopper cannot otherwise
+   touch at all** — which is a Phase 0 item 3 radius asymmetry, the class the algorithm says
+   "recurs every year and is reliably exploitable", sitting unused in my own unit.
+
+### Three readings of one method in one day, and what separates the last from the first two
+
+- First: "3-tile enemy-**paint** remover" — wrong on *what it affects*, from a constant's name.
+- Second: "3 tiles, drains robots" — right on effect, wrong on *extent*, from how the arrays
+  were **built**.
+- Third: "6 tiles, 3x2, out-ranges the attack" — from how the arrays are **consumed**.
+
+> **The construction of a data structure tells you its shape; only its use tells you its
+> meaning.** I stopped at `anewarray`/`newarray` twice and got the wrong answer twice. The
+> index expression `[iload_4][iload_6]` applied to *two* array references is what finally gave
+> it away, and that appears only at the use site.
+
+This also revises iteration 32's economics upward before it has run, which is precisely the
+direction that should make me *more* careful rather than less — every one of today's errors
+made a mechanic look better than it was. The difference here is that I went looking for the
+correction on a reading I had already committed to `RULES.md` as fact, rather than being handed
+it by a failed run.
