@@ -250,12 +250,27 @@ while read m; do grep -q "rc\.$m(" src/alice/RobotPlayer.java || echo "  $m"; do
 - **NOT YET VERIFIED**: whether `EXTRA_RESOURCES_FROM_PATTERN` stacks per completed pattern,
   and whether patterns may overlap or need spacing. Probe before costing anything on it.
 
-### MOPPER AoE (unused through iteration 29)
+### MOPPER `mopSwing` (unused through iteration 30) — drains ROBOTS, does NOT clear tiles
 
-- `canMopSwing(dir)` / `mopSwing(dir)`; `MOPPER_SWING_PAINT_DEPLETION = 5`,
-  `ATTACK_MOPPER_SWING_COOLDOWN = 20`.
-- My moppers only ever single-target. Note this contradicts the premise of the 25-iteration
-  "I cannot take enemy ground" blind spot: the mopper has always had an area attack.
+**Read the method body, not the constant names.** `InternalRobot.mopSwing` was disassembled
+after I first recorded this wrongly here. Per tile in its arc it does:
+`onTheMap` -> `GameWorld.getRobot(loc)` -> `isRobotType`/`getTeam` ->
+`addPaint(-MOPPER_SWING_PAINT_DEPLETION)`. **No tile-paint write exists in the method.**
+
+- `canMopSwing(dir)` / `mopSwing(dir)`; **cardinal directions only**; MOPPER only.
+- Hits **3 tiles** (`int[4][6]` = 4 directions x 3 coordinate pairs).
+- Removes `MOPPER_SWING_PAINT_DEPLETION = 5` from each **enemy ROBOT** standing there.
+- Cooldown **20** (hard-coded `bipush 20`), vs the normal attack's `MOPPER.actionCooldown = 30`
+  (verified: `attack` applies `getType().actionCooldown` unmodified). Mopper `attackCost = 0`,
+  so both are free in paint.
+- **It does NOT dominate the single-target attack**: single-target clears a *tile* to EMPTY
+  and drains a robot; the swing only drains robots, three at a time. Different jobs.
+- **The "I cannot take enemy ground" premise therefore STANDS**: a soldier cannot overwrite
+  enemy paint and a mopper still clears only one tile. Iterations 28/29 and `alice_paintthief`
+  do not rest on a false foundation.
+- Live hypothesis: a paint drain on units is an accelerant on starvation, which causes
+  **76-90%** of bob's deaths and 72-88% of mine. That is about killing units, not holding
+  ground.
 
 ### MESSAGING (unused through iteration 29)
 
