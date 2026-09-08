@@ -9415,3 +9415,85 @@ cannot resolve a small win, but it resolves a **−15** without difficulty. Both
 outside noise; it is only the middle that this instrument cannot read.
 
 `src/bob/` unchanged. **`bob_iter20` remains the bot.**
+
+---
+
+## PHASE 0 API SWEEP (2026-09-08) — overdue, and it found a whole mechanic I have never called
+
+Doctrine now schedules this at **iteration 5, every 10 thereafter, and whenever the loop stalls**,
+replacing "periodically" — an instruction with no trigger, which loses every time it competes with a
+live hypothesis. I am at iteration 27 and had never run it. The coordinator's framing is the reason
+it cannot be substituted: **the failure mode is not knowing a call exists, so re-reading my own bot
+cannot surface it.** It needs the external list.
+
+`javap battlecode.common.RobotController` from the 3.1.0 engine jar, diffed against every method
+`src/bob/*.java` calls. **68 methods; 27 never called.**
+
+### 1. THE HEADLINE: this bot has no communication whatsoever
+
+```
+sendMessage        0 call sites        canSendMessage        0
+readMessages       0 call sites        canBroadcastMessage   0
+broadcastMessage   0 call sites
+```
+
+**Zero. Twenty-seven iterations, and the entire messaging mechanic is untouched.** My own `RULES.md`
+documents it in full and has since Phase 0 — robot↔tower within r²≤20 over connected ally paint,
+**tower→tower broadcast within r²≤80 with no paint connectivity required**, 32-bit payload, 5-round
+buffer, towers may send 20 messages a turn. I wrote that section, and then built a bot in which no
+robot ever tells another robot anything.
+
+**This lands exactly on the constraint that closed my most promising rejected direction.** Iteration
+13's closure reads: *"Re-open only if soldier movement stops being the binding constraint on ruin
+discovery — **for instance if a future iteration gives soldiers a non-movement way to find ruins**."*
+Communication is precisely that, and I wrote the re-open condition myself without noticing that the
+engine already offers the capability it names. The related finding from that closure — *"soldier
+movement is this bot's scarcest capability, not its spare one"* — is what makes it valuable: the bot
+currently spends its scarcest resource rediscovering, unit by unit, information some other unit
+already had.
+
+The tower→tower broadcast backbone is the part that needs no paint connectivity, so a tower mesh is
+reachable without solving the connectivity problem first.
+
+### 2. Markers — a free persistent shared blackboard, also unused
+
+```
+mark  0        removeMark  0        canMark  0        canRemoveMark  0
+```
+
+The bot calls `markTowerPattern` and `markResourcePattern` (different methods) but never the
+general-purpose `mark()`. `RULES.md`: *ally-visible map annotations, r²≤2, costs 1 paint, no
+cooldown.* That is a persistent shared blackboard written on the terrain itself, needing no
+connectivity and no protocol — strictly simpler than messaging, and a cheaper first probe of the
+same idea. Caveat already in my own notes: marks are a contended map-wide resource that pattern
+marking competes for, so this is not free of interactions.
+
+### 3. Smaller, but real
+
+- **`getNumberTowers` — never called, and `MAX_NUMBER_OF_TOWERS = 25` is a hard cap I reason about.**
+  Iteration 25's write-up asserts tower utilisation is *"pinned at the engine cap on large maps"* —
+  a claim about a quantity the bot cannot observe, and the engine hands it over in one call.
+- `getResourcePattern` / `getTowerPattern` — `RULES.md` line 201 explicitly says *"use
+  rc.getResourcePattern() rather than hand-decoding"*, and I do neither.
+- `getActionCooldownTurns` / `getMovementCooldownTurns` — I use only the boolean `isActionReady`,
+  so the bot cannot tell "ready next turn" from "ready in five".
+- `senseRobot`, `canSenseRobotAtLocation`, `isLocationOccupied`, `sensePassability`, `onTheMap`,
+  `adjacentLocation` — utilities; convenience rather than capability.
+- `disintegrate`, `resign`, `setIndicatorDot`, `setIndicatorLine` — situational or debug.
+
+### What this does to my plan
+
+I was about to pre-register iteration 28 on the **mopper share** — a genuinely untested axis (the
+mopper slot has been pinned at 1-in-5 since iteration 0 and appears nowhere in the CLOSED list). It
+is still a real candidate and I am keeping it queued.
+
+But it is another *parameter* in a space I already know about, and the sweep's whole point is that a
+ladder cannot tell you whether the space is the right one. Per LEARNINGS 37, a 50-game arm cannot
+resolve anything under ~14 points, so tuning a share I have already bracketed twice is poor value,
+whereas **an unused mechanic is where a 14-point effect could plausibly live.** Communication is
+therefore ahead of the mopper share in the queue.
+
+**And one correction it forces immediately**: iteration 25's "utilisation is pinned at the engine
+cap" was inferred, when `getNumberTowers()` would have measured it. That is a small instance of the
+sweep's general lesson — I reasoned about a quantity rather than reading it, because I did not know
+it was readable.
