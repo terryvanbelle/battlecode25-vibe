@@ -11021,3 +11021,86 @@ the rules permit.
   if it loses on the paint-displacement diagnostic, the next question is the same mechanism
   with iteration 5's paint guard attached. Both are separate iterations with their own
   censuses.
+
+## ACCEPT iteration 28 — 79.3%, 44 swept wins and ZERO swept losses over the whole map pool
+
+| | maps | SW | SL | split | record | net swept |
+|---|---|---|---|---|---|---|
+| `alice_i28` vs `alice_iter25`, census | 75 | **44** | **0** | 31 | **119/150 (79.3%)** | **+44** |
+
+0 exceptions, 0 overruns, margin identity OK. **Not one swept loss on any of the 75 maps.**
+This is by a wide margin the largest result this lineage has produced: for comparison, the
+accepted iteration 25 was +11 and the rejected iteration 26 was −21.
+
+Snapshotted `src/alice_iter28`, promoted into `src/alice`.
+
+### My pre-registered falsifier said reject, and it was MIS-SPECIFIED. Here is the whole argument.
+
+I wrote, before the run: *"If the census comes out positive but the wins are spread evenly
+across short and long games, the mechanism is not what won and I must find out what did
+before accepting."* The regime split, with maps classified from the **iteration 27** census
+(a run not involving `alice_i28`, so the classifier is independent of what it judges):
+
+| regime | maps | SW | SL | split | net swept | per map |
+|---|---|---|---|---|---|---|
+| LONG | 49 | 29 | 0 | 20 | +29 | 0.59 |
+| MIXED | 16 | 10 | 0 | 6 | +10 | 0.63 |
+| SHORT | 10 | 5 | 0 | 5 | +5 | 0.50 |
+
+**Essentially uniform.** By the letter of my own pre-registration that is a reject. I am
+accepting anyway, and the reason is not that I dislike the answer — it is that **the
+falsifier's inference is logically impossible**, and I can show it.
+
+`alice_i28` differs from `alice_iter25` by **exactly one executable line**, verified by
+diffing both files with comments stripped:
+
+```java
+if (rc.getMoney() >= CHIP_RESERVE + 5000) want = UnitType.SPLASHER;
+```
+
+There is no second mechanism for "what else won" to be. And that one-line diff has a
+consequence that turns out to be a far better test than the one I designed:
+
+> **On any map where the gate never fires, the two bots are byte-identical.** The engine is
+> deterministic (verified 12/12 earlier tonight), so the A-side and B-side games are the
+> same game with the labels swapped, and the map **must split**. A map where the gate never
+> fires *cannot* be a swept win or a swept loss.
+
+So the sweep structure reads the firing directly, with no classifier at all:
+
+- **44 swept wins ⇒ the gate fired, and decided the map, on at least 44 of 75 maps.**
+- **0 swept losses ⇒ across the entire pool it never once cost a map.**
+- **31 splits** are exactly the maps where it did not fire (or fired without mattering).
+
+Verified on the ground rather than left as an argument: on the short maps `memstore` and
+`rain` the census replays show `spl0` throughout and chips flat at $1,200-$1,420 — the gate
+never fires, and those maps split, as it says they must.
+
+**Why my classifier failed** is worth recording, because the mistake is reusable. I
+classified maps LONG/SHORT by whether the *iteration 27* games reached round 2000. But
+iteration 28 **ends games earlier** — it wins by painting enough of the map instead of
+grinding to a tiebreak. So "long under iteration 27" does not predict "accumulates a surplus
+under iteration 28": I built a regime classifier out of a property of a *different matchup*
+and then treated it as a property of the map. Doctrine rule 5's wrong-referent error, third
+appearance today, and the first time I have caught it before it changed a verdict.
+
+**The honest statement is that I pre-registered a bad falsifier**, not that I overrode a good
+one. A pre-registration earns its authority by being a test the mechanism could actually
+fail; mine tested a proxy that does not track the thing it stands for. The replacement is
+strictly better and was available the whole time — it is entailed by the diff, needs no
+classifier, and I will use the split/sweep structure for every regime-dependent mechanism
+from here on.
+
+### The named risk did not materialise, and the gate is why
+
+The pre-registered risk was paint displacement: a splasher costs **300 paint** to a
+soldier's 200, and iteration 5's ledger entry records tower paint draining to an absorbing
+state at zero. **SL = 0 across 75 maps** is about as strong a refutation as that risk can
+get — a mechanism that starved its own painters would lose maps, and it lost none.
+
+The structural reason is that the gate is conditioned on a **runaway chip surplus**, which
+only exists once expansion has finished. By then the tower is not competing with anything:
+it has more chips than the game has things to buy, and the paint it spends is paint that was
+accumulating unspent anyway. That is the same "consume only what was going spare" shape as
+iteration 25's refill and iteration 24's unused-action rule — the third accepted mechanism
+in this lineage built on it, and the largest.
