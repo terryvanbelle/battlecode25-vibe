@@ -1056,3 +1056,63 @@ observable that *distinguishes* faulty from fixed, and check that it distinguish
 naming it. "It looks wrong on the chart" was a symptom I never confirmed the chart could
 show. My own report was the un-run discriminating case — the same failure I have twice now
 caught in someone else's instrument, committed in my own bug report.
+
+## 28. Every map in the corpus is symmetric — but only 27 of 75 are symmetric the way you'd guess (2026-09-08)
+
+Read straight from the 75 `.map25` flatbuffers inside the engine jar (a Python re-parse I
+wrote for this; nothing here comes from any agent's workspace, so it is shared ground on the
+same footing as `tools/mapdata`). Testing the wall grid for invariance under vertical
+reflection `(W-1-x, y)`, horizontal reflection `(x, H-1-y)`, and 180° rotation `(W-1-x, H-1-y)`:
+
+```
+symmetric under at least one of the three     75 / 75      no exceptions
+  vertical reflection only                    30
+  horizontal reflection only                  18
+  180 rotation only                           23
+  all three (fully bilateral)                  4
+```
+
+**So 48 of 75 maps — 64% — are NOT rotationally symmetric.** Anything that assumes "the
+enemy's copy of my spawn is my position rotated 180° about the centre" is simply wrong on
+two maps in three. That is a large, quiet trap: the assumption is the most natural one to
+make, it is right often enough to look fine in a trace, and no error is ever raised.
+
+**Why iteration 21's beacon is safe anyway, which is the point worth keeping.** The beacon
+does not need to be the true mirror. It only needs to land in the *enemy half*, and that is
+implied by whichever symmetry holds:
+
+```
+vertical reflection   enemy half is x > W/2   beacon x' = W-1-x > W/2   in enemy half
+horizontal reflection enemy half is y > H/2   beacon y' = H-1-y > H/2   in enemy half
+180 rotation          both coordinates flip   both hold                 in enemy half
+```
+
+**The general lesson: weaken the claim until it is symmetry-agnostic, instead of detecting
+the symmetry.** Detecting it needs observations, comms and a fallback for "not yet known" —
+three new ways to be wrong, and iteration 17 was voided by exactly that class of failure (a
+mechanism that never executed). Asking only for the *half* costs nothing and cannot be wrong
+on any map in the corpus.
+
+### Two methodological notes, because both nearly bit
+
+**The indexing convention was an assumption, so I ran the discriminating case.** Reading the
+wall vector as `y*W+x` versus `x*H+y` swaps the "vertical" and "horizontal" labels. Square
+maps cannot tell them apart — a transpose preserves rotational symmetry — so the
+discriminating set is the **non-square** maps:
+
+```
+row-major  y*W+x    symmetric 75/75    non-square 25/25
+col-major  x*H+y    symmetric 54/75    non-square  4/25
+```
+
+Row-major, decisively. Had I checked only the corpus-wide 75 vs 54 I would have had a weak
+argument; the non-square subset is where the two hypotheses actually differ. Same rule as
+§27 and as the coordinator's finding on the coverage denominator, now three times over:
+**test where the hypotheses differ, not where the data is convenient.**
+
+**The parse is externally corroborated.** My scan gives `DefaultMedium` 35x35 with **32 walls
+= 2.6%**. The coordinator, by a different route (Java, engine source), independently
+described the map that defeated the coverage-denominator verification as having "32 walls in
+1225 tiles — 2.6%". Two independent implementations agreeing on a specific count is a real
+check on the parser, and it is the kind of check §26 says to look for: independent
+*derivation*, not just an independent-looking number.
