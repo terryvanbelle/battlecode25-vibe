@@ -12625,3 +12625,45 @@ this run accepts nothing.** It answers only: is there a dose response, and where
 The `pr0`-must-split check is the run's own validity condition and is read first.
 
 Registered before launch.
+
+### Refinement to tonight's finding, from the discriminating case — and it REORDERS the queue
+
+I asserted two causes for bob fielding zero splashers in the games it loses: the `getRoundNum() > 60`
+gate, and unaffordability. **Those are separable, and I checked which before building anything on it.**
+The discriminating case is a map bob *wins*, long enough to run far past round 60:
+`bob-vs-alice-on-Money` (35x35, 24 ruins, 1,696 rounds), bob = T1.
+
+```
+  round    bob tw   bob twPaint   bob spl   bob $
+      1       2         610          0      $2,030
+    100       9       3,179          0        $770
+    300      10       1,364          5      $4,778
+    500      12       1,078         13      $5,044
+   1600      15       1,079         17    $269,370
+```
+
+**bob builds NINE towers by round 100 and does field splashers once past round 60.** So the round-60
+gate is *not* the dominant cause of `spl0` on CastleDefense and Filter — bob would have had 49 rounds
+of splasher eligibility on Filter and spawned none. The dominant cause is that its tower paint sat at
+50-300 and **a splasher costs 300**.
+
+**Consequences, both of which I would have got wrong without this dump:**
+
+1. **Iteration 33 is strengthened.** Paint is the binding constraint on both the losing maps *and* the
+   winning one — note `starved20-38` per 100 rounds even on a map bob sweeps.
+2. **Iteration 34 is demoted, and would have been a mistake as designed.** Un-gating splashers earlier
+   spends *more* paint per unit (300 vs 200) out of the exact stash iteration 33 says is starved. The
+   two mechanisms are not independent; they pull opposite ways on the same pool. **Do not run the
+   splasher-gate iteration until 33 has said whether tower paint is binding**, and if it is, the
+   splasher change has to be re-derived rather than un-gated.
+
+That is the second time tonight that running the discriminating case before naming a fault changed the
+answer, and this time it changed the *next experiment* rather than the last one.
+
+### A third observation, logged not chased: chips are dead everywhere, not just on the maps I lose
+
+bob finishes this **won** game with **$269,370 unspent** and still climbing, while starving for paint
+all game. `Tower.java`'s iteration-3 comment already said this in different words. It is not tonight's
+iteration and I am not opening it tonight, but it is the strongest untested lead I now hold: bob has a
+large, permanently idle resource and a permanently binding one, and no mechanism converting between
+them. (`srp0-2` all game is the other half of that picture.)
