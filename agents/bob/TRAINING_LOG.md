@@ -12378,3 +12378,98 @@ That makes the pending result a clean close either way, and forecloses the "try 
 move that kept this area alive for three iterations already. If this loses, the tower-type coordinate
 rule is closed for good and the 0.47-points-per-mismatched-map slope from A7 is refuted as a
 generalisation — which would itself be worth knowing, since I have been treating it as a fact.
+
+---
+
+## FINDING (tournament channel) — I NEVER BUILD A THIRD TOWER on ruin-poor maps, and last night's parity mechanism is REFUTED
+
+Executed stall-protocol item 1 properly this time: not "trace my own losses again" but the thing the
+algorithm actually asks for — **read the tournament replays for what the other lineages do that I never
+attempt**. Two dumps, and they overturn the finding I published last night.
+
+### The discriminating case, run BEFORE naming the fault
+
+Last night I named the fault as *"my tower-TYPE rule is single-branch, so on Filter/Snowman/gridworld
+every tower I build is a MONEY tower and paint income never grows."* The correlation was real. **The
+mechanism is wrong**, and one dump each of the two fastest sweeps against me shows it:
+
+```
+carol-vs-bob CastleDefense (93 rounds)      carol-vs-bob Filter (109 rounds)
+  round   bob tw   bob $   bob cov            round   bob tw   bob $   bob cov
+     1      2      $2030      91                 1      2      $2030      14
+    20      2      $1850     215                15      2      $1700     129
+    30      2      $1900     218                30      2      $1900     158
+    50      2      $2200     209                60      2      $2250     222
+    70      2      $2550     200                90      2      $2900     150
+    90      2      $2900     156               105      2      $3350     153
+  carol:  tw2->3 @r18, ->4 @r27, cov 91->659   carol: tw3 @r30, tw4 @r45, tw5 @r105, cov 14->680
+```
+
+**bob is at two towers — the two it STARTED with — for the entire game, on both maps.** It builds
+nothing. So "every tower bob builds is a money tower" cannot be the mechanism: bob builds *no* towers,
+and on CastleDefense the parity rule would have given it PAINT towers, exactly what it needs.
+
+The correlation stands and the maps are still the ones I lose. **The causal story I attached to it does
+not.** Recorded as a self-correction rather than quietly dropped, because I published the mechanism
+last night with a trace I thought supported it — I read bob's decaying coverage and its piling chips as
+*confirmation*, when the same trace already contained `tw2` on every sampled row and I did not look at
+that column.
+
+### What the replays show instead — and the arithmetic closes exactly
+
+Two things bob does that carol does not:
+
+**1. bob fields ZERO splashers in both games.** `spl0` and splash-actions `s0` on every sampled round,
+start to finish. Carol converts to splashers (`spl2` by r10, `spl4-5` and `sold0` later) and its splash
+count runs `s3-s10` per 15 rounds. The cause is in my own `Tower.java`:
+
+```java
+: (((SPLASHER_SLOTS >> slot) & 1) != 0 && rc.getRoundNum() > 60)
+```
+
+**Iteration 20 — my LAST ACCEPTED CHANGE, "spawn 2 splashers per 5 units" — is gated behind round 60.**
+These games are decided at rounds 93, 109, 130, 139, 140, 151. My most recent accept is *inert for the
+whole decisive phase* of every fast game I lose, and unaffordable after it (a splasher costs the tower
+**300 paint**; bob's total tower paint sits at 50-300).
+
+**2. bob converts tower paint into soldiers; carol converts it into towers.** RULES.md line 84 —
+*the paint cost of a spawned unit is paid out of the spawning tower's stash* — and the table: SOLDIER
+**200 paint**/250 chips, SPLASHER 300/400, MOPPER 100/300. The replay's round-1 row confirms the
+arithmetic to the point: 2 towers x 500 initial paint = 1000, minus 2 soldiers x 200 = 600, plus regen
+= the **610** the dumper prints, for both teams.
+
+Then they diverge:
+
+```
+            round 10        round 30
+  carol   sold2 spl2      sold2 spl2   tw4   twPaint 866
+  bob     sold5           sold6        tw2   twPaint 100
+```
+
+**bob buys six soldiers — 1,200 paint — from a single paint tower, and then all six starve.** The
+dumper's own counters say so: `starved1/2/4` on bob's rows, and bob's paint actions collapse to
+`p1, p4, p0, p1` per 10 rounds while carol runs `p94, p109`. Six starving soldiers paint less than
+carol's four fed ones.
+
+And a starved soldier cannot complete a ruin: the 5x5 tower pattern costs ~30-50 paint plus 25 for the
+mark. So bob never gets tower #3, never gets more paint income, and the loop never closes. Chips are
+irrelevant to it — bob ends with **$2,900-3,350 unspent** because chips were never the binding
+constraint. **Paint is, and bob spends it on units instead of on the tower that would produce more.**
+
+### Why this is not LEARNINGS 49's third instance
+
+49 says a "units are wasting X" hypothesis must argue its way past two prior failures where per-unit
+waste turned out to be load-bearing cohesion. **This is not that shape.** It does not claim units are
+individually wasteful and it proposes no per-unit efficiency fix. It is a *resource allocation* claim:
+one pool (tower paint) has two uses (buy units / complete towers), bob puts ~all of it into the first,
+and the second is the one that compounds. The prize is not recovered waste, it is a different
+allocation of a resource that is fully spent either way. 49's gate is met by not being the same
+question.
+
+### Status
+
+Iteration 33 material, to be pre-registered on its own once iteration 32's run resolves. **Not started
+tonight**, and deliberately: the two mechanisms above (the round-60 splasher gate, and the spawn/build
+paint split) are *two* mechanisms, and this log records more than one lineage-hour lost to bundling.
+The price is also real and broad — fewer early soldiers means less early coverage on the ~77% of maps
+where bob is currently winning — which makes this a **dose ladder**, not a single arm.
