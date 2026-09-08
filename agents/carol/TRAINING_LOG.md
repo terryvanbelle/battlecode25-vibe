@@ -10344,3 +10344,31 @@ says chips genuinely bind for carol and not for them — which is the one condit
 iteration 38's link 2 could actually hold, since the whole benefit of a refill over a rebuild is
 250 chips. I am recording this as a *hypothesis about the weak link*, from a build that is nine
 iterations stale, not as support for it.
+
+## Iteration 38 ADDENDUM 3 — a BUG-shaped failure mode, named before the result
+
+Tracing `nearestKnownTower`'s dry-tower guard while the run finishes. The guard returns `null`
+when the nearest remembered tower is within r2<=2, on the reasoning that being adjacent and still
+low means `refillIfPossible` just failed, so the tower is dry or destroyed and homing again would
+deadlock the unit.
+
+**It does not deadlock. It oscillates.** A unit adjacent to a dry tower gets `null`, so it walks
+toward its exploration target — one step, to d2 = 4 or so. Next turn 4 > 2, the guard no longer
+fires, the tower is still the nearest remembered one, and the unit steps back. Period-2 ping-pong
+beside a dry tower, painting almost nothing, for as long as it stays under `RETURN_PCT`.
+
+I am recording this now, before any number, because of the interpretation it controls:
+
+- If the arm loses **and** units are found oscillating, the hypothesis is **untested**, not
+  refuted. That is an implementation bug, and a rejection would say nothing about whether
+  returning to refill is a good idea.
+- If the arm loses **and** units are not oscillating, the hypothesis is genuinely refuted and the
+  weak link (link 2) is where to look.
+
+The discriminating evidence is cheap and I will run it either way rather than reason about it:
+`hg/ha` near 1.0 with coverage collapsed is the oscillation signature, since a ping-ponging unit
+asks and goes on nearly every turn. A per-robot position track over ~40 rounds settles it outright.
+
+Also to check on the same dumps, because the new scan is not free: `ov=` (bytecode overruns) in
+the indicator string. `nearestKnownTower` walks up to 64 entries on every low-paint turn, and a
+silent mid-turn truncation would corrupt the arm without any other symptom.
