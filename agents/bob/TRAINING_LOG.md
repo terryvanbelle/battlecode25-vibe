@@ -10176,3 +10176,20 @@ packages, the logging because instrumenting is the point. That is why the check 
 cleared by making the probe smaller: shrinking a probe reduces the printed volume but never removes
 the 8 bytes, and the check would have kept failing at the end of it. LEARNINGS 41 stands as written and
 is now measured rather than inferred.
+
+### Chip census, widened to 15 maps — the conclusion is unchanged and now sturdy
+
+Final-phase treasury, both sides, baseline replays from run `20260908-115418`:
+
+```
+Leaf         A $5,736   B $527,895     <- the outlier, by two orders of magnitude
+FourCorners  A $5,796   B $35,160      <- mild outlier
+every other map, both sides:  $1,157 - $8,307
+```
+
+**Fourteen of fifteen maps sit in low single-digit thousands on BOTH sides.** So neither story Leaf
+suggested survives contact with the corpus: there is no general hoarding problem, and iteration 8's
+re-open trigger ("chips sustained below ~5,000") is not cleanly met either — several sides sit in the
+$1.2k-$5k band, but these are final-phase samples from games of differing lengths and "sustained"
+is a claim about the whole trajectory, which I have not measured. **No re-open, and I am not going to
+manufacture one from an ambiguous read.**
