@@ -10970,3 +10970,181 @@ frontier) and 40 (more money towers) all landed monotone toward zero dose. Every
 the last two results both point at: the per-unit efficiency with which paint becomes territory. I
 am going to stop proposing doses of existing knobs.
 
+
+---
+
+# Iteration 41 — SPECIAL RESOURCE PATTERNS, a capability this lineage has never had
+
+Pre-registered before writing any code.
+
+## Why this is not another dose of an existing knob
+
+Iterations 37-40 all landed monotone toward zero dose, and all four were parameter changes to
+machinery that was already running. I said at the end of iteration 40 that I would stop proposing
+doses. **Carol has no SRP code at all** — `grep -i srp src/carol/*.java` returns one comment and
+nothing else, and the per-round team counter reads `srp0` for both arms in all eight cached game
+dumps. This is a capability at literally zero, not a setting at the wrong value.
+
+## The arithmetic, engine-verified against the jar rather than the spec
+
+`javap` on `battlecode.common.GameConstants`:
+
+```
+COMPLETE_RESOURCE_PATTERN_COST  = 200      RESOURCE_PATTERN_ACTIVE_DELAY   = 50
+EXTRA_RESOURCES_FROM_PATTERN    = 3        RESOURCE_PATTERN_RADIUS_SQUARED = 8
+MARK_PATTERN_PAINT_COST         = 25       PATTERN_SIZE                    = 5
+```
+
+and the API is all present: `canMarkResourcePattern` / `markResourcePattern` /
+`canCompleteResourcePattern` / `completeResourcePattern` / `getResourcePattern`.
+
+Each **active** SRP pays **+3 paint/turn to every PAINT tower** (`RULES.md` [E]: the bonus sits
+inside the `type.paintPerTurn != 0` guard, so money towers get chips, not paint). The payment is
+per tower, so it scales with the tower count, and it is permanent.
+
+Against the only other way carol can convert chips into paint income:
+
+| purchase | chips | paint/turn bought | paint/turn per chip |
+|---|---|---|---|
+| upgrade one paint tower to lv2 | 2500 | +5 (that tower only) | 0.0020 |
+| **one SRP, with 5 paint towers** | **200** | **+15 (team-wide)** | **0.0750** |
+
+**~37x more chip-efficient, and the multiple grows with every paint tower carol owns.** At 5 paint
+towers one SRP is +15 paint/turn against a base income of 25/turn — a **60% increase in the
+binding resource** for 200 chips out of a treasury that iteration 40 showed sitting idle (median
+1,550-3,050, and 60,000 unspendable in the pathological case `RULES.md` records).
+
+**And this is the one chip purchase that does not rebound onto paint.** That is the whole lesson
+of iteration 40: chips bought soldiers, and soldiers are billed 200 paint each, so the trade was
+charged twice. An SRP is charged in chips and paid back in paint. It runs the exchange the
+correct way for the first time.
+
+## The cost is smaller than it looks, and this is the crux
+
+Laying an SRP costs 25 paint to mark plus up to 25 x 5 = 125 paint to paint the 25 tiles. **But
+those 25 tiles are territory carol wants painted anyway** — 99.7% of tournament games are decided
+on area painted (85.3% by the 70% coverage win, 14.4% on the area tiebreak). The SRP does not
+consume coverage; it asks that ground already destined for paint be painted in a particular
+arrangement. The genuinely marginal costs are the 25-paint mark, the secondary-colour tiles, and
+the soldier-turns spent standing still.
+
+## The mechanism
+
+A soldier standing on a candidate centre reaches all 25 tiles (corner distance^2 = 8, soldier
+action radius 9), so it adopts its own location as the site, marks the pattern with
+`markResourcePattern` — letting the **engine** compute the orientation rather than my decoding
+`RESOURCE_PATTERN = 28873275` by hand — and then reuses iteration 29's proven paint-to-match-marks
+loop, enemy-tile skip included. It completes when `canCompleteResourcePattern` says so.
+
+Using the engine's own marks is deliberate. A hand-decoded 5x5 that is transposed or flipped
+produces a pattern that never completes and a mechanism that silently does nothing, which is this
+lineage's most common failure shape. `markResourcePattern` cannot be off by an orientation.
+
+**Strictly subordinate to ruin work**: SRP work is attempted only when `nearestEmptyRuin()` returns
+null. Iteration 36 established that displacing soldiers off ruins is expensive, and I am not
+retrying that.
+
+## Doses
+
+`carol_iter36` (no SRP, zero arm) / **`carol_i41_a`** (SRP only when no unclaimed ruin is visible,
+primary) / `carol_i41_b` (SRP also when the nearest unclaimed ruin is farther than r^2=36).
+Monotone in soldier-attention diverted to SRPs. Both candidates carry `BUILD = "i41"`.
+`BOT=carol_i41_a OPPONENTS="carol_iter36 carol_i41_b"`, 25 fresh maps, both sides, 100 games.
+
+## Gate (standing gate, fourth use)
+
+**>= 29/50 accepts, <= 25 rejects, 26-28 UNRESOLVED** pending a disjoint-sample replication.
+Report D, sd distance and the area split; gate on none of them.
+
+## Manipulation checks, weak link named in advance
+
+1. **Link 1 (does it fire at all).** The dump's per-team `srp<N>` counter must leave 0. It has read
+   `srp0` in every game this lineage has ever played, so this is an unusually clean instrument:
+   any non-zero value proves the mechanism ran, and a zero proves it did not, with no inference.
+2. **Link 2 — THE WEAK ONE. The pattern completes but never ACTIVATES, or does not survive.**
+   `RESOURCE_PATTERN_ACTIVE_DELAY = 50` means 50 undisturbed rounds after completion. A single
+   enemy splasher repainting one of the 25 tiles resets it. So the failure I most expect is a
+   candidate that pays the paint and the soldier-turns, completes SRPs, and holds none of them
+   long enough to be paid. **I will measure the `srp` counter as a time series, not a total** —
+   a count that rises and falls is completion without activation, and is a rejection with a
+   different remedy (place SRPs deep in home territory) than a count that never rises at all.
+3. **Link 3.** Activation becomes paint income: fleet tower paint and splashers built both rise.
+4. **The price, and the falsifiable version of it.** Each SRP costs ~25 soldier-turns of standing
+   still. If that time is taken from ruin completion, I lose towers to buy paint income and repeat
+   iteration 36's mistake in reverse. **Falsifiable: paint towers built must NOT fall.** If
+   `twPAINT` drops against `carol_iter36` while `srp` rises, the subordination gate has failed and
+   the iteration is rejected regardless of the win count.
+
+## Iteration 41 ADDENDUM — three pre-flights before the gauntlet, and a revised dose axis
+
+Written before the run. The gate is unchanged; what changed is the dose axis, and it changed
+because a one-match pre-flight kept answering link 1 with "no". Each pre-flight is one game of
+shared-VM time against the 100 a gauntlet costs, and it has now saved three of them.
+
+**Pre-flight 1 — SRP_RUIN_D2 as the dose.** 5 patterns completed on `DefaultMedium`; the team's
+active-SRP counter read **0** at every 100-round sample. A finer dump found exactly **one**
+activation, at round 638, lasting **28 rounds**. `RESOURCE_PATTERN_ACTIVE_DELAY` is 50 undisturbed
+rounds, so four patterns were paid for and never paid out. This is precisely the link-2 failure I
+registered ("completes but never ACTIVATES"), and the remedy I named in the same breath was "place
+SRPs deep in home territory".
+
+**Pre-flight 2 — require all 25 tiles already ours.** Every tag count came back **identical to the
+byte** (5 SRPDONE, 6 srpMark, 149 srpPaint, 1705 srpNo). I first suspected my own dump cache, which
+keys on the replay's path while `vm-match.sh` writes every rerun of a pairing to the same filename
+— and the cached dump was three minutes *older* than the replay it described. **That is a real bug
+and I fixed it** (`carol-tools/mixcheck/dumpcache.sh` now keys on the replay's content hash), but
+it was not this: a fresh dump and the deployed remote source both confirmed the new gate was live.
+The gate was a genuine no-op, because all six sites were *already* fully ours. Interiority was not
+the problem.
+
+**What the arena render proved.** At round 650 the pattern centred on (11,26) read exactly
+
+```
+AAaAA        A = ally SECONDARY      round 650: intact and ACTIVE
+AaaaA        a = ally PRIMARY        round 680: top row is AaaaA
+aaAaa        b = enemy paint         (10,28) and (12,28) went A -> a
+AaaaA
+AAaAA
+```
+
+Two tiles flipped from ally secondary to **ally primary**. Still our paint. The enemy never
+touched it.
+
+> **OUR OWN SPLASHERS BREAK OUR OWN RESOURCE PATTERNS.** A splasher paints ally primary across
+> its whole footprint and scores centres by enemy paint (r^2<=2) and empty tiles. There was enemy
+> paint one tile off the pattern's left edge, so a perfectly correct splash at a legitimate target
+> converted our secondary tiles to primary and reset the 50-round clock.
+
+I would not have found this from the counters. The counter said "completed 5, active 0", which is
+equally consistent with a bad orientation, a chip shortage, an enemy raid, or friendly fire — four
+faults with four different remedies. Rendering the thing once separated them in a single look.
+That is the second time today a picture has settled a question the tabulation could not.
+
+**Pre-flight 3 — SRP_MARGIN, a ring of our own paint.** The soldier-side fix: place patterns where
+no splash centre can score. It does not work, and the reason is quantitative. Vision is r^2=20, so
+a 7x7 ring (corner (3,3), d^2=18) is the widest that can be *sensed*, and margin 2 would fail its
+own sense check on every call. Margin 1 adopted **1 site against 608 rejections**, and that one
+still died. Placing patterns out of a splasher's reach and placing them anywhere useful turn out
+to be the same constraint pulling in opposite directions.
+
+**Pre-flight 4 — SRP_GUARD, the causal fix, on the splasher's side.** A splasher refuses a centre
+whose footprint holds a tile it is actively keeping ally-secondary to satisfy a mark. Link 1 and
+link 2 both fire: first activation at round **422**, **81 paid SRP-rounds**, and the candidate won
+the map it had lost in both previous pre-flights (round 867). Bytecode max **10,938 / 17,500**,
+`ov=0 nm=0` — the extra footprint scan is affordable.
+
+**Revised doses**, and note this makes the run its own ablation:
+
+- `carol_iter36` — zero arm, no SRP.
+- **`carol_i41_a`** — SRP + `SRP_GUARD` (primary).
+- `carol_i41_b` — SRP with the guard **ablated**, everything else identical.
+
+So `i41_a` vs `i41_b` isolates the guard, and both against `iter36` price the feature as a whole.
+The prediction I want on record: **if the guard is what makes SRPs work, `i41_b` should be the
+worst of the three** — it pays the soldier-turns and the paint for patterns that then get bulldozed
+by its own splashers. A ladder of `i41_a > iter36 > i41_b` corroborates the whole account; a
+monotone `iter36 > i41_a > i41_b` says SRPs cost more than they pay and the mechanism is wrong.
+
+Honest caveat carried into the verdict: one pre-flight game is a mechanism check, **not** evidence
+of strength, and I am not counting that round-867 win as anything.
+
