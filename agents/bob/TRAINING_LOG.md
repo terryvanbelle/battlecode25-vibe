@@ -13254,3 +13254,23 @@ what would demote the hypothesis, so the data could demote it.
 livelock as **one confirmed instance with no established rate** until it reports. The `Nav.java` stuck
 detector is still, on inspection, unable to fire on a moving robot — that code fact stands on its own
 and is not affected by any of this. What is not established is how often it costs anything.
+
+**Final probe point, and it points at a different variable.** Money's third robot came in at 6 tiles,
+so the full picture is:
+
+```
+                          distinct tiles / 30 turns     LIFETIME in turns
+  CastleDefense (loses)        2,  8,  5,  5              54, 64, 54, 48
+  Money         (sweeps)       4,  8,  6                  50, 75, 161
+```
+
+Mobility still shows no separation. **Lifetime might.** Bob's soldiers on the map it sweeps live 50,
+75 and 161 turns; on the map it loses, 48-64 with no outlier above. One robot lasting 161 turns is not
+a result, but it suggests the discriminating statistic is **how long a unit survives and what it
+completes**, not how far it wanders — which is the same conclusion the conjunction argument reached
+from the other direction, and is consistent with a bot whose losses run 93-151 rounds while its wins
+run 453-2,000.
+
+Next session's census should therefore emit, per robot: **lifetime, paint-at-death, towers completed,
+and tiles painted** — outcome measures — with mobility as a *secondary* column rather than the key.
+That is a cheap change to make before the tool exists and an expensive one after.
