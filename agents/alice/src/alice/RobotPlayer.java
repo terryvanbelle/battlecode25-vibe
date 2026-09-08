@@ -15,6 +15,13 @@ public class RobotPlayer {
         Direction.SOUTH, Direction.SOUTHWEST, Direction.WEST, Direction.NORTHWEST,
     };
 
+    /** Minimum converted tiles before a splash is worth its 50 paint. A splash costs
+     *  50 and a soldier pays 5 per tile, so 10 tiles is nominal break-even against a
+     *  soldier -- but a soldier CANNOT take enemy ground at any price, so the enemy
+     *  tiles in the score are worth more than this arithmetic admits. Unused until
+     *  splashers are actually built; the dose belongs to that iteration, not this fix. */
+    static final int MIN_SPLASH_TILES = 6;
+
     // --- instrumentation ---
     static int overruns = 0;    // confirmed bytecode overruns (round advanced mid-logic)
     static int i24Moves = 0;   // engagement counter: times the hold branch relocated
@@ -233,22 +240,57 @@ public class RobotPlayer {
 
     // --------------------------------------------------------------- splasher
     static void runSplasher(RobotController rc) throws GameActionException {
-        // Iteration 0: splashers are never built; behave like a wanderer that splashes
-        // when enough enemy paint or a tower is in reach.
+        // BUG FIX (2026-09-08). The previous version could never attack at all:
+        // `bestScore` started at 3 while `score` was computed from the single CENTRE
+        // tile and could only reach 2, so `score > bestScore` was never true and
+        // `best` stayed null on every turn of every game. The threshold had been
+        // written for an AoE FOOTPRINT sum ("a few tiles worth" -- its own comment)
+        // but the sum was never taken. Splashers are never built today, so this is
+        // dormant and the fix is behaviourally inert until one is spawned; it is
+        // separated from any decision to build them precisely so that change can be
+        // measured on its own.
+        //
+        // Engine semantics (RULES.md, verified): centre within dist^2<=4; every tile
+        // within r^2<=4 of the centre gets painted if EMPTY or ally, but ENEMY paint
+        // is overwritten ONLY within r^2<=2. That inner disc is the whole reason this
+        // unit matters: a soldier can NEVER overwrite enemy paint, and a mopper only
+        // clears one tile to EMPTY. So enemy tiles inside r^2<=2 are scored double --
+        // they are ground no other unit I field can take.
         if (rc.isActionReady() && rc.getPaint() >= 60) {
             MapLocation best = null;
-            int bestScore = 3; // require at least a few tiles worth
+            int bestScore = MIN_SPLASH_TILES;   // real footprint threshold now
             for (MapInfo t : rc.senseNearbyMapInfos(rc.getType().actionRadiusSquared)) {
                 MapLocation c = t.getMapLocation();
                 if (!rc.canAttack(c)) continue;
-                int score = 0;
-                if (t.getPaint().isEnemy()) score += 2;
-                else if (t.getPaint() == PaintType.EMPTY && t.isPassable()) score++;
+                int score = splashScore(rc, c);
                 if (score > bestScore) { bestScore = score; best = c; }
             }
             if (best != null) rc.attack(best);
         }
         wander(rc);
+    }
+
+    /** Value of splashing centred on `c`, in tiles actually converted.
+     *  EMPTY tile inside r^2<=4  -> +1 (ground taken)
+     *  ENEMY tile inside r^2<=2  -> +2 (ground taken that NOTHING else I field can take)
+     *  ally paint, walls, enemy paint outside r^2<=2 -> 0 (the splash does nothing there)
+     *  Counts the DECISION's value, not a downstream outcome. */
+    static int splashScore(RobotController rc, MapLocation c) throws GameActionException {
+        int score = 0;
+        for (int dx = -2; dx <= 2; dx++) {
+            for (int dy = -2; dy <= 2; dy++) {
+                int d2 = dx * dx + dy * dy;
+                if (d2 > 4) continue;                 // outside the splash footprint
+                MapLocation l = c.translate(dx, dy);
+                if (!rc.canSenseLocation(l)) continue;
+                MapInfo m = rc.senseMapInfo(l);
+                if (!m.isPassable()) continue;
+                PaintType pt = m.getPaint();
+                if (pt == PaintType.EMPTY) score += 1;
+                else if (pt.isEnemy() && d2 <= 2) score += 2;   // engine: only the inner disc
+            }
+        }
+        return score;
     }
 
     // ----------------------------------------------------------------- mopper

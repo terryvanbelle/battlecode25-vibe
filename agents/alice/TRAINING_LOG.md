@@ -8770,3 +8770,69 @@ tonight's tournament analysis, in a *different* area:
    building splashers.
 2. **Tower count / economy** — bob finished 16 towers to my 6, 234 units to my 84,
    701‰ coverage to my 281‰. The master variable, and a ~3:1 production gap.
+
+## Splasher dead-branch REPAIRED (inert), and the direction sized from engine costs
+
+Separated deliberately from any decision to build splashers, so that decision can
+be measured on its own rather than bundled with a bug fix.
+
+**The fix.** `runSplasher` scored candidate centres by the paint of the **single
+centre tile** (max 2) against a threshold of **3**, so `best` was never assigned
+and the splasher never attacked. Now it scores the actual AoE footprint, using the
+engine's real semantics from `RULES.md`:
+
+- centre within `dist²<=4`; every tile within **`r²<=4`** (13 tiles) is painted if
+  EMPTY or ally;
+- **ENEMY paint is overwritten ONLY within `r²<=2`** (9 tiles).
+
+Enemy tiles in that inner disc are scored **double**, because they are ground
+**nothing else this lineage fields can take**: a soldier can never overwrite enemy
+paint (and is charged 5 for trying — iteration 22), and a mopper clears one tile to
+EMPTY rather than to ally.
+
+**Inertness is provable, not inferred.** The tower spawn line reads
+`want = (rnd(4)==0) ? MOPPER : SOLDIER`, and `UnitType.SPLASHER` appears **zero**
+times as a build target anywhere in `src/alice`. So `runSplasher` never executes
+and the change cannot affect play. Confirmed empirically too: the same match
+(`alice` vs `alice_iter23`, DefaultSmall) returns the identical result before and
+after — A wins, round 2000, tiebreaker.
+
+### Sizing the direction from engine costs — it is better than my prior said
+
+| way of taking ground | paint per tile taken |
+|---|---|
+| soldier on EMPTY | **5.00** |
+| soldier on ENEMY | **impossible**, and costs 5 to attempt |
+| mopper on ENEMY | 0, but only converts to **EMPTY**, never to ally |
+| **splasher, empty ground (13 tiles)** | **3.85** |
+| **splasher, enemy ground (9 tiles)** | **5.56** |
+
+A splasher costs 1.5x a soldier's paint (300 vs 200) and its 6 lifetime attacks
+convert up to **78 tiles against a soldier's 40** — and up to **54 of those come
+off enemy paint**, which is the ground my standing structural gap says I cannot
+take at all after the map saturates.
+
+**This does not license building splashers yet**, and the prior against it is
+specific: `alice_splashcensus` measured a mean best blast of **1.37 tiles of 13**
+against a nominal break-even of 10. The table above is a *ceiling* (every footprint
+tile convertible); 1.37 is a *measurement* at positions a **soldier** chose. The
+gap between 1.37 and 13 is the whole question, and it is a question about
+**positioning**, not about the unit.
+
+### Pre-registered next step, and what it must NOT be
+
+The reachability lesson applies to my own plan: I must not build splashers and hope.
+The sizing instrument has to sample positions a **splasher** would occupy, which the
+old census could not. Concretely, before any build decision:
+
+1. Field splashers in a **census build only** (never in `src/alice`), with the
+   repaired scorer, and record `splashScore` at the centre it actually chooses.
+2. Pre-register the deciding quantity: **median chosen-centre score**, against the
+   `MIN_SPLASH_TILES = 6` threshold and the nominal break-even of 10.
+3. Size the **price** too, which the ceiling table omits: a 300-paint unit drawn
+   from the same tower paint that §3c showed is the absorbing-state bottleneck. A
+   splasher displaces 1.5 soldiers, and that is the number the gain must beat — not
+   zero.
+
+`MIN_SPLASH_TILES = 6` is a placeholder and is deliberately *not* tuned here; the
+dose belongs to the iteration that builds splashers.
