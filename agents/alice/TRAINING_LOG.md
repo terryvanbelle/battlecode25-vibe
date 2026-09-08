@@ -9788,3 +9788,23 @@ the ballistic walk that iterations 12 and 14 bought.
 I am writing that down *before* the census rather than after, because "the mechanism
 was thinner than I thought, so here is a bigger version of it" is a rationalisation if
 constructed afterwards and a plan if committed beforehand.
+
+### Caught before it mattered: my mirror null was STALE
+
+`MULTI_AGENT.md` warns that a mirror must be regenerated from **the baseline the
+candidate is measured against**, and that the subtle version of the failure bites
+*after an accept*, because the baseline moves. Mine had drifted exactly that way:
+`src/alice_mirror` was still a copy of a **pre-iteration-24** build — it lacked
+`i24Moves` entirely, so it predates the mopper hold branch I accepted as iteration 24.
+
+Had I read iteration 25's margin against it, I would have been attributing to the
+refill every game that **iteration 24's already-accepted mechanism** flipped. The
+document says two nulls one accept apart disagreed on 6 of 40 games — same net
+margin, different games — which is precisely the size of effect I am trying to
+resolve here, where the whole result is +1 map.
+
+Regenerated from `alice_iter24` and verified byte-identical apart from the package
+line. Recording the *tell* for next time, because I did not catch this by suspicion —
+I caught it by running the diff as a routine step before using the instrument:
+**a mirror is a build like any other, and "I made it once" is not "it is current".**
+The check costs one `diff` and there is no reason ever to skip it.
