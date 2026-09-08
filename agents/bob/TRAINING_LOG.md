@@ -9603,3 +9603,73 @@ peak at 1600, with 6400 at or below it.**
 post-hoc rescue: the hint is a *single most-recent* location, so every soldier in a tower's range
 receives the same one and may pile onto one ruin. If the effect is negative, that is the first thing
 to check, and the fix is a per-soldier spread (round-robin per recipient), not abandoning the idea.
+
+## Iteration 28 v1 — **VOID by the manipulation check, called while the run was still in flight**
+
+Run `20260908-111254` was still playing when `src/bob_hprobe` (= the `bob_h2` arm plus adoption
+counters) returned the pre-registered kill condition:
+
+```
+map         soldier-turns   haveHint   ADOPTED
+Dominoes     123 / 104 / 17    0/0/0     0/0/0
+memstore     212 /  37 / 26    0/0/0     0/0/0
+```
+
+**Soldiers never received a single message.** `ADOPTED = 0` everywhere, so `HINT_MAX_D2` was not a
+dose at all — every arm played identical policy and the run measures nothing. Pre-registered
+condition: *"If that is ~0 the dose does not exist and the run voids regardless of the number."*
+**Void.** I am not looking at its scores.
+
+This is the second void in one day and the second time the check fired on the thing I was most
+confident about. It is also the second time the pre-registration is what stopped me: the dose-
+response across three radii would have come back flat, and "communication does not help" is an
+extremely plausible-sounding conclusion to draw from a flat curve produced by a mechanism that never
+executed.
+
+### The fault, diagnosed rather than guessed
+
+Two engine facts checked first, so I did not blame the wrong thing:
+
+- **`readMessages(-1)` is correct.** Disassembling `RobotControllerImpl.readMessages` shows
+  `if (arg == -1) add-unconditionally`, so `-1` really does mean "all buffered rounds".
+- **Tower→robot sending is legal.** `assertCanSendMessage`'s messages are *"Only (robot <-> tower)
+  communication is allowed"* — both directions.
+
+So the channel was fine and the fault was mine: **I built a consumer and a relay and no producer.**
+Towers ingested ruins from their own vision only — and **towers are built on ruins and sit among
+ruins that are therefore already claimed**, so `nKnown` stayed 0 and there was nothing to relay. The
+units that actually discover *unclaimed* ruins are the wandering soldiers, and in v1 soldiers never
+sent anything at all.
+
+That is a design error with an obvious shape in hindsight, and the reason I missed it is worth
+naming: I designed the protocol around **who owns the radio** (towers have the long-range broadcast
+and the 20-message budget) rather than around **who holds the information**. The capability lives in
+one place and the knowledge in another.
+
+### Two further fixes the probe forced, each measured rather than assumed
+
+**v2 — soldiers report a free ruin.** Still `reportable = 0` on both maps. Diagnosed: my producer
+excluded `workRuin`, but `chooseRuin` always claims the *nearest* free ruin it can see, so the only
+reportable ruins were second-and-later sightings. Removed the exclusion.
+
+**v3 — per-recipient round-robin.** The tower was sending the *same* code to every soldier in range;
+it now advances the round-robin per recipient, so two soldiers are steered to different ruins. This
+is the failure mode I pre-registered before the run (*"every soldier receives the same one and may
+pile onto one ruin"*) — fixed on its own merits, not because a number demanded it.
+
+**v3 manipulation check PASSES on both maps:**
+
+```
+map         haveHint   ADOPTED   seenTaken (hint pointed at a claimed ruin)
+Dominoes     29/25/12    8/1/2      4/0/0
+memstore     27/11/8     7/3/1     14/2/6
+```
+
+Hints flow, and soldiers adopt them, in both resource regimes. **`seenTaken` is large** — 14 of 21
+on one memstore soldier — meaning many hints point at ruins claimed since they were broadcast. That
+is a real staleness cost, recorded now as a known limitation rather than discovered later: towers
+cannot see distant entries go stale, and nothing expires them.
+
+`src/bob_j0..j3` built from the **verified** v3 mechanism with the counters stripped (assertion-
+checked that none remain), compile-checked. Iteration 28c launches when the void run releases the VM
+— I am not killing it; the shared-VM rule is absolute and it costs only wall-clock.
