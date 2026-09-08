@@ -12264,3 +12264,59 @@ The second half of that premise is **wrong**: the mopper has always had a 3-tile
 That does not invalidate iterations 28 and 29, which were measured and won on their own
 census. It does mean the *reason* I gave for them was incomplete, and that a cheaper answer to
 the same problem was one API call away the entire time.
+
+## ACCEPT iteration 30 — 58.0%, +12 net swept, and the mechanism fires on EVERY map
+
+`alice_i30b` vs `alice_iter29`, full 75-map census, run `20260908-103815`, candidate as `BOT`.
+
+| | maps | SW | SL | split | record | net swept |
+|---|---|---|---|---|---|---|
+| `alice_i30b` vs `alice_iter29` | 75 | **21** | 9 | 45 | **87/150 (58.0%)** | **+12** |
+
+- **0 exceptions in 150 games**, checked on field 5 of the `EXC` lines.
+- **0 overruns** anywhere in the run.
+- **Margin identity exact**: wins − losses = 87 − 63 = 24 = 2 × (21 − 9).
+- Full population, deterministic engine: **+12 is exact, not an estimate.**
+
+Every clause of the pre-registered gate holds. Snapshotted `src/alice_iter30`, promoted into
+`src/alice`, compile-checked (`COMPILE_EXIT=0`).
+
+**The mechanism**: a soldier below half paint walks to the nearest visible friendly tower
+holding spare paint, instead of wandering dry until it starves. It pre-empts the role rather
+than following it, because `wander()` already spends the movement every turn — a walk appended
+after the role would have been inert *for exactly the reason iteration 25's refill is inert*.
+
+### The reach check, which came out as sharp as it could
+
+**The set of maps where `alice_i30b` is identical to `alice_iter29` is EMPTY** — zero of 75,
+with r2000 ties excluded by construction. Under the mirror-identity argument that means the
+divert fires, and changes the game, on **every single map in the population**. Compare
+iteration 29, whose corresponding set was 6.
+
+This is the first iteration in this lineage whose mechanism reaches the entire map pool. It
+is also why I take the 9 swept losses seriously rather than netting them away: a mechanism
+that touches everything has nowhere left to hide, and `BunnyGame, Circuit, HungerGames,
+Justice, Restart, UnderTheSea, box, defensetower, starburst` are maps where walking home is
+actively wrong.
+
+### What this result is NOT evidence for
+
+**It is not evidence that starvation was the binding constraint.** It is evidence that this
+change beats iteration 29 on this pool. Those are different claims and today has punished me
+five times for eliding that distinction. The starvation measurement (72-88% of deaths) came
+from *bob* games; the census is self-play; the mechanism could be winning here for a reason
+that has nothing to do with why I lose to bob. **The tournament is the instrument that can
+tell those apart, and iteration 30 will be in the next one.**
+
+**And the measured +12 is a lower bound on the mechanism**, because `i30b` throws away the
+commuting soldier's *action* — a defect I logged before this verdict, precisely so that
+finding it could not look like motivated auditing of a result I liked. `alice_i31a` is the
+one-line fix and is already pre-registered and compile-checked.
+
+### Roster
+
+Standing rule applied: **on every accept, add the snapshot that was current before it.**
+`alice_iter29` joins `progress/roster_extra.txt`, calibrated at **58.0%** by this census at
+zero VM cost. The roster is now 10 rungs, and the two newest sit at 58% and 56% — the first
+time this lineage has had reference points near 50%, where a rung can register movement in
+*either* direction.
