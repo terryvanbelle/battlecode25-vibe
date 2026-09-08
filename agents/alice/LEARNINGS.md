@@ -1824,3 +1824,73 @@ And the sharper form of the process failure: I wrote the sentence naming the tes
 run, and committed the conclusion in the same breath. **Naming a missing check is not
 performing it** — if the check is cheap enough to name, it is cheap enough to run before the
 claim ships.
+
+## Theme: with a deterministic engine, the SPLIT/SWEEP structure reads a mechanism's firing rate directly
+
+### 2026-09-08 — a classifier-free regime test, entailed by the diff rather than assumed
+
+Iteration 28 is a **regime-dependent** mechanism: towers build splashers only once chips run
+past a threshold, which happens only in games that get that far. Doctrine rule 4 says such a
+mechanism needs a regime-matched sample and a map-level prediction, so I pre-registered one
+— and built the classifier badly. The replacement needs no classifier at all.
+
+The candidate differed from its baseline by **exactly one executable line** (verified by
+diffing with comments stripped, not by intention). Therefore:
+
+> **On any map where the gate does not fire, the two bots are byte-identical.** Under a
+> deterministic engine the A-side and B-side games are then the same game with the labels
+> swapped, so the map **must split**. A non-firing map *cannot* be a swept win or a swept
+> loss.
+
+Which makes the sweep counts a direct readout of the mechanism:
+
+| quantity | what it means |
+|---|---|
+| **swept wins** | maps where the mechanism fired **and decided the map in my favour** |
+| **swept losses** | maps where it fired and **cost** me the map |
+| **splits** | maps where it did not fire, or fired without changing the outcome |
+
+Iteration 28 read 44 / 0 / 31 over the full 75-map census, and the reading was confirmed on
+the ground: the split maps `memstore` and `rain` show `spl0` and flat chips in the replay,
+exactly as the structure says they must.
+
+**This is the first genuinely new use I have found for swept maps.** The ledger already
+records that swept counts and the head-to-head margin are the *same number* — `wins − N =
+SW − SL` identically — so citing both is citing one number twice. But that identity is about
+`SW − SL`. **`SW + SL` versus the split count is independent of it**, and under a one-line
+diff it measures *reach*: how many maps the mechanism acted on at all. Two numbers after
+all, but not the two I had been reaching for.
+
+### Preconditions, because this does not hold in general
+
+1. **A deterministic engine** — verified, 12/12, earlier the same day.
+2. **A genuinely single-mechanism diff.** Verify it by diffing stripped source. With two
+   changed behaviours a split can mean "both fired and cancelled", and the inference dies.
+3. **Both sides of every map played.** A one-sided sample has no sweeps to count.
+
+### And the falsifier I pre-registered was MIS-SPECIFIED, which is its own lesson
+
+I had written: *"if the wins are spread evenly across short and long games, the mechanism is
+not what won"*. The wins came out spread evenly. By the letter of the pre-registration that
+is a reject, and I accepted anyway — so the reasoning has to be better than a preference.
+
+It is: **the falsifier's inference was logically impossible.** With a one-line diff there is
+no other mechanism available for "what else won" to be. A pre-registration earns its
+authority by naming a test the mechanism could actually fail; mine tested a **proxy that
+does not track the thing it stands for**.
+
+Concretely, the classifier called maps LONG or SHORT by whether the *previous iteration's*
+games reached round 2000 — but the new bot **ends games earlier**, by painting enough of the
+map instead of grinding to a tiebreak. So I had built a regime classifier out of a property
+of a *different matchup* and then used it as a property of the map. Doctrine rule 5's
+wrong-referent error, and the first time I have caught one before it moved a verdict.
+
+> **Overriding a pre-registered gate is legitimate only when you can show the gate's
+> INFERENCE is invalid, not when you can show its conclusion is inconvenient.** The
+> distinction is whether the replacement test was available before the data and is strictly
+> stronger. Here it was and is — it follows from the diff, which was fixed before the run.
+
+**Operational**: when pre-registering a regime prediction, prefer a classifier the *mechanism
+itself* determines (did it fire?) over a proxy for the conditions under which it should fire.
+Under a deterministic engine and a single-mechanism diff, the split/sweep structure is that
+classifier, and it is free.
