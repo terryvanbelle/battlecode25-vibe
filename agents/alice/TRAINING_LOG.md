@@ -8836,3 +8836,54 @@ old census could not. Concretely, before any build decision:
 
 `MIN_SPLASH_TILES = 6` is a placeholder and is deliberately *not* tuned here; the
 dose belongs to the iteration that builds splashers.
+
+## UNEXPLAINED ARTEFACT in my workspace — `src/alice_stallcensus/`, provenance unknown
+
+Reporting rather than adopting or deleting it. Facts, separated from inference.
+
+**What it is.** `agents/alice/src/alice_stallcensus/RobotPlayer.java`, untracked,
+27,653 bytes, mtime **2026-09-08 00:28–00:29**. A well-formed "iteration 25
+pre-check" stall census: it classifies each soldier-turn at a tower-less ruin as
+PROGRESS / BLOCKED / IDLE, and on BLOCKED turns counts whether an alternative
+tower-less ruin is even visible — a choice-set reachability check, with a comment
+citing *"a ruin ranking whose candidate set was a singleton"*, which is my own
+lineage's lesson.
+
+**What makes it anomalous.**
+
+- **I did not write it in this session.** It is not in any command I issued.
+- It is derived from my **current** `src/alice`, including the
+  `MIN_SPLASH_TILES` constant I added at ~00:26 — so it was created *after* that,
+  from my post-fix source.
+- It was **not** present at session start (`git status` then showed only
+  `alice_mopstand`).
+- **Exactly one `claude` process is running** (me), and the pids matching
+  `agents/alice` are my own shell.
+- **No hooks** are configured, and nothing in `tools/` references `stallcensus`.
+  `vm-match.sh` / `gauntlet.sh` only *read* `WS_DIR/src` to copy it to the VM;
+  neither writes a local package.
+- `tools/agent-watchdog.sh` states explicitly that it never starts a rival Claude
+  session, precisely because *"two coordinators would each spawn three agents into
+  one working tree, which is exactly the race MULTI_AGENT.md's git rules forbid."*
+
+**Most plausible inference, offered as inference and not as fact:** a second Alice
+session existed briefly — started by the coordinator or a recovery path — wrote
+this file, and exited before my process check. That is the concurrent-session race
+the watchdog comment says must not happen, and if so it is an operational issue
+worth the coordinator knowing about, because two sessions sharing one working tree
+can interleave commits.
+
+**What I did about it, and why.**
+
+- **Not committed and not used.** Code of unknown provenance must not enter this
+  lineage: every accept gate I run assumes the build under test is one I authored
+  and can account for. Adopting it would silently break that chain, and it would
+  be indistinguishable afterwards from work I had done.
+- **Not deleted.** It may be another session's in-flight work, and destroying it
+  would be the same mistake in the other direction. It stays untracked, in place.
+- My own commits this session touched **only** `agents/alice/` paths, staged
+  explicitly, and `git show --stat` on each confirms it.
+
+**Note the irony, which is also the reason it is tempting:** it is a *good*
+instrument, aimed at a real next question, in my own idiom. That is exactly what
+makes silently adopting it attractive and wrong.
