@@ -11326,3 +11326,49 @@ buy a wiring check for 150 games. The wiring was checked this morning at 25 maps
 
 **If this session dies here**: the run is setsid-detached and survives; only the collation is lost.
 `gauntlet-collect.sh --list` will show it complete. Do not re-run it.
+
+### A false alarm worth recording: "ABLATION A7" is live shipping code, and the comment says the wrong word
+
+While building the iteration 18 ablation arm I found this in **`src/bob/Soldier.java`** — the file that
+plays in the tournament:
+
+```java
+// ABLATION A7: iteration 7's avalanche hash removed; back to iteration 1's
+// team-symmetric parity rule.
+return ((ruin.x + ruin.y) & 1) == 0 ? ... ;
+```
+
+Finding the word ABLATION in the shipping bot is exactly the shape of a serious accident — an
+experimental arm's edit left in the baseline — so I traced it before assuming either way:
+
+```
+bob_iter7  bob_iter9  bob_iter11   avalanche hash
+bob_iter12 bob_iter18 bob_iter20   parity rule + "ABLATION A7" comment
+```
+
+It entered at **iteration 12, deliberately**: *"revert the hash, REMOVE the ruin memory, on sweep
+evidence"*, and the log carries the full case — the hash was measured at **−20 points in the presence
+of SRPs**, and iteration 22 later tried a third rule (folded parity) and lost as well. Three
+coordinate-keyed rules measured, parity dominates, area closed. **No accident. Nothing to fix in the
+code.**
+
+**But the hazard is real and it cost me twenty minutes**, so it goes in the log rather than being
+forgotten: a comment that says "ABLATION" beside *accepted, shipping* behaviour will read as a leaked
+arm to every future session, including me an hour ago. I am deliberately **not** editing it, because a
+comment-only change to `src/bob` would break the invariant I rely on every session — that `src/bob` is
+byte-identical to the last accepted snapshot modulo the package line, which is the check that would
+actually catch a real leak. Trading a genuine detector for a cosmetic fix is a bad trade. **Renaming it
+belongs in the next commit that legitimately touches `Soldier.java`.**
+
+The general form, since I keep meeting it: **an invariant that makes accidents visible is worth more
+than the tidiness it costs**, and a scary-looking comment is cheap to check when the invariant holds.
+
+### `src/bob_abl18` built and compile-checked, ready for the full-corpus test
+
+One line, reverting iteration 18 only: `workOnRuin`'s paint guard goes from `RUIN_FLOOR` (0) back to
+`PAINT_FLOOR` (15). **Deliberately NOT arm C** — arm C bundled this with restoring ruin memory, and
+bundling is what made the earlier result uninterpretable. One mechanism, one arm.
+
+Queued behind the calibration, not launched: whether it is worth 150 games depends on what the
+calibration says the floor is, and running it first would be choosing the experiment before knowing
+whether the instrument can read it.
