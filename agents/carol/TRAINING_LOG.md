@@ -10468,3 +10468,116 @@ and try again" — that would rescue a mechanism whose own best case bought 7%. 
 matters is that soldier-to-tower conversion is carol's paint pump, and this run priced it: pulling
 soldiers off ruins costs 24% of the tower count and half the coverage. **The direction is to feed
 that pump, not to bypass it.**
+
+---
+
+# Iteration 39 — SPLASHER FRONTIER STEERING (pre-registered before any game)
+
+## The measurements, all free from replays already on disk
+
+Incumbent (`carol_iter36`), `mit`, two windows — because a one-window read samples a game *phase*,
+which is a mistake already in my LEARNINGS:
+
+| | rounds 200-240 | rounds 900-940 |
+|---|---|---|
+| fired (`SPLASH`) | 4.4% | 2.0% |
+| cooldown-blocked | 21.4% | 14.2% |
+| **out of paint** | **45.4%** | 14.8% |
+| **targetless** (`lowScore`+`noTgt`) | 28.8% | **69.1%** |
+
+**The binding constraint switches phase**: paint early, targets late. Had I read only the late
+window I would have built for the wrong half of the game.
+
+Splasher `bestScore` distribution (the score is already stamped in the indicator):
+**median 0, p75 2, p90 4-6, max 18-27.** The median splasher turn scores *zero* — it is standing
+where there is nothing to paint. In the same window the soldier's own frontier counter reports
+`frontFound` on **41 of 41** idle turns, so empty ground is visible at r2=20 while the splasher's
+r2~8 scoring window sees none of it.
+
+## Two candidate iterations killed here, for free, before any VM time
+
+1. **Raise `SPLASH_MIN_SCORE`** (fire only on dense frontier). Dead: `>=8` is reached on 4.4% /
+   2.0% of turns, which *exactly* equals the observed fire rate. The threshold is already firing
+   on only the top 2-4% of opportunities; raising it drives firing to zero and lowering it buys
+   shots at 25-50 paint per tile. The constant is well placed.
+2. **More money towers (`MONEY_MOD` down)** to unpin the treasury below the soldier build gate of
+   2250. Dead: the treasury is not uniformly pinned — median $1,550 but p90 $15,190 and max
+   $46,200. Chips explode later in the game, so chips are not the binding constraint, which
+   matches the existing iteration-31 probe (100% of chips-available no-builds are `tpIn <
+   paintCost`). Iteration 34's direction was right.
+
+## The ceiling, computed BEFORE building — the new rule, and it nearly killed this iteration
+
+My LEARNINGS rule from iteration 38: alongside "can the gate fire?", compute *"if it fired on
+every eligible turn, how much could the outcome move?"*
+
+First pass said **near zero**, and the argument was sound: a splasher holds 300 paint and a shot
+costs 50, so its whole life is 6 shots; it cannot refill without walking to a tower, which
+iteration 38 just priced at −3.10 sd. If splashers already spend all their paint, steering cannot
+add a single shot — it can only relocate shots that were going to happen anyway, and the `>=8`
+threshold gates quality identically in both arms.
+
+So I measured the thing the argument turned on:
+
+| | splash actions | splashers built | paint-capped ceiling (6/unit) | realised |
+|---|---|---|---|---|
+| `carol_iter36` | 559 | 136 | 816 | **68.5%** |
+
+**Splashers die holding roughly 31% of their paint.** The headroom is real: up to **+46% splash
+actions at zero resource cost**, since this spends paint already committed to the unit and never
+touches a tower stash. (Corroboration from the rejected arm: `carol_i38_50`, whose splashers
+refilled constantly, realised 94.7% — the headroom is reachable, that build just paid for it out
+of the towers.)
+
+That is a modest, quantified ceiling rather than an exciting one, and it is the honest number.
+
+## Change (one mechanism, movement only)
+
+The splasher is the only unit that never steers. `runSoldier` has redirected idle soldiers at
+`nearestVisibleEmpty()` since iteration 29 and it was accepted there; splashers and moppers still
+call `moveExploring(null)` — a random far target. When a splasher is action-ready and fuelled but
+does not fire, steer it at the nearest visible empty tile. **Zero marginal cost: it redirects a
+move that was already going to happen.**
+
+**One implementation note that is a real bug avoided.** The target is passed as `moveExploring`'s
+`target` argument, *not* written into `explore` the way the soldier version does. `moveExploring`
+replaces `explore` whenever `distanceSquaredTo(explore) <= 8`, and for a splasher the nearest
+empty tile is frequently that close — its scoring window is only r2~8, so "nothing worth hitting"
+and "nothing within 8" are different conditions. Written the soldier's way, the steering would be
+silently discarded exactly when it matters. (The soldier version is safe from this only because an
+idle soldier by definition has no empty tile inside its r2=9 action radius.)
+
+## Doses
+
+| arm | | |
+|---|---|---|
+| `carol_iter36` | — | zero arm (incumbent, never steers) |
+| `carol_i39_all` | `STEER_ON_LOWSCORE = true` | steer whenever it did not fire — primary |
+| `carol_i39_notgt` | `false` | steer only when `bestScore == 0` (conservative) |
+
+`BOT=carol_i39_all OPPONENTS="carol_iter36 carol_i39_notgt"`, 25 fresh random maps, both sides,
+100 games. Both carry `BUILD = "i39"`.
+
+## Gate (standing gate, second use)
+
+1. `carol_i39_all` vs `carol_iter36`: **>= 29/50 accepts, <= 25/50 rejects, 26-28 UNRESOLVED**
+   pending a replication on a disjoint map sample. The complement of this run's `maps.txt` is 50
+   maps, and a replication there **pools with this run to cover all 75 — where map-sampling error
+   is exactly zero.**
+2. Report D, the sd distance, and the small/large area split. Gate on none of them.
+
+## Manipulation checks, weak link named in advance
+
+1. **Link 1 (strong).** `sf/(sf+sn)` — the conditional reachability counter — is high, and splash
+   actions per splasher rise from **68.5%** of the paint ceiling toward 100%. If this does not
+   move, the mechanism did not run and nothing downstream is interpretable.
+2. **Link 2 — THE WEAK ONE.** More shots become more coverage. It breaks if the extra shots are
+   *marginal* ones: the threshold fires at `bestScore >= 8`, which is only ~4 empty tiles for 50
+   paint (12.5 paint/tile) against a best case of ~3.8. Steering toward the **nearest** empty tile
+   is not steering toward the **densest**, so the extra shots may all be bought at the worst price
+   the threshold allows. That is the specific way I expect this to fail, and the check is the
+   `s=` score distribution at the moment of firing, not the count of firings.
+3. **The price.** A steered splasher walks toward empty ground and therefore *away* from painted
+   territory, and several splashers steering at the same frontier tile will clump (−1 HP per
+   adjacent ally, −2 on enemy ground). Measured: coverage, deaths, and whether tower paint moves
+   at all — it should NOT, and if it does I have mis-read the mechanism.
