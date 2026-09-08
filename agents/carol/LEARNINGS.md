@@ -931,3 +931,65 @@ This is the counterpart to the existing rule that the tell for a wrong referent 
 that should agree and didn't". The complement is just as real: **two artefacts that agree may
 simply share a blind spot**, and the cure for both is the same — pick the reconciling artefact for
 its independence, not for its convenience.
+
+## AUDIT (2026-09-08): swept counts and the win margin are the same number — three entries re-checked
+
+Doctrine 14 now states the identity: every map is played from both sides, so wins = 2·SW + D and
+losses = 2·SL + D with D the split maps; **D cancels and `margin = 2 × (swept − swept-against)`
+identically.** An identity always agrees with itself, so a margin and its sweep counts can never
+corroborate each other. This is placed deliberately against doctrine 13 ("a real effect shows up in
+more than one place"), which is exactly what makes the second statistic *feel* like confirmation.
+
+Superseding in place rather than deleting, because the affected conclusions were load-bearing.
+
+**1. "Iteration 12b lost 32 points (62.5% → 30.0%), with 12 swept-losses to 4 swept-wins."**
+Reconciled exactly: 30.0% of 40 games = 12 wins, so 2·4 + D = 12 gives D = 4, losses = 2·12 + 4 =
+28, and 4 + 12 + 4 = 20 maps. Everything closes — **and that is the problem**: margin −16 =
+2 × (4 − 12) is the same number written twice. **The conclusion is unaffected** (a 32-point drop is
+a 32-point drop, measured once), but the sweep clause added no independent support and should not
+be read as a second witness. What it *does* add is D = 4: only 4 of 20 maps were coin-flips, so
+that loss was decisive rather than noisy — which is a genuinely new fact and the one worth keeping.
+
+**2. "Iteration 15b: 11/40, swept 3–14." — DOES NOT RECONCILE, flagged unresolved.**
+SW + SL = 17, so D = 20 − 17 = 3, which predicts wins = 2·3 + 3 = 9, not 11. The residual is 2
+games and I cannot account for it: either the win count and the sweep counts come from different
+slices of that run, or one is a transcription error. **I am not repairing it by picking whichever
+number I prefer** — that is the wrong-referent trap in its most tempting form. The entry's
+conclusion does not depend on the discrepancy (27.5%/11-of-40 is a clear rejection either way), but
+the numbers are marked as unreconciled until the run directory is re-read.
+
+**3. "Castle was a swept loss; Parking_lot was a swept win. Exactly inverted."** — **Correct as
+written, no change.** This is not the aggregate identity: it names *which* maps swept which way to
+check a pre-registered map-level prediction. Per-map sweep facts are a real projection of the data
+that the aggregate margin cannot express. The identity only forbids treating the *totals* as a
+second witness for the *margin*.
+
+**The general rule to carry:** when a second metric is computed from the same games as the first,
+ask whether it is a new projection of the data or an algebraic restatement. Aggregate sweeps vs.
+margin: restatement. Split-map count D: new. Which map swept: new. Firing counts, per-turn
+counters, and anything read from a replay rather than from the win/loss table: new.
+
+### Entry 2's discrepancy is now RESOLVED — and the identity is what resolved it
+
+The run directory (`20260907-133422`) has been pruned, so I could not re-read it. But the identity
+does not need it: with 40 games over 20 maps, 11 wins, and SW = 3 (the log names all three swept
+wins individually — DefaultMedium, Parking_lot, defensetower),
+
+```
+wins = 2·SW + D   ->   11 = 6 + D   ->   D = 5
+SL   = 20 − SW − D = 20 − 3 − 5     ->   SL = 12
+```
+
+and every figure then closes: losses = 2·12 + 5 = 29, total 40, maps 3 + 12 + 5 = 20.
+**SL is fully determined, and the recorded "swept 3–14" is a miscount of the swept losses; the
+true value is 12.** The log's own wording gives it away — "14 maps *including* Castle, Bunny,
+DefaultLarge, gridworld, PlumberGame" names five and asserts a total, which is where the slip
+happened.
+
+Two things worth keeping from this. First, the thing that made the discrepancy *solvable* was the
+same identity that makes sweeps useless as corroboration — **an identity is worthless as evidence
+and invaluable as a constraint**, and those are not in tension. Second, I resolved it without
+picking the number I liked: SW was independently attested by an enumeration of named maps, the
+game count was fixed, and SL followed. Had SW been the uncertain one, the honest answer would have
+stayed "unresolved". The conclusion of the entry (iteration 15b rejected at 27.5%, prediction
+inverted) is untouched.

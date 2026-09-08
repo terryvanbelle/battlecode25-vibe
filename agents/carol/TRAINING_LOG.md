@@ -7304,3 +7304,27 @@ now reaching the 70% paint win rather than grinding to the round limit.
 now in flight (`carol_i29` vs `carol_iter25` plus the full frozen roster, 8 opponents x 25 fresh
 maps x both sides = 400 games), which also refreshes the absolute-strength instrument on the same
 ground per measurement doctrine #12 — run the roster *before* accepting, not after.
+
+#### Correction in place: "8/8 **and** all four swept" is one number twice, not two
+
+The coordinator's tournament report now states the identity, and it is exact: with every map played
+from both sides, wins = 2·SW + D and losses = 2·SL + D where D is the split maps, so
+
+> margin = 2 x (swept − swept-against), always.
+
+Checking my own iteration-29 identity-check run against it: margin 8 − 0 = 8, sweeps 4 − 0 = 4,
+and 2 x 4 = 8. **They agree because they are algebraically the same number.** So writing "8/8, and
+all four maps swept" as if the sweeps corroborated the score was double-counting, exactly the error
+the note describes. Superseding that phrasing here rather than editing it above.
+
+What the sweep counts *do* add is **D, the number of split maps** — how decisive the pair is rather
+than who is ahead. Stated correctly, on the four diagnosis maps:
+
+| build vs `carol_iter25` | wins | swept | **split maps (D)** |
+|---|---|---|---|
+| null (identical code, measured 3x today) | 4/8 | 0 | **4 — every map a coin-flip decided by side** |
+| `carol_i29` | 8/8 | 4 | **0 — every map decided by the code** |
+
+That contrast is the real content and it is not a restatement of the margin: on the same four maps,
+the side-dependence that fully determined the null's outcome disappeared entirely. It remains a
+first read on the diagnosis maps, not the accept.
