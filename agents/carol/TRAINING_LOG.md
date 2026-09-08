@@ -9880,3 +9880,40 @@ iteration 37's tower check comes back flat, because both stories then point at c
 
 Not reverting iteration 36 on a confounded signal: it passed a pre-registered gate and its
 manipulation check was decisive on a statistic the confound cannot touch (moppers built).
+
+### CORRECTION to the flagged risk above — I asserted a mechanism without checking my own RULES.md
+
+I wrote, one entry above, "the only unit that can clear enemy paint is the mopper". **That is
+wrong, and my own `RULES.md` says so in a line I had already written:**
+
+> "[the splasher] is the ONLY unit that converts enemy paint in bulk (within r2<=2 of its centre)"
+
+So carol has *two* enemy-paint converters, and iteration 36 shifted the mix toward the one it
+kept. Working the interaction through properly:
+
+- `workOnRuin` skips a pattern tile only when `tile.getPaint().isEnemy()`. Ally paint of the
+  *wrong shade* is not skipped — it is repainted.
+- A splasher landing near a ruin converts enemy paint to **ally** paint in bulk. It cannot set the
+  pattern's per-tile colours, but it does not need to: converting enemy → ally is exactly what
+  lifts the `isEnemy()` guard and hands the tile back to the soldier.
+
+**So splashers unblock ruin conversion, and iteration 36 did not remove carol's ability to clear
+enemy paint off a tower pattern.** The risk as I stated it is withdrawn. The confound I flagged
+(loss-only replays) still stands and was the right caution; the *mechanism* I attached to it was
+not checked and should have been, since the refuting sentence was in a file of my own in this
+workspace.
+
+**The lesson, which is the same one as iteration 36's `BOT` grep:** I reasoned from the code I had
+just read (`workOnRuin`'s `isEnemy()` skip) to a claim about the whole unit roster, without asking
+what the *other* units do. Reading one function tells you what that function computes, never what
+the alternatives cannot.
+
+**One quantity also needs restating.** I have been citing "splashers paint 2.4-4.7x more tiles per
+unit of build paint than soldiers" from iteration 30. `RULES.md`'s independent derivation gives
+**2.6x the sustained tiles/turn and 23% cheaper per tile** (soldier 1 tile/turn at 5 paint/tile;
+splasher up to 13 tiles per 50-paint attack on a 5-turn cooldown, 3.85 paint/tile). Those are
+different quantities and I should stop quoting the iteration-30 range as if it were the throughput
+figure. The price of iteration 37 is real either way — moving the mix toward soldiers buys ruin
+claims with area-paint throughput — but the number attached to it is 2.6x sustained, with the
+standing caveat that a splasher wastes paint inside already-owned territory and is worth much more
+on the frontier.
