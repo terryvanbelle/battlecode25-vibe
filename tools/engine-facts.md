@@ -115,3 +115,34 @@ enough for questions about accumulation, pooling and drought. It cannot answer
 exactly the turns whose recorded resources were spent down — the estimate is
 conditioned on the outcome it is predicting. To measure a decision, instrument
 the decision in-bot, at the decision point.
+
+---
+
+## Resolve the engine jar with `tools/engine-jar.sh`, never with a bare `find`
+
+battlecode-dev's gradle cache holds **two** engine jars —
+`battlecode25-java-1.0.0.jar` and `battlecode25-java-3.1.0.jar` — so a probe
+that locates the engine with `find ... -name 'battlecode25*.jar' | head -1` can
+decompile the **wrong engine** and derive confident, false facts about the game.
+
+This is not hypothetical: a lineage decompiled 1.0.0 while every
+`engine_version.txt` in the repo says 3.1.0, and caught it only because a method
+it expected (`getChips`) was missing outright. A subtler difference between
+versions — a changed constant, a reordered branch — would have passed silently
+into this file, which all three lineages trust.
+
+**Use:**
+
+```
+javap -p -c -cp "$(tools/engine-jar.sh)"          battlecode.common.RobotController
+tools/engine-jar.sh --remote     # the path as resolved on battlecode-dev
+```
+
+It reads the wanted version from `arena/engine_version.txt` and **refuses to
+print a path whose version does not match**, so a missing or wrong jar becomes an
+error rather than a wrong fact. Verified end to end: the resolved 3.1.0 jar
+contains `getChips` and `getNumberTowers`, which 1.0.0 does not.
+
+**Add an engine fact only if you obtained it through this resolver.** A fact
+derived from an unpinned jar cannot be trusted, and cannot be distinguished later
+from one that can.
