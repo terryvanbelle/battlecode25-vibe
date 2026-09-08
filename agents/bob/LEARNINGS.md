@@ -1116,3 +1116,13 @@ described the map that defeated the coverage-denominator verification as having 
 1225 tiles — 2.6%". Two independent implementations agreeing on a specific count is a real
 check on the parser, and it is the kind of check §26 says to look for: independent
 *derivation*, not just an independent-looking number.
+
+**Prior art in my own toolbox, stated so this does not read as a fresh discovery.**
+`bob-tools/BobSym.java`, written for the iteration-14 tower-type audit, already says "maps
+are guaranteed symmetric" and already *infers* which of the three transforms is in force per
+map. What §28 adds is the corpus **distribution** — which that tool computes per map and
+never tabulated — and the consequence: because rotational symmetry is the *minority* case
+(27 of 75), inferring the transform is unavoidable for anything that needs the true mirror,
+while anything that needs only the enemy half can skip inference entirely. The first tool
+needed the mirror (a ruin and its counterpart), so it had to infer. The beacon does not, so
+it must not.
