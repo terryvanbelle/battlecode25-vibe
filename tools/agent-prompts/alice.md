@@ -118,7 +118,10 @@ publishes your files into a staging area any sibling can commit from; in the
 window before your own commit runs, their commit takes your files with it. That
 has already happened once, putting 1,716 lines of one lineage's work into
 another's commit under the wrong message. `--only` commits the named paths in a
-single operation regardless of the index. `git pull --rebase` before pushing (`--autostash` if you have
+single operation regardless of the index. **It cannot introduce a NEW file**
+(every accepted snapshot is one), so for those do `git add <paths>` immediately
+followed by `git commit --only <paths>` — keep them adjacent, and `--only` still
+guarantees your commit holds only your paths. `git pull --rebase` before pushing (`--autostash` if you have
 unstaged work; the other agents' uncommitted files share this working tree, so
 never commit or stash-drop anything outside `agents/alice/`). Keep HEAD
 compiling — HEAD is what plays in the tournament.

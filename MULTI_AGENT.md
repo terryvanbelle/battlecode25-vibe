@@ -345,7 +345,17 @@ agents. Therefore:
   be located by hash.
 
   `git commit --only <paths>` commits the named paths in ONE operation regardless
-  of what is staged, which closes the window entirely. History is not rewritten
+  of what is staged, which closes the window entirely.
+
+  **Caveat, found the hard way: `--only` cannot introduce a NEW file.** It
+  refuses a path git does not already know (`did not match any file(s) known to
+  git`), and you create new files constantly — every accepted snapshot is a new
+  directory. For those, `git add <paths>` immediately followed by
+  `git commit --only <paths>`. The add window reopens, but only for genuinely new
+  files, and `--only` still guarantees that *your* commit contains only *your*
+  paths — which is the half of the protection that stops you sweeping up a
+  sibling's work. Keep the two commands adjacent; the risk is proportional to the
+  gap between them. History is not rewritten
   to repair such a commit — a force-push on a shared repo is worse than a wrong
   author line. Record the hash and move on, as that lineage did.
 - `git pull --rebase` before every push; on push rejection, pull-rebase and
