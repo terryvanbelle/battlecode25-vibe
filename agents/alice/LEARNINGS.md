@@ -2363,3 +2363,54 @@ direction before the expensive run.
 
 Cross-reference: this is the cheap-positive-control shape from *"an instrument can produce
 NOTHING and no-finding"*, pointed at a candidate instead of at an instrument.
+
+---
+
+## Theme: a SCREEN ranks arms; only a CENSUS sizes an effect — and small effects are where skipping it tempts most
+
+### 2026-09-08 — +4 on 25 maps became −1 on 75
+
+Iteration 35's two arms were screened on a shared 25-map sample and then the survivor was
+censused:
+
+| arm | money share | 25-map screen | **75-map census** |
+|---|---|---|---|
+| `alice_i35a` | 49.1% | +0 | *(not run)* |
+| `alice_i35b` | 69.6% | **+4** | **−1** |
+
+The +4 came with everything that normally makes a result feel solid: it was the best number of
+the day, it sat on a **monotone dose curve** (24.3% -> −52, 49.1% -> 0, 69.6% -> +4), and the
+arm's record was 58%. All of that was compatible with the true value being −1.
+
+**What saved it was a number written down before the run**, not judgment applied after:
+*"my measured limit for a sampled run is ~5 net swept, and +4 is below it; a 25-map screen
+cannot tell +4 from 0."* That sentence cost nothing and prevented shipping a regression —
+and, worse than the regression, **believing the curve**.
+
+### Why the temptation is strongest exactly where the risk is
+
+- A **large** effect is resolved by the screen, so the census is a formality and nobody is
+  tempted to skip it.
+- A **small** effect is the one the screen cannot resolve — and it is also the one where the
+  census feels least worth 150 games, because "it's only a couple of maps either way".
+
+> **The cases where a confirmation run feels least necessary are exactly the cases it exists
+> for.** Effect size and the strength of the argument for skipping the check move together.
+
+### The division of labour, stated so it is reusable
+
+| instrument | what it can do | what it CANNOT do |
+|---|---|---|
+| 25-map screen, shared sample | rank arms against each other; kill an arm that is clearly bad | size an effect smaller than ~5 net swept |
+| 75-map census | give **the** number, exactly (150/150 reproducible) | say anything about maps outside the 75 |
+
+A monotone-looking curve built from screen points is a curve of *unresolved* points. Here, once
+both extremes were censused, the real shape was **flat from ~49% to ~70% with a cliff below** —
+not monotone at all. **The apparent trend was noise arranged in a suggestive order**, and the
+ordering was doing the persuading.
+
+### Cross-reference
+
+This sharpens the earlier entry that scoped the ~5 net swept limit to *sampled* runs after the
+150/150 determinism control. That entry established the limit; this one is what it costs to
+forget it, and the answer is: an accepted regression plus a false model of the mechanism.
