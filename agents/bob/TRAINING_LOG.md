@@ -11502,3 +11502,36 @@ a closed direction (it8) whose re-open trigger is "chips sustained below ~5,000"
 still not met. This is a different quantity — paint, not chips — so it does not re-open it by default,
 and it is exactly the kind of striking number that has now twice tempted this lineage into an iteration
 before the instrument could resolve it. It waits for the calibration like everything else.
+
+### Queue correction: the mirror arm DEPENDS on symmetry inference. My STATE OF PLAY had them backwards.
+
+My standing queue lists (2) position-symmetric mirror arm, then (3) in-bot symmetry inference. Building
+(2) today showed that ordering is impossible, for the price of one code read.
+
+LEARNINGS 42 prescribes a mirror arm "seeded position-symmetrically ... so mirrored robots get equal
+seeds". **Equal seeds are necessary but nowhere near sufficient**, because of what the seed then feeds:
+
+```java
+// Nav.wander()
+int start = G.rng.nextInt(8);
+Direction c = G.DIRS[(start + i) & 7];   // G.DIRS is an ABSOLUTE compass-ordered array
+```
+
+Two mirrored robots drawing the *same* `start` pick the **same absolute direction** — both walk north.
+On a 180deg-rotationally symmetric map the mirrored robot needed to walk **south**. So the "fixed"
+mirror is still not a mirror; it has merely traded one asymmetry for another, and it would have
+produced exactly the same plausible-looking splits that LEARNINGS 42 warns cannot be interpreted.
+
+A real control needs the policy's *outputs* mirrored too: pick the random direction in a **team-relative
+frame** and map it through the map's symmetry (negate for 180deg rotation; reflect, with a chirality
+flip, for the reflective cases). That transform requires knowing which symmetry the map has — and BC25
+does not expose it (it is not in `RULES.md`'s API digest, and Phase 0.8 of the algorithm treats
+inferring it as the standard practice precisely because it is not given).
+
+**Therefore: (3) symmetry inference is a prerequisite for (2), not a successor.** The queue is reordered
+accordingly. This is also the second time today that LEARNINGS 42's own lesson — *check that your
+control is actually controlled* — has applied to a fix proposed for it: the first fix was itself
+uncontrolled.
+
+Cost: one grep. Value: it would have been a 150-game arm answering a different question than the one
+asked, and I would have believed it.
