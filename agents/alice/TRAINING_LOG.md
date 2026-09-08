@@ -11104,3 +11104,63 @@ it has more chips than the game has things to buy, and the paint it spends is pa
 accumulating unspent anyway. That is the same "consume only what was going spare" shape as
 iteration 25's refill and iteration 24's unused-action rule — the third accepted mechanism
 in this lineage built on it, and the largest.
+
+## Iteration 29, pre-registered — the splasher gate's REACH, and the trap it has to avoid
+
+Iteration 28's split/sweep structure says exactly where the headroom is: **31 of 75 maps
+split, which under a one-line diff means the gate never fired there and those maps got
+iteration 25 unchanged.** The mechanism went 44-0 on the maps it reached. It is not obvious
+that anything is wrong with it — the obvious question is whether it can reach further.
+
+**Hypothesis**: lower the threshold from `CHIP_RESERVE + 5000` to `CHIP_RESERVE + 2500`
+(a level-2 tower upgrade rather than a level-3 one — still an engine constant, still not
+searched), so the gate fires earlier and on more maps.
+
+### The named risk is iteration 26 wearing a different hat, and I want it on the record first
+
+A splasher costs **400 chips**. Chips are the compounding currency: `completeTowerPattern`
+gates on `getMoney() >= 1000`, so **chips spent on splashers are chips not spent on towers**,
+and iteration 26 measured what happens when tower construction is starved — **−21 net swept,
+the worst result this lineage has recorded.**
+
+Iteration 28 is safe from that only because its threshold sits *above the expansion phase*:
+by the time a tower holds 5,000 chips beyond the reserve there is nothing left to build.
+**Lowering the threshold walks toward the cliff on purpose**, and the entire question is
+whether 2,500 is still past the end of expansion or already inside it.
+
+So this is a dose-response step, and the zero arm and the +1 arm are both already measured:
+
+| threshold | build | census |
+|---|---|---|
+| never fires | `alice_iter25` | zero arm |
+| `+5000` | `alice_iter28` | **119/150, +44 swept** |
+| **`+2500`** | `alice_i29` | pre-registered below |
+
+### Pre-registered
+
+- **Instrument**: `alice_i29` vs **`alice_iter28`** (the new baseline), full 75-map census.
+- **Gate**: net swept > 0, `SW`/`SL` separately, 0 exceptions, 0 overruns.
+- **Reach check, replacing the classifier I got wrong**: report the **split count**. Under
+  the same one-line-diff logic, a lower threshold that genuinely reaches further must
+  produce **fewer splits than iteration 28's 31**. If the split count does not fall, the
+  dose did not change the reach and any margin is something else — that is the properly
+  specified version of the regime prediction I mis-built last time, and it is a property of
+  the mechanism rather than a proxy for it.
+- **Failure diagnostic, named in advance**: if it loses, check **tower count at r200-400**
+  against the baseline. A fall there is iteration 26's chip-starvation cliff reached from
+  the other side, and it means the threshold must stay above expansion — in which case the
+  reach ceiling is structural and the remaining 31 maps are simply not addressable by this
+  knob.
+- **If it loses on that diagnostic, the next question is NOT a smaller step.** It is
+  whether the gate should key on *expansion being finished* (no completable ruin in
+  sight) rather than on a chip level that only correlates with it. That is a different
+  mechanism and a separate iteration.
+
+### A second, independent thing iteration 28 unlocked, noted so it is not lost
+
+`MIN_SPLASH_TILES = 6` gates every splasher attack, and it was written when **splashers were
+never built**, so it has never once been evaluated on a live unit — the repair that
+introduced it was explicitly accepted as *inert*. It is now the single most-exercised
+untested constant in the bot. `alice_splashprobe` already carries the telemetry to measure
+`splashScore` at the centres a splasher actually chooses (the quantity the iteration-24
+census parked as unmeasurable), and reading it needs a replay dump, not a census.
