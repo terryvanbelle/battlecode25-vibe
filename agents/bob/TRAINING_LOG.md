@@ -11009,3 +11009,189 @@ Also noted while looking: `bob-tools/BobSym.java` is an **offline audit** of the
 symmetry, not runtime symmetry inference. So the structural direction "infer the map symmetry in-bot
 and extrapolate the unseen half" remains genuinely unattempted, not half-built as I assumed this
 morning.
+
+### Wall-density pre-check, run immediately: the naive "wall-dense maps" regime is 8% — same trap as the cap
+
+`bob-tools/map_symmetry.py` already parses the `.map25` flatbuffers out of the engine jar and already
+computes wall counts; I did not need a new tool, only to read the one I had. Over all 75 maps:
+
+```
+wall density   min 1.6%   median 10.1%   p90 15.0%   max 20.0%
+maps >= 16%:   gridworld 20.0  maze 19.8  boxofchocolates 19.5
+               yearofthesnake 18.4  sierpinski 16.9  mit 16.3      = 6 of 75 (8%)
+```
+
+**So "fix navigation for wall-dense maps" is an 8%-of-corpus regime, which is the tower cap's death
+sentence almost exactly.** I am writing that down before I get attached to the direction, because I
+found the maze result forty minutes after closing a direction for this precise reason and the
+temptation to grade the new favourite on a softer curve is the whole failure mode.
+
+**But the two are not equivalent, and the difference is testable rather than rhetorical.** The tower
+cap is a *threshold* effect — it does nothing at all below 44 ruins, which I verified (38 and below:
+never binds). Wall density is a *continuum*, and if capture degrades continuously with it then the
+effect is spread over the whole corpus rather than concentrated in 6 maps, and the median map at 10.1%
+is already paying something. My four data points cannot tell these apart:
+
+```
+map          walls    capture
+Gears         4.6%      57%
+headphones   11.5%      50%
+SMILE          ?        53%
+maze         19.8%      12.5%
+```
+
+Three flat points and one collapse is equally consistent with "a cliff somewhere above 16%" (regime =
+6 maps, dies) and with "a knee that starts biting in the mid teens" (regime = much larger, worth it).
+
+**Pre-registered discriminating probe, before any candidate is built**: run the four remaining >=16%
+maps (`gridworld`, `boxofchocolates`, `yearofthesnake`, `sierpinski`, plus `mit`) and three mid-density
+maps (12-15%), and plot capture against wall%. **Prediction I am committing to now: if the mid-density
+maps come back at 45-57% like `headphones`, this is a cliff and a 6-map regime, and I close it the way
+I closed the cap.** Only a graded decline across the mid-range justifies building anything.
+
+**And a confound I must rule out in the same probe**: `maze` at 19.8% walls may simply have ruins
+behind walls that no navigation can reach, in which case the 12.5% is the map's ceiling and not my
+bot's failure. The discriminating observation is the *opponent's* capture on the same map — `bob_iter20`
+played the other side of that very game. If both teams sit near 4, it is the map; if the opponent
+captured many more, it is the bot. **That number is already in the replay I have on disk and I have not
+looked at it.**
+
+---
+
+## Iteration 30 — **REJECTED**. Run `20260908-144158`, 200 games, complete.
+
+```
+arm      what changed                              score   vs null  swept  sweptAg  diff-from-null
+bob_d0   Nav refactored, every caller pref 0        25/50     +0       0       0        0/50   NULL
+bob_d1   moppers indifferent to enemy paint         22/50     -3       1       4        7/50
+bob_d2   moppers AND splashers indifferent          22/50     -3       1       4        7/50
+bob_d3   both actively PREFER enemy paint           19/50     -6       0       6        8/50
+```
+
+**The null arm is clean** — 25/50, all 25 maps split, zero sweeps either way — so the `Nav` refactor is
+inert and the run is valid. Stage-0 had already shown `d0` reproducing the baseline exactly on Bread
+(r616) and Rose (r530) while `d1` diverged on both.
+
+**Gate: `>= +7` accepts. The best arm is −3. Rejected, and not marginally.**
+
+### The ladder is monotone DOWNWARD, and that is the finding
+
+My pre-registered prediction was *"`d1` positive and small, `d2` > `d1`, `d3` uncertain and possibly
+negative as the paint price bites."* The sign is wrong from the first rung:
+
+```
+pref 0 (avoid)  25   ->   pref 1 (indifferent)  22   ->   pref 2 (prefer)  19
+```
+
+Monotone, evenly spaced, and — per §43, measured today — a ladder's **shape** on a single shared map
+sample reads at ±1. So this is a real, clean dose-response, not three noisy points. **The more willing
+a denial unit is to stand on enemy paint, the worse the bot does, at every dose I tested.**
+
+**The hypothesis is refuted rather than merely unsupported.** The theory was that `navTo`'s enemy-paint
+avoidance fights the splasher's firing condition, so relaxing it would raise denial throughput. The
+price I priced — 2 paint/turn to stand on enemy ground, doubled for moppers — is not merely a cost to
+subtract from a gain; it **exceeds any gain at every dose**. The reallocation costing exercise in the
+pre-registration had both numbers, and the price side won.
+
+`d1` and `d2` scoring identically (22/50, 7 flipped cells each, same 1/4 sweeps) is worth noting: adding
+**splashers** to the change on top of moppers moved nothing at all. Whatever is happening is a mopper
+effect.
+
+### The flip signature confirms this is causal, not churn — and today's calibration is what licenses saying so
+
+Doctrine 10 says scattered mixed-direction flips are churn and one-directional flips are a real causal
+effect. I now have both signatures measured on the same day, on the same instrument:
+
+```
+                        cells flipped      direction        score
+PRNG phase only  n1           15            8 up / 7 down     +1     <- churn
+                 n2           14            7 up / 7 down     +0
+                 n3           19           10 up / 9 down     +1
+iteration 30     d1            7            2 up / 5 down     -3     <- causal
+                 d2            7            2 up / 5 down     -3
+                 d3            8            1 up / 7 down     -6
+```
+
+**The real mechanism perturbs HALF as many games as a pure PRNG reshuffle and moves the score six times
+as far**, because its flips point one way. A change that alters behaviour a lot and outcomes randomly
+looks nothing like a change that alters behaviour a little and outcomes systematically, and until this
+morning I had no measured baseline for the first shape. This is the calibration paying for itself
+inside one iteration.
+
+### Closed direction, recorded with the measurement that closed it
+
+**Denial-unit navigation policy (willingness to stand on enemy paint) is CLOSED.** Dose ladder
+0/1/2 → 25/22/19 on a clean null, one-directional flips at every dose. Re-open only with evidence that
+changes the paint arithmetic — the price is an engine constant (2/turn, doubled territory component for
+moppers), so a re-open needs either a mechanism that pays the cost back explicitly, or a regime where
+denial units are not paint-constrained. "Denial units run at 1% of capacity" remains **true and
+unexplained**; what is now known is that this is *not* the cause, and freeing them to enter enemy paint
+is not the cure.
+
+**Functional-area tracking**: this is my 3rd consecutive reject in unit-behaviour/threshold tuning
+(28c ruin-hint sharing, 29 vetoed, 30 rejected). `MaxConsecutiveRejects = 3` is reached, so **the next
+attempt must leave this area** — which the revised queue already does: instrument work first, then
+structural.
+
+---
+
+## RETRACTION — the `maze` navigation lead was a GREEDY-REGEX ERROR. My probe table reported the wrong team.
+
+The entry above ("maze is an absolute degeneracy signal, and it points at NAVIGATION", commit
+`a6e194f`) is **wrong and is withdrawn**. It stands in the log because decisions were queued off it;
+this supersedes it.
+
+**The bug.** My extraction was
+
+```bash
+grep -oE "^round [0-9]+ \| T1 .* tw[0-9]+"   |  sed -E 's/.*(round [0-9]+).* tw([0-9]+).*/\1 tw\2/'
+```
+
+`.* tw([0-9]+)` is **greedy**, so on a line containing both teams it matches the *last* `tw` on the
+line — **T2's tower count**, under a pattern I had written `T1` into and therefore read as T1's. Every
+number in that probe table was the opponent's. This is doctrine 5 exactly: a number correctly computed
+against the wrong referent, produced by a procedure that looked right and had the right label on it.
+
+**Re-extracted per team with a field-split parser instead of a regex** (T1 = `bob`, T2 = `bob_iter20`):
+
+```
+map           ruins   r500        r1000       r1500       r2000
+DefaultHuge     49    23 / 22     21 / 25     20 / 25     21 / 25
+DonkeyKong      46    23 / 21     20 / 25     19 / 25     18 / 25
+TheBest         44    17 / 25       (ended r808)
+SMILE           38    12 / 15     23 / 19     23 / 19     23 / 18
+headphones      32    16 / 16     21 / 13     20 / 14     22 / 13
+maze            32     4 /  4      7 /  4     14 /  4     18 /  4
+UglySweater     28      (ended r377)
+```
+
+**What survives.** The tower-cap conclusion is unaffected and is confirmed on correct data: a team
+reaches 25 on Leaf (both), DefaultHuge, DonkeyKong and TheBest — every map with >= 44 claimable ruins —
+and on none at 38 or below (SMILE peaks at 23, headphones at 22). The regime is still 5 of 76 maps and
+the direction stays closed for the reason recorded.
+
+**What dies.** *"On maze my bot claims 4 of 32 ruins in 2000 rounds"* is false. **T1 reached 18 of 32
+(56%), which is exactly the normal rate.** There is no navigation degeneracy here. The 12.5% belonged to
+the other side, and the wall-density story I built on it — median 10.1%, the 8%-of-corpus regime, the
+cliff-versus-knee probe I pre-registered two entries ago — was built on a number that was never about
+wall density at all. **That probe is cancelled, not deferred.** The wall-density census itself is fine
+and stays as a fact about the corpus; only the inference from it goes.
+
+**What is left, and what I may NOT say about it.** On maze, two byte-identical builds went 18 and 4.
+That is a real and very large split. But **LEARNINGS 42 forbids me from calling it a symmetry bug**:
+`G.rng = new Random(r.getID())` and IDs are not mirrored, so `bob` vs `bob_iter20` is not a mirror — it
+is one policy under two random streams, and a compounding divergence (the 400x treasury gap on Leaf is
+the precedent) produces exactly this. Positional bug and seed divergence are indistinguishable here, on
+n = 1, by construction. The position-symmetric mirror arm §42 specifies is the only thing that could
+separate them, and it is still unbuilt.
+
+**What both the claim and this retraction took for granted** (the retraction audit): both assumed the
+probe replays were a *mirror* and so that either team's number characterises "my bot". They are not a
+mirror in the only sense that matters, which is why a 4 and an 18 can sit in one game with no bug at
+all. The deeper error was not the regex — it was reaching for a per-team number from a matchup whose
+two sides I have already documented as incomparable.
+
+**Control installed, not a lesson (doctrine 16).** The regex is replaced by an awk field-split on `|`
+that binds T1 and T2 to named variables and prints both, always, as `r<round>(T1/T2)`. It is not
+possible to read one team's number believing it is the other's when the output shows the pair. That
+form is what produced the table above and is what I will use for every replay aggregate from here.
