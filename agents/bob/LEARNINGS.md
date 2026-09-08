@@ -1715,3 +1715,40 @@ cheap ones came first.
 `tools/replay-dump.sh X.bc25 --quiet | grep -v GameHeader` on both arms, then `diff`.
 `cmp` stays valid for exactly one job — re-running an **identical pairing** to test determinism or
 detect a corrupted run — where the names match by construction.
+
+---
+
+## 42. An ID-seeded RNG means this lineage has never run a real mirror test
+
+`G.java` line 20: `rng = new java.util.Random(r.getID())`. Every robot seeds its own generator from
+its own engine-assigned ID, and **IDs are not mirrored between teams** — in one Leaf game T1 held
+10046/10348/10534 while T2 held 10149/10394. Two mirrored robots in a "mirror" match therefore draw
+**different random sequences**, and `Nav.wander()` — the behaviour that decides which ground gets
+explored, hence which ruins get captured, hence the whole compounding economy — is exactly what those
+draws control.
+
+So `bob` vs `bob_j0` is not a mirror in the sense the symmetry audit needs. It is **the same policy
+run under two different random streams**. That changes what its results can support:
+
+- The 28c null arm reading **all 25 maps split by side, 0 swept** does *not* establish a positional
+  bug. Identical policies with different seeds, on a deterministic engine, will land on a fixed
+  per-map winner and flip when the sides (and hence the seeds) swap. That is the same observation a
+  real side-bias would produce.
+- A 400× treasury divergence between "identical" bots on Leaf ($1,318 vs $527,895) is likewise
+  consistent with variance amplified by compounding, with no asymmetry in the bot at all.
+
+The algorithm prescribes mirror-matching to find play-symmetry bugs, and says *"a persistent lopsided
+split on a map is a real bug."* **That instrument does not work on a bot whose randomness is
+ID-seeded**, because the mirror never had a chance to be symmetric. Neither hypothesis — positional
+bug, or seed variance — can be separated from the other by any number of these runs.
+
+**What would actually discriminate**, and is worth building before trusting any symmetry conclusion: a
+mirror arm seeded **position-symmetrically** rather than by ID — e.g. from the robot's spawn location
+expressed relative to its own team's starting corner, so mirrored robots get equal seeds. Under that
+seeding a symmetric map with symmetric policy *must* produce a symmetric game, and any surviving split
+is a genuine bug with nowhere left to hide.
+
+**The transferable form: check that your control is actually controlled.** A mirror match is only a
+control if every input is mirrored, and a per-entity random seed derived from an engine-assigned
+identifier is an input that silently is not. The failure is invisible — the control runs, produces
+plausible numbers, and answers a different question than the one asked.
