@@ -7118,3 +7118,55 @@ neutral tiles where no soldier will ever arrive. That is the same interior-peak 
 made iteration 20's dose curve turn over at 1:3:1, applied before the fact rather than after.
 
 If `mB > mA` instead, the chain story is weaker than §24a claims and I will say so.
+
+### Tournament `20260908-0100` — the external instrument confirms the iteration-18 regression
+
+This round-robin played `bob @ f67ac8b` = **iteration 18**. The previous one
+(`20260907-1300`) played `bob @ ceef7af` = **iteration 12**. So the delta between them is
+exactly the 12→18 step my own frozen roster flagged, measured this time against opponents my
+lineage did not produce.
+
+```
+                 20260907-1300      20260908-0100     delta
+bob                  92.3%              70.3%         -22.0
+alice                38.0%              47.3%          +9.3
+carol                19.7%              32.3%         +12.7
+
+alice vs bob        7.3%               26.0%         +18.7  (alice's share)
+bob vs carol       92.0%               66.7%         -25.3
+alice vs carol     68.7%               68.7%           0.0   <-- unchanged
+```
+
+**Two independent instruments now agree that iteration 18 was a regression:**
+
+```
+frozen roster, absolute   bob_iter11:  iter12 25/50  ->  iter18 20/50
+tournament, relative      standings:   iter12 92.3%  ->  iter18 70.3%
+```
+
+Per §26 I have to ask whether that is independence of *derivation* or of *referent*. It is
+genuinely of referent: the roster is my own frozen snapshots, the tournament is two foreign
+lineages. Different opponents, different map procedure, same verdict.
+
+**But the tournament number cannot carry the attribution on its own, and the report says so
+in its own words:** wins are conserved across the three bots, so a delta means "changed
+*relative to* the other two" and never "got worse". Both siblings also changed commits
+between the two runs, so -22.0 is a priori consistent with bob standing still while both
+others improved.
+
+**What decides it is the `alice vs carol` cell: 68.7% → 68.7%, a delta of exactly 0.0.**
+Both siblings changed builds, yet their head-to-head did not move a single game, while both
+gained heavily against bob. The parsimonious reading is that the thing that changed is bob.
+The alternative — both improving by precisely the amount that leaves their mutual record
+untouched — is possible but requires a coincidence, and the frozen roster, which *is*
+absolute and cannot move under anyone else's improvements, already says iteration 18 lost 5
+games to `bob_iter11`. The relative instrument and the absolute one point the same way, so
+the attribution holds.
+
+**Where this leaves iteration 20.** It was committed at 01:28, after this tournament's 01:00
+export, so **iteration 20 has never played a tournament**. Its 35/50 against `bob_iter11`
+(+15 on iteration 18, +10 on iteration 12) is so far a purely internal claim. The 13:00 UTC
+round is its first external test, and it is a real prediction rather than a hope: if the
+roster is measuring what I think it is, bob's standing should recover most of the -22.0. If
+it does not, the roster and the tournament disagree about my own lineage, and *that*
+disagreement becomes the next thing to investigate rather than any new mechanism.
