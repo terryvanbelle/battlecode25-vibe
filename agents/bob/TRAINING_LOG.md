@@ -8658,3 +8658,71 @@ the price half of this trade. `src/bob_cprobe` is now built and compile-checked 
 that at the decision point (pattern verified complete tile-by-tile, then `canCompleteTowerPattern`
 false, split by whether chips < 1000). It has not been run. If iteration 26 produces an accept,
 this probe is what turns it from a tuned constant into an explained one.
+
+---
+
+## ROSTER SATURATION AUDIT (2026-09-08) — doctrine 12's new clause, applied to my own roster
+
+**The clause**: a rung beaten 94-100% of the time has stopped measuring, because it can
+register no improvement *and no decline*; report the **weakest** rung rather than the mean; fix
+saturation by **adding** a harder fixed reference, never by retiring rungs.
+
+**My roster at iteration 20, sorted weakest-first — which is how it has to be read:**
+
+```
+bob_iter11           35/50    70.0%    <- the only rung still discriminating
+bob_iter1            44/50    88.0%       near-saturated
+bob_iter0            46/50    92.0%       near-saturated
+examplefuncsplayer   50/50   100.0%    <- SATURATED: cannot register a decline at all
+                     mean     87.5%    <- the number I should never quote
+```
+
+**One of four rungs is dead, two are nearly dead, one works.** The mean, 87.5%, is exactly the
+misleading summary the clause warns about: it reads like a strong instrument and three quarters
+of it cannot move.
+
+**And this lineage is the case study for why that matters.** `bob_iter11` is the rung that
+caught iteration 18 sliding — 25/50 under iteration 12, 20/50 under iteration 18 — which the
+tournament then confirmed independently with a 22-point standings drop. That detection was only
+possible because `bob_iter11` could still beat me sometimes. Had it been saturated, iteration 18
+would have stood.
+
+**It is saturating from below right now**, which is the part I would have missed:
+
+```
+iter12: 58% -> 56% -> 50%      iter18: 40%      iter20: 70%
+```
+
+It moved **30 points in one accept**. Two more accepts of that size and the last live rung joins
+the dead ones — and per §5b that is precisely the condition under which a chain of
+individually-positive accepts can walk downhill undetected. Iteration 25's `+2` is exactly the
+kind of thin link such a chain is made of.
+
+### The fix, and one candidate I rejected
+
+**Rejected: `bob_denier`.** The obvious move was to promote my existing synthetic archetype. It
+scores **86% and 94%** against this lineage in recent runs — it is *already* saturated, so
+adding it would have produced a fifth dead rung while feeling like a repair. Worth recording,
+because "add an archetype" is the clause's own suggested remedy and applying it without checking
+the archetype's current strength would have quietly made things worse.
+
+**Adopted: `bob_iter20` as a fixed extra rung.** It is the strongest build this lineage has
+produced, it is already frozen and compile-checked, and the stride rule puts it at **position 8**
+— not a multiple of 5 — so it would otherwise never have joined the roster at all. It reads ~50%
+by construction until the next accept, which is what a maximally discriminating rung should
+read. Roster is now `bob_iter0 bob_iter1 bob_iter11 examplefuncsplayer bob_iter20`; nothing was
+retired.
+
+**Standing rule recorded in `roster_extra.txt` itself**, not just here, so it survives a session
+that never reads this entry: *whenever the weakest rung passes ~90%, add the newest accepted
+snapshot as a new rung. Add, never replace.*
+
+**Reporting convention changed**: I will quote the weakest rung from here on, never the mean.
+
+**What this does not fix, named so it is not mistaken for done.** `bob_iter20` is my own code,
+so it inherits every blind spot the lineage shares — it makes the roster *harder*, not more
+*independent*. A genuine strategic archetype would do both, and today's spawn probe hands me the
+weakness to build one against: production is chip-gated on 38-90% of early tower-turns on most
+maps, and coverage is decided in exactly that window. An archetype that races coverage early and
+ignores the late game would attack a weakness I have measured rather than one I imagine. That is
+a real candidate, not a note — but it is a build, and it is not this iteration.

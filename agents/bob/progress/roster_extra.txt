@@ -1,1 +1,36 @@
+# Fixed non-snapshot yardsticks for the frozen roster (one name per line).
+# These qualify for the same reason old snapshots do: they never change.
+#
+# NEVER retire a rung. Saturation is repaired by ADDING a harder reference,
+# because a retired rung takes its whole history with it.
+
 examplefuncsplayer
+
+# Added 2026-09-08 under doctrine 12's saturation clause. State of the roster at
+# iteration 20, sorted weakest-first (which is how it must be READ -- a mean over
+# saturated rungs hides that nothing in the set can move):
+#
+#     bob_iter11           35/50   70.0%   <- the only rung still discriminating
+#     bob_iter1            44/50   88.0%      near-saturated
+#     bob_iter0            46/50   92.0%      near-saturated
+#     examplefuncsplayer   50/50  100.0%   <- SATURATED: cannot register a decline
+#
+# bob_iter11 is also the rung that CAUGHT iteration 18 sliding (25/50 -> 20/50),
+# later confirmed by a 22-point tournament drop -- so this lineage has direct
+# evidence of what an unsaturated rung buys. But it has moved 58 -> 56 -> 50 -> 40
+# -> 70 and is saturating from below: two more accepts the size of iteration 20's
+# and it joins the dead rungs.
+#
+# bob_denier was considered and REJECTED as the fix: it already scores 86% and 94%
+# against this lineage, so it would be a fifth saturated rung, not a harder one.
+#
+# bob_iter20 is the hardest fixed reference available -- the strongest build this
+# lineage has produced, frozen. The stride rule puts it at POSITION 8, not a
+# multiple of 5, so it would otherwise never join the roster. It reads ~50% by
+# construction until the next accept, which is exactly what a maximally
+# discriminating rung should read.
+bob_iter20
+
+# STANDING RULE for this workspace, so the fix does not have to be rediscovered:
+# whenever the weakest rung passes ~90%, add the newest accepted snapshot here as
+# a new rung. Add, never replace.
