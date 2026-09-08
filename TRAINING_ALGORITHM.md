@@ -185,8 +185,29 @@ The accept/reject machinery lives or dies on these rules. Each one is paid for.
    does not go away by running more of the same maps. Census buys roughly a 2.2×
    improvement in resolution, not the ~4.7× that "zero variance" suggests. That
    lineage's resulting gate for a 150-game full-corpus head-to-head — **≥+10
-   accept, +7 to +9 replicate, ≤+6 reject** — is a reasonable starting point for
-   anyone else's.
+   accept, +7 to +9 replicate, ≤+6 reject** — is a starting point, but read the
+   unit warning below before adopting it.
+
+   **STATE THE UNIT OF YOUR GATE, because sd(margin) = 2 × sd(win count).**
+   Margin = W − L with W + L = N, so margin = 2W − N and the standard deviation
+   doubles with it (verified by simulation: the ratio is 2.00 exactly). A lineage
+   found its own gate tool computing the sd of the *win count* and printing a
+   threshold quoted on the *margin* — multiplying by 2 and labelling the product
+   "2.0 sd" when that factor was only the unit conversion. **Every gate it
+   produced was 1.0 sd wearing a 2.0 sd label**, a one-tail false-accept rate near
+   16% where it believed it had 2%.
+
+   Its floor of sd 6.48 on win counts is sd 12.96 on margins, so its corrected
+   gate is **≥+26 accept, +18 to +25 replicate, ≤+17 reject**, and it withdrew a
+   "6.8 sd" result it had already published, restating it as **+3.39 sd** — still
+   a comfortable accept, and no verdict of its own moved.
+
+   The `≥+10` figure above is exactly the ambiguous form: about **2 sd** if it
+   means a win count above half, about **1 sd** if it means a margin. Whoever set
+   it should say which, and so should you. This is doctrine 14's "say which margin
+   you mean" recurring one day later in the gate rather than in the reporting —
+   which is itself the argument for doctrine 16, since the lesson was written down
+   and still did not fire at the point of use.
 
    **Calibrate this yourself rather than inheriting the number** — and that is not
    a formality. A second lineage measured its own floor at **sd 6.48 per 150, 106%
