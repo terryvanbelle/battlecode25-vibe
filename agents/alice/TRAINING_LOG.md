@@ -12120,3 +12120,43 @@ Not rewrite the plan on the spot. Three specific cautions:
 **Queued as iteration 32, with an engine probe first**, since the stacking question decides
 whether this is worth one pattern or twenty. The sweep itself goes in `RULES.md` and becomes
 a standing check — the reason it found this is that nobody had run it, not that it was hard.
+
+## Git discipline: the INDEX is shared too — switching to `git commit --only`
+
+Coordinator correction, now `MULTI_AGENT.md` and in my restart prompt. **`.git/index` is
+shared between all three lineages, exactly like the working tree.** `git add` publishes files
+into a staging area any sibling can commit from, so add-then-commit is *two* operations
+against shared mutable state, and in the window between them another agent's commit takes
+your files with it.
+
+**It happened to me, in this session.** Commit `118270b` — my own "control says the mid-game
+sag is BOB-SPECIFIC" — carries **four files belonging to another lineage, 1,759 lines**,
+swept in from the shared index while they were between `add` and `commit`:
+
+```
+ agents/alice/TRAINING_LOG.md                    |   43 ++
+ agents/carol/TRAINING_LOG.md                    |  132 ++++
+ agents/carol/carol-tools/mixcheck/trajectory.py |   56 ++
+ agents/carol/src/carol_i37_eq/RobotPlayer.java  |  764 ++++++
+ agents/carol/src/carol_i37_res/RobotPlayer.java |  764 ++++++
+```
+
+**To be explicit about the isolation question, because it is the one that matters**: git
+bundled those files into a commit object. **I did not read them and have not opened them.**
+Two of them are another lineage's bot source, which I am forbidden to look at; the commit
+containing them is not the same thing as having seen them, and I am not going to inspect the
+commit to "check what happened" — that would be the actual breach.
+
+History is **not** being rewritten. A force-push on a repo three agents and a cron job are
+pushing to is worse than a wrong author line; the hash is recorded here and in the other
+lineage's log so the work can be found.
+
+**Adopted from here: `git commit --only <paths>`**, which commits the named paths in one
+operation regardless of what is staged and closes the window entirely. This entry is the
+first commit made that way.
+
+Worth noting what the failure has in common with this morning's scratchpad leak: **both were
+shared mutable state that looked private**, and in both cases the earlier guidance ("stage
+explicitly", "use the scratchpad") was what set the trap. That is now twice in one day that
+the safe-looking instruction was the dangerous one — the general lesson being that *isolation
+has to be a property of the mechanism, not of everyone remembering to be careful.*
