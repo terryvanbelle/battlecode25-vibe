@@ -10581,3 +10581,38 @@ idle soldier by definition has no empty tile inside its r2=9 action radius.)
    territory, and several splashers steering at the same frontier tile will clump (−1 HP per
    adjacent ally, −2 on enemy ground). Measured: coverage, deaths, and whether tower paint moves
    at all — it should NOT, and if it does I have mis-read the mechanism.
+
+## Iteration 39 ADDENDUM — the incumbent's firing quality, measured before the result
+
+Building the weak-link check turned up the number that check needs, and it is not the one I
+assumed. `carol_iter36`, `mit`, rounds 900-940, scores at the moment of firing:
+
+> **shots = 12, mean score 17.1, median 18, p90 27, max 27.**
+
+`SPLASH_MIN_SCORE = 8` is a floor the incumbent is nowhere near. Its shots average **17.1**,
+roughly 9 empty tiles for 50 paint (~5.6 paint/tile against a best case near 3.8). **The
+incumbent is not firing at the threshold; it is firing well above it**, because a splasher that
+waits accumulates a better target than one that shoots at the first legal opportunity.
+
+This sharpens the pre-registered weak link into a specific, falsifiable comparison rather than a
+worry:
+
+> **If `carol_i39_all` raises the shot COUNT while its mean firing score falls toward 8-10, the
+> extra shots are marginal ones bought at roughly half the tiles per paint, and a raw count of
+> splash actions would report that as success.**
+
+So the acceptance evidence is **shots x mean score**, not shots. Pre-registered thresholds, set
+now against the measured baseline of 17.1:
+
+- link 1 confirmed if shot count rises **and** mean firing score stays **>= 14**;
+- link 2 **refuted** if shot count rises while mean firing score falls **< 12**, which would mean
+  steering trades quality for quantity at a loss;
+- the honest null is both roughly unchanged, meaning steering did not change where splashers
+  stand.
+
+**One methodological note, because it cost a wrong table.** My first version of this check grepped
+the whole dump line for `SPLASH` — and the robot label `(T1,SPLASHER)` contains that substring, so
+every splasher turn matched and the tool reported all 607 turns as firing shots at "mean score
+1.3". The number was absurd enough to catch, which is the same luck as the `p`-counts-tiles trap:
+the guard is a stated ceiling, not vigilance. Fixed by filtering the extracted state fragment
+rather than the line. Recorded in the tool.
