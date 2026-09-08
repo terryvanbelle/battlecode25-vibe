@@ -1,4 +1,4 @@
-package alice;
+package alice_refillprobe;
 
 import battlecode.common.*;
 
@@ -21,6 +21,30 @@ public class RobotPlayer {
      *  tiles in the score are worth more than this arithmetic admits. Unused until
      *  splashers are actually built; the dose belongs to that iteration, not this fix. */
     static final int MIN_SPLASH_TILES = 6;
+
+    // ---- REFILL GUARD PROBE (instrumentation only; NEVER in src/alice) --------
+    // Replay forensics: alice made ZERO transferPaint calls across three whole
+    // tournament games while bob made 62/74/36. tryRefill has three guards --
+    // hungry (p*2 < cap), action still unused, and a tower with 200 spare paint
+    // ADJACENT (dist^2 <= 2). Any one of them could be the binding one, and they
+    // imply completely different fixes: if adjacency binds, no reordering helps and
+    // the unit must path home; if the action guard binds, moving the call before
+    // the role dispatch is a one-line iteration. Guessing between them is exactly
+    // the wrong-referent error, so measure instead.
+    //
+    // PRE = sampled at the top of the turn, before the role runs (where a moved
+    // call would sit). POST = at the current call site, after the role has run.
+    static int rfTurns, rfHungryPre, rfAdjPre, rfReadyPre;
+    static int rfHungryPost, rfAdjPost, rfReadyPost;
+
+    /** PROBE ONLY: is a tower with spare paint adjacent? Mirrors tryRefill's test. */
+    static boolean rfAdjacentTower(RobotController rc) throws GameActionException {
+        RobotInfo[] near = rc.senseNearbyRobots(2, rc.getTeam());
+        for (int i = 0; i < near.length; i++)
+            if (near[i].getType().isTowerType()
+                    && near[i].getPaintAmount() - UnitType.SOLDIER.paintCost > 0) return true;
+        return false;
+    }
 
     // --- instrumentation ---
     static int overruns = 0;    // confirmed bytecode overruns (round advanced mid-logic)
@@ -49,13 +73,30 @@ public class RobotPlayer {
         while (true) {
             int startRound = rc.getRoundNum();
             try {
+                if (rc.getType().isRobotType()) {          // PROBE ONLY: decides nothing
+                    rfTurns++;
+                    boolean hungry = rc.getPaint() * 2 < rc.getType().paintCapacity;
+                    if (hungry) {
+                        rfHungryPre++;
+                        if (rc.isActionReady()) rfReadyPre++;
+                        if (rfAdjacentTower(rc)) rfAdjPre++;
+                    }
+                }
                 switch (rc.getType()) {
                     case SOLDIER: runSoldier(rc); break;
                     case MOPPER: runMopper(rc); break;
                     case SPLASHER: runSplasher(rc); break;
                     default: runTower(rc); break;
                 }
-                if (rc.getType().isRobotType()) tryRefill(rc);
+                if (rc.getType().isRobotType()) {
+                    boolean hungry = rc.getPaint() * 2 < rc.getType().paintCapacity;
+                    if (hungry) {                          // PROBE ONLY: decides nothing
+                        rfHungryPost++;
+                        if (rc.isActionReady()) rfReadyPost++;
+                        if (rfAdjacentTower(rc)) rfAdjPost++;
+                    }
+                    tryRefill(rc);
+                }
             } catch (GameActionException e) {
                 // illegal action; keep going
             } catch (Exception e) {
@@ -65,12 +106,11 @@ public class RobotPlayer {
                 if (bc > maxBc) maxBc = bc;
                 if (rc.getRoundNum() > startRound) overruns++;
                 else if (bc > limit - limit / 7) nearMisses++;
-                rc.setIndicatorString("i25=" + i25Refills + "/" + i25Paint + " "
-                        + (rc.getType() == UnitType.MOPPER
-                        ? "i24=" + i24Moves + " p=" + rc.getPaint() + " " : "")
-                        + "bc=" + bc + " max=" + maxBc
-                        + (overruns > 0 ? " OVR=" + overruns : "")
-                        + (nearMisses > 0 ? " near=" + nearMisses : ""));
+                String rp = "RF t=" + rfTurns + " PRE h=" + rfHungryPre + " a=" + rfAdjPre
+                        + " r=" + rfReadyPre + " POST h=" + rfHungryPost + " a=" + rfAdjPost
+                        + " r=" + rfReadyPost + " did=" + i25Refills + " ";
+                rc.setIndicatorString(rp.length() > 200 ? rp.substring(0, 200)
+                        : rp + "bc=" + bc + (overruns > 0 ? " OVR=" + overruns : ""));
                 Clock.yield();
             }
         }
@@ -231,12 +271,7 @@ public class RobotPlayer {
             // so the build is byte-for-byte iteration 25 there. On DefaultHuge it fired
             // hard -- 30 splashers by r1000, 48 by r1500 -- and coverage went
             // 438 -> 556 -> 688 while the baseline's COLLAPSED 538 -> 413 -> 282.
-            // ITERATION 29: lower the gate from an L3 upgrade (5000) to an L2 (2500), to
-            // reach the 31 maps that split under iteration 28 -- i.e. never fired at all.
-            // Deliberately walks toward iteration 26 cliff: a splasher costs 400 CHIPS and
-            // completeTowerPattern gates on getMoney() >= 1000, so this is only safe while
-            // the threshold still sits past the end of expansion.
-            if (rc.getMoney() >= CHIP_RESERVE + 2500) want = UnitType.SPLASHER;
+            if (rc.getMoney() >= CHIP_RESERVE + 5000) want = UnitType.SPLASHER;
             int off = rnd(8);
             for (int i = 0; i < 8; i++) {
                 MapLocation loc = rc.getLocation().add(directions[(i + off) % 8]);

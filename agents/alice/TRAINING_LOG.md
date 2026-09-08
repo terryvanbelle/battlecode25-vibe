@@ -11499,3 +11499,114 @@ one of its self-play games and settle it there, at no extra VM cost.**
 I am deliberately not drawing the "starvation is my unique weakness" conclusion that the
 numbers invite: bob starves at 76% of deaths and I starve at 72%, so starvation per se is
 not what separates us. What separates us is that bob has 62 transfers and I have none.
+
+## ACCEPT iteration 29 — 56.0%, +9 net swept, and the dose-response curve has BENT
+
+`alice_i29` vs `alice_iter28`, full 75-map census, run `20260908-091551`.
+
+| | maps | SW | SL | split | record | net swept |
+|---|---|---|---|---|---|---|
+| `alice_i29` vs `alice_iter28` | 75 | **12** | **3** | 60 | **84/150 (56.0%)** | **+9** |
+
+**0 exceptions in 150 games** (checked on field 5 of the `EXC` lines — my first pass read
+field 4, which is the side letter, and reported 150 non-zero; the correct count is 0). No
+overruns anywhere in the run. Margin identity holds exactly: wins − losses = 84 − 66 = 18 =
+2 × (12 − 3).
+
+The pre-registered gate was **net swept > 0, SW/SL separately, 0 exceptions, 0 overruns**.
+All four hold. There is no sampling error to argue about: this is the entire 75-map
+population, and the engine is deterministic, so **+9 is exact rather than an estimate**.
+
+Snapshotted `src/alice_iter29`, promoted into `src/alice`, compile-checked against the
+engine jar (`EXIT=0`) because HEAD is what plays in the tournament.
+
+### The manipulation check — run BECAUSE I expected to pass it, and it caught something
+
+The coordinator's rule, adopted: *a check you run only when you fear the answer is not a
+check.* So I ran one on a result I liked.
+
+**The check.** `+2500 < +5000`, so any map where the lower gate never fires is necessarily a
+map where the higher gate never fires. My test for "never fired" has been *equal round counts
+on both sides* — under determinism, identical bots play the same game with the labels
+swapped. So the never-fired set of this census **must be a subset** of the never-fired set of
+the iteration 28 census.
+
+**Raw, it fails outright: 23 ⊄ 16.** More maps look identical at the *lower* threshold than
+at the higher one, which is impossible.
+
+**The contamination**, found by looking rather than by explaining it away: **a game that
+reaches the round-2000 tiebreak has round count 2000 on both sides whether or not the two
+games were the same game.** Equal round counts are *forced* at the cap. Of the 23, seventeen
+are r2000/r2000; of the 16, eight are. Excluding ties:
+
+```
+  i29 vs i28:  60 splits, 23 equal-round, 17 forced by the r2000 cap  ->  6 genuine
+  i28 vs i25:  31 splits, 16 equal-round,  8 forced by the r2000 cap  ->  8 genuine
+  E29 (6) subset of E28 (8)?   YES, violations = []
+```
+
+**The check passes once the instrument is corrected — and correcting it retracts an overclaim
+I made earlier today.** Hours ago I wrote "of 31 splits, 16 have IDENTICAL round counts both
+sides -> byte-identical games". **The right number is 8.** Round-count identity over-counts
+by exactly the number of tiebreak games, and I had used it as if it were proof. The
+iteration 28 write-up's own hedge ("or fired without mattering") happens to survive this, but
+the sharpened version I wrote today did not. That correction was available *only* because I
+ran a check on a result nobody was doubting.
+
+### My pre-registered reach check was INAPPLICABLE — the third mis-specification of one kind
+
+I wrote: *"a lower threshold that genuinely reaches further must produce fewer splits than
+iteration 28's 31."* Splits came out **60**. But 31 was measured in `alice_i28` vs
+`alice_iter25`, and 60 in `alice_i29` vs `alice_iter28` — **different baselines**. The split
+count of a pair measures how often *that pair* differs, not how far either member reaches. It
+is not that the criterion failed; it cannot be evaluated.
+
+That is the same wrong-referent error as the iteration 28 regime classifier and the map
+cross-tab I threw out this morning. **Three times in one day, and this one I wrote into a
+pre-registration** — which is worse, because a pre-registration is supposed to be the thing
+that protects me. I am not going to claim I have learned it now. The concrete rule instead:
+**a pre-registered criterion may only reference quantities measured inside the run it
+judges.** 31 came from another run; it should never have been in the gate.
+
+The within-run reach measure that *is* valid: `alice_i29` is behaviourally identical to
+`alice_iter28` on **6 of 75 maps** and differs on the other 69. The reach is broad.
+
+### What the number actually says: the yield collapsed and the predicted cliff appeared
+
+| threshold | census | SW | SL | net swept |
+|---|---|---|---|---|
+| `+5000` (iteration 28) | vs `alice_iter25` | 44 | **0** | **+44** |
+| `+2500` (iteration 29) | vs `alice_iter28` | 12 | **3** | **+9** |
+
+Same knob, same direction, one step further: **the yield fell from +44 to +9 and the first
+swept losses in this mechanism's history appeared** — `lighthouse`, `yearofthesnake`,
+`defensetower`. I named that risk before the run: a splasher costs 400 chips, chips fund
+towers, and iteration 26 measured −21 net swept when tower construction was starved. Three
+swept losses is that cliff becoming visible. It is an accept, but it is an accept on a
+bending curve, and **the next step down is not obviously positive.**
+
+### And the honest strategic note: this knob is second-order
+
+Today's replay forensics say chips are not my binding resource — I sit on $1,000-$3,700 idle
+while my army stalls and my coverage *falls*. Iteration 29 spends chips slightly earlier.
+That is a real +9 and I am banking it, but **I should stop tuning this constant.** The
+measured deficit is paint logistics, and `alice_refillprobe` is built to find out which of
+`tryRefill`'s three guards is the one that keeps it at zero transfers.
+
+## Roster: the coordinator's correction, and what I am changing
+
+The coordinator retracted the advice that a saturated roster is fixed with a hand-built
+synthetic archetype: its difficulty is set by guesswork about one's own weaknesses, so it
+lands at a ceiling or a floor. Two lineages hit both extremes. The remedy is **the newest
+accepted snapshot**, which reads ~50% *by construction* rather than by aim.
+
+- **Adding `alice_iter28` to `progress/roster_extra.txt`.** Its calibration is already
+  measured, by the census above, at **56.0%** — the closest rung to 50% I have, and it cost
+  no VM time because the accept's own census *is* the calibration. Standing rule from here:
+  **on every accept, add the snapshot that was current before it.**
+- **`alice_paintthief` stays.** I did score it before promoting (74.0%), so it is not the
+  failure mode described, and it is the only rung that has ever taken a swept map off my
+  accepted bot. Retiring rungs destroys the trend that is the chart's whole point.
+- **What the snapshot rung does NOT fix**: it makes the roster harder, not more
+  *independent*. `alice_iter28` shares every blind spot I have — it is me, one iteration ago.
+  Only the tournament measures me against something my lineage did not write.
