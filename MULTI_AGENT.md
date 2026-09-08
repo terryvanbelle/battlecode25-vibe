@@ -62,13 +62,24 @@ Two Claude sessions on one workspace race on the same git tree and the same
 `src/`, which is the failure `Git discipline` below exists to prevent. It has
 happened once, for about six minutes, and the mechanism is not obvious:
 
-**Sending a message to an agent that has already reported RESUMES it.** So the
-sequence "agent completes -> coordinator sends it a note -> coordinator relaunches
-it" produces two live sessions, because the note revived the one being replaced.
+Two mechanisms, and the second is the one that actually bites:
 
-The rule that avoids it: **check which agents are live AFTER sending messages,
-not before**, and never send to a completed agent you intend to relaunch — put
-what you wanted to say into a message to the NEW session instead.
+1. **Sending a message to an agent that has already reported RESUMES it.** So
+   "agent completes -> send it a note -> relaunch it" yields two live sessions,
+   because the note revived the one being replaced.
+2. **A completion notification is NOT authority to relaunch.** These agents
+   report and then keep going, so a `completed` notification often means "finished
+   a write-up", not "gone". Relaunching on the strength of that notification
+   duplicates an agent that never stopped.
+
+**The rule: `ListAgents` is the only authority on liveness. Relaunch only what it
+does not list as running — never on the strength of a completion notification.**
+That was the actual error both times this happened; the messaging quirk merely
+made it easier to reach.
+
+When two do end up live, do not guess which to keep. Sample each session's
+transcript mtime a few seconds apart: the one still being written is the live
+worker, and it is usually the older one with the deeper context. Stop the other.
 
 If it happens anyway, the tell is a file in the workspace that the agent did not
 write. An agent finding one should do what the affected lineage did: neither
