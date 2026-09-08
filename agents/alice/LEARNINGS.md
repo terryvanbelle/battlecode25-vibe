@@ -2180,3 +2180,92 @@ structure is free and I had been asking for separate instrumentation to learn it
   runs only.
 - Caveat retained: this is a census of a *fixed* map population. It is exact about those 75
   maps and says nothing about maps outside them.
+
+---
+
+## Theme: you cannot compare a COMPOUNDING resource to a CONSUMPTIVE one with a per-turn rate
+
+### 2026-09-08 — "a money tower funds soldiers 3.2x faster", and it was the wrong question
+
+Iteration 34 rebalanced tower construction from ~50% money towers to ~24%, on an arithmetic
+I checked carefully and verified from bytecode:
+
+| tower | per turn | soldiers funded per turn |
+|---|---|---|
+| money | `moneyPerTurn` 20 | 20 / `SOLDIER.moneyCost` 250 = **0.080** |
+| paint | `paintPerTurn` 5 | 5 / `SOLDIER.paintCost` 200 = **0.025** |
+
+Every constant is right. The **units** are not. That table prices a money tower as a
+*supplier of soldiers*, and it is not one:
+
+> **Chips buy TOWERS. A money tower's 20 chips/turn is not 0.08 soldiers/turn — it is
+> 0.02 towers/turn, and a tower produces soldiers forever, plus more chips, plus more
+> paint.** Paint is terminal: it pays a spawn and paints a tile and is gone.
+
+Dividing both by `SOLDIER.*Cost` makes them look commensurable by erasing exactly the
+property that distinguishes them. **A ratio between an investment yield and a consumption
+rate is not a number that means anything**, however carefully each side is verified.
+
+### What the engine actually did with the extra paint
+
+`Barcode`, T1 = `alice_i34`, T2 = `alice_iter30`. The mechanism worked perfectly and the
+bot still collapsed:
+
+| round | T1 towers | T1 tower paint | T1 soldiers | T1 chips | T1 cov | | T2 towers | T2 soldiers | T2 cov |
+|---|---|---|---|---|---|---|---|---|---|
+| 200 | 7 | **2,156** | 9 | $1,330 | 420 | | 9 | 10 | 451 |
+| 300 | **7** | **2,201** | 10 | $1,430 | 437 | | 11 | 14 | 537 |
+| 500 | **7** | 811 | 11 | $1,330 | 370 | | 15 | 27 | 601 |
+| 1100 | **7** | 511 | 9 | $3,380 | 306 | | 15 | 26 + 18 splashers | 667 |
+
+**T1's tower count froze at 7 for 900 rounds.** Its tower paint at r200 was nearly *double*
+the baseline's — the change did exactly what it was designed to do — and the paint then
+**stranded**, draining away while the army stayed at ~10 soldiers and coverage decayed
+420 -> 306. The baseline compounded to 15 towers and 44 units.
+
+> **I raised production of the consumptive resource by cutting production of the compounding
+> one. The consumptive resource piled up unspent and everything else stalled.**
+
+### The trap fired for the THIRD time, and this time I had the rule written down
+
+My evidence that chips were spare was *"chips idle at $1,000-3,700"*. LEARNINGS already says,
+in these words:
+
+> *"A stock is not a rate, and for a compounding resource the stock is at its most misleading
+> exactly when the compounding has succeeded."*
+
+and
+
+> *"When the explanation of a result is a claim about a resource, check that resource's own
+> production identity in RULES.md before reaching for a story about the bots."*
+
+**The idle balance I cited as proof of surplus was produced BY the money towers I then
+deleted.** I read a stock, inferred the rate was redundant, and cut the rate. The previous
+two firings of this trap cost iteration 26 (−21) and a retraction; this one is worse, because
+the earlier entries were on the page and I wrote a fresh engine-verified table instead of
+re-reading them.
+
+### The operational check, which is one sentence and would have stopped this
+
+> **Before changing the MIX of two resources, ask of each: does spending it produce more of
+> anything? If exactly one of them does, they are not exchangeable at any ratio, and a
+> per-turn comparison between them is a category error rather than a dose to be tuned.**
+
+In BC25 the answer is in `RULES.md`: `completeTowerPattern` gates on `getMoney() >= 1000` and
+upgrades cost 2,500/5,000 chips, so **chips are the only currency that buys production**.
+There is no corresponding paint purchase. That asymmetry is the whole game and it is not
+visible anywhere in a soldiers-per-turn table.
+
+### What the iteration got right, and is worth keeping
+
+- **The named risk was the real one.** I pre-registered iteration 26's chip-starvation cliff
+  and a two-branch diagnostic: *towers fall* vs *soldiers rise*. Towers froze and soldiers did
+  not rise — branch (a), cleanly, with the rival branch refuted rather than merely unchosen.
+  **Pre-registration converted a rout into a precise answer.**
+- **The parity defect is real and survives the rejection.** Four of the 75 maps are
+  single-parity (`gridworld`, `Filter`, `Snowman` all-even; `CastleDefense` all-odd), so the
+  old rule builds zero paint towers on three maps and zero money towers on one. That is still
+  a bug; it is just not one worth fixing by moving the ratio the wrong way.
+- **Validating a geometric key against all 1,374 real ruin coordinates before running games
+  was cheap and correct**, and it is reusable. The key had zero single-branch maps. The key
+  was never the problem.

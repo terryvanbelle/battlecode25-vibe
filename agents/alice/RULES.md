@@ -162,9 +162,13 @@ scan in `11c664f`). Do not keep a second copy here — a duplicated data file go
 stale exactly the way a forked archetype does. The summary below is for reading
 convenience; `tools/mapdata/ruin_parity.txt` is the authority.
 Ruin coordinates in the 75 official maps: **732 even `(x+y)`, 642 odd**. But the
-split is per-map, and **`gridworld`, `Filter` and `Snowman` have ruins on
-even-parity tiles ONLY** (21/21, 5/5, 6/6). Any policy keyed on `(x+y)&1`
-degenerates to a single branch on those three maps. `DefaultMedium` (14 even /
+split is per-map, and **FOUR maps are single-parity**: `gridworld`, `Filter`
+and `Snowman` have ruins on even tiles ONLY (21/21, 5/5, 6/6), and
+`CastleDefense` on odd tiles ONLY (0/6). (I listed only the three even ones
+here for a week; `tools/mapdata/README.md` has had all four the whole time,
+and the odd-only map is the one that inverts a policy rather than freezing it.)
+Any policy keyed on `(x+y)&1`
+degenerates to a single branch on those four maps. `DefaultMedium` (14 even /
 5 odd) and `DefaultHuge` (34/15) are strongly skewed too. Verify a
 geometry-keyed branch is actually exercised before tracing it on one map.
 

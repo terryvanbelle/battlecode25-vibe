@@ -13027,3 +13027,87 @@ output. My first fix, `grep ... || true | awk ...`, was **also wrong** — that 
 `grep ... || (true | awk ...)`, so the good path never reached `awk`. Correct form is
 `A=$({ grep ...; } | awk ...)` with the `|| true` inside the braces. Mine, not `tools/`,
 so I fixed it rather than reporting it.
+
+## Iteration 34 — choose the tower TYPE by which resource binds, not by ruin parity
+
+**The measurement chain, all of it already on the record, none of it new to this iteration:**
+
+1. **Tower PAINT binds, chips do not.** Iteration 5's own comment: a tower's paint income
+   is 5-15/turn and it "never accumulates the 200 a soldier needs". Replay forensics:
+   my chips idle at **$1,000-3,700** while my soldier count stalls at **10-23** against
+   bob's **157**.
+2. **My last three chip-spending iterations netted <= 0** — 26 (−21), 32 (−1), 33 (0).
+   Iteration 33 is the sharpest: it decided 26 of 75 maps and won exactly none of them net.
+3. **Tower type has never been touched.** It is `((ruin.x + ruin.y) & 1)` — an arbitrary
+   geometric coin-flip giving ~50/50, written to dodge a timing artifact and never revisited.
+
+### Two defects in that line, and they push the same way
+
+**The ratio is wrong, and the right one is an engine constant.** A soldier costs 250 chips
+and 200 tower paint. Verified by `javap` on `battlecode25-java-3.1.0` (I read the `UnitType`
+field order out of the class rather than trusting my digest: `paintCost, moneyCost,
+attackCost, health, level, paintCapacity, actionCooldown, actionRadiusSquared,
+attackStrength, aoeAttackStrength, paintPerTurn, moneyPerTurn, attackMoneyBonus`):
+
+| tower | per turn | soldiers funded per turn |
+|---|---|---|
+| `LEVEL_ONE_MONEY_TOWER` | `moneyPerTurn` **20** | 20/250 = **0.080** |
+| `LEVEL_ONE_PAINT_TOWER` | `paintPerTurn` **5** | 5/200 = **0.025** |
+
+A money tower funds soldiers **3.2x faster**, so balanced throughput wants **3.2 paint
+towers per money tower — a 23.8% money share, not 50%.** And the asymmetry is worse than the
+ratio: `LEVEL_ONE_MONEY_TOWER.paintPerTurn` is **0**, so a money tower spawns two soldiers
+from the 500 paint it is born with and is then dead weight for unit production forever.
+
+**Parity degenerates on four of the 75 maps.** `tools/mapdata/README.md`: `gridworld`,
+`Filter` and `Snowman` have ruins on even tiles only — **100% money towers, zero paint
+towers** — and `CastleDefense` is all-odd. (My own `RULES.md` listed three of the four and
+omitted `CastleDefense`; corrected there.)
+
+### The change, and how the two parts were chosen differently
+
+```java
+final int SOLDIERS_PER_MONEY_TOWER = 1000 * LEVEL_ONE_MONEY_TOWER.moneyPerTurn / SOLDIER.moneyCost;  // 80
+final int SOLDIERS_PER_PAINT_TOWER = 1000 * LEVEL_ONE_PAINT_TOWER.paintPerTurn / SOLDIER.paintCost;  // 25
+int towerKey = (ruin.x * 13 + ruin.y * 29) % (SOLDIERS_PER_MONEY_TOWER + SOLDIERS_PER_PAINT_TOWER);
+UnitType wantTower = towerKey < SOLDIERS_PER_PAINT_TOWER ? MONEY : PAINT;
+```
+
+- **The dose is engine-derived** — 25/105 falls out of four `UnitType` constants, the same
+  discipline as iterations 5, 25, 28 and 33.
+- **The key (13, 29) is NOT derived, and I am not going to pretend otherwise.** I dumped all
+  **1,374 ruin coordinates** from the 75 official `.map25` files (a coordinate-emitting
+  variant of `tools/mapdata/ruinscan`, run in my scratchpad — `tools/` is not mine to edit)
+  and tested ten candidate keys. `(13, 29)` was the **only one with no single-branch map**.
+
+| key | corpus money share | maps at 0% or 100% |
+|---|---|---|
+| `(x+y)&1` (current) | 53.3% | **4** |
+| **`(x*13 + y*29) % 105 < 25`** | **24.3%** | **0** |
+| eight other candidates | 22.6-25.3% | 2-5 |
+
+Realized on the corpus: every map between **6% and 50%** money, minimum **1** money tower and
+**3** paint towers per map, paint-tower share **46.7% -> 75.7%**. `Filter` goes from zero
+paint towers to three. **This is selection on map COVERAGE, not on win rate** — the same
+criterion `tools/mapdata` already demands — so it is not tuning against the outcome. Still
+purely positional, so still immune to the money-at-mark-time artifact parity was written for.
+
+### Pre-registered, before the run
+
+- **Gate**: net swept > 0, `SW` > `SL`, 0 exceptions, 0 overruns, full 75-map census.
+- **Mechanism check**: the mirror null (`tools/mirror_null.txt`) is **0 decisive maps** under
+  byte-identical code. This change alters the type of ~30% of all ruins on **every** map, so
+  I expect a **large** decisive set — **larger than iteration 33's 26 of 75**. A small
+  decisive set would mean tower type barely reaches the outcome, and any margin would not be
+  this change.
+- **Named risk, and it is iteration 26's cliff**: paint towers produce **no chips**, and the
+  corpus money share falls 53.3% -> 24.3%. Chips fund tower completions (1,000), soldiers
+  (250) and upgrades (2,500/5,000). If chips become binding, tower construction stalls, which
+  is exactly how iteration 26 lost 21 net swept. Untouched mitigations: `CHIP_RESERVE` and
+  every existing chip gate are unchanged, and both teams keep their starting **level-2** money
+  tower (30 chips/turn), which this line cannot remove.
+- **Failure diagnostic, named in advance**: if it loses, compare (a) **tower count at
+  r200-400** and (b) **cumulative soldiers spawned**. A fall in towers is the chip-starvation
+  cliff and implies raising the money share; a *rise* in soldiers alongside a loss means the
+  army grew and the extra soldiers were not worth the towers, which implies the opposite fix.
+  Those two are distinguishable and they contradict each other, which is the point.
