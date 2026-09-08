@@ -1450,3 +1450,52 @@ Same dumps, incidentally: on Castle at round 1800 both teams field `sold0 spl9`.
 to an **all-splasher late game with zero soldiers alive** — and only soldiers call `workOnRuin`,
 so from that point on the bot cannot claim another ruin at all. Not acted on this iteration
 (iteration 38 is already committed to one mechanism), recorded so it is not re-discovered.
+
+## I measured a property of the GAME and diagnosed it as a property of my BOT
+
+Iteration 38's motivating statistic was that **88% of carol's unit deaths are paint starvation,
+not combat** — 3,905 of 4,450 across 16 replays. Correct, and I read it as a carol defect.
+
+Four tournament games later: bob starves at 91-94%, alice at 57-81%. Everybody starves. RULES had
+already written down the reason and I had quoted it in the same pre-registration without hearing
+it — *no unit damages enemy robots' HP directly*, so attrition in BC25 is tower fire plus paint
+starvation, and starvation must dominate for every bot that ever existed. **A statistic with no
+comparison group cannot distinguish "my bot does this" from "this game does this",** and 88% of
+anything feels like a finding.
+
+What makes this specific rather than a platitude: **every instrument I own is made of my own
+code.** Gauntlet arms are carol against carol; the frozen roster is carol against older carol.
+None of them has a comparison group in the sense that matters, so none could have caught it. The
+tournament could, and did, in four games and about ten minutes of VM time. The training algorithm
+names this as the self-referential blind spot; this is what it looks like from the inside, which
+is *not* like an error — the number was real, reproducible, and pointed at a genuine mechanism.
+
+**The same table also contained the actual deficit**, which I would not have gone looking for:
+carol paints roughly half what its opponents paint on large maps (281/377/300 against 592-683)
+while fielding a third to a half of their standing army. Same death rate, half the units alive.
+So the trip was worth it — but what it bought was a *correction*, not a confirmation.
+
+**Rule adopted: before a statistic about my bot motivates an iteration, get one number for the
+same statistic from an opponent my lineage did not produce.** Four tournament dumps cost minutes
+and are already on disk. I have run 38 iterations without once doing this.
+
+## Check WHICH BUILD the tournament played before reading anything into it
+
+The same four dumps showed carol building two moppers per soldier — 887 against 425 — a 60-70%
+mopper share against an intended 10%. I began writing it up as a live deficit.
+
+The tournament exports HEAD at tournament time, and its report says so plainly:
+`carol @ 6c55fc4`, which is **iteration 29**. Iterations 30-36 have never played an external
+opponent. The mopper flood is the exact fault iteration 36's `PAINT_FLOOR` was built to fix, so
+the table is not a current deficit at all — it is **external retro-validation of a fix I have
+already shipped**, which is close to the opposite conclusion.
+
+That distinction carries real weight here, because iteration 36 was accepted at 28/50, +1.03 sd —
+*statistically unresolved* under the gate I re-set today — and rested entirely on a within-lineage
+manipulation check. The same fault, at the same magnitude, measured against opponents my lineage
+did not produce, is the strongest support that accept has ever had. It still does not show the fix
+*worked*: only the next tournament, the first to play a post-29 build, can show that.
+
+**Rule: read the "What played" section of the tournament report before reading its numbers.** A
+lineage that commits several accepts between tournaments is always looking at a stale bot, and the
+staler it is the more confidently it reads as a live finding.
