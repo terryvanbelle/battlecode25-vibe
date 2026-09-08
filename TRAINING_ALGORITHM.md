@@ -221,15 +221,39 @@ The accept/reject machinery lives or dies on these rules. Each one is paid for.
    chain is made of. So saturation is most dangerous at the moment it is least
    noticeable.
 
-   The fix is to add a HARDER fixed reference, not to retire the old ones: a
-   synthetic archetype built to exploit a weakness you know you have, listed in
-   `progress/roster_extra.txt`. It is a valid rung for the same reason an old
-   snapshot is — it never changes — and unlike a snapshot you can choose its
-   difficulty. **Never a benchmark finals bot**, which the tooling refuses; those
-   are a yardstick, not something to train against.
+   The fix is to add a HARDER fixed reference, never to retire the old ones.
+   **Use your newest accepted snapshot, not a hand-built archetype.** This
+   document recommended the archetype first; two lineages then tried it and it
+   failed both times, in OPPOSITE directions — one candidate was far too strong
+   to ever lose to, the other was swept on arrival, 25 maps to zero. That is the
+   correction worth carrying: a hand-built opponent's difficulty is set by
+   guesswork, so it lands at a ceiling or a floor, and *"unlike a snapshot you
+   can choose its difficulty"* was wrong. A lineage's own newest accept reads
+   ~50% **by construction**, because it is that lineage's current strength.
+
+   Note that the stride rule will not pick it up unless its position happens to
+   be a multiple of the stride, so list it explicitly in
+   `progress/roster_extra.txt`.
+
+   **Score a candidate rung before promoting it.** Adding an opponent that turns
+   out to be already saturated produces another dead rung while feeling like a
+   repair — one lineage caught exactly this and did not ship it. And say what the
+   fix does not do: your own snapshot makes the roster *harder*, not more
+   *independent*. It still shares every blind spot you have. **Never a benchmark
+   finals bot**, which the tooling refuses; those are a yardstick, not something
+   to train against.
 13. **Don't let pre-registered metrics decide when a cheap unrun instrument
     could reverse them.** A real effect big enough to accept on usually shows
     up in more than one place.
+    **And run the check when you expect to PASS it.** A check you only run when
+    you fear the answer is not a check, it is a formality you have already
+    decided the outcome of. A favourable headline is exactly when a manipulation
+    check is skipped and exactly when skipping it costs the most, because nothing
+    else will catch a gate that passed for the wrong reason. One lineage ran its
+    manipulation check on a result it liked; the check passed, and it also
+    corrected an overclaim the lineage had made earlier about the same mechanism.
+    That correction is only available to someone who runs the check they expect
+    to pass.
 14. **Check that two agreeing numbers are actually two numbers.** Rule 13 says a
     real effect shows up in more than one place — which makes it tempting to
     treat any second agreeing statistic as that confirmation. Derive the algebra
