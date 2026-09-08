@@ -12942,3 +12942,88 @@ splasher gate), so the diff is one mechanism.
 - **Failure diagnostic, named in advance**: if it loses, compare **tower count at r200-400**
   and **soldier paint-starvation deaths**. A fall in towers is iteration 26's cliff; a rise in
   starvation is the paint-competition path, and those imply opposite fixes.
+
+## REJECT iteration 33 — net swept 0, and the mechanism fired on 26 of 75 maps
+
+`alice_i33` vs `alice_iter30`, full 75-map census. **Two runs**, `20260908-133308` and
+`20260908-133435` — a duplicate launch (see below), which turned out to be worth having.
+
+| | maps | SW | SL | split | record | net swept | exceptions |
+|---|---|---|---|---|---|---|---|
+| `alice_i33` vs `alice_iter30` (133308) | 75 | 13 | 13 | 49 | 75/150 (50.0%) | **0** | 0 |
+| `alice_i33` vs `alice_iter30` (133435) | 75 | 13 | 13 | 49 | 75/150 (50.0%) | **0** | 0 |
+
+**Rejected on the pre-registered gate** (`net swept > 0`). `src/alice` stays at iteration 30.
+
+### The pre-registered mechanism check passes, and that is what makes this informative
+
+I registered: *the identical-to-baseline set must be small; a large one would mean money
+rarely sits in the 1250-1450 band and the result is not about this change.*
+
+I have a **measured null for "identical code"** and had not thought to use it this way:
+`tools/mirror_null.txt`, run `20260907-032745`, alice vs a byte-identical `alice_mirror` —
+**0 swept wins, 0 swept losses, every map split 1-1.** Under a deterministic engine two
+identical bots must split every map, and they did.
+
+Iteration 33 produces **26 decisive maps out of 75**. Against a null of zero, the mechanism
+did not merely fire — it changed the *outcome* of a third of the census. And it netted
+**exactly zero**: 13 won outright, 13 lost outright.
+
+> **This is a stronger result than "no effect".** A change that reshuffles 26 maps and wins
+> none of them net is a direct measurement that **the chip reserve is not where the value
+> is**. Relaxing it moves games around at random. That is what "chips are not the binding
+> resource" looks like when you measure it rather than infer it from an idle balance.
+
+Neither named failure diagnostic is worth running: at net 0 with a symmetric 13/13 there is
+no direction for "towers fell" or "starvation rose" to explain. Recording the choice rather
+than skipping it quietly, as with iteration 32.
+
+### Three of my last four iterations spent chips, and all three netted <= 0
+
+| iteration | mechanism | net swept |
+|---|---|---|
+| 26 | spend the chip surplus (units) | **−21** |
+| 32 | mopSwing on the spare action | **−1** |
+| 33 | relax the chip reserve to one tower completion | **0** |
+
+Iteration 5 told me in its own comment that **tower PAINT** is the binding resource, and
+the replay forensics said my chips idle at $1,000–3,700 while my soldier count stalls at
+10–23 against bob's 157. I have kept building mechanisms that spend the resource I have a
+surplus of. **Iteration 34 goes after the supply of the one that binds.**
+
+## The duplicate launch, and the reproducibility control it bought for free
+
+A session death left **two runs of the same census launched 87 seconds apart** — same bot,
+same base, same 75 maps (the map lists are identical as sets; only the order differs). That
+is wasted shared-VM time and I am recording it as such. It also bought a control I had never
+run at this scale.
+
+`tools/determinism-check.sh`, all 75 maps, both sides:
+
+```
+shared maps fully played: 75   match: 75   differ: 0   skipped: 0
+```
+
+**150 of 150 games agree, game for game, between two independently launched runs.**
+
+> **A FULL 75-MAP CENSUS IN THIS LINEAGE HAS ZERO RUN-TO-RUN VARIANCE.** The engine's only
+> nondeterminism is the 6th tiebreak (`Math.random`), and it did not decide a single game in
+> 150.
+
+This corrects the scope of a lesson I wrote yesterday. I measured two 35-40 map samples of
+the same quantity disagreeing by ~9 net swept on a 75-map scale, and recorded a resolution
+limit. **That spread was entirely map SAMPLING; none of it was run-to-run noise.** So:
+
+- A **sampled** run (25-40 maps) cannot resolve below roughly 5 net swept. Unchanged.
+- A **census** (all 75) is *exact*. Iteration 32's −1 and iteration 33's 0 are not noisy
+  readings near zero; they are the numbers, and repeating either would return the same
+  digits. There is nothing to be gained by re-running a census, ever.
+
+### A bug in my own tool, found by running it
+
+`tools/determinism-check.sh` has `set -euo pipefail`, and its two `grep` calls had no
+`|| true`. The first map with no games in one run killed the script after one line of
+output. My first fix, `grep ... || true | awk ...`, was **also wrong** — that parses as
+`grep ... || (true | awk ...)`, so the good path never reached `awk`. Correct form is
+`A=$({ grep ...; } | awk ...)` with the `|| true` inside the braces. Mine, not `tools/`,
+so I fixed it rather than reporting it.

@@ -2119,3 +2119,64 @@ read and fail to apply.
 And note the shared direction of both errors: **each made a mechanic look better than it was,
 along the exact axis of the problem I was trying to solve.** Motivated reading does not feel
 like motivated reading; it feels like a lead. Run the check hardest on the finding you like most.
+
+---
+
+## Theme: a CENSUS is exact — separate sampling noise from run-to-run noise before you call something unresolvable
+
+### 2026-09-08 — 150 of 150 games identical across two independently launched runs
+
+A session death launched the same 75-map census twice, 87 seconds apart: same candidate,
+same baseline, same map set. `tools/determinism-check.sh` on all 75 maps and both sides:
+
+```
+shared maps fully played: 75   match: 75   differ: 0   skipped: 0
+```
+
+Both runs returned `SW=13 SL=13 split=49`, net swept 0, 75/150, 0 exceptions — the same
+digits, not merely the same verdict.
+
+**Yesterday I measured two 35-40 map samples of one quantity disagreeing by ~9 net swept on
+a 75-map scale and wrote down a resolution limit.** The limit is real, but I had not
+established *where the variance came from*, and the natural reading — the one I left on the
+page — lumps sampling and engine/harness noise together. This separates them:
+
+> **All of that spread was WHICH MAPS were drawn. None of it was run-to-run noise.** The
+> engine's only nondeterminism is the 6th tiebreak (`Math.random`), and in 150 games it
+> decided none — it sits behind five deterministic tiebreaks and is almost never reached.
+
+### The operational consequences, which point in opposite directions
+
+- **A sampled run (25-40 maps) cannot resolve below ~5 net swept.** Unchanged, and it is a
+  *sampling* limit, so the fix is more maps or a disjoint replication — never a re-run.
+- **A census is exact.** A census result near zero is not "noise around zero", it *is* zero.
+  Iteration 32's −1 and iteration 33's 0 are the numbers.
+- **Never re-run a census.** It is guaranteed to return the same answer and costs shared VM
+  time to learn nothing. (I did not choose this duplicate, but I would have been wrong to
+  treat the second run as confirmation *of the result*; it only confirms the *pipeline*.)
+
+### The null I already had and had not been using as one
+
+`tools/mirror_null.txt` records alice vs a byte-identical copy: **0 swept wins, 0 swept
+losses, every map split 1-1.** That is the measured signature of an inert change under a
+deterministic engine, and it turns the sweep counts into a **mechanism-firing test that
+needs no instrumentation at all**:
+
+> **Non-split maps under a deterministic engine = maps whose outcome the change altered.**
+> The null is 0. So iteration 33's 26 decisive maps out of 75 prove the mechanism fired
+> broadly, from the same numbers that judge it.
+
+This is why "net swept 0" was worth more than "no effect": a change that decides 26 maps and
+nets zero is a *measurement that the resource it spends is not the binding one*, not a
+failure to act. Pair it with the pre-registered mechanism check every time — the sweep
+structure is free and I had been asking for separate instrumentation to learn it.
+
+### Cross-references
+
+- Extends *"with a deterministic engine, the SPLIT/SWEEP structure reads a mechanism's
+  firing rate directly"* — that entry read the firing rate; this one gives it a **calibrated
+  zero** from the mirror null, so the reading is absolute rather than comparative.
+- Scopes *"my gauntlet's resolution collapses exactly where I need it most"* to **sampled**
+  runs only.
+- Caveat retained: this is a census of a *fixed* map population. It is exact about those 75
+  maps and says nothing about maps outside them.

@@ -8,8 +8,8 @@ R1="${1:?usage: determinism-check.sh <run1> <run2> [opponent]}"
 R2="${2:?}"; OPP="${3:-alice_iter24}"
 match=0; differ=0; skipped=0
 while read -r M; do
-  A=$(grep "^RESULT $OPP $M " "$R1/results.txt" | awk '{print $4$5}' | sort | tr '\n' ',')
-  B=$(grep "^RESULT $OPP $M " "$R2/results.txt" | awk '{print $4$5}' | sort | tr '\n' ',')
+  A=$({ grep "^RESULT $OPP $M " "$R1/results.txt" || true; } | awk '{print $4$5}' | sort | tr '\n' ',')
+  B=$({ grep "^RESULT $OPP $M " "$R2/results.txt" || true; } | awk '{print $4$5}' | sort | tr '\n' ',')
   na=$(grep -c "^RESULT $OPP $M " "$R1/results.txt" || true)
   nb=$(grep -c "^RESULT $OPP $M " "$R2/results.txt" || true)
   if [ "$na" -lt 2 ] || [ "$nb" -lt 2 ]; then
