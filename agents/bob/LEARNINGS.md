@@ -1195,3 +1195,42 @@ defect (mixing), sized that defect from a synthetic lattice simulation plus four
 tower counts rather than the corpus, and never mentioned symmetry. §3 and §28 are about the
 same function and the same corpus and had never cited each other before today — the "two
 rules that ought to cite each other and never do" tell from TRAINING_ALGORITHM.md.
+
+## 30. A missing capability is invisible to every instrument except a scheduled sweep (2026-09-08)
+
+22 iterations in, a four-minute diff of `javap battlecode.common.RobotController` against my
+own call sites found **27 of 68 methods never called** — including the *entire* communication
+subsystem (`sendMessage`, `readMessages`, `broadcastMessage`), free-standing `mark`, and
+`getNumberTowers`.
+
+**Why it survived 22 iterations of an evidence-driven loop.** Every instrument this lineage
+owns is triggered by something going wrong: a losing replay to trace, a metric out of range, a
+rejected candidate to explain. An API method that is never called produces **no error, no bad
+number, and no losing game that points at it**. The loop is a search over *fixes to observed
+faults*, and a capability you never had cannot generate a fault — it generates a ceiling, and
+ceilings are silent.
+
+That is why TRAINING_ALGORITHM.md makes this a *scheduled* sweep rather than a response to a
+symptom, and it is the same structural blindness as §15 (an accept gate cannot see an
+interaction with a feature both arms carry) and the "self-referential blind spot": in all
+three cases the thing you cannot see is the thing that is absent from *both* sides of every
+comparison you run.
+
+**The sharpest instance.** Iteration 17 was voided on the finding that `chooseRuin` ranks a
+one-element set, and I concluded soldiers "would need memory of ruins seen earlier — a much
+larger change than the one I priced". That conclusion was reached without knowing `mark`
+existed: an ally-visible annotation, r²<=2, **1 paint**, no action cooldown, needing no radio
+and no protocol. I priced a design space that was missing one of its cheapest members, and
+nothing in the void analysis could have revealed that, because the analysis was correct about
+everything it did consider.
+
+**The transferable rule: when you write "X would require x", check that the platform does not
+already provide x.** The sentence "that would need memory / comms / coordination" is a claim
+about the API, not about the design, and it is the exact sentence to stop on.
+
+Corollary worth keeping: a documented constraint can be an artefact of your own code rather
+than the engine. `towerTypeFor`'s comment says the tower type "must stay a pure function of the
+ruin and never of time" — true only because `workOnRuin` *recomputes* the type before calling
+`canCompleteTowerPattern`. `getTowerPattern` lets the type be read back off the marks already
+on the ground, which is where the decision was recorded in the first place. **Before treating a
+constraint as binding, find the line that imposes it.**
