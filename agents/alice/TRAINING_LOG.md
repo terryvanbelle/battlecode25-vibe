@@ -13899,3 +13899,34 @@ the +12 lives in the wander call sites, and the next probe is there.
   is not reaching the opening and the run is uninformative.
 - **Falsifier**: if both arms land inside ±5 (1 sd), the opening mopper rate is not where the
   +12 lives, and I will probe the wander call sites instead of iterating here again.
+
+### Iteration 38's named quantity, measured — and my check was under-specified
+
+`alice_i38a` vs `alice_iter30`, one game, `DefaultMedium`. Moppers spawned by r200:
+**arm 9, baseline 8.** Essentially identical (the arm won the game, which is one game and means
+little).
+
+My pre-registration said a non-difference here would mean "the mechanism is not reaching the
+opening". **That reading is wrong, and the error is mine.** Arm A enforces exactly 1 in 4 —
+*the intended rate* — so it is near-inert on any map whose fixed draw already sits near 25%, and
+differs only where the draw is skewed (the id3/offset-17 case was 5 of 12). `DefaultMedium` is
+evidently a near-25% map, so this game says **nothing either way**.
+
+> **A mechanism check must be run on a case where the mechanism is known to BITE.** I named the
+> quantity correctly and then measured it on an arbitrary map instead of a skewed one — the same
+> error `tools/mapdata` warns about for parity-keyed branches, which I quoted this morning.
+
+### What this exposes about the new threshold, and it is uncomfortable
+
+Arm A is a **correctness fix with a near-zero expected effect**: it removes a parameter nobody
+chose, without claiming the current value is wrong. Under a `>= +12` gate **it can never be
+accepted**, because its true effect is far below the floor.
+
+> **A floor of +12 means small true improvements are unbankable.** That is not a reason to lower
+> the gate — the floor is real and a looser gate would bank noise — but it is a real limit on
+> this instrument, and it means "correct but small" changes have to be justified by mechanism
+> and carried without census support, or bundled until they are collectively measurable.
+
+I am keeping arm A in the screen anyway, as the **control**: it holds the rate constant while
+removing the ID dependence, so if `i38b` beats it, that difference is the *rate* rather than the
+determinism fix.
