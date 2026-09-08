@@ -11952,3 +11952,53 @@ the sort of quiet hand-fix my own doctrine says is not a repair. They go in the 
 Which of the two runs first depends on the census verdict, and I will pick on the evidence
 rather than on which I find more interesting — the reserve story is the one I *want* to be
 true, which is precisely why it does not get to jump the queue.
+
+## Iteration 31, pre-registered — `alice_i31a`: let the commuting soldier keep its ACTION
+
+Built and compile-checked while the iteration 30b census runs. Conditional on that census
+accepting; if it rejects, this candidate dies with it and the chip-reserve probe runs instead.
+
+**The diff against `alice_i30b` is one line**, and I want that on the record because it took
+a second look to see it:
+
+```java
+- if (goRefill(rc)) return;      // i30b: the walk pre-empts the whole role
++ goRefill(rc);                  // i31a: the walk spends MOVEMENT only
+```
+
+I also changed `tryMove` to return whether it moved, intending to fix the boxed-in soldier
+that wastes its turn. **That change is behaviourally inert here** — once `goRefill`'s return
+value is discarded the role always runs, so the boxed-in case is fixed as a side effect and
+the boolean is never read. I am keeping it for hygiene and stating that it is inert, rather
+than counting it as a second mechanism. **The diff is single-mechanism**, which is what makes
+the split/sweep reading valid.
+
+**Hypothesis**: movement and the action are independent engine resources. A soldier diverted
+at half a tank still holds paint, so it can paint tiles, mark patterns and complete tower
+patterns *while walking home*. Iteration 30b silenced all of that for the whole commute.
+
+### Pre-registered, with every quantity measured inside the run that judges it
+
+- **Instrument**: `alice_i31a` vs `alice_iter30`, full 75-map census, candidate as `BOT`.
+- **Gate**: net swept > 0, `SW`/`SL` separately, 0 exceptions, 0 overruns.
+- **Mechanism check, and it is a sharp one**: the divert predicate is **untouched**, so
+  iteration 31 must not change *where* the mechanism fires — only what it costs. Under the
+  mirror-identity argument (r2000 games excluded by construction), the set of maps where
+  `i31a` is identical to `i30b` should be **small**, because the two differ on every turn a
+  soldier commutes, and commuting happened on all 40 maps of the dose-finding run. **If that
+  identical set is large, the two builds are barely diverging and any margin is not this
+  change.**
+- **Named risk**: the commuting soldier now paints *along its route home*, which is by
+  definition away from the frontier. That paints my own rear area rather than contested
+  ground — coverage that may be worth less than it looks. If `i31a` wins on total coverage
+  but loses swept maps, that is the diagnosis.
+- **Falsifier**: net swept <= 0 means the action was not worth preserving, and iteration
+  30b's pre-emption was accidentally correct — a soldier whose paint is low enough to send
+  home is one whose remaining paint is better saved than spent.
+
+### Queue discipline
+
+The chip-reserve direction (`alice_chipprobe`, built and compile-checked) is the one I find
+more interesting and the one whose story I have already half-written. **That is exactly why
+it waits.** `i31a` is one line, follows directly from a defect I found in a candidate that
+was already winning, and its falsifier is sharper. Interest is not evidence.
