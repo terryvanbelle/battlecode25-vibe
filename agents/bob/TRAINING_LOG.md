@@ -10965,3 +10965,47 @@ MAPS="$(cat ../../tools/bc25-maps.txt)" MAXJOBS=3 BOT=bob \
 75/150 IS the noise floor at this scale** — two independent draws of it, measured inside the same run
 that measures the candidate, on identical ground. 450 games. That is one run answering the calibration
 question and the accept question together, instead of two runs answering neither.
+
+### A free by-product of the tower-cap probes: `maze` is an absolute degeneracy signal, and it points at NAVIGATION
+
+The seven probe matches were run to size the tower cap. They also handed me a ruin-capture rate per
+map, which I did not go looking for. Towers built by T1 (`bob`) against claimable ruins:
+
+```
+map           ruins   towers    capture     walls
+Leaf            52      25 (cap)   cap        4.4%
+DefaultHuge     49      25 (cap)   cap
+DonkeyKong      46      25 (cap)   cap
+TheBest         44      25 (cap)   cap
+SMILE           38      20          53%
+Gears           14       8          57%
+headphones      32      16          50%
+maze            32       4          12.5%    19.8%    <- OUTLIER
+```
+
+**On `maze` my bot claims 4 of 32 ruins in 2000 rounds and the count is flat from round 250 onward.**
+Every other non-capped map sits at 50-57%. This needs no opponent to be wrong — it is the "our bot
+stalls" class of signal the algorithm explicitly prefers over any opponent-relative comparison.
+
+`maze` has **19.8% walls against Leaf's 4.4%**, and `Nav.navTo` is a greedy stepper whose only
+escape is `stuckTurns >= 3 -> G.randomDir()`. That is not a bug-nav, and greedy descent with a random
+kick is the classic failure in wall-dense terrain: it does not escape concavities, it re-enters them.
+`reference/RESEARCH.md` lists hybrid bug-nav among the perennial mechanics.
+
+**Why this is a better candidate than the tower cap**, in the terms that killed the tower cap:
+
+- the tower cap's ceiling was ~3 games of 50 because its regime is 5 of 76 maps;
+- this is a **50-point capture deficit on the affected maps**, not a marginal one, so the per-map
+  effect is large and the question is only how many maps are wall-dense.
+
+**Pre-check to run before anything else, and NOT yet done:** the wall-density distribution over all 75
+maps. `tools/mapdata/` carries ruin parity but no wall counts, so this needs a small scanner in
+`bob-tools/` reading the `.map25` flatbuffers the way `BobSym.java` already does. **I am naming this as
+unfinished**: I have one wall-dense map and one dense-map failure, which is n=1, and §3's
+degenerate-sizing-map rule applies to me here exactly as it applied to the tower cap. If wall-dense
+maps turn out to be 3 of 75, this dies the same death and should.
+
+Also noted while looking: `bob-tools/BobSym.java` is an **offline audit** of the tower-type rule's
+symmetry, not runtime symmetry inference. So the structural direction "infer the map symmetry in-bot
+and extrapolate the unseen half" remains genuinely unattempted, not half-built as I assumed this
+morning.
