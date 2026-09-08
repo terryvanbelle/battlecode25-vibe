@@ -10119,3 +10119,132 @@ of any benefit that was available.
 
 **DECISION: REJECT.** `src/carol` is untouched and remains iteration 36; nothing to revert, HEAD
 compiles and is what plays in the tournament. Cost: one 100-game run and six cached dumps.
+
+---
+
+# Iteration 38 — RETURN TO REFILL (pre-registered before any game is played)
+
+## The measurement that motivates it
+
+Not a new run: 16 replays already cached from iterations 35-37, re-read with a new counter
+(`carol-tools/mixcheck/attrition.py`). ReplayDump classifies a death as starved when the
+robot's last observed paint was <= 0, so the split between "walked itself to death" and
+"the opponent killed it" is already in every dump I own.
+
+| band | splasher action utilisation | starvation share of deaths |
+|---|---|---|
+| small maps (< 2000 tiles) | 16.4% | **91.1%** (1498/1644) |
+| large maps (>= 2000 tiles) | 17.8% | **85.8%** (2407/2806) |
+
+**88% of all carol unit deaths are paint starvation, not combat** — 3,905 of 4,450. And RULES
+records the reason this is not merely a curiosity: *no unit damages enemy robots' HP directly*.
+Robot attrition in BC25 is tower fire plus paint starvation, so paint is the whole attrition
+mechanic and starvation is the part of it I control completely.
+
+Splashers fire at ~17% of the engine ceiling (an attack adds +50 cooldown falling 10/turn, so
+0.2 shots/splasher/round is exact, not a model). Iteration 37 established that splashers are
+what carries carol on large maps; they are running at a sixth of capacity.
+
+## Two engine facts read this iteration, one of which killed my first design
+
+`javap -p -c battlecode.world.RobotControllerImpl` (engine 3.1.0):
+
+1. **`assertCanTransferPaint` calls `assertCanActLocation(loc, 2)` — a HARDCODED 2**, not the
+   unit's action radius. Refill range is r2<=2 for every unit type.
+2. **Low-paint cooldown**: below 50% paint, all cooldowns rise by (100 - 2*X)% where X is
+   percent full. A unit under half paint is already crawling at up to half speed *before* it
+   starves, painting nothing the whole way.
+
+Fact 1 killed the iteration I was about to build. `refillIfPossible` searches
+`senseNearbyRobots(2, ...)` while RULES gives soldier action r2 = 9, so it looked exactly like
+the fourth instance of this lineage's most productive bug class — a gate set narrower than the
+mechanism it guards, which is what iterations 30, 35 and 36 all were. **It is not.** The engine
+pins transfer at 2 regardless of unit, so widening the search would have been a no-op that
+`canTransferPaint` refuses, and a no-op arm produces an uninterpretable result rather than a
+clean rejection. Iteration 37's lesson was that three confirmations of a heuristic are exactly
+when it stops being checked; this is that check being run, and it saved a 100-game run.
+
+## The hypothesis
+
+Units do not run out of paint because they cannot reach a tower. They run out because **nothing
+in carol ever sends them back to one.** `refillIfPossible` fires only when a unit happens to be
+standing within r2=2 of a tower, which in practice means the turns just after it spawns.
+
+The memory required already exists. `seenLoc` has stored every distinct ally tower's `(x<<6)|y`
+since iteration 34, refreshed every turn by `censusTowers()` — and **its coordinates have never
+been read by anything.** Only the paint/money counts derived from it are used, by `towerTypeFor`.
+So this iteration adds a consumer for data already collected, at no new sensing cost.
+
+**Change (movement only, one mechanism):** when a unit's paint falls below `RETURN_PCT`% of its
+capacity, `moveExploring` retargets it at the nearest remembered tower instead of its
+exploration target. Action logic is untouched, so a unit still paints whatever it can reach on
+the way home.
+
+`RETURN_PCT = 50` is read off the engine, not tuned: it is the cooldown-penalty knee from fact 2,
+and it is also exactly the threshold `refillIfPossible` already uses. Triggering there means the
+walk home happens at full speed rather than at the penalised rate.
+
+**Reachability, checked before building** (my own doctrine, and the thing iteration 37 skipped):
+`seenN >= 1` is guaranteed — a unit spawns adjacent to the tower that built it and `censusTowers`
+runs on turn 1. And the iteration-32 probe already measured that **63% of idle soldier turns are
+below half paint**, so the trigger fires on a large fraction of exactly the turns being wasted.
+This gate is reachable on existing evidence; I am not paying a run to discover it.
+
+## Doses
+
+| arm | RETURN_PCT | |
+|---|---|---|
+| `carol_iter36` | — | zero arm (incumbent; never returns) |
+| `carol_i38_50` | 50 | the engine's knee — primary |
+| `carol_i38_25` | 25 | returns later, having done more work, but walks home penalised |
+
+Both candidates carry `BUILD = "i38"` per the shared-tag convention. One run,
+`BOT=carol_i38_50 OPPONENTS="carol_iter36 carol_i38_25"`, 25 fresh random maps, both sides,
+100 games. The sample is drawn once and shared, so the dose-response comparison within the run
+is exact.
+
+## Gate — the FIRST use of the re-set gate, and it is stricter than anything I have accepted on
+
+Under the standing gate adopted this session (commit 5443d59), against a measured sd of ~2.4
+wins for a near-even 50-game arm:
+
+1. **`carol_i38_50` vs `carol_iter36` >= 29/50 accepts. <= 25/50 rejects. 26-28 is UNRESOLVED**
+   and may not accept without a replication on a disjoint map sample.
+2. Report `D` (split count) and the sd distance from `tools/map-resample.py`. Gate on neither.
+3. Stratify by map area; report the small and large halves separately.
+
+Note what this costs me: iterations 34 and 36 were both accepted at 28/50, which under this gate
+would have been unresolved. I am not going to quietly discover that 28 is enough after seeing a 28.
+
+## Manipulation checks, with the WEAK LINK named in advance
+
+Iteration 37's most useful output was that I named its weak causal link before the run and it
+was exactly the link that broke. Doing that again:
+
+1. **Link 1 (strong, expect it to pass).** The decision fires and finds a tower: `hg/ha > 0.8`
+   from the indicator counters. Starvation share of deaths falls from 88% pooled to **< 70%**.
+   If this fails, the mechanism did not run and nothing else is interpretable.
+
+2. **Link 2 — THE WEAK ONE.** Fewer starvation deaths become more coverage. **I expect this to
+   be where it breaks**, and the mechanism is specific: a refill draws from the tower's stash,
+   which is *the same paint a replacement unit would have been built from*. If tower paint
+   rather than chips is the binding constraint, the field population is unchanged and the only
+   gain is the 250 chips per unit not re-bought. Carol's treasury is measured to oscillate in
+   [1600, 2450] and never to reach the 3700 an upgrade needed before iteration 35, which is
+   evidence she is chip-tight too — but "chip-tight" and "chips are the binding constraint" are
+   different claims and only one of them is measured.
+
+   **If starvation falls and coverage does not move, the finding is that carol is paint-limited,
+   and refilling merely relocates the same paint.** That is a real result about the bot's
+   binding constraint, not a null, and I would rather buy it knowingly than infer it.
+
+3. **The PRICE, stated before it is paid.** Returning units drain tower stashes, so `twPaint`
+   falls and production falls with it. This is the most likely way the arm loses outright, and
+   it is the "two consumers of one budget must partition it by an explicit decision" failure
+   from my own LEARNINGS — `refillIfPossible` takes `min(cap - paint, ally.paintAmount)`, i.e.
+   everything the tower has, with no floor left for building. I am deliberately NOT adding that
+   partition in this iteration: it would be a second mechanism, and I do not yet have a
+   measurement saying the drain happens. If the price comes due, the partition is iteration 39
+   and it will have evidence behind it.
+
+Measured for all three: `twPaint`, `+sold`/`+spl` spawn counts, `died`/`starved`, `cov`.
