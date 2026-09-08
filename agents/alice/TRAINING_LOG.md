@@ -11352,3 +11352,73 @@ defensively at 255.
 - **Deliberately not launched yet**: the iteration 29 census holds all three job slots, and
   `MULTI_AGENT.md` caps MAXJOBS at 3 across a VM shared with two siblings and a live BC26
   project. Queued behind it, not run alongside it.
+
+## Tournament forensics: **my deficit against bob is the MID-GAME**, and it is very sharp
+
+Non-blocking work while the iteration 29 census runs. No VM time, no new games — this is
+re-reading `tournaments/20260908-0100/results.csv`, which is the only measurement I have
+against an opponent my lineage did not write.
+
+### First, the thing I tried that did not work — and it was my own repeated error
+
+I cross-tabulated the iteration 28 census's **split set** (the 31 maps where the one-line
+diff means the splasher gate never fired) against the maps bob sweeps:
+
+| | bob-swept | split | alice-swept | total |
+|---|---|---|---|---|
+| gate NEVER fires (census split) | 19 (61%) | 9 | 3 | 31 |
+| gate FIRES (census swept-win) | 25 (57%) | 14 | 5 | 44 |
+
+**Flat** — and 61% / 57% both sit on the base rate of 44/75 = 59%. But I am not reporting
+this as "no relationship", because **the test is invalid**, for the third time today in the
+same way: *whether the gate fires is a property of the MATCHUP, not of the map.* The gate
+needs a runaway chip surplus. That surplus arises against `alice_iter25`; there is no reason
+whatever to assume it arises against bob on the same map. I classified maps by a property
+measured in a different matchup and applied it to this one — **exactly** the error that broke
+my iteration 28 regime classifier, which I had written up hours earlier and then walked
+straight back into.
+
+**This also forces me to retract the strength I gave the `alice_paintthief` observation
+above.** I noted both of its swept wins fell in the non-firing set and called it "a
+direction". The direction rests on the same invalid transfer, and n=2 besides. It is
+withdrawn — not contradicted, just unsupported.
+
+### The statistic that IS valid, because it conditions on nothing that picks a winner
+
+Instead of classifying maps, bucket all 150 alice–bob games by **the round the game was
+decided in**, and ask who won each bucket. Nothing here is conditioned on the winner:
+
+| decided in | games | bob won | alice won | **bob share** |
+|---|---|---|---|---|
+| r < 500 | 25 | 13 | 12 | **52%** |
+| r500–799 | 32 | 26 | 6 | **81%** |
+| r800–1199 | 29 | 27 | 2 | **93%** |
+| r1200–1998 | 22 | 20 | 2 | **91%** |
+| r2000 tiebreak | 42 | 25 | 17 | **60%** |
+| **all** | **150** | **111** | **39** | **74%** |
+
+**I am level with bob in the opening (52%) and nearly level at the tiebreak (60%). I lose
+88% of everything decided in between** — 73 of 83 games in r500–1998.
+
+The obvious objection is selection: game length is itself an outcome, so maybe bob just
+paints faster and every decisive game skews to him. **The data refutes that model**, and this
+is the part worth keeping. If bob were uniformly faster, his edge would be *largest* in the
+fastest games. It is smallest there — 52%, a coin flip. The edge appears only once the
+opening is over, and it collapses again if nobody converts by r2000. That shape is not
+"faster"; it is a conversion engine operating in a phase where I have none.
+
+### What this does to my agenda
+
+It supports iteration 29's direction from a completely independent instrument, which I did
+not expect and had not designed for:
+
+> Iteration 28's gate needs `CHIP_RESERVE + 5000`. Whatever round that arrives on, it is
+> **late** — it is defined as the point where expansion has finished and there is nothing
+> left to buy. My deficit is r500–1200. **A mechanism that switches on after the phase I
+> lose in cannot address the phase I lose in.** Lowering the threshold moves it earlier.
+> That is iteration 29, pre-registered before I knew any of this.
+
+It also names the measurement I should have made first and had not: **the round at which
+the gate first fires**. I have never recorded it. `alice_splashprobe2` should carry it, and
+until I have it, "iteration 29 fires earlier" is an assumption about a constant rather than
+an observation. Adding it before that probe runs.

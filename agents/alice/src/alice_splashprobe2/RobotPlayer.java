@@ -34,6 +34,7 @@ public class RobotPlayer {
     // ready turn, unfiltered: the fraction of ready turns whose best available centre
     // falls in [1..MIN_SPLASH_TILES] is exactly the fraction of attacks the constant
     // suppresses, and the shape below it says what a lower dose would buy.
+    static int spGateRound = -1;                // round the +5000 gate FIRST fired (tower)
     static int spReadyTurns;                    // turns with action ready and paint >= 60
     static int spFired;                         // of those, turns an attack actually fired
     static final int[] spAvail = new int[26];   // best AVAILABLE score, unfiltered
@@ -94,7 +95,9 @@ public class RobotPlayer {
                     String probe = "SPAVAIL rdy=" + spReadyTurns + " fired=" + spFired
                             + (overruns > 0 ? " OVR=" + overruns : "") + " h=" + h;
                     rc.setIndicatorString(probe.length() > 255 ? probe.substring(0, 255) : probe);
-                } else rc.setIndicatorString("i25=" + i25Refills + "/" + i25Paint + " "
+                } else rc.setIndicatorString(
+                        (rc.getType().isRobotType() ? "" : "GATE=" + spGateRound + " ")
+                        + "i25=" + i25Refills + "/" + i25Paint + " "
                         + (rc.getType() == UnitType.MOPPER
                         ? "i24=" + i24Moves + " p=" + rc.getPaint() + " " : "")
                         + "bc=" + bc + " max=" + maxBc
@@ -260,7 +263,12 @@ public class RobotPlayer {
             // so the build is byte-for-byte iteration 25 there. On DefaultHuge it fired
             // hard -- 30 splashers by r1000, 48 by r1500 -- and coverage went
             // 438 -> 556 -> 688 while the baseline's COLLAPSED 538 -> 413 -> 282.
-            if (rc.getMoney() >= CHIP_RESERVE + 5000) want = UnitType.SPLASHER;
+            boolean gate = rc.getMoney() >= CHIP_RESERVE + 5000;
+            // PROBE ONLY: the round the gate FIRST becomes true. Never recorded before,
+            // and it is the number that decides whether this mechanism can touch the
+            // r500-1200 band where the tournament says I actually lose. Decides nothing.
+            if (gate && spGateRound < 0) spGateRound = rc.getRoundNum();
+            if (gate) want = UnitType.SPLASHER;
             int off = rnd(8);
             for (int i = 0; i < 8; i++) {
                 MapLocation loc = rc.getLocation().add(directions[(i + off) % 8]);
