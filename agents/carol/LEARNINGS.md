@@ -1591,3 +1591,40 @@ finding an error like this is to distrust the whole table, and the disciplined m
 which claims actually rested on the broken quantity. Here it was one inference (that tower paint
 is abundant late), and the per-map spread — 7,813 against 423, an 18-fold range — refuted it
 outright.
+
+## Carol's units are TETHERED to towers by paint, and two iterations attacked the tether from opposite ends
+
+Iterations 38 and 39 were the two halves of one mistake, and neither was visible as such from
+inside itself.
+
+| | change | link 1 | result |
+|---|---|---|---|
+| **38** | low-paint unit walks **toward** the nearest remembered tower | fired 5,007x, 93% hit, refills **50x** | 17/50, −3.10 sd |
+| **39** | non-firing splasher walks **toward the frontier** (away from towers) | fired, 89.8% found a frontier | 17/50, −3.50 sd |
+
+Both mechanisms ran exactly as designed. Both lost by roughly the same margin. Both dose ladders
+were **monotone toward zero** — less of the mechanism was better at every setting tested.
+
+**The single fact that explains both:** `transferPaint` requires r2<=2 — adjacency — for every
+unit type, hardcoded in the engine. A unit's paint is therefore a *tether* to the tower that
+filled it. It can spend that paint anywhere, but it can only get more by physically touching a
+tower.
+
+- **38 pulled the units in.** Refills rose fiftyfold and drained the tower stashes by 71%, and
+  tower paint is what *builds* units: splashers −29%, towers −24%, coverage −51%.
+- **39 pushed the units out.** Splashers reached the frontier and ran dry there permanently —
+  `noPaint` 27.8% -> 47.0% — and *fired fewer shots than the incumbent*, 629 against 663.
+
+**So the tether length bounds carol's territory, and neither shortening nor lengthening the leash
+helps.** The arena picture is the same fact: carol boxed into a corner while bob spans the map.
+
+**What follows, and it is not another movement change.** The tether is anchored at towers, so the
+only way to reach further is to *move the anchors* — put more towers further out. That is the
+soldier -> ruin -> tower pump, which is also what iteration 38's replay trace found the incumbent
+already doing well (a soldier spends to 7 paint building a tower, then refills from it two rounds
+later). **Two consecutive iterations tried to out-think a loop that was already the right one.**
+
+**The generalisable form:** when two opposite changes to the same variable both lose by the same
+margin, the variable is not the lever — something *else* is holding the outcome fixed, and the
+next iteration must name what. I spent two runs establishing this and could have spent one, had I
+asked after iteration 38 what the *opposite* change would predict.
