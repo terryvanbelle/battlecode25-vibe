@@ -1426,3 +1426,63 @@ mechanism ready to blame (`RUIN_FLOOR = 0` letting a soldier paint to exactly ze
 - **Reach for the frozen instrument first, not as a cross-check.** I own five frozen opponents
   precisely so that "did my change help?" has a clean answer, and I twice went to the confounded
   number first because it was the one in front of me.
+
+## 35. A PRNG draw inside a conditional makes that conditional part of the behaviour (2026-09-08)
+
+I added a conjunct to a spawn gate and called the zero-dose arm *exact*, having javap-confirmed that
+the engine already asserts the condition I was adding. The reasoning was right about the engine and
+wrong about the bot:
+
+```java
+if (chips >= want.moneyCost + reserve) {
+    int start = G.rng.nextInt(8);      // consumed INSIDE the gate
+    for (...) { if (rc.canBuildRobot(want, l)) { ... } }
+}
+```
+
+`G.rng` is a per-robot `Random(rc.getID())`. A tower with chips but too little paint still entered
+this block, still drew, and ran a loop that could spawn nothing. Narrowing the `if` skipped the draw
+on exactly those turns and offset that tower's PRNG for the rest of the game. **The change was
+neutral in outcome and catastrophic in sequence** — every later random direction differed.
+
+**The rule: a PRNG is shared mutable state, so the set of turns on which you draw is itself
+behaviour.** Adding, removing, or *re-scoping* a draw is never a no-op, however inert the guarded
+code is. When adding a guard around code that draws, put the guard **after** the draw unless you
+intend the desynchronisation. This generalises past PRNGs to anything with call-order-dependent
+state.
+
+**Corollary for reading old results:** any past iteration that narrowed or widened a condition
+wrapping a draw carries the same contamination, and its measured effect is its mechanism *plus* a
+PRNG reshuffle. Do not re-litigate old verdicts on this basis alone — but do not cite their margins
+as precise either.
+
+## 36. A mirror null's zero variance is STRUCTURAL — it is not evidence the instrument is quiet (2026-09-08)
+
+Seven consecutive runs put my control arm at *exactly* 25/50 with all 25 maps split. I wrote, at
+iteration 18, *"a zero arm measured at EXACTLY the null (25/50, **se = 0**, all 25 maps split)"* and
+proceeded to treat 2- and 3-game deltas as signal.
+
+**That zero variance was forced, not observed.** The control was byte-identical to the bot, so a
+deterministic engine on a symmetric matchup *cannot* return anything but 25/50-all-split. It is a
+wiring check on the harness. It is not a measurement of how much a **changed** arm's score moves for
+reasons unrelated to its mechanism, and those are different quantities.
+
+The distinction became measurable by accident. A voided arm differed from the bot **only** by PRNG
+phase — no rule changed, no reachable outcome altered — and scored **19/50**, with swept maps going
+from 0-against to 8-against. A behaviourally neutral change moved the instrument by 6 games.
+
+Set against that band, my recent "results" — `-3`, `+2`, `-1`, `+0`, `-3` — are all inside it. That
+is consistent with what the 400-game pooled replication already said (the effects were zero), and it
+explains *why* the `+2` never replicated: it was never a +2 of anything.
+
+**Rules:**
+- **Never quote a mirror null as the instrument's standard error.** It bounds harness error, not
+  measurement noise. Two different quantities were wearing the same number.
+- **The noise floor for a CHANGED arm must be measured with changed arms**, not derived from a
+  binomial formula that assumes coin-flips are the only source of variation. A deterministic engine
+  is not a low-noise engine; it is a chaotic one with reproducible chaos.
+- **Calibrate it directly**: run several behaviourally neutral, PRNG-desynchronised arms in one
+  gauntlet and read the spread. Doctrine 9 has asked for this noise floor since day one and I have
+  been supplying a formula where a measurement was wanted.
+- Hold the finding to standard: the 19/50 is **one** draw. The logical half — zero variance under
+  byte-identity is forced — needs no sample and is the part I assert.
