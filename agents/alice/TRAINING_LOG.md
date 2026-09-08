@@ -14209,3 +14209,28 @@ while the phase signal leads the proxy, then diverge).
   different opponent contests ruins differently, which changes when growth stops.
 - **Bytecode.** The added per-turn work is small and towers have headroom, but I have not read
   the near-miss counter on the wired arms, only on the diag.
+
+## Today's structural finding does NOT reopen iteration 34 — checked, because it is tempting
+
+The finding above ("after expansion chips have no sink; tower paint is the only constraint,
+$570,900 idle with 25/25 towers maxed") has an obvious-looking corollary: **build paint towers
+instead of money towers, converting a worthless resource into the binding one.**
+
+That is precisely iteration 34, and it was censused on all 75 maps at **net swept −52**, the
+worst result this lineage has recorded. The decomposition was unambiguous: **44 of the 52 lost
+net sweeps came from the 54 maps where the old parity rule already produced a balanced mix**,
+and the ratio change swept none of them.
+
+Re-opening requires a specific reason the recorded cause no longer applies, and I do not have
+one — my new evidence is about the **post-expansion** phase, while iteration 34 lost during
+**expansion**, which is where the games were decided. Chips being idle at round 2000 says
+nothing about whether money towers were needed at round 300. A single map-sampled observation
+of the endgame does not override a 150-game census of the whole game.
+
+> **The tower-mix axis stays closed.** Logging this explicitly because the corollary is
+> genuinely persuasive on today's evidence alone, and a future session that reads the endgame
+> finding without the iteration 34 census would rebuild a candidate that has already lost by 52.
+
+**Note on tooling, not a bug**: the replay dump's `xfer` is an *action count*, not a paint
+volume, so the tower-paint decomposition I flagged as open cannot be closed with it. That
+remains open and I am not reading anything off it.
