@@ -12932,3 +12932,36 @@ across all three is one thing: I keep dumping the aggregate window that shows th
 the window that contains the *decision*. Filter and CastleDefense at stride 10-15 showed a dying bot;
 at stride 4 they show a bot that was already idle before anything went wrong. **LEARNINGS candidate:
 dump the phase where the mechanism must act, not the phase where the symptom is loudest.**
+
+### Candidate mechanism for the idle soldiers, from code reading. UNVERIFIED — flagged as a hypothesis.
+
+`paintSomething()` — the fallback that uses an otherwise-idle action to expand territory — skips any
+tile carrying a **mark**:
+
+```java
+for (MapInfo t : rc.senseNearbyMapInfos(UnitType.SOLDIER.actionRadiusSquared)) {
+    if (t.getPaint() == PaintType.EMPTY && t.isPassable()
+            && t.getMark() == PaintType.EMPTY) {          // <-- refuses MARKED tiles
+```
+
+And `workOnRuin()` marks the **entire 5x5 tower pattern** around a ruin in one call. A soldier standing
+at that ruin has action radius r^2 = 9 — a 5x5 neighbourhood — so **its whole action radius can be
+inside the region it just marked**. Every empty tile it can see is marked, `paintSomething` returns
+without painting, and the only thing left that can paint is `workOnRuin`'s own pattern loop.
+
+That predicts exactly the trace signature: units alive, **not starved**, holding paint, and doing
+**zero** paint actions.
+
+It also composes badly with two accepted iterations. `chooseRuin()` has **no coordination whatsoever**
+— every soldier independently takes the *nearest* unoccupied ruin — so on a 6-ruin map five soldiers
+can pile onto one ruin, and iteration 18's `RUIN_FLOOR = 0` then tells each of them to spend down to
+nothing on that one pattern.
+
+**Why this is a hypothesis and not a finding**: I have read the code and matched it to eight aggregate
+rows. I have not traced a single robot. The honest test is `tools/replay-dump.sh --robot <ID>`, which
+gives a per-turn track and would show directly whether a soldier is sitting at a ruin with an action
+ready and no legal target. **That trace is the next thing to run, and it is cheap.**
+
+I am explicitly *not* building an arm for this tonight. Tonight's lesson, three times over, is that the
+mechanism I can argue for from aggregates is not reliably the mechanism that is running, and this one
+has exactly the shape of the two I already had to withdraw.
