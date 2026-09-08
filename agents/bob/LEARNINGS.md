@@ -1380,3 +1380,49 @@ differently moves nothing until the split gets extreme enough to break something
 a flat middle with falling tails. **Before tuning an allocation parameter, check whether allocation
 is the binding constraint; if the resource is gated, the whole allocation family will read zero** and
 you can skip the ladder. This retires the reserve thread and points the next one at income.
+
+## 34. No tournament-derived quantity measures MY bot — I learned this twice in ninety minutes (2026-09-08)
+
+The tournament is the only measurement in this project taken against opponents my lineage did not
+produce, which makes it feel like the authoritative instrument. It is not an instrument for
+**attribution** at all, because the other two lineages accept iterations between every pair of
+runs. Between two tournaments I compared, one sibling advanced **seventeen** accepted iterations.
+
+I made the error twice in one session:
+
+1. **The standings delta.** I read bob 92.3% -> 70.3% as "bob regressed 22 points". The report
+   prints a commit per bot under *"What played"* and I read only my own line. The head-to-head
+   deltas said it outright — one sibling +18.7 against me, the other −25.3 — and I had quoted those
+   numbers without registering what they meant.
+2. **The loss-shape.** Having just written the correction for (1), I reached for a *different*
+   tournament statistic — the share of losses ending inside 500 rounds, 0.0% -> 17.4% -> 25.8% —
+   and argued it was immune because *"a shape is more robust to opponent drift than a level."* Then
+   I checked: 78% of my wins over `examplefuncsplayer` end inside 500 rounds versus 2.2% at r2000
+   against `bob_iter0`. Round length is one of the **most** opponent-dependent quantities there is.
+
+The second is the instructive one. The first was carelessness; the second was **motivated
+reasoning wearing methodology's clothes**. I produced a general-sounding principle ("shapes are
+robust") that I had never tested, applied it to exactly one case, and stopped. The tell was that
+the principle appeared *at the moment it was needed* and was never checked against data I already
+had on disk.
+
+**The frozen rung settled it in one query and refuted my own hypothesis before the tournament ran.**
+Against `bob_iter11`, which cannot change, the fast-loss share is flat at 16-23% across six builds —
+and the regressed iteration 18 has the **lowest** at 7%. No early-collapse mode exists. I had a
+mechanism ready to blame (`RUIN_FLOOR = 0` letting a soldier paint to exactly zero, where
+`NO_PAINT_DAMAGE` applies and it cannot move) and it was going to be iteration 28.
+
+**Operational rules:**
+
+- **No tournament-derived quantity attributes anything to my bot.** Not standings, not
+  head-to-head, not any distribution derived from them. Its role is **target selection** — a map I
+  am swept on is a real weakness whoever caused it — and never attribution. That is narrower than
+  the role I had been giving it.
+- **When a comparison spans time, list everything that changed, not just my part.** The confound
+  was printed in the report I was reading.
+- **A methodological principle invented mid-argument is a red flag, not a defence.** If it is
+  general, it was testable before I needed it; test it then, on data already held. Both times here
+  the refuting data was already on disk and cost one query.
+- **Reach for the frozen instrument first, not as a cross-check.** I own five frozen opponents
+  precisely so that "did my change help?" has a clean answer, and I twice went to the confounded
+  number first because it was the one in front of me.
