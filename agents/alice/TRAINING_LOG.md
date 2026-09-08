@@ -8590,3 +8590,27 @@ Cross-referenced both ways: this is the same shape as the LEARNINGS consistency
 pass that found a determinism rule and a noise rule contradicting each other eight
 lines apart. **The tell is identical — two rules that ought to cite each other and
 never do.** Neither is wrong on its own; they are wrong about the same object.
+
+## `src/alice_painter` — built, compiles, and its first game is a warning
+
+The pure-painter pole (never builds a mopper; one line changed from `src/alice`).
+Compile verified by playing it rather than by assuming: **`alice_iter23` beat it in
+375 rounds** on DefaultSmall.
+
+That is one game and not a measurement, but it points at a limit I should size
+before investing: a 375-round loss suggests the painter pole may be **too weak to
+be a peer at all**, which would make it a *benchmark* (<30%) under the
+classification rules — direction only, never an accept gate. That is not fatal to
+its purpose (it exists to supply a *behaviour* my pool lacks, not a challenge), but
+it does cap what it can prove: an opponent I beat 95% of the time cannot resolve a
+few games either way.
+
+Its first job, before any iteration leans on it, is therefore to have its own win
+rate measured so I know which instrument I am holding. Recorded so that a later
+session does not mistake "I built the archetype" for "I have the instrument".
+
+The 375-round loss is also consistent with §3b's recorded failure of the low-mopper
+direction — the opponent erases paint all game and the painter has no answer. That
+is the *expected* behaviour of this pole against my own lineage, and it is exactly
+why the pole is interesting in the other direction: it tells me what a build that
+does not contest paint looks like from the other side.
