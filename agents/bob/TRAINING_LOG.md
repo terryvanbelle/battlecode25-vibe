@@ -8726,3 +8726,90 @@ weakness to build one against: production is chip-gated on 38-90% of early tower
 maps, and coverage is decided in exactly that window. An archetype that races coverage early and
 ignores the late game would attack a weakness I have measured rather than one I imagine. That is
 a real candidate, not a note — but it is a build, and it is not this iteration.
+
+---
+
+## Iteration 26 — RESULT: **REJECTED**, and iteration 25's `+2` does **not** replicate. The reserve is a *plateau*, not a peak.
+
+Recovered after a session death: the run had finished and been collated, and a **second, unplanned
+duplicate run of the identical four arms** (launched 31s later, almost certainly a double-submit by
+the dying session) had finished on the VM and was never collated. I collected it rather than
+discarding it — it is a paid-for, independent map sample of exactly the arms under test, which is
+the one thing doctrine 1 says a deterministic engine *cannot* give you by re-running.
+
+Runs `20260908-074050` (sample A) and `20260908-074121` (sample B), 200 games each, 400 total.
+Map overlap between samples: **9 of 25** (16 fresh maps in B), so B is substantially but not
+perfectly independent of A.
+
+**Scores below are the ARM's own score** (the log's standing convention; the raw `summary.txt`
+reports the *incumbent's* score against each arm, i.e. `50 − arm`). See the convention note below.
+
+```
+arm       reserve   sample A   sample B   pooled     vs null
+bob_w12      1200     25/50      25/50    50/100        +0   (mirror of the incumbent -> null)
+bob_x18      1800     23/50      26/50    49/100        -1
+bob_w24      2400     24/50      26/50    50/100        +0
+bob_x30      3000     25/50      22/50    47/100        -3
+```
+
+- **Not void.** Control `bob_w12` is 25/50 with all 25 maps split and zero swept in *both* samples —
+  the eighth and ninth consecutive zero-variance null.
+- **Doctrine 3 satisfied.** Outcomes differing from the null arm on the same (map, side):
+  A: x18 12/50, w24 15/50, x30 10/50; B: x18 7/50, w24 5/50, x30 11/50. The dose executes.
+- **Gate.** Pre-registered accept-eligibility was best arm **>= 30/50**. Best arm is **25/50**.
+  Not accepted, and not close — this is a null, not a near miss, so it does not consume a
+  `MaxNearMissRefinements` slot so much as it closes the thread outright.
+
+### The pre-registered contingency fired, word for word
+
+I wrote before launching: *"if **both** return ~0, the `+2` was the sample and the whole right-hand
+rise is in doubt."* Both returned ~0. **2400 gave `+1` on sample A and `−1` on sample B; pooled over
+200 games it is exactly `+0`.** Iteration 25's `+2` was the map sample.
+
+I record this as a win for the pre-registration and a loss for my iteration-25 write-up, which spent
+several paragraphs explaining a mechanism (*"utilisation counts towers eventually built and says
+nothing about WHEN"*) for an effect that does not exist. The explanation was good prose about noise.
+**Doctrine 2's warning is about reading a curve's shape; it says nothing about a 2-game height, and
+I had already flagged exactly that** — *"the peak's location is far better supported than its
+height — location rests on a sign pattern across five doses, height on two games"* — and then wrote
+the mechanism section as if the height were real anyway. That is doctrine 6 in its purest form: I
+flagged the caveat and reasoned from the number regardless.
+
+### What the whole ladder now says
+
+```
+reserve      0    600   1200   1800   2400   3000   3600
+vs null     -7     -3     +0     -1     +0     -3     -7
+games        50     50    ~200    100    150     100     50
+```
+
+Not a peak at 1200, and not a peak at 2400. A **broad flat plateau from ~1200 to ~2400**, with both
+tails falling away hard and symmetrically. Within the plateau the reserve is genuinely inert.
+
+**This is the good branch of iteration 25's pre-registered fork**, and I am claiming it as such: the
+constant set in iteration 0 as *"the 1000 a tower costs, plus a little"* and never examined for 25
+iterations is now **bracketed on both sides by measured falloff** and sitting on a plateau. It stops
+being an unrefuted guess and becomes a validated constant. **Keep `reserve = 1200`** — not because it
+won, but because it is on the plateau, it is the incumbent, and nothing beats it.
+
+### Thread closed, with the mechanistic reason
+
+Five doses, seven levels, ~700 games. A reallocation knob reading zero across its entire plateau is
+consistent with LEARNINGS 31 and the iteration-24 spawn probe: **production is chip-gated on 38–90%
+of early tower-turns on most maps.** A reserve decides *how a budget is split*; if the budget itself
+is the binding constraint on most turns, then splitting it differently moves nothing until the split
+gets extreme enough to break something — which is exactly the flat-middle, falling-tails shape above.
+**The lever is income, not allocation.** That is where iteration 27 goes.
+
+### Convention note, recorded because I nearly mis-called it a tooling bug
+
+On resuming I read the raw `summary.txt` (`vs bob_w24 23/50`) against the log (`bob_w24 27/50`) and
+was one step from reporting the resampling tool as sign-inverting. **I ran the discriminating case
+first**, as doctrine requires: iterations 24 and 25 reconcile *exactly* — `27 = 50 − 23` and
+`18 = 50 − 32` — so the log's conversion is correct and consistently applied, and there is **no
+tooling bug**. Nothing to report to the coordinator. Recorded here because the near-miss is the
+lesson: the two artefacts that "should agree and didn't" (doctrine 5's tell) disagreed for a benign
+reason, and the check that separated benign from real cost one command.
+
+`gauntlet.sh` reports the **bot's** score; this log reports the **arm's**. Stated here so a future
+session does not re-derive it under pressure.

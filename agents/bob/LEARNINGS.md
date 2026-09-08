@@ -1316,3 +1316,67 @@ chip-limited maps it is not the economy refusing to spawn, it is a constant I wr
 0 and never measured. A resource pinned in a dead band is one of the two absolute degeneracy
 signals the algorithm names, and it took a decision-point probe to see it, because from outside
 the bot "treasury sits at 1200" and "treasury cannot afford anything" look the same.
+
+---
+
+## 32. A 2-game margin bought a mechanism story; replication cost nothing and refuted it (2026-09-08)
+
+Iteration 25 measured `+2` for one dose arm and I wrote several paragraphs explaining *why* — a
+genuinely nice argument about utilisation counting towers eventually built while saying nothing
+about when. Iteration 26 put the same arm on a fresh map sample: `−1`. Pooled over 200 games: `+0`.
+The mechanism I explained does not exist.
+
+The damning part is that **I had already written the correct caveat** in the same entry — *"the
+peak's location is far better supported than its height — location rests on a sign pattern across
+five doses, height on two games"* — and then wrote the mechanism section as though the height were
+real. That is doctrine 6 exactly: the caveat was flagged, and then reasoned past. A flagged caveat
+has to **constrain what you write next**, and the concrete test is: *would this paragraph survive if
+the number it explains were zero?* If not, do not write it until the number replicates.
+
+**Doctrine 2 is about shape, not height.** "A curve that peaks in the middle is stronger evidence
+than any single point" licenses reading a *sign pattern across doses*. It does not license
+explaining the magnitude at one dose. I read a shape claim as a height claim because the shape
+happened to be real (the tails do fall away) and that lent unearned credibility to the peak.
+
+**And the replication was free.** A duplicate run — the dying session double-submitted the same four
+arms 31 seconds apart — sat finished and uncollated on the VM. Doctrine 1 says re-running a
+deterministic engine is worthless, and that is true of re-running *the same games*; it is emphatically
+not true of **the same arms on a redrawn map sample**, which is the only cheap replication this
+project has. Collecting an orphaned duplicate cost one command and overturned a published conclusion.
+**Check `gauntlet-collect.sh --list` for uncollated runs before trusting any thin margin in the log.**
+
+Corollary for the resume checklist: an unplanned duplicate run is not waste to be discarded, it is a
+free independent sample. Collate it and pool it.
+
+## 33. Distinguish a plateau from a peak before you claim an optimum (2026-09-08)
+
+Seven reserve levels, ~700 games:
+
+```
+reserve      0    600   1200   1800   2400   3000   3600
+vs null     -7     -3     +0     -1     +0     -3     -7
+```
+
+Iterations 24 and 25 each saw three points of this and each named a **peak** — iteration 24 put it
+above 1200, iteration 25 put it at 2400. Both were fitting a maximum to a **flat middle**, where the
+argmax is whichever arm caught the friendlier sample. With the tails measured on both sides, the
+honest reading is a **plateau from ~1200 to ~2400 with symmetric falloff**, and inside a plateau
+there is no optimum to locate — only a range that does not matter.
+
+Two operational rules from this:
+
+1. **A three-point ladder cannot tell a peak from a plateau.** It has one interior point, and one
+   interior point above two lower ones is what *both* shapes look like. Do not name an optimum until
+   the interior is sampled at more than one dose, on one shared sample.
+2. **A flat middle with falling tails is itself the finding**, and a good one. It converts an
+   unexamined constant into a validated one and closes the thread — which is worth more than the
+   marginal accept I was chasing. Iteration 0 set `reserve = 1200` as "the 1000 a tower costs, plus
+   a little"; it survives 25 iterations later not because it won but because it is bracketed.
+
+**Why the plateau is flat, which is the transferable part:** a reserve is a knob on *how a budget is
+split*. The iteration-24 spawn probe measured production as **chip-gated on 38–90% of early
+tower-turns** — the budget itself is the binding constraint on most turns. Splitting a binding budget
+differently moves nothing until the split gets extreme enough to break something, which is precisely
+a flat middle with falling tails. **Before tuning an allocation parameter, check whether allocation
+is the binding constraint; if the resource is gated, the whole allocation family will read zero** and
+you can skip the ladder. This retires the reserve thread and points the next one at income.
