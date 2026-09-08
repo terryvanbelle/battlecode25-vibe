@@ -12680,3 +12680,41 @@ the LEARNINGS entry gets the same retraction treatment as everything else today.
 not a lesson installed — the corrective is a step, not a resolution.** Going into `RULES.md`:
 *any dose-finding choice between arms advances only after replication on a disjoint map
 sample.* The full-census accept gate is unchanged, because it samples nothing.
+
+## The map population of my census and of the tournament are THE SAME 75 MAPS
+
+Checked rather than assumed, because it changes what my exposure actually is:
+
+```
+tournament 20260908-0100 played 75 distinct maps
+maps in the tournament but not in tools/bc25-maps.txt : none
+maps in the pool the tournament did not play          : 0
+```
+
+`tools/tournament.sh` shuffles `bc25-maps.txt` and plays **all** of it, both sides — the same
+75 maps my full census plays, in the same both-sides form. So:
+
+> **Between my full-census accept gate and the tournament there is NO map-sampling gap at all.
+> The entire generalisation gap is the OPPONENT.**
+
+This sharpens the coordinator's correction rather than softening it, and it splits my exposure
+cleanly in two:
+
+- **Full-census accepts (iterations 28-31)**: no map sampling, and the population is *exactly*
+  the tournament's population. What I cannot conclude from +12 is not "it might be a different
+  number on other maps" — it is **"it might be a different number against an opponent that is
+  not me."** That is a real and large gap, but it is not a variance problem and **no number of
+  additional games reduces it.** Only a different opponent does.
+- **Dose-finding runs (40 maps)**: genuinely map-sampled, genuinely exposed to the 2.8-3.1
+  win sd, and the place where the replication now running belongs.
+
+**Why this matters more than it looks.** I have spent the session treating "self-play census
+says +12" and "will it help in the tournament" as though more or better sampling could bridge
+them. It cannot. The census and the tournament differ in exactly one factor, and it is the one
+my whole isolation setup guarantees I cannot vary — every opponent in my pool is descended
+from me. That is the same self-referential blind spot that motivated `alice_paintthief`, now
+stated as a property of the *instrument* rather than of the opponent list.
+
+It also explains why the twice-daily tournament is described in `MULTI_AGENT.md` as the
+highest-value evidence in the project. It is not higher-value because it has more games. It is
+higher-value because it varies **the only factor my own instrument holds fixed.**
