@@ -28,7 +28,7 @@ path, opp = sys.argv[1], sys.argv[2]
 rec = collections.defaultdict(lambda: [0, 0])   # map -> [bot wins, games]
 for line in open(path):
     f = line.split()
-    if f[0] != "RESULT" or f[1] != opp:
+    if len(f) < 5 or f[0] != "RESULT" or f[1] != opp:
         continue
     rec[f[2]][1] += 1
     if f[3] == f[4]:
@@ -42,21 +42,48 @@ games = sum(n for _, n in rec.values())
 wins = sum(w for w, _ in rec.values())
 decisive = sw + sl
 
-sd_map = math.sqrt(decisive) if decisive else 0.0
-sd_binom = math.sqrt(games / 4) if games else 0.0
+# --- UNIT-BEARING NAMES (coordinator, 2026-09-08) -------------------------------
+# Another lineage's gate tool computed sd of the WIN COUNT and printed a threshold
+# quoted on the MARGIN, so every gate it produced was 1.0 sd wearing a 2.0 sd label.
+# The three statistics here, and their exact relationships, derived not assumed:
+#
+#   net_swept      = SW - SL
+#   wins           = 2*SW + split ,  N = SW + SL + split
+#   wins - N       = SW - SL              = net_swept          (EXACT, so sd is EQUAL)
+#   wins - losses  = 2*(SW - SL)          = 2 * net_swept      (so sd is DOUBLED)
+#
+# Var(net_swept) = Var(2*SW - decisive) = 4 * decisive/4 = decisive, hence sqrt(decisive).
+# This gate and this floor are BOTH in net_swept units, so the sd-multiple is invariant
+# to the choice -- that invariance is the protection, not luck.
+sd_net_swept = math.sqrt(decisive) if decisive else 0.0
+sd_wins      = sd_net_swept          # identical by wins - N == net_swept, above
+sd_win_minus_loss = 2 * sd_net_swept # the OTHER margin; never compare a net_swept gate to this
+sd_binom_wins = math.sqrt(games / 4) if games else 0.0
+
+# THE CONTROL, not a note (doctrine 16): the identity above is checked on every run, so a
+# future change that breaks it fails loudly here instead of silently halving a gate.
+_net_from_sweeps = sw - sl
+_net_from_wins   = wins - len(full)
+assert _net_from_sweeps == _net_from_wins, (
+    "UNIT ERROR: net_swept from sweeps (%d) != wins - N (%d). The gate and the floor are no "
+    "longer in the same unit; do NOT read a verdict off this run."
+    % (_net_from_sweeps, _net_from_wins))
+
+sd_map = sd_net_swept      # legacy alias used by the prints below
+sd_binom = sd_binom_wins
 
 print(f"opponent            : {opp}")
 print(f"maps (both sides)   : {len(full)}   games: {games}")
 print(f"record              : {wins}/{games} ({100*wins/games:.1f}%)")
 print(f"SW / SL / split     : {sw} / {sl} / {split}")
-print(f"NET SWEPT           : {sw-sl:+d}")
+print(f"NET SWEPT (=wins-N) : {sw-sl:+d}   [unit: net_swept; wins-losses would be {2*(sw-sl):+d}]")
 print()
 # NB: "decisive" = one arm swept the map (won both sides). It is NOT the same statistic as
 # "maps whose result survives a phase change", which compares two runs map-by-map. Only
 # decisive maps contribute to net swept; split maps cancel exactly.
 print(f"decisive maps       : {decisive} of {len(full)}  "
       f"({100*decisive/len(full):.0f}% decisive, {100*split/len(full):.0f}% split)")
-print(f"sd(net swept)       : {sd_map:.2f}   [= sqrt(decisive); each decisive map is a coin flip]")
+print(f"sd_net_swept        : {sd_net_swept:.2f}   [= sqrt(decisive); == sd_wins; sd(wins-losses) = {sd_win_minus_loss:.2f}]")
 # net_swept = wins - N exactly (wins = 2*SW + split, losses = 2*SL + split, N = maps),
 # so sd(net swept) and sd(wins) are the SAME quantity and compare directly -- no factor of 2.
 print(f"sd(wins), binomial  : {sd_binom:.2f}   -> map pairing keeps "
@@ -78,7 +105,7 @@ print(f"Var(S) about 0.500  : {var_null:.3f}   ceiling 0.250  "
       f"{'*** EXCEEDS CEILING -> contaminated, floor is an UPPER BOUND ***' if var_null > 0.25 else 'OK'}")
 print(f"Var(S) about mean   : {var_obs:.3f}")
 print()
-print(f"FLOOR: a |net swept| below ~{sd_map:.0f} is 1 sd -- indistinguishable from chaos.")
+print(f"FLOOR (net_swept unit): |net_swept| below ~{sd_net_swept:.0f} is 1 sd -- indistinguishable from chaos.")
 print(f"       accept >= ~{2*sd_map:.0f} (2 sd); replicate between ~{sd_map:.0f} and ~{2*sd_map:.0f}.")
 
 # --- the check that matters most: is this "null" actually null? ---

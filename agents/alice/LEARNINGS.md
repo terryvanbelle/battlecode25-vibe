@@ -562,6 +562,10 @@ for it.
 
 ## Theme: removing waste pays only when the freed resource is the scarce one
 
+> **THIRD OCCURRENCE, 2026-09-08 (iteration 39a).** This entry did not fire, again. See
+> "a lesson written THREE times is not a lesson, it is a missing control" below; the check
+> now prints from `tools/gate-read.sh` on every verdict read.
+
 Iterations 19 and 20 attacked the *same* measured waste from opposite sides,
 against the same baseline, on the same map sampler. One accepted, one landed on
 the null to the game.
@@ -1691,6 +1695,11 @@ matters is a coin flip. The strong rows are strong *because* they are irrelevant
 
 ## Theme: an UNSPENT SURPLUS is not evidence of waste — and my first correction was ALSO wrong
 
+> **SEE ALSO the third occurrence (iteration 39a, 2026-09-08)** and the control installed for
+> it. This entry and the one at "removing waste pays only when the freed resource is the
+> scarce one" are the same rule reached from two directions, and until today neither cited
+> the other — the exact tell this document's own consistency-pass rule names.
+
 > **SUPERSEDED, SAME DAY, BY ITS OWN PRESCRIBED TEST.** This entry originally concluded that
 > the surplus was "a symptom of losing" and prescribed the contrast case as the missing
 > check. I ran the check. **The winner's surplus was 4x the loser's** ($154,040 vs $1,510),
@@ -2529,3 +2538,80 @@ frequency and is a *literal fixed sequence* for the units whose decisions matter
    under any change to spawn order. Fix it by making the opening mix *explicit* — a per-tower
    counter giving exactly 1 in 4 — which deletes the hidden parameter instead of choosing a
    lucky value for it.
+
+
+## Theme: a lesson written THREE times is not a lesson, it is a missing control
+
+**2026-09-08, iteration 39a.** I measured that the splasher gate fires on 76% of tower
+build-turns on DefaultHuge and that the tower cannot afford the paint on 96% of those, called
+1,315 idle build-turns "pure waste", and built a candidate to reclaim them. The candidate
+removed splasher production **entirely** (gate firings 1374 -> 0 on two maps) because the
+idling *was* the accumulation mechanism: the tower was saving toward a 300-paint splasher, and
+letting it buy a 200-paint soldier meant it never reached 300 again.
+
+**Build slots were never scarce. Tower paint was.** That is verbatim the rule already in this
+document under "removing waste pays only when the freed resource is the scarce one" (iteration
+20, freed soldier turns) and again under "an UNSPENT SURPLUS is not evidence of waste"
+(iteration 26, spent chips, −21 net swept). Three iterations, one error, and **two prior
+write-ups that did not stop the third.**
+
+> **The tell was available before the run and I did not use it: a 96% "unaffordable" rate is
+> not a failure rate if the other 4% is what the 96% was saving up for.** Any denominator that
+> includes the accumulation phase of a savings behaviour will read as waste.
+
+### The control, since the note demonstrably is not one
+
+`tools/gate-read.sh` — the tool I invoke to read *every* verdict — now prints three standing
+pre-checks to stderr before any numbers, unconditionally:
+
+1. **SCARCITY**: name the wasted resource and the binding one; if they differ, the freed
+   resource buys nothing. Carries all three failures as worked examples.
+2. **UNIT**: `net_swept = SW−SL = wins−N`, `sd = sqrt(decisive)`; `wins−losses` is 2x both.
+3. **BITE**: was the mechanism check run on a map where the mechanism is known to act?
+
+It fires whether or not I think I need it, which is the whole point. Its honest weakness:
+it fires when I *read* a result, not when I *design* a candidate — so it can still cost a
+screen, but not an accept. That is a strictly smaller blast radius, not a cure.
+
+## Theme: my gate and my floor are in the same unit — the audit, with the derivation
+
+**Coordinator flag, 2026-09-08.** Another lineage's gate tool computed the sd of the **win
+count** while quoting its threshold on the **margin**; since `sd(margin) = 2 × sd(wins)`, every
+gate it produced was **1.0 sd wearing a 2.0 sd label** — a one-tail false-accept rate near 16%
+where it believed it had 2%. I was asked to audit mine before my next verdict.
+
+**Mine is sound, and here is the derivation rather than the assurance.** With every map played
+both sides, writing `split` for the maps that go one apiece:
+
+```
+wins          = 2*SW + split          N  = SW + SL + split
+wins - N      = SW - SL               = net_swept        <- EXACT, so the sds are EQUAL
+wins - losses = 2*(SW - SL)           = 2 * net_swept    <- the sd is DOUBLED
+Var(net_swept) = Var(2*SW - decisive) = 4 * decisive/4   = decisive
+```
+
+So `sd(net_swept) = sqrt(decisive) = sd(wins)`, and **there is no factor of 2 between my floor
+and my gate** — the factor of 2 lives in `wins − losses`, a statistic I do not gate on. My
+census null: `sd_net_swept = 5.29`, gate `+12`, giving **2.27 sd**.
+
+> **The structural protection is that my gate and my floor are expressed in the SAME unit, so
+> the sd-multiple is invariant to which of the two margins I quote.** +12 against sd 5.29 and
+> +24 against sd 10.58 are the same statement. A tool is only exposed to this bug when the
+> threshold and the sd come from different places — which is exactly how the other lineage's
+> did.
+
+And the answer to the question the coordinator asked of my `alice_phase` result: **the +12 is
+`wins − N`** (87 − 75 = 12, matching SW − SL = 20 − 8), so my **win-count sd is 5.29**, not
+2.65 — squarely between the other two lineages' 4.80 and 6.48, against a binomial reference of
+6.12 (86%). My floor is not anomalous under either reading.
+
+**Two controls, installed rather than resolved.** `tools/noise-floor.py` now carries
+unit-bearing names (`sd_net_swept`, `sd_wins`, `sd_win_minus_loss`) and **asserts
+`SW − SL == wins − N` on every run**, refusing to report if it ever fails. `tools/gate-read.sh`
+already computed the same identity independently and prints `OK (wins-N=…, SW-SL=…)` per
+opponent — so two tools written days apart agree, which is the reconciliation doctrine 5 asks
+for rather than a single tool trusted twice.
+
+One thing worth keeping: I declined to ship `alice_phase` on the grounds that **a margin needs
+a mechanism**, and that decision is correct under *either* unit reading. The arithmetic sharpens
+the report; it was never what made the call.
