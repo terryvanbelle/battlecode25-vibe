@@ -11443,3 +11443,79 @@ Five iterations of economics have produced one accept. The next one goes at the 
 - `src/carol_i41_a` and `src/carol_i41_b` stay in the tree as a documented negative result: a fully
   working SRP implementation, so a future session can tell "we never tried it" from "we tried it
   and it did not pay".
+
+---
+
+# Iteration 42 — RADIAL EXPLORATION, and the first run evaluated as a CENSUS
+
+## Adopting doctrine 1: sampled runs find a SHAPE, the full corpus fixes a LEVEL
+
+The coordinator has settled the standard-error question. The engine is deterministic, so the only
+randomness in this apparatus is **which maps were drawn** — one lineage decomposed it (sd 0.58
+within a shared map sample against 3.37 across samples), another ran a 150-game census twice and
+got 150/150 identical games. Run the whole corpus and the sampling term is not reduced, it is gone:
+a census does not estimate the population, it **is** the population.
+
+This lands squarely on my last two verdicts. I rejected iteration 41 on a disjoint replication —
+27/50 then 22/50, pooled 49/100 — which was the right instinct and cost me a **second 50-game run**
+to reach. A census would have answered it once, exactly. And my accepts at 28/50 that I
+deliberately rested on covariates rather than the margin: those margins sat inside a ±3.5 band, so
+the caution was not merely prudent, it was necessary.
+
+Note also that this does **not** conflict with my charter's ban on hand-picked map lists. The
+charter forbids a *standing subset* because accepted iterations drift toward it. The full 75 is not
+a subset — **you cannot overfit to the population**, and it is the same corpus the tournament
+judges on.
+
+**So iteration 42 is evaluated on all 75 maps, both sides, 150 games, against `carol_iter36`.**
+
+## Gate for a census — different in kind, and pre-registered
+
+There is no sampling error to clear, so the gate is not a noise threshold:
+
+- **ACCEPT at > 75/150** — a strict majority of the corpus, which for a census is an exact
+  statement about the population rather than an estimate of one.
+- **REJECT at <= 75/150.**
+- No unresolved band, because the band existed only to hold sampling noise.
+
+I will report swept maps as the **free mechanism test** the coordinator points out: byte-identical
+code splits every map by spawn side, so on a census *any* sweep at all proves the change did
+something.
+
+## The hypothesis and the pre-flight
+
+`newExploreTarget()` samples four uniformly random map coordinates and keeps the farthest. It
+biases outward but its DIRECTION is random, so on arrival a soldier picks another random far point
+— often back across the board — and spends the crossing walking over ground that is already ours.
+Iteration 42 gives each soldier a fixed heading from its ID, runs it to the map edge, and advances
+to the NEXT sector on arrival rather than re-drawing at random, so the fleet fans out and no
+soldier re-crosses the territory it just left.
+
+**Pre-flight on `TheBest` (60x60), link 1 only, and it is the largest mechanism effect I have
+measured in this lineage:**
+
+| | `carol_iter36` | `carol_i42_a` |
+|---|---|---|
+| IDLE-ALLY (idle inside our own paint) | **71.0%** | **6.8%** |
+| IDLE-ENEMY | 10.2% | 0.3% |
+| **turns actually painting** | **5.7%** | **28.4%** |
+
+Idleness inside our own territory falls by a factor of ten and productive turns rise five-fold.
+The candidate also won that game at round 769, which I am **not** counting as evidence — one game
+is a mechanism check, and after this afternoon I am particularly clear about that.
+
+## Doses
+
+`carol_iter36` (zero arm) / **`carol_i42_a`** (all soldiers radial, primary) / `carol_i42_b` (half
+the fleet). The census runs the primary against the incumbent to fix the level; the half dose is
+held for a shape run if the level is worth resolving further.
+
+## Weak link named in advance
+
+**Radial headings send soldiers to the map EDGE, and the paint tether does not care about my
+geometry.** Iterations 38 and 39 both died by moving units relative to their refill anchors. A
+soldier that commits to a heading walks away from towers by construction, so the failure I expect
+is soldiers stranded at the perimeter at zero paint. Measured: `starved` turns and soldier deaths,
+and **the falsifiable version — if this fails the way 38/39 did, deaths and starvation will rise
+against the incumbent while coverage does not.** If instead coverage rises and starvation is flat,
+the tether is not the binding constraint on soldiers the way it was on splashers.
