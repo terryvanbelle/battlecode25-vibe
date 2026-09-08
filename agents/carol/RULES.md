@@ -86,6 +86,19 @@ you rely on to escape.
   Mopper transfer: give/take paint with ally robots AND towers (withdraw = negative amount),
   r²=2, +10 cooldown. All robots can withdraw from towers; only moppers transfer robot→robot
   and refill towers.
+- **`transferPaint` range is r²≤2 for EVERY unit type, NOT the unit's action radius**
+  [E, iteration 38]. `assertCanTransferPaint` calls `assertCanActLocation(loc, 2)` with a
+  **hardcoded literal 2**; the action-radius column above (soldier 9, splasher 4, mopper 2)
+  governs *attacks* only. So a soldier can attack a tower from r²=9 but must stand within
+  r²=2 — the 8 surrounding tiles — to draw paint from one. **A unit can never top up in
+  passing; it must physically walk to touch a tower.** Worth stating loudly because the
+  mismatch between `senseNearbyRobots(2, ...)` in a refill helper and a soldier's r²=9 looks
+  exactly like this lineage's most productive bug class (a gate narrower than its mechanism,
+  which iterations 30/35/36 all were) and is not one. The remaining preconditions are
+  `assertIsActionReady`, a robot present, not self, non-zero amount, same team, the *caller*
+  not a tower ("Towers cannot transfer paint!"), withdrawal only from towers ("Paint can only
+  be withdrawn from towers!"), giving to a non-tower ally only as a mopper, and both stashes
+  sufficient.
 - **No unit damages enemy robots' HP directly.** Robot attrition = tower fire + paint
   starvation. Paint denial is the combat mechanic.
 

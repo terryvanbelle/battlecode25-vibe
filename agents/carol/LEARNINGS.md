@@ -1418,3 +1418,35 @@ set, which resampling at least dilutes.
    counts carry that the margin does not, and it is descriptive.
 4. **Quote the sd distance from `tools/map-resample.py` in every verdict.** The line was always
    printed. Not reading it is what this entry is about.
+
+## `p` in the replay dump counts painted TILES, not painting units — caught by an impossible ratio
+
+Building the splasher-utilisation counter I printed a "soldier paint rate" of **3163%** of one
+paint per soldier-turn. An impossible number is a gift: it cannot be argued with, only explained.
+
+The dump line reads `sold0 spl9 ... acts[p707 u0 a33 s73 m0]` — 707 paints on a round where the
+team fielded **zero soldiers**. `p` counts `PaintAction`, and the engine emits one per *tile*, so
+a splasher's ~10-tile disc registers as ~10 paints (707/73 = 9.7, which is the splasher disc).
+`p` is a tile counter that no unit owns.
+
+Two things worth keeping:
+
+- **The denominator was mine, the numerator was the engine's.** I divided a tile count by a unit
+  count and called it a per-unit rate. Every number in that column was meaningless, and the ones
+  that were *not* obviously impossible — 19.4%, 17.4% — looked entirely plausible and would have
+  been quoted. Only the rows where the population went to zero exposed it.
+- **The splasher column next to it was fine**, because `s` counts splash *actions* and `spl`
+  counts splashers, and both are per-unit. Same table, same shape, one column valid and one not.
+  A ceiling is what told them apart: splash utilisation has an exact engine ceiling (0.2/round
+  from the +50 cooldown) and sat sensibly under it, while the soldier column had no ceiling I had
+  bothered to write down, so nothing flagged 3163% except my reading it.
+
+**Rule: give every rate an explicit ceiling before you print it.** A rate with no stated maximum
+cannot be sanity-checked, and the one in this table was wrong by a factor of 30.
+
+## The late game is all splashers and no soldiers, and I had never looked
+
+Same dumps, incidentally: on Castle at round 1800 both teams field `sold0 spl9`. Carol converges
+to an **all-splasher late game with zero soldiers alive** — and only soldiers call `workOnRuin`,
+so from that point on the bot cannot claim another ruin at all. Not acted on this iteration
+(iteration 38 is already committed to one mechanism), recorded so it is not re-discovered.
