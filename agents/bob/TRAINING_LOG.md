@@ -9549,3 +9549,57 @@ one call — LEARNINGS 38's smaller instance, now with figures.
 
 **This also removes the reason iteration 25 gave for not expecting gains from more towers**, and more
 towers is exactly what better ruin discovery would buy.
+
+---
+
+## Iteration 28 — PRE-REGISTERED: share ruin locations over the messaging mechanic
+
+**Why this and not the mopper share.** The API sweep found messaging entirely unused; the
+channel-sizing probe found both links open (100% broadcast, 93-100% soldier→tower when a tower is in
+vision) and the demand enormous (soldiers idle with no ruin target for whole lifetimes). And it is
+the literal re-open condition I wrote for iteration 13 — *"a non-movement way to find ruins"* — for a
+direction closed because **soldier movement is this bot's scarcest capability.** Per LEARNINGS 37 a
+50-game arm cannot resolve a small effect, so an unused mechanic is where a resolvable one can live.
+
+**Mechanism (one idea, two halves).**
+- *Tower*: ingests ruin sightings from its own vision (unclaimed ruins only) and from messages,
+  keeps 12, and each turn broadcasts one round-robin to the tower mesh (r²≤80, no connectivity) and
+  pushes it to allied soldiers in vision (capped at 15 sends, under the 20/turn tower limit).
+- *Soldier*: reads messages; in `chooseRuin`, when **nothing unclaimed is visible**, adopts the
+  hinted ruin instead of falling through to `Nav.wander()`.
+
+Encoding `1 + x*64 + y`; 0 means nothing.
+
+**Dose: `HINT_MAX_D2`, how far a soldier will travel for a hint.** Arms `bob_h0` (0), `bob_h1` (400),
+`bob_h2` (1600), `bob_h3` (6400), one shared 25-map sample, 200 games.
+
+**`bob_h0` is an exact zero arm, and deliberately so**: at 0 the hint is still read and broadcast but
+never *accepted*, so `chooseRuin` returns the same answer and `Nav.wander()` is reached on exactly
+the same turns — which keeps each robot's PRNG in phase. That is LEARNINGS 35 applied at design time
+rather than discovered by a void. All comm machinery runs in every arm, so the **only** thing that
+varies across arms is the acceptance radius.
+
+**Pre-flight checks already run** (a new mechanism can fail silently): one full game, **zero
+exceptions** (`EXC`/`GAE` both 0 — each would cost 500 bytecode) and **zero bytecode overruns**, with
+towers rising only 590→736 of 20,000 (3.7%) and soldiers at 1,736 of 17,500 (9.9%).
+
+**Gates.**
+- **Void** if `bob_h0` is not 25/50 with all 25 maps split.
+- **Accept** per the tightened rule fixed earlier today: margin **>= +7 (32/50, 2 se)** → accept-
+  eligible on this sample, then the frozen roster (`bob_iter0`, `bob_iter1`, `bob_iter11`,
+  `examplefuncsplayer`, `bob_iter20`; none regressing by more than 3, and I quote the **weakest**
+  rung). Margin **+5/+6** → replication on a fresh sample before accepting. **<= +4** → reject.
+- **Manipulation check** to be run *whichever way the headline falls*, per the rule adopted today: a
+  counter build measuring how often a soldier actually **adopts** a hint. If that is ~0 the dose does
+  not exist and the run voids regardless of the number. The dose-response across three radii is a
+  weaker cross-check of the same thing, not a substitute.
+
+**Prediction.** Monotone increasing from 0 through 1600, because a longer acceptance radius converts
+more idle wandering into directed travel — then **flattening or falling at 6400**, where a soldier
+crosses most of the map for a ruin that will usually be claimed before it arrives. So: **interior
+peak at 1600, with 6400 at or below it.**
+
+**A failure mode I can see now and am recording before the run**, so it cannot become a
+post-hoc rescue: the hint is a *single most-recent* location, so every soldier in a tower's range
+receives the same one and may pile onto one ruin. If the effect is negative, that is the first thing
+to check, and the fix is a per-soldier spread (round-robin per recipient), not abandoning the idea.
