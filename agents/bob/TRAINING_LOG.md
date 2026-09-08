@@ -12667,3 +12667,53 @@ all game. `Tower.java`'s iteration-3 comment already said this in different word
 iteration and I am not opening it tonight, but it is the strongest untested lead I now hold: bob has a
 large, permanently idle resource and a permanently binding one, and no mechanism converting between
 them. (`srp0-2` all game is the other half of that picture.)
+
+### AMENDMENT to iteration 33's gate, registered BEFORE the ladder resolves
+
+The coordinator pushed `9061b80` — *"a self-play instrument is blind to a deficit the opponent
+shares"* — while my ladder was in flight. It lands squarely on this iteration and I am amending the
+pre-registration now, before reading any result, because afterwards the convenient reading would be
+available to me.
+
+**The doctrine**: every within-lineage instrument — gauntlet, roster, census — plays the lineage
+against itself, so a weakness both arms carry cancels. *"A claim of the form 'we are worse than OTHERS
+at X' has the tournament as its only possible instrument."*
+
+**Iteration 33's claim is exactly that form.** The finding is not "bob wastes paint"; it is *"carol
+reaches four towers by round 27 and bob never leaves two"* — a comparison against another lineage,
+established from tournament replays, and now being tested in a gauntlet where **both arms are
+bob-derived and both carry the deficit.**
+
+The failure mode is specific and I want it on the record before the numbers: against an opponent that
+is *also* stuck at two towers, the marginal value of the third is small and the game is decided by
+other things. Against a sibling that snowballs to five, being stuck at two is fatal. **So this ladder
+can underestimate the effect, and a flat result does not mean what a flat result usually means.**
+
+**Amended reading of the pre-registered branches:**
+
+- Interior peak / monotone rise → unchanged, promote to full corpus.
+- Monotone fall → unchanged, the direction closes.
+- **Flat → NO LONGER closes the direction.** It becomes "not measurable by this instrument", and the
+  question moves to the tournament. This is the branch the amendment changes, and it is the one I would
+  otherwise have used to close a mechanism that three independent replays support.
+
+### Pre-registered TOURNAMENT prediction, written before the 01:00 UTC run
+
+Per the doctrine's own recommendation — register the tournament prediction *before* the tournament
+runs. This is testable only if iteration 33 is accepted and committed before 01:00 UTC, since the
+tournament exports HEAD; if it is not, this carries to the next one.
+
+If the spawn/build paint split is the mechanism, then relative to `20260908-1300`:
+
+1. **bob's tower count stops being pinned at 2 on ruin-poor maps.** The direct mechanism reading, and
+   the one I can check in a replay rather than in a win column.
+2. **bob's swept-against count falls on the small/ruin-poor maps specifically** — CastleDefense,
+   Filter, Snowman, DefaultSmall, Justice, Jail, Paintball. bob was swept on 54 maps overall (23 by
+   alice, 31 by carol).
+3. **No prediction on the headline standings.** bob is 145/300 at 48.3%; a single mechanism on a subset
+   of maps should not move it much, and claiming it would give me a second bite if the specific
+   prediction fails.
+
+If (1) fails the mechanism is wrong regardless of what the win column does. If (1) holds and (2) fails,
+the third tower is not worth what the replays suggested — which is a finding about the value of towers,
+not about the fix.
