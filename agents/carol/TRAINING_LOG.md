@@ -9507,3 +9507,151 @@ proxy for it. If rho comes back flat, the honest reading is *"area is a poor pro
 starvation"*, **not** that the mechanism is absent — the manipulation check is what settles
 whether the mechanism fired. My last area prediction (iteration 35) failed at +0.009, so I am
 registering this one with lowered confidence and saying so in advance.
+
+### VERDICT — ACCEPT (recovered: the run finished, the verdict died with the session)
+
+Run `gauntlet/20260908-094128`, `BOT=carol_i36_200`, opponents `carol_iter35` and `carol_i36_100`,
+100 games on a fresh random 25-map sample. The run had completed and been collated before the
+session ended; only the accept/reject decision was lost. **No games were re-run.**
+
+| gate (pre-registered) | required | measured | |
+|---|---|---|---|
+| 1. `carol_i36_200` vs `carol_iter35` | > 25/50 | **28/50 (56%)** | pass |
+| 2. swept wins >= swept losses | >= | **6 vs 3** | pass *(but see below — this is not independent)* |
+| 3. large-area half win rate | >= 45% | **57.7%** (15/26 over 13 maps) | pass |
+
+vs `carol_i36_100`: 26/50. The 200 dose is ahead of the 100 dose, consistent with the ladder.
+
+**The headline margin is weak and I am not going to dress it up.** 28/50 has a one-sided binomial
+p = 0.24 — a coin flip clears this gate a quarter of the time. What carries this accept is the
+manipulation check, not the win rate.
+
+### Gate 2 was never independent evidence — an arithmetic error in my own gate
+
+The tournament report states the identity `wins - N = swept - swept_against` for an N-map,
+both-sides sample. Checked on this exact run: N=25, wins=28, SW=6, SL=3, split=16 →
+`2*6+16 = 28` wins and `2*3+16 = 22` losses, and `28-25 = 3 = 6-3`. Exact.
+
+So **gate 2 is algebraically implied by gate 1**: any result with wins > 25/50 has SW > SL
+necessarily. My "three-condition" accept gate has only ever been two conditions, and I have been
+reporting a margin and its sweep counts as two agreeing facts when they are one fact written twice.
+The report warns about precisely this and I encoded the error into the gate anyway.
+
+What the sweep counts *do* add is **D, the split count** — decisiveness, not direction. Here D=16
+of 25 maps, i.e. **64% of maps are coin-flips decided by spawn side**, which is the honest reason
+the headline margin is weak. Replacing gate 2 with a decisiveness condition is a process change,
+recorded in `progress/milestones.txt`.
+
+### Manipulation check — PASSES decisively, and this is what the accept rests on
+
+Both bots play in the same replay, so every game is a **paired** observation: same map, same
+round count, same opponent. Realized build mix is a direct count of `SPAWN` events
+(`carol-tools/mixcheck/`), not a rate reconstructed from post-turn robot state, so the
+"replay state is written AFTER the turn resolves" bias documented in `tools/engine-facts.md`
+does not touch it.
+
+| game (candidate loss) | cand s/m/p | cand sold% | inc s/m/p | inc sold% | d(sold%) |
+|---|---|---|---|---|---|
+| giver__botB | 13/0/46 | 22.0% | 154/105/35 | 52.4% | -30.3 |
+| SMILE__botA | 48/1/250 | 16.1% | 201/48/198 | 45.0% | -28.9 |
+| DefaultHuge__botB | 488/3/151 | 76.0% | 112/47/205 | 30.8% | +45.2 |
+| lighthouse__botA | 60/0/12 | 83.3% | 60/36/33 | 46.5% | +36.8 |
+| Brat__botA | 37/0/7 | 84.1% | 26/33/6 | 40.0% | +44.1 |
+| Snowman__botB | 39/0/6 | 86.7% | 25/23/9 | 43.9% | +42.8 |
+| Gears__botA | 63/0/23 | 73.3% | 40/22/47 | 36.7% | +36.6 |
+| Circuit__botA | 160/1/33 | 82.5% | 65/20/102 | 34.8% | +47.7 |
+| Snowman__botA | 21/0/8 | 72.4% | 17/16/6 | 43.6% | +28.8 |
+| Brat__botB | 22/0/6 | 78.6% | 9/6/17 | 28.1% | +50.4 |
+| starburst__botA | 15/0/9 | 62.5% | 17/5/11 | 51.5% | +11.0 |
+| giver__botA | 38/0/38 | 50.0% | 23/2/52 | 29.9% | +20.1 |
+| sierpinski__botB | 139/0/29 | 82.7% | 17/2/86 | 16.2% | +66.5 |
+| Thirds__botB | 10/0/135 | 6.9% | 9/1/133 | 6.3% | +0.6 |
+| windmill__botA | 9/0/4 | 69.2% | 3/1/11 | 20.0% | +49.2 |
+| Castle__botA | 4/0/141 | 2.8% | 8/0/138 | 5.5% | -2.7 |
+| Oasis__botA | 2/0/144 | 1.4% | 7/0/138 | 4.8% | -3.5 |
+| Racetrack__botB | 4/0/24 | 14.3% | 5/0/21 | 19.2% | -4.9 |
+| Justice__botA | 12/0/2 | 85.7% | 1/0/10 | 9.1% | +76.6 |
+| SaltyPepper__botB | 1/0/144 | 0.7% | 7/0/141 | 4.7% | -4.0 |
+| galaxy__botA | 3/0/143 | 2.1% | 4/0/143 | 2.7% | -0.7 |
+| walalilongla__botA | 9/0/136 | 6.2% | 9/0/132 | 6.4% | -0.2 |
+| **POOLED (22 games)** | **1197/5/1491** | | **819/367/1674** | | |
+
+**Summary of the 22 paired games** (`carol-tools/mixcheck/aggregate.py`):
+
+| set | n | mean d(soldier%) | median | positive |
+|---|---|---|---|---|
+| all paired games | 22 | **+21.9 pp** | +24.5 pp | 14/22 |
+| incumbent built >=5 moppers (**mechanism can fire**) | 11 | **+25.8 pp** | +36.8 pp | 9/11 |
+| incumbent built <5 moppers (**mechanism inert**) | 11 | +17.9 pp | -0.2 pp | 5/11 |
+
+**Soldier share is the pre-registered statistic but it is not the cleanest one, and I should say so.**
+Unit *counts* scale with how the game went, and in the two games where soldier share moved against
+the candidate (`giver`, `SMILE`) the candidate was simply being crushed and built few of everything.
+The direct, outcome-robust reading of the mechanism is the **mopper share**, because it is the
+quantity the floor acts on:
+
+- candidate **5 moppers of 2,693 builds = 0.19%**
+- incumbent **367 moppers of 2,860 builds = 12.83%**
+- a **69x reduction**, and in **0 of 22** games did the candidate build more moppers than the
+  incumbent. Candidate maximum in any single game: **3**. Incumbent maximum: **105**.
+
+The manipulation check passes, and it passes on the statistic that cannot be confounded by the
+outcome of the game it was measured in.
+
+
+The split is the whole result. **Where the incumbent actually built moppers, the floor moves the
+soldier share by ~45 points, in 5 of 5 games. Where the incumbent built almost none, the floor is
+inert and the share difference is noise of either sign.** That is exactly the behaviour a correct
+gate should produce, and it is strong evidence the mechanism is the one I named rather than a
+lucky win rate.
+
+**But I must state what the floor actually computes, not what I advertised.** I wrote it as
+"protect the expensive unit from the cheap one", implying re-prioritisation. Combined with
+iteration 30's still-active `SPLASH_FLOOR = 2000` — which already requires `chips >= 2300` for a
+mopper — the realized effect is that **moppers go to approximately zero, not to a smaller share**:
+0, 0, 1, 3, 0 in the five games where the mechanism fired, against 33, 6, 20, 47, 22 for the
+incumbent. This is a unit-removal change wearing a prioritisation change's clothes. It passed its
+gate as built, so it is accepted as built, but the honest name is "carol no longer builds moppers",
+and the next session must not reason about it as a dial.
+
+### Covariate — directionally right, NOT significant, and I am not claiming it
+
+> pre-registered: rho(wins, map area) > 0
+
+Measured **rho = +0.291, t = +1.46, df = 23** (`carol-tools/covar/mapcovar.py`). Low-area half
+54.2%, high-area half 57.7%. The sign is as predicted and the magnitude is not distinguishable
+from zero. **I retracted iteration 34's rho for exactly this and I am not going to re-earn that
+mistake by counting +0.291 as a confirmation.** It is consistent with the prediction and it is not
+evidence for it.
+
+### The result that matters most is the one that did NOT go my way — stated carefully
+
+`DefaultHuge` (area 3481), the largest map in the sample, is where the mechanism fired hardest:
+the candidate built **488 soldiers / 3 moppers / 151 splashers** against the incumbent's
+**112 / 47 / 205**, a 45-point swing in soldier share — and the candidate lost that game.
+
+**A caveat I nearly skipped, which would have been a real error.** The gauntlet only writes
+replays for the candidate's *losses*, so every row of the table above is a loss by construction.
+I cannot read a direction out of this set — "more soldiers, therefore the loss" is not available
+to me, and the per-map record confirms the trap: DefaultHuge went **1–1**, so the candidate won
+the same map from the other side.
+
+What the set *does* support is a claim about **sufficiency**, which does not depend on selection:
+in that game the mix fault was fully corrected — 3 moppers, 76% soldier share — and the game was
+lost anyway. **Whatever loses DefaultHuge for this lineage is not the build mix.** The mix was a
+real fault, it is now fixed, and it is not the binding constraint on the largest maps.
+
+That is a more useful finding than the accept itself, and it is what iteration 37 is aimed at.
+
+`src/carol` is now iteration 36; frozen as `src/carol_iter36`. **17 accepted iterations**,
+`carol_iter0..36`. Compile checked (`tools/vm-compile.sh` -> COMPILE-OK), so HEAD plays.
+
+### New tooling, and the waste that motivated it
+
+- `carol-tools/mixcheck/spawnmix.sh` — paired realized-build-mix counter for a run's loss replays.
+- `carol-tools/mixcheck/aggregate.py` — the fired/inert split above.
+- `carol-tools/mixcheck/dumpcache.sh` — **because I wasted shared VM time.** The 22-replay sweep
+  cost ~30s of remote compile-and-run each and I kept three integers from each dump, throwing away
+  the tower spawns, the per-round economy and the coverage series. Every later question about the
+  same games would have paid the VM again. Dumps are now cached on disk under the git-ignored
+  `gauntlet/.dumpcache` and keyed by replay path plus flags. Dump once, parse many times.

@@ -11,4 +11,4 @@ e6ad3ae|split a losing bundle to ablate the baseline for free
 4af02c2|resampling sign convention pinned in the tool, not in a note the reader must recall
 1eb2e1f|probes self-limit on Clock.getBytecodesLeft() -- an overrun makes numbers unreadable
 33bf800|closed the paint accounting: discarded attacks found
-d28ec3f|stratify every accept gate by map area (external data shows rho=-0.546 vs area)
+0ef9308|stratify every accept gate by map area (external data shows rho=-0.546 vs area)

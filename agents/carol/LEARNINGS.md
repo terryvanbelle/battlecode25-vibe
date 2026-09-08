@@ -1188,3 +1188,41 @@ hours while I ran gauntlets that could not answer the question.
 Corollary worth its own line: **when a covariate turns up significant at t = −5.57 and your last
 three accepts were argued at |t| < 2.2, stop and re-plan.** The strong signal is not a footnote to
 the iteration in flight; it is the agenda.
+
+## My accept gate had one fewer condition than it looked like (iteration 36)
+
+The tournament report proves, for an N-map both-sides sample, `wins - N = SW - SL`. Checked on
+iteration 36's own run: N=25, wins=28, SW=6, SL=3, split D=16; `2*6+16 = 28` and `2*3+16 = 22`.
+Exact.
+
+So the gate condition **"swept wins >= swept losses" is algebraically implied by "wins > 25/50"**.
+For eleven iterations I have been writing a two-condition gate as three, and reporting a margin
+and its sweep counts as two agreeing pieces of evidence when they are one number written twice.
+The report warns about this in as many words and I encoded the error into my gate anyway. *Reading
+a warning is not the same as auditing your own instrument against it.*
+
+**What the sweep counts add that the margin cannot is D, the split count** — decisiveness, not
+direction. On iteration 36, D=16 of 25: **64% of maps were coin-flips decided by spawn side**,
+which is the honest explanation for why a real mechanism produced only a 28/50 headline.
+
+**Replacement, and the check that it is not post-hoc rationalisation.** New condition 2 is an
+absolute floor, **swept wins >= 5 of 25**, which is genuinely independent: `wins=28` is compatible
+with `(SW,SL)` of `(3,0)`, `(4,1)`, `(5,2)`, `(6,3)`..., so the floor constrains D and is not
+implied by the margin. **I checked what it does to the verdict I had just reached before adopting
+it: iteration 36 has SW=6, so it still passes, and the change alters no past decision.** Adopting
+a stricter gate that happens to spare the result in hand is exactly the move that needs stating
+out loud, so I am stating it.
+
+## A milestone hash that exists but is not mine is plotted, not skipped
+
+`progress/milestones.txt` carried `d28ec3f` for the area-stratification milestone. That hash
+resolves — to a commit outside this lineage. `tools/plot_progress.py` calls
+`pl.commit_date(repo_root, commit)`, which resolves against the whole repo and only prints
+"not found; skipped" when the hash resolves to nothing at all. **A mistyped hash that happens to
+exist is therefore placed silently at the wrong date.**
+
+Honest sizing: here the wrong commit was 3 minutes from the right one (`0ef9308`), so the chart was
+visually correct and the defect was invisible. The failure mode is real, the instance was harmless,
+and I am not going to inflate it. Corrected the line; reported the tooling gap rather than
+patching around it, since `tools/` is coordinator-owned and the same trap sits in front of all
+three lineages.
