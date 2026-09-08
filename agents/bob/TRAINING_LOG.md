@@ -12717,3 +12717,46 @@ If the spawn/build paint split is the mechanism, then relative to `20260908-1300
 If (1) fails the mechanism is wrong regardless of what the win column does. If (1) holds and (2) fails,
 the third tower is not worth what the replays suggested — which is a finding about the value of towers,
 not about the fix.
+
+### SECOND amendment to iteration 33, also before any result: the ladder is POWER-LIMITED by map composition
+
+Ran the power arithmetic I should have run before launching, and it changes how the ladder must be
+read. The reserve can only bind where the tower stash actually runs dry, which the replays put on
+ruin-poor maps (`twPaint` 50-300 on CastleDefense/Filter, versus 1,000-3,200 on ruin-rich Money where
+bob reaches 15 towers and is fine). So the corpus splits:
+
+```
+  claimable ruins   maps    share
+      <= 6            4       5%
+      7-9             8      11%     <- <=8 ruins: 12 of 75 maps = 16% of the corpus
+     10-14           19      25%
+     15-24           31      41%
+     25+             13      17%
+```
+
+**16% of the corpus, but 7 of my 13 fastest tournament sweep-losses** — CastleDefense, DefaultSmall,
+Filter, Jail, Justice, Paintball, catface. A **3.4x enrichment**: the maps where the mechanism can fire
+are the maps I lose worst on.
+
+For this run's drawn sample (fixed before any outcome was known, by a ruin-count criterion that lives
+in a file written before I looked):
+
+```
+  Justice 8,  roads 8,  DefaultSmall 8,  catface 6   ->  4 of 25 maps,  8 of 50 games per arm
+```
+
+**Eight games per arm is where the whole effect has to show up, inside a 50-game arm whose resolution
+is ~14 points.** Even a mechanism that flips all four maps from sweep-loss to sweep-win moves the
+headline by at most +8. **The ladder is structurally unable to resolve this at the headline**, and that
+is a property of the design, not of the result.
+
+**Third pre-registered read, defined now:** the paired per-map outcome restricted to those four maps.
+The subset is outcome-independent — it is fixed by ruin count, the criterion predates the draw, and I
+am writing the four names down before the games finish. Eight games is descriptive only and gates
+nothing; it exists so that a flat headline can be distinguished from a flat mechanism.
+
+**Combined with the first amendment, the honest position before the numbers arrive is:** this ladder
+is most likely to read flat, flat now means "instrument cannot see it" rather than "mechanism absent",
+and the decision will rest on the subset read, the tower-census mechanism reading, and the tournament.
+I am recording that expectation now precisely so that a flat result cannot later be told as a clean
+close, and a positive one cannot be told as a clean win.
