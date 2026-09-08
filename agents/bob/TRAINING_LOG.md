@@ -11825,3 +11825,96 @@ another's. That also sharpens my own caveat from earlier: I flagged that 4.80 is
 *self-play* arms and may not hold when the two sides are different bots. If the floor varies this much
 between two bots that are merely *different lineages*, the case for it varying between a baseline and a
 structurally different candidate is stronger, not weaker. **My +10 gate stays, and stays provisional.**
+
+---
+
+## Symmetry-inference probe — the timing headline says BUILD, the denominator says DON'T. Per-robot full resolution FAILS its gate.
+
+Four verbose matches (`bob_symprobe` vs `bob` on Leaf, DefaultHuge, catface, DefaultSmall), evaluated by
+`bob-tools/sym_eval.py`, which was written and committed **before** the probe ran.
+
+### 1. Correctness first, as registered — and it is perfect
+
+```
+engine symmetry=0  ->  probe says 0, 47 robots   100%
+engine symmetry=1  ->  probe says 1, 299 robots  100%
+engine symmetry=2  ->  probe says 2, 113 robots  100%
+```
+
+**459 of 459 robots correct, on all three symmetries.** The inference is sound. This mattered to check
+first: fast-and-wrong is indistinguishable from working in the output, which is how "1% of capacity"
+survived four days.
+
+**Permanent engine fact, now pinned down** (and per LEARNINGS 47 this is the kind that does not expire):
+the bijection is the **identity**, so the engine's `MapSymmetry` ordinals are
+
+```
+0 ROTATIONAL  (x,y) -> (W-1-x, H-1-y)
+1 HORIZONTAL  (x,y) -> (x,     H-1-y)     i.e. HORIZONTAL mirrors the Y coordinate
+2 VERTICAL    (x,y) -> (W-1-x, y    )     i.e. VERTICAL   mirrors the X coordinate
+```
+
+The `HORIZONTAL`/`VERTICAL` naming is the ambiguous one I refused to guess at when writing the probe.
+It is now measured rather than assumed, and it is the *opposite* of the reading I would have picked.
+
+### 2. Timing — and the number that actually decides it
+
+```
+map            robots resolved   median life   p90
+DefaultHuge                299            70   252
+DefaultSmall                47            21    65
+Leaf                        88            39   154
+catface                     25            41    69
+ALL                        459            51   231
+```
+
+Median resolve-life **51 rounds**, which trips my pre-registered "**<= 100 -> BUILD THE TREATMENT
+ARM**". **That reading is wrong, and my own script said why before it ran:** the median is conditional
+on resolving at all, and robots that never resolve cannot appear in it. Against the spawn counts from
+the same replays:
+
+```
+type       spawned resolved      rate
+SOLDIER       1177      243     20.6%
+SPLASHER      1065      155     14.6%
+MOPPER         529       61     11.5%
+ALL           2771      459     16.6%
+```
+
+**Five robots in six never resolve the symmetry at all, and moppers — the unit the whole treatment was
+for — resolve 11.5% of the time.** The pre-registered third condition, *"frequently never resolves"*,
+is the one that is met.
+
+### VERDICT: the per-robot, full-resolution form is CLOSED, by my own rule
+
+I wrote: *"Frequently never resolves — the direction is dead in its per-robot form and needs shared
+state to live. Shared state means comms, which is a closed direction (28c, 3 attempts). Then I close it
+and say so, rather than re-opening comms through the back door."* That is the situation. **Closed, and
+no comms.**
+
+Cost: four probe matches and no gauntlet. Had I trusted the median — the number my own pre-registration
+told me to distrust — I would have built a treatment arm and spent 150 games discovering that it fires
+for one mopper in nine.
+
+**Towers are not the escape hatch either**, and the reason is geometric rather than empirical: a tower
+is stationary, so its 69-tile vision disc never moves, and it can only ever eliminate a hypothesis
+whose axis happens to cut its own disc. Long life does not help when the observations never change.
+Pre-registered option 2 ("attach it to towers") is therefore closed by inspection, not deferred.
+
+### One genuinely new idea, flagged as NEW rather than smuggled in as a rescue
+
+**Full resolution is not actually required.** With 2 of 3 hypotheses alive a robot has two candidate
+enemy regions; with 3 alive it has three — and all three images of its own position lie away from its
+own corner. Steering by the *current candidate set* rather than waiting for a unique answer would fire
+on **100%** of robot-turns instead of 16.6%.
+
+I am recording this as a **separate hypothesis requiring its own pre-registration**, not as a
+continuation of the one that just failed — because "the mechanism failed, but a variant of it might
+work" is exactly the reasoning that produced ruin-hint-sharing attempts 2 and 3, and I would rather
+name the pattern than repeat it. It also inherits an unmeasured assumption: that the images of a
+robot's own position are useful targets *before* the set narrows, which the probe did not test and
+which is not obvious on a map whose symmetry is rotational versus reflective.
+
+**What survives regardless:** `Sym.java` is correct, cheap, and now validated at 459/459 — so whenever a
+mechanism does need the symmetry, the inference itself is built and does not have to be re-derived or
+re-trusted.
