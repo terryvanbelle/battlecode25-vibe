@@ -8756,3 +8756,101 @@ than what the bot does. It must be a synthetic archetype I write; **a BC25 final
 a yardstick and never an opponent, and must never enter `roster_extra.txt`** — AGENT.md names that
 exact file as the trap, precisely because a never-changing external bot is what a frozen yardstick
 looks like.
+
+## Iteration 33 — REJECT at 24/50, and the trace says paint is binding for the third time
+
+Run `20260908-063927`, fresh random 25-map sample, 100 games.
+
+| arm | result | swept-win | swept-loss | split |
+|---|---|---|---|---|
+| `carol_i33` vs **`carol_iter30`** (the accept gate) | **24/50 (48.0%)** | 3 | 4 | 18 |
+| `carol_i33` vs `carol_iter25` (peer check) | 47/50 (94.0%) | 22 | 0 | 3 |
+
+**Fails the pre-registered gate** (`> 50%` required). The peer check is strong and one-sided, so
+this is **not** a general regression — the bot is intact, the change simply does not pay.
+
+**The mechanism engaged, so this is a real rejection and not a void iteration.** The §4 engagement
+check passed before the run was bought: the redirect fired on **94.7%** (Parking_lot), **64.3%**
+(DefaultLarge) and **21.4%** (gridworld) of IDLE-ENEMY turns, and 7 maps were swept (3–4), so games
+genuinely changed.
+
+### Why it lost, from both teams inside ONE game
+
+`Snowglobe` was a swept loss and the replay carries both arms, so the comparison is exact rather
+than cross-run. T1 = `carol_i33`, T2 = `carol_iter30`, same map, same game:
+
+| round | | coverage | **tower paint** | paint acts (that window) | starved |
+|---|---|---|---|---|---|
+| 200 | `carol_i33` | **318m** | **520** | **724** | 4 |
+| 200 | `carol_iter30` | 242m | **2,312** | 526 | 7 |
+| 400 | `carol_i33` | 290m *(fell)* | **418** | 521 | **22** |
+| 400 | `carol_iter30` | **390m** | **1,379** | **855** | 13 |
+
+**The mechanism worked exactly as designed and that is what beat it.** Un-gating found soldiers
+more empty ground, so they painted more — 724 acts to 526 in the first 200 rounds — and took a
+76m coverage lead. Paying for it drained the tower stash to **520 against 2,312**, a 4.4× deficit.
+From there production collapsed: by round 400 the candidate had *less* coverage (290 vs 390), was
+painting *less* (521 vs 855), and had **22 starved robots against 13**. Early coverage is not
+durable — it gets painted over — while tower paint is what funds sustained production.
+
+So the change converts stored tower paint into early coverage at an unfavourable exchange rate.
+That is the same shape as the price argument I have now got wrong three times, and it is the term
+I named in the pre-registration ("a soldier at the enemy frontier may be there for a reason the
+census cannot see") — though not for the reason I guessed: it was not about holding contested
+ground, it was about the paint bill.
+
+### The finding that outlives the iteration
+
+Four iterations have now tried to convert idle soldier turns into value — 14 (frontier-seeking),
+26 (SRP commitment), 32 (lattice SRP), 33 (un-gating). Only 14 was accepted, and 33 has just shown
+why the others cannot work as a class:
+
+> **carol's soldiers are not idle for lack of targets. They are idle for lack of paint.**
+
+The direct, on-this-build evidence, which I already had and had not put together:
+- Iteration 32's probe: on **63%** of idle turns the soldier held **< 100 paint** — below half
+  capacity, where RULES.md's `(100 − 2·X)%` cooldown penalty is already biting (`SRPpoor` 65 of 104).
+- Iteration 33's trace: giving idle soldiers *more* to do raised paint acts 38% and starvation 69%,
+  and cost the game.
+
+Any mechanism that spends an idle turn spends paint, and paint is the constraint. **The idle-turn
+budget is not free capacity; it is the visible shadow of the paint shortage.** That closes the
+whole class as a source of gains and points at the one direction the ledger already registered.
+
+### Closed-directions ledger
+
+- **"Spend idle soldier turns on additional work" — CLOSED as a class.** Three mechanisms, three
+  failures, one cause: iterations 26 and 32 (SRP) and 33 (frontier redirect) all spend paint, and
+  paint is what the idleness is made of. Re-opening requires a mechanism that consumes idle turns
+  at **literally zero paint** — iteration 14 is the existing member of that class and it is the one
+  that was accepted, which is the pattern.
+- **"Raise tower paint income" — OPEN and now the indicated direction, on three independent
+  measurements**: 100.0% of chips-available no-builds are paint-limited (iteration 31 probe, on
+  this build); 63% of idle soldier turns are below half paint (iteration 32 probe); and iteration
+  33's tower stash collapsed 4.4× below the baseline's the moment spending rose. The SRP was only
+  ever one *instrument* for this and it failed; the target did not.
+
+**DECISION: REJECT.** `src/carol` is untouched and remains iteration 30; nothing to revert.
+
+### Tooling report — `gauntlet-collect.sh` prints the WORKSPACE name, not the bot that played
+
+`gauntlet-collect.sh 20260908-063927` prints `bot=carol` for a run whose `bot.txt` records
+`bot=carol_i33`. Cause, read out of the script rather than inferred from the symptom
+(`tools/gauntlet-collect.sh:22-23`):
+
+```bash
+default_bot="$(basename "$WS_REL")"; ...
+BOT="${BOT:-$default_bot}"          # never reads bot.txt, which HAS the right value
+```
+
+**Discriminating check, so this is characterised and not just reported**: `grep '\$BOT'` finds
+line 54 — the `echo` — as the *only* use in the file. Scoring comes from `results.csv`, whose rows
+are keyed by opponent and side and carry no bot identity at all. So the defect is **cosmetic and
+cannot move a verdict** (unlike `map-resample.py`, which was inverting; I checked which this was
+before naming it).
+
+It is still worth fixing, because of exactly who reads it: a session recovering a finished run
+after a session death — the case `gauntlet-collect.sh` exists for — sees `bot=carol` and can
+reasonably conclude the run was a mirror of the baseline against itself, then discard a valid
+100-game run or re-run it and pay for shared VM time twice. `bot.txt` already holds the correct
+label, so the fix is to read it there. Reported rather than worked around.
