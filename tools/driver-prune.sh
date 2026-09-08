@@ -22,13 +22,20 @@
 set -euo pipefail
 
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-# Newest N gauntlet runs per agent keep their replays. Four, not six: the
-# retained set IS the steady state, since all the growth happens inside the
-# protected window, and three busy agents at six runs each settle around 2.5G on
-# a 30G root already carrying an 18G sibling project. Four keeps a couple of
-# days of traceable runs and cuts the floor by a third. Results are kept forever
-# either way, so this only ever costs re-runnable detail.
-KEEP_RUNS="${KEEP_RUNS:-4}"
+# Newest N gauntlet runs per agent keep their replays. TWO, revised twice as the
+# lineages' appetite grew: six settled around 2.5G, four looked stable at 1.2G,
+# and then the gauntlets themselves got bigger -- 100-250 games apiece instead of
+# 50 -- so the same four runs became 1.8G and free space fell 1.7G -> 1.2G in
+# half an hour, faster than an hourly sweep can answer.
+#
+# The lesson is in the tuning, not the number: the retained window IS the steady
+# state, so a retention count is a promise about SIZE only while run size holds
+# still. It didn't. Two runs per agent reclaims ~1G here and still leaves every
+# lineage its current and previous run to trace, which is what replay analysis
+# actually reaches for. Results, verdicts and map lists are kept forever
+# regardless, so this only ever costs re-runnable detail on a deterministic
+# engine.
+KEEP_RUNS="${KEEP_RUNS:-2}"
 MIN_AGE_MIN="${MIN_AGE_MIN:-60}" # never touch a file written in the last hour
 
 DRY=0
