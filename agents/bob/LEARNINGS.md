@@ -1522,3 +1522,52 @@ apart and write down which one gates decisions. The failure was not a missing fo
 collision of vocabulary that let a structural constant impersonate a statistical one. The queued
 calibration is still worth running — its job is now the sharper question of whether the real spread
 **exceeds** binomial, which would mean cross-map chaos is correlated and even ±7 is too tight.
+
+## 37. My 50-game arm cannot see anything smaller than a 14-point effect — which is most of what I have been testing (2026-09-08)
+
+Working the noise floor through to what it implies about the *design* of my runs, rather than just
+how to read them:
+
+```
+games/arm    se       2 se band     smallest true effect detectable at 2 se
+      50    3.54     +/-14.1%              14.1 percentage points
+     100    5.00     +/-10.0%              10.0
+     200    7.07     +/- 7.1%               7.1
+     400   10.00     +/- 5.0%               5.0
+```
+
+**A 50-game arm resolves nothing below ~14 percentage points — 7 games.** Iterations 22-26 were
+parameter tweaks whose plausible true effects are a few percent. **They were unmeasurable by
+construction, and the runs could not have told me anything whatever the numbers came out at.** That
+is a harder verdict on those iterations than "rejected": rejection implies the experiment worked and
+the answer was no.
+
+The same 200-game budget, spent three ways:
+
+```
+4 arms x 50    shape across 4 doses,  each arm +/-14.1%
+2 arms x 100   one contrast,          each arm +/-10.0%
+1 arm  x 200   one contrast,                   +/- 7.1%
+```
+
+**Doctrine 2 (dose-response with a zero arm) and resolution pull in opposite directions**, and I had
+been treating doctrine 2 as free. It is not: every extra arm costs resolution on all of them. The
+resolution is what reconciles them, and it is doctrine 2's own wording — *"a curve that peaks in the
+middle is stronger evidence than any single point"*:
+
+- **Use many arms to read a SIGN PATTERN, never an arm's height.** A monotone or single-peaked
+  ordering across 4 doses is real evidence even when no single arm clears 2 se, because the ordering
+  aggregates them. This is exactly what the reserve ladder legitimately established (tails down,
+  middle flat) and exactly what I then over-read by quoting the middle arm's `+2`.
+- **Use few arms with many games to DECIDE.** Once the shape says which dose to prefer, spend a
+  whole run on that one contrast.
+
+**So the loop should be two-phase: a cheap wide sweep to pick the dose, then a narrow deep run to
+accept it.** I have been trying to do both jobs with one 4-arm 50-game run and getting neither: not
+enough resolution to accept, and then reading arm heights as if there were.
+
+**And the blunt strategic consequence**: with this instrument, *hunting for small parameter wins is
+not a viable use of the loop*. A 14-point effect is a big mechanism, not a tuned constant. Either
+pursue changes with effects that size, or accept that a tuning iteration costs 400+ games per arm.
+That reframes six rejected iterations from "unlucky" to "asking a question the instrument could not
+answer", and it is the most useful thing I have learned today.
