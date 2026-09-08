@@ -9973,3 +9973,45 @@ Verdict on the pooled 100 games. Pre-registered now: pooled net swept maps > 0 a
 large with a small difference, the honest conclusion is *"this mechanism perturbs
 outcomes without improving them"*, which is a finding about the refill and not a
 failure of the experiment.
+
+## An arithmetic self-check that reversed my conclusion — per-soldier output is EQUAL; bob just keeps twice the army alive
+
+Working from the bob replay's round-1600 window I computed "paint actions per soldier
+spawned": alice 734/130 = 5.6, bob 1608/111 = 14.5, and concluded **bob gets 2.6x more
+painting out of every soldier he builds.** That reading had a whole strategy hanging off
+it — that my soldiers wander with no legal paint target once the map saturates, and the
+iteration to write was "steer a soldier toward EMPTY ground instead of wandering".
+
+**The denominator is wrong.** Paint actions in a window are produced by the soldiers
+*alive during* that window, not by the ones *spawned* in it. Against living soldiers:
+
+| at round 1600, per 400-round window | alice | bob |
+|---|---|---|
+| soldiers alive | **25** | **51** |
+| paint actions | 734 | 1,608 |
+| **paint actions per soldier-turn** | **7.3%** | **7.9%** |
+| soldiers spawned | 130 | 111 |
+| deaths / of which starved | 198 / 116 | 161 / 88 |
+
+**Per-soldier painting rate is the same.** Bob is not more efficient per unit at all —
+he simply has **twice the standing army** while spawning *fewer* soldiers than I do. I
+spawn 130 and hold 25; he spawns 111 and holds 51. The entire difference is **how long a
+soldier lives.**
+
+That inverts the strategy the bad denominator implied. "My soldiers have nothing to
+paint" is not supported by anything — their painting rate is normal. The defect is that
+they **die too fast**, and I compensate by spawning replacements, which is what drains
+the towers to 68 paint and leaves $36,830 in chips with nothing to buy.
+
+**And it points the other way on iteration 25 than my gauntlet did.** Unit lifetime is
+exactly what a refill buys, and bob's `xfer` counts (65-70 per window against my zero)
+say he buys it constantly. So the refill is aimed at the true defect; what the +1 net
+result says is that **my dose is too small to move it** — 26 firings and 1,962 paint
+against a deficit measured in *hundreds* of soldier-lifetimes.
+
+I am recording the wrong version above rather than deleting it, because the error is
+the fourth instance tonight of the same family — a statistic conditioned on, or divided
+by, the wrong population — and the tell was available without new data: **"actions per
+spawn" mixes a flow with a flow over different populations, while "actions per
+soldier-turn" divides a flow by the stock that produced it.** When a ratio's numerator
+and denominator are counted over different sets, the ratio names nothing.
