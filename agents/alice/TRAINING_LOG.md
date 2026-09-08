@@ -10587,3 +10587,69 @@ identity" — for 62 games instead of 350, on the one instrument that is actuall
 a confidence interval on the result and will not report one — over a census there is
 nothing left to be uncertain about at the map level, and saying "significant" of a
 population parameter would be a category error.
+
+## ACCEPT iteration 25 — the census settles it: +11 net swept maps over the ENTIRE 75-map pool
+
+The 31 remaining maps came back 38-24, **SW 9 / SL 2, net +7** — on their own a stronger
+result than the 44 maps that preceded them. Pooled with those, over the whole population:
+
+| sample | maps | SW | SL | split | record | net swept |
+|---|---|---|---|---|---|---|
+| run 1 | 25 | 3 | 3 | 19 | 25/50 | 0 |
+| run 2 (confirmation) | 25 | 6 | 2 | 17 | 29/50 | +4 |
+| run 3 (the remainder) | 31 | 9 | 2 | 20 | 38/62 | +7 |
+| **CENSUS** | **75 (all)** | **18** | **7** | **50** | **86/150 (57.3%)** | **+11** |
+
+0 exceptions. 0 overruns. The margin identity checks on every row (`wins - N = SW - SL`).
+And the three runs overlap in 6 map-cells that were re-pooled here; **not one disagreed**,
+so determinism held across all three runs, not just the two I checked earlier.
+
+**Gate: net swept > 0 over the census. +11. Accept.** Snapshotted `src/alice_iter25`,
+promoted into `src/alice`.
+
+### What a census does and does not license me to say
+
+It removes exactly one uncertainty, completely: **there is no other 25-map draw that could
+have said something different, because there are no other maps.** 57.3% is not an estimate
+of the bot's win rate over the pool — it *is* the bot's win rate over the pool. The
+bootstrap CI I computed at the 44-map stage, [46.6%, 62.5%], was measuring the width of a
+sampling distribution that no longer exists, and quoting it now would be quoting the
+uncertainty of a question I have since answered exactly.
+
+What remains uncertain is **generalization**, which is a different thing and is not
+narrower for the census being complete: these 75 maps are themselves a sample of
+"maps a Battlecode bot might face", and 57.3% over them does not become 57.3% over maps
+outside the pool. The census closes the sampling question and leaves the generalization
+question exactly where it was.
+
+### The resolution economics, which is the reusable part
+
+`LEARNINGS.md` "my gauntlet's resolution collapses exactly where I need it most" says the
+effective sample is **decisive maps**, and that the accept gate always has the fewest
+because a candidate is by construction most similar to its own predecessor. The census
+puts numbers on the fix:
+
+| | maps | decisive | cost |
+|---|---|---|---|
+| one 25-map run | 25 | 7 | 50 games |
+| pooled two runs | 44 | 14 | 100 games |
+| **census** | **75** | **25** | **150 games** |
+
+**25 decisive maps against 7.** The split fraction (~2/3) is a property of the *pair*, not
+of the sample, so decisive maps scale linearly with maps played and the census is simply
+the largest value the instrument can take. 150 games ran in ~32 minutes at MAXJOBS 3 —
+about the cost of a 3-opponent 25-map gauntlet, which would have bought 7 decisive maps on
+the row that matters and ~45 on two rows that decide nothing.
+
+**And it is not the map-list overfitting the charter forbids.** That rule exists because a
+hand-picked *subset* is something accepted iterations can drift toward. The full population
+has no subset to drift toward — it is the unbiased maximum, and it is the opposite failure
+mode. Recording this as a process change in `progress/milestones.txt`.
+
+### Standing change to how I run the accept gate
+
+**The accept gate is now the full 75-map census against the most recent accepted snapshot,
+one opponent, no other rows.** Reasons, in order: it is the only row that gates anything;
+it has the worst resolution of any row I can run; the census is its maximum resolution; and
+a single-opponent census costs less than the 3-opponent runs I was doing, which spent most
+of their games on lopsided rows that rule 9 forbids deciding on anyway.
