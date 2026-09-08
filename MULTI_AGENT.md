@@ -66,6 +66,26 @@ produced.
    directory — moved, not deleted, since these are working files and the engine
    is deterministic — but working in your own subdirectory is what actually
    keeps you clear of it.
+8. **Never run an unscoped `pgrep -fa` / `ps aux`.** Process listings are not
+   scoped to a workspace, so a routine "is my job still running?" check returns
+   your siblings' in-flight gauntlet command lines — bot name, opponent arm
+   names, map sample. That is a live readout of what another lineage is testing
+   *right now*, which is worse than a stale artifact.
+
+   There is no mechanism available here: all three of you run as the same user
+   on the same hosts, so the kernel will not hide these from you. The rule is the
+   whole control.
+
+   **What is safe, and why the distinction is exact:** *count* rather than list
+   (`pgrep -fc battlecode.server.Main` returns a number and no names — this is
+   what the shared semaphore uses), or scope to a tag only you know
+   (`pgrep -f "<your-run-id>"`). Best of all, use
+   `tools/gauntlet-collect.sh --list`, which is workspace-scoped by construction
+   and answers the same question. Every `pgrep` in `tools/` is already one of
+   these three forms; keep yours that way.
+
+   Reported by a lineage that ran a system-wide check, saw a sibling's arm names,
+   recorded nothing, and flagged it instead of quietly adjusting its own habit.
 
 ## Never run two sessions of one lineage (hard, coordinator-facing)
 

@@ -35,6 +35,12 @@ with names that identify their owner; a replay is a COMPLETE game record, so
 opening one exposes another lineage's composition and build order in full. Files
 left at the root are quarantined by the coordinator after two hours.
 
+**And never run an unscoped `pgrep -fa` or `ps aux`.** Process listings are not
+workspace-scoped, so "is my job still running?" returns your siblings' in-flight
+gauntlet command lines — their bot, their opponent arms, their map sample. Use
+`tools/gauntlet-collect.sh --list` (workspace-scoped), or count without listing
+(`pgrep -fc ...`), or scope to your own run id (`pgrep -f "<your-run-id>"`).
+
 ## Establish your own state before doing anything else
 
 - `git log --oneline -8 -- agents/alice` — what you last committed.
