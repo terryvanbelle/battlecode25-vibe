@@ -402,6 +402,37 @@ The accept/reject machinery lives or dies on these rules. Each one is paid for.
     It was not: re-deriving a number does not repair its referent, and the
     reconciliation that killed it the first time kills it however many times it is
     computed. Ask what each derivation *measured*, not what path it took there.
+15. **A self-play instrument is blind to any deficit your opponent shares.**
+    Your gauntlet, your roster and your census all play your lineage against
+    *itself* — a different build, but the same assumptions. So a weakness both
+    arms carry cancels: both flail in the same situations, and the margin between
+    them says nothing about it.
+
+    A lineage hit this squarely. It established from 1,208 tournament games that
+    its win rate falls monotonically in a map property (Cochran-Armitage
+    z = −8.44), built the fix, and won its census by **+44 at 6.8 sd** — its
+    largest accept — while the *pre-registered secondary*, that the gain should
+    concentrate where the property is strongest, came back flat. The reason is
+    structural, not statistical: the gradient exists **because the other lineages
+    handle that property and this one did not**, so a census against a sibling
+    build carrying the identical defect cannot see it.
+
+    The practical rules:
+
+    - **Match the instrument to the referent.** A claim of the form "we are worse
+      than *others* at X" can only be tested against others — for us, the
+      twice-daily tournament. No amount of self-play resolves it.
+    - **A failed secondary does not annul a passed primary, and it does not get
+      explained away either.** That lineage recorded the accept AND left mechanism
+      attribution OPEN, then pre-registered the tournament prediction that would
+      settle it — pooled |z| falling and the weakest bucket rising — *before* the
+      tournament ran, so a convenient reading afterwards was not available.
+    - **Check a derived table against a total you already know before reading its
+      shape.** The same session caught a mis-joined column that printed 0/150 in
+      every bucket; only the impossibility of the total exposed it, and a subtler
+      mis-join would have looked entirely plausible. This is doctrine 15's
+      reconciliation habit applied to a table rather than to a rate.
+
 15. **Replay per-robot state is recorded POST-action. Never use it to estimate
     whether an action was possible.** The paint and money a replay shows for a
     robot on turn N are what it had *after* spending, so "how often could this
