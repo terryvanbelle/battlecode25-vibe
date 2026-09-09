@@ -15363,3 +15363,108 @@ measures it honestly. But **a pass here must not be reported as movement on the 
 deficit**, and the ruin-sparse split stays the open problem it was. Writing that down now removes
 the convenient reading later — the failure mode is doctrine 6, a flagged caveat used as though it
 were discharged.
+
+### Trigger-frequency pre-check DISCHARGED on `Portal` — 23–26%, a second chip-rich map
+
+| tower | n | built | skipM | paint | DEAD | DEAD/n | pt |
+|---|---|---|---|---|---|---|---|
+| paint | 1988 | 103 | 206 | 1676 | **517** | **26%** | 1 |
+| paint | 1969 | 99 | 214 | 1653 | **484** | **25%** | 1 |
+| paint | 1879 | 87 | 162 | 1627 | **439** | **23%** | 1 |
+| money | 1988 | **3** | 205 | 1780 | 0 | — | 0 |
+| money | 1990 | **1** | 216 | 1734 | 0 | — | 0 |
+
+Every **paint** tower idles a quarter of the game holding 200–299 paint, consistent with
+`BatSignal`'s 30%, so the effect is not a property of one map. And every **money** tower built
+1–3 units in ~1,990 rounds with `DEAD = 0` and the paint bucket at ~90% — engine fact 4 confirmed
+in play: born with 500, no income, two builds, dead build slot for the rest of the game.
+
+Both previously-named gaps are now closed. The identity check has confirmed the control:
+`alice_i42off` vs `alice_iter39` on `BatSignal` ends at **round 1414 with A winning**, exactly
+reproducing `alice_spawncensus` vs `alice_iter39` on the same map — the compile-time constant
+does eliminate the branch and the control is byte-identical, for the third independent time.
+
+## Iteration 42 VOID at the one-map identity check — killed by its own reconciliation, for 2 games
+
+Two independent checks landed together and both say the same thing.
+
+### 1. The identity check: the mechanism is alive, and it is a disaster
+
+| arm | `BatSignal` vs `alice_iter39` | result |
+|---|---|---|
+| `alice_i42off` (control) | A wins, **round 1414**, MAJORITY_PAINTED | byte-identical to baseline ✓ |
+| `alice_i42on` (live) | **B wins, round 2000, on tiebreakers** | mechanism alive, win -> loss |
+
+The control reproduces `alice_spawncensus` exactly (round 1414, A) — third confirmation that a
+compile-time `static final boolean` gives a genuinely byte-identical zero arm. The live arm flips
+a 1,414-round paint win into a 2,000-round tiebreak loss on the same map.
+
+### 2. The reconciliation: `DEAD` was never idle waste — it is ACCUMULATION
+
+I applied doctrine 15's benign-reading check to the `paint` bucket, and again to `skipM`, and
+then **did not apply it to the bucket I liked**. Doing it now, with doctrine 18's method — turn a
+rate into a count and compare against a count you can observe directly:
+
+If a tower must climb from 200 to 300 paint before every splasher build, it *must* spend
+`100 / income` turns in the [200,300) band per build. So `DEAD / built` is predicted, not free:
+
+| tower | built | DEAD | DEAD/built | implied income |
+|---|---|---|---|---|
+| `BatSignal` paint | 73 | 427 | 5.85 | 17.1 |
+| `Portal` paint A | 103 | 517 | 5.02 | 19.9 |
+| `Portal` paint B | 99 | 484 | 4.89 | 20.5 |
+| `Portal` paint C | 87 | 439 | 5.05 | 19.8 |
+
+Pure accumulation at an L3 paint tower's **15/turn** predicts **6.67** turns per build. Every
+tower measures **4.9–5.9 — at or BELOW the prediction.** There is no residue. The band-time is
+not merely *explained* by accumulation, it is slightly *less* than accumulation alone requires
+(builds that happen from above 300 skip the band), so **there is no idle waste in `DEAD` to
+recover at all.**
+
+> **`DEAD` counts a tower saving up, exactly as `skipM` counts a treasury saving up.** I caught
+> the benign reading on the two buckets that pointed at closed directions and missed it on the
+> one that pointed at a new iteration. **The check I skip is the check on the number I want.**
+> That is doctrine 13's "run the check when you expect to PASS it" in its exact predicted form,
+> and this is the third distinct bucket in one census where the accumulation reading was the
+> right one.
+
+### And the mechanism was mis-described in my own pre-registration
+
+I wrote: *"It never removes a splasher the tower could have built; it only fills a turn that
+produced nothing."* **Both clauses are false**, and tracing the dynamics rather than re-reading
+my own sentence shows why: a tower climbing at 15/turn reaches **200 before it reaches 300**, on
+every single cycle. So the fallback fires first *every time*, builds a soldier, drops the tower
+to ~0, and the cycle repeats. The tower **never builds another splasher** — the arm does not
+augment the composition, it converts it to ~100% soldiers and silently reverts iterations 28, 29
+and 39. Which is precisely what the 2,000-round tiebreak loss looks like.
+
+That is the *same* error I logged one section earlier about my own splasher-gate comment — a
+branch description that is not the predicate the code computes — **committed again, by me, in
+the write-up of the finding about it, within the same session.** Doctrine 19 is right that a
+written lesson is not a control; here the lesson and the repeat are 200 lines apart.
+
+**Decision: iteration 42 is VOID.** Not "rejected on the numbers" — voided before evaluation,
+because the motivating quantity dissolves under reconciliation and the mechanism does the
+opposite of what I registered. `src/alice_i42off` and `src/alice_i42on` stay committed as the
+record; neither is a candidate. **Total cost: 2 games and no gauntlet.**
+
+### Closed-directions ledger — additions from this session
+
+| direction | closed by | can re-open if |
+|---|---|---|
+| Trying more than the 8 adjacent tiles when a tower builds (the engine allows 12, r^2 <= 4) | census over 3 maps and ~5,000 tower turns: `RECOV = 0` and `blk12 = 0` on **every** tower — the 8 tried are never all blocked | the bot ever crowds its own towers deliberately, e.g. a defensive formation parking units on the spawn ring |
+| "Towers idle because the attack consumes their action" | `javap`: `attack()` adds cooldown only `if (type.isRobotType())`, and a tower is not one; confirmed in play by `nrdy = 0` everywhere | never — it is an engine fact |
+| "Tower build slots / cooldown are scarce" | `nrdy = 0` across 3 maps; third independent confirmation (iteration 39a, the endgame trace, this census) | — |
+| Falling back to a soldier when a tower cannot afford the splasher it wants | reconciliation: `DEAD/built` = 4.9–5.9 against 6.67 predicted by accumulation alone, so the bucket holds no waste; and the arm reverts the splasher composition entirely (win at r1414 -> tiebreak loss at r2000) | a mechanism that holds a tower *below* 300 indefinitely is found — accumulation alone does not, so this needs an external drain, not a build-side change |
+
+**What remains open**, unchanged and honestly still unexplained: the **ruin-sparse deficit**
+(44.0% on the 25 sparsest maps against 62.7% elsewhere, 2.39 sd), and the **coverage decline**
+in the four sanctioned tournament losses. Iteration 42 did not touch either, and I said so before
+running it rather than after.
+
+**The one live lead this session produced is `atcap`** — 125 and 21 turns at full paint capacity
+on `MoneyTower`, destroyed income with no accumulation reading available, and not covered by the
+`CHIP_RESERVE` ledger row (that re-open condition is about chips; `atcap` is a claim about
+paint). It is one map, so per my own rule from yesterday it needs corpus sizing before it is a
+candidate. **Next session's first move: size `atcap` across a map sample with
+`src/alice_spawncensus`, which is committed and wired for exactly this.**
