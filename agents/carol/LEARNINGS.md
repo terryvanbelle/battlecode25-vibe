@@ -177,6 +177,18 @@ both directions, and do not let a reject you agree with quietly answer a questio
   the state closes. → *"A guard belongs on the branch"*, *"A state's own EXIT PATH"*
 - A variable's blast radius is where its VALUE ENDS UP. `canAttack` is legality, not efficacy. →
   *"A variable's blast radius"*, *"`canAttack` is a legality check"*
+- A UNIT'S LEGAL ACTION SET, not its cost, decides what an architecture can do. A soldier paints
+  only EMPTY or own-team tiles, so its conversion rate against contested ground is exactly zero:
+  soldier-primary can take ground and structurally cannot recapture it. Measured iteration 59,
+  Leaf: coverage 611 at r500 decaying to 400, with **paint acts = 0** at r1500 while towers held
+  4,039 paint and $9,340 chips sat idle. Nothing was scarce; the army was disqualified. So a unit
+  mix must be a function of MAP STATE, not of the treasury. → TRAINING_LOG, *"Correction 3 (D1c)"*
+- A THRESHOLD BAND on a quantity the treatment itself consumes is fed by the treatment — doctrine
+  10 one level down, and I wrote doctrine 10 and still shipped it. Gating moppers on tower paint in
+  [100,200) looked like "spend an idle stash"; with 25 towers spawning continuously it is just the
+  band every paint tower's stash passes through on each refill cycle, so it took +113 builds per
+  250 rounds against soldiers' +35. The fix names the state instead of a band: a MONEY tower has
+  `paintPerTurn == 0` [E], so its stash really is finite and idle. → TRAINING_LOG, *"Correction 1 (D1b)"*
 
 ## Housekeeping
 
