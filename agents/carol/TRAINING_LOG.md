@@ -13161,3 +13161,114 @@ That reframes this morning's "silently reverted a measured dose" finding, which 
 plainly because it ran in the direction I wanted: the *mix* claim was right and is confirmed at
 scale (610 soldiers / 6 moppers / 2207 splashers), but the *value* claim I hung on it was wrong.
 Iteration 36 did zero the mopper share, and that cost nothing.
+
+---
+
+# Iteration 44's PRE-REGISTERED TOURNAMENT TEST — scored, and it FAILED. Attribution moves OPEN -> REFUTED.
+
+Scored on `tournaments/20260909-0100`, the first round-robin that played `carol_iter44`
+(`5be82ca`). This is the test I registered on 2026-09-08 *before* the tournament ran, precisely so
+that a convenient reading would not be available afterwards. It is now available and it is not
+convenient.
+
+## The control is free, and it is exact
+
+| | 20260908-1300 | 20260909-0100 |
+|---|---|---|
+| alice | `920dafd` | `920dafd` |
+| bob | `e425f46` | `e425f46` |
+| carol | `432d702` (**iter36**) | `5be82ca` (**iter44**) |
+
+**Both opponents played byte-identical builds across the two runs.** Same 75-map corpus, both
+sides, 300 carol games each. The only thing that changed in the entire apparatus is my own build,
+so this is a controlled A/B of iteration 44 against opponents my lineage did not produce — the
+instrument doctrine 17 says is the only one that can test this claim. I did not pay for it; it is
+the free control doctrine 16 says to take when two lineages play identical builds across
+consecutive runs.
+
+Reconciliation before reading the shape: the tool counts 300 carol rows and 151 carol wins in
+`20260909-0100`, which is exactly what `report.md` states. The table closes.
+
+## The prediction, and the result
+
+> *"the pooled Cochran-Armitage |z| falls below the 8.44 measured over the previous five, and the
+> `>= 24` bucket rises from 14.0% pooled / 19.1% in the last run."*
+
+| ruins | iter36 (0908-1300) | iter44 (0909-0100) | delta |
+|---|---|---|---|
+| <= 11 | 49/76 = 64.5% | 57/76 = **75.0%** | **+10.5** |
+| 12-17 | 44/76 = 57.9% | 49/76 = **64.5%** | **+6.6** |
+| 18-23 | 30/80 = 37.5% | 30/80 = **37.5%** | **0.0** |
+| >= 24 | 13/68 = 19.1% | 15/68 = **22.1%** | **+3.0** |
+| **total** | **136/300** | **151/300** | **+15** |
+| **trend z** | **-5.96** | **-7.09** | **steeper** |
+
+**The gradient did not flatten. It steepened**, from z = -5.96 to -7.09 on equal 300-game samples,
+and the spread widened from 45.4 points (64.5 -> 19.1) to 52.9 points (75.0 -> 22.1).
+
+And it steepened against **each opponent separately**, which is two independent instruments
+agreeing rather than one:
+
+| | iter36 | iter44 |
+|---|---|---|
+| vs alice | z = -4.01 | **z = -5.00** |
+| vs bob | z = -4.52 | **z = -5.12** |
+
+The second half of the prediction passed in sign only — `>= 24` rose 19.1% -> 22.1%, +2 games on
+68, z = +0.43, which resolves nothing. The gain went where the mechanism has no fuel.
+
+## What this does and does not kill
+
+**It does not touch the accept.** Iteration 44 went 136/300 -> 151/300, **+15 games against
+byte-identical external opponents**. The +44 census was not a self-play artefact; the bot really is
+better, confirmed on the one instrument that cannot share my blind spots. `src/carol` stays at
+`carol_iter44` and the accept stands.
+
+**It kills the causal story.** The census secondary failed the same way (gain flat in ruin count,
+ruin-poorest bucket the best), and I excused that as self-play blindness: both arms carried the
+defect, so the ruin-rich maps could not discriminate. That excuse was specific, falsifiable, and
+came with this test attached. The test has now run on non-self-play opponents and **agrees with the
+census**. Two instruments of different kinds, one of them external, both say the gain is not
+ruin-conditioned.
+
+So the attribution for my largest accept moves from **OPEN to REFUTED**: denied-ruin detection
+fires (verified at 43.2% -> 2.8% blocked-at-ruin on the probe), the bot improved, and the
+improvement is **not** the thing the mechanism was built to do. Whatever iteration 44 bought, it
+bought it on ruin-poor maps.
+
+**And the deficit is still there, undiminished and now unexplained.** Playing my best build,
+against static opponents, I win 75.0% where ruins are scarce and 22.1% where they are dense. That
+is ~36 games a tournament sitting in the two high-ruin buckets, and iteration 44 — built
+specifically to collect them — collected 2.
+
+## LESSON: a pre-registered threshold on a POOLED statistic is not a test
+
+My prediction named "the pooled |z| falls below 8.44". Run as written, the tool now reports pooled
+|z| = **10.62**, and that number is meaningless for the purpose:
+
+- pooling the new run with the five old ones **anchors** the estimate to the very data the fix was
+  meant to change — five runs of the broken bot outvote one run of the fixed one;
+- Cochran-Armitage |z| **grows with sample size** at fixed effect size, so pooling one more run
+  into the total pushes |z| up whether the bot improved, worsened, or stood still.
+
+A threshold on that quantity cannot fail in the direction I cared about and can pass for reasons
+that have nothing to do with the bot. The comparable statistic is the **per-run** z on the equal
+300-game samples, which is what I used above, and which is fair in both directions.
+
+This is doctrine 5 (the wrong-referent error) landing inside a pre-registration rather than inside
+an analysis, and it is worse there, because the whole value of pre-registering is that the number
+is fixed before you can be tempted. **Pre-register a statistic that is computed on the same
+quantity of data before and after, and check it is capable of moving both ways.** Had the run come
+out well I would have quoted 10.62 falling out of a tool I wrote myself and called it confirmation.
+
+Per doctrine 19 this is a note, not a control, unless it fires without being remembered — so the
+control is in the tool: `ruingradient.py` gains a `--per-run-z` reconciliation that prints the
+pooled and per-run z side by side with a warning that only the latter is comparable across runs.
+
+## Functional-area ledger update
+
+- **Ruin conversion on ruin-dense maps** — mechanism 1 (soldier held at a denied ruin) FIXED by
+  iteration 44 and verified fixed; the gradient survives it at z = -7.09. The area is **re-opened
+  with the first mechanism eliminated**, which is progress of the kind doctrine calls a falsified
+  premise: I now know it is not the blocked-soldier trap, because I removed that trap and measured
+  the deficit again.

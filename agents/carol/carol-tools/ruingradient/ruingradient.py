@@ -63,6 +63,7 @@ def main():
     maps = load_maps(MDAT)
     runs = sorted(d for d in os.listdir(TDIR) if re.match(r"^\d{8}-\d{4}$", d))
     pooled = [[0, 0] for _ in LABELS]
+    per_run = []
     per_opp = collections.defaultdict(lambda: [[0, 0] for _ in LABELS])
     skipped = set()
 
@@ -89,7 +90,10 @@ def main():
             f"{LABELS[i]}:{b[i][0]}/{b[i][1]}={100*b[i][0]/b[i][1]:.0f}%"
             for i in range(len(LABELS)) if b[i][1]
         )
-        print(f"{run}  {cells}")
+        zr = trend_z([c[1] for c in b], [c[0] for c in b])
+        tot, gms = sum(c[0] for c in b), sum(c[1] for c in b)
+        per_run.append((run, zr, tot, gms))
+        print(f"{run}  {cells}   z={zr:+.2f}  ({tot}/{gms})")
 
     def report(title, tab):
         print(f"\n{title}")
@@ -100,6 +104,26 @@ def main():
         print(f"   Cochran-Armitage trend z = {z:+.2f}   (negative = rate falls as ruins rise)")
 
     report(f"POOLED -- {ME} vs all other lineages", pooled)
+
+    # CONTROL (installed 2026-09-09). Iteration 44 pre-registered "the POOLED |z| falls
+    # below 8.44" and that threshold was untestable: pooling a new run with the old ones
+    # anchors the estimate to runs of the OLD build, and Cochran-Armitage |z| grows with n
+    # at fixed effect size, so pooled |z| rises whether the bot improved or not. Only the
+    # per-run z, on equal-sized runs, is comparable across builds. Printed here so the
+    # comparison cannot be made the wrong way without seeing the right one beside it.
+    print("\n=== PER-RUN z (the ONLY figure comparable across builds) ===")
+    print("   pooled |z| above is NOT comparable across runs: it grows with n and is")
+    print("   anchored by every earlier run, i.e. by builds you have already replaced.")
+    for run, zr, tot, gms in per_run:
+        if gms:
+            print(f"   {run}  z={zr:+.2f}   {tot}/{gms} = {100*tot/gms:.1f}%")
+    if len(per_run) >= 2:
+        (r0, z0, _, g0), (r1, z1, _, g1) = per_run[-2], per_run[-1]
+        note = "" if g0 == g1 else "   (WARNING: unequal game counts, z not directly comparable)"
+        print(f"   latest two: {r0} {z0:+.2f} -> {r1} {z1:+.2f}"
+              f"   {'STEEPER' if abs(z1) > abs(z0) else 'flatter'}{note}")
+    print("   NOTE: a run only tests YOUR change if the other lineages' commits are")
+    print("   unchanged between the two runs -- check report.md 'What played' first.")
     for opp in sorted(per_opp):
         report(f"{ME} vs {opp} only", per_opp[opp])
     if skipped:
