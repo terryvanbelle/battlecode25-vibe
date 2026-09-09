@@ -13866,3 +13866,60 @@ that carol finishes in 108-133. So:
 
 I am writing this before the numbers arrive because after they arrive the convenient reading is
 available, and doctrine 6 says a flagged caveat used anyway is worse than one never noticed.
+
+---
+
+## Iteration 35 — DESIGNED, NOT BUILT. Ruin selection that accounts for poisoned patterns.
+
+Registered now, with its unfinished pre-checks named, because momentum is exactly when a pre-check gets
+skipped and the next session inherits the momentum without the doubt.
+
+**The candidate.** `Soldier.chooseRuin()` currently releases a ruin only when a tower appears on it. The
+diagnosis above says a ruin whose 5x5 contains enemy paint cannot be completed by a soldier at all, and
+that bob's soldiers park on such ruins until they starve. Two shapes are available and they are **not**
+equivalent:
+
+- **(a) Abandon**: drop `workRuin` when its pattern holds enemy paint.
+- **(b) Rank**: prefer an unpoisoned ruin among those visible; fall back to a poisoned one only if no
+  clean ruin exists.
+
+**(b) is the better-behaved design and (a) is the one that thrashes** — a single enemy tile appearing
+and being re-covered would make (a) drop and re-acquire repeatedly, and a soldier that abandons with
+nowhere to go has bought nothing. But (b) is worthless if the choice set is a singleton.
+
+### THE PRE-CHECKS I HAVE NOT DONE. Do not build before these.
+
+1. **CHOICE SET SIZE — the one that has already killed this exact shape for another lineage.** The
+   algorithm records a lineage that tuned a ruin-ranking function whose candidates were the ruins *in
+   vision*, where a soldier never sees two at once, so the choice set was a singleton and every dose was
+   byte-identical. **I have not measured how many ruins are in a bob soldier's vision when
+   `chooseRuin()` runs.** If it is ~1, design (b) is dead on arrival and only (a) is available. Measure
+   this FIRST; it is the cheapest thing on the list and the most likely to kill the iteration.
+2. **Trigger frequency on maps bob WINS.** I have sized poisoning on exactly one map (CastleDefense,
+   10 of 25 tiles on the ruin at (2,7)). That is one map, and the algorithm's own warning is that a
+   quantity measured on one map is a statement about that map — `gridworld` gave one lineage 25% where
+   two other maps gave 95%. If ruins are transiently poisoned on ruin-rich maps too, this change fires
+   where bob currently wins and the price lands there.
+3. **The price, unpriced so far.** A poisoned ruin is not permanently poisoned — a mopper or splasher
+   can clear it. Abandoning forfeits the partially-painted pattern and any chance a mopper arrives.
+   bob's moppers are 1-in-5 spawns and are not directed at ruins, so I *believe* that probability is
+   low, but believing is not the same as counting it, and doctrine says price a reallocation against
+   what it displaces rather than against zero.
+4. **Bytecode.** Testing 25 tiles per visible ruin per turn inside a 17,500-bytecode budget, in the most
+   frequently executed function in the bot, is not obviously affordable. `senseMapInfo` per tile is not
+   free. Not measured.
+
+### And one prior-art check that is DONE and passes
+
+History pre-check: no prior iteration deliberately established that soldiers should hold poisoned ruins.
+The behaviour is incidental — `chooseRuin()` has one release condition and it is about occupancy. So
+this supersedes nothing and needs no new evidence to overturn a past decision.
+
+### The instrument problem is UNCHANGED and applies to this iteration too
+
+This is a regime mechanism: it acts where ruins are contested, which is where carol beats bob and where
+my self-play pool has no games. Iteration 34 is currently measuring how large that blindness is. **If
+iteration 34 returns a null, iteration 35 must not be evaluated the same way and then also called
+null** — that would be spending a second run to re-learn the instrument's limit rather than anything
+about the bot. In that case the honest order is: fix the instrument, or take the mechanism to the
+tournament as the only valid instrument for a cross-lineage claim (doctrine 15), and say which.
