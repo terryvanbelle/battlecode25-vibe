@@ -2581,3 +2581,57 @@ once, with no new opponent and no guess about anyone's strategy.
 **The shape mattered more than the correlation.** It is a *cliff*, not a gradient (corr is only
 +0.357), so it defines a **failure condition to avoid** rather than a quantity to maximise. A gradient
 would have invited tuning toward it, which is overfitting to an intermediate metric.
+
+## 65. The engine never cleans up marks, and my bot never did either (2026-09-09)
+
+`GameWorld.completeTowerPattern` is 28 bytes of bytecode: append to `towerLocations`, set
+`towersByLoc`, `spawnRobot`, return. `completeResourcePattern` is similar. **Neither touches
+`markersA` / `markersB`.** The only writer of a marker in the whole engine is `GameWorld.setMarker`,
+reached from `markPattern(...)` and from `RobotControllerImpl.removeMark`.
+
+So a mark is **permanent unless the bot removes it**, and `removeMark` was one of 24
+`RobotController` methods this lineage had never called in 38 iterations. Every ruin bob has ever
+marked still carries its 5x5 mark blob at round 2000, and `srpSiteSafe()` refuses any SRP centre whose
+own 5x5 touches one.
+
+**The general shape, which is the part worth carrying:** I had been reasoning about marks as if they
+were a *transient* annotation — write it, build against it, done. Nothing in the API says that, and
+nothing in the engine implements it. **A resource with no destructor is a resource you are leaking**,
+and the way to find out is to ask which engine method clears it rather than to assume the obvious
+lifecycle. The question "what removes this?" is cheap, mechanical, and I had not asked it once.
+
+`removeMark` also turns out to be **free** — it asserts robot type, `canActLocation(r^2<=2)` and
+marker-exists, then calls `setMarker(...,0)`. No `isActionReady`, no cooldown, no paint. So the
+cleanup costs nothing but bytecode, which is why it is worth doing at all: had it consumed an action
+it would have competed with painting and almost certainly lost.
+
+## 66. The stall trigger works, and it works because it is a TRIGGER (2026-09-09)
+
+Iterations 26-37 produced no accepts: five rejects, a void, a veto, and iteration 37's priced null.
+That is TRAINING_ALGORITHM's "loop stalls" condition, and its instruction is to sweep the
+`RobotController` surface for unused methods **before** inventing a new mechanism.
+
+I nearly skipped it. The sweep had been run once before (iteration 29) and I *knew* what it said, so
+re-running it felt like ceremony — and the obvious next move, the conditional splasher gate, was
+sitting right there with a fresh instrument pointed at it. Re-running the sweep took one `javap` and
+one grep and produced a mechanic I had never touched, attached to code I had read many times.
+
+**The reason it fires is that the algorithm makes it a trigger and not a habit.** The document says
+so explicitly, from a prior project that lost 81 iterations this way: "periodically" is an
+instruction with no trigger, so it loses every time it competes with a live hypothesis. I had a live
+hypothesis. The trigger beat it, and it was right to.
+
+**The corollary I want to remember:** a sweep is worth re-running against *changed code*, not just
+once per lineage. The unused-method list is a function of my bot, and my bot moved 9 iterations since
+the last sweep.
+
+## 67. `disintegrate()` is a pure suicide, with no refund (2026-09-09)
+
+Checked while working the same sweep, because ~95% of bob's soldier deaths are starvation and a
+self-destruct that returned paint would be worth a lot. `RobotControllerImpl.disintegrate()` is four
+bytecodes: `new RobotDeathException; dup; invokespecial <init>; athrow`. Nothing else. No paint
+spill, no chip refund, no effect on the tile.
+
+Recording the negative because the cost of checking was two minutes and the cost of *assuming* it
+refunds — and building a starvation-recycling policy on that assumption — would have been an
+iteration. **Closed as an economic mechanism.**
