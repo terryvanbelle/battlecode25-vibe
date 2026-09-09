@@ -14516,3 +14516,71 @@ precedent by number.
 > without reading anything?" — was answered in the affirmative by me, today, and the mechanism
 > is what closed the gap. Worth stating plainly because the sample is one and the temptation is
 > to over-read it: what it demonstrably prevented here is a screen, not an accept.
+
+## Iteration 39c ACCEPTED — census `20260908-211909`, +16 net swept (3.02 sd)
+
+The screen's verdict died with the session; the run itself did not. Recovered it already
+collated on disk and read it through `tools/gate-read.sh`, which is the point of that tool.
+
+| | value |
+|---|---|
+| run | `20260908-211909`, `BOT=alice_i39c`, opponent `alice_iter30`, **75 maps / 150 games** |
+| record | **91–59 (60.7%)** |
+| swept win / swept loss / split | **17 / 1 / 57** |
+| **net swept** | **+16** |
+| identity check | **OK** — `wins−N = 91−75 = 16`, `SW−SL = 17−1 = 16` |
+| pre-registered gate | **net swept >= +12** |
+| my measured null floor | `sd_net_swept = 5.29` -> **+16 is 3.02 sd** |
+| engine exceptions | **0** |
+
+> **ACCEPT.** Frozen as `src/alice_iter39/`; `src/alice/` now carries the mechanism.
+> First accept since iteration 30 — iterations 31–38 were all rejected, and 40 was closed
+> unbuilt. The flat stretch on chart 1 is that run of rejects, and it ends here.
+
+### The three standing pre-checks, discharged rather than recited
+
+**1. SCARCITY — the resource freed is not the resource that was binding, and that is why it pays.**
+The freed resource is **chips after expansion ends**. Once the last ruin is claimed there is
+nothing to buy with them: `completeTowerPattern` has no target left, so chips accumulate
+monotonically and dead. The binding resource for *output* is tower paint, and this iteration
+**does not touch it** — the tower must still afford the 300 paint, exactly as before. The change
+is purely to the *chip* threshold, from `CHIP_RESERVE + 2500` down to
+`CHIP_RESERVE + SPLASHER.moneyCost`, and only once the phase signal says expansion is over.
+
+This is the distinction from the three failures the pre-check names. Iteration 20 freed soldier
+*turns* while paint was binding (null). Iteration 26 spent chips while *paint* was binding (−21).
+Iteration 39a freed build *slots* while tower paint was binding, and the idling was the
+accumulation (splashers -> 0). Here the freed resource is genuinely dead **and** the binding one
+is untouched, so the conversion is additive by construction — which is also why arm C could
+only ever *add* splasher production, never remove it.
+
+**2. UNIT — same unit throughout.** Gate `+12` and floor `5.29` are both `net_swept`; the
+identity column agrees on both readings. No factor of 2 anywhere.
+
+**3. BITE — checked on a map where the mechanism is known to act, and it acted.**
+`gauntlet/20260908-211909/losses/alice_iter30__AlarmClock__botA.bc25`, dumped: `T1 = alice_i39c`,
+`T2 = alice_iter30`. Cumulative splashers built, by sample window:
+
+| round window | `alice_i39c` (T1) | `alice_iter30` (T2) |
+|---|---|---|
+| ->400 | 1 | 1 |
+| 400–600 | **+14** | +8 |
+| 600–800 | +12 | +18 |
+
+**The arm opens splasher production earlier and harder in the 400–600 window** — the interval
+where the phase signal fires and the chip proxy has not yet opened. That is the predicted
+signature, and it is present in a game the arm **lost**, which makes it a conservative reading:
+the mechanism is not an artefact of the games that went well.
+
+**A correction to my own earlier note while I am here.** I wrote that on AlarmClock the baseline
+"built ZERO splashers all game". In *this* game `alice_iter30` built 18+ and ended r800 sitting
+on **$18,260** idle. The zero-splasher game was a different pairing, and I should not have
+carried it forward as a property of the map. What survives is the chip pile: the baseline's
+$18,260 against the arm's $1,520 is the dead resource this iteration exists to spend.
+
+### What this does NOT establish, named so it is not assumed later
+
+The census is against `alice_iter30` only, as the screen was. **Trigger frequency against a
+different opponent is still untested** — an opponent that contests ruins on another schedule
+moves the tower-gain sequence the signal is built from. The tournament is the instrument for
+that, and it can only answer now that the accept has shipped to HEAD.
