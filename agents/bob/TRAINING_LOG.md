@@ -13398,3 +13398,130 @@ the read before it prints:
   carol simply punishes it harder.
 
 These give visibly different numbers, and I do not know which way it goes.
+
+---
+
+## The instrument is broken: MY SELF-PLAY POOL CANNOT PRODUCE THE GAMES I LOSE
+
+This supersedes the "next session" queue above. Traced from the reframing, and it explains iterations
+31, 32 and 33 better than any of their own post-mortems did.
+
+### The trace: two sides of one map, two different failures, both ending in `spl0`
+
+`CastleDefense` (20x20, 6 claimable ruins), bob vs carol, 20260909-0100. bob loses BOTH sides, and the
+census says bob reached 4 towers on one side and 2 on the other. They are not the same game.
+
+**T2 side (109 rounds), bob paint-collapsed** — the failure I already had:
+```
+  round 10   bob sold5 spl0 tw2 twPaint100   $1550     carol sold2 spl2 tw2 twPaint100
+  round 30   bob sold6 spl0 tw2 twPaint100   $1900     carol sold2 spl2 tw4 twPaint866
+  round 100  bob sold3 spl0 tw2 twPaint250   $3200     carol sold1 spl4 tw5 twPaint1550
+             bob acts[p0 u0 a0 s0 m0]                  carol cov676 vs bob cov182
+```
+
+**T1 side (130 rounds), bob paint-RICH and still inert** — this one is new:
+```
+  round 40   bob sold8 spl0 tw3 twPaint445   $700    cov409  acts[p6]
+  round 60   bob sold6 spl0 tw4 twPaint799   $300    cov374  acts[p2]
+  round 80   bob sold6 spl0 tw4 twPaint1045  $900    cov359  acts[p0]
+  round 100  bob sold6 spl0 tw4 twPaint859   $1200   cov347  acts[p0]
+  round 130  bob sold7 spl0 tw4 twPaint622   $1350   cov276  acts[p0]   <- LOSS
+```
+
+**bob's coverage PEAKS at round 40 and then falls 409 → 276 while it holds 800-1000 tower paint and
+does literally zero paint actions.** Carol's climbs monotonically 447 → 676. Carol wins on
+MAJORITY_PAINTED.
+
+Two code facts, both mine, explain it and they are *different* on the two sides:
+
+1. Soldiers **cannot overwrite enemy paint** (my own iteration-20 comment). Carol's splashers convert
+   bob's tiles; bob's eight soldiers physically cannot convert them back, so they stand still — that is
+   the `acts[p0]` with a full paint stash, and the declining coverage.
+2. bob fields **zero splashers**. On the T2 side because a splasher costs 300 paint and bob's towers
+   held 50-250. On the T1 side because of **chips**: `reserve = 1200` after round 30, splasher
+   moneyCost 400, so bob needs 1600 chips and never once held 1600 in the whole game ($300-$1350).
+   A soldier needs 1450 and bob was mostly under that too.
+
+**So my own 1200-chip reserve froze bob's entire unit production from round 30 to the end of the game.**
+That corrects my note of 2026-09-08, which concluded from the T2 side alone that "the dominant cause is
+paint, a splasher costs 300". True on that side. On the other side of the same map paint was ample and
+the blocker was chips. One side of one map is not a regime.
+
+### Iteration 24 measured the reserve. It could not have seen this.
+
+Iteration 24 laddered the reserve and got a monotone result against lowering it (1200 > 600 > 0). I
+re-read that run's own `results.csv` by regime, at zero VM cost. The `bob_v12` null reads exactly 50.0%
+in every bucket, which confirms the bucketing:
+
+```
+  arm       ruin-poor<=13   mid    ruin-rich>=24        short<=400   mid   long>1000
+  bob_v12       50.0%      50.0%      50.0%                  -      50.0%    50.0%
+  bob_v6        61.1%      55.0%      50.0%                50.0%    71.0%    29.4%
+  bob_v0        55.6%      80.0%      50.0%                50.0%    77.8%    47.1%
+```
+
+Lowering the reserve is worse in every ruin bucket, so my regime hypothesis is **not** rescued by
+saying "it helps on ruin-poor maps". But look at the `n` behind the length split: iteration 24's 150
+games contained **8 games at or under 400 rounds, and zero under 200.** The regime in which the reserve
+freezes production is essentially absent from the run that measured the reserve.
+
+### And that absence is a property of SELF-PLAY, not of that run
+
+Same maps, different opponent:
+
+```
+                              n     median   <=200 rounds     ruin-poor median
+  self-play (iter24)         150      870      0  (0.0%)            818
+  tournament vs alice        150      898      2  (1.3%)            624
+  tournament vs carol        150      724      9  (6.0%)            484
+```
+
+Map by map on the nine ruin-poor maps common to both, self-play is systematically longer — `rain`
+780-2000 in self-play against 306/332 versus carol; `starburst` 730-1550 against 224/488; `Bread`
+616-931 against 383/395.
+
+Then I checked it across **every gauntlet I have ever run — ~4,900 games, 68 distinct opponents**:
+
+```
+  opponent            n     median   <=200   <=400   bob win%
+  bob (self)        300       894       1      17     55.3%
+  bob_iter11        300       816       0      19     53.3%
+  bob_denier        100       949       0       2     90.0%   <- the archetype built to attack me
+  examplefuncsplayer 200      314      36     138    100.0%   <- saturated, gates nothing
+  ... 64 more opponents, every one with <=1 game under 200 rounds
+```
+
+**Not one opponent I own, including the paint-denial archetype I built precisely to be unlike me,
+produces the sub-200-round game in which I lose.** `bob_denier` has a *median of 949 rounds*. The only
+short-game opponent is `examplefuncsplayer`, which bob beats 100/100 and which therefore cannot show
+bob failing at anything.
+
+This is measurement doctrine 15 in its most directly observable form. It is not an argument that my
+instruments *might* be blind; it is a census showing the losing regime has never once appeared in them.
+Iterations 31, 32 and 33 were all opening interventions evaluated entirely inside a pool that cannot
+generate the opening failure they targeted, and all three produced nothing. That is a better account of
+those three nulls than any of the three wrote for itself.
+
+### Closed-directions ledger — an addition and a correction
+
+- **ADD**: "evaluate an early-game/opening mechanism on the self-play gauntlet alone" is CLOSED as a
+  method. The pool has no games decided before round 200 and its ruin-poor median is 818 against
+  carol's 484. Any opening mechanism measured there is measured in the wrong regime.
+- **CORRECT (supersede, not delete)**: my 2026-09-08 note "tower paint was never the binding
+  constraint" is now scoped. It is correct for the T1 side of CastleDefense and wrong for the T2 side.
+  Both sides lose. Neither generalises to "the" constraint.
+- **NOT re-opened**: iteration 24's reserve *level* stands as measured, for long self-play games. What
+  is untested is the reserve's *condition* in short games, and the reason it is untested is that no
+  instrument I own can run that test.
+
+### What must happen next, and why it is an instrument job rather than a candidate
+
+Building the reserve fix now would repeat the exact error above: I would evaluate it in a pool that
+cannot produce the regime, get a null, and close a direction that was never tested. The prerequisite is
+**an opponent that ends games before round 200**, and its acceptance criterion is a *regime* criterion,
+not a strength one — it must produce sub-200-round games on small ruin-poor maps. `bob_denier` fails
+that test at a median of 949 and is not repairable into it; it was built to deny paint, not to end
+games.
+
+Note carefully what this archetype is and is not for. It makes the pool **contain the regime**; it does
+not make the pool independent of my blind spots, and it cannot become an accept gate on its own.
