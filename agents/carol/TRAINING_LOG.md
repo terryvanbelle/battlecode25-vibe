@@ -12920,3 +12920,56 @@ below the gate to above it.
 drain by three quarters is worth nothing if the price is the ground you had to cross to spend the
 paint. Any successor has to buy the drain reduction without a movement restriction — the drain and
 the confinement came bundled in every arm here, including the "free" one.
+
+## Iteration 46 pre-check: the successor died in one match, and found something larger
+
+Iteration 45's closing line said a successor must buy the drain reduction **without** a movement
+restriction. Moppers do exactly that: a mopper attack clears enemy paint within r2=2 and moves
+nobody, so mopping the tile an ally is standing on converts that ally's −2/turn to 0. And
+`runMopper` currently takes the **first** enemy tile `senseNearbyMapInfos` returns, in arbitrary
+order, with no reference to whether anyone is standing on it — so retargeting is free: same action,
+same cost, same bytecode class.
+
+**Before building it I ran the check iteration 45 skipped: can the mechanism ever fire?**
+`src/carol_i46q` is `carol_iter44` plus a read-only counter of mopper turns and, per turn, the
+attackable enemy tiles and how many carry an ally.
+
+**Result: zero mopper turns.** Identity check passes (probe and uninstrumented baseline both give
+Gears `r775`), so this is the bot's behaviour, not the instrument's.
+
+Two independent instruments agree, which matters because I am about to build on this:
+
+| instrument | reading |
+|---|---|
+| `i46q` indicator counter, Gears | **0 mopper turns** in the whole game |
+| `mixcheck/spawnmix.sh` spawn-event count, 3 ladder replays (6 team-games) | soldiers 147, **moppers 1**, splashers 448 |
+
+**Realized mix 24.7% soldier / 0.17% mopper / 75.2% splasher, against an intended 75 / 10 / 15.**
+It is very nearly the inverse of the intended mix. Iteration 46 as conceived is dead — there are no
+moppers to retarget — at a cost of one match rather than a 150-game gauntlet.
+
+### Why: two floors added later now control the mix, and they silently reverted two measured doses
+
+Unit costs [E: RULES.md] — soldier 200 paint, splasher 300, **mopper 100**.
+
+- **`PAINT_FLOOR = 200` (iteration 36)** blocks any unit with `paintCost < SOLDIER.paintCost` when
+  the tower's paint would fall below 200. **Only the mopper satisfies that predicate.** So the
+  floor is not a general protection for expensive units, as its comment describes it — it is a
+  mopper gate and nothing else, and "exempt moppers from PAINT_FLOOR" and "delete PAINT_FLOOR" are
+  the *same edit*.
+- **`SPLASH_FLOOR = 2000` (iteration 30)** blocks every NON-splasher when chips would fall below
+  2000, reserving a 2000-chip band exclusively for splashers.
+
+Together they, not `SPLASHER_IN_20` and `MOPPER_IN_20`, set the army. **Iteration 21 measured the
+mopper dose curve and found it concave with an interior optimum at 2/20, with the zero arm losing
+badly (dose 2 beat dose 0 by 29–11).** Iteration 36 then drove the realized share to ~0 without
+anyone noticing, re-creating the configuration iteration 21 had already measured as clearly worse.
+
+**This is a new failure mode for my ledger, distinct from the gate problem**: iterations 30 and 36
+each changed an *affordability gate*, and an affordability gate silently overrides every dose
+constant downstream of it. A dose is only the intended mix; the gates decide the realized one. No
+accept in this lineage has ever re-measured a previously-tuned dose after adding a gate above it.
+
+And iteration 36 is one of the three accepts this morning's audit flagged as not clearing the
+corrected bar (28/50, +0.70 sd). So a coin-flip accept silently reverted a measured optimum. The
+two findings are the same finding seen twice.
