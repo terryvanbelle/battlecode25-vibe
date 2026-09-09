@@ -311,7 +311,12 @@ one entire mechanic. Reproduce with:
 # can silently return the wrong one. tools/engine-jar.sh reads the wanted version from
 # arena/engine_version.txt and REFUSES to print a non-matching path.
 J="$(../../tools/engine-jar.sh --remote)"
-gssh "javap -cp $J battlecode.common.RobotController \
+# PATH IS NOT OPTIONAL EITHER: battlecode-dev has no system JDK (no /usr/lib/jvm,
+# `which javap` is empty). The JDK lives in ~/jdk21, which tools/gauntlet.sh
+# exports for itself; a bare gssh gets a non-login shell without it and the
+# command dies with "javap: command not found" (verified 2026-09-09, iteration 44).
+gssh "export PATH=\$HOME/jdk21/bin:\$PATH
+      javap -cp $J battlecode.common.RobotController \
       | sed -n 's/.* \([a-zA-Z][a-zA-Z0-9]*\)(.*/\1/p' | sort -u" > rc_api.txt
 while read m; do grep -q "rc\.$m(" src/alice/RobotPlayer.java || echo "  $m"; done < rc_api.txt
 ```

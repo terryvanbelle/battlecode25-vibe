@@ -16110,3 +16110,147 @@ lineage**, while it separates the tournament at |z| > 4. That is the self-refere
 of TRAINING_ALGORITHM.md stated as a number: my gauntlet cannot see the axis that decides my
 cross-lineage results, so iteration 44's falsifier is being asked of an instrument that has never
 shown a size effect at all. Recording that as a limit on what a null in the size cut can mean.
+
+## Iteration 44 REJECTED — net swept **−58** of a possible −75. The largest negative this lineage has measured
+
+`20260909-115552`, `alice_i44` vs `alice_i44ctl`, full 75-map corpus, 150 games, 0 exceptions.
+
+| | maps | SW | SL | split | record | net swept |
+|---|---|---|---|---|---|---|
+| `alice_i44` (remember towers) | 75 | **0** | **58** | 17 | **17/150 (11.3%)** | **−58** |
+
+Identity check `wins − N = SW − SL` passes (−58 = −58). **Zero swept wins on 75 maps.** Against
+my measured floor `sd_net_swept = 5.29` this is **−11.0 sd**. The corrected census bar (+12) never
+came into play and neither would the mis-registered +4; nothing about this verdict is close.
+
+**The pre-registered map falsifier is refuted in sign as well as size.** I registered that a
+genuine gain must sit on the LARGE half and be ~0 on the small half. `tools/map-axis-split.py
+--axis size`:
+
+| half | `alice_i44` wins | rate |
+|---|---|---|
+| SMALL (35 maps) | 10.0/70 | 14.3% |
+| LARGE (40 maps) | 7.0/80 | **8.8%** |
+
+Spearman rho vs size = **−0.117, p = 0.327 — no trend**. The arm is catastrophic everywhere and,
+if anything, *worse* on the large half where the mechanism was supposed to help most. Even had the
+total been positive, this cut would have disqualified it.
+
+**How the games ended:** 124 of 150 "painted enough of the map" (the 70% instant win), 26 on the
+coverage tiebreaker. **Zero decided by tower destruction.** The whole corpus is a painting race,
+which makes what follows a direct account of the loss rather than an inference.
+
+### What actually happened — the trace, and it disconfirms my first guess
+
+`BatSignal` (40x25), T1 = `alice_i44`, T2 = `alice_i44ctl`. Counters are per-window, reset each
+sample (`ReplayDump` line 230), so `p` is paint actions *in that window*:
+
+| round window | T1 paints | T2 paints | T1 cov | T2 cov | T1 towers | T2 towers | T1 soldiers | T2 soldiers |
+|---|---|---|---|---|---|---|---|---|
+| →100 | 228 | 317 | 258 | 361 | 4 | 6 | 7 | 5 |
+| →200 | **56** | **233** | 318 | 587 | 4 | **8** | 7 | **16** |
+| →300 | 115 | 109 | 366 | 579 | 5 | 8 | 9 | 11 |
+
+My first guess was "soldiers commute instead of painting, so paint actions collapse". The paint
+collapse is real — **4.2x** in the r101–200 window — but the trace shows the guess was **too
+small**, and it also kills the flattering reading:
+
+1. **The mechanism fires.** Late-window paint transfers are T1 **14** against T2 **2**. Soldiers
+   really are walking home and drawing paint. This is not an inert arm.
+2. **But it does not deliver its own stated benefit.** Starvation deaths per window run T1
+   3/2/5 against T2 2/1/8 — **comparable, not reduced**. The change bought essentially nothing on
+   the quantity it was built to fix, while paying 4x in paint actions.
+3. **And the real cost is not paint at all — it is EXPANSION.** By r200 the control holds **8
+   towers to my 4** and **16 soldiers to my 7**. `goRefill` runs at the top of `runSoldier` and
+   `return`s, so a diverted soldier skips the ruin-capture role entirely. Fewer ruins captured →
+   fewer towers → less income and less spawn → fewer soldiers → fewer ruins. It compounds, which
+   is why a diversion that looks like a minor tempo cost lands at −58.
+
+### The error, named exactly — and it is the FOURTH instance of one shape
+
+The probe that motivated this was correct and I read it wrong. It said: of a soldier's hungry
+turns, **96.2% have no tower in vision, so `goRefill` cannot act.** I read that as *96.2% of
+hungry turns are wasted*. They were not wasted. **They were the turns the soldier was out
+painting and capturing ruins.** The probe measured the inertness of a *branch*; I attributed it to
+the *bot*.
+
+> The gate's own SCARCITY pre-check asks: name the resource you claim was wasted, and the resource
+> that is actually binding. I answered "soldier paint" for both. The binding resource was
+> **ruin-capture tempo**, and soldier paint was merely its input. Iterations 20, 26 and 39a each
+> freed a resource that was not binding; **44 went further and spent the binding one to buy the
+> non-binding one.**
+
+It is precisely the iteration 39a shape — *"the idling WAS the accumulation"* — one level up:
+**the inert branch WAS the productive path.** I even wrote the risk down before the run
+("iteration 26 lost 21 by pulling painters off the map; this is the same family of risk") and
+registered a gate that could not detect it, because the gate scores outcomes and the risk was
+about which turns get spent. Naming a risk is not controlling for it.
+
+**Standing check, added to `tools/gate-read.sh`'s pre-check list rather than left as prose:** when
+a candidate diverts a unit, state what the diverted turns were *doing before*, measured — not what
+the branch failed to do.
+
+### What is closed and what is not
+
+**Closed: diverting soldiers by a hunger threshold.** Two arms now (iteration 26 at −21,
+iteration 44 at −58) say that pulling soldiers off ruin work on a *paint-fraction* test loses,
+and loses bigger the more turns it captures. `REFILL_WALK` is `paint*2 < capacity` — a soldier is
+"hungry" for most of its life, so this diverts most of it.
+
+**NOT closed: the underlying defect.** Soldiers still die at 0 paint, 5–19 per 100-round window,
+while towers hold 300–600. That number is unexplained and unfixed; what is refuted is one
+particular fix. The re-open standard: **a diversion may only capture turns that are already
+producing nothing.** A soldier below 5 paint cannot paint at all (`SOLDIER.attackCost = 5`), so
+those turns have near-zero opportunity cost — unlike the 96.2% this iteration captured, which were
+the bot working. That is iteration 45, and it is a dose change on the same mechanism rather than a
+new one.
+
+## Scheduled API sweep at iteration 45 — 37 of 68 still unused, and one of them is the map itself
+
+Run while the iteration 44 census finished, per the Phase 0.2 trigger (iteration 5, then every
+10). Verified against the right jar: the pipeline yields **68 unique names** and
+`getChips`/`getNumberTowers` are both present, so this is 3.1.0 and not the stale 1.0.0 beside it.
+
+**The documented command did not run, and the fix is in `RULES.md` rather than in my head.**
+battlecode-dev has **no system JDK** — no `/usr/lib/jvm`, `which javap` is empty. The JDK is at
+`~/jdk21`, which `tools/gauntlet.sh` exports for itself (line 107) but a bare `gssh` does not,
+so the reproduce block died with `javap: command not found`. Not a `tools/` bug — the tools do
+this correctly; the omission was in my own RULES.md reproduce block, now carrying the `export`.
+
+**37 of 68 unused** — the same count as iteration 29, so nothing I have built since has consumed
+new API surface. One correction to the list before reading anything into it: **`getChips` is a
+false positive**, the bot calls the synonym `rc.getMoney()` seven times. The sweep matches names,
+not semantics.
+
+The unused set, grouped:
+
+- **communication** — `sendMessage` `broadcastMessage` `readMessages` `canSendMessage`
+  `canBroadcastMessage` (still the largest unexplored capability I own, unused for 45 iterations)
+- **resource patterns** — `markResourcePattern` `completeResourcePattern` `canMarkResourcePattern`
+  `canCompleteResourcePattern` `getResourcePattern` (`srp0` for both teams in every trace I have
+  dumped, all year)
+- **mopper area attack** — `mopSwing` `canMopSwing`
+- **cheap ground marks** — `mark` `removeMark` `canMark` `canRemoveMark`
+- **map geometry** — `getMapWidth` `getMapHeight` `onTheMap` `adjacentLocation`
+  `getAllLocationsWithinRadiusSquared` `sensePassability`
+- misc — `disintegrate` `resign` `getHealth` `senseRobot` `senseRobotAtLocation` `canSenseRobot`
+  `isLocationOccupied` `getActionCooldownTurns` `getMovementCooldownTurns` `setIndicatorDot`
+  `setIndicatorLine` `setTimelineMarker` `canPaint`
+
+### The one that matters, and it lands exactly on this session's open question
+
+> **`getMapWidth` / `getMapHeight` have never been called. This bot does not know how big the map
+> is.**
+
+The confirmed axis of my cross-lineage deficit is **map SIZE** (|z| > 4 in both directions:
+−28.7 on the 19 smallest, +21.8 on the 19 largest, with the sparseness rival killed by the
+disjoint-residual control). A size-conditional policy is not something I have tried and rejected —
+it is **not currently expressible**, because the bot has no access to the quantity. Two calls,
+available since iteration 0, free of cost and bytecode-trivial.
+
+That is a much better-founded lead than iteration 44's was, and it comes with a caution I should
+state now rather than after a disappointing run: my **gauntlet cannot see this axis** (rho +0.014,
+p = 0.903 against my own predecessor over a 75-map census). The instrument that shows the size
+effect is the **tournament**, which I do not control and which runs twice a day. So a size-keyed
+mechanism has to be justified by a within-arm mechanism check, not by a gauntlet headline — and I
+should expect the gauntlet to score it ~0 even if it is right.

@@ -32,6 +32,13 @@ cat >&2 <<'PRECHECK'
      SAME unit; the identity column below fails loudly if they are not.
   3. BITE. Was the mechanism check run on a map where the mechanism is KNOWN to
      act? A near-inert map says nothing either way (the iteration 38 error).
+  4. DIVERSION. If this candidate redirects a unit's turn, state what those turns
+     were DOING BEFORE -- measured, not assumed. A branch that is "inert on 96.2%
+     of turns" is a fact about the BRANCH; those turns may be the bot working.
+     (i44: diverted hungry soldiers to remembered towers, -58 net swept. The
+      96.2% of hungry turns with no tower in vision were the turns the soldier
+      spent painting and capturing ruins. Paint was not binding; ruin-capture
+      TEMPO was, and the diversion spent it. Towers 4 v 8 by round 200.)
   ------------------------------------------------------------------------------
 PRECHECK
 
