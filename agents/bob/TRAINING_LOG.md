@@ -16287,3 +16287,56 @@ LEARNING 74's lesson working for once instead of catching me afterwards.
 
 `src/bob/` untouched. **`bob_iter20` remains the bot; HEAD's behaviour is unchanged.** Registered
 secondaries (mopper share, unpaints, total paint actions, dTiles, towers) follow when the census lands.
+
+### Iteration 45 secondaries — the mechanism worked perfectly and the objective fell anyway
+
+All 200 replays censused (42,897 rows, r ≤ 200, stride 1).
+
+```
+ stratum         team    n     acts    dTiles    conv   soldRnd  mopU%
+   small       bob_m0   16    415.5     333.3   0.802    1210.1    7.7
+               bob_mS   16    383.2     335.4   0.875     887.6   31.1
+               bob_mL   16    386.8     336.9   0.871    1165.8   18.9
+               bob_mX   16    343.6     312.9   0.910     809.0   40.5
+   large       bob_m0   18    563.7     547.1   0.970    1370.4    5.3
+               bob_mS   18    455.4     441.8   0.970     923.6   29.1
+               bob_mL   18    485.1     470.2   0.969    1152.0   17.2
+               bob_mX   18    394.1     379.2   0.962     812.8   38.7
+     ALL       bob_m0   50    500.3     448.6   0.897    1260.0    6.5
+               bob_mS   50    428.2     390.2   0.911     875.6   29.7
+               bob_mL   50    449.0     417.3   0.929    1150.2   17.0
+               bob_mX   50    367.7     340.0   0.925     771.3   39.4
+```
+
+- **Secondary 1 (mechanism engaged): PASSES, emphatically.** Mopper alive-share went **6.5% → 29.7% /
+  17.0% / 39.4%**, i.e. from below bob's tournament 7.1% to past alice's 24.6%. The dose landed.
+- **Secondary 2 (the denominator — registered *as* the iteration 43 failure mode): FIRES.** Total paint
+  actions per game fell **500.3 → 428.2 / 449.0 / 367.7**, i.e. **−14% / −10% / −27%**. I wrote in the
+  pre-registration: *"If mopper share rises and total paint actions fall in proportion, this is iteration
+  43 repeating and I will say so rather than quote a per-unit gain."* **It is, and I am.**
+- **Secondary 3 (the objective): FAILS.** `dTiles` fell **448.6 → 390.2 / 417.3 / 340.0** (−13% / −7% /
+  −24%).
+- **And `conv` ROSE**: 0.897 → **0.911 / 0.929 / 0.925**, and on small maps **0.802 → 0.875 / 0.871 /
+  0.910**. The moppers did *exactly* what they were bought to do. Bob's conversion problem is genuinely
+  fixable by mopping, and fixing it **loses games**.
+
+**This is LEARNING 76 for the second time in three iterations, and it is now a pattern rather than an
+incident.** Iteration 43 raised tiles-per-soldier-round 6.5% and the army shrank, netting flat. Iteration
+45 raised conversion 3-9 points and the *action volume* collapsed 10-27%, netting **negative**. Both
+mechanisms worked. Both were paid for out of the thing that generates the objective.
+
+> **Bob's binding constraint is total paint actions, and every mechanism I have tried for three
+> iterations has bought quality with volume.**
+
+**One regime-level nuance, recorded and then closed by arithmetic.** On **small maps** — the target
+regime, where bob wins 14% — `dTiles` did **not** fall: 333.3 → 335.4 / 336.9 (+0.6% / +1.1%), with conv
+up 7 points. The damage is on medium and large, where bob already wins 60% and `dTiles` falls 7-24%. So a
+**map-area-gated** mopper build is the obvious refinement — and it is **CLOSED without a run**, because
+its best case is the small-map number, and **+1.1% of 333 tiles is +3.7 tiles** against a 91-tile deficit.
+A gate can at most buy back the harm; it cannot make this a lever. (Iteration 40 already rejected a
+small-area gate on a different mechanism, so the scaffolding cost is not the objection — the size is.)
+
+**Closed-directions ledger, AMEND** the iteration 45 entry: "raise bob's mopper spawn share" is CLOSED at
+−5/−6/−11 wins, **with the mechanism confirmed working** (conversion +3 to +9 points, mopper share 6.5% →
+39%) and the cost located precisely in **total paint actions (−10% to −27%)**. Also CLOSED, by arithmetic
+rather than games: the **map-area-gated** variant, whose best case is **+3.7 tiles**.

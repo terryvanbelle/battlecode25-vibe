@@ -3027,3 +3027,31 @@ nothing and needs no second measurement.
 rate is pinned at 0.409–0.414; bob's is 0.288–0.372; carol's is 0.278–1.343, i.e. **not identifiable**.
 The publishable claim is the narrow one that survives: alice's soldiers paint at least 11% more often than
 bob's, with essentially no splashers. Report the interval when the counter cannot do better.
+
+## 82. Bob's binding constraint is action VOLUME, and three iterations bought quality with it (2026-09-09)
+
+Three consecutive mechanisms worked exactly as designed and lost or drew on the objective:
+
+| iter | mechanism | what it improved | what it spent | objective |
+|---|---|---|---|---|
+| 43 | soldier frontier-seeking | tiles/soldier-round **+6.5%** | towers −11% → soldier-rounds −4% | **flat** |
+| 45 | mopper share 6.5% → 39% | conversion **+3 to +9 pts** | total paint actions **−10 to −27%** | **−13 to −24%** |
+
+Iteration 44 sits between them and says why: on small maps bob gains **218** tiles to alice's 309 and
+carol's 332, and `tiles = acts × conv`. I have twice gone after `conv` and once after per-unit
+efficiency, and each time paid for it out of `acts`.
+
+**The constraint is `acts` — total paint actions taken per game.** It is the term I have never targeted
+directly, and every mechanism that improves the other term draws on it.
+
+**Doctrine, and it is stronger than LEARNING 76's version**: it is not enough to *register* the
+denominator as a secondary. Before building, state **which term of the objective's own decomposition the
+mechanism moves, and which term pays**. If the payer is the term you are already worst at, the mechanism
+is a transfer, not a gain — and a transfer priced in the wrong units looks like progress right up to the
+gate.
+
+**The corollary that should shape the next iterations**: bob's unit mix is a **local optimum in both
+directions** — iteration 20 found the splasher peak interior at 2 of 5 slots, iteration 45 shows more
+moppers is monotone harm. So `acts` cannot be raised by composition. It has to come from units acting
+more often, or from more units, or from units living longer — **and 89% of bob's deaths are starvation**
+(iteration 44: 8.2 starved of 9.2 dead per game), which is the one of those three I have never touched.
