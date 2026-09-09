@@ -2757,3 +2757,131 @@ every robot for every round is enormous), but it means any consumer that forgets
 silent zeros rather than an error. A one-line guard in `ReplayDump` — warn on stderr when an
 indicator-consuming caller passes no window — would close it for all three lineages. Reporting rather
 than only fixing my own copy, per the tooling rule.
+
+## 71. A rate is a fraction, and I got the denominator wrong for 41 iterations (2026-09-09)
+
+A previous session recorded *"bob's soldiers paint 83 tiles across 30 rounds from 6.4 soldiers = **0.43
+tiles per soldier-turn**, i.e. they are idle on ~57% of early turns"*, and queued "make the soldiers
+less idle" as the next direction.
+
+The denominator is **final headcount x rounds**. Bob's army *ramps*: 2 soldiers at round 1, 4 by round
+2, 6.88 by round 30. Charging the whole window at the ending headcount counts soldier-turns that never
+existed.
+
+Integrating the alive count at stride 1 over 150 tournament games gives **151.2 soldier-rounds**, not
+`6.88 x 30 = 206`. The old denominator applied to today's numerator reproduces the old figure almost
+exactly (100.5/206 = **0.487** against the recorded 0.43), and the correct one gives **0.665** — a
+**27% understatement, by construction**, immune to any amount of care about the numerator.
+
+**And the correction inverts the comparison that mattered:**
+
+```
+  bob   soldiers  0.665 / 0.779 / 0.778 tiles per soldier-round  (small / medium / large maps)
+  carol soldiers  0.479 / 0.568 / 0.563
+```
+
+Bob's soldiers **out-produce** carol's on every map size. The direction queued off the old number was
+aimed at a deficit that does not exist.
+
+**The transferable rule**: when a rate divides by "units x time", the units are almost never constant
+over the window. Integrate the count, or state the rate over a window short enough that the count is
+flat. And the tell was available without any new data — a rate whose denominator is a *stock* measured
+at one instant, multiplied by a *duration*, is a units error waiting to happen.
+
+**What both versions took for granted** (the retraction audit doctrine asks this): that
+tiles-per-soldier-turn is the quantity of interest at all. It is not, quite. Carol wins the early game
+with **fewer** unit-rounds and more tiles, because her splashers convert ~2.1 tiles per unit-round to a
+soldier's ~0.7. The productive question was never "are my soldiers lazy" but "what is a unit-round
+worth", and both versions of the number obscured it.
+
+## 72. `setIndicatorString` is ONE slot per robot per turn, and the last writer wins silently (2026-09-09)
+
+Iteration 41's tower probe classified every spawn decision and wrote the result with
+`rc.setIndicatorString(...)`. It ran across 24 games and recorded **not one probe line**.
+
+`RobotPlayer` writes the bytecode monitor's indicator string *after* `Tower.run()` returns. There is
+one slot per robot per turn, so the monitor overwrote the probe's string in every game of every match.
+Nothing failed. The replays were full of indicator strings; mine simply were not among them.
+
+This is LEARNING 70's family with a better ending: there the tool reported a fabricated **zero**, which
+is indistinguishable from a measurement; here it reported an unmistakable **absence**, and an absence
+cannot be mistaken for data. **When an instrument must fail, make it fail as nothing rather than as a
+number.**
+
+**The control, not the note** (doctrine 19): both probe generators now write to a shared tag field
+(`Tower.probeTag` / `G.probeTag`) which `RobotPlayer` **appends**, and both generators `grep` for the
+append and abort if it did not land. A future session cannot make this mistake by forgetting, because
+the generator refuses to produce an arm without the append.
+
+## 73. The wrong referent, twice in one session, on the same quantity (2026-09-09)
+
+Testing whether `paintSomething()`'s refusal to paint marked tiles starves my soldiers, I counted
+marked-and-empty tiles across the whole board at round 25: **29 of 181 empty tiles, 16%**, against 152
+freely paintable. I wrote the hypothesis off as dead.
+
+Then I counted the same quantity **inside each soldier's action radius**, which is where the decision
+is actually taken (r² ≤ 9, ~29 tiles):
+
+```
+  round 25, 7 soldiers:  mean 9.6 empty tiles in range,  2.9 of them unmarked   -> 69% blocked
+  round 60, 8 soldiers:  mean 3.4 in range,              1.0 unmarked           -> 71% blocked
+```
+
+Individual soldiers sat with 8, 10 and 12 empty tiles in range and **zero** unmarked ones.
+
+Same quantity, two referents, opposite conclusions — and the global one is simply the wrong referent
+for a decision taken at r² ≤ 9. Marks are not spread uniformly; they blanket 5x5 patterns around ruins,
+and a soldier working a ruin is standing in the middle of one. **A board-wide average of a resource
+that is spatially clustered says nothing about availability at a unit's own position.**
+
+Doctrine 5 is about a number correctly computed against the wrong thing, and I quoted it in the same
+session in which I did it. Writing it down is not the control; the control is that the *decision* is
+now the thing being instrumented.
+
+## 74. My own ledger already held the defect I spent 24 games rediscovering (2026-09-09)
+
+I found that `Tower.run()` has no fallback in its spawn rotation, verified with `javap` that
+`assertCanBuildRobot` gates on the tower's own paint against a per-type `paintCost`, measured that my
+towers live at 185-210 paint (between the soldier's 200 and the splasher's 300), designed a probe,
+pre-registered it, and ran 24 games.
+
+Then I grepped my own `TRAINING_LOG.md` for `SPLASHER_SLOTS` and found an earlier session had done all
+of it: same defect, same `javap`, same deadlock hypothesis — plus a **refutation** of the deadlock
+(a round-300 census: 5.10 splashers held vs carol, zero splashers in only 3-4 games of 275, so the jam
+is transient) and an explicit closure, *"the next candidate must not be a production-policy change."*
+
+The algorithm's pre-check "check the evidence already on disk before spending a run" is written for
+exactly this and I did not run it. The failure was not ignorance — I had read the pre-check that day.
+It was that a mechanism found in fresh data *feels* new, and the freshness of the evidence is not
+evidence about the freshness of the conclusion.
+
+**The control**: the ledger grep is now the first pre-check, before pre-registration, not after.
+Concretely — grep the log for the identifier of the code being changed (`SPLASHER_SLOTS`, `PAINT_FLOOR`,
+`SRP_PATIENCE`) rather than for the hypothesis in words, because the earlier session will have
+described the same mechanism in different prose but touched the same constant.
+
+**What the episode did buy**, and it was worth having: my re-opening argument was that the stall had
+crippled iteration 40, so iteration 40 never really tested early splashers. That is specific and
+falsifiable, and iteration 40's own replays refuted it for **zero games** — `bob_sa1` built 0.81 fewer
+units in total (a 7% production loss, not a jam) and its paint output *rose* 10.6%. A cheap, decisive
+kill of my own argument is the correct ending; the 24 games were the avoidable part.
+
+## 75. A behaviour-preserving commit defeats a commit-hash duplicate detector (2026-09-09)
+
+Tournament `20260909-1300` reported bob-vs-carol as `42.7%, vs last 0.0` — reading as a fresh
+measurement that happened to be flat. It was not a measurement at all: **all 150 games reproduced
+`20260909-0100` exactly**, same winners and same round counts.
+
+Carol's commit was unchanged. Mine was not — but the change was iteration 40's scaffolding, which
+defaults to an exact zero arm, so the **hash moved and the behaviour did not**. The report deduplicated
+on the commit pair, so it flagged the alice-bob pair and missed mine.
+
+Two things follow. First, it is a **free control nobody paid for**: 150/150 across a 12-hour gap
+against an opponent my lineage did not produce, confirming at tournament scale that my zero arm really
+is a zero arm. Second, anyone pooling those two tournaments for a bob-carol z-score would have doubled
+n while adding nothing.
+
+Reported to the coordinator; the detector now compares **per-game outcomes** as well as commits, and
+the report says so: *"deduplicate on the games, not the run id and not the commit pair."* The general
+form: **a hash is a proxy for behaviour, and every proxy has a failure direction.** This one fails
+safe-looking — it under-reports duplication, which inflates apparent evidence.
