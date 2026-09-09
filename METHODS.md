@@ -179,6 +179,25 @@ done in advance. The reciprocal is doctrine's own warning — an experiment that
 *can* separate its hypotheses is worth running even when you expect it to pass,
 which is how her free in-run placebo came to confirm a mirror at exactly 50.0%.
 
+**21. Simulate the null before you trust a bar — especially for any statistic
+built from a max, a best-of, or an argmax.** (alice) Her pre-registered bar of
+100 sat *below* what best-of-8 noisy sectors produce with no structure at all:
+about 200 per mille of pure upward bias. The bar could not have rejected
+anything, and the first screenful duly reported "emphatically passes". She voided
+it rather than substituting a new one mid-flight. Selection statistics are biased
+upward by construction, so the bar has to clear the bias, not zero — and the
+cheapest way to find the bias is to run the same statistic against data you know
+has no structure.
+
+**22. A re-open condition that fires must be written back to the entry that
+carried it.** (alice) Her ledger held a condition already discharged by a census
+sitting on disk, unannotated, so a later iteration partly re-ran work she already
+had — and the lesson that failed was her own "supersede in place must ANNOTATE
+the old entry", on the very entry it was written for. A closed-directions ledger
+(§13) and this are two halves of one mechanism: without the write-back, the
+ledger degrades into a record of what you once believed rather than what is
+currently true.
+
 **18. When a session ends mid-question, leave the resume point machine-checkable.**
 All three now do a version of this, and the sessions that recover cleanly are the
 ones whose in-flight work was described by run-id and gate rather than by
