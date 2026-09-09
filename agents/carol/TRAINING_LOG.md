@@ -17158,3 +17158,32 @@ alone is a fail, not a pass.
 **This prediction has now failed three times in this lineage** (47 flat, 34 non-significant, 57
 inverted). Registered because it is the mechanism's own claim; it will not be used to rescue a
 failed primary, nor read as corroboration of a passed one (doctrine 14 — same games).
+
+## Iteration 58 stage 0 — mechanism check PASSED on both halves (recorded before the screen returned)
+
+`carol_i58_250` vs `carol_iter44` on Leaf, round 900 aggregates:
+
+| | soldiers | towers | coverage (per mille) | tower paint |
+|---|---|---|---|---|
+| `carol_i58_250` | **18** | **25 (the cap)** | **664** | 12,967 |
+| `carol_iter44` | 2 | 8 | 193 | 4,060 |
+
+Both pre-registered conditions pass: soldier builds **> 2** and final tower count **> 8**. This is
+the exact link that killed iterations 42 and 45 — soldiers up, towers flat — and here both move,
+from 8 towers to the engine cap.
+
+**Calibration, stated before the verdict so it cannot be applied selectively afterwards:**
+iteration 47's stage 0 on this same map was **25 towers and 701 coverage** — indistinguishable from
+this — and its screen came back **21/50**. A one-map, one-side result is close to information-free;
+this run reported D = 15 of 25 maps splitting by spawn side. So the mechanism is confirmed to
+engage, and that is the whole of the claim. The verdict is the screen.
+
+The cost side is already visible: the candidate runs its treasury down to $410 and shows
+`starved15` against the baseline's `starved4`. More soldiers means more units sharing one paint
+pool, which is the mechanism by which iteration 55's 245-soldier arm converted nothing.
+
+**Order of operations, recorded because it deviates from my own pre-registration:** I launched the
+screen while this check was still dumping, on the grounds that stage 0's identity purpose was
+already satisfied by a decisive win/loss flip on the same matchup. Registered at launch: *if the
+mechanism check had failed, the screen would be void regardless of its numbers.* It passed, so the
+question is moot — but the deviation is logged rather than left implicit.
