@@ -17521,3 +17521,38 @@ magnitude calls keep landing and the structural call keeps missing — which, wi
 noted last iteration, is a real series now rather than a pattern I named too early.
 
 `src/bob/` untouched. **`bob_iter20` remains the bot.**
+
+---
+
+## Iteration 54 — PRE-REGISTERED: invert the order of work. Sweep the comparative FIRST, and let it nominate.
+
+**Why.** Three consecutive closures (#51 territory, #52 upgrade rate, #53 chip liquidity) each ended the
+same way: the tournament comparative showed bob **ahead of the lineage beating it 60–40** on the very
+quantity I was about to spend a screen improving. Each time the comparative was run *last*, as a control.
+Run *first*, it would have saved all three screens.
+
+**So the procedure changes, and this iteration is the change.** Before proposing any mechanism: sweep
+every metric I can already compute for **both** bob and alice on the same tournament games, and pursue the
+one where **bob is furthest behind**. Doctrine 17 says an opponent-independent instrument cannot tell "the
+bot improved" from "the instrument moved"; this is the positive form of the same idea — a cross-lineage
+comparative on a shared corpus is the only cheap instrument that can say *"this is actually my problem."*
+
+**PRE-REGISTERED, before re-reading any of the numbers:**
+
+- **The sweep NOMINATES; it accepts nothing** (LEARNINGS 16: a heuristic that nominates a candidate is not
+  evidence about it). Whatever it nominates still needs its own pre-registered probe or gate.
+- **I will pursue the metric where bob is furthest BEHIND alice in relative terms** — not the largest
+  absolute quantity, and not the one with the best story. Registering that now because "largest absolute"
+  is how I picked crowding (24,900 paint/game looked enormous and was worth +6).
+- **`grep CLOSED.md` for the nominee before building anything** — RULES.md's first act. If the nominee is
+  already closed, I take the next one down and record that the sweep re-nominated a closed direction,
+  because that is information about the sweep.
+- **Zero new games**: everything comes from censuses already on disk (`tl_tour.tsv`, `crowd_tour.tsv`,
+  `terr_tour.tsv`, `tour_census.tsv`) over the 75 `alice-vs-bob` replays of tournament `20260909-1300`.
+- **The one metric I will NOT trust from this sweep**: anything conditioned on winning or losing computed
+  on a mirror corpus (LEARNINGS 93). All comparatives here are on tournament games by construction.
+- **Prediction, registered**: the sweep nominates **paint-tower count** (bob 4.7/game vs alice 7.4 —
+  the one gap iteration 52 recorded without claiming). My structural calls have missed seven times running
+  while the magnitude calls landed, so this is registered as the guess it is.
+
+`src/bob/` untouched. **`bob_iter20` remains the bot.**
