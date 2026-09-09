@@ -15665,3 +15665,90 @@ to stop the gate being blind, not to manufacture a pass.
 **Kept regardless**: nothing ships. `src/carol` is untouched; HEAD still plays `carol_iter44`.
 The three arms and the calibration are committed so iteration 53 starts from measurements rather
 than from a rebuild.
+
+---
+
+## Iteration 53 — PRE-REGISTERED. `carol_denier`: a paint-denial archetype, because no opponent I own contests paint
+
+Written and committed **before any game is played**, per the loop. This iteration repairs the
+**pool**, not the bot — the second such repair this lineage has made (`carol_racer` was the first).
+
+### The finding this comes from
+
+Iteration 52 screened a 13.4% mopper share against `carol_iter44` and got **25/50 — a dead-centre
+null**. The free replay measurement that followed did not overturn the number; it undermined the
+*instrument*. Moppers are the only unit that REMOVES enemy paint, so their value is a function of
+how much paint the opponent takes off me. `carol_iter44` builds **0% moppers** and its splashers
+wander. So does every other member of my pool, because every member descends from me.
+
+**A defensive mechanism cannot be priced on an instrument that never loads it.** That is not a
+reason to overturn the reject — the gate said reject and it rejected — it is a reason the null is
+uninformative, which is a different and worse problem than being wrong.
+
+### The mechanism, and why it is one line of intent
+
+`carol_iter44` already has the denial *capacity*: a DefaultMedium census shows **48 splashers, 4
+soldiers, 0 moppers**, and the splasher's target scoring already prefers enemy paint (3 points per
+enemy tile inside the r2<=2 convertible core, against 2 for empty). What it never does is **go
+there** — both `runSplasher` and `runMopper` end in `moveExploring(null)`.
+
+So `src/carol_denier/` is `carol_iter44` with `nearestVisibleEnemyPaint()` added and passed to
+`moveExploring` in exactly those two places. Nothing else differs. A null target falls through to
+the identical exploration, so on a map with no enemy paint in sight the two bots are the same bot.
+
+### Instrumented on the realized quantity, not the code path
+
+Iteration 52's lesson was that `mW > 0` certified the mechanism *fired* while the entire verdict
+turned on *how far it moved*. So the denier carries `dn` — enemy tiles actually converted or
+removed, counted exactly (one per mop; per splash, the enemy tiles inside r2<=2 of the chosen
+centre, counted at fire time from the same scan that chose it).
+
+**And `dn` is still not the criterion.** It is the denier's own bookkeeping. The ground truth for
+denial is the **victim's coverage curve**, which is measured from the other side of the game.
+
+### Pre-registered promotion criteria — all three, before any result
+
+`carol_denier` goes into `progress/roster_extra.txt` **only if all three pass**. Doctrine 12: score
+the rung before promoting it, or install a dead one while feeling you made a repair.
+
+1. **Denial is real** (the manipulation check, run on the quantity the hypothesis names).
+   `carol_iter44`'s **peak painted-tile count** must fall by **>= 20% relative** when its opponent
+   is `carol_denier` rather than an exact self-mirror. The control is `src/carol`, which is
+   byte-identical to `carol_iter44` up to the package name — so the control arm is iter44 playing
+   itself, and any suppression is attributable to the archetype and nothing else. Required on
+   **both** probe maps (`DefaultMedium` and a dense map), not one. `dn > 0` is necessary and
+   explicitly **not** sufficient.
+2. **Peer band, i.e. a live rung and not a dead one.** `carol_denier` vs `carol_iter44`, 50 games,
+   fresh 25-map sample: **30%-90%**. Outside that band it is saturated and is NOT promoted, however
+   well it denies. `carol_racer` failed exactly this test on its first attempt and was correctly
+   kept out of the roster for a session.
+3. **It must deny, not merely lose differently.** Criterion 1 is measured on `carol_iter44`'s
+   coverage regardless of who wins the probe game. If the denier suppresses coverage only in games
+   it wins, that is winning, not denial, and it fails.
+
+### And the follow-on gate, pre-registered now so it cannot be set after the fact
+
+If and only if the denier is promoted, iteration 52's mopper question gets re-asked on an
+instrument that can see it. One run, `BOT=carol_denier OPPONENTS="carol_i52_b carol_i52_0"`, so
+both arms share the exact same 25-map sample and the comparison is **within-run and exact**:
+
+- `carol_i52_0` — waiver off, realized **0.0%** moppers. The control.
+- `carol_i52_b` — `MOP_DROUGHT = 12`, realized **13.4%** moppers.
+
+**ACCEPT if `i52_b`'s record vs the denier exceeds `i52_0`'s by >= 8 games of 50. REJECT if <= +2.
+3-7 inconclusive.**
+
+**What a pass would and would not license.** It would say the 13.4% dose pays *against an opponent
+that contests paint*, and that the iteration 52 null was an instrument artefact. It would **not**
+ship the mechanism on that evidence alone: the denier is a bot I built, and a mechanism that only
+pays against an opponent I designed to make it pay is overfitting with extra steps. The tournament
+is the arbiter, as it was for `carol_racer`.
+
+### Prediction
+
+Criterion 1 I expect to pass — the change is mechanically direct and iter44 has 48 splashers to
+carry it. Criterion 2 is the real risk: hunting enemy paint drags units onto enemy tiles, where
+paint drain doubles (-2/turn, -4 for a mopper), and this lineage has repeatedly found that paint,
+not chips, is the binding resource. **The most likely failure is a denier that denies effectively
+and starves doing it**, landing under 30% and disqualifying itself. I am recording that before the
+run rather than after.
