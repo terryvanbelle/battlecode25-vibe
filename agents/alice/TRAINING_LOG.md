@@ -17282,3 +17282,64 @@ side is now closed by measurement rather than by assumption.
 
 **Cost of the rejection: one 160-game screen and two 6-game checks.** The probe that preceded it
 saved a great deal more than that by killing the ranking version of this arm before it was built.
+
+## My accept gate is a fixed integer where it should be a multiple of sd — measured from my own runs
+
+Prompted by a coordinator note (a different lineage found a gate it had labelled 2.0 sd was
+really about 1.0 sd). I ran the check on my own runs. It is worse than a mislabel: **the same
+fixed bar is worth wildly different amounts of evidence depending on which arms I happen to be
+comparing, and two of those comparisons are inside a single run.**
+
+`sd(net swept) = sqrt(decisive)` — my own `tools/noise-floor.py`, where split maps contribute
+exactly 0 and cancel:
+
+| run / pairing | N | SW | SL | split | net | decisive | **sd** | **+4 in sd** | **+12 in sd** |
+|---|---|---|---|---|---|---|---|---|---|
+| i47 screen, `a50` v `a0` | 40 | 4 | 3 | 33 | +1 | 7 | 2.65 | **1.51** | 4.54 |
+| i47 screen, `a50` v `a250` | 40 | 1 | 1 | 38 | 0 | 2 | 1.41 | **2.83** | 8.49 |
+| i46 screen | 40 | 1 | 2 | 37 | −1 | 3 | 1.73 | 2.31 | 6.93 |
+| i45 census | 75 | 4 | 15 | 56 | −11 | 19 | 4.36 | 0.92 | **2.75** |
+| `20260908-211909` v `alice_iter30` | 75 | 17 | 1 | 57 | +16 | 18 | 4.24 | 0.94 | 2.83 |
+
+**The bar moves because `decisive` moves.** The more alike two arms are, the more maps split, the
+fewer decisive maps, and the *smaller* the sd — so a fixed +4 is a 1.51 sd filter against one
+opponent and a 2.83 sd filter against another **in the same 160-game run, on the same 40 maps.**
+I have been quoting "+12 = 2.27 sd" from a single corpus-wide floor of 5.29 as though it were a
+property of the gate. It is a property of one arm pair.
+
+**And my screens have a second, larger hole: they ignore sampling error entirely.**
+`noise-floor.py`'s docstring is right that for a **full-corpus** census the residue is engine
+chaos and "more of the same maps cannot fix that" — because at n = N = 75 the finite-population
+correction (N−n)/(N−1) is exactly **zero** and there is no sampling variance to have. But a
+**screen** draws 40 of 75, where that factor is (75−40)/74 = **0.473**, i.e. a real sampling
+component that `sqrt(decisive)` does not measure at all. My screen bar is calibrated on chaos
+alone and is therefore under-protected against drawing a friendly 40.
+
+**Does this change the iteration 47 verdict? No, and it hardens it.** +1 on a run whose chaos sd
+is 2.65 is **0.38 sd**, and adding an unmeasured sampling component only makes +1 a weaker signal,
+never a stronger one. The reject stands on either calibration. But had the number come back at,
+say, +5, I would have "passed" a screen at 1.9 sd of chaos and an unknown amount less once
+sampling is counted — and I would not have known it.
+
+**Change to the loop, effective now** (process change, recorded in `progress/milestones.txt`):
+state every gate as a **multiple of the sd computed from that run's own decisive count**, and
+quote the integer only as a derived convenience. For sampled screens, treat `sqrt(decisive)` as a
+*lower bound* on sd until I measure the sampling component properly — the honest way to do that is
+to re-draw several independent samples with the same policy-identical, phase-different pair
+`src/alice_phase` that produced the 5.29 figure, and read the spread of net swept ACROSS draws.
+That run is not free, and I am recording it as the next instrument job rather than pretending the
+number I have covers it.
+
+### Three further items from the same note, recorded with what I did about each
+
+1. **`tools/agent-commit.sh`** now commits through a private index. Adopted from this commit
+   onward; it removes the `git add` + `git commit --only` two-step I have been using for every new
+   snapshot and probe directory, which is exactly the window the shared-index hazard lives in.
+2. **A stage-0 tool that refuses to print the winner.** My stage-0 checks today *did* print the
+   win column — `a50` came back 4/6 on the bite maps. I wrote at the time that six games "is not
+   evidence of strength — it is evidence the branch fires," and the screen then returned +1, so
+   the doctrine held in my reasoning. But it held because I remembered it, and a rule that has to
+   be remembered is not a control. Worth building the same refusal into my own bite check.
+3. **Freezing the accepted snapshot from the same text that becomes the live tree**, rewriting only
+   the package line and refusing to overwrite. My snapshots are made by exactly this `sed` on the
+   package line, but nothing *enforces* it or refuses an overwrite. Noted for my next accept.
