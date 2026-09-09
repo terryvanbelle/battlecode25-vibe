@@ -50,7 +50,7 @@ while read -r MAP; do
     HDR=\$(printf '%s\n' "\$OUT" | sed -n 's/^=== GameHeader  team1=\([^ ]*\)  team2=\([^ ]*\).*/\1/p')
     if [ "\$HDR" = "$A" ]; then SIDE=T1; else SIDE=T2; fi
     echo "# GAME \$MAP \$SIDE"
-    printf '%s\n' "\$OUT" | grep -E ' (PAINT|UNPAINT) ' || true
+    printf '%s\n' "\$OUT" | grep -E ' (PAINT|UNPAINT) |^round [0-9]* DIED ' || true
   done
 done < maps.txt
 REMOTE

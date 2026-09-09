@@ -18829,3 +18829,136 @@ there. **The discriminator: of alice's abandonments, what fraction end with the 
 the soldier ALIVE and elsewhere?** Dead is an endurance limit and a targeting rule cannot fix it;
 alive-and-elsewhere is a decision and it can. That is one probe, and it decides which of three
 mechanisms is even eligible.
+
+## Dead-vs-alive discriminator — PRE-REGISTERED decision rule, before the numbers
+
+Two things the coordinator asked me to name in my own log, because they are what make the previous
+result stand: the three-way gradient **30.9 / 16.2 / 1.5** is its **own control** — incidental
+painting would be flat across the classes, and it is not; and the **distinct-painter** column
+independently confirms the arithmetic I stated when registering the check, so completion being a
+**~4.5-soldier relay against a ~20-action lifetime** is not an inference from one number but two
+measurements agreeing.
+
+**The question.** When alice abandons a tower pattern, is the soldier **dead** or **alive and
+somewhere else**?
+
+**Definition, fixed now.** For each unclaimed ruin, take every alice soldier that painted inside its
+5x5. For each, find its LAST paint near that ruin, then ask:
+- it appears in a `DIED` event with no later paint anywhere -> **DEAD**
+- it paints again OUTSIDE that 5x5 afterwards -> **ALIVE, LEFT**
+- it neither dies nor paints again before the census round -> **STALLED** (alive, out of paint or
+  blocked — a third state I am naming in advance rather than folding into either camp)
+
+**The decision rule, registered before any number, because it decides which CLASS of fix is
+eligible and not merely which mechanism:**
+
+| result | what it means | eligible class |
+|---|---|---|
+| **DEAD >= 60%** | an **endurance** limit | no targeting or commitment rule can fix it; only lifetime/refill can, and iteration 44 already lost 58 swept doing that |
+| **ALIVE-LEFT >= 60%** | a **decision** limit | commitment / target-stickiness / relay-steering become eligible |
+| neither, or STALLED large | mixed | I state that and do not pick a mechanism on it |
+
+**Why this ordering matters and is not ceremony:** every mechanism this session that skipped the
+"which class of fix is even eligible" question failed — 49 and 50 attacked a rate that was nearly
+irreducible, 52 assumed one unit type's constraint was the bot's, 53 assumed a chip sink had closed.
+The class test is one probe and it disqualifies two of three candidate families before I write any.
+
+## Discriminator result — the registered rule returns MIXED, and the CEILING then kills the leading candidate anyway
+
+`tools/abandon-why.py` over the 38 small-map alice-vs-carol games, now traced with `DIED` events
+included (112,643 action lines, 4,226 deaths). **Zero games played.** 146 unclaimed-ruin
+observations, 352 unit-abandonment events:
+
+| outcome | n | share |
+|---|---|---|
+| **DEAD** | 151 | **42.9%** |
+| **ALIVE, LEFT** | 145 | **41.2%** |
+| STALLED (alive, did nothing more) | 56 | 15.9% |
+
+Soldiers alone: DEAD 45%, ALIVE-LEFT 41%, STALLED 15%.
+
+> **My pre-registered rule required >= 60% either way and got neither. The verdict is MIXED, and the
+> rule says state that and pick no mechanism on it.** I am honouring that. Naming the third state
+> (STALLED) in advance mattered: folding it into "alive" would have manufactured a 57% and folding it
+> into "dead" a 59%, and either would have let me claim a class was settled when it is not.
+
+### The ceiling, measured rather than assumed — and it is 7%
+
+The registered rule was about *eligibility*. The magnitude question is separate and answerable
+exactly, because **the paints a departing soldier performed ELSEWHERE afterwards are precisely what a
+commitment rule could have redirected back into the pattern it left.**
+
+| for the 145 ALIVE-LEFT soldiers | value |
+|---|---|
+| paints performed elsewhere after leaving | **mean 6.4, median 3** |
+| cases where that alone covers the ruin's shortfall to 28 | **11 / 145 = 7.6%** |
+
+End to end: 11 completions across 38 games = **0.29 towers per game** x 75 actions per tower =
+**22 paint actions**, against the 319-action gap — **7%**. **Below even the 15–17% band every other
+mechanism landed in. The stickiness / commitment family is dead on magnitude**, and no larger sample
+overturns a bound on what is available to redirect.
+
+### And an UNREGISTERED reading that sharpens the MIXED verdict — flagged as unregistered
+
+A soldier that leaves with a **median of 3 paints left in its entire remaining life** is not a
+soldier that chose to go elsewhere. It is a soldier that is **functionally spent**. Adding it to the
+43% that are literally dead:
+
+> **~85% of abandonments are units that are out of paint or nearly so.** "Alive" and "able to help"
+> are different predicates, and my registered rule tested the first while the mechanism needs the
+> second.
+
+I did **not** pre-register that cut, so it does not overturn the MIXED verdict — the rule stands as
+written and returned MIXED. What it does is explain *why* the eligible-looking class prices at 7%.
+
+### What this closes, and the honest state of the whole chain
+
+**Closed: the commitment / target-stickiness family**, on magnitude, at 7%. **Confirmed: abandonment
+is an ENDURANCE phenomenon** — and endurance is exactly where iteration 44 lost 58 swept (refill
+diversion) and iterations 49–50 measured upkeep as real in size but largely uncollectable.
+
+So the full chain, every link now measured:
+
+> per-tower production deficit -> soldiers cannot complete tower patterns -> completion is a
+> ~4.5-soldier relay -> the relay drops because soldiers run out of **paint**, not because they are
+> mis-targeted, mis-informed, or short of ruins.
+
+**Alice's soldier is under-provisioned for the job its own strategy asks of it**: a 200-paint tank
+against a ~28-paint pattern plus ~100 paint of lifetime upkeep. That is not a bug in any branch; it
+is the strategy's arithmetic.
+
+### The one lead this leaves that is NOT closed, recorded for next session
+
+`tryRefill` draws paint from **towers only** — `if (!t.getType().isTowerType()) continue;`. But a
+**MOPPER can transfer paint to an ally robot**, and alice's moppers gain paint by attacking enemy
+units (+5 to self, engine-verified in RULES). **Mopper-to-soldier transfer is unused.** It is the one
+endurance route that does **not** divert a soldier from ruin work — the *mopper* moves, and moppers
+are the unit whose turns iteration 52 showed are not the bottleneck.
+
+**Pre-check owed before any of that, in the shape that has worked all session:** how much surplus
+paint do alice's moppers actually hold, and how often is a paint-starved soldier within a mopper's
+transfer range? If moppers are themselves near empty, or never adjacent to a hungry soldier, the
+route is dead on reachability for zero games.
+
+### The pattern, stated once rather than as five separate notes
+
+This is the **fifth** pre-check this session to demote or kill the direction that motivated it, and
+the count belongs in one place rather than scattered across five entries:
+
+| # | pre-check | what it was built to test | what it did |
+|---|---|---|---|
+| 1 | winner's-curse null + the `worst > chosen` impossibility | the informed wander heading | **killed it** — 17% ceiling, and voided my own unfalsifiable bar |
+| 2 | mop-fed classification of post-r200 paints | mopper throughput as the cap | **killed it** — 23.7% against a registered 50% bar |
+| 3 | actor-split of the same run's secondary | "23% of paints are wasted repaints" | **killed it** — SPLASHER 6,488, SOLDIER 0; a splash's geometry, not a defect |
+| 4 | ruin classification by paints-in-the-5x5 | symmetry inference | **demoted it** — discovery is at most 17% of the supply |
+| 5 | dead-vs-alive, then the redirectable-paint ceiling | commitment / target stickiness | **killed it** — 7%, below every other band |
+
+Every one cost either zero games or a handful. Against that, the four mechanisms I *built* before
+asking these questions — iterations 44, 45, 46, 47 — cost a 50–150 game screen or census each and
+returned −58, −11, −1 and +1.
+
+> **A pre-check that can only confirm the thing you want to build is a formality. The five above
+> were each registered with a condition that would disqualify their own motivating direction, and
+> five times out of five it fired.** That is not a run of bad luck about mechanisms; it is what the
+> ladder is for, and it is the reason this session closed seven directions for roughly the cost of
+> one of last session's screens.
