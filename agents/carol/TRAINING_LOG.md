@@ -15566,3 +15566,102 @@ the accept gate.
   The coverage-ratchet argument is strong, but iteration 36 measured a real cost to moppers and was
   accepted on it, so a waiver that is too generous re-creates that cost. A null here would say the
   10% target itself was never worth hitting.
+
+### Zero-arm control and manipulation check — both pass, and the control confirms the diagnosis
+
+| arm | DefaultMedium result | `mV` (rolls refused/tower) | `mW` (waivers) | peak bc |
+|---|---|---|---|---|
+| `carol` (base) | win r830 | — | — | — |
+| `carol_i52_0` | **win r830** | **49** | **0** | 6920 |
+| `carol_i52_a` | loss r545 | 2 | 6 | 6759 |
+
+The zero arm reproduces the base game exactly — same winner, same round. And `mV = 49` in the
+control is an independent confirmation of the whole diagnosis: the two floors were refusing **49
+mopper rolls per tower per game**, with the waiver off. That is the off switch, counted.
+
+### Stage 1: **REJECT at 14/50 (28%)** — and then the free measurement that changes what it means
+
+Run `20260909-143453`, fresh sample: `carol_i52_a` 14/50, swept-win 0/25, swept-loss 11.
+
+Before writing "moppers do not help", I ran the discriminating measurement, which cost **zero games**
+because the replay was already on disk — the realized mopper share each arm actually produced:
+
+| arm | soldiers | moppers | splashers | **realized mopper share** |
+|---|---|---|---|---|
+| `carol_i52_0` | 4 | 0 | 48 | **0.0%** |
+| `carol_i52_a` (`MOP_DROUGHT` 3) | 1 | 15 | 23 | **38.5%** |
+
+**`MOP_DROUGHT = 3` overshot the 10% target by nearly 4x.** 38.5% is not the untested middle — it is
+most of the way back to the 60-75% regime iteration 36 measured and correctly rejected, and soldiers
+fell from 4 to 1, which is precisely the crowding-out iteration 36 documented. So 14/50 **reproduces
+iteration 36's finding at a new dose; it does not test the hypothesis I wrote down.**
+
+This is doctrine 5b arriving in a screen rather than an ablation: *an arm prices a CODE PATH at a
+SETTING, not a concept.* Had I stopped at the win rate I would have closed a hypothesis that had
+never been put to the question, and the evidence against doing so was free and already on disk.
+
+**A note on the trap I nearly walked into**: `mW > 0` passed, so the manipulation check said the
+mechanism fired — and firing is exactly what it certified. It said nothing about firing at the
+*intended intensity*, and the whole verdict turned on that. **A manipulation check should assert the
+dose the mechanism realizes, not merely that it moved.** Recording this in LEARNINGS.
+
+### Calibrated dose, then the real test
+
+`carol_i52_b`, `MOP_DROUGHT = 12`, measured on DefaultMedium before spending any gauntlet on it:
+
+| arm | mopper share |
+|---|---|
+| `carol_i52_0` | 0.0% |
+| `carol_i52_a` (3) | 38.5% |
+| **`carol_i52_b` (12)** | **13.4%** |
+
+13.4% against an intended 10% — the first time this bot has ever played in the middle of this axis.
+Screen `20260909-144733`, same pre-registered gate: **ACCEPT >= 34/50, REJECT <= 30/50**, fresh
+sample. (Calibrating the dose on one map and screening on 25 fresh ones keeps the tuning surface and
+the evaluation surface disjoint.)
+
+### Stage 1 at the calibrated dose: **REJECT at 25/50 (50.0%)** — a dead-centre null, not a harm
+
+Run `20260909-144733`, fresh sample: `carol_i52_b` **25/50**, swept-win 4, swept-loss 4, split 17.
+Below the >= 34 accept line, so **REJECT** on the gate as pre-registered.
+
+But 50.0% with a 4–4 sweep split is a *clean null*, and that is a different result from `i52_a`'s
+14/50. The dose–response over the axis this bot had never played in the middle of:
+
+| realized mopper share | 0.0% (`i52_0`) | 13.4% (`i52_b`) | 38.5% (`i52_a`) |
+|---|---|---|---|
+| vs `carol_iter44` | 50% by construction | **50.0%** (25/50) | **28.0%** (14/50) |
+
+So the axis is **flat to ~13% and sharply harmful beyond it**. Iteration 36 was right about the
+regime it measured, and it did not overshoot into harm — it overshot into *neutral*. The 10% the
+code intends is worth neither having nor not having, against this opponent.
+
+**"Against this opponent" is doing real work in that sentence, and I am not going to pretend
+otherwise.** The screen is `carol_i52_b` vs `carol_iter44`, and `carol_iter44` also builds **0%
+moppers**. The mechanism I argued for is a *defensive* one — moppers are the only unit that removes
+enemy paint, so they matter exactly insofar as the opponent takes paint off me. My entire pool
+descends from a lineage that has never contested paint that way. Against alice, whose splasher count
+climbs to 38 while mine falls to 10, the coverage ratchet is visible in the replay; against a mirror
+of myself it may simply never be loaded.
+
+This is the pool limitation I logged before (my opponents all descend from me) arriving in a place
+where it can silently produce a null. **It is a reason to distrust the instrument, NOT a reason to
+accept a 25/50** — the gate said reject and it rejects. What it earns is a named next piece of work.
+
+### Where this leaves iteration 53
+
+`carol_racer` was added because no opponent in my pool would **close a dense map**, so no gate could
+detect a bot that failed to. The same repair is now owed one axis over: **no opponent in my pool
+contests paint**, so no screen of mine can price a defensive mechanism. The next thing to build is a
+synthetic archetype that aggressively repaints my territory — a paint-denial pressure opponent —
+after which `carol_i52_b` deserves re-screening against it, because a null measured on a blind
+instrument is not the same as a null.
+
+Note what this does NOT license: re-screening `i52_b` against a new opponent built *by me* is still
+a within-lineage measurement, and a mechanism that only pays against an opponent I designed to make
+it pay is overfitting with extra steps. The tournament remains the arbiter. The archetype's job is
+to stop the gate being blind, not to manufacture a pass.
+
+**Kept regardless**: nothing ships. `src/carol` is untouched; HEAD still plays `carol_iter44`.
+The three arms and the calibration are committed so iteration 53 starts from measurements rather
+than from a rebuild.

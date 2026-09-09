@@ -2270,3 +2270,34 @@ the supply of pattern-painting that made completions possible in the first place
 next instance rarely announces itself as the same lesson. Doctrine 19 says the test of a control is
 whether the next session could make the mistake without reading anything. Add a second test: **could
 *I* make it again in the same hour, having just written it?** Here the answer was yes, three times.
+
+## A manipulation check must assert the DOSE, not merely that the mechanism fired (iteration 52)
+
+An earlier entry says a manipulation check proves the mechanism FIRED, never that firing it HELPED.
+Iteration 52 found the gap that leaves open, and it nearly cost a hypothesis.
+
+The mopper drought waiver was instrumented with `mW`, a count of waivers granted. `mW = 6 > 0`, so
+the check passed and the arm went to a 50-game screen. It returned **14/50**, which reads as a clean
+rejection of "this bot needs moppers".
+
+It was not. The arm realized a **38.5%** mopper share against an intended **10%** — an overshoot of
+nearly 4x, landing in the 60-75% regime a previous iteration had already measured and rejected. The
+screen faithfully reproduced that old finding at a new setting and said nothing whatever about the
+hypothesis I had written down. **The counter that passed was measuring the wrong quantity**: it
+asserted that the mechanism moved, when the entire verdict turned on *how far* it moved.
+
+**The rule**: instrument the *realized value of the quantity your hypothesis is about*, not the
+number of times your code path executed. Here the hypothesis was about a **share**, so the check had
+to be a share. `mW` counts events; it cannot distinguish "restored a 10% trickle" from "flooded the
+army at 38%", and those two have opposite expected effects.
+
+**The saving grace, and the habit worth keeping**: the measurement that caught this cost **zero
+games** — the replay was already on disk, and one dump gave the realized share. Before writing
+"mechanism X does not work", spend the free measurement that says *what setting of X you actually
+tested*. A rejection is only as good as the confidence that the arm did the thing the hypothesis
+named, and that is a separate fact from the win rate, obtainable after the fact, for nothing.
+
+**Corollary for dose design**: calibrate the dose to the target on a cheap probe *before* the
+screen, and keep the calibration surface and the evaluation surface disjoint (one map to calibrate,
+a fresh sample to screen). Choosing the constant by intuition and reading the win rate conflates
+"wrong idea" with "wrong number", which are the two outcomes the loop most needs to tell apart.
