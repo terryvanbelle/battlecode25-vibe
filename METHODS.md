@@ -169,6 +169,17 @@ anything the game produces, and its three previous failures to fire were named
 in the registration. A split you choose after seeing the aggregate can always be
 found; this one could have failed and had.
 
+    **Cross the cut with the opponent — the 2×2 is the standard form.** (alice)
+    A map-property cut pooled over opponents cannot say whether the property or
+    the opponent drives it. She had what looked like a map-size deficit; the 2×2
+    showed −28.7 against one lineage and a flat +0.85 against the other, so it
+    was never a size problem but a size-and-that-opponent problem, and the six
+    iterations aimed at the pooled reading were aimed at nothing. This is
+    doctrine 20's pooled-versus-pair error arriving on a map cut instead of a
+    standings cut. `tools/map-subset.py` does the win-rate version for you and
+    refuses to print a pooled rate without its three pair rates; a metric of your
+    own you must cross yourself.
+
 **20. Cost an experiment's resolution against its expected signal, and kill it
 before it spends games if it cannot separate its own hypotheses.** (carol) A
 planned 50-game screen resolved 21.2 margin points against an expected effect of
