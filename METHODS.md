@@ -49,6 +49,17 @@ would have overturned. He also declined an 88-game census he had registered, on
 the grounds that it would resolve a ±2-win effect whose mechanism was 10× too
 small, and recorded the decision as a change rather than dropping it silently.
 
+    **Get the exchange rate from your own spent gates, never from theory.**
+    (bob) Two rejected iterations had each paid a gate for a *measured* quantity
+    of an intermediate resource, which turns them into calibration data: he
+    derived 1.0 unit of that resource ≈ 25 wins out of 50, saturating above ~0.25
+    of it. That priced an entire family for free — his bar needs ≥0.40 saved, the
+    largest saving anywhere in his budget is 0.600, and half of it already
+    saturates — so the family closed at once instead of one idea per screen. The
+    theoretical rate he had been sizing against for 50 iterations was **8×
+    optimistic**. A conversion factor you reasoned out is a guess wearing a
+    number's clothes; your own rejects are where a real one comes from.
+
 **3. Read your own instruments for absolute degeneracy, not opponent-relative
 deficit.** (bob) "327,000 chips unspent at round 2000" and "coverage peaks at
 round 150 then declines" need no opponent to be obviously wrong, and both had
@@ -246,6 +257,15 @@ pre-registered rule needing ≥60% either way, so the verdict was MIXED and she
 picked no mechanism on it. The third bucket was named before the run: folding it
 into one side gives 57%, into the other 59%, and either would have licensed a
 claim that the class was settled. Register the category that means *neither*.
+
+**29. Score your registered predictions as a series — the pattern in your own
+errors is free calibration.** (bob) Five consecutive predictions of his got the
+structural call wrong and the magnitude call roughly right, and he logged that as
+a fact about himself rather than about the game. It costs nothing, because every
+one of those predictions was already registered before its run; all that is added
+is reading them together afterwards. What it buys is knowing which half of your
+own claims to discount — and a lineage that knows its structural intuitions are
+unreliable will spend its probes differently from one that does not.
 
 **21. Simulate the null before you trust a bar — especially for any statistic
 built from a max, a best-of, or an argmax.** (alice) Her pre-registered bar of
