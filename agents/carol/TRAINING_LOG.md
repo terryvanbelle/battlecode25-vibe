@@ -16739,7 +16739,7 @@ a direction. Never delete a row; supersede in place.
 | C3 | **SRP / resource patterns** | mark-and-complete, `SRP_MIN_CHIPS` doses 1500 and 300 | delivery runs **5-8x short** of what the marks demand in this architecture (iters 48-51) | this bot acquires a reason for soldiers to **dwell** — a territory-holding or defensive-station behaviour adopted for its own sake, whose locality SRP can free-ride on |
 | C4 | **tower paint floors for expensive units** | `PAINT_FLOOR` dose ladder | killed by dose-response at **both ends** (iter ~44 region) | a new unit type or paint source changes the accrual rate |
 | C5 | **lower `CHIP_RESERVE`** | reserve lowered/disarmed early | rejected **with a trace**: the 1,980 starting chips are exactly the first tower completion; spending them on ~7 early soldiers left the bot a tower behind by round 300 (iter 4) | the change is confined to the LATE game and leaves the opening reserve armed |
-| C1b | **soldier RATE LIMIT / standing soldier population** — iteration 58 | exempt soldier per tower per SOLDIER_GAP rounds; doses 1000/500/250 | screen 29 / 26 / **32**/50 (best = +14, UNRESOLVED); **full 75-map CENSUS of the best dose: 82/150, margin +14, +1.08 sd — REJECT** on a gate registered before launch. Closed by my own pre-registered clause: "if this rejects, the soldier direction closes as a class" | **only** as a version CONDITIONAL on ruin density — see the re-open condition below, which is specific and checkable |
+| C1b | **soldier RATE LIMIT / standing soldier population** — iteration 58 | exempt soldier per tower per SOLDIER_GAP rounds; doses 1000/500/250 | screen 29 / 26 / **32**/50 (best = +14, UNRESOLVED); **full 75-map CENSUS of the best dose: 82/150, margin +14, +1.08 sd — REJECT** on a gate registered before launch. Closed by my own pre-registered clause: "if this rejects, the soldier direction closes as a class" | **NONE — closure is now effectively permanent.** The condition was evaluated (see below): its proxy clause passes (map area, corr 0.807, 81.3%) but its "beat the unconditional version" clause is a +6 difference at **0.33 sd**, unresolvable at 300 games. The prize on this axis is bounded at ~+20/150. |
 | C6 | **free the pin-escape's duty cycle** | proposed: fix the pin detector's band from [1200,1450) to [1200,1600) so it fires | **killed on magnitude before any games** — releases 1,200 chips ONCE = 3 splashers = ~15 tiles against a 481-tile gap = **3.1%** (iter 56) | carol's income per round rises enough that a one-off 1,200 chips is material, i.e. this is downstream of an income fix, never upstream of one |
 | C7 | **ruin-dense maps merely amplify skill gaps** | pair decomposition over three tournaments | refuted **in the wrong direction**: the alice-bob pair (the one without me) has rho **negative** every time (−0.105, −0.186, −0.186) while both pairs containing me are positive (iter 55) | — (this is a refuted premise, not a shelved direction) |
 
@@ -17570,3 +17570,43 @@ exact rather than heuristic, and needs no comms). Both are structural rather tha
 **not** starting one at the tail of a session — a structural attempt deserves a full pre-check pass,
 and the honest state to hand over is a complete closure map plus a named direction, not a half-built
 mechanism.
+
+## C1b's re-open condition, EVALUATED — clause 1 passes, clause 2 cannot be satisfied. The closure is effectively permanent.
+
+I wrote C1b's re-open condition hours ago and it looked checkable. Evaluating it before building
+anything shows it is not. Doing that evaluation now, rather than leaving it for a session that would
+have spent 300 games discovering it, is the point of writing conditions down at all.
+
+**Clause 1 — an in-bot observable proxy for ruin density: SATISFIED.**
+Over the 75-map corpus, `corr(map area, ruin count) = 0.807`, and the best area threshold
+(`area >= 1225`) classifies "ruins >= 18" at **81.3% accuracy** (35 dense + 26 sparse correct; 12
+false-dense, 2 missed-dense). A robot reads `getMapWidth() * getMapHeight()` on turn 1 — exact,
+free, no accumulation, no comms. This clause is genuinely met.
+
+**Clause 2 — "must beat the UNCONDITIONAL version, not the baseline": CANNOT BE SATISFIED.**
+
+The census decomposes as **+20 on the dense half (74 games) and −6 on the sparse half (76)**. A
+conditional version suppresses the mechanism where it loses, and those games become byte-identical
+mirrors — margin exactly 0 with **zero** variance, since identical behaviour reproduces exactly.
+So the conditional version's **ceiling is the dense-half effect alone: +20**, trimmed to about **+19**
+by the proxy's 12 false-dense maps.
+
+It must beat the unconditional +14. That is a difference of **+5 to +6**, against
+`sd = sqrt(2) x 12.96 = 18.3` for a pair of censuses — **0.33 sd**, and 2 sd would need +36.7.
+**No affordable experiment can resolve it**, and 300 games would buy a null that means nothing.
+
+**So C1b stays closed, now for a quantitative reason rather than a procedural one**, and the ledger
+row is updated to say so. The prize on this axis is bounded at ~+20 on a 150-game census — a real
+effect, permanently too small for my instrument to certify against its own predecessor.
+
+### The lesson, which is about the condition and not the mechanism
+
+**A re-open condition must be checked for FEASIBILITY when it is written, not when it is invoked.**
+I wrote "must beat the unconditional version" because it is the methodologically correct comparison —
+and it is — but I never asked whether that comparison is *resolvable*. A condition that is correct
+and unsatisfiable looks identical, on the page, to one that is correct and actionable. The check is
+one line of arithmetic: **compute the expected effect size of the comparison the condition demands,
+and divide by the sd of that comparison.** If it is under ~2 sd, the condition is decorative.
+
+This is the same shape as the power-kill that saved 300 games on the attribution arm, applied one
+level up — to the *rule* rather than to the experiment. Recorded in LEARNINGS.
