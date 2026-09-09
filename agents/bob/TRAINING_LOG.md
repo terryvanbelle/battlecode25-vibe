@@ -17001,3 +17001,60 @@ considers only 5 of 8 directions (straight, ±45°, ±90°), so a unit boxed in 
 backwards to escape them. That is iteration 50, pre-registered separately below.
 
 `src/bob/` untouched. **`bob_iter20` remains the bot; HEAD's behaviour is unchanged.**
+
+---
+
+## Iteration 50 — PRE-REGISTERED (written before the run exists): past the knob's saturation, with the candidate set isolated
+
+**Why, from iteration 49's mechanism column rather than its win column.** `d1` cut crowd 3.9% and scored
+**0**; `d3` cut crowd 35.6% and scored **+6**, with paint actions +4.6%, `conv` flat and no payer found.
+The weight has almost no headroom left — navTo's ranks run 0..4, so at `DECLUMP ≥ 5` crowd strictly
+dominates directness and every larger weight is the identical ordering. **The knob saturates at 5.**
+
+**The remaining headroom is the candidate set.** `navTo` ranks only 5 of 8 directions (straight, ±45°,
+±90°), so a unit boxed in by allies **cannot step backwards to escape them** — which is exactly the
+situation the mechanism exists to fix, and the one case it currently cannot reach.
+
+**Arms** (`bob-tools/make-declump2-arms.sh`), with the weight held at full domination in both treated arms
+so the **only** difference between them is the candidate set:
+
+- `e0` — `DECLUMP 0`, **exact zero arm** (constant tested before anything is sensed).
+- `e9` — `DECLUMP 9`, narrow (5 candidates). The iteration-49 knob at saturation; measures its
+  remaining headroom over `d3` directly.
+- `e9w` — `DECLUMP 9`, **wide** (all 8 directions, ranks 0..7).
+
+The **fallback** pass ("take anything") deliberately keeps the original 5 directions in every arm.
+Widening it too would let a boxed-in unit walk backwards for reasons unrelated to crowding, which is a
+second mechanism, and iteration 45 is the reason I separate those into their own arms instead of
+averaging over them.
+
+### PRE-REGISTERED GATE — thresholds unchanged from iterations 45, 47 and 49
+
+`BOT=bob_iter20`, `OPPONENTS="bob_e0 bob_e9 bob_e9w"`, maps unset ⇒ 150 games.
+`delta = 25 − (iter20's wins vs that arm)`.
+
+- **VOID** unless `bob_e0` lands at exactly **25/50 with all 25 maps split by side**.
+- **delta ≥ +10** accept-eligible; **+7..+9** replicate on a fresh sample; **≤ +6** REJECT.
+
+**Secondaries, in this order** (all read at **r≤200**, per LEARNINGS 87):
+
+1. **Mechanism engaged**: crowd per mobile-unit-round must fall further than `d3`'s 0.434. If `e9` does
+   not beat `d3` the knob was already saturated at 3, and if `e9w` does not beat `e9` the candidate set
+   was not the binding limit — **either of those is the answer to the question this iteration asks**, and
+   I will report it as such rather than as a null.
+2. **The payer (position)**: tower count and `conv`. `d3` cost 2.3% of towers with `conv` flat; if a
+   deeper dose starts bending `conv`, the mechanism has found its payer and the ladder has a peak.
+3. **The channel**: paint actions per game must rise above `d3`'s +4.6%.
+4. **The objective**: `dCov` at r≤200.
+
+**Prediction, registered with signs**: `e9` beats `d3` only slightly on crowd (the knob was nearly
+saturated at 3) and lands within a game or two of `d3`'s +6; `e9w` cuts crowd substantially further and is
+the arm that clears the gate, if any does. **My last three predictions were wrong** (iteration 47's shape,
+iteration 48's tower/mobile split, iteration 49's interior peak), so this is registered as a falsifiable
+guess with a poor track record attached, not as an expectation.
+
+**One thing I am explicitly NOT doing**: treating this as a second attempt at `d3`. If `e9` lands at +6
+again, that is two independent samples of an effect the gate calls a reject, and the correct conclusion is
+that this mechanism is worth about 6 wins and does not clear the bar — not that a third sample might.
+
+`src/bob/` untouched. **`bob_iter20` remains the bot.**
