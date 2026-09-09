@@ -14205,3 +14205,398 @@ a substitute for the tournament, and no result against it can settle a claim abo
 
 **Process note (milestone).** This is a change to *how I evaluate*, not an accept, so it belongs in
 `progress/milestones.txt` per the charter — recorded in this same commit.
+
+## Iteration 48 — PRE-REGISTERED: carol's money share is the ONLY one of three lineages below 50%
+
+Written before any arm is built or any game is played. The three pre-checks I recorded as NOT
+done when I prepared this hypothesis are now done, and two of them changed the hypothesis.
+
+### The pre-check that was owed: generality, measured against the RIGHT referent
+
+The prepared note rested on **three games, two of them the same map**, and I had just finished
+criticising myself for generalising from two maps. So I built the census the claim actually needs:
+`towercensus.py` over **all 450 replays of tournament `20260909-0100`** (900 team-games), counting
+every `SPAWN` of a `PAINT_TOWER` / `MONEY_TOWER`. This is the only instrument I own whose opponents
+my lineage did not produce, which is what doctrine 17 requires for a claim of the form *"we are
+worse than others at X"*.
+
+| bot | n | towers built/game | money share | towers/1k rounds | conversion (built / claimable ruins) |
+|---|---|---|---|---|---|
+| alice | 300 | 12.13 | **54.0%** | 11.88 | **66.2%** |
+| bob | 300 | 8.01 | **53.2%** | 8.20 | 43.7% |
+| **carol** | 300 | **5.17** | **24.9%** | 5.44 | **28.2%** |
+
+**Doctrine 20 pair decomposition** (a pooled cross-lineage number is a three-body statistic; the
+pair rates cost one GROUP BY and I am not entitled to the pooled figure without them). Money share,
+per pair, per regime:
+
+| pair | regime | first bot | second bot |
+|---|---|---|---|
+| alice–bob | dense | 52.3% | 51.2% |
+| alice–bob | rest | 56.2% | 55.3% |
+| alice–carol | dense | 53.6% | **24.1%** |
+| alice–carol | rest | 52.9% | **23.2%** |
+| bob–carol | dense | 49.2% | **28.8%** |
+| bob–carol | rest | 55.6% | **24.8%** |
+
+Carol sits at 23–29% in **every pair and every regime**; both rivals sit at 49–56% in every pair and
+every regime. The quantity does not move with the opponent, so this is not one rival being unusual
+— it is a private property of my policy. That is the sign structure doctrine 20 asks for, and it
+signs the conclusion as *"a capability I lack"*, not *"a defect of theirs"*.
+
+### The pre-check that KILLED half the prepared hypothesis: the "money-share lottery" is refuted
+
+The prepared note suspected that `k % MONEY_MOD` makes the realized money share a lottery over
+which ruins you happen to claim, and that carol "drew zero on Leaf". Computed exactly instead of
+guessed, with `KScan.java` over the 75 official `.map25` files in the engine jar (the same
+`ruins()` vector `tools/mapdata` uses — claimable ruins, four fewer than a replay header, and my
+census reconciles to exactly +4 on every map):
+
+- The rule's **intended** corpus money share is **27.1%**, and carol's **realized** share is
+  **24.9%**. Those agree to 2.2 points, so the one-sided paint override is nearly inert and the
+  realized share is not a lottery in aggregate. **The Leaf 0-of-6 was small-sample noise**
+  (Leaf's intended share is 19.2%, so 0 in 6 draws has p ≈ 0.28 under a random draw).
+- **Carol is getting exactly the mix she asks for. The number to change is the ask, not the
+  variance around it.**
+
+### A real degeneracy, found by the same scan, and NOT the one I was looking for
+
+`k % 4 == 0` is **single-branch on 6 of 75 maps** — `DefaultSmall`, `Fossil`, `FourCorners`,
+`Racetrack`, `SaltyPepper`, `roads` have **zero** money-keyed ruins, so carol can never build a
+money tower there at any tower count. This is the identical trap `tools/mapdata/README.md`
+documents for `(x+y)&1` parity, in a different key, and I own the second instance of it.
+
+Stated honestly: **none of those 6 maps is in the dense set**, so this does *not* explain the
+dense-map deficit and is not the case for this iteration. It is recorded because it is true, and
+because the dose below happens to reduce it (MOD 2 is single-branch on **1** map, not 6).
+
+### THE PRICE, computed in both currencies before building (and it is what makes the case)
+
+RULES.md lines 25–52 and 224–236, all engine-verified: a lv1 paint tower mines **5 paint/turn**
+into its own stash and no chips; a lv1 money tower mines **20 chips/turn** and — the trap
+RULES.md already records — gets **no paint from anything, not even an SRP**. A soldier costs
+**200 paint + 250 chips**; completing a tower pattern costs **1000 chips and no team paint**.
+
+Per 100 rounds, per group of 4 towers:
+
+| mix | paint/100r | chips/100r | soldiers the paint funds | chips those soldiers cost | **chips left for tower builds** |
+|---|---|---|---|---|---|
+| **3 paint : 1 money (carol, MOD 4)** | 1500 | 2000 | 7.5 | 1875 | **125 → 0.1 towers** |
+| **2 paint : 2 money (alice/bob, MOD 2)** | 1000 | 4000 | 5.0 | 1250 | **2750 → 2.75 towers** |
+
+**Carol's mix is, to within rounding, the exact no-expansion equilibrium**: it converts her whole
+chip income into soldier-building and leaves nothing to complete a ruin with. That is not a
+tuning miss, it is a corner solution, and it was arrived at by optimising the *soldier* gate.
+
+The reallocation is priced against what it displaces, not against zero: **MOD 2 buys 2.75 tower
+completions per 100 rounds per 4 towers and pays 2.5 soldiers' worth of paint for them.**
+
+### The independent signature the census already carries: carol's tower count SATURATES
+
+Towers built per game, non-dense → dense (available ruins roughly double):
+
+- alice 9.20 → 22.12 (**2.4x**), bob 5.94 → 15.09 (**2.5x**), **carol 4.66 → 6.91 (1.5x)**.
+
+Alice and bob scale tower count with available ruins; carol does not. A fixed budget is what
+produces a flat response to more supply, and chips are the budget the completion gate spends.
+(Doctrine 14: this is the *same fact* as the conversion column above written as a ratio — one
+number, not two, and I am citing it once.)
+
+### Superseding iteration 34 on new evidence, not silently reverting it
+
+Iteration 34 moved `MONEY_MOD` 3 → 4 *reducing* money towers, on the measurement that
+"100.0% of chips-available no-builds are `tpIn < paintCost`". **That measurement was of the
+SOLDIER-SPAWN gate, and it is still correct there.** It never measured the *tower-completion*
+gate, which spends the same treasury and is the branch this iteration is about. Doctrine 5b:
+two branches drawing on one budget are two prices, and the order they fire in sets the
+allocation by accident rather than by measurement. Iteration 34 priced one branch.
+
+Also on the record, in my favour and therefore audited harder: iteration 34 accepted at
+**+0.70 sd**, and the corrected-gate audit (commit `c5790b4`) flagged it as one of three accepts
+that **do not clear the corrected bar**. So 3-vs-4 is *unresolved*, not established, and MOD **2
+has never been tested at all**. The burden here is re-testing an unresolved constant over a wider
+range, not overturning a firm result.
+
+### The dose axis, checked for degeneracy and reachability BEFORE the run (doctrine 2)
+
+| MONEY_MOD | corpus money share | dense share | single-branch maps |
+|---|---|---|---|
+| 4 (**zero arm** = incumbent) | 27.1% | 26.4% | 6 |
+| 3 | 32.5% | 31.6% | 5 |
+| **2** | **55.6%** | **52.8%** | **1** |
+
+MOD 2 lands on **55.6%**, which is where two independent lineages converged (54.0% / 53.2%). The
+zero arm is the incumbent constant, so it is byte-identical to `carol_iter44` by construction and
+stage 0 can detect a dead mechanism (doctrine 5 step 0).
+
+### PRE-REGISTERED GATE
+
+- **Screen** (sampled 25 maps x both sides vs `carol_iter44`): `>= 34/50` accept-eligible,
+  `<= 30/50` reject, 31–33 unresolved. Regenerated from `carol-tools/sampledgate.py`, not
+  remembered.
+- **Decision** is the **full 75-map census** vs `carol_iter44`, both sides (150 games), per
+  milestone `c725146`. **Gate: margin `>= +23` (2.0 sd) accepts.** Unit stated explicitly, because
+  this is the error doctrine 1 says is worth 1.0 sd of false confidence: **+23 is a MARGIN
+  (W − L), not a win count**, on a floor of sd 11.5 for the margin.
+
+### PRE-REGISTERED MANIPULATION CHECK (iteration is void if it fails, whatever the margin)
+
+At stage 0, on a dense map, the MOD 2 arm must show a **money-tower build count strictly greater**
+than the zero arm's. If the constant moved and the tower mix did not, nothing was tested.
+
+### PRE-REGISTERED WEAK LINK — the one that can kill this
+
+**Paint starvation.** Halving paint income is the price, and RULES.md records losing the last
+paint tower as an instant unrecoverable loss. The existing safety net (`seenPaint*2 < seenMoney`
+forces paint) requires money > 2x paint and therefore **will not fire at a 1:1 intended mix** —
+so at MOD 2 the net is effectively disarmed. I am registering this now rather than discovering it
+in a post-mortem: at stage 0 I will read the `starved` counter, and a materially higher starve%
+in the MOD 2 arm is the named failure mode.
+
+### PRE-REGISTERED MAP-LEVEL PREDICTION (doctrine 4)
+
+The mechanism buys **tower completions**, which need ruins to complete. So the gain should
+concentrate on ruin-dense maps and be absent where there is nothing left to claim: **margin on the
+17 dense maps > margin on the 17 sparsest**, within the same census. Recorded before the run so a
+convenient reading is unavailable afterwards — and noting that iteration 47's equivalent
+prediction came back FLAT, so a flat result here does not annul a passed primary (doctrine 17) but
+does leave attribution OPEN (doctrine 5 step 3b).
+
+## API SWEEP (trigger: three consecutive rejects = the loop has stalled) — SRP has NEVER been implemented
+
+The algorithm says run this "at iteration 5, every 10 iterations after that, **and whenever the
+loop stalls** — before inventing a new mechanism, since an unused method is a cheaper source of
+ideas than an invented one." Iterations 45, 46 and 47 were all rejects, so the trigger is met and
+this is not a "periodically" I let lose to a live hypothesis.
+
+`javap -p` on `battlecode.common.RobotController` via `tools/engine-jar.sh --remote` (the local
+path correctly REFUSED to serve a jar, which is the pin working). 68 methods; `src/carol` never
+calls **33** of them. Grouped:
+
+- **Resource patterns (SRP) — the whole mechanic**: `markResourcePattern`,
+  `canMarkResourcePattern`, `completeResourcePattern`, `canCompleteResourcePattern`,
+  `getResourcePattern`.
+- **Communication — the whole mechanic**: `sendMessage`, `broadcastMessage`, `readMessages`,
+  `canSendMessage`, `canBroadcastMessage`.
+- Sensing/util never used: `senseRobotAtLocation`, `senseRobot`, `canSenseLocation`,
+  `canSenseRobot`, `sensePassability`, `isLocationOccupied`, `onTheMap`, `adjacentLocation`,
+  `getHealth`, `getMoney`, `getActionCooldownTurns`, `getMovementCooldownTurns`,
+  `getTowerPattern`, `canPaint`, `canMark`, `mark`, `removeMark`, `canRemoveMark`.
+- Irrelevant: `disintegrate`, `resign`, `setIndicatorDot`, `setIndicatorLine`,
+  `setTimelineMarker`.
+
+### The finding: SRP is not "under-used", it is ABSENT, and it has been for 48 iterations
+
+I checked every accepted snapshot rather than assuming:
+
+```
+carol_iter0 1 5 7 11 12 14 18 21 25 29 30 34 35 36 44   ->  SRP calls = 0 in ALL of them
+```
+
+`src/carol` mentions "SRP" exactly **once**, in a comment. So the mechanic has never been in a
+carol build at any point in the lineage's history.
+
+**And this lineage already knows it is the best purchase in the game.** From my own engine probe
+(disassembled `processBeginningOfRound`, logged at iteration 7 — not inference, bytecode):
+
+```java
+if (type.paintPerTurn != 0) addPaint(type.paintPerTurn + 3 * numSRPs);                 // per PAINT tower
+if (type.moneyPerTurn != 0) teamInfo.addMoney(team, type.moneyPerTurn + 3 * numSRPs);  // per MONEY tower
+```
+
+and from my own closed-direction table on tower upgrades:
+
+| purchase | chips | gain | payback |
+|---|---|---|---|
+| money lv1 -> lv2 upgrade | 2500 | +10 chips/turn | 250 rounds |
+| new money tower at a ruin | 1000 | +20 chips/turn | 50 rounds |
+| **one SRP** | **200** | **+3/turn to EVERY paint tower and EVERY money tower** | **~11 rounds** |
+
+**How it went missing, traced rather than guessed.** Iteration 7 was *selected* as the SRP
+iteration ("Decision: iteration 7 = SRP"). The same session then found the `CHIP_RESERVE` dead
+band — a bot frozen at 1350 chips, unable to build, annihilated at round 69 — and re-registered
+iteration 7 as the reserve fix, writing "Registered now, **ahead of SRPs**, because it is smaller,
+safer, and converts guaranteed losses." That was the right call on the day. **SRP was never
+picked back up, and the log has not mentioned it in ~13,000 lines since.**
+
+This is precisely the failure the algorithm's sweep rule exists to catch — *"a prior project lost
+81 iterations to a whole game mechanic sitting unused because the obvious methods were assumed to
+be the whole interface"* — and it is a deferral that silently became a permanent omission. The
+sweep cost one `javap` and one grep.
+
+## Iteration 49 DRAFT — SRP. Pre-checks done up front, with the results, including one that could have killed it
+
+Not built yet; iteration 48 is in flight and bundling is forbidden. Recording the pre-checks now
+while they are cheap.
+
+### Reachability of the CHOICE SET, not just the guard — measured, not assumed
+
+`isValidPatternCenter` (disassembled at iteration 7) needs `2 <= x < W-2`, `2 <= y < H-2` and
+`areaIsPaintable`: all 25 tiles of the 5x5 free of walls **and ruins**. On a ruin-dense map that
+could plausibly leave nowhere to put one, which would make the whole mechanic dead exactly where I
+need it. So I counted valid centres on all 75 official maps directly from the engine jar's
+`.map25` files (`SrpScan.java`).
+
+**Reconciliation before reading the shape** (doctrine 5, and doctrine 17's "check a derived table
+against a total you already know"): the scan reports Leaf `walls=160`, `ruins=56`. The replay
+MatchHeader independently reports `walls=160/3600` and `ruins=56`. Exact agreement on both, on a
+count derived from a flat boolean vector whose index order I had assumed — so the assumption is
+verified, not asserted.
+
+| | valid SRP centres |
+|---|---|
+| corpus | min **0**, median **206**, max 1685 |
+| **the 17 DENSE maps (where I lose)** | min **86**, median **502** |
+| the other 58 maps | min 0, median 117 |
+
+**The check came back positive, and in the best possible shape**: sites are ~4x more abundant on
+exactly the ruin-dense maps where the tournament says I am beaten. That is a doctrine-4
+regime match rather than a dilution — the mechanism has most fuel in the losing regime.
+
+### The degeneracy this scan found, which is a trap for anyone, not just me
+
+**Five maps have ZERO valid SRP centres**: `Brat`, `CastleDefense`, `DefaultSmall`, `Paintball`,
+`gridworld` (plus `Justice` at 6 and `Snowman` at 9). All are small and wall-dense.
+
+`DefaultSmall` is the default first-trace map for this whole project, and `gridworld` is already
+documented in `tools/mapdata/README.md` as degenerate in two other ways. **Had I traced SRP on
+`DefaultSmall`, I would have measured a mechanism that cannot fire on that map at all and
+concluded it was dead code.** This is the same class as the `(x+y)&1` parity trap that file
+already records; I am reporting it for `tools/mapdata/` rather than keeping it private, because
+the trap is live for all three lineages and the file is the right home for it.
+
+### THE PRICE, in both currencies, before building
+
+- **Cost**: 200 chips + up to **125 paint** (25 tiles x 5 paint/tile, less any already correct),
+  and the pattern must sit **undisturbed 50 rounds** before it pays anything.
+- **Benefit at carol's CURRENT tower mix** (3.88 paint + 1.29 money towers, from today's
+  900-team-game census): one SRP = **+11.6 paint/turn and +3.9 chips/turn**.
+- Carol's baseline paint income is 3.88 x 5 = **19.4 paint/turn**, so **one SRP is +60% paint
+  income** — and paint is the resource RULES.md records as the binding one and the one whose
+  exhaustion is unrecoverable.
+- Paint payback: 125 / 11.6 = **~11 rounds**, which is where the table's figure comes from.
+
+### The doctrine-5b PAIR, named by ancestry NOW rather than after a roster drop
+
+SRP pays **+3 paint per PAINT tower**, so its value scales with the paint-tower count. Iteration
+48 (`MONEY_MOD` 4 -> 2) **cuts the paint-tower share from ~75% to ~45%**. These two are therefore
+substitutes acting on one quantity, and a chain of two individually-positive accepts is exactly
+the shape doctrine 5b says can walk downhill.
+
+Nominating it in advance is not evidence about it — the base rate in this project is that
+nominated pairs are usually refuted, and one came out the opposite sign to its argument. But the
+ancestry names this pair in three lines, and registering it before either accept means the 2x2
+ablation is a planned check rather than an improvised excuse. **If both 48 and 49 accept, the 2x2
+runs before either is trusted.**
+
+## Iteration 48 stage 0 — mechanism LIVE, manipulation check PASSED, weak link HELD
+
+`carol_i48_2` vs `carol_iter44` on Leaf, both sides (`carol-tools/stage0.sh`, which by design
+refuses to report who won).
+
+| | bSold | bSpl | twPAINT | twMONEY | cov_end | tw_end | $med | twPaint_med | starve% |
+|---|---|---|---|---|---|---|---|---|---|
+| `i48_2` (A) | 8 | 168 | 9 | **2** | **699** | **13** | 1500 | **1818** | 6.7% |
+| `iter44` (A) | 5 | 112 | 5 | **0** | 177 | 7 | 1440 | 4307 | 5.8% |
+| `iter44` (B) | 4 | 101 | 4 | **0** | 150 | 6 | 1460 | 2133 | 6.0% |
+| `i48_2` (B) | 18 | 148 | 15 | **6** | **700** | **23** | 1480 | 1620 | 5.6% |
+
+- **IDENTITY**: arms differ from the `iter44`-vs-`iter44` reference (1685 vs 2013 rounds). Live.
+- **MANIPULATION CHECK (pre-registered)**: money towers 2 and 6 against 0 and 0. **PASSES on both
+  sides.**
+- **WEAK LINK (pre-registered)**: starvation 6.7%/5.6% against 5.8%/6.0%. **No material rise; the
+  registered failure mode did not occur.**
+- The price shows up exactly where predicted: median tower paint stash **4307 -> 1818**.
+
+**I am reading no verdict from this.** Iteration 47 read a one-map stage 0 as a "complete
+reversal" and its 100-game screen came back at −0.93 sd; that is why this tool refuses to collect
+the winner, and the discipline is only worth anything if it holds when the numbers look good.
+
+## Iteration 48 RESULT — **REJECT** on the pre-registered gate. 22/50.
+
+Run `gauntlet/20260909-121211`, `carol_i48_2` vs `carol_iter44`, 25 maps pinned, both sides.
+
+| instrument | result | pre-registered gate | verdict |
+|---|---|---|---|
+| screen h2h vs `carol_iter44` | **22/50 = 44%**, margin **−6** | >=34 accept, <=30 **reject** | **REJECT** |
+| swept | win 4 / loss 7 / split-by-side 14 | reported, never gated | — |
+
+**Orientation verified independently before reading anything into it** (the wrong-referent error
+is the one this project keeps making, and I filed a tooling bug about an inverted verdict this
+morning): recounting wins as `bot_side == winner_side` straight from `results.csv` gives **22**,
+matching the `bot_result` column. The 22 is the candidate's.
+
+**The margin is −6 against sd(margin) = 8.59 for a 50-game sampled run, i.e. −0.70 sd.** So the
+honest statement is *fails to clear the accept bar*, **not** *demonstrated regression* — the same
+distinction I drew for `i47_1400`. No census was spent: the screen exists precisely so a rejected
+candidate does not cost 150 more games, and my pre-registration made the screen decisive at <=30.
+
+### The pre-registered map-level prediction: NOT confirmed
+
+Predicted the gain would concentrate on ruin-dense maps. Sample contained 8 of the 17 dense maps:
+
+| | record | margin |
+|---|---|---|
+| dense (8 maps, 16 games) | 7/16 | **−2** |
+| other (17 maps, 34 games) | 15/34 | **−4** |
+
+Directionally as predicted and **both negative and both far inside noise** (sd(margin) ≈ 4.9 and
+7.1). This is not confirmation, and I am not going to call a −2 "the dense maps holding up".
+
+### WHERE the deficit lives — and it names the mechanism that killed it
+
+Splitting the same 50 games by whether they reached the round limit (a decomposition of one
+number, **not** a second independent statistic — doctrine 14):
+
+| | record | margin |
+|---|---|---|
+| decided before round 2000 | 16/33 | **−1** |
+| reached the **round-2000 tiebreak** | 6/17 | **−5** |
+
+Median rounds: candidate wins 1124, candidate losses 1550. **The candidate is dead even in games
+that end decisively and loses the ones that go the distance.**
+
+`RULES.md` gives the reason, and it is the thing my own price table got wrong:
+
+> Win immediately by painting **>70% of paintable squares** … Game ends at round 2000;
+> tiebreakers **in order: area painted** → towers alive → money → …
+
+**Paint IS the score. Chips are not, at either win condition.** My pre-registration priced a money
+tower as buying "2.75 tower completions per 100 rounds" and treated that as the good. But a tower
+completion only scores through the paint it subsequently makes, while a paint tower makes paint
+*directly* — and in a game that reaches round 2000, the tiebreak reads painted area and nothing
+else. Trading paint income for chip income trades the scored quantity for an unscored one, and
+that is exactly the sub-population where the candidate lost.
+
+Caveat stated rather than buried: n=17 tiebreak games puts sd(margin) near 4.1, so −5 is ~1.2 sd.
+This is a *mechanism-shaped* reading of where the loss sits, not an established sub-effect.
+
+### What this does NOT establish, and the honest tension in it
+
+On Leaf the dose produced **3x the towers and 4x the coverage** (699 vs 177). So the mechanism is
+not weak — it is strongly effective on the densest map in the corpus and still loses a 50-map
+screen. That tension is real and I am leaving it as a tension rather than resolving it with a
+story I have not tested.
+
+It is also the **second** time a change that demonstrably increases ruin conversion has lost to
+`carol_iter44` (iteration 47 was the first, at −0.93 sd). Two independent mechanisms, same
+opponent, same shape. Per doctrine 17 and my own iteration-47 note, `carol_iter44` floods
+splashers and wins on coverage, so *against her* converting ruins is the slower strategy — while
+the tournament says converting ruins is what alice and bob beat me with. This is the instrument
+problem restated, and it is why `carol_racer` was promoted.
+
+### CLOSED-DIRECTIONS LEDGER — addition
+
+- **`MONEY_MOD` as a route to more towers — CLOSED at MOD 2.** 55.6% money share (matching both
+  rivals' realized share) scores **22/50** against the incumbent, with the deficit in tiebreak
+  games where area painted is the scored quantity. Re-opening requires a mechanism that converts
+  chips into **paint income**, not one that converts chips into more chips. Recorded with its
+  measurement, per the ledger rule.
+
+### And it sharpens iteration 49 rather than weakening it
+
+The reject's mechanism — *chips do not score; paint does* — is an argument **for** SRP, not
+against it. An SRP is the only purchase in the game that converts chips into **paint income**:
+200 chips for +3 paint/turn to every paint tower, engine-verified in the disassembly. That is the
+exact conversion this iteration failed to achieve by going the long way round through money
+towers.
