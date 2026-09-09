@@ -15549,3 +15549,29 @@ count at r200 (the price), small-map stratum (registered underpowered, direction
 
 Arms are UNCOMMITTED working-tree dirs (`src/bob_fs0`, `src/bob_fs3`, `src/bob_fs8`), regenerable with
 `bob-tools/make-seek-arms.sh`. `src/bob` is unchanged, so **HEAD still plays `bob_iter20`'s behaviour.**
+
+## Iteration 43 — **REJECTED** on the primary. Run `20260909-151137`, 150 games, 25 maps sampled of 75.
+
+```
+arm        SEEK   score   vs null   swept  sweptAg  split   diff-from-null
+bob_fs0      0    25/50     +0        0        0      25       0/50   <- NULL
+bob_fs3      3    27/50     +2        7        5      13      16/50
+bob_fs8      8    28/50     +3        7        4      14      21/50
+```
+
+**The zero arm is EXACT** — 25/50, all 25 maps split, 0 swept either way, 0 diff-from-null. The
+registered VOID condition is satisfied in the good direction; the run is valid.
+
+Gate was **≥ +10 accept-eligible / +7..+9 replicate / ≤ +6 reject**, in wins out of 50. **+2 and +3
+are rejects**, and not marginal ones.
+
+**The mechanism is unambiguously live**: 16/50 and 21/50 games differ from the null, and the dose
+orders correctly (more commitment, more divergence). This is not a dormant branch.
+
+**The sweep counts are not corroboration and I am not citing them as such.** margin-over-50% = swept −
+swept-against identically, and it checks out on both arms (7−5 = +2, 7−4 = +3) — that is one number
+written twice, guaranteed whatever the bots did. What the sweeps *do* add is D: **split maps fall from
+the null's 25 to 13 and 14**, so the change converts ~11 coin-flip maps into decisive ones in **both
+directions at once**. Scattered, mixed-direction flips are the churn signature, not a causal effect.
+
+*(Secondaries below were computed after the primary was read and recorded.)*
