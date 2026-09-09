@@ -13923,3 +13923,55 @@ iteration 34 returns a null, iteration 35 must not be evaluated the same way and
 null** — that would be spending a second run to re-learn the instrument's limit rather than anything
 about the bot. In that case the honest order is: fix the instrument, or take the mechanism to the
 tournament as the only valid instrument for a cross-lineage claim (doctrine 15), and say which.
+
+### Iteration 35 pre-check 1 — RUN, and it KILLS design (b) before anything was built
+
+Computed offline from the round-40 arena dump I already had. Soldier vision is r²≤20; `chooseRuin()`
+considers unoccupied ruins in vision.
+
+```
+  free ruins on the board:  4   at (2,7) (2,15) (7,10) (17,4)
+  bob soldiers:             6
+
+  soldier at ( 1, 7):  1 ruin in vision   [(2,7)]
+  soldier at ( 2, 5):  1 ruin in vision   [(2,7)]
+  soldier at ( 2, 6):  1 ruin in vision   [(2,7)]
+  soldier at ( 6, 9):  2 ruins in vision  [(2,7) (7,10)]
+  soldier at (12, 3):  0 ruins in vision
+  soldier at (12, 6):  0 ruins in vision
+
+  mean ruins in vision = 0.83
+```
+
+**Design (b), the ranking, is dead.** Four of six soldiers see one ruin or none; exactly one sees two.
+A ranking over a choice set of size 0 or 1 is not a ranking, and every dose of it would have been
+byte-identical. This is precisely the failure the algorithm records for another lineage — a ruin-ranking
+function whose candidates were the ruins in vision, tuned over a singleton — and the pre-check that
+exists because of it caught mine for the cost of parsing a dump I already had.
+
+**And the argument generalises rather than depending on this one map, which matters because sizing on
+one map is exactly what I was warned about.** The choice set is small here *because ruins are sparse*,
+and ruin sparsity is the defining property of the maps this mechanism was meant to help on. So the
+choice set is smallest exactly where the fix was supposed to act, **by construction**. On ruin-rich
+maps the set would be plural — and those are the maps bob already wins. A selection mechanism cannot
+help here in principle, not merely in this sample.
+
+**The deeper reframe, and it is worth more than the killed design.** Doctrine 2's example separates
+"chooses badly" from "never sees it". This is a third case: **the soldiers are not choosing badly and
+they do see it — they have no alternative to choose.** Three of them are stacked on the same poisoned
+ruin at (2,7) with nothing else in vision. Abandoning (design (a)) would send them wandering into
+carol's territory, which they cannot paint.
+
+So iteration 35 in both its shapes is **not a selection problem at all**. What the soldiers lack is a
+*capability* — something able to remove enemy paint from the pattern — and the only units that have it
+are moppers and splashers. That points back at iteration 34's direction rather than away from it, and
+it is the second independent route to the same conclusion today.
+
+**Closed-directions ledger, ADD**: "ruin *selection/ranking* changes as a fix for the ruin-poor
+deficit" is CLOSED. Mean choice set 0.83 on the motivating map, and structurally smallest on exactly the
+maps the fix targets. Re-opening requires a measurement showing a plural choice set on ruin-poor maps,
+which the sparsity argument says should not exist.
+
+**Still unmeasured** (carried forward, unchanged): poisoning frequency on maps bob wins; the price of
+forfeiting a partially-painted pattern; the bytecode cost of a 25-tile pattern scan. Pre-check 1 killed
+the design before these mattered, and they will matter again for any candidate that inspects patterns.
