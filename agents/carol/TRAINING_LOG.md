@@ -13272,3 +13272,215 @@ pooled and per-run z side by side with a warning that only the latter is compara
   with the first mechanism eliminated**, which is progress of the kind doctrine calls a falsified
   premise: I now know it is not the blocked-soldier trap, because I removed that trap and measured
   the deficit again.
+
+---
+
+# Iteration 47 — SPLASH_FLOOR is an off-switch for SOLDIERS, and soldiers are the only unit that builds towers
+
+## PRE-REGISTERED. Written before any evaluation game is built or run.
+
+### Where this came from
+
+Not from invention: from the trace the failed iteration-44 tournament test demanded. I pulled the
+two extremes of the ruin gradient out of `20260909-0100` — `Leaf` (52 ruins, carol swept 4/4) and
+`MoneyTower` (10 ruins, carol won) — and counted **build events** with
+`carol-tools/mixcheck/channels.py` on `--every 1` dumps. Build events, not affordability inferred
+from replay state, so doctrine 18 does not apply.
+
+| map | ruins | carol built | opponent built | towers | coverage |
+|---|---|---|---|---|---|
+| Leaf | 52 | **2 sold** / 52 spl / 0 mop | 254 sold / 51 spl / 90 mop | 8 vs **25** | 214 vs 700 |
+| MoneyTower | 10 | **3 sold** / 49 spl / 0 mop | 58 sold / 0 spl / 20 mop | 5 vs 5 | **702 vs 254** |
+
+**Carol builds two to three soldiers per GAME**, on both maps, against an intended share of 75%.
+Her realized mix is ~95% splasher / ~5% soldier / 0% mopper against an intended
+15 / 75 / 10 — **the exact inverse of the intended mix**, and invariant in the map.
+
+### The mechanism, read out of the code and confirmed against the engine
+
+```java
+final int SPLASH_FLOOR = 2000;
+boolean afford = chips >= reserve + want.moneyCost;
+if (afford && want != UnitType.SPLASHER && chips - want.moneyCost < SPLASH_FLOOR) afford = false;
+```
+
+Engine costs, from `javap` on the pinned 3.1.0 jar (not inferred): SOLDIER moneyCost **250**,
+SPLASHER **400**, MOPPER 300. So the effective chip requirement per unit is
+
+| unit | requirement | carol's median treasury |
+|---|---|---|
+| SPLASHER (exempt) | `chips >= 1600` | **1360** (Leaf) / **1460** (MoneyTower) |
+| SOLDIER | `chips >= 2250` | ditto |
+| MOPPER | `chips >= 2300` | ditto |
+
+The **cheaper** unit is gated **higher** than the expensive one, at a level the treasury reaches
+only in brief spikes. This is the third instance in this lineage of the fault iteration 30 itself
+named and iteration 35 named again: *"a gate above where the treasury actually sits is not a
+policy, it is an off switch."* Iteration 30 wrote that sentence and then built one.
+
+**Two artefacts that should agree and don't** (doctrine 5's tell): the bot's own pin-detector
+computes `cheapest = UnitType.SOLDIER.moneyCost` and calls the treasury "pinned" in
+`[1200, 1450)`. But a soldier actually needs 2250. The pin detector is watching a threshold the
+code does not use, which is why `pinFree` fires and soldiers still never appear — and note
+`SPLASH_FLOOR` is applied *after* `reserve`, so the `freed` escape hatch cannot rescue a soldier
+at all.
+
+### Why this IS the ruin gradient, and why iteration 44's gain landed where it did
+
+Only soldiers call `workOnRuin`, so only soldiers convert ruins into towers. Carol's tower count is
+therefore pinned at ~5-8 whatever the map offers, while the opponent's scales with ruin count
+(25 on Leaf). Compounding: alice's median treasury on Leaf is 2380 to carol's 1360.
+
+- **Ruin-poor map**: 10 ruins, so 5 towers is a competitive share of what exists. Carol is not
+  behind on economy, and her 49 splashers out-paint alice 702 to 254. **She wins.**
+- **Ruin-dense map**: 52 ruins. Alice takes 25 towers, compounds, and fields 254 soldiers. Carol
+  builds the same ~50 splashers she always builds. **214 to 700. She loses.**
+
+Carol has **no mechanism that converts an additional ruin into anything**, so her output is flat in
+ruin count while her opponents' rises. That is a monotone declining win rate in ruin count — the
+gradient, in one sentence.
+
+And it explains the two failures I could not explain before. Iteration 44 unblocked soldiers held
+at denied ruins. With **2-3 soldiers built per game**, unblocking them is worth a great deal on a
+10-ruin map, where 3 towers versus 5 is the whole game, and close to nothing on a 52-ruin map,
+where three soldiers cannot claim 52 ruins however unblocked they are. **The failed census
+secondary and the failed tournament prediction are the same fact, and this is it.**
+
+### Superseding iteration 30 on new evidence, not reverting it
+
+Iteration 30 established `SPLASH_FLOOR = 2000` and was accepted at 44/50 with 19 swept wins and 0
+swept losses — a real effect that clears even my corrected sampled gate. I am not calling it wrong.
+I am calling it **stale**, for a specific reason:
+
+Iteration 30 gated soldiers at a time when **carol's soldiers were broken** — pre-44 they orbited
+denied ruins for `RUIN_PATIENCE` turns and converted nothing, which is why suppressing them in
+favour of splashers was worth +19 swept maps. **Iteration 44 fixed the soldier. Nobody re-opened
+the gate that suppresses it.** The constant that was correct for a bot with broken soldiers is
+wrong for a bot with working ones.
+
+That is yesterday's lesson recurring at the point of use: *a dose curve is evidence about the bot
+it was measured on.* I wrote it about iteration 21's mopper curve and it applies verbatim here,
+one iteration later, to a constant I did not think to re-examine.
+
+### The dose axis, checked for degeneracy BEFORE the run (doctrine 2)
+
+The soldier requirement is `max(CHIP_RESERVE + 250, SPLASH_FLOOR + 250) = max(1450, SPLASH_FLOOR+250)`.
+**Every `SPLASH_FLOOR <= 1200` is therefore byte-identical**, because the reserve term dominates.
+A naive ladder of 0 / 400 / 800 / 1200 would have produced four identical arms and one wasted run.
+Distinct doses are only:
+
+| dose | soldier needs | expected |
+|---|---|---|
+| 0 (≡ any value ≤ 1200) | 1450 | at/below median — soldiers flow |
+| 1400 | 1650 | above median — soldiers trickle |
+| 2000 (**incumbent, zero arm**) | 2250 | off switch |
+
+Arms: `carol_i47_0`, `carol_i47_1400`, against `carol_iter44` unchanged as the byte-identical
+zero arm.
+
+### PRE-REGISTERED GATE
+
+- **Stage 0, one-map identity check** on `Leaf` (dense, where the mechanism has fuel). If the arms
+  come back byte-identical to the baseline, the iteration is void.
+- **Stage 1**, sampled 25-map screen, both arms vs `carol_iter44`. ACCEPT needs >= 34/50 on my
+  corrected sampled gate. **Pre-commitment, per the rule I adopted yesterday: if the screen lands
+  unresolved I take the better dose to a census anyway rather than reading an underpowered screen
+  as a rejection.**
+- **Stage 2**, full 75-map corpus census, 150 games. **ACCEPT >= +23** margin (2 sd on my measured
+  chaos floor of sd 6.48 per 150 win-counts = 12.96 on margins; I am quoting the MARGIN).
+
+### PRE-REGISTERED MANIPULATION CHECK (must pass, or the iteration is void whatever the margin)
+
+Soldiers built per game rises from 2-3 toward the intended share, **and** carol's tower count on a
+dense map rises above the incumbent's 8.
+
+### PRE-REGISTERED WEAK LINK — the one that has killed three iterations here
+
+Named in advance because this is where 42 and 45 died: **if soldiers built rises but towers built
+does NOT, I REJECT**, whatever the headline says. Mechanism firing is not mechanism paying, and
+this chain has snapped at exactly that link before.
+
+### PRE-REGISTERED MAP-LEVEL PREDICTION (doctrine 4)
+
+The gain must **concentrate on high-ruin maps**: margin on maps with >= 18 ruins exceeds margin on
+maps with <= 17. Unlike iteration 44's census, this instrument can actually see it — iteration 44's
+census compared two builds that BOTH had ~0 soldiers, so the ruin-conversion dimension cancelled in
+both arms. Here the candidate differs from the baseline in precisely that dimension, so doctrine
+17's self-play blindness does not apply.
+
+### THE PRICE, computed before building (doctrine: price a reallocation against what it displaces)
+
+This is a **reallocation**, not an addition: soldiers come out of the splasher budget. Carol
+currently wins ruin-poor maps *because* of those splashers — `MoneyTower` coverage 702 to 254 is a
+large buffer, and the whole ruin-poor bucket is where her 75.0% lives. **The realistic bad outcome
+is not "no effect"; it is a trade that buys dense maps and sells sparse ones**, netting to zero
+while looking like churn. That is why the map-level prediction above is registered as a
+concentration test rather than a headline: a flat headline with the right map-level shape is a
+different animal from a flat headline with no shape, and I want to be able to tell them apart.
+
+### Pre-checks NOT yet done at the time of writing
+
+- No in-bot decision counter for the gate (I am relying on build-event counts, which are outcomes;
+  they are unambiguous here at 2 soldiers/game, but they are not the decision).
+- Trigger frequency across other games not yet checked beyond the two traced maps.
+
+## Iteration 47 stage 0 — identity check PASSED, and the dose curve is concave for a nameable reason
+
+One map (`Leaf`, 52 ruins — the densest in the corpus, chosen because that is where the mechanism
+has fuel), each arm against `carol_iter44`. Build counts from `--every 1` dumps.
+
+| arm | soldiers | splashers | moppers | towers built | tw end | coverage | result |
+|---|---|---|---|---|---|---|---|
+| `carol_i47_0` (floor 0) | **190** | **3** | 7 | 9 | 11 | **147** | **LOSS** |
+| `carol_iter44` (its opponent) | 4 | 63 | 0 | 11 | 6 | 701 | win |
+| `carol_i47_1400` (floor 1400) | **106** | **97** | 4 | **23** | **25** | **701** | **WIN** |
+| `carol_iter44` (its opponent) | 4 | 71 | 0 | 5 | 5 | 179 | loss |
+
+**Arms are not byte-identical to the baseline, so the iteration is live.**
+
+### Dose 0 reproduces iteration 30's ORIGINAL pathology, in mirror image
+
+At floor 0 a soldier needs 1450 chips and a splasher 1600. The soldier is both cheaper and
+lower-gated, so soldiers drain the shared treasury below the splasher's line and **splasher builds
+collapse 63 -> 3**. That is precisely the failure iteration 30 was built to fix
+("50-95% of splasher rolls die at the chips gate because cheaper units drain the shared treasury
+below it first"), reproduced by removing iteration 30's fix.
+
+So the incumbent and dose 0 are the **two ends of one axis**, not a fix and its absence:
+
+| | soldier gate | splasher gate | realized mix |
+|---|---|---|---|
+| floor 2000 (incumbent) | 2250 | 1600 | ~95% splasher, soldiers off |
+| floor 0 | 1450 | 1600 | ~98% soldier, splashers off |
+
+Whichever unit is gated lower eats the shared treasury and starves the other. **The mix is set by
+the ordering of two thresholds, not by `SPLASHER_IN_20`** — the roll is decided first and then
+filtered, so the filter, not the roll, is the policy. Nobody chose that policy; it is the accidental
+consequence of two constants set in different iterations for different reasons.
+
+The balance point is algebraic rather than searched: soldier requirement equals splasher
+requirement when `SPLASH_FLOOR + 250 = reserve + 400`, i.e. **`SPLASH_FLOOR = 1350`**. My 1400 arm
+sits one notch to the splasher side of exactly that point, which is why it was in the ladder.
+
+### Dose 1400 on the densest map in the corpus
+
+**25 towers and 701 coverage against the incumbent's 5 and 179**, winning a map carol was swept
+4/4 on in the tournament. Both registered conditions pass: soldiers built 4 -> 106, tower count
+5 -> 25. The weak link that killed iterations 42 and 45 — *soldiers up but towers flat* — **holds
+here**: soldiers up, towers up, coverage up, all three links intact.
+
+And the reallocation I priced as the main risk **did not occur at this dose**: splasher builds went
+*up*, 71 -> 97, not down. The extra towers raise income, so both unit types are built more. That is
+the "capability preserved at zero marginal cost" profile the algorithm names as the recurring
+winner's shape, rather than the trade I was braced for. Priced against zero it would look free;
+priced against what it displaces, it displaces nothing at 1400 and everything at 0.
+
+**Caveat, stated because Leaf is a degenerate sizing map by construction**: 52 ruins is the corpus
+maximum, so this is the most favourable possible ground for the mechanism. One map is not a
+verdict — doctrine says replay inspection is for MECHANISM, never for VERDICT. The verdict is the
+screen and the census. The specific risk this map cannot see is the ruin-POOR bucket where carol
+currently wins 75%, and the pre-registered map-level prediction is what tests it.
+
+**Stage 1 launched**: run `20260909-102945`, `BOT=carol_iter44`, opponents `carol_i47_0` and
+`carol_i47_1400` on one shared 25-map sample, 100 games. Margins reported by the tool are the
+BASELINE's; candidate score is `50 - reported`.
