@@ -13525,3 +13525,133 @@ games.
 
 Note carefully what this archetype is and is not for. It makes the pool **contain the regime**; it does
 not make the pool independent of my blind spots, and it cannot become an accept gate on its own.
+
+### Enumerating the mechanisms before naming one: bob loses ruin-poor games in TWO ways
+
+Doctrine 2 says a trace gives the symptom and the mechanism is still an inference. The symptom is
+uniform — **`spl0` in every ruin-poor loss** — so I enumerated the routes to it before picking one.
+
+Time to each tower built (2 are given at spawn, so "3rd" is the first one *built*), from the replay
+`SPAWN ...TOWER` events, with two ruin-rich wins as controls:
+
+```
+  replay                          bob  result   bob 3rd  4th  5th | opp 3rd  4th  5th
+  bob-vs-carol-on-CastleDefense    T1   loss         11   50    - |      30   73    -
+  bob-vs-carol-on-Filter           T1   loss          -    -    - |      30   87    -
+  bob-vs-carol-on-Paintball        T1   loss         31    -    - |      31   54   66
+  carol-vs-bob-on-DefaultSmall     T2   loss          -    -    - |      17   41  116
+  carol-vs-bob-on-Filter           T2   loss          -    -    - |      26   38   96
+  bob-vs-carol-on-Leaf             T1   WIN          16   64   83 |      49   72  111
+  carol-vs-bob-on-Leaf             T2   WIN          20   41   56 |      18   44   73
+  carol-vs-bob-on-DefaultHuge      T2   WIN          20   57   77 |      17   35   64
+```
+
+**"bob is slow to the third tower" is refuted as the general story.** On CastleDefense T1 bob built its
+third tower at round 11 against carol's 30 — bob *won* the tower race, reached four towers, and lost
+anyway. So the two failures are distinct:
+
+- **Type A** (CastleDefense T1, Paintball T1, Filter T1): bob wins or ties the tower race, coverage
+  peaks around round 40 and then **declines** — 409 → 276 on CastleDefense — while bob does zero paint
+  actions. Carol's splashers convert bob's tiles and **a soldier cannot overwrite enemy paint at all**,
+  so bob's six-to-eight soldiers have nothing they are able to do. bob has no splashers.
+- **Type B** (DefaultSmall T2, Filter T2): bob never builds a third tower, tower paint collapses to 50,
+  every unit starves. bob has no splashers.
+
+And the *reason* for `spl0` differs by map even inside Type A, which is why the single-cause version of
+this kept failing:
+
+```
+  CastleDefense T1   twPaint 799-1045  chips $300-1350   -> CHIPS bind (splasher needs 400+1200 reserve)
+  Filter        T1   twPaint 100-210   chips up to $3569 -> PAINT binds (splasher costs 300 paint)
+```
+
+The unifying statement that survives both, and it is a capability claim rather than a resource one:
+**in short games bob cannot field the only unit type able to retake painted ground, by one route or
+another, so its coverage is a ratchet that only turns down once the opponent starts converting.** That
+matches the algorithm's recurring winner's profile — capability preserved at zero marginal cost —
+better than any of the resource-tuning candidates I have run.
+
+I am **not** building on it yet, because of the finding above: I have no instrument that can evaluate
+it. That is the next thing, and it is under way.
+
+### Regime instrument: `src/bob_rush`, and what would make it fail
+
+Built `bob-tools/refork-rush.sh` on the same maintained-fork pattern as the denier (`--check` reports
+staleness; the algorithm's archetype-staleness rule once masked a 62.5% as 95.0%). `bob_rush` is
+`src/bob` with a Tower.java policy at the opposite pole: **no chip reserve, splashers from round 1, and
+a 250 paint floor kept back so a soldier can still complete a ruin pattern.** bob is units-first;
+bob_rush is economy-first.
+
+Three things recorded before it plays:
+
+1. **Its acceptance criterion is the REGIME, not the win rate.** It must produce sub-200-round games on
+   small ruin-poor maps. A version bob beats 95% of the time is a fine instrument if the games are
+   short; a 50% version over 900-round games is useless for this purpose. This is deliberately *not*
+   doctrine 12's rung test, which is about strength — and `bob_denier` already failed the rung test at
+   86-94%, which is why it is not one.
+2. **The circularity, written down so a later session cannot mislay it.** bob_rush's policy overlaps
+   mechanisms this lineage has considered adopting. "bob loses to an opponent that does X" is therefore
+   **not** evidence that bob should do X — an opponent built around a mechanism will of course display
+   it. The archetype exists to generate a regime; the accept gate stays elsewhere.
+3. **The PRNG lesson from iteration 33 is built into the fork.** The direction draw `G.rng.nextInt(8)`
+   is hoisted above the paint guard, so refusing a spawn does not shift the stream. That is the exact
+   bug that voided iteration 33, and it is now a property of the generator script rather than something
+   a future session has to remember.
+
+Running `BOT=bob OPPONENTS="bob_rush bob_denier"` on 12 pinned small/ruin-poor maps, 48 games.
+`bob_denier` is in the same run **on the same pinned maps**, so the game-length comparison between the
+new archetype and the old one is exact rather than a cross-run subtraction.
+
+**Pre-registered read**: bob_rush is a useful instrument if its median game length on these maps is
+under ~400 rounds with at least a few games under 200; it has failed if it looks like bob_denier
+(median 949, two games under 400 in 100). Win rate is *reported but does not decide*.
+
+### The comparative tower census: BRANCH 1 FIRES. The tower pin is inflicted, not self-caused.
+
+Registered before the run: *"If bob is pinned at 2 towers against carol but reaches 3+ against alice on
+the SAME map, the pin is something carol does to bob, not bob's own build logic — and every candidate
+that reshapes bob's opening spend is aimed at the wrong mechanism."*
+
+Same four maps, **byte-identical bob build** (`e425f46`), the two opponents:
+
+```
+  map             side   vs CAROL  bob tw start/max   rounds  |  vs ALICE  bob tw start/max   rounds
+  CastleDefense    T1              2/4                  134   |           2/5                  703
+  CastleDefense    T2              2/2                  109   |           2/5                  241
+  Filter           T1              2/2                  133   |           2/4                 1015
+  Filter           T2              2/2                  108   |           2/4                 1071
+  Paintball        T1              2/3                  141   |           2/6                  615
+  Paintball        T2              2/3                  163   |           2/7                  286
+  DefaultSmall     T1              2/3                  183   |           2/3                  168
+  DefaultSmall     T2              2/2                  131   |           2/4                  197
+
+  bob's mean max towers:   vs carol 2.6      vs alice 4.6
+```
+
+**bob's tower count nearly doubles against alice on the very same maps, from the very same code.** Six
+of the eight alice games have bob at 4 or more; seven of the eight carol games have bob at 3 or fewer.
+Game length moves with it: 108-183 against carol, 168-1071 against alice.
+
+Branch 1 fires. **The pin is inflicted.** bob's opening build logic is capable of reaching 4-7 towers on
+Filter, CastleDefense and Paintball — it does so against alice — and does not get to against carol.
+
+This retires a class of candidate rather than one candidate. Iterations 31 (anti-crowding), 32
+(tower-type coordinate rules) and 33 (spawn paint reserve) all reshape **how bob spends its own opening
+resources**. On this evidence that whole family is aimed at a mechanism that is not the one operating,
+which is a better explanation of three consecutive nulls than the three separate ones I wrote.
+
+**Closed-directions ledger, ADD**: "candidates that reshape bob's own opening spend, motivated by the
+ruin-poor deficit" is CLOSED, on the ground that the deficit is opponent-inflicted and the same code
+reaches 4-7 towers against a different opponent. Re-opening requires evidence that bob's *own* spend
+binds in a game it loses — which the CastleDefense T1 trace (four towers, 800-1045 tower paint, still
+lost) argues against directly.
+
+**What replaces it** is a contested-ruin question: what happens between bob and carol at a ruin that
+does not happen between bob and alice. That is a cross-lineage claim, so per doctrine 15 the tournament
+is its only valid instrument — and it is also, precisely, the shape doctrine 7 warns cannot be measured
+against opponents that never perform the behaviour. My pool does not contain a ruin denier.
+
+Note what this does NOT establish. It does not say bob's opening is good; it says the opening is not
+what separates these games. And it does not name carol's mechanism — "claims them first", "destroys
+bob's", and "makes the ground unusable" all produce this table, and I have not yet run the case that
+separates them.
