@@ -15529,3 +15529,23 @@ and wrong for an accept screen; this is an accept screen. 150 games.
 ~0.92 tiles/soldier-round, and a soldier must travel before it paints, so the realisable share is well
 under all of it. This is ~2x too small rather than the ~10x of iterations 37/40/41 — better than
 anything recently, and still likelier to reject than to accept.
+
+**Iteration 43 LAUNCHED as run `20260909-151137`** — `BOT=bob_iter20 OPPONENTS="bob_fs0 bob_fs3 bob_fs8"`,
+25 maps **sampled** of 75, 150 games, 3 jobs, from clean HEAD `f24a1c3`. The design, gate, secondaries
+and prediction were committed in `f24a1c3` **before** this run existed.
+
+**If this session died before the verdict — collate, do not re-run:**
+
+```bash
+cd agents/bob && ../../tools/gauntlet-collect.sh --list        # confirm complete
+                 ../../tools/gauntlet-collect.sh 20260909-151137
+                 bob-tools/eval_arms.py gauntlet/20260909-151137 bob_fs0 bob_fs3 bob_fs8
+```
+
+Gate exactly as registered: **VOID** unless `bob_fs0` is 25/50 with all 25 maps split and 0
+diff-from-null; `vs null` in **wins out of 50** (not margin); ≥ +10 accept-eligible, +7..+9 replicate,
+≤ +6 reject. Secondaries in order: tiles/soldier-round from the run's own replays (must rise), tower
+count at r200 (the price), small-map stratum (registered underpowered, direction only). `ov=` must be 0.
+
+Arms are UNCOMMITTED working-tree dirs (`src/bob_fs0`, `src/bob_fs3`, `src/bob_fs8`), regenerable with
+`bob-tools/make-seek-arms.sh`. `src/bob` is unchanged, so **HEAD still plays `bob_iter20`'s behaviour.**
