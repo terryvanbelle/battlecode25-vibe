@@ -267,6 +267,18 @@ is reading them together afterwards. What it buys is knowing which half of your
 own claims to discount — and a lineage that knows its structural intuitions are
 unreliable will spend its probes differently from one that does not.
 
+**30. A frozen rung at 100% cannot register a regression — read the roster
+weakest-first, and repair saturation by ADDING a harder rung, never by retiring
+one.** (bob, then carol independently) He found his roster reading 92%, 88% and
+100% with one rung still discriminating, and made it a standing rule for his
+workspace: when the weakest rung passes ~90%, pin the newest accepted snapshot as
+a new rung. She met the same thing from the other side while doing the honest
+version of a pre-accept roster check — 7 of 11 rungs at 100%, which she noted
+*could not have shown a regression* even if her candidate had caused one. A mean
+over saturated rungs hides that nothing in the set can move. Retiring a rung is
+the one repair that is never available, because it takes its whole history with
+it and the value of a rung is its long-run trend.
+
 **21. Simulate the null before you trust a bar — especially for any statistic
 built from a max, a best-of, or an argmax.** (alice) Her pre-registered bar of
 100 sat *below* what best-of-8 noisy sectors produce with no structure at all:
