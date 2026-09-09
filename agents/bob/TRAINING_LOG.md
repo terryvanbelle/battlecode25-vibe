@@ -15209,3 +15209,133 @@ the mechanism's payoff is plausibly regime-dependent and a random draw would mix
 6 maps x 2 arms x 2 sides = 24 games.
 
 `src/bob/` is untouched; `bob_iter20` remains the bot and HEAD's behaviour is unchanged.
+
+## Iteration 41 — **CLOSED, no accept, and the most useful part is a correction to one of my own numbers.**
+
+### 1. The probe ran, the identity check passed, and the instrument returned nothing
+
+Run `20260909-142552`, 24 games, `BOT=bob_iter20 OPPONENTS="bob_sq0 bob_sq1"`, maps pinned
+`CastleDefense DefaultSmall Justice maze mit gardenworld`.
+
+**The pre-registered VOID condition was satisfied in the good direction**: `bob_sq0` and `bob_sq1` both
+went 6/12 and agreed on *every* (map, side) — same winner and the same round count on all six maps
+(CastleDefense r252, DefaultSmall r1269, Justice r462, gardenworld r1047, maze r2000, mit r2000). The
+instrumented build is provably inert, exactly as the algorithm requires before believing an
+instrumented build.
+
+**And then it reported nothing at all: not one `SPW` line in 24 games.** The cause is not subtle once
+seen. `setIndicatorString` is **one slot per robot per turn, and the last writer wins silently.**
+`RobotPlayer` writes the bytecode monitor's string *after* `Tower.run()` returns, so it overwrote the
+probe's string in every game. The replay was full of indicator strings — mine were simply not among
+them.
+
+This is LEARNING 70's shape with a different cause and a better ending: there the tool reported a
+fabricated **zero**, here it reported an unmistakable **absence**, and an absence is the honest failure
+mode. Fixed in `bob-tools/make-spawnprobe-arms.sh`: the probe now writes to `Tower.probeTag` and
+`RobotPlayer` **appends** it, with a `grep` guard that fails the generator if the append does not land.
+
+### 2. I did not re-run it, because the ledger already answered the question — and I should have read the ledger first
+
+Searching my own log for `SPLASHER_SLOTS` turned up that **an earlier session had already found this
+exact defect**, verified it with the same `javap`, hypothesised the same permanent deadlock, and
+**refuted the deadlock** with a round-300 census (bob holds 5.10 splashers vs carol, zero splashers in
+only 3-4 games of 275 — the jam is transient). It then recorded the fixes as bracketed by prior
+measurement: fall back to a cheaper unit -> spawns more -> iteration 24's **-7**; advance the slot and
+build nothing -> fewer splashers -> iteration 20's interior peak at 2:2:1. Its closing line was
+explicit: *"the next candidate must not be a production-policy change."*
+
+**That is my process failure, not a subtle one.** The algorithm's pre-check "check the evidence already
+on disk before spending a run" exists for precisely this, and I spent 24 games re-deriving a defect my
+own ledger already carried. Recording it plainly rather than folding it into the result.
+
+### 3. My re-opening argument was specific, testable, and WRONG — killed for zero games
+
+I did have a specific reason the recorded closure might not apply, which is the bar the ledger sets:
+iteration 40 produced **1.00 splasher at r30** where a 2-of-5 slot mix predicts about 2, so perhaps the
+stall had crippled it and iteration 40 never tested early splashers at all — only early splashers
+jammed. That is a real, falsifiable claim, and iteration 40's own replays are already on disk.
+
+`bob-tools/arm_traj.py` over run `20260909-125651`, arm-side totals through round 120:
+
+```
+maps with area < 1000 (sa1 and sa2 fire)
+      arm    n   win%  +sold   +spl   +mop  TOTAL built  died  twPaint  paintAct    cov
+  bob_sa0   16  50.0%  10.06   0.50   0.94        11.50  4.62      681     213.0  359.1
+  bob_sa1   16  62.5%   7.69   2.12   0.88        10.69  3.69      585     235.6  362.5
+  bob_sa2   16  62.5%   7.69   2.12   0.88        10.69  3.69      585     235.6  362.5
+
+all maps (control: on area >= 1500 the arms are byte-identical to the null)
+  bob_sa0   50  50.0%  10.56   0.50   0.82        11.88  4.36     1075     280.7  277.4
+  bob_sa1   50  54.0%   9.80   1.02   0.80        11.62  4.06     1044     288.0  278.5
+  bob_sa2   50  56.0%   9.34   1.32   0.80        11.46  3.82     1043     294.7  280.1
+```
+
+**Refuted.** `bob_sa1` built **0.81 fewer units in total** (11.50 -> 10.69), a 7% production loss — not
+a jam — and it converted 2.37 soldiers into 1.62 splashers and **raised its paint output by 10.6%**
+(213.0 -> 235.6 tiles). The mechanism fired and worked; it was simply far too small to matter, which is
+what iteration 40 concluded. The win% column reconciles exactly with iteration 40's headline (50.0/62.5
+on the small stratum; 50/54/56 over all 50) — the same games read two ways, agreeing, which is what
+made it safe to reason from.
+
+**So the spawn stall is real and now PRICED: ~0.8 units per 120 rounds where splashers are enabled,
+0.26 units where they are not.** Closed on magnitude.
+
+**Closed-directions ledger, ADD**: "add a cheaper-unit fallback to the spawn rotation" is CLOSED at a
+measured cost of 0.26-0.81 units per 120 rounds, on top of the pre-existing bracket from iterations
+20/24/27. **And ADD, by arithmetic rather than by games**: "reorder the splasher slots so they are not
+adjacent (`0b01100` -> `0b01010`)" is CLOSED without a run — a 5-slot cycle costs
+`2*300 + 2*200 + 1*100 = 1100` paint whatever the order, tower paint accumulates losslessly, so order
+changes the phase of arrivals and not the long-run rate or mix. Preferring the decomposition to the
+experiment, per the algorithm.
+
+### 4. What the iteration DID deliver: my soldiers are the better half, and I had the denominator wrong
+
+A previous session recorded *"bob's soldiers paint 83 tiles across 30 rounds from 6.4 soldiers = **0.43
+tiles per soldier-turn**, i.e. they are idle on ~57% of early turns"* and named making them less idle
+as the next direction. That denominator is **final soldier count x rounds**, which charges the whole
+window at the ending headcount and ignores the ramp.
+
+Measured exactly, by integrating the alive count at stride 1 over the 150 bob-vs-carol tournament
+games: bob's soldier-rounds are **151.2**, not `6.88 x 30 = 206`. Applying the old denominator to
+today's data reproduces the old figure (100.5/206 = **0.487**); the exact one gives **0.665**. The rate
+was understated by ~27% **by construction**, in a way no amount of care about the numerator would catch.
+
+And with the correct denominator the comparison inverts:
+
+```
+  bob   soldiers  0.665 / 0.779 / 0.778 tiles per soldier-round   (small / medium / large)
+  carol soldiers  0.479 / 0.568 / 0.563
+  carol splashers 0.162 / 0.163 / 0.164 splashes per splasher-round  (hard ceiling 0.20 at cd 50)
+```
+
+**Bob's soldiers out-produce carol's, per turn, on every map size.** Carol's splashers run at **81% of
+their theoretical action ceiling** and deliver ~2.1 tiles per unit-round against a soldier's 0.7.
+
+**Superseding in place**: "bob's soldiers are idle on 57% of early turns" is withdrawn as an artefact of
+the denominator, and with it the direction that was queued off it. What replaces it is not a bob defect
+at all — it is that carol converts *fewer* unit-rounds into *more* tiles by unit type.
+
+**The footprint assumption is forced, not chosen.** I attribute 13 tiles to each splash. I did not have
+to assume it: carol's soldier rate is `(146.4 - k*9.6)/45.1` for footprint `k`, and a soldier cannot
+exceed 1.0 tiles per round, so `k >= 11.3`. The geometric maximum is 13. The interval is narrow and
+**bob's soldiers beat carol's anywhere inside it**, so the conclusion does not rest on the assumption.
+
+### 5. Two engine facts, into RULES.md
+
+- **A TOWER attack adds no action cooldown.** In `attack(loc, bool)` the `addActionCooldownTurns` call
+  sits behind `ifeq` on `getType().isRobotType()`. So contact never blocks spawning, and my
+  attack-then-spawn order is correct (the reverse would silently cost the attack, since
+  `assertCanAttack` asserts action-ready and `buildRobot` does add the cooldown). This killed the
+  obvious confound for the whole trajectory above before it could be raised.
+- **`assertCanBuildRobot` gates on the tower's OWN paint against the type's `paintCost`** — MOPPER 100,
+  SOLDIER 200, SPLASHER 300 — so a tower's stash decides *which* unit it may build, not merely whether.
+
+### 6. New instruments, all reusable and all zero-game
+
+`bob-tools/early-paint-census.sh` (compile once on the VM, loop; runs over tournament **and** gauntlet
+replay dirs), with `early_paint_agg.py` (paint flow by map-area stratum), `traj_agg.py` (whole-game
+trajectory) and `arm_traj.py` (production comparison across arms). Between them they read the input
+side of the paint economy — actions taken, units built, tower stock — where every instrument I had
+before read only the output side (coverage).
+
+`src/bob/` is untouched. **`bob_iter20` remains the bot; HEAD's behaviour is unchanged.**

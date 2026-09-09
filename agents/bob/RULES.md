@@ -109,6 +109,17 @@ Ground truth from: official specs.pdf (V3.1.0 changelog current) + reflection du
 - Tower paint capacity 1000. Every alive defense tower buffs allied towers' **single-block**
   attack +5/+7/+9 by level (`EXTRA_DAMAGE_FROM_DEFENSE_TOWER=5`, `+2`/level; AoE unaffected).
 - Each turn a tower can do ONE single-block attack AND ONE AoE attack (AoE hits all enemies in range).
+- **A TOWER attack adds NO action cooldown** (javap 3.1.0, `RobotControllerImpl.attack(loc, bool)`:
+  the `addActionCooldownTurns` call sits behind `ifeq` on `getType().isRobotType()`). So a tower can
+  attack AND build on the same turn, and "the enemy is in range" never blocks production. `buildRobot`
+  DOES add the cooldown, and `assertCanAttack` asserts action-ready, so **attack first, then build** --
+  the reverse order silently costs the attack. Verified iteration 41.
+- **`assertCanBuildRobot` requires `tower.getPaint() >= type.paintCost`** as well as
+  `teamMoney >= type.moneyCost` (javap 3.1.0). Paint costs differ by type -- **MOPPER 100, SOLDIER 200,
+  SPLASHER 300** -- so a tower's paint stash decides *which* units it may build, not merely whether it
+  may build. A tower holding 200-299 paint can build a soldier and cannot build a splasher. Combined
+  with `paintPerTurn == 0` on money towers (which therefore never regain paint), a spawn policy with no
+  cheaper fallback can wedge a tower permanently. Verified iteration 41.
 - Build: paint the type's 5x5 pattern around a ruin, then `completeTowerPattern` (adjacent, r²≤2).
   `markTowerPattern` costs 25 paint, marks the 5x5. Towers always built at level 1; `upgradeTower`
   (r²≤2) costs the next level's chips. **Max 25 towers** (`MAX_NUMBER_OF_TOWERS`).

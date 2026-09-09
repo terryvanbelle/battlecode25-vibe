@@ -77,6 +77,7 @@ probe = '''                    break;
      *  Cumulative counters ride in the string, so one narrow replay window reads
      *  the whole game instead of a dump of every round. */
     static int tB, tR, tN;
+    static String probeTag = "";
     static final UnitType[] ALT = { UnitType.MOPPER, UnitType.SOLDIER, UnitType.SPLASHER };
 
     static void spawnProbe(UnitType want, boolean built, int chips, int reserve)
@@ -95,13 +96,15 @@ probe = '''                    break;
             }
             if (alt) { tR++; code = 'R'; } else { tN++; code = 'N'; }
         }
-        rc.setIndicatorString("SPW " + code + " w=" + want + " p=" + rc.getPaint()
-                + " B" + tB + " R" + tR + " N" + tN);
+        probeTag = "SPW " + code + " w=" + want + " B" + tB + " R" + tR + " N" + tN;
     }
 }
 '''
 open(p, 'w').write(s[:-len(tail)] + probe)
 PY
+
+perl -0pi -e 's/\+ " mx=" \+ maxBc \+ " p=" \+ rc\.getPaint\(\)\);/+ " mx=" + maxBc + " p=" + rc.getPaint()\n                    + (isTower ? " " + Tower.probeTag : ""));/' src/bob_sq1/RobotPlayer.java
+grep -q 'Tower.probeTag' src/bob_sq1/RobotPlayer.java || { echo "!! bob_sq1: RobotPlayer append did not land" >&2; exit 1; }
 
 for pat in 'boolean built = false;' 'built = true;' \
            'spawnProbe(want, built, chips, reserve);' 'static int tB, tR, tN;'; do
