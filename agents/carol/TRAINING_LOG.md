@@ -13105,3 +13105,59 @@ inverted realized mix (610 soldiers / 6 moppers / 2207 splashers over 28 team-ga
 from a candidate-side measurement showing the share actually moved.** If it did not move, the
 margins above are some other effect wearing this iteration's name and the accept is void whatever
 the census says.
+
+## Iteration 46 RESULT — REJECT. Manipulation check PASSED on both sides; the census says no.
+
+**Stage 2 census**, run `20260909-090546`, `BOT=carol_i46_100` vs `carol_iter44`, full 75-map
+corpus, 150 games. Margins here are the **candidate's**.
+
+| | |
+|---|---|
+| **73/150 = 48.7%** | margin **−4** = **−0.35 sd** |
+| swept W / swept L / split | 7 / 9 / **59** |
+| identity check | `2*(SW-SL) = -4`, equals the margin |
+
+Gate was ACCEPT >= +23. **Rejected.** `src/carol` stays at `carol_iter44`.
+
+The stage-1 screen read +4 (27/50) and the census reads −4 over three times the maps. Both sit
+within half a standard deviation of zero, so they do not conflict — they are two readings of a
+null, and 59 of 75 maps splitting by side says the pair barely differs at all. This is precisely
+the case the two-stage design exists for, and precisely why I pre-committed to run stage 2 on an
+unresolved screen rather than reading +4 as encouragement.
+
+### The manipulation check passed, both halves, and it did not save the iteration
+
+Paired counts from the same game, so map and opponent are held exactly:
+
+| game | candidate sold / **mop** / spl | `carol_iter44` sold / **mop** / spl |
+|---|---|---|
+| `i46_100` vs `iter44`, Gears | 43 / **4** / 18 | 20 / **0** / 42 |
+| `i46_0` vs `iter44`, DefaultSmall (stage 1) | 11 / **8** / 7 | 13 / **0** / 10 |
+
+- **Mopper share rises**: 0% -> 6.2% at dose 100, 0% -> 30.8% at dose 0. The causal story is
+  confirmed: `PAINT_FLOOR` gates the mopper and only the mopper, and dosing it restores the unit.
+- **Soldiers do not collapse** — 43 against the baseline's 20 on Gears. The counter I registered in
+  advance because iterations 38 and 45 both died on it does not fire here.
+
+So both registered conditions passed and the margin is still a null. **Mechanism confirmed, value
+zero** — the same shape as iteration 45, reached by a different route, and this time the two-sided
+check cannot even be blamed.
+
+### Why iteration 21's dose curve did not transfer, which is the transferable part
+
+I built this iteration on iteration 21's measurement that the zero-mopper arm loses 11–29 to dose 2.
+That measurement was real. It simply **no longer describes this bot**: iteration 21 predates
+`SPLASH_FLOOR`, and carol's realized army is now **78% splashers** (2207 of 2823 units over 28
+team-games). The splasher is the *only other unit that converts enemy paint in bulk* [E: RULES.md] —
+which is exactly the job that made the mopper worth having in iteration 21. With splashers at 78%
+that job is already covered, so restoring moppers adds a unit whose distinctive contribution is
+redundant, and the dose curve flattens to nothing.
+
+**Lesson: a dose curve measured 25 iterations ago is evidence about a bot that no longer exists.**
+The composition it was measured under is part of the measurement, not background. Before reviving a
+retired parameter on an old curve, check whether the mechanism that made it pay is still scarce.
+
+That reframes this morning's "silently reverted a measured dose" finding, which I should state
+plainly because it ran in the direction I wanted: the *mix* claim was right and is confirmed at
+scale (610 soldiers / 6 moppers / 2207 splashers), but the *value* claim I hung on it was wrong.
+Iteration 36 did zero the mopper share, and that cost nothing.
