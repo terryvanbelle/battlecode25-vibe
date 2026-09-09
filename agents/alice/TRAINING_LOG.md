@@ -14584,3 +14584,234 @@ The census is against `alice_iter30` only, as the screen was. **Trigger frequenc
 different opponent is still untested** — an opponent that contests ruins on another schedule
 moves the tower-gain sequence the signal is built from. The tournament is the instrument for
 that, and it can only answer now that the accept has shipped to HEAD.
+
+## Roster run `20260909-081021` — the absolute-strength point for iteration 39
+
+`BOT=alice` (= `alice_iter39`), the full frozen roster, 25 maps x 11 opponents = **550 games**.
+This also served as the build check: I have no local JDK, so "HEAD compiles" is only ever
+demonstrated by a remote run actually playing games.
+
+| opponent | record | net swept | | opponent | record | net swept |
+|---|---|---|---|---|---|---|
+| `alice_iter0` | 50–0 (100%) | +25 | | `alice_iter28` | 33–17 (66%) | +8 |
+| `alice_iter1` | 50–0 (100%) | +25 | | `alice_iter29` | 32–18 (64%) | +7 |
+| `alice_iter4` | 49–1 (98%) | +24 | | `alice_iter30` | 28–22 (56%) | +3 |
+| `alice_iter7` | 49–1 (98%) | +24 | | `alice_flood` | 48–2 (96%) | +23 |
+| `alice_iter12` | 50–0 (100%) | +25 | | `alice_paintthief` | 41–9 (82%) | +16 |
+| `alice_iter23` | 46–4 (92%) | +21 | | **overall** | **476/550** | **86.5%** |
+
+Identity check OK on all 11 pairs, 0 exceptions. **The ladder is monotone** in accept order —
+100 / 98 / 92 / 66 / 64 / 56 — which is what a frozen roster is for: it says the lineage has
+been gaining absolute strength, not just moving relative to a drifting pool.
+
+**Coherence check against the census.** `+3` net swept vs `alice_iter30` on 25 maps against the
+census's `+16` on 75. Rescaling extensively, the census predicts `16 x 25/75 = +5.3`; observed
+`+3` on `decisive = 3` (sd 1.73) is 1.3 sd low. Consistent, and worth stating as a *range*
+rather than treating the small-sample number as a correction to the large one.
+
+## Today's measurement: I am weak on RUIN-SPARSE maps, and it is opponent-independent
+
+Not an iteration — the "measure first" step for the next one, taken from the sanctioned
+cross-agent channel because it is the only place opponents I did not write can be observed.
+
+### First, a trap I walked into and had to back out of: tournaments DOUBLE-COUNT
+
+I aggregated the last four tournaments to get more data per map. **`alice`–`bob` was
+byte-identical across `20260908-1300` and `20260909-0100` — 150/150 games, same winner *and*
+same round count.** Both lineages shipped unchanged commits and the engine is deterministic, so
+the second tournament re-ran the identical 150 games. `alice`–`carol` differed (carol shipped
+`432d702 -> 5be82ca`): 19/150 identical, 127/150 same winner.
+
+> **A tournament run is not an independent sample of a pair whose two commits have not moved.**
+> Aggregating N tournaments multiplies the apparent n by N while adding zero information, and it
+> shrinks every standard error by `sqrt(N)`. My first pass reported "0/8 on 23 maps"; the honest
+> figure was 0/2 against `bob`, printed four times.
+
+Deduplicating on the **commit pair**, not the run id, leaves **450 unique games, exactly 6 per
+map** (2 vs bob, 4 vs carol). Every number below is on the deduplicated set.
+
+### The finding
+
+Splitting the 75-map corpus into terciles by *claimable* ruin count (`tools/mapdata/ruin_parity.txt`,
+neutral shared ground — and note it excludes the 4 starting-tower tiles, so it runs 4 below a
+replay header):
+
+| tercile | ruins | alice record | map-level mean ± SE |
+|---|---|---|---|
+| **sparsest** | 5–12 | **66/150 = 44.0%** | 44.0% ± 6.7 |
+| middle | 12–20 | 92/150 = 61.3% | 61.3% ± 5.6 |
+| richest | 20–52 | 96/150 = 64.0% | 64.0% ± 5.7 |
+
+> **Sparsest vs the rest: a gap of +18.7 points, SE 7.8 -> 2.39 sd**, clustered at the map level
+> so the 6 games on a map count as one observation, not six.
+
+It is a **threshold, not a gradient** — middle and richest are indistinguishable — which is why
+the plain correlation is only `+0.128` and would have been dismissed. Area (`+0.100`) and ruin
+*density* (`+0.022`) carry nothing once ruin count is in.
+
+**Why this is a statement about me and not about a matchup.** Bob and carol have *opposite* size
+profiles: `corr(alice win%, area)` is `−0.182` against bob and `+0.332` against carol. Any
+single-opponent read would have been that confound. The sparse-map deficit is the part that
+survives averaging over two independently developed opponents.
+
+### A hypothesis I built, tested, and killed before spending a game on it
+
+Tracing `alice-vs-bob-on-MoneyTower` (10 ruins), alice's money sat at **$1,200–1,400 all game —
+below `CHIP_RESERVE = 1450`** — while its towers held 1,700–2,200 idle paint, and it built
+**zero splashers in 1,044 rounds**. That reads as a clean story: sparse map -> few money towers
+-> chip income too low to ever cross the splasher gate (`1450 + 400 = 1850` even after iteration
+39), so alice has no area-painting unit at all.
+
+It also passed the SCARCITY pre-check for once *affirmatively* — freed resource and binding
+resource would have been the same resource, chips — which is exactly why it felt convincing.
+
+**It is false.** Measured across the ruin spectrum from census replays already on disk:
+
+| map | ruins | median $ | % turns $<1450 | median twPaint | max splashers |
+|---|---|---|---|---|---|
+| `BatSignal` | 10 | **13,400** | **0%** | 485 | 9 |
+| `rain` | 12 | 2,180 | 20% | 862 | 9 |
+| `Portal` | 22 | 10,365 | 0% | 950 | 14 |
+| `Rose` | 26 | 3,540 | 22% | 1,045 | 17 |
+
+On `BatSignal` — as sparse as `MoneyTower` — alice sits on a **$13,400** median pile and builds
+9 splashers. Chip starvation is a property of `MoneyTower`, not of sparse maps.
+
+> **I generalised from one map, and the map I picked was the corpus's second-sparsest by
+> density (5.7/1k).** `tools/mapdata/README.md` warns about exactly this for `gridworld`, in
+> those words, and I made the same error with a different map inside the same session in which
+> I read it. **One map cannot size a corpus-level quantity — pick the sample before the trace,
+> not the trace before the sample.** Cost: four replay dumps. Cost had I skipped it: an
+> iteration built on a refuted mechanism.
+
+### What the sibling replays actually show, on four maps rather than one
+
+`T1`/`T2` per each replay's own header; all four are alice losses.
+
+| game | ruins | ended | alice splashers | sibling splashers | alice cov -> | sibling cov -> |
+|---|---|---|---|---|---|---|
+| `alice`-vs-`bob`-on-`MoneyTower` | 10 | r1044 | **0** | 17 | 449 -> 353 | 305 -> 622 |
+| `alice`-vs-`bob`-on-`starburst` | 8 | r654 | **0** | 5–6 | 425 -> 328 | 506 -> 648 |
+| `carol`-vs-`alice`-on-`BatSignal` | 10 | r582 | **0** | 9 | 278 -> 248 | 457 -> 680 |
+| `alice`-vs-`carol`-on-`BunnyGame` | 12 | r400 | **0** | 8 | 185 -> 181 | 497 -> 702 |
+
+Three things are consistent across all four, and none of them is opponent-specific:
+
+1. **Alice builds zero splashers in every one.** Both siblings are spawning splashers by
+   **round 2** — before any expansion could have finished.
+2. **Alice's coverage peaks early and then DECLINES**; the sibling's rises monotonically. Alice
+   is not slowly losing a race, it is going backwards.
+3. **The games end early** — r400, r582, r654 — all `MAJORITY_PAINTED`. Alice's tower paint is
+   *rising* while it loses (`BatSignal`: 1,741 -> 2,743). It hoards paint through a loss.
+
+> **The gate is the problem, not the dose.** Both of my splasher triggers — the chip proxy and
+> iteration 39's phase signal — are *late-game* conditions by construction. On a map decided at
+> round 400 they cannot fire in time to matter, however well calibrated they are. Iteration 39
+> was a real gain (+16) and does nothing for this: it makes a late gate fire *less late*.
+
+## Iteration 41 PRE-REGISTERED — an early, ungated splasher share
+
+**Hypothesis.** Alice's splasher production is controlled entirely by late-game triggers, so on
+maps decided before round ~650 it never happens. Spawning a fixed *share* of splashers from
+round 1 raises alice's area-painting rate on exactly the maps it currently loses.
+
+**Mechanism, one change.** A deterministic per-tower spawn counter: every `k`-th non-mopper
+spawn becomes a `SPLASHER` instead of a `SOLDIER`. The existing chip-proxy and phase-signal
+gates are left untouched and can still fire on top, so this only ever *adds* — the same
+augment-never-replace discipline that made iteration 39's arm C work and arm B fail.
+
+**Dose ladder**: `k = 0` (control), `k = 8`, `k = 4`.
+
+**Why a counter and not `rnd(k)`.** This is the direct lesson of the `alice_phase` false null.
+An extra `rnd()` call would consume a PRNG draw, so the `k = 0` arm would *not* be
+byte-identical to the baseline — and my own measured "null" moved a 75-map census by **+12**
+for precisely that reason. A counter consumes no draws, so **dose 0 is byte-identical by
+construction** rather than by argument. It is also the fix LEARNINGS already prescribes for
+this bot's ID-seeded PRNG: make the mix explicit instead of choosing a lucky seed.
+
+### SCARCITY pre-check — and this one is a REALLOCATION, which is why it can work at all
+
+- **Binding resource: tower paint.** Established twice — iteration 39a (removing the splasher
+  gate sent splasher production to 0 because the idling *was* the accumulation), and today's
+  traces (alice's `twPaint` *rises* through losses while its coverage falls).
+- **This iteration does not free a resource. It re-spends the binding one**: 300 paint to a
+  splasher instead of 200 paint to a soldier.
+
+> Iterations 20, 26 and 39a all failed the same way — each freed a resource that was **not**
+> binding (soldier turns, chips, build slots), and a freed non-binding resource buys nothing.
+> **The only change that can move output when one resource binds is a reallocation *of that
+> resource*.** That is a different move from all three failures, and it is the first candidate
+> in this lineage that is one.
+
+**The claim that makes it map-conditional**: a soldier's paint buys ruin capture; on a map with
+5–12 ruins there is little left to capture, so the same paint buys more as area.
+
+### Pre-registered gates, thresholds fixed BEFORE the run
+
+1. **Screen** — 25 maps, `BOT=alice_iter39` (baseline), arms as opponents; an arm is good when
+   the BOT loses. Advance at **net swept >= +4** (the corrected screen value of a threshold
+   candidate: an effect is extensive in maps, noise goes as `sqrt`, so holding the *sd-multiple*
+   constant across sample sizes silently raises the bar — see the iteration 39 screen entry).
+2. **Census** — 75 maps, 150 games. Accept at **net swept >= +12** (2.27 sd on my measured floor
+   of `sd_net_swept = 5.29`). Unchanged.
+3. **Zero-dose control must return net swept 0 exactly.** Anything else means the arm is not the
+   null I built and the whole ladder is uninterpretable.
+
+### The pre-registered MECHANISM falsifier — separate from the accept gate
+
+The story says the gain is concentrated on ruin-sparse maps. So, on the census:
+
+> **net swept over the 25 sparsest maps must exceed net swept over the 25 richest.**
+
+If the gain is uniform or reversed, **the sparse-map explanation is wrong even if the total
+passes**, and I may not claim it — I would have a number without a mechanism, which is the
+ground on which I declined to ship `alice_phase`. This does not veto an accept; a real gain is a
+real gain. It vetoes the *story*.
+
+**Named risk, in advance**: early splashers spend paint that expansion needs, so I expect a
+*loss* on ruin-rich maps. A flat share may therefore net near zero by cancellation. That is the
+reason the tercile split is registered up front rather than read off afterwards: cancellation
+and no-effect look identical in a headline, and only the split separates them. If that is what
+happens, the follow-up is a ruin-count-conditional share, and it needs an in-game estimator of
+map ruin density, which I do not yet have.
+
+## Tooling bug report — `tools/replaydump/ReplayDump.java` attributes timeline markers to the WRONG team
+
+Coordinator-owned, reported rather than worked around. **What the code computes**, at
+`ReplayDump.java:152`:
+
+```java
+System.out.println("  marker r" + tm.round() + " team" + tm.team() + " " + tm.label());
+```
+
+`battlecode.schema.TimelineMarker.team()` returns a **0-based byte**, printed raw. Every other
+line of the same tool is 1-based (`team1=`/`team2=` in the GameHeader, `T1`/`T2` in the
+aggregates). So a marker from `T2` prints as `team1`.
+
+**The discriminating case, run before naming the fault** — a wrong label and a genuine
+mis-attribution look identical in one game:
+
+| observation | result |
+|---|---|
+| `alice` calls `setTimelineMarker` | **0 times** in `src/alice` and `src/alice_iter30` |
+| markers in an `alice`-vs-`alice` replay | **none at all** |
+| `alice`-vs-`bob` on `MoneyTower` (bob = **T2**) | 9 markers, all `team0`... no: all **`team1`** |
+| `bob`-vs-`alice` on `MoneyTower` (bob = **T1**) | same 9 markers, all **`team0`** |
+
+The label tracks bob's *side*, flipping 1 -> 0 when bob moves from T2 to T1. That is
+conclusively **0-based indexing printed with a 1-based prefix**, not an inverted attribution:
+the underlying datum is correct and only the rendering is off by one.
+
+**Consequence, stated honestly**: no computation is affected, but under the tool's own naming
+convention every marker is shown as the *opposing* team's, so a reader takes the opponent's
+build timeline for their own. **Fix**: `"team" + (tm.team() + 1)`.
+
+**No verdict of mine moves.** I read build timings off `SPAWN` event lines and the per-round
+aggregate columns, never off markers; I noticed the discrepancy precisely because the marker
+rounds matched the *other* team's `SPAWN` rounds.
+
+**Second, smaller item**: `tools/engine-jar.sh --remote` exists to support `javap` against the
+pinned jar, but `javap` is not on the non-interactive-ssh `PATH` on `battlecode-dev` — a bare
+`gssh "javap ..."` fails with `command not found`. It lives at `~/jdk21/bin/javap`. Worth
+either adding to the remote `PATH` or documenting in the tool's header, since the charter
+directs every engine probe through that path.
