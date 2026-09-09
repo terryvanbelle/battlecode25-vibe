@@ -44,6 +44,7 @@ Companion files, and what each is for:
 
 ## B. Gates, sampling, noise and what a margin can carry
 
+- **12b. NEW.** **A measurement's window is part of the measurement.** I carried iteration 44's r≤200 composition (83.5% soldiers) as if it were whole-game (it is 48%), inflating a denominator 1.7x until two instruments were made to disagree. → #89
 - **13.** My 50-game arm cannot resolve anything smaller than a **~14-point** effect — which is most of what I test. Size the effect against the instrument first. → #37
 - **14.** The noise floor is binomial, and it is nearly **all map sampling**. → #43
 - **15.** Swept-map counts are **not** noise-immune: 5–6 each way is what pure noise looks like. → #44
@@ -111,6 +112,7 @@ Numbers live in `RULES.md`; these are the ones that changed a decision.
 - **64.** `disintegrate()` is a pure suicide with no refund. → #67
 - **65.** Every map in the corpus is symmetric — but only **27 of 75** the way you would guess. → #28
 - **66.** Symmetry and fixed-order decisions are this lineage's recurring bug class. → #3
+- **66b. NEW.** **A condensed rule is a cache, and mine went 47 iterations without invalidation.** `RULES.md`'s paint-penalty digest hid that crowding is charged on your **own** paint and that `crowd` counts **towers** — i.e. it hid the largest single paint sink in the game (~24,900/game). **Re-derive a digested number from the bytecode as the FIRST step of any mechanism that depends on it.** → #88
 - **67. NEW (iteration 47).** The **low-paint cooldown tax is exactly zero for soldiers**. `num` tops out at 19 (< 20) at X=1, so one decrement always clears it. Real only for MOPPER (3→5 turns/action) and SPLASHER (5→9) — both of which already run far below their untaxed ceilings. → `CLOSED.md` #22
 
 ## F. Where bob actually stands (the strategic state, and it is nearly closed)

@@ -3202,3 +3202,56 @@ the metric.
 win rate the treatment changes. Read secondaries in a window that closes before the games do, and if a
 whole-game and a windowed read disagree, the windowed one is the measurement and the difference is the
 outcome. Iterations 44 and 45 used r≤200 for this reason; iteration 47 re-derived the reason the hard way.
+
+## 88. My own rules digest hid the largest single paint sink in the game (2026-09-09)
+
+`RULES.md` had the per-turn paint penalty as: *"end turn on neutral −1, on enemy −2; PLUS 1 × (# adjacent
+allied robots), doubled while in enemy territory."* Every clause is individually defensible, and the
+sentence as a whole is misleading, because the "PLUS" reads as a rider on a territory penalty. The
+bytecode (`InternalRobot.processEndOfTurn`) is:
+
+```
+mult  = (type == MOPPER) ? 2 : 1
+crowd = |getAllRobotsWithinRadiusSquared(myLoc, 2, myTeam)| excluding self
+if   NEUTRAL : addPaint(-1*mult); addPaint(-crowd)
+elif ENEMY   : addPaint(-2*mult); addPaint(-2*crowd)
+else /* OWN */: addPaint(-crowd)
+```
+
+**Two things the digest hid, both of which move the target:**
+
+1. **Crowding is charged on your OWN paint.** The own-territory branch has *no* territory cost and *still*
+   charges `-crowd`. So clustering leaks paint everywhere, all game, including deep in safe territory —
+   an unconditional cost, not a situational one.
+2. **`crowd` counts TOWERS.** A soldier parked beside its own tower — refilling, or painting a ruin's 5x5 —
+   pays crowding paint for the tower itself. That is a direct cost of the behaviour iteration 47 dialled
+   up, and it was invisible to me while dialling it.
+
+**Measured consequence** (iteration 48, zero games): bob burns ~**24,900 paint per game** on crowding — a
+lower bound — against ~**65,022** issued to units and 17,304–37,996 spent on attacks. **Bob burns roughly
+as much paint standing next to its own units as it spends painting.**
+
+**The transferable lesson is about the digest, not the game.** I wrote that summary myself from the spec,
+early, and then trusted it for 47 iterations while `javap`-ing the engine for a dozen *other* facts. A
+condensed rule is a cache, and a cache that is never invalidated is a liability exactly in proportion to
+how much you rely on it. The rule now: **when a mechanism depends on a digested number, re-derive that
+number from the bytecode as the first step — not the fifth.** Two of this lineage's four zero-game
+closures came from doing that (the low-paint cooldown, #22; this).
+
+## 89. I carried an r≤200 composition as if it were the whole-game one (2026-09-09)
+
+Iteration 44 measured bob's *alive* unit mix at **83.5% soldiers**. Sizing iteration 48 I used that to
+convert soldier-rounds into mobile-unit-rounds, and got a denominator that disagreed with the arena grid
+by **1.7x**.
+
+The grid says whole-game bob fields **18.7 soldiers, 15.1 splashers, 5.1 moppers** per frame — soldiers
+are **48%** of mobiles. Neither number is wrong: iteration 44's window was **r≤200**, and bob's splasher
+slots are gated at round 60, so early-game composition is nothing like the whole-game one. The two
+instruments agree exactly where they overlap — the grid's 18.7 soldiers/frame reproduces the exact
+census's 17,363 soldier-rounds ÷ ~930 rounds = 18.7.
+
+**What caught it was a 1.7x disagreement between two instruments**, which is the same move as LEARNINGS 81
+(check a rate against its own ceiling) and 23 (check a number lies in its own range). What *caused* it was
+quoting a statistic without its window. **A measurement's window is part of the measurement**, and a
+figure lifted out of one — especially into a whole-game denominator — is a different quantity wearing the
+same name.
