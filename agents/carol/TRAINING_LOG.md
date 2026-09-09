@@ -14827,3 +14827,220 @@ mere threshold. The complete engine-verified price of one SRP:
 
 against **+3 paint/turn to every paint tower and +3 chips/turn to every money tower, permanently**
 (+11.6 paint/turn at carol's measured 3.88/1.29 tower mix, on a 19.4 paint/turn base).
+
+## Iteration 49 stage 0 — zero-arm control PASSES, mechanism fires, and the choice set was MEASURED
+
+### The zero-arm control, which gates everything else
+
+`carol_i49_0` (`SRP_MIN_CHIPS = Integer.MAX_VALUE`) against `carol_iter44`:
+
+```
+IDENTITY
+  !! candidate arm is IDENTICAL to the carol_iter44-vs-carol_iter44 reference.
+```
+
+That warning is the **wanted** result here, and it is the strongest control this iteration has:
+the ~45 lines I added are provably behaviour-neutral when the mechanism is switched off, so any
+effect the dose arms show is the SRP mechanism and not my refactor. Every counter matches and the
+two sides are exact mirrors (4/140/0 towers 4, cov 374 — against iter44's 5/137/0, towers 5,
+cov 441, swapped on the other side).
+
+### The choice set, measured rather than assumed — and it was too small
+
+First build, with the tile underfoot as the only candidate centre:
+
+| side | `sA` asks | `sM` marks | `sD` completed |
+|---|---|---|---|
+| A | 34 | 1 | 0 |
+| B | 45 | 3 | 2 |
+
+**3–9% of asks produced a mark**, against 29% of Leaf's tiles being legal centres. The one tile a
+soldier happens to occupy is usually not a legal centre, so the mechanism was barely running — and
+a mechanism that barely runs cannot be evaluated at all. A null would not have distinguished
+*"ran and failed"* from *"never ran"*, which is the distinction doctrine explicitly demands, and I
+would have closed a direction I had never actually tested.
+
+Widened to 9 candidate centres at spacing 2 (all inside the engine's asserted r2=8 mark radius;
+spacing 2 because a neighbour one tile away fails for the same wall or ruin the centre did):
+
+| build | `sM` marks | `sD` completed | peak bytecode | overruns | near-misses |
+|---|---|---|---|---|---|
+| tile underfoot only | 1 | 0 | 2348 / 17500 | 0 | 0 |
+| **9 candidates** | **5** | **1** | **6994 / 17500** | **0** | **0** |
+
+(side A, per-robot maxima). Marks up 5x and a pattern now completes on the side where none did.
+
+**Bytecode checked because the algorithm says an instrumented or heavier build can approach the
+limiter and silently truncate a turn**: peak rose 3x to 6994, which is 40% of the 17500 limit,
+with **zero overruns and zero near-misses**, and zero `GAE`/`EXC` strings in the replay. There is
+ample headroom, and — importantly — the measurement is trustworthy *because* behaviour is not
+being truncated.
+
+**Manipulation check (pre-registered): PASSES.** `sD > 0`, and `srpD` appears in the indicator
+trace, so patterns are genuinely being completed rather than merely marked.
+
+**One number I am flagging rather than explaining**: `sX` (patterns abandoned) is 5, the same
+order as `sM`. Patterns are being dropped about as often as they are laid. That is either the
+`SRP_PATIENCE` timeout or soldiers being carried out of range, and I do not yet know which. It is
+recorded now, before the screen result, so that whichever way the screen goes I am not choosing
+this explanation afterwards to suit it.
+
+### Screen launched
+
+`gauntlet/20260909-125655`, `carol_i49_a` vs `carol_iter44`, the **same 25 pinned maps** as
+iteration 48 — which contain `Brat` and `DefaultSmall`, the two maps with **zero legal SRP
+centres**. Those 4 games are the pre-registered placebo: the mechanism cannot fire there, so they
+must come back identical to the incumbent, and a gain appearing on them would void the iteration.
+
+## Iteration 49 stage 0, re-run on the SHIPPED build — control passes, and the WEAK LINK is visibly biting
+
+Recorded **while the screen is still running**, deliberately: a caveat written before the number
+arrives is worth much more than one written after, and this one bears directly on how that number
+should be read.
+
+**Zero-arm control, re-verified on the exact fixed-and-widened code** (not just the first build):
+
+```
+IDENTITY
+  !! candidate arm is IDENTICAL to the carol_iter44-vs-carol_iter44 reference.
+```
+
+`carol_i49_0` is still byte-identical to the incumbent after both the freeze fix and the widened
+choice set. The control holds on the shipped build, so whatever the dose arms do is the mechanism.
+
+**Dose arm on Leaf, and it is ugly:**
+
+| | bSold | bSpl | twPAINT | twMONEY | cov_end | tw_end | twPaint_med |
+|---|---|---|---|---|---|---|---|
+| `i49_a` (A) | 27 | 49 | **1** | 0 | **110** | **3** | 640 |
+| `iter44` (A) | 7 | 97 | 10 | 2 | **701** | 14 | 1440 |
+| `iter44` (B) | 9 | 155 | 14 | 4 | **700** | 20 | 2021 |
+| `i49_a` (B) | 3 | 77 | **10** | 0 | **177** | 12 | **9701** |
+
+Coverage 110 and 177 against 701 and 700. Towers 3 and 12 against 14 and 20. And side B's median
+tower paint stash is **9701** — paint piling up in towers that is not being spent.
+
+**This is the pre-registered weak link, and I named it before building**: *"a parked soldier is a
+soldier not expanding."* The mechanism suppresses movement while a pattern is held; the widened
+choice set made patterns start far more often; so soldiers park more, explore less, find fewer
+ruins, and build fewer towers. Coverage is downstream of all of that — and coverage is the win
+condition. The `sX` abandonment count I flagged as unexplained an hour ago fits the same picture:
+patterns are being started, held, and dropped, with the movement suppressed throughout.
+
+**I am still not reading a verdict from this**, for the same reason I did not read one from
+iteration 48's stage 0, which looked *excellent* on this same map and then screened at −6. Stage 0
+answers "did the mechanism fire" and "how", never "did it pay". The screen decides.
+
+But if the screen rejects, the diagnosis is already on record rather than improvised: **the SRP
+mechanism is probably sound and the movement-suppression policy around it is probably wrong.**
+Those are separable, and the obvious next candidate is an SRP that does not park the soldier —
+lay the mark, keep walking, and let whichever soldier is nearby finish the pattern. That is a
+different code path, not a different dose, so it would be iteration 50 rather than a refinement.
+
+## Iteration 49 RESULT — **REJECT**, 7/50. And it is the cleanest causal result this lineage has produced.
+
+Run `gauntlet/20260909-125655`, `carol_i49_a` vs `carol_iter44`, 25 pinned maps both sides.
+
+| instrument | result | pre-registered gate | verdict |
+|---|---|---|---|
+| screen h2h vs `carol_iter44` | **7/50 = 14%**, margin **−36** | >=34 accept, <=30 **reject** | **REJECT** |
+
+Orientation re-verified independently: `bot_result` gives 7, and recounting `bot_side ==
+winner_side` from raw rows gives 7. They agree. −36 against sd(margin) 8.59 is **−4.2 sd** — this
+one *is* a demonstrated regression, unlike iteration 48's −0.70 sd.
+
+### The PRE-REGISTERED PLACEBO PASSES, and it is what makes this causal rather than correlational
+
+`Brat` and `DefaultSmall` have **zero legal SRP centres** (`SrpScan`, computed before the run),
+so the mechanism *cannot fire* there. Predicted before the run: those 4 games must look identical
+to the incumbent.
+
+| map | side A | side B | rounds |
+|---|---|---|---|
+| `Brat` | **win** | loss | 2000 / 2000 |
+| `DefaultSmall` | loss | **win** | 480 / 480 |
+
+**2/4, each map splitting exactly by side, with identical round counts on both sides.** That is
+precisely the signature of a mirror match — which is what a candidate byte-identical to its
+opponent produces. On the maps where the mechanism cannot act, the candidate *is* the incumbent.
+
+### And the harm is monotone in the mechanism's FUEL — a dose-response I did not have to run
+
+Split by how many legal SRP centres each map has (threshold 200 = the corpus median, computed
+before the screen, not chosen from the results):
+
+| SRP sites available | record | margin |
+|---|---|---|
+| **zero** (placebo) | 2/4 | **0** |
+| **< 200** | 4/20 | **−12** |
+| **>= 200** | 3/30 | **−24** |
+
+**Zero fuel, zero effect; more fuel, more damage.** The effect is absent exactly where the
+mechanism is disabled by the map and grows with how much the map lets it run. Doctrine 3's
+arm-to-arm identity check and doctrine 4's regime prediction are usually two separate obligations;
+here the map corpus supplied both for free, and together they close attribution completely. This
+is not "SRP correlates with losing" — it is the mechanism, and nothing else in the diff.
+
+### The failure mode is the one I pre-registered, and the shape confirms it
+
+| | record | margin |
+|---|---|---|
+| decided before round 2000 | 4/41 | **−33** |
+| reached the r2000 tiebreak | 3/9 | **−3** |
+
+Nearly all the damage is in games that **end decisively**, the mirror image of iteration 48 (which
+lost only tiebreaks). Carol is being beaten outright, before the round limit — i.e. the opponent
+reaches the >70% paint win while the candidate is not painting. Stage 0 shows why, on Leaf:
+coverage **110 and 177** against the incumbent's **701 and 700**, towers 3 and 12 against 14 and
+20, and a median tower paint stash of **9701** — paint accumulating unspent in towers whose
+soldiers are standing still.
+
+**This is the pre-registered weak link, verbatim**: *"a parked soldier is a soldier not
+expanding."* I wrote it before building, flagged it again from stage 0 before the screen ran, and
+it is what happened. LEARNINGS' standing entry — *survival bought with inactivity; units die doing
+the thing that wins* — now has a second, much larger instance.
+
+### What is REJECTED, stated precisely, because the two are separable
+
+**Rejected: suppressing soldier movement while a pattern is held.** That policy costs 36 games.
+
+**NOT rejected: the SRP mechanic itself.** Nothing here measures the value of an *active* SRP,
+because the candidate barely completed any while paying the full parking cost on every attempt.
+The `sX` abandonment count I flagged before the screen says the same thing: patterns were being
+started and dropped, so the bot paid the movement cost repeatedly and collected the income rarely.
+This is doctrine's "the mechanism ran and failed" vs "the mechanism never ran" distinction landing
+on a third case — **the mechanism ran, paid its full price, and was interrupted before delivering**.
+
+An SRP is still 200 chips for +3 paint/turn to every paint tower, engine-verified, and iteration
+48's own reject established that converting chips into *paint income* is the conversion this bot
+lacks. That case is untouched by this result.
+
+### CLOSED-DIRECTIONS LEDGER — addition
+
+- **"Park a soldier to lay an SRP" — CLOSED.** −36 games (−4.2 sd), with the damage monotone in
+  SRP site availability and exactly zero on maps where the mechanism cannot fire. Re-opening
+  requires a design in which laying a pattern does **not** suspend movement. That is a different
+  code path, not a dose, so it is a new iteration and not a refinement of this one.
+
+### Iteration 50 — the targeted refinement this earns, and why it is the interesting design
+
+The algorithm grants one targeted refinement for *"a specific, well-understood failure mode"*, and
+this qualifies: the mechanism is confirmed, the cost is located in one line
+(`if (srpCenter == null) moveExploring(ruin);`), and the placebo proves nothing else moved.
+
+**The design: mark and walk away.** A soldier that finds a legal centre marks it and keeps
+moving. It never parks. The 25 marks persist on the map as ordinary map state, so *any* soldier
+that later passes within action range sees marked tiles that mismatch and paints them — the same
+mark-driven loop `workOnRuin` already uses for tower patterns. Completion happens whenever some
+soldier happens to be adjacent with the team able to pay.
+
+That is **emergent coordination with no communication**, which `reference/RESEARCH.md` §11 lists
+as one of the highest-value ideas for a stalled lineage (one team won two-thirds of its self-play
+games from a spawn-ordering change with no messages sent). The mark *is* the shared to-do list,
+written into the map, read by whoever arrives. It also removes the abandonment problem entirely:
+there is nothing to abandon, because no soldier is ever committed to a pattern.
+
+Price, against what it displaces: **25 paint for the mark, and nothing else** — no forgone
+movement at all, which is the entire cost that killed this iteration. That is the
+"capability preserved at zero marginal cost" shape LEARNINGS records as the recurring winner's
+profile.
