@@ -16178,3 +16178,18 @@ reason the bracket no longer applies, not a new constant inside it.
 **Consecutive rejects: 4** (51 SRP, 52 moppers, 53 denier archetype, 54 paint floor). The areas are
 distinct, so `MaxConsecutiveRejects` does not force a move by the letter of the rule. I am moving
 anyway, and the next entry says why the streak itself is the evidence.
+
+## Iteration 54 Stage 1: **REJECT at 25/50 (50.0%)** — a dead-centre null at the calibrated dose
+
+Run `20260909-155554`, fresh 25-map sample: `carol_i54_b` **25/50**, swept-win **5**, swept-loss
+**5**, split-by-side **15**. Below the pre-registered `>= 34` screen line, so **REJECT** as
+registered. No census is spent — that is exactly what the screen stage exists to prevent.
+
+The 5/5 sweep split with 15 split-by-side maps is the signature of a genuinely neutral change
+rather than a noisy one: the two arms trade sides on three fifths of the sample and sweep an equal
+number of the rest.
+
+**The result is symmetrical with iteration 52's**, which also returned exactly 25/50 at its
+calibrated dose after its first dose overshot. Two mechanisms in a row that (a) overshot on the
+first setting, (b) were calibrated to a sane realized dose, and (c) landed on precisely 50%. That
+pattern is worth naming rather than treating as coincidence, and I take it up below.
