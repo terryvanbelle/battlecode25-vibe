@@ -455,6 +455,13 @@ way out by looking at itself.
    by someone who does not already believe the entry is wrong.** Iteration 9's
    was: "a map class exists where ruins are not saturated by mid-game — check the
    ruin count against final tower totals before believing it." That condition is
+
+   > **RE-OPEN CONDITION MET — annotated 2026-09-09.** Measured over 74 tournament
+   > games (`tools/ruin-supply.py`): unclaimed ruins run **53% at r150 and 42% at r300 on
+   > small maps, 79% and 61% on large**, and **0 of 142 game-observations had none left**.
+   > Not a map class — every map measured. The original "ruins saturate" was ONE map, late,
+   > in self-play. Discovery/memory directions closed on that premise are re-openable.
+
    exactly what the tournament satisfied, and it is the reason re-opening was
    disciplined rather than a hunch. **Write the re-open condition when you close
    the direction, not when you want to re-open it.**

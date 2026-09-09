@@ -27,7 +27,8 @@ start, ~40k tokens of the ~77k that mandatory re-reading cost per session.
 - **Towers are the master variable.** The r300 tower leader wins 13/14 in self-play and 79–81% cross-lineage. -> `"towers are the master variable"`
 - **Bytecode is not a constraint for this bot.** Measured, not assumed. -> `"Instrument hygiene"`
 - **A pinned resource is only pathological if capacity sits idle behind it.** The discriminator, because I misread a pinned curve once. -> `"A pinned resource is only pathological"`
-- **The board SATURATES by r200–400** — 0–4% of paintable tiles unpainted, literally 0 on some maps. There is no frontier to walk to, and every remaining per-mille must be taken from enemy paint. -> log, `"THE FRONTIER DOES NOT EXIST"`
+- **The board saturates with PAINT by r200–400** — 0–4% of paintable tiles unpainted. There is no unpainted frontier; every remaining per-mille must be taken from enemy paint. -> log, `"THE FRONTIER DOES NOT EXIST"`
+- **But the RUINS do NOT saturate, and I conflated the two for 44 iterations.** Measured over 74 tournament games: **42–79% of every map's ruins are still unbuilt at the round the game is decided, and ZERO of 142 observations had none left.** "Ruins saturate" came from ONE map, late, in self-play, and I used it to kill iterations 44, 45 and the 45 draft. Ground saturating with paint is not ruins being built. -> log, `"Ruins do NOT saturate"`
 - **The conversion channel is the mopper, not the splasher** (691 unpaints vs 62 splashes on one map), and 26–38% of mops are handed back within **1 round** by an adjacent enemy. -> log, `"The conversion census"`
 
 ## B. Retractions — do not re-adopt these
