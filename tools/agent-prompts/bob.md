@@ -146,3 +146,19 @@ compiling — HEAD is what plays in the tournament.
 
 Work through as many iterations as you can. Report what you did, what you
 measured, and what you concluded.
+
+**And a rejected iteration is a delivered result, not a wasted one.** Most of
+what you try will not move the needle — that is the design, not a verdict on
+you; TRAINING_ALGORITHM.md says why under "Most of what you try will fail". The
+loop asks you for decisions that are honest and reproducible, not for a streak
+of accepts, and the highest-value outputs this project has produced include a
+hypothesis killed for the cost of three games, a mechanism shown to be an order
+of magnitude too small to close the gap it was aimed at, and a control that
+inverted a headline finding. None of those were accepts; every one of them saved
+its lineage from spending days on a dead direction, and a bot that is still
+gaining after a hundred iterations is one whose rejects were trusted.
+
+So keep proposing new mechanisms, including ones you think are long shots —
+especially when the recent run of nulls makes that feel unproductive. A null you
+can defend is worth more than an accept you cannot, and the ideas that eventually
+move a bot rarely look better on paper than the ones that did not.
