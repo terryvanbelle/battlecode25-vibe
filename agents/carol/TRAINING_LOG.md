@@ -18497,3 +18497,84 @@ and a mopper's 0, so 50 is over-conservative for them; that is a different mecha
 dose of this one. **Feasibility checked at the moment of writing**, per the lesson this log has now
 paid for twice: soldiers and moppers are a small minority of units in this architecture, so the
 reachable prize is small — a future session should price it before building it.
+
+# Iteration 62 — the depot circuit-breaker. PRE-REGISTERED BEFORE ANY GAME.
+
+**Found by putting iteration 61's own process change into practice on its first use.** I moved
+stage 0 off Leaf to `Mirage` (the corpus-median map) and immediately found that the freshly
+accepted `carol_iter45` **loses there**, in a way it never does on Leaf.
+
+## The traced deficit — a causal chain visible in counters, not inferred from the outcome
+
+`carol_iter45` vs `carol_iter44` on **Mirage** (area 1,600 / 18 ruins, the closest map in the corpus
+to the joint median of 1,500 / 17), at r2000:
+
+| | `carol_iter45` | `carol_iter44` |
+|---|---|---|
+| tower paint (total / per tower) | **380 / 42** across 9 towers | **1,000** across 1 |
+| standing splashers | **0** | 4 |
+| soldiers built per 1,000 rounds | **219** | 3 |
+| of which STARVED | **207** | 9 |
+| paint actions per 1,000 rounds | **2,596 -> 38** | 862 |
+| chips idle | **$80,850** | $320 |
+| coverage | 296 | **673** |
+
+**The circuit, each link a counter rather than a story:** the tower spawns -> its stash drains ->
+the units D3 sends home arrive at a dry tower -> they starve -> the tower spawns replacements.
+`carol_iter45` converts its entire paint income into soldiers that die without painting, and cannot
+build a single splasher because **no tower can ever reach a splasher's 300 paint cost**. RULES.md's
+hard rule then bites: chips are worthless when paint binds, and $80,850 is what that looks like.
+
+## The defect is mine, and it is precisely identified
+
+`src/carol`'s paint gate reads `want.paintCost < UnitType.SOLDIER.paintCost`, so **it applies only
+to moppers.** Soldiers and splashers draw a tower to zero with no breaker at all. That was survivable
+before iteration 60, when nothing walked home and the tower stash had no second customer.
+
+**Iteration 60 ported D3's walk-home half and NOT its depot half.** `carol_r1` had both — a spawn
+reserve (`TOWER_PAINT_KEEP`) that makes production self-regulating, and a rule that a withdrawal
+cannot empty a tower — and I wrote both there *because the rewrite hit this exact failure*. Porting
+one of two co-designed halves is how iteration 60 passed a census while carrying this.
+
+## Why this is not a closed axis (stated because it looks like one)
+
+My ledger closes "tower paint floors — closed by dose-response both ends". That closure was measured
+on `PAINT_FLOOR` **in its role gating cheap units only**, in an architecture where no unit ever
+walked home. `ALL_FLOOR` gates a **different set of builds** (every unit, not just moppers), and it
+does so in an architecture D3 materially changed by giving the tower stash a second consumer. This
+is my own iteration-59 D2 lesson — a constant co-adapted to an architecture must be re-derived when
+the architecture moves — and not another dose of a settled knob.
+
+## Arms and doses
+
+Generated from `src/carol`, verified to differ only in `ALL_FLOOR` (normalised `diff` empty), shared
+`BUILD = "i62"`. **Zero arm is `carol_iter45`**, byte-identical by construction (`ALL_FLOOR = 0`
+short-circuits before the comparison).
+
+`ALL_FLOOR` = **150 / 300 / 450**. Tower capacity is 1,000, so at 300 a soldier needs the tower to
+hold 500 and a splasher 600.
+
+## Registered predictions
+
+1. **Mechanism (stage 0, on Mirage, all three required):** tower paint per tower must rise well
+   above 42; **standing splashers must become non-zero**; and starved-per-1,000-rounds must fall
+   well below 207. Splashers alone is a fail — iterations 42 and 45 died on exactly the link where
+   one counter moved and the capability did not.
+2. **A registered risk, not a prediction:** `ALL_FLOOR` scales against unit cost, so it gates
+   splashers (300) *harder* than soldiers (200). If the breaker throttles the primary unit more than
+   the waste, the dose curve will fall monotonically and the mechanism is wrong in shape rather than
+   in size. I am naming this now because it is the way I expect this to fail if it fails.
+3. **Falsifier:** if tower paint rises and coverage does **not**, then paint was not the binding
+   constraint on Mirage and I have mis-read a rich-tower state as a healthy one.
+
+## Gate and decision rule, registered before the numbers exist
+
+Screen: `BOT=carol_iter45`, three arms, one **fresh random 25-map sample**, both sides, 150 games.
+
+> **Take the arm with the highest margin, provided it reaches >= 31/50; ties to the SMALLER dose.
+> If none reaches 31, the breaker does not pay on the map population and the direction closes.**
+> The selected arm then goes to the full 75-map census on the standing gate —
+> **margin >= +26 ACCEPT | +18..+25 REPLICATE | <= +17 REJECT.**
+
+**Mirage is n=1 and is now my stage-0 map precisely because Leaf was not representative — it is not
+a gate either.** The screen decides the dose; the census decides the accept.
