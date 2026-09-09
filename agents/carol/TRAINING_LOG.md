@@ -18410,3 +18410,90 @@ paid for twice.
 
 **Screen launched**: run `20260909-233258`, `BOT=carol_iter45`, three arms, fresh 25-map sample,
 150 games, decision rule unchanged from the pre-registration.
+
+# Iteration 61 — NULL. `REFILL_LOW` is bracketed on both sides; the axis CLOSES at 50.
+
+Run `20260909-233258`, `BOT=carol_iter45`, three arms, fresh 25-map sample, 150 games.
+
+| dose (`REFILL_LOW`) | candidate wins | margin | in sd (7.1 on a 50-game margin) |
+|---|---|---|---|
+| 10 | 25/50 | +0 | 0.00 |
+| 25 | 23/50 | −4 | −0.56 |
+| 40 | 26/50 | +2 | +0.28 |
+| **50 (incumbent, mirror)** | **25/50** | **0** | by construction |
+
+**Registered decision rule applied mechanically: no arm reached 31/50, so `REFILL_LOW` is bracketed
+on both sides, the axis closes at the incumbent value of 50, and no census is spent.**
+`src/carol` stays at `carol_iter45`.
+
+**Power, stated rather than implied.** The screen bounds any sub-50 dose effect at roughly **±14
+margin on 50 games (±2 sd)**. The closure means "no effect my instrument can resolve", not "provably
+zero".
+
+## The predictions, scored honestly
+
+- **P1, the ordered `noPaint` prediction: CONFIRMED** — 49.0% / 42.2% / 1.8% / 0.0%, monotone in
+  dose, zero only at 50. A four-point ordering called in advance from one engine constant.
+- **P2, the outcome prediction (monotone increasing toward 50): FAILED.** The outcome is **flat**
+  (+0, −4, +2), not monotone.
+- **P3, the falsifier (a lower dose *beats* the incumbent): did not fire.** +2 at dose 40 is 0.28 sd.
+
+## The finding, which is bigger than the null: the mechanism statistic is not the causal channel
+
+**`noPaint` moves from 0.0% to 49.0% across this ladder and the outcome does not move at all.**
+Driving nearly half of all ready splasher-turns into the inert state — a rate *worse than the
+pre-D3 incumbent's 41.2%* — costs nothing measurable on the map population.
+
+So the statistic I used as iteration 60's headline stage-0 clause is a **correlate, not the
+channel**. This independently corroborates the mechanism correction I made *in flight*, in writing,
+before iteration 60's screen returned ("population, not throughput") — and it sharpens it: even the
+population channel is **threshold-insensitive over [10,50]**. What pays is *having* walk-home at
+all, which is precisely what iteration 60 measured against a `carol_iter44` that has none.
+
+This is doctrine 13 working as designed: I ran a check I expected to pass, and it corrected an
+earlier overclaim of mine about the same mechanism. That correction is only available to someone
+who runs the check they expect to pass.
+
+## And the discovery that reframes the whole session: LEAF IS THE CORPUS OUTLIER
+
+On Leaf the doses differ enormously — dose 10 **loses** (coverage 308 vs 556), dose 40 and 50 win
+crushingly (coverage ~700 vs ~100–150), standing splashers 6 / 8 / 28 / 22. On a 25-map sample they
+are **level**. I ran the discriminating check rather than picking the answer I preferred:
+
+> **Leaf is 60x60 = 3,600 area (the maximum, 89th percentile) with 52 ruins — the 99th percentile,
+> and the ONLY map in the 75-map corpus with 52 or more.** The corpus medians are 1,500 and 17.
+> Leaf has **3.1x the median ruin count**.
+
+Iteration 60's census put **+24 of its +26 margin on ruin-dense maps**. So Leaf is, *by
+construction*, the best case in the corpus for every economy/flywheel mechanism this lineage tests —
+and it has now over-stated three in a single session:
+
+1. `carol_r1` **won** Leaf and then lost the corpus **38/150**.
+2. Iteration 60's doses looked decisive on Leaf; the census landed **exactly on the bar**.
+3. Iteration 61's doses look decisive on Leaf; the 25-map screen is **flat**.
+
+**Every stage 0 I have ever run in this lineage used Leaf.** That is not a neutral choice of probe
+map — it is a systematic upward bias on exactly the property my mechanisms depend on, and it is why
+stage 0 has repeatedly looked more decisive than the gate that followed.
+
+### Process change, adopted now
+
+**Stage 0 runs on a corpus-median map, and uses Leaf only as a deliberate best-case probe that is
+labelled as such.** `Mirage` (area 1,600, 18 ruins) is the closest map in the corpus to the joint
+median (1,500 / 17) and becomes the default stage-0 map. This does not invalidate any completed
+verdict — every accept and reject this session was decided on a 25-map screen or a 75-map census,
+never on Leaf — but it does explain why stage 0 kept over-promising, and it makes the cheap rung
+honest rather than merely cheap.
+
+## Ledger
+
+| axis | status |
+|---|---|
+| `REFILL_LOW` (D3 latch threshold) | **CLOSED at 50** — bracketed both sides: flat over [10,50], degrading above (100 -> 19, 150 -> 12 of 50) |
+
+**Re-open condition**: only a candidate that makes the latch threshold **per-unit-type**
+(`attackCost` per unit rather than one shared constant) may re-open this. A soldier's attack costs 5
+and a mopper's 0, so 50 is over-conservative for them; that is a different mechanism, not another
+dose of this one. **Feasibility checked at the moment of writing**, per the lesson this log has now
+paid for twice: soldiers and moppers are a small minority of units in this architecture, so the
+reachable prize is small — a future session should price it before building it.
