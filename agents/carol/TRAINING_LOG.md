@@ -17917,3 +17917,100 @@ moving the capability is the failure mode this lineage dies on most often.
 **Not started this session** — iteration 59's census is the standing question and iteration 60 must
 be evaluated against whichever of `carol_r1` / `carol_iter44` that census leaves as the incumbent.
 Starting it now would build on a baseline I do not yet have.
+
+# Iteration 59 — REJECTED on the full-corpus census. The structural question is ANSWERED.
+
+Run `20260909-194625`, `carol_r1` vs `carol_iter44`, **full 75-map corpus, both sides, 150 games.**
+
+> **`carol_r1` 38 / 150. Margin −74.** Gate was `>= +26 ACCEPT | +18..+25 REPLICATE | <= +17 REJECT`.
+> At sd 12.96 on the margin this is **−5.71 sd**. Not close, not marginal, not a power problem.
+
+**`src/carol` stays at `carol_iter44`.**
+
+**Referent check (doctrine 5), stated because this run's summary invites exactly that error:** the
+run was launched with `BOT=carol_iter44`, so `overall: 112/150` is the **incumbent's** win count.
+The candidate's is 150 − 112 = 38. Reading 112 as the candidate's score would have inverted the
+verdict, which is the precise failure this project has already published once.
+
+**Consistency check (doctrine 14), reconciled exactly:** `wins − N = 112 − 75 = 37` and
+`swept − swept-against = 44 − 7 = 37`. Identical, as the algebra requires. Nothing left over.
+
+## The registered secondaries, reported whichever way they fell
+
+**S1 — ruin density: PASSES.** carol_r1's margin is **−18 on the 74 ruin-dense games** against
+**−56 on the 76 sparse ones**, a difference of **+38**. The flywheel thesis is directionally right:
+carol_r1 needs ruins to eat. This is the second pass of a prediction that has now been made five
+times in this lineage. It corroborates the mechanism and, per doctrine 14, says nothing about size
+and cannot rescue the primary — it loses in *both* buckets.
+
+**S2 — how games end: FAILS, decisively.** The incumbent wins **80 games by painting >70% outright**
+against carol_r1's 8. I predicted the reverse from carol_r1's early paint volume. Leaf was not
+representative, and going to census instead of trusting the stage-0 map is what caught that.
+
+**S3 — the shape of the losses: FAILS, and this is the informative one.** I registered that SHORT
+losses would make the reject "a bug report rather than an architecture verdict". carol_r1's losses
+have median round **790**, and **44 of 112 end before round 600** — of which **43 are the incumbent
+painting out >70%**. Those short losses sit on **small maps: median area 900 against the corpus's
+1,500.** The area gradient is clean and monotone:
+
+| map area | carol_r1 | margin |
+|---|---|---|
+| small (<900) | 3/22 = **13.6%** | −16 |
+| mid (900–1600) | 14/64 = 21.9% | −36 |
+| large (>1600) | 21/64 = **32.8%** | −22 |
+
+## The arithmetic I never did, which explains the entire result
+
+The win condition is **painted area**. So the unit that matters is the one that paints area fastest,
+and I never priced that before writing a soldier-primary bot. From RULES.md [E]:
+
+| | tiles per action | action cooldown | **tiles/turn** | paint/tile |
+|---|---|---|---|---|
+| soldier | 1 | +10 (acts every turn) | **1.0** | 5.0 |
+| splasher | up to 13 (r²<=4 disc) | +50 (acts every 5 turns) | **~2.6** | **3.85** |
+
+**A splasher paints roughly 2.6x more area per turn than a soldier, and does it at 1.3x better paint
+efficiency.** A soldier's compensating advantage is that it is the only unit that can complete a
+ruin — but towers are only ever a *means* to paint, and on a small map the game ends by paint-out
+long before the flywheel repays the detour. That is precisely the 13.6% bucket.
+
+> **Splasher-primary is not a local maximum this lineage got stuck in. It is the correct
+> architecture for this win condition, and the closure map I read as "eight mutually load-bearing
+> closures trapping the bot" was actually eight constants correctly co-adapted to a sound design.**
+
+That is the answer to the structural question, and it is what the rewrite was built to obtain. Per
+the clause I registered before launching: I record it and I do **not** re-run the rewrite with
+different constants.
+
+## What the rejected iteration leaves behind, which is not nothing
+
+1. **The answer above**, which no parametric experiment could have produced.
+2. **`carol_r1` is a genuine synthetic archetype** — a frozen soldier-primary opponent spanning a
+   policy region my lineage has never occupied, which is exactly what TRAINING_ALGORITHM asks
+   archetypes to be ("for X our own lineage never does"). It never changes, so it qualifies for
+   `roster_extra.txt` on the same grounds an old snapshot does. Added.
+3. **D3, the paint-logistics mechanism, was never what failed.** The census rejected the
+   architecture around it. D3 is written, debugged and measured (871 -> 4,190 transfers per window).
+
+## Iteration 60 — the registration from earlier this session is WITHDRAWN, and replaced
+
+The mopper-fallback candidate I registered was specified against `carol_r1` as the incumbent. That
+baseline is now rejected, so the registration is void rather than pending, and I am saying so
+explicitly instead of leaving it to look queued. Its motivating deficit (73.7% legally-idle
+soldier-turns) is a property of `carol_r1`, and `carol_iter44` fields 2 soldiers.
+
+**Replaced by: port D3 (paint logistics with hysteresis) into the splasher-primary incumbent.**
+
+- **Traced deficit, already measured, no new games**: the post-58 splasher census found carol's
+  splashers **INERT, not starving** — **41.2% of ready splasher-turns are `noPaint`**, at median
+  paint **15** against a splash cost of **50**, and only **23.7% of ready turns fire**.
+- **The mechanism matches the deficit exactly**: `transferPaint` is r²<=2 for every unit [E], so a
+  stranded splasher must physically walk to a tower, and the incumbent has no code that ever does.
+  D3 is that code, and it now exists and is debugged.
+- **Magnitude, in the units of the gap**: if the 41.2% `noPaint` share were converted to fires, the
+  splash rate roughly triples, against a unit measured at 2.6x a soldier's area throughput.
+- **Why this is not the rewrite again**: it is one mechanism, ported into the architecture the
+  census just certified as the better one, and it changes no economy constant.
+
+This is the honest shape of the session: the rewrite was rejected at −5.71 sd, and it paid for
+itself by telling me which architecture is right and handing me a debugged mechanism to put in it.
