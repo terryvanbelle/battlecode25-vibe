@@ -18578,3 +18578,92 @@ Screen: `BOT=carol_iter45`, three arms, one **fresh random 25-map sample**, both
 
 **Mirage is n=1 and is now my stage-0 map precisely because Leaf was not representative — it is not
 a gate either.** The screen decides the dose; the census decides the accept.
+
+## Iteration 62 — KILLED AT STAGE 0 for 3 games. The registered falsifier fired.
+
+Mirage, one game per arm, all against `carol_iter44`. Whole-game totals.
+
+| arm | chips idle | coverage | towers | tower paint (total / per tower) | +soldiers | +splashers | standing spl | starved |
+|---|---|---|---|---|---|---|---|---|
+| `carol_iter45` (zero) | **$80,850** | **296** | **9** | 380 / **42** | 331 | 26 | **0** | 309 |
+| `ALL_FLOOR=150` | $3,340 | 246 | 6 | 635 / 106 | 97 | 29 | **0** | 113 |
+| `ALL_FLOOR=300` | $2,050 | 257 | 4 | 701 / 175 | 83 | 62 | **0** | 122 |
+| `ALL_FLOOR=450` | $3,460 | **82** | 2 | 843 / **422** | 10 | 3 | **0** | 6 |
+
+**The breaker works perfectly on its own terms, monotonically in dose:** tower paint per tower
+42 -> 106 -> 175 -> 422, starvation 309 -> 113/122/6, idle chips $80,850 -> ~$3,000. Three counters,
+all moving hard and in order.
+
+**And it buys nothing.** Coverage 296 -> 246 / 257 / 82 — every dose WORSE than the zero arm — and
+tower count falls 9 -> 6 -> 4 -> 2.
+
+- **Registered mechanism clause 1b FAILED**: standing splashers had to become non-zero. They are
+  **0 at every dose**, exactly as at baseline. I registered "all three required; splashers alone is
+  a fail", and the converse binds me equally: two passing counters do not carry a failed one.
+- **Registered falsifier 3 FIRED**: "if tower paint rises and coverage does not, paint was not the
+  binding constraint on Mirage and I have mis-read a rich-tower state as a healthy one." Tower paint
+  rose 10x. Coverage fell. **So I had mis-read it, and I am recording that conclusion rather than
+  re-interpreting the number.**
+- Registered risk 2 was also right about the shape: `ALL_FLOOR` scales against unit cost, so it
+  gates a 300-paint splasher harder than a 200-paint soldier — dose 450 built **3** splashers all
+  game.
+
+**Killed at rung two for three games; the registered 150-game screen is NOT spent.** Recorded as a
+decision rather than dropped silently.
+
+## What the kill exposed, which is worth far more than the candidate
+
+The comparison that matters is not between my doses. It is this:
+
+| on Mirage, r2000 | `carol_iter44` | `carol_iter45` (accepted) |
+|---|---|---|
+| towers | **1** | 9 |
+| coverage | **673** | 296 |
+| soldiers built | 3 | **331** |
+| splashers standing | **4** | **0** |
+| chips idle | $320 | **$80,850** |
+
+**`carol_iter44` wins with ONE tower and 673 coverage against nine towers and 296.** So towers are
+not what paints on a median map — splashers are — and the accepted build fields none.
+
+### The causal chain, and it is D3's own success biting back
+
+`carol_iter45`'s soldiers survive (that is what iteration 60 bought), so it builds **9 towers**, so
+its chip income explodes to **$80,850 idle**. But the incumbent's spawn gates are *chip* gates —
+`SPLASH_FLOOR = 2000`, `CHIP_RESERVE = 1200`. A team that is permanently rich satisfies them on every single
+tower-turn, so **every tower spawns whenever it holds 200 paint**, and the roll is 75% soldier.
+Tower paint therefore never accumulates past ~42, and a splasher — which needs **300** — is
+differentially locked out: 15% of rolls ask for a splasher and only 26 of 357 builds became one.
+
+**The chip gates were doing load-bearing work as an implicit PAINT throttle, and D3 broke that by
+making the team rich.** This is my own iteration-59 D2 lesson for the third time: a constant
+co-adapted to an architecture must be re-derived when the architecture moves. `SPLASH_FLOOR` and
+`CHIP_RESERVE` were tuned against a treasury that hovered near 1,400. They now guard nothing.
+
+### Why `ALL_FLOOR` was the wrong shape, precisely
+
+A flat floor throttles *every* unit, and because it is compared against unit cost it throttles the
+**expensive** unit hardest — the splasher, which is the one that paints. The correct breaker is the
+**opposite asymmetry**: throttle the cheap unit to protect the expensive one's headroom.
+
+# Iteration 63 — the splasher-headroom reserve. PRE-REGISTERED, derived from 62's failure.
+
+**Mechanism, one line:** a tower may build a unit *cheaper than a splasher* only if it would still
+hold at least `SPLASHER.paintCost` afterwards. Soldiers are throttled exactly when they would deny
+the next splasher; splashers themselves are never gated.
+
+This is not another dose of `ALL_FLOOR` — it is the reverse asymmetry, and 62's dose ladder is the
+evidence that the direction of the asymmetry is the whole question. It is also expressible with no
+new tuning constant at all: the threshold **is** `UnitType.SPLASHER.paintCost`, the way iteration
+61 established `REFILL_LOW = SPLASHER.attackCost`.
+
+**Registered mechanism check (Mirage, all required):** splashers built must rise well above 26 of
+357 builds; **standing splashers must become non-zero** (the clause 62 failed); and coverage must
+rise above the zero arm's 296 — since 62 proved a healthy-looking economy that does not convert is
+worthless.
+
+**Registered falsifier:** if soldiers are throttled and splasher builds do NOT rise, then low tower
+paint is not what blocks splasher production and my reading of the 26-of-357 split is wrong.
+
+**Gate:** unchanged — fresh 25-map screen at `BOT=carol_iter45`, `>= 31/50` to proceed, then the
+full-corpus census at **margin >= +26**.
