@@ -18316,3 +18316,60 @@ that architecture and moved it.
 so the interior optimum is bracketed above but **not below** — a dose between 0 and 50 has never
 been played, and the peak could sit lower than 50. That is a legitimate dose-response question
 (doctrine 2), not a fishing expedition, and it is the cheapest open lead this lineage has.
+
+# Iteration 61 — bracket `REFILL_LOW` from BELOW. PRE-REGISTERED, with a quantitative ordered prediction.
+
+The open lead from iteration 60: the screen ladder was `0 -> 25, 50 -> 32, 100 -> 19, 150 -> 12`, so
+the interior optimum is bracketed **above** 50 and never **below**. Arms `carol_i61_10`, `_25`,
+`_40`, generated from the newly accepted `src/carol` and verified to differ only in `REFILL_LOW`
+(normalised `diff` empty). Shared `BUILD = "i61"`. Baseline is now **`carol_iter45`**.
+
+## Why I can predict the answer from the mechanism, which is what makes this a test
+
+**A splash costs 50 paint.** `REFILL_LOW` is the level at which a unit latches and walks home. So a
+splasher holding paint in the window **[`REFILL_LOW`, 50)** is *ready, mobile, and unable to
+splash* — which is **exactly the `noPaint` inert state D3 was built to eliminate**, and which
+iteration 60 drove from 41.2% to 0.0%.
+
+Lowering `REFILL_LOW` below 50 therefore **re-opens that window**, with width `50 − REFILL_LOW`:
+
+| dose | inert window | predicted `noPaint` |
+|---|---|---|
+| 40 | [40,50) — 10 wide | small but non-zero |
+| 25 | [25,50) — 25 wide | moderate |
+| 10 | [10,50) — 40 wide | large |
+| **50 (incumbent)** | **empty** | **0.0%** |
+
+**So 50 is not a tuned number. It is `UnitType.SPLASHER.attackCost`** — the smallest threshold at
+which a splasher is never stranded. That the screen's best dose landed exactly on the engine
+constant is either a real mechanistic fact or a coincidence, and this run separates them.
+
+## Registered predictions, in order of strength
+
+1. **Ordered mechanism prediction (free, from replays, no gate involved):** the `noPaint` share of
+   ready splasher-turns is **monotone decreasing in dose** — 10 > 25 > 40 > 50 — and **0.0% only at
+   50**. This is a *quantitative ordering over four points*, not a direction, so it is hard to
+   satisfy by accident.
+2. **Outcome prediction:** all three arms land **at or below 25/50** (the zero-margin point),
+   monotone increasing toward 50.
+3. **The falsifier, and I would accept it:** if any dose below 50 **beats** the incumbent, then the
+   attack-cost story is wrong — the latch threshold is doing something other than preventing the
+   inert state — and I must revisit the mechanism I accepted iteration 60 on rather than keep the
+   tidy explanation.
+
+## Gate and decision rule, registered before the numbers exist
+
+Screen: `BOT=carol_iter45`, three arms, one **fresh random 25-map sample**, both sides, 150 games.
+The zero arm is `carol_iter45` itself, **25/50 by construction** (mirror).
+
+> **Decision rule: if any arm reaches >= 31/50, census the best one on the standing gate
+> (margin >= +26 of 150). If none reaches 31, `REFILL_LOW` is BRACKETED ON BOTH SIDES, the axis
+> CLOSES at the incumbent value of 50, and I record the attack-cost derivation as the reason —
+> with no census.**
+
+A null here is the expected and useful outcome: it converts a value that currently looks tuned into
+a value with a mechanism behind it, and it closes an axis rather than leaving it open for a future
+session to re-litigate. **Re-open condition for the closure**: only a candidate that makes the latch
+threshold **per-unit-type** (`attackCost` per unit, rather than one shared constant) may re-open it,
+since a soldier's attack costs 5 and a mopper's 0 — for them 50 is over-conservative, and that is a
+different mechanism rather than another dose of this one.
