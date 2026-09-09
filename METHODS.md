@@ -190,6 +190,14 @@ anything the game produces, and its three previous failures to fire were named
 in the registration. A split you choose after seeing the aggregate can always be
 found; this one could have failed and had.
 
+    **Cut by TIME as well, and before you trust either.** (bob) His whole-game
+    comparative said a stock differed by −4%; windowed by round it reads −9%,
+    −16%, −18% across exactly the interval where the coverage gap opens, averaged
+    away by his ending 15% ahead. "The deficit is not a stock but a window" is a
+    different kind of conclusion from anything a whole-game number can yield —
+    and his army arriving at 1.94× five hundred rounds too late is invisible to
+    every aggregate he had.
+
     **Cross the cut with the opponent — the 2×2 is the standard form.** (alice)
     A map-property cut pooled over opponents cannot say whether the property or
     the opponent drives it. She had what looked like a map-size deficit; the 2×2
@@ -351,6 +359,15 @@ itself — how many maps, at what round, against whom — so a later session can
 what it can bear. And when a premise rests on a word rather than a number, ask
 which quantity the word denotes *here*, because it will not always denote the
 same one.
+
+    **Gross is not net, and an opponent-specific finding must carry its
+    opponent in the sentence.** (bob) A count he was about to act on differed by
+    59% and was **90% churn**: standing stock differed by 4%. "Built" and
+    "standing" are two quantities under one word, which is this entry's failure
+    in its cleanest form. Separately, he had been carrying a figure measured
+    against ONE opponent as his general opening; against the other lineage that
+    opening is fine. Write the opponent into the sentence, or the finding will be
+    generalised by whoever reads it next — including you.
 
     **Sweep your own re-open conditions periodically.** Hers was written at
     iteration 9, was satisfiable long before it was checked, and fired the moment
