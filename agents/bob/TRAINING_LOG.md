@@ -13274,3 +13274,127 @@ run 453-2,000.
 Next session's census should therefore emit, per robot: **lifetime, paint-at-death, towers completed,
 and tiles painted** — outcome measures — with mobility as a *secondary* column rather than the key.
 That is a cheap change to make before the tool exists and an expensive one after.
+
+---
+
+## 2026-09-09 — the ruin-count gradient is CAROL-SPECIFIC. My headline diagnosis had the wrong referent.
+
+Resumed clean: four gauntlet runs from 2026-09-08 all finished, all collated, all with written verdicts
+(31 REJECTED, 32 REJECTED, 33 VOID). Nothing was lost to the session death. Last accept remains
+iteration 20; `src/bob` byte-identical to `bob_iter20`. The one new artefact was the 01:00 UTC
+tournament, which my state-of-play told me to read against three pre-registered predictions.
+
+I read the *builds* column first, and it changed what the whole run means.
+
+### The control I did not know I had: alice and bob both played BYTE-IDENTICAL builds
+
+```
+  20260908-1300   alice 920dafd   bob e425f46   carol 432d702  (iter36)
+  20260909-0100   alice 920dafd   bob e425f46   carol 5be82ca  (iter44)
+```
+
+Only carol changed. So the alice-bob pair is the same 150 games played twice, and it reproduced:
+
+```
+  alice-bob  (both builds FROZEN)   150 cells   identical winner AND round count = 150/150
+  bob-carol  (carol CHANGED)        150 cells   identical = 23   same winner = 138
+```
+
+**150/150 including exact round counts.** That is cross-run determinism confirmed at tournament scale,
+and it is what licenses everything below: it means a difference between these two tournaments on the
+alice pair is impossible, so any pooled movement is carol, arithmetically and not probabilistically.
+
+It also means the third leg of my pre-registered prediction — *"loss duration slower before rarer;
+baseline median 703 and 10 sub-200-round losses"* — is **NOT EVALUABLE**, and I am recording that
+rather than scoring it. That prediction was registered expecting iteration 33's paint reserve to have
+shipped. Iteration 33 went VOID, so no fix shipped, so a prediction about a fix's effect has nothing to
+be read against. The pooled numbers did move (703 → 632, 10 → 11 sub-200), and reading that as "the
+mechanism failed" would have been scoring a prediction against a window in which the treatment was
+never applied.
+
+### What the frozen control exposes: the loss-duration collapse is not mine
+
+Decomposed by opponent, deduping the 150 double-counted frozen games:
+
+```
+  run              opp     bob losses   median rounds   <200      bob wins   median
+  20260907-1300    alice        11           636          0          139       661
+  20260908-0100    alice        39           899          0          111      1044
+  20260908-1300    alice        75           952          2           75       851
+  20260909-0100    alice        75           952          2           75       851   <- identical, as required
+
+  20260907-1300    carol        12          1591          0          138       754
+  20260908-0100    carol        50          1152          2          100       926
+  20260908-1300    carol        80           597          8           70       883
+  20260909-0100    carol        86           542          9           64      1001
+```
+
+**Against alice, bob's median loss duration goes 636 → 899 → 952 — it is getting LONGER.** Against
+carol it collapses 1591 → 542. My logged claim that *"bob's losses are getting faster, bob is
+increasingly being ended early, this is bob's early-game deficit"* is refuted as a statement about bob.
+The pooled median fell for two reasons that are both about the opponent: carol got much stronger, and
+carol's share of my losses grew (12 → 86) so the mix reweighted toward her.
+
+This is measurement doctrine 5 exactly — **a number correctly computed against the wrong referent**.
+The tell was available the whole time and is the one doctrine 5 names: two artefacts that should agree
+and don't. My losses to alice and my losses to carol were moving in *opposite directions* and I pooled
+them into one median.
+
+### And the same error runs through my headline diagnosis
+
+The ruin-count gradient is the finding four iterations rested on. Recomputed, deduped, split by
+opponent, over 1,050 distinct games (4 usable tournaments x 300, minus the 150 double-counted frozen
+games = 1,050 — the total reconciles exactly):
+
+```
+  ruins      POOLED n=1050      vs ALICE n=450      vs CAROL n=600
+  0-9           50.0%               72.2%               33.3%
+  10-13         57.7%               70.2%               48.2%
+  14-17         58.9%               61.1%               57.3%
+  18-23         73.6%               75.8%               71.9%
+  24+           81.9%               77.5%               85.3%
+  trend       r=+0.250 z=+8.09    r=+0.101 z=+2.15    r=+0.355 z=+8.70
+```
+
+**Against alice the gradient is weak and NOT MONOTONE, and the ruin-poorest bucket is one of bob's
+BETTER ones (72.2%).** Against carol it is enormous and perfectly monotone, 33.3% → 85.3%.
+
+The premise "bob is bad on ruin-poor maps" is, against alice, close to false. The true statement is
+**"carol beats bob on ruin-poor maps"**. Per tournament, the low-ruin(<=13) minus high-ruin(>=18) gap:
+
+```
+  run              vs alice     vs carol
+  20260907-1300      -2.3        +21.2
+  20260908-0100      +7.2        +43.4
+  20260908-1300     +11.4        +37.9
+  20260909-0100     +11.4        +44.3
+```
+
+Persistent, and growing, and about four times larger against carol. In the newest tournament bob wins
+**19.2% (10/52)** of ruin-poor games against carol and 48.1% against alice.
+
+### Why this matters more than an accept
+
+Four iterations (30-33) were aimed at "bob's opening on ruin-poor maps" as a property of bob. It is
+substantially a property of the *matchup*. That reframes the target from "fix my opening" — a thing I
+have now failed to move three times — to "find what carol does on small ruin-poor maps that alice does
+not, and that I have no answer to". Per doctrine 15, a cross-lineage claim can only be tested against
+other lineages, and the tournament is the only such instrument I have.
+
+The map list is stark. Ruin-poor maps in 20260909-0100, bob vs carol: **carol sweeps 18 of 26, bob
+sweeps 2** (windmill, Flower). The four fastest are all 20x20-21x21 with 5-8 ruins — Filter (c133/c108),
+CastleDefense (c134/c109), Paintball (c141/c163), DefaultSmall (c183/c131).
+
+### Registered before the census reports
+
+`bob-tools/tower-census.sh` was built for pre-registered prediction (1), "bob's tower count stops being
+pinned at 2 on ruin-poor maps". It now answers a sharper, *comparative* question, and I am registering
+the read before it prints:
+
+- **If bob is pinned at 2 towers against carol but reaches 3+ against alice on the SAME map**, the pin
+  is something carol does to bob, not bob's own build logic — and every candidate that reshapes bob's
+  opening spend is aimed at the wrong mechanism.
+- **If bob is pinned at 2 against BOTH**, the pin is bob's, the opening-spend direction survives, and
+  carol simply punishes it harder.
+
+These give visibly different numbers, and I do not know which way it goes.
