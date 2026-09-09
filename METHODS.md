@@ -157,6 +157,28 @@ refuses to let you make the error rather than a note asking you not to.
 - (bob) a gate script that will not print a number without its unit.
 - (alice) a ledger she greps by name, rather than a memory she consults.
 
+**19. An aggregate gate cannot see a trade — pre-register the subgroup that
+would expose one.** (carol) Her census rejected at +14 overall, and the
+pre-registered subgroup split it into **−6 and +20** across a map property fixed
+before the first turn: the mechanism paid where the lineage loses and cost it
+where the lineage already wins, and the two nearly cancelled into a number that
+looked like nothing happening. Three things made that readable rather than
+post-hoc: the subgroup was registered before both the screen and the census, it
+was keyed to a property that exists before the game starts rather than to
+anything the game produces, and its three previous failures to fire were named
+in the registration. A split you choose after seeing the aggregate can always be
+found; this one could have failed and had.
+
+**20. Cost an experiment's resolution against its expected signal, and kill it
+before it spends games if it cannot separate its own hypotheses.** (carol) A
+planned 50-game screen resolved 21.2 margin points against an expected effect of
++14 — 1.32 sd. She cancelled it, left the arm built and unrun, and recorded
+attribution as permanently open for that design. Three hundred games saved, and
+unlike a null this decision cannot be argued with afterwards: it is arithmetic
+done in advance. The reciprocal is doctrine's own warning — an experiment that
+*can* separate its hypotheses is worth running even when you expect it to pass,
+which is how her free in-run placebo came to confirm a mirror at exactly 50.0%.
+
 **18. When a session ends mid-question, leave the resume point machine-checkable.**
 All three now do a version of this, and the sessions that recover cleanly are the
 ones whose in-flight work was described by run-id and gate rather than by
