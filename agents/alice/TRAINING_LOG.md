@@ -16706,3 +16706,89 @@ from hand-backs trades an enemy paint drain for a tile. The census cannot price 
 the gate above does not pretend to — it measures the net of both, which is the honest thing a
 game-level gate can do. If the arm loses, "I gave up a drain" is the first hypothesis to test,
 not a post-hoc excuse.
+
+### Iteration 46 bite reading — the mechanism ACTS, and that is the whole of the claim
+
+`alice_i46` and `alice_i46ctl`, each against `alice_iter39`, same maps:
+
+| map | arm | control |
+|---|---|---|
+| Bunny | loses at **1557** | loses at **1618** |
+| Portal | wins at **778** | wins at **744** |
+
+Both games differ, so the re-ranking changes the game — pre-check 3 satisfied. **Both readings
+also happen to favour the control**, and I am recording that I will not read a direction from
+them, because this lineage's own iteration 45 is the counter-example: a 290-round bite reading
+in the arm's favour preceded a 610-round corpus result against it, on the same quantity. Two
+maps cannot sign this effect any more than one map could sign that one. The screen decides.
+
+### Sizing the channel, so any mopper iteration has a stated ceiling
+
+Portal, whole game: T1 finished around 626–662 per-mille, i.e. ~730 of 1129 paintable tiles.
+**206 of those tiles were taken through the mopper->soldier conversion pipeline** (mopped from
+enemy paint and then repainted by T1). So roughly **28% of my final holding came through the
+mopper channel**, in a game where splashers contributed 62 splash actions in total.
+
+That is the number that makes a mopper-targeting iteration worth running at all, and it also
+bounds it: perfect retention on Portal would have added **+125 tiles (~+110 per-mille)**, which
+is the whole of the gap to the 700 win line. Realistic re-ranking captures a fraction of that.
+Stated in advance so that a small positive result is not oversold and a null is not surprising.
+
+## Iteration 46 REJECTED at the screen — net swept −1 against a +4 bar, and the falsifier says why
+
+`20260909-141300`, `alice_i46` vs `alice_i46ctl`, 40 maps sampled of 75, 80 games, 0 exceptions,
+clean tree at the pre-registration commit (`989b0ba`).
+
+| | maps | SW | SL | split | record | net swept |
+|---|---|---|---|---|---|---|
+| `alice_i46` (mop-retention tie-break) | 40 | 1 | 2 | **37** | 39–41 | **−1** |
+
+Identity check passes (wins−N = −1 = SW−SL). The bar was **+4**; this is −1. **Rejected**, no
+census run — the whole point of a screen is to not spend 150 games on this.
+
+**37 of 40 maps split by side** is the signature of a true null, and I have a calibrated
+reference for that: iteration 41's deliberate zero-dose control returned net swept 0 with 25 of
+25 split. This looks like that, not like a real effect that missed a bar.
+
+### The pre-registered falsifier, run on a null, and it earns its keep
+
+I registered that a win must show as a **higher kept-share of the arm's own unpaints**. Running
+it on a *reject* is not what I wrote it for, but it separates two completely different failures,
+so I ran it anyway — on three games the arm lost, measuring both sides of the same game:
+
+| game | arm mops | arm kept | control mops | control kept |
+|---|---|---|---|---|
+| Bunny | 2332 | **61.7%** | 789 | 52.1% |
+| Brat | 396 | **51.3%** | 153 | **75.8%** |
+| Castle | 560 | **64.5%** | 991 | 51.6% |
+| mean | | **~59%** | | **~60%** |
+
+**The arm did not move the quantity it was built to move.** Two games favour it, one strongly
+favours the control, and the means are indistinguishable. So this is not "retention rose and the
+games did not follow" — which would have killed the whole conversion direction. It is **"the
+mechanism never got to act on the tiles that matter"**, which is a defect in *this* arm.
+
+> A falsifier written to protect an accept turned out to be worth more on a reject. Without it
+> I would have recorded "mopper targeting doesn't matter" and closed a direction that this run
+> does not actually speak to.
+
+### Why it could not act, and it is sitting in the code I deliberately did not touch
+
+The tie-break ranks only the **plain** class. It is outranked by priority 1 — *"a robot is
+standing on this tile: steal paint"* — and I flagged the tension when I wrote the arm:
+
+> *Note the tension, recorded rather than silently resolved: pri 1 deliberately prefers a tile
+> with an enemy robot ON it, which is the class this census says is handed back fastest.*
+
+The census says a hand-back happens at a **median of 1 round**, which only an adjacent enemy unit
+can do. Priority 1 selects for exactly that unit being present. So in every contested position —
+the only positions where retention is in doubt — priority 1 plausibly takes the decision before
+the tie-break is consulted, and the tie-break is left ranking the uncontested tiles where it
+changes nothing. That is consistent with everything observed: games differ (the mechanism acts),
+kept-share does not (it acts where retention was never at risk), net swept is 0.
+
+**It is a hypothesis, not a finding, and it has an obvious cheap measurement**: count what
+fraction of mops resolve at priority 0 / 1 / 2. If priority 1 is rare, this explanation is wrong
+and the retention signal is simply too weak to matter. **That count is the next artifact, and it
+must come before any arm that touches priority 1** — this lineage has now paid twice (44, and
+45's killed draft) for building on an unmeasured claim about how often a branch fires.
