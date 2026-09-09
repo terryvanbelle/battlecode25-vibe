@@ -14027,3 +14027,83 @@ Same clock design on the **17 SPARSEST maps** (fewest claimable ruins), both arm
 
 Launching per my own new control: `gauntlet-collect.sh --list` first, confirming no run of this
 configuration is already in flight, rather than inferring it from a log.
+
+## Doctrine 20 check on today's headline — the gradient SURVIVES the pair decomposition
+
+The coordinator relayed doctrine 20 and `tools/map-subset.py`: a pooled tournament rate on a map
+subset is a three-body statistic and cannot, alone, separate "I am bad at this" from "one of them is
+good at this". Today's central claim — carol's ruin-density deficit — is exactly that shape, so it
+had to be re-checked rather than assumed.
+
+**Dense subset (my 17 `>= 24`-ruin maps), last 3 tournaments**, with the tool excluding
+`20260909-0100: alice–bob` as a byte-identical repeat:
+
+| | subset | complement | delta | z |
+|---|---|---|---|---|
+| alice vs bob | 27.9% (19/68) | 40.9% | −13.0 | **−1.94** |
+| alice vs carol | 86.3% (88/102) | 55.7% | +30.5 | **+5.61** |
+| bob vs carol | 80.4% (82/102) | 43.7% | +36.7 | **+6.53** |
+
+**Sparse subset (the 17 fewest-ruin maps), single run**, where carol is strongest:
+
+| | subset | complement | delta | z |
+|---|---|---|---|---|
+| alice vs bob | 47.1% | 50.9% | −3.8 | −0.39 |
+| alice vs carol | 29.4% | 64.7% | −35.2 | **−3.65** |
+| bob vs carol | 20.6% | 49.1% | −28.5 | **−2.96** |
+
+**Both carol pairs move hard, in opposite directions on the two subsets, while alice–bob barely
+moves either way.** Carol is the outlier at both ends: far better than both rivals where ruins are
+scarce, far worse where they are dense. The deficit is a property of my lineage and not of one
+rival's strength, so the session's framing survives the check.
+
+One honest caveat the tool surfaces: on the dense subset alice–bob sits at **z = −1.94**, just
+under the |z| >= 2 bar the tool uses to call a pair "flat". It is *nearly* moved, in the same
+direction bob's dense-map strength would predict. The conclusion does not rest on it — the two
+carol pairs are at 5.61 and 6.53 — but "alice–bob is flat" is a marginal call here rather than a
+clean one, and I would rather say so than lean on the tool's binary.
+
+Also worth recording against my earlier work: my own `ruingradient.py` pools **all six** tournaments
+with no repeat exclusion, and alice and bob played byte-identical builds across `20260908-1300` and
+`20260909-0100`. So its pooled figures include duplicated games that add n without information —
+a second, independent reason (beyond the anchoring I logged this morning) that its pooled |z| is
+not a quantity to quote. The per-run figures I actually used are unaffected.
+
+## TOOLING BUG in `tools/map-subset.py` — the READ verdict asserts a DIRECTION it never computes
+
+Reporting rather than working around, and I ran the discriminating case before naming it.
+
+**What it does.** When one lineage is common to every moved pair and one pair is flat, the tool
+prints:
+
+```
+READ: every pair that moved involves carol, and alice-bob is flat.
+      ... this is a capability the other two lack,
+      not a defect private to either of them.
+```
+
+**The discriminating case, which was already available.** I ran it on two subsets with *opposite*
+signs for carol:
+
+- **dense** maps, where carol loses (alice vs carol **86.3%**, i.e. carol is crushed) — prints
+  "a capability **the other two lack**";
+- **sparse** maps, where carol wins (alice vs carol **29.4%**) — prints the **identical sentence**.
+
+So the sentence is emitted **regardless of the sign of the effect**. Reading the source confirms it
+(`tools/map-subset.py` ~line 200): the branch is selected purely by which pairs moved by |z| >= 2
+and which is flat; the direction of the deltas is computed for the tables above but never consulted
+for the verdict.
+
+**Why this is a correctness fault and not a cosmetic label.** The numbers are right; the conclusion
+drawn from them is inverted in exactly half the cases. On my dense subset the tool told me the
+capability is one **the other two lack**, when every other line of evidence I gathered today says
+carol is the one lacking it — she wins 15.1% of dense games decided by the paint condition against
+their 60-68%. A lineage that trusted that sentence would conclude its rivals had the defect and
+would look for a mechanism to exploit rather than one to acquire. It happens to read correctly on
+the sparse subset, which makes it more dangerous, not less: it is right half the time and wrong
+precisely when you are diagnosing your own weakness.
+
+**Suggested fix**: the sign is already in hand — the common lineage's subset-vs-complement pooled
+delta is printed two tables above. Branch on it: negative → "this is a capability the other two
+have and you lack"; positive → the current wording. The rest of the tool's reasoning is sound and
+the repeat-exclusion is a genuinely valuable control that caught a real duplicate in my own pool.
