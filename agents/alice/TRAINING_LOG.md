@@ -19365,3 +19365,60 @@ The per-tower production deficit stands, fully described and with no affordable 
 Every route measured today: upkeep rate (uncollectable), soldier endurance (arithmetic, not a branch
 bug), ruin supply (abundant but pattern-completion limited), commitment (7%), heading (harmful),
 upgrade priority (−2), mopper transfer (cannot fire).
+
+# A NEW FRONT, and it is bigger than the one I just exhausted: 48% of alice's losses are COLLAPSES FROM AHEAD
+
+The per-tower production direction is finished — every route measured, none affordable. So I asked a
+question I had not asked all session: **when alice loses, was it ever ahead?** Decomposed from census
+data already on disk, **zero games**, across all four cells:
+
+| cut | opp | losses | **from AHEAD on towers at r300** | from level | from behind |
+|---|---|---|---|---|---|
+| SMALL | carol | 16 | 3 | 5 | 8 |
+| LARGE | carol | 8 | **7** | 1 | 0 |
+| SMALL | bob | 12 | 5 | 2 | 5 |
+| LARGE | bob | 18 | **11** | 4 | 3 |
+| **total** | | **54** | **26 = 48%** | 12 | 16 |
+
+> **Nearly half of every game alice loses, it was winning the expansion race at round 300.** And
+> **19 of the 26 were LARGE leads** — two or more towers, or fifty-plus per-mille of coverage.
+
+The extremes are not marginal leads thrown away in a close game:
+
+| map | opp | tower lead at r300 | coverage lead | result |
+|---|---|---|---|---|
+| DonkeyKong | bob | **+9** | **+120‰** | LOST at r2000 |
+| DonkeyKong | bob | **+9** | **+210‰** | LOST at r2000 |
+| giver | bob | **+8** | +188‰ | LOST |
+| headphones | bob | **+7** | +162‰ | LOST |
+| Gears | bob | +4 | **+234‰** | LOST at r2000 |
+| Snowman | bob | +2 | **+234‰** | LOST at r2000 |
+
+**And the round column is the tell: almost every large collapse ends at round 2000**, i.e. on the
+coverage tiebreaker. Alice builds a commanding position by r300 and then loses coverage across the
+next 1,700 rounds.
+
+### Why this reframes the whole session
+
+Everything I measured today was about the **expansion race** — per-tower production, pattern
+completion, soldier endurance, ruin supply. That work stands and it explains the small-map deficit
+against carol. But **it addresses the 30% of losses where alice was behind**, and the larger share is
+games where alice's expansion **already worked** and something else gave the game away.
+
+On the LARGE cut against carol — where alice wins 78.9% — **7 of its 8 losses are collapses from
+ahead.** There is essentially no other way alice loses those maps.
+
+This is the "coverage peaks and declines" problem my log has carried as *unexplained* since
+iteration 42 and named as **regime 2** at iteration 45, where I wrote that regime 2 *"decides the
+rest, and only from a winning position"*. **I never sized it.** Sized, it is 48% of losses — larger
+than the deficit I spent this entire session characterising.
+
+**Crude ceiling:** converting even half of the 26 squandered leads is +13 games in a 152-game
+sample, roughly **+8 points**. Every mechanism priced today was worth 7–17% of a *production* gap;
+this is a different and larger quantity. I am not treating that as a mechanism estimate — it is the
+size of the *target*, and the pre-check that follows decides whether any of it is reachable.
+
+**Registered, before any mechanism:** trace the largest collapses round by round and establish
+**what actually declines** — alice's towers, alice's coverage, or both — and **when**. A tower lead
+that survives to r1900 with coverage bleeding away is a different defect from one where alice's
+towers are being destroyed. Those have different fixes and I do not yet know which I am looking at.
