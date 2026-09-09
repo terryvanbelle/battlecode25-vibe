@@ -15694,8 +15694,13 @@ bob_fs8      28/50       +3      7        4     14          21/50
 ```
 
 Registered: **≥ +10 accept-eligible, +7..+9 replicate, ≤ +6 reject**, in wins out of 50. `fs3` is **+2**
-and `fs8` is **+3**. Binomial sd on 50 games is ~3.5, so `fs8` sits at **0.85 sd** — not a small effect,
-an absent one. **REJECT**, unambiguously, no replicate band.
+and `fs8` is **+3**. **REJECT**, unambiguously, no replicate band.
+
+> **CORRECTED later the same day** (see "What my gate is actually worth"): I published `fs8` as
+> **0.85 sd** using the unpaired binomial sd of 3.54 on 50 games. That is the wrong sd — my runs are
+> **paired per map**, which cancels map difficulty, and the measured paired sd for this run is **2.74**.
+> `fs8` is therefore **1.10 sd**, not 0.85. The verdict is unchanged; the number was wrong and is
+> corrected rather than left standing.
 
 The mechanism was not inert: diff-from-null is **16/50** and **21/50**, so the arms genuinely played
 different games. They just did not play better ones.
@@ -16144,3 +16149,44 @@ revision in the *favourable* direction is exactly the shape of motivated reasoni
 where the verdict cannot quietly absorb it. (c) The standing argument against the whole direction is
 unchanged and still on the record: **carol fields 0% moppers, unpaints 0.1 tiles a game, and gains the most
 small-map tiles of the three (332)**. If moppers were the lever, carol should be worst, and carol is best.
+
+
+---
+
+## What my accept gate is actually worth, in sd — measured from my own runs, not assumed
+
+Prompted by a coordinator note that another lineage found its gate far looser than labelled, I measured
+mine (`bob-tools/gate_sd.py`). **Mine is the opposite problem.**
+
+The unit is `vs null` in wins out of 50, and the right sd is **paired per map**: each map contributes both
+sides to both arms, so `d_m = arm wins − null wins ∈ {−2..+2}` cancels map difficulty and spawn advantage
+exactly. A run samples **25 of the 75** maps, so the finite-population correction `(N−n)/(N−1) = 50/74 =
+0.676` applies — an **18% cut in sd**, not a nicety at n/N = 1/3.
+
+```
+run                  null       arms          pooled sd(vs null)   +10 gate   +7 gate
+20260909-151137   bob_fs0   fs3, fs8                    2.79       3.59 sd    2.51 sd
+20260909-120113   bob_mk0   mk1, mk2                    2.30       4.34 sd    3.04 sd
+20260909-104412   bob_t0    t1,  t2                     2.98       3.36 sd    2.35 sd
+```
+
+**My `+10` gate is a 3.4–4.3 sd requirement.** I have been describing it with the *unpaired* binomial sd
+(√(50 × 0.25) = 3.54), which made it look like ~2.8 sd. Pairing cuts the sd to ~2.3–3.0, so the gate is
+**substantially stricter than I have been claiming in every verdict I have written**.
+
+**What follows, and what does not.**
+
+- **The gate does NOT change.** It has governed iterations 38, 40, 43 and now 45, and its whole value is
+  that those verdicts stay comparable. Re-cutting a threshold after seeing that it is strict is how a
+  loop starts accepting noise.
+- **But my reject band is not "no effect".** `≤ +6` reaches **2.2 sd** — roughly p = 0.015 one-sided. My
+  loop is therefore biased toward rejecting, which is the safe direction but is **not free**: a real
+  mechanism worth +7 (2.5 sd) is currently filed as "replicate" and one worth +6 as "reject". Some of
+  what I have called a null was plausibly a small real effect I declined to buy.
+- **`sd` varies by run** (2.16–3.24 across arms here), so a single figure is approximate and the per-run
+  number is the one to quote in a verdict.
+- **Every future verdict quotes the paired sd from `gate_sd.py` for that run**, not a binomial
+  approximation. The tool prints per-arm and pooled.
+
+This is a correction to my *instrument*, not to any bot, and it is the kind that silently re-weights
+everything downstream — which is why it goes in the log at the level of a finding.
