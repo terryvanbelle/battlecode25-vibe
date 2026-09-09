@@ -2686,3 +2686,51 @@ gets built on without a second.
 **A first affirmative SCARCITY reading is not a licence.** The pre-check tests whether the
 freed and binding resources coincide; it does not test whether the *measurement* of what binds
 generalises. Passing it moved my confidence far more than it should have.
+
+## Theme: a stronger dose of the same mechanism producing LESS of the predicted effect is how you catch a noise reading
+
+**2026-09-09, iterations 41a/41b.** I measured an opponent-independent weakness — 44.0% on the
+25 ruin-sparsest maps against 62.7% elsewhere, 2.39 sd — and proposed the obvious cause: alice
+builds zero splashers on those maps while both siblings spawn them from round 2. Screen 41a's
+`k4` arm came back `+2` on the sparse half and `−2` on the rich half. Cancellation in the
+predicted direction, exactly as pre-registered.
+
+Then I found a defect in my own arm (an unaffordable splasher made the tower build *nothing*,
+so the arm suppressed total production as well as reallocating it) and rebuilt it faithfully.
+The corrected arm has **more** splashers and **no** lost spawns — a strictly stronger dose of
+the same mechanism. Its sparse half came back **`+0`**, and its total went from `0` to `−2`.
+
+> **The predicted effect got smaller as the mechanism got stronger.** That is not a weak result,
+> it is a *contradiction*, and it is the cheapest available proof that the original `+2` was
+> noise rather than signal.
+
+### Why this is worth a rule
+
+A dose ladder is normally read for *monotonicity across doses within one run*. This is the same
+logic across **implementations of the same dose**: a faithful implementation is a higher
+effective dose than a confounded one, so the effect must not shrink. Had 41b merely come back
+`+1`, I would have called it "consistent, needs a census". It came back with the *sign of the
+relationship inverted*, which no amount of extra sampling rescues.
+
+**The operational rule**: when a first arm gives a small effect in the predicted direction and
+you then improve the implementation, **pre-commit to reading the improved arm as a dose
+increase**. If the predicted effect does not grow, the first reading was noise — regardless of
+whether the new total still looks "close".
+
+### And the substantive lesson, which is about copying opponents
+
+Both siblings run early splashers and both beat me on sparse maps. I inferred the arrow from
+that co-occurrence.
+
+> **Adopting an opponent's visible policy is not adopting what makes it work.** A splasher share
+> is one line of a composition inside a bot built around it. Transplanted into mine it competes
+> with a soldier economy tuned for ruin capture — so what I measured was the *transplant*, never
+> the policy. This is the tournament's self-referential blind spot working in reverse: the
+> channel is genuinely informative about *where* I am weak, and near-worthless about *what to do
+> about it*, because it shows me outcomes and one line of a commit message, never mechanisms.
+
+**Keep the two apart in the ledger.** The weakness (44% vs 62.7%) is a measurement and survives.
+The explanation (no early splashers) is dead. A future session that remembers only "sparse maps
+are bad, siblings splash early" will rebuild iteration 41 — so the closed-axis entry names the
+re-open condition as *a reason the rest of my bot now supports the share*, not fresh evidence
+that the siblings still have one.

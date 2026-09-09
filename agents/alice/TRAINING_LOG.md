@@ -14948,3 +14948,66 @@ and the control stays a true null, consuming no extra PRNG draws. **Standing pre
 open**: bytecode. The fallback adds a second 8-way `canBuildRobot` scan on the failure path;
 iteration 39 peaked at 12,796 against a 20,000 tower limit, so there is headroom, but I will
 read `OVR=`/`near=` off this run's replays before any census rather than assuming it.
+
+## Iteration 41b REJECTED — run `20260909-094518` — and the axis is now CLOSED
+
+| arm | dose | BOT record | arm net swept | sparse half | rich half |
+|---|---|---|---|---|---|
+| `alice_i41bk0` | **control** | 25–25 | **+0** (25 split) | +0 | +0 |
+| `alice_i41bk8` | 1 in 8 | 26–24 | **−1** | −1 | +0 |
+| `alice_i41bk4` | 1 in 4 | 27–23 | **−2** | +0 | −2 |
+
+The control returned a perfect null a second time, from a second construction. Both live arms
+are **negative**. Nothing approaches the `+4` advance bar. **Iteration 41b is REJECTED.**
+
+**The mechanism falsifier FIRES**, and the way it fires is the whole result:
+
+> `41a` `k4` showed **`+2`** on the sparse half. `41b` `k4` is the *same mechanism implemented
+> faithfully and more strongly* — more splashers, no lost spawns — and its sparse half is
+> **`+0`**. **A stronger dose of the same mechanism produced less of the effect the story
+> predicted.** The `+2` was noise, and had I read it as encouragement I would have built a
+> ruin-density estimator on top of it.
+
+**Bytecode pre-check discharged** from this run's replays: arm towers peak at **828** against
+the 20,000 tower limit with the overrun/near-miss counters at `0/0`. The added fallback scan
+costs nothing measurable, so the negative result is not a limiter artefact.
+
+### What is closed, and what is emphatically NOT
+
+> **CLOSED: "an early, ungated splasher share".** Two screens, two independent implementations,
+> four live arms at doses 1-in-8 and 1-in-4, 300 games: `−1, 0` confounded and `−1, −2`
+> faithful. Not one positive arm, and the sparse-map concentration the hypothesis required did
+> not survive a better implementation.
+
+The recorded cause, so a future session does not re-open it on the same reasoning I used:
+
+> Both siblings *do* run early splashers and both beat me on sparse maps, and I inferred the
+> arrow from that. **Adopting an opponent's visible policy is not the same as adopting what
+> makes it work.** A splasher share is one line of bob's composition sitting inside a bot built
+> around it; transplanted into mine it competes with a soldier economy tuned for ruin capture,
+> and the transplant is what I measured. A re-open needs a reason the *rest* of my bot now
+> supports the share — not fresh evidence that the siblings still have one.
+
+**NOT closed: the finding itself.** Alice is at **44.0% on the 25 ruin-sparsest maps against
+62.7% elsewhere, 2.39 sd, opponent-independent, deduplicated and map-clustered.** That is a
+measurement, and it stands untouched. What died today is *one proposed explanation of it* —
+the most obvious one, which is why it was worth spending two screens to kill properly rather
+than carrying it forward as an assumption.
+
+The other candidate explanations the replays support, none of them yet tested, and deliberately
+left unranked because ranking them now would be the same guessing that produced 41:
+
+- **Coverage that peaks and then DECLINES.** In all four sanctioned replays alice's painted area
+  falls after an early peak while the sibling's rises monotonically. Alice is going backwards,
+  not merely growing slower. Nothing in iteration 41 addressed *why*, and a decline is a
+  different phenomenon from a shortfall — it implies something is being lost, not under-built.
+- **Paint hoarded through a loss.** `BatSignal`: alice's tower paint *rises* 1,741 -> 2,743
+  while it is being out-painted 2:1. Tower paint is the established binding resource, so a
+  rising reserve during a loss is the strongest single anomaly on the board.
+- **The mopper share.** Alice fields 5–6 moppers on maps it loses and spends more actions
+  unpainting than painting (`p91 u188` at r1950 on `MoneyTower`). Iteration 5 already found the
+  mopper mix to be an absorbing state once before.
+
+**Next session's first move should be the second one** — a rising paint reserve during a loss is
+an anomaly in the *binding* resource, and every mechanism that has ever moved this bot moved a
+binding resource. It is also measurable from replays already on disk, before any candidate.
