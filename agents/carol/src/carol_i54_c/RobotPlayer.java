@@ -129,6 +129,9 @@ public class RobotPlayer {
      * proved a bare event count cannot tell "restored a trickle" from "flooded the army", and
      * the whole verdict here likewise turns on how often the widened gate actually bites. */
     static int pRolls = 0, pFloor = 0, pFloorBig = 0;
+    /** Corrected dose pair: pAble = expensive-unit rolls the ENGINE would have
+     *  allowed (tower actually holds the paint); pBlocked = those MY gate refused. */
+    static int pAble = 0, pBlocked = 0;
 
     /** Iteration 12: see TRAINING_LOG.md. Gate is computed per level, never a constant --
      *  a fixed CHIP_RESERVE+2500 would let a lv2->lv3 upgrade (5,000) strand the treasury
@@ -410,10 +413,20 @@ public class RobotPlayer {
             boolean cheap = want.paintCost < UnitType.SOLDIER.paintCost;
             boolean broke = cheap ? rc.getPaint() - want.paintCost < PAINT_FLOOR
                                   : rc.getPaint() - want.paintCost < BIG_FLOOR;
+            // ---- CORRECTED DOSE DENOMINATOR (iteration 54). pRolls counts rolls CHIPS
+            // allowed, but on most tower-turns the tower simply does not hold the unit's
+            // paint cost and the engine's own canBuildRobot would refuse anyway. Charging
+            // those to my gate inflated the measured dose enormously -- BIG_FLOOR 200 and 50
+            // read 88.8% and 83.2%, nearly identical, which is the signature of a denominator
+            // dominated by rolls the gate never touched. pAble counts rolls that WOULD have
+            // built without my gate; pBlocked counts those my gate actually refused. The dose
+            // is pBlocked/pAble, and that is the only ratio that prices this mechanism.
+            boolean ableOnPaint = rc.getPaint() >= want.paintCost;
+            if (ableOnPaint && !cheap) pAble++;
             if (broke && (cheap || FLOOR_ALL_TYPES)) {
                 afford = false;
                 pFloor++;
-                if (!cheap) pFloorBig++;    // refusals the NEW scope is responsible for
+                if (!cheap) { pFloorBig++; if (ableOnPaint) pBlocked++; }    // refusals the NEW scope is responsible for
             }
         }
         if (afford) {
@@ -423,6 +436,7 @@ public class RobotPlayer {
         }
         // Team-level econ trace (towers see chips + tower count; paint is per-tower).
         return "T pR=" + pRolls + " pF=" + pFloor + " pFB=" + pFloorBig
+                + " pAble=" + pAble + " pBlk=" + pBlocked
                 + " r=" + rc.getRoundNum() + " chips=" + chips + " tw=" + rc.getNumberTowers()
              + " tp=" + rc.getPaint() + " e=" + enemies.length
              + " rsv=" + reserve + " stag=" + stagnantTurns

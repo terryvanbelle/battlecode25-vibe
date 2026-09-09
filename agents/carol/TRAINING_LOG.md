@@ -16008,3 +16008,50 @@ levels (~310 healthy, ~68 spiral) so that it can actually tell them apart:
 Calibrated on DefaultMedium and screened on a fresh 25-map sample, keeping the tuning surface and
 the evaluation surface disjoint. The accept gate is unchanged from the pre-registration:
 **ACCEPT >= 34/50, REJECT <= 30/50.**
+
+### The dose instrument was broken, and the tell was a missing dynamic range
+
+Before selecting an arm I swept the knob, and the sweep condemned the instrument rather than the
+mechanism:
+
+| BIG_FLOOR | 25 | 50 | 100 | 200 |
+|---|---|---|---|---|
+| "dose" (`pFloorBig/pRolls`) | 67.0% | 83.2% | 86.5% | 88.8% |
+| denominator (`pRolls`) | 1,842 | 4,952 | 18,544 | 20,024 |
+
+An **8x** sweep of the knob moved the metric 22 points and every arm read "most rolls refused". Two
+faults, and the second is the one I would not have found from the symptom alone:
+
+1. `pRolls` counts rolls **chips** allowed. On most tower-turns the tower does not hold the unit's
+   paint cost at all, so the engine's own `canBuildRobot` refuses regardless of my gate. Those
+   rolls are not attributable to the treatment.
+2. **The denominator is caused by the treatment.** A blocked build leaves the chips unspent, so a
+   more restrictive gate generates *more* rolls to divide by — the denominator grew **11x** from
+   the weakest arm to the strongest. The ratio is fed by the thing it is measuring, which is why it
+   compresses toward a constant however the knob moves.
+
+Corrected: `pAble` counts expensive-unit rolls where the tower **genuinely held the paint** (the
+engine would have allowed the build), `pBlocked` counts those my gate refused, and the dose is
+`pBlocked/pAble` — counterfactual, and computed from a quantity the treatment does not move.
+All five arms re-probed with the corrected counters. **Behaviour is unchanged (counters only), so
+every outcome must reproduce its earlier round number exactly — a free determinism check on the
+patch.** `i54_0` reproduced at round 830.
+
+**Note what this does NOT overturn.** `i54_a` is still over-dosed: its own peak coverage collapsed
+697 -> 237 per-mille, which is a direct measurement of the bot's behaviour and does not depend on
+the broken ratio at all. The instrument bug changes how I *choose among* the arms, not the finding
+that BIG_FLOOR=200 is too strong.
+
+### Arm-selection rule, registered BEFORE the corrected doses are read
+
+So that the choice cannot be made post-hoc, and explicitly **not** by calibration-map win/loss
+(DefaultMedium outcomes were i54_c win r1395, i54_b win r699, i54_d loss r685 — selecting on those
+is exactly the overfitting my charter forbids, and one game is not evidence of strength anyway):
+
+> **Screen the arm with the LARGEST `BIG_FLOOR` whose corrected dose is <= 50%.** If no arm's
+> corrected dose falls at or below 50%, then this mechanism cannot be dosed into the registered
+> band with this knob, and I will report that as the result rather than screen an arm I have
+> already said is the wrong bot.
+
+The accept gate is unchanged: 50 games vs `carol_iter44`, fresh 25-map sample,
+**ACCEPT >= 34/50, REJECT <= 30/50, 31-33 inconclusive.**
