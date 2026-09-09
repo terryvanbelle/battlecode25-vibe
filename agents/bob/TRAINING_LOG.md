@@ -15666,3 +15666,10 @@ BOT**, and which is exactly what makes it a good *opponent*: an arm that hurts m
 is the pressure my pool lacks.
 
 `src/bob/` untouched. **`bob_iter20` remains the bot; HEAD's behaviour is unchanged.**
+
+**Registered bytecode check — PASSED, and run because I expected to pass it.** `bob-tools/ind-census.sh`
+over the SEEK=8 arm's 50 replays, rounds 150-151: **2,883 of 2,883 indicator lines report `ov=0`**, and
+peak soldier bytecode is **3,708 of 17,500 (21%)**. `seekEmpty`'s full-vision scan is real cost and
+nowhere near the limiter, so the mechanism secondary was not measured at the edge. Doctrine 13 asks for
+the check you expect to pass, because that is the one that gets skipped and the one whose absence
+nothing else would catch.
