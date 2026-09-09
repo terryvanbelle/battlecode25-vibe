@@ -17307,3 +17307,38 @@ read a shrunken margin as a contradiction.
 cannot price a capability that only pays against alice and bob, and the ruin-density deficit is
 exactly that shape. So a passing census licenses "this beats my predecessor", not "this closes the
 tournament gap". The tournament remains the only instrument for the latter.
+
+## Iteration 58 — the registered map-level secondary PASSES, for the first time in this lineage
+
+I registered it with its failure base rate attached, so I owe the report whichever way it fell.
+
+| arm | <=17 ruins | >=18 ruins | margin difference |
+|---|---|---|---|
+| `carol_i58_250` | 12/22 = **54.5%** (margin +2) | 20/28 = **71.4%** (margin +12) | **+10** |
+| `carol_i58_1000` | 11/22 = **50.0%** (margin +0) | 18/28 = **64.3%** (margin +8) | **+8** |
+
+**The ruin-poor half is neutral in both arms (+2 and +0) and the entire gain sits in the dense
+half.** That is the mechanism's own claim, and it is the shape the last three attempts failed to
+produce: iteration 47 flat at −4/−4, iteration 34 non-significant after correction, iteration 57
+inverted (18.8% large vs 41.2% small).
+
+**Why this is not the margin counted twice (doctrine 14).** Sweep counts *are* the margin restated —
+`wins − N == SW − SL` identically. A bucket split is not: it is a decomposition of the same games
+along a covariate chosen in advance, and it carries information the margin cannot (where the effect
+lives). It is still the *same games*, so it corroborates the mechanism, never the size of the effect.
+
+**Power, stated rather than implied.** The dense bucket is 28 games, so sd(margin) ≈ 5.3 and +12 is
+≈ **2.3 sd**. The bucket *difference* has sd ≈ 7.1, so **+10 is ≈ 1.4 sd** — suggestive, not
+decisive on its own. What raises it above a single suggestive number is that it **replicates across
+two doses on the same maps**, and the two arms are different builds, so the agreement is not
+automatic.
+
+**What it does NOT license.** Both arms are carol, so per doctrine 17 this cannot show the mechanism
+closes the *cross-lineage* ruin gradient — only that its benefit within self-play concentrates where
+ruins are dense. The tournament remains the only instrument for the former, and the census now
+running remains a self-play instrument too.
+
+**Read against the mis-sizing**: this is evidence for "more ruin conversion helps on ruin-dense
+maps", which is the direction the whole 45–58 thread has been aimed at. It is *not* evidence for the
+floor story specifically, because the arm that produced it is the compounding version. The
+attribution stays OPEN and `carol_i58_rl250` is the experiment that settles it.
