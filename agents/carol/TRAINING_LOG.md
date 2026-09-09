@@ -13822,3 +13822,50 @@ ending by annihilation flagged separately since those stop the clock for an unre
 `carol_iter44`, and where both reach it, in **fewer rounds**. If the two clocks are the same, then
 the 13-5 split was an artefact of head-to-head coupling, the capability difference does not exist,
 and the whole ruin-conversion direction is closed for good rather than merely closed at this dose.
+
+## RESUME POINT (2026-09-09 ~11:20 UTC) — read this first if the session died
+
+**State**: `src/carol` is `carol_iter44`, unchanged. HEAD compiles; iteration 44 is what plays in
+the tournament. Iterations 45, 46 and 47 are all REJECTED. Working tree carries two untracked
+candidate dirs, `src/carol_i47_0` and `src/carol_i47_1400`, which are deliberately not committed
+(only accepted snapshots are).
+
+**Runs completed and collated today** (verdicts all in this log, nothing outstanding):
+
+| run | what | result |
+|---|---|---|
+| `20260909-102945` | iteration 47 screen, 2 arms, 25-map sample | REJECT (cand 21/50 and 11/50) |
+| `20260909-104327` | dense census, 17 maps >= 24 ruins | margin **+0**, direction closed |
+| `20260909-105442` | **clock arm 1**: `carol_iter44` vs `examplefuncsplayer`, 17 dense maps | in flight when this was written |
+
+**In flight / queued when this was written**, and NOT yet analysed:
+
+1. `20260909-105442` — clock arm 1. Collect with `tools/gauntlet-collect.sh <run-id>` if the
+   session died before collation; **do not re-run it**, it is finished games either way.
+2. Clock arm 2 — `BOT=carol_i47_1400 OPPONENTS=examplefuncsplayer` on the same 17 pinned maps
+   (`MAPS` list is the 17 `>= 24`-ruin maps, regenerable from `tools/mapdata/ruin_parity.txt`).
+   It was chained behind arm 1 on the shared-VM job cap; **check it actually launched** — a chained
+   follow-up is exactly what does not survive a session death.
+
+**Analysis to run when both land**: `carol-tools/clock/clock.py <run1> iter44 <run2> i47_1400`.
+
+**The pre-registered prediction, so it cannot be edited after the fact**: `carol_i47_1400` closes
+(reaches >70% paint) on MORE of the 17 dense maps than `carol_iter44`, and where both close, in
+fewer rounds. **If the clocks match, the 13-5 decided-game split was head-to-head coupling, the
+capability difference does not exist, and the ruin-conversion direction is closed for good rather
+than closed at one dose.**
+
+**Pre-checks explicitly NOT done** (named rather than left for the log to imply):
+
+- **Generality of "2-3 soldiers per game".** It is measured on exactly two maps. A third data point
+  from iteration 46 (`spawnmix` over 6 team-games) reads ~24 soldiers per team-game, and I verified
+  today that the two tools agree exactly on the same replay (2 and 254), so the discrepancy is
+  across *different games*, not a tool bug. **Soldier production is therefore map-dependent and my
+  headline figure does not generalise from two maps.** This is unresolved and it qualifies the
+  iteration 47 write-up.
+- **Money-tower hypothesis (iteration 48 candidate)**: generality unchecked (three games, two of
+  them the same map), lottery-vs-policy unresolved, and the price of a money tower against the
+  paint tower it displaces uncosted. Do not build on it until those are done.
+- **Whether the clock's fixed opponent distorts the measurement.** `examplefuncsplayer` paints
+  area too, so it competes for the 70% denominator. It does so identically for both arms, which is
+  why the comparison is fair, but the absolute round counts are not "time to close an empty map".
