@@ -16908,3 +16908,69 @@ re-open the splasher share, whose standard is a reason *my bot* now supports the
 once more a fact about the situation, which is the exact form that standard excludes. Third time
 this session I have arrived at that door and declined it, and I would rather the log show the
 count than show me quietly stopping to notice.
+
+## Ruin capture has headroom where paint does not — and the one-map story for it did NOT survive the corpus
+
+The paint census says the board saturates by r200–400. **Ruins do not.** Across 29 games, share
+of a map's ruins captured by round 300 (both teams, initial two each excluded):
+
+| | value |
+|---|---|
+| median share of ruins captured by r300 | **65%** |
+| games above 90% | **0 / 29** |
+| games below 60% | **8 / 29** |
+| worst | `boxofchocolates` — 19 ruins, **2 captured (11%)**, both sides |
+
+So the resource the game is decided on (r300 tower count) is the one resource that is **not**
+exhausted. That is the headroom, and it is where regime 1 lives.
+
+### The extreme map, and the story it suggested
+
+`boxofchocolates` (55x55, 19.5% walls, 19 ruins) is a **deadlock**: both teams sit at 3–4 towers
+for the whole 2000 rounds while chips run away to **$80,200 / $117,730 unspent**, soldiers fall to
+1–2, and 7–13 units starve per 200-round window. Tower paint pools stay at 102–332 across three
+towers, so the towers are starved too. The bot converts its surplus into splashers — units that
+cost 400 chips and *consume* paint — which reads as buying the non-binding resource's output with
+the binding resource's input, i.e. pre-check 1 in my own `gate-read.sh` applied to an existing
+accepted mechanism rather than to a new arm.
+
+That is a clean, seductive mechanism story, and I was one step from making it iteration 47.
+
+### The corpus check, which is free, and which kills the key term
+
+Splitting the 29 games at 60% capture:
+
+| group | n | tower paint @r300 | chips @r300 | **starved / 300 rounds** |
+|---|---|---|---|---|
+| LOW capture (<60%) | 8 | 469 | 2825 | **13.9** |
+| HIGH capture (>=60%) | 21 | 1439 | 1949 | **18.0** |
+
+| correlation with capture% | r |
+|---|---|
+| tower paint pool | **+0.416** |
+| starvation | **+0.307** |
+| chips at r300 | −0.205 |
+| ruin density | +0.266 |
+| map area | −0.197 |
+
+**Starvation runs LOWER in the low-capture games, not higher** — r = +0.307, pointing the
+opposite way from the deadlock story. So "units starve, therefore patterns go unpainted,
+therefore no towers" is **not** the corpus-wide mechanism; more starvation goes with *more*
+capture, which is what you would expect if starvation is a by-product of having more units doing
+more things.
+
+And the strongest correlate, tower paint at +0.416, **is partly circular and I will not cite it as
+evidence**: `twPaint` is a sum over towers, and tower count is inside the capture measure. More
+towers mechanically means more tower paint. That correlation is close to meaningless as stated.
+
+> `boxofchocolates` is real, extreme, and an **outlier** — not the pattern. I read a mechanism off
+> one map and the free corpus check contradicted its central term. This is the third time today
+> the same discipline paid: the frontier census (retired a direction), the priority probe
+> (refuted my own explanation of a null), and now this.
+
+**Iteration 47 is therefore NOT this.** What is honestly established is only *where* the headroom
+is — ruin capture before r300, which is unsaturated while everything else is — and that is a
+location, not a defect. **The next artifact is a probe that localises why a soldier standing in a
+map with unclaimed ruins does not claim one**: ruins seen, patterns started, patterns completed,
+and turns spent at a ruin with an incomplete pattern. Not an arm. This lineage's ledger is full
+of mechanisms aimed at locations.
