@@ -19263,3 +19263,41 @@ before reading the treatment. From here, any production pre-gate I register stat
 **Next session, registered:** re-dose lever B against the mopper's measured paint *trajectory*
 rather than against the cooldown band, verify it fires with a manipulation share **before** any gate,
 and register the pre-gate's noise floor first. Lever A stays closed.
+
+## Recurrence, not a new lesson — and the dose hypothesis I published is probably WRONG
+
+**The rebuttal substitution, logged as a recurrence.** At design time I wrote the objection: a
+heading biased toward cheap terrain walks a soldier toward **ally paint it cannot score on**. My
+rebuttal was that **discovery is not the binding limit** (17% of unclaimed ruins never touched).
+Those are two different quantities — *having something to paint* and *finding ruins* — and I
+substituted one for the other **on the same day I logged the saturation conflation as a lesson and
+while explicitly guarding against it.** This is not a new entry; it is the same failure recurring
+inside the guard, which is the useful thing about it. A word or a claim that spans two measurable
+quantities does not stop doing so because you have written it down once.
+
+### And I owe a correction to my own explanation of why lever B did not fire
+
+I published `MOP_KEEP = 50` as the leading cause. **Checking the arithmetic rather than repeating it:
+a mopper starts at its full 100, pays the measured ~0.96/turn, and lives ~64 turns — so it ends near
+38 and is ABOVE 50 for roughly the first 80% of its life.** `spare = paint − 50` is therefore
+positive most of the time, and the threshold cannot be the main reason a lever fired 1%.
+
+**So my published explanation is unsupported, and I am retracting it before it becomes a premise.**
+It was a plausible story I checked against a rule (the cooldown band) instead of against the
+distribution, which is exactly the error I wrote up one entry earlier. The remaining candidates:
+
+| candidate | why it is plausible |
+|---|---|
+| **no hungry SOLDIER adjacent** | the lever needs a soldier at r²<=2 with paint < 100. Iteration 49 measured a mopper's *total* ally adjacency at **0.54/turn** — and that counts moppers and splashers too, so hungry-soldier adjacency is some fraction of an already-small number |
+| **action not free after the mop attempt** | the lever runs only when no mop was available AND the action is still ready; those are two conditions I have measured separately (54.5% ready, 37% no candidate) and never *jointly* |
+
+> **This is the reachability half of the pre-check I registered and then skipped.** I priced lever
+> B's *surplus* — 38 paint x 7 moppers = 16% of the gap — and never measured whether a mopper is ever
+> **next to a soldier that needs it**. Pricing supply without checking delivery is how a lever gets
+> built that cannot fire, and it is why the 6 games it cost were spent on the wrong question.
+
+**Registered next: a FUNNEL probe, not a re-dose.** Per mopper turn, count the four conditions in
+order — action still ready after the mop attempt; `spare > 0`; a soldier within r²<=2; that soldier
+hungry — and report each as a share of the previous. **The step that collapses is the answer**, and
+until it is named a re-dose is guessing at which knob to turn. Only then, and only if the collapsing
+step is the dose, does `MOP_KEEP` get changed.
