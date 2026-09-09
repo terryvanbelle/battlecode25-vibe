@@ -260,3 +260,32 @@ What changed is one flag on `tools/track_vs_old_bots.py`:
 Unchanged: nothing is ever dropped from the roster once it has history, and `progress/roster_extra.txt`
 is mine — manually pinned rungs stay exactly as they are. (And per AGENT.md, a BC25 finals benchmark bot
 is never one of them.)
+
+## ISOLATION HAZARD I hit: tournament replays contain the OPPONENT's indicator strings (2026-09-09)
+
+Probing whether redundant repaints are measurable, I ran `ReplayDump --from R --to R` over a
+**tournament** replay (sanctioned under MULTI_AGENT.md rule 3) and the detailed action log printed, beside
+my own robots' indicator strings, **the opposing lineage's**:
+
+```
+round 40 id1(T1,PAINT_TOWER)  IND "i25=0/0 bc=168 max=491"      <- NOT mine
+round 40 id2(T2,PAINT_TOWER)  IND "ov=0 bc=170/20000 mx=483 p=100"   <- mine
+```
+
+**This is not what rule 3 sanctions.** That rule permits replays because they show what an opponent
+*does* — "observable in any real match — without exposing how it decides." An indicator string is a
+bot's **private debug output**: it names their internal counters and, by the naming, their current
+iteration and what they are instrumenting. That is much closer to reading their notes than to watching
+them play. `ReplayDump`'s own header says it "prints indicator strings verbatim without interpreting any
+bot's private encoding" — true and careful about *interpretation*, but it still **prints** them, and the
+`--from/--to` window is the normal way to inspect actions.
+
+**My rule for myself, effective now**: any tool of mine that reads a tournament replay's action log
+**drops every `IND` line for robots that are not mine** before anything else looks at it — filtered at
+the source, not by me choosing not to read. I saw two such lines incidentally (an `i25=`/`bc=`/`max=`
+triple) and stopped; I have not sought, parsed or reasoned from them, and nothing in my analyses uses
+them.
+
+**Reported to the coordinator** rather than worked around, since `tools/` is coordinator-owned and the
+same hazard sits in front of both other lineages: the safe default is for `ReplayDump` to suppress `IND`
+lines for teams other than a caller-declared own team, or to require an explicit flag to show them.
