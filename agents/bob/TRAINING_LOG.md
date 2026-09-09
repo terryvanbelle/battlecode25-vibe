@@ -15789,3 +15789,62 @@ is CLOSED at **+2/+3 wins out of 50** across doses 3 and 8, with the mechanism *
 mechanism pays for itself out of the army.
 
 `src/bob/` untouched. **`bob_iter20` remains the bot; HEAD's behaviour is unchanged.**
+
+---
+
+## Iteration 44 — PROBE PRE-REGISTERED (written while the census was still running, before any number existed).
+
+**Why this probe, and why now.** LEARNING 76 (iteration 43) established that every prize this lineage
+priced in iterations 37-43 was a **per-soldier-round ratio**, and that a mechanism can shrink that
+ratio's denominator and net nothing. The objective is **total painted area**. So the next question has
+to be asked in those units, and against opponents my lineage did not produce.
+
+**The source is the one I have been under-using.** `tournaments/20260909-1300` holds 450 games; 300 of
+them have bob in them (150 vs alice, 150 vs carol). Per MULTI_AGENT.md rule 3 these replays are
+sanctioned shared information — they show what an opponent *does*, which is observable in any real
+match. Reading their per-round paint-action and coverage counters is exactly that, and it is a
+**paired** comparison: same map, same game, same round count, bob and the opponent side by side. Zero
+gauntlet cost.
+
+**The standing puzzle it attacks.** LEARNING 69: bob's r30 coverage differential is **−65 per-mille on
+small maps while bob fields 4x carol's soldiers**. Four times the army, less painted ground. Iteration
+42 then found that on small maps **50.4%** of bob's soldier-turns go to ruin/SRP pattern work. Bob is
+the lineage that wins 60% on large maps and **14%** on small.
+
+**The quantity, and the confound I am naming before I look.** `conv = dTiles / acts`, where `acts` is
+paint + splash actions taken in the window and `dTiles` is **net** coverage change in tiles
+(`d(cov per-mille) × area / 1000`). Net coverage is reduced by the enemy repainting me, so `conv` is a
+**conversion** measure, not a pure churn measure — a low `conv` can mean "I repaint my own tiles" or
+"the enemy takes mine back", and these counters alone cannot separate them. The **paired within-game
+ratios** are what carry the weight, because whatever the opponent overwrites of mine, I can overwrite of
+theirs, on the same board.
+
+**PRE-REGISTERED, before the numbers exist**, on small maps, r ≤ 200, per opponent separately:
+
+- **VOID unless the census covers all 300 bob replays** and both opponents are analysed as separate
+  populations (alice games and carol games are different games and must never be pooled).
+- Let `ratio_acts = bob acts / opponent acts` and `ratio_tiles = bob dTiles / opponent dTiles`, both
+  means over the same paired games.
+- **Branch 1 — `ratio_acts ≥ 1.3` and `ratio_tiles ≤ 1.0`**: bob spends materially more actions for no
+  more coverage. **Conversion is the gap**; the next mechanism targets churn (repainting ground that is
+  already mine or already the right colour).
+- **Branch 2 — `ratio_acts` and `ratio_tiles` agree within 15%**: bob converts actions to coverage as
+  well as they do and simply takes fewer of them. **The gap is action volume**, and churn work is
+  CLOSED before it is started.
+- **Branch 3 — `ratio_acts ≤ 1.0`**: bob takes *fewer* paint actions than the opponent despite LEARNING
+  69's 4x soldier count. That would make LEARNING 69's army-size framing the thing to revisit, and it
+  would mean my soldiers are not acting, not that they are acting wastefully.
+- **Registered as NOT an accept test.** It measures rates over existing games and can accept nothing;
+  it chooses which of three mechanisms earns an evaluation. Same standing as iteration 42's probe.
+- **Prediction, registered as a sign**: **Branch 1** — `ratio_acts > 1` and `ratio_tiles < 1` on small
+  maps against both opponents. Basis: LEARNING 69's 4x soldier count with a negative coverage
+  differential. I am **not** predicting the alice-vs-carol ordering; I have no mechanism for it.
+- **Also registered**: `conv` on large maps should exceed `conv` on small for bob. Basis: iteration 42
+  found the pattern-work share (A) is 50.4% small vs 26.1% large, and pattern work repaints fixed tiles.
+
+New instrument `bob-tools/conv_agg.py`, committed with this pre-registration and already exercised on
+iteration 43's own census (bob-vs-bob, so no cross-lineage content): bob's `conv` there was **0.767 on
+small maps and 1.016 on large**, which is a within-lineage sighting of the same regime split and is the
+reason the large-vs-small sign above is registered rather than discovered.
+
+`src/bob/` untouched. **`bob_iter20` remains the bot.**

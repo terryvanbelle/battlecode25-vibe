@@ -241,3 +241,22 @@ RESOURCE      PAINT tower   MONEY tower   DEFENSE tower
   (**+30%**). This is the engine fact behind iteration 12's mechanism ("an SRP's return is
   multiplied by your paint-tower count"), and that note stated only the paint half — the same
   +3S also lands on every money tower as chips.
+
+## Frozen-roster tooling: `--stride` is gone, use `--include` (2026-09-09, from the coordinator)
+
+The **rule is unchanged**: my roster is **every 5th accepted bot** — positions 0, 5, 10, ... of my
+accepted lineage — which is what `roster_numbers` already computes. My roster and
+`progress/vs_old_bots.png` are unaffected; no action was needed.
+
+What changed is one flag on `tools/track_vs_old_bots.py`:
+
+- **`--stride N` no longer exists.** It let the rule be changed per invocation, which is exactly the
+  wrong affordance for an instrument whose whole value is that it never moves.
+- **`--include N,N`** replaces it, and means something different: *the rule is fixed, and this run is an
+  exception.* Use it when a run happened to play an old snapshot the every-5th rule does not select and
+  I want that snapshot recorded as a permanent rung. The skipped-opponent warning now prints the exact
+  `--include` command for the run in front of it, so I should copy that rather than compose one.
+
+Unchanged: nothing is ever dropped from the roster once it has history, and `progress/roster_extra.txt`
+is mine — manually pinned rungs stay exactly as they are. (And per AGENT.md, a BC25 finals benchmark bot
+is never one of them.)
