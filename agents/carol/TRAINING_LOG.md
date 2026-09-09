@@ -16569,3 +16569,190 @@ on a chain whose links are true and whose conclusion is false.
 
 `src/carol` is unchanged; `carol_conv` stays in the tree as a documented archetype and a
 counterexample, not as a roster rung.
+
+---
+
+# Iteration 56 — VOID. Killed on MAGNITUDE before it played a game, and the axis it sat on was already closed.
+
+**Outcome in one line: no change to `src/carol`; one candidate killed for zero games; one of my own
+readings retracted; and a near-miss re-run of iteration 47 caught by the history pre-check.**
+
+## What I set out to do
+
+The log left iteration 56 pre-registered but unbuilt ("choose tower type from the binding resource,
+not from a coordinate modulus") and named iteration 57 as "size the real constraint". I went to the
+tournament replays — the sanctioned cross-lineage channel — to size it.
+
+## Measurement 1 — carol's tower count is flat in ruin count (confirms an existing finding, on new maps)
+
+Tournament `20260909-1300`, carol's games, five maps spanning the gradient, from
+`arena/tournaments/20260909-1300/replays/`:
+
+| map | ruins | carol tw | opp tw | carol cov | opp cov | soldiers alive at end |
+|---|---|---|---|---|---|---|
+| Leaf | 52 | **8** | **25** (cap) | 207 | 688 | **0** |
+| DonkeyKong | 46 | **5** | **25** (cap) | 162 | 691 | **0** |
+| headphones | 32 | **5** | **24** | 185 | 682 | 6 |
+| Castle | 10 | 4 | 7 | 288 | 684 | 3 |
+| BatSignal | 10 | **8** | **4** | **674** | 291 | **14** |
+
+Tower deficit is +17/+20/+19 on the dense maps and +3/−4 on the poor ones. Carol's own tower count
+is 8/5/5/4/8 — **flat in ruin count**, while opponents scale to the 25-tower cap. This is an
+absolute degeneracy signal: no opponent is needed to see that output does not respond to input.
+It confirms the iteration-47 diagnostic (log ~13333) on three maps it did not use.
+
+## Measurement 2 — NEW: the iteration-18 pin-escape is DEAD, and it is dead exactly where I lose
+
+Full-game indicator census, carol's towers on Leaf, **5,425 tower-turns**:
+
+| quantity | value |
+|---|---|
+| max `pinnedTurns` reached, all game | **9** (`STAGNANT_ROUNDS` = 10) |
+| `pinFree` count, all game | **0** |
+| tower-turns with chips >= 2250 (SOLDIER gate) | **2 = 0.04%** |
+| tower-turns with chips >= 1600 (SPLASHER gate) | 7.04% |
+| median / p95 / max chips | 1390 / 1610 / 2530 |
+
+**The escape misses by exactly one turn, all game.** The arithmetic explains it exactly and was
+confirmed by the measurement rather than assumed: the pinned band is `cheapest` = 250 wide
+(`SOLDIER.moneyCost`) and income is 30.6 chips/round, so the treasury transits the band in
+250/30.6 = **8.2 turns**; `pinnedTurns` therefore tops out at 9 and the threshold of 10 is
+unreachable. Stated generally:
+
+> **The pin-escape can only fire when team income <= 25 chips/round** (a 250-wide band needs
+> >= 10 turns to cross). Income rises with tower count, so **the escape is anti-correlated with
+> the ruin density it was built to survive.**
+
+This refines, and does not contradict, the existing entry at log ~7642 that measured the escape
+firing on ~5% of pinned turns on DefaultMedium (19 ruins). Both are true: ~5% at mid density,
+**0% at 52 ruins**. The prior entry sized the escape where it partly works; this sizes it where
+carol actually loses. Per doctrine 4, that is the regime-matched number.
+
+## The candidate this suggested, and why I did not build it
+
+The pin detector is a **wrong-referent error inside my own bot** (doctrine 5): it calls the treasury
+"pinned" over `[reserve, reserve + SOLDIER.moneyCost)` = [1200, 1450), but the code never builds a
+soldier at 1450 — `SPLASH_FLOOR` is applied *after* `reserve` and puts the real soldier requirement
+at 2250. The cheapest unit the code can actually build is the SPLASHER at `reserve + 400` = 1600.
+So the honest band is [1200, 1600), which is 400 wide, takes 13.3 turns to cross, and **would** fire.
+
+One-line fix, no new constant, and orthogonal to the closed `SPLASH_FLOOR` axis (with `reserve`
+freed a soldier still needs 2250 because the floor is exempt only for splashers, so this changes
+splasher timing ONLY and reopens nothing).
+
+## KILLED on magnitude, for zero games (METHODS section 2)
+
+Before screening it I priced it in the units of the gap. Chip accounting for carol on Leaf, closed
+first per doctrine "close the accounting before you read anything off it":
+
+```
+builds over 725 rounds:  2 soldiers, 0 moppers, 41 splashers, 6 tower completions
+chip spend  = 2*250 + 41*400 + 6*1000                    = 22,900
+chip income = spend + final(1350) - start(2030)          = 22,220   (30.6/round)
+independent check: measured +30/round * 725 rounds       = 21,750   (ratio 1.02)
+residual 680 = exactly the treasury drop 2030 -> 1350.   Accounting closes.
+```
+
+**Carol spends 22,900 of 22,220 earned — essentially 100% of income.** Therefore:
+
+- `CHIP_RESERVE` = 1200 is a **standing buffer, not unspent income**. Freeing it permanently
+  releases 1,200 chips **once** = 3 extra splashers over the whole game, against 41 built.
+- Carol's realised coverage is 5.0 tiles per splasher, so 3 splashers buy **~15 tiles**.
+- The coverage gap on Leaf is **481 tiles** (207 vs 688).
+- **15 / 481 = 3.1% of the gap. The mechanism is ~30x too small to matter.**
+
+This is a null no larger sample could overturn, which is the point of pricing magnitude before
+power. Same shape as iteration 55's "245 soldiers buy one tower".
+
+## RETRACTION of my own reading, made the same hour I made it
+
+I first read "77.2% of tower-turns sit above the reserve and below every reachable gate" as
+**idle resources**. It is not. It is **dwell-time in a band**, and the accounting above shows carol
+spends ~100% of her income. A treasury that sits at 1,200 for most of the game is not slack; it is
+a constant buffer plus an empty-and-refilling remainder. Treating a high dwell fraction as unspent
+budget is the wrong-referent error again, and I nearly shipped a candidate on it.
+
+What both my readings took for granted (per the retraction rule): that the *gate* was what limited
+build rate. It is not — **income is**. 30.6 chips/round divided by 400 per splasher is one splasher
+per 13.1 rounds, and carol builds 41 in 725 rounds = one per 17.7. She is already near her income
+limit, so no gate change can raise output; it can only reallocate a fixed budget.
+
+## History pre-check CAUGHT a near-duplicate run (this is the entry that paid for itself)
+
+I had a dose ladder ready — `SPLASH_FLOOR` in {1400, 1350, 1300}, derived from a measured
+reachability cliff, ~200 games. The history pre-check found **iteration 47 already ran it**:
+
+- it derived the same balance point algebraically (`SPLASH_FLOOR + 250 = reserve + 400` -> **1350**);
+- it measured **1400 at 21/50** and **0 at 11/50** against this same baseline on a shared sample;
+- its ruin-bucket prediction came out **flat** (−4 vs −4);
+- and a **34-game census of all 17 maps with >= 24 ruins returned margin exactly 0**, which closed
+  the direction on its own pre-registered terms.
+
+My reachability table adds one thing worth keeping: **`SPLASH_FLOOR` <= 1200 are all behaviourally
+identical** while `freed` is false (the soldier gate is `max(reserve+250, SF+250)`, which saturates
+at 1450), so iteration 47's SF=0 arm also measured SF=1200 and the axis is bracketed more
+completely than it recorded. Doses in [1600, 2000] are likewise near-identical (0.04–0.06%
+reachable). **The whole axis is a cliff between 1400 and 1300, and both sides of it are measured.**
+
+## API sweep (doctrine: run it at a stall — 11 iterations without an accept)
+
+33 `RobotController` methods are never called by `src/carol`. The two that are whole mechanics:
+
+- **Communication is entirely unused** — `sendMessage`, `readMessages`, `broadcastMessage`,
+  `canSendMessage`, `canBroadcastMessage`. Carol has never sent a message. Recorded as an
+  unexplored mechanic; it needs a purpose before it needs an implementation.
+- **Resource patterns unused** — but legitimately CLOSED at iterations 48–51 with a price attached.
+  Not reopened.
+
+Also unused and cheap to keep in mind: `senseRobotAtLocation`, `isLocationOccupied`,
+`sensePassability`, `getMoney`, `disintegrate`, `setTimelineMarker`.
+
+## Where this leaves the lineage (the honest statement)
+
+Carol's ruin-dense deficit is an **income deficit**: 30.6 chips/round on Leaf against an opponent
+holding 25 towers. Every spawn-gate change reallocates a fixed ~22k budget and cannot grow it.
+Only more towers grow it; more towers need soldiers; and the soldier route through `SPLASH_FLOOR`
+is closed at a measured margin of exactly 0 over the 17 densest maps.
+
+**So the next candidate must grow towers or income by a route that is not the spawn gate.** That is
+a genuine narrowing: it eliminates the entire spawn-threshold family, which is where iterations 30,
+36, 47, 49, 52 and 54 all lived.
+
+---
+
+# CLOSED-DIRECTIONS LEDGER (grep this before proposing anything)
+
+Adopted from `METHODS.md` section 13 on 2026-09-09, because **this session re-derived iteration 47
+from scratch and came within one command of re-running it for ~200 games.** My closed threads were
+recorded correctly but scattered through 16,000 lines of prose, so a fresh session could only find
+them by already knowing they existed. That is a note, not a control (doctrine 19). This is the
+control: one grep-able table, each row with the measurement that killed it and a *checkable*
+re-open condition.
+
+Convention: search by HYPOTHESIS NAME, not by iteration number. Add a row the same commit you close
+a direction. Never delete a row; supersede in place.
+
+| # | hypothesis name | what was tried | measurement that killed it | re-open ONLY if |
+|---|---|---|---|---|
+| C1 | **splash-floor / soldier gate** | `SPLASH_FLOOR` 2000 -> 1400 and -> 0, dose ladder vs `carol_iter44` | 1400 = **21/50**, 0 = **11/50**; ruin buckets **flat** (−4 vs −4); **34-game census of the 17 densest maps, margin exactly 0** (iter 47) | a mechanism makes the soldier gate reachable *without* moving the treasury's own limit cycle, i.e. income rises first. Note the axis is bracketed: SF<=1200 all identical, SF in [1600,2000] all identical, cliff between 1400 and 1300 (iter 56) |
+| C2 | **soldier supply limits tower count** | `carol_conv`, `SPLASH_FLOOR`=0 archetype, full 75-map corpus | **245 soldiers bought ONE extra tower** (9 -> 15 vs 245 -> 16 on Leaf); rho(win, ruins) = −0.048, z = −0.59 over 150 games (iter 55) | evidence that soldier supply binds tower count *anywhere*. Directly contradicted today |
+| C3 | **SRP / resource patterns** | mark-and-complete, `SRP_MIN_CHIPS` doses 1500 and 300 | delivery runs **5-8x short** of what the marks demand in this architecture (iters 48-51) | this bot acquires a reason for soldiers to **dwell** — a territory-holding or defensive-station behaviour adopted for its own sake, whose locality SRP can free-ride on |
+| C4 | **tower paint floors for expensive units** | `PAINT_FLOOR` dose ladder | killed by dose-response at **both ends** (iter ~44 region) | a new unit type or paint source changes the accrual rate |
+| C5 | **lower `CHIP_RESERVE`** | reserve lowered/disarmed early | rejected **with a trace**: the 1,980 starting chips are exactly the first tower completion; spending them on ~7 early soldiers left the bot a tower behind by round 300 (iter 4) | the change is confined to the LATE game and leaves the opening reserve armed |
+| C6 | **free the pin-escape's duty cycle** | proposed: fix the pin detector's band from [1200,1450) to [1200,1600) so it fires | **killed on magnitude before any games** — releases 1,200 chips ONCE = 3 splashers = ~15 tiles against a 481-tile gap = **3.1%** (iter 56) | carol's income per round rises enough that a one-off 1,200 chips is material, i.e. this is downstream of an income fix, never upstream of one |
+| C7 | **ruin-dense maps merely amplify skill gaps** | pair decomposition over three tournaments | refuted **in the wrong direction**: the alice-bob pair (the one without me) has rho **negative** every time (−0.105, −0.186, −0.186) while both pairs containing me are positive (iter 55) | — (this is a refuted premise, not a shelved direction) |
+
+## Standing first question for any new candidate (METHODS section 2)
+
+**Price it in the units of the gap before screening it.** Two of my last three candidates died here
+for zero games (C2: 245 soldiers -> 1 tower; C6: 3.1% of the gap). The gap to quote on ruin-dense
+maps is **481 tiles of coverage** and **17-20 towers**; a mechanism worth screening must plausibly
+move one of those by a double-digit percentage. A candidate that cannot say what fraction of the
+gap it closes has not been costed.
+
+## Standing second question (this session's addition)
+
+**Does it grow the budget, or reallocate it?** Carol spends ~100% of a ~22,000-chip income on Leaf.
+Any spawn-gate, floor, reserve or unit-mix change is a *reallocation* of that fixed budget and is
+bounded by it. Only tower count grows it. State which of the two a candidate is, in one line, before
+building.
