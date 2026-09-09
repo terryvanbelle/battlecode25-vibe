@@ -15044,3 +15044,67 @@ Price, against what it displaces: **25 paint for the mark, and nothing else** �
 movement at all, which is the entire cost that killed this iteration. That is the
 "capability preserved at zero marginal cost" shape LEARNINGS records as the recurring winner's
 profile.
+
+## Iteration 50 stage 0 — the parking cost is GONE, the hit rate is fixed, and NOTHING COMPLETES
+
+`carol_i50_a` (mark-and-walk-away, `SRP_MIN_CHIPS = 1500`) vs `carol_iter44` on `DefaultMedium`
+(35x35, 298 legal SRP centres — chosen small and site-rich so stage 0 is fast, and explicitly NOT
+`DefaultSmall`, which has zero centres and would have measured a mechanism that cannot fire).
+
+| arm | side | `sA` asks | `sM` marks | `sD` **completed** | `sP` pattern tiles painted |
+|---|---|---|---|---|---|
+| `i50_a` | A | 10 | 4 | **0** | 40 |
+| `i50_a` | B | 104 | 6 | **0** | 29 |
+| `i50_0` (zero) | A, B | 0 | 0 | 0 | 0 |
+
+Peak bytecode 7059/17500 with **zero overruns, zero near-misses**, and zero `GAE`/`EXC` in either
+replay. **Zero-arm control passes again**: `carol_i50_0` is completely inert.
+
+**Two of the three problems are fixed.** The mark-and-walk design removes the movement suppression
+entirely (there is no soldier state left to detain anyone), and the mark hit rate is 4/10 and 6/104
+rather than iteration 49's 1/34 — patterns are being laid and their tiles are being painted by
+passers-by, which is the emergent half working as designed.
+
+**The third is fatal as it stands: `sD = 0` on BOTH sides. Not one pattern was ever completed.**
+Without a completion there is no income at all, so the arm pays every cost — 25 paint per mark,
+plus the re-shading waste — and collects nothing. Evaluating it now would measure a pure cost and
+report "SRP does not pay", which is precisely the uninterpretable null I have twice written down
+that I must not buy.
+
+### TWO candidate causes, and I am NOT choosing between them by argument
+
+Doctrine: a trace gives the symptom; the mechanism is still an inference and needs its own test.
+Both of these produce an identical `sD = 0`.
+
+1. **My own chips gate locks out the completion branch.** `srpWork` returns immediately when
+   `chips < SRP_MIN_CHIPS`, and that early return sits *above* the completion loop — so at 1500,
+   with carol's treasury hovering near 1400, completion is gated off most turns even when a
+   pattern is finished and only 200 chips are needed. This is my own bug shape from iteration 49
+   recurring one level down: **an exit path sitting inside a guard that should only cover the
+   entry path.**
+2. **Soldiers overwrite each other's marks.** Nine candidate centres spaced 2 apart, many soldiers,
+   and *no engine constraint against overlapping SRPs* (established in my iteration-7 probe: the
+   only thing preventing two overlapping patterns is that both must hold simultaneously). Soldiers
+   marking near each other would mutually destroy each other's marks, so tiles get painted forever
+   and no pattern ever holds all 25 at once.
+
+### The discriminating experiment, in flight
+
+`carol_i50_b` is `i50_a` with `SRP_MIN_CHIPS = 300` (just above the 200-chip completion cost), one
+match against `carol_iter44` on `DefaultMedium`. **If `sD > 0`, cause 1 is confirmed and the fix is
+to move the completion loop above the chips gate. If `sD` is still 0, cause 1 is eliminated and
+cause 2 is the live one**, whose fix is a no-overlap guard: do not start a new pattern when any
+mark is already visible in range — go help finish that one instead, which is also the behaviour
+the emergent design wants.
+
+### Pre-checks NOT done, named explicitly so the next session inherits the doubt
+
+- **The overlap hypothesis has not been measured at all**, only reasoned about. A direct check
+  exists and is cheap: dump the mark grid and count distinct SRP centres whose 5x5s intersect.
+- **`sP` is not a clean SRP counter.** Step 2 paints *any* mismatched marked tile in r2=9, and
+  tower-pattern marks match that description too, so `sP` may include tower-pattern work. It is
+  reported above as-is; do not quote it as "SRP tiles painted" without separating the two.
+- **No screen has been run for iteration 50 and none should be** until `sD > 0`. The gate is not
+  the issue; the mechanism not delivering is.
+
+**Resume point**: read the `i50_b` counters first, then take the branch above.
