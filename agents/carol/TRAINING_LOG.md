@@ -15856,3 +15856,89 @@ it being an **expansion** threat, not a denial one, and that is a different iter
 **Kept**: both archetypes are committed with their measurements, so a later session that wonders
 whether paint denial was ever tried gets the answer and the numbers rather than a rebuild. Nothing
 ships; `src/carol` is untouched and HEAD still plays `carol_iter44`.
+
+---
+
+## Iteration 54 — PRE-REGISTERED. The paint floor exists and is scoped so it can never fire when it matters
+
+Registered before any game. Found for **zero extra VM cost**, in iteration 53's own control games.
+
+### The measurement that prompted it
+
+Iteration 53's control was `carol_iter44` playing a byte-identical copy of itself. On DefaultMedium
+the two sides did not merely diverge, the loser's coverage **collapsed**: peak **387** per-mille at
+round 400, **165** at the end. It lost 57% of all the paint it ever held, to an opponent building
+**zero moppers**.
+
+Tracing the losing seat through that decline gives a specific, mechanical death spiral:
+
+| round | towers | tower paint (all 3) | soldiers | splashers | paint actions / 100 rounds | starved | died |
+|---|---|---|---|---|---|---|---|
+| 400 | 3 | 935 | 0 | 3 | 381 | 4 | 6 |
+| 700 | 3 | 203 | **9** | **0** | **96** | 2 | 4 |
+| 800 | 3 | 218 | **6** | **0** | **13** | **9** | **12** |
+
+Read the last row: six soldiers alive taking **thirteen** paint actions in a hundred rounds — a 2%
+action rate. The towers are dry, so they stop affording 300-paint splashers and roll soldiers
+instead; a robot spawns with a full stash drawn **from the building tower** [E: RULES.md], so each
+spawn moves 200 paint out of a tower that has ~70, into a robot that drains to zero, then takes
+-20 HP/turn and dies. The tower's income is being converted into corpses.
+
+**Banking strictly dominates spawning in this regime**, and the engine says so rather than my
+intuition: any robot may withdraw from a tower [E: RULES.md], so paint left in a tower can still
+refuel the starving robots already on the field, while paint spent on a spawn cannot.
+
+### The mechanism: a gate that is narrower than the mechanism it guards
+
+The protection is **already written**. Iteration 36 added `PAINT_FLOOR = 200` — a tower will not
+build if the build drops it below 200 paint. But it is scoped:
+
+```java
+if (afford && want.paintCost < UnitType.SOLDIER.paintCost   // <-- the scope
+        && rc.getPaint() - want.paintCost < PAINT_FLOOR) {
+```
+
+Iteration 36 aimed it at moppers, to stop the cheap unit crowding out the expensive one, and scoped
+it to exactly that job. **So it cannot fire on a soldier or a splasher — which is the only thing
+being built in the spiral above.** The floor is present, correct, and unreachable in the regime
+that needs it.
+
+This is the third instance of this lineage's most productive bug shape (iterations 30/35/36 were
+all gates narrower than their mechanism, and 49/50/51 were all guards sitting across a whole
+mechanism instead of on the branch that starts work). It is also, uncomfortably, the shape my own
+LEARNINGS file tells me to go looking for, found only because a control game for an unrelated
+iteration happened to print the losing seat's trajectory.
+
+### Arms — one clause, nothing else
+
+- `carol_i54_0` — `FLOOR_ALL_TYPES = false`. Iteration 36's exact scope. The zero arm.
+- `carol_i54_a` — `FLOOR_ALL_TYPES = true`. The floor applies to every unit type.
+
+### Pre-registered, before any result
+
+- **Zero-arm control**: `carol_i54_0` vs `carol_iter44` on DefaultMedium must reproduce `carol` vs
+  `carol_iter44` — **win, round 830**. As in iteration 52 the replay HASH cannot serve, because the
+  indicator string gained `pR`/`pF`/`pFB` and indicator strings are recorded in the replay. Winner
+  + round + counters is the check.
+- **Manipulation check, stated as a SHARE not a count** (iteration 52's lesson, applied at design
+  time rather than after a wasted screen): the dose is `pFloorBig / pRolls` — the fraction of
+  otherwise-affordable build rolls that the *widened* scope refuses. `pFB > 0` is necessary and
+  explicitly not sufficient. I want that share **materially above 0 and below ~50%**: near zero the
+  arm is the control wearing a different name, and above half the tower is banking more often than
+  it builds, which is a different and much more aggressive bot than the hypothesis describes.
+- **Realized quantity the hypothesis names**: **coverage retention = final / peak** for the losing
+  seat. The control's is **165/387 = 43%**. The mechanism is supposed to raise it. Retention is
+  measured on the probe replays and costs no extra games.
+- **Stage 1**: 50 games vs `carol_iter44`, fresh 25-map sample.
+  **ACCEPT >= 34/50, REJECT <= 30/50, 31-33 inconclusive.** Same gate shape as iterations 51-53.
+
+### Prediction, recorded before the run
+
+I expect the manipulation check to pass easily and the screen to be **close**. The floor cannot help
+in games that are already being won, and the spiral it targets is a losing-seat phenomenon, so at
+best it converts some losses into longer losses. The specific risk is **opening tempo**: a soldier
+costs 200 paint against a 200 floor, so a tower now needs 400 paint to roll one, and a starting
+tower holds 500. If that delays the first soldiers even slightly, this lineage's known weakness —
+losing the race to the 70% paint condition — gets worse in exactly the games it is already losing.
+**A plausible outcome is that the mechanism fixes the spiral and loses the screen anyway**, and if
+that happens the retention number will say so and I will report both rather than only the verdict.
