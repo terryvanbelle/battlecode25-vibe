@@ -610,6 +610,12 @@ The accept/reject machinery lives or dies on these rules. Each one is paid for.
 
 ## The iteration loop
 
+**See also `METHODS.md`** — practices that have demonstrably worked for one of
+the three lineages, collected by the coordinator so the others can adopt them.
+This document is the loop; that one is the accumulated craft of running it, and
+it is where a practice goes once a lineage has evidence rather than a preference.
+
+
 Hyperparameters (starting values; revisit only with evidence):
 
 | name | value | meaning |

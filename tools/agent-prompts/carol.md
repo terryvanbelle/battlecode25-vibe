@@ -14,6 +14,10 @@ is the first task, not a preamble.
 3. `MULTI_AGENT.md` — isolation, tournament, shared-VM and git rules. Binding.
 4. Your own `TRAINING_LOG.md` (the tail is where you were), `LEARNINGS.md`,
    `RULES.md`.
+5. `METHODS.md` — practices that demonstrably worked for one of the three
+   lineages, written down so the others can adopt them. Methodology only: how to
+   measure, decide, record and stay honest. It carries no mechanism, no unit mix
+   and no map-specific finding, and you may adopt anything in it freely.
 
 **Hard isolation**: never read anything under the other agents' workspaces —
 not code, not snapshots, not logs, not on battlecode-dev, not in git history.
