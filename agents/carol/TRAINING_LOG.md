@@ -17342,3 +17342,67 @@ running remains a self-play instrument too.
 maps", which is the direction the whole 45–58 thread has been aimed at. It is *not* evidence for the
 floor story specifically, because the arm that produced it is the compounding version. The
 attribution stays OPEN and `carol_i58_rl250` is the experiment that settles it.
+
+## Iteration 58 — a FREE PLACEBO inside the run, and a planned experiment killed on power
+
+### First: the attribution experiment I registered is UNDERPOWERED. Do not run it.
+
+Before spending games I costed it against my own calibrated chaos floor (sd 12.96 on a 150-game
+margin, so 7.48 on a 50-game one). The statistic is a *difference of two arms*, whose sd is
+`sqrt(2)` times that:
+
+| design | sd(difference) | 2 sd resolution | expected signal | z |
+|---|---|---|---|---|
+| 50-game screen | 10.58 | 21.2 | +14 | **1.32** |
+| 150-game census pair | 18.33 | 36.7 | +42 (if uniform) | **2.29**, at 300 games |
+
+**A 50-game screen cannot separate the hypotheses**, and the census pair reaches 2.3 sd only under
+the most favourable assumption — the very assumption regression to the mean makes unlikely, and
+which I had already registered as unlikely. So `carol_i58_rl250` stays built and unrun. **This is
+the third candidate this session killed on magnitude/power before spending games**, and the pattern
+is now the standing first question rather than an afterthought.
+
+### Second: the run already on disk contains a placebo nobody paid for
+
+With `SOLDIER_GAP = 1000`, a tower's clock is compared against round 1000, so **no exemption of any
+kind can fire before round 1000**. In games that end earlier, `carol_i58_1000` is *behaviourally
+identical* to `carol_iter44` — the pair is a pure mirror. That subset is a placebo, and its
+selection is clean: it is defined entirely by baseline dynamics, because in it the treatment
+provably did nothing.
+
+| subset | candidate | margin | |
+|---|---|---|---|
+| **G=1000, mechanism CANNOT have fired (<1000 rounds)** | **9/18 = 50.0%** | **+0** | **placebo PASSES exactly** |
+| G=1000, could have fired (>=1000) | 20/32 = 62.5% | +8 | +1.41 sd |
+| G=250, <1000 rounds | 10/19 = 52.6% | +1 | |
+| G=250, >=1000 rounds | 22/31 = 71.0% | +13 | +2.33 sd |
+
+**9/18 is the exact mirror null.** Per doctrine 13 I ran this expecting to pass, which is when a
+check is least likely to be run and most valuable: it confirms there is no positional or systematic
+bias in the measurement, and it is a live arm-to-arm identity check — the mechanism really is the
+only difference between the arms.
+
+### Third: the complication, which cuts against the tidy reading
+
+I predicted the `G=250` short games would show the effect, since its mechanism can fire from round
+250. **They do not** (52.6%, +1). In *both* arms the gain sits entirely in games lasting >= 1000
+rounds. So the cut that matters is **game length**, not "mechanism fired".
+
+The mechanistic reading is that the compounding loop needs time — it converts ruins into towers into
+soldiers, and that ladder takes hundreds of rounds. That is plausible and consistent with the trace.
+But **game length is post-treatment**: this mechanism keeps carol contesting, which lengthens games.
+Conditioning on it is the same error family as iteration 47's decided/tiebreak split, which I
+recorded then as "partly definitional". So the 71.0% is **not** a clean effect estimate and I am not
+quoting it as one.
+
+**What survives the caveat**: the placebo, because within it the treatment provably did nothing, so
+no post-treatment conditioning can contaminate it. That is the one number here I would defend
+unreservedly.
+
+### Attribution status: still OPEN, and now with a reason it is hard rather than a plan to close it
+
+`G=1000` is *not* the pure-compounding arm I first thought: in the 21 games reaching round 2000, a
+tower born at R also gets a rate-rule firing at R+1000, so both paths are live. The two rules differ
+mainly in **timing** — the compounding version fires up to `SOLDIER_GAP` rounds earlier — rather than
+in the number of exemptions over a long game. That is exactly why the arms are so hard to separate,
+and it is a better statement of the problem than the experiment I had queued.
