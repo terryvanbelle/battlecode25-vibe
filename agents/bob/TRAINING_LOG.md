@@ -15006,3 +15006,86 @@ forbids a *standing* map list because accepted iterations drift toward it. Here 
 by a map property fixed in advance by the mechanism's own conditioning variable, the mechanism is
 provably inert outside it, and the accept decision still has to weigh the stratum by its true share of
 the 75-map corpus — which the tournament, playing all 75 uniformly, will audit twice a day regardless.
+
+## Iteration 40 — **REJECTED**, and the secondary prices the whole direction out.
+
+Run `20260909-125651`, 150 games, `BOT=bob_iter20 OPPONENTS="bob_sa0 bob_sa1 bob_sa2"`.
+
+```
+arm      SMALL_AREA   score   vs null   swept  sweptAg  split   diff-from-null
+bob_sa0        0      25/50     +0        0        0      25       0/50   <- NULL
+bob_sa1     1000      27/50     +2        3        1      21       4/50
+bob_sa2     1500      28/50     +3        4        1      20       7/50
+```
+
+**The zero arm is EXACT**: 25/50, all 25 maps split, 0 diff-from-null. Run valid, not void.
+
+Gate was **+10 accept / +7..+9 replicate / <= +6 reject**. `+2` and `+3` are rejects. They are also
+**both inside the impossible-gate problem I recorded before the run reported** — `bob_sa1` could not
+have scored above +8 — so I am not treating these as a near miss against a fair bar. The bar was
+wrong; the result is still a reject on its own terms, because +2 on the 16 games where the mechanism
+can act is 10/16 against 8/16, which resolves nothing (se ~ 12 points).
+
+**My pre-registered prediction was WRONG.** I predicted `bob_sa1 > bob_sa2` on the reasoning that the
+wider threshold would re-import iteration 34's long-game harm. I got +2 vs +3. The two are well inside
+1 se of each other so the ordering is unresolved, but I predicted a *sign* for the difference and did
+not get it, and I am recording that as a miss rather than as noise I happened to survive.
+
+### The secondary, read after the primary, and it is the whole value of the iteration
+
+`bob-tools/sa_eval.py` over the run's own replays, stratified by map area:
+
+```
+arm        stratum   n  arm win%  r30 cov diff  arm spl@30  bot spl@30
+bob_sa0      small  16     50.0%         0.0       0.00        0.00     <- exact null
+bob_sa0      large  34     50.0%         0.0       0.00        0.00
+bob_sa1      small  16     62.5%        +1.7       1.00        0.00
+bob_sa1      large  34     50.0%         0.0       0.00        0.00     <- byte-identical, as argued
+bob_sa2      small  16     62.5%        +1.7       1.00        0.00
+bob_sa2      large  34     52.9%        +1.3       0.24        0.00
+```
+
+**Three things this confirms.** The null reads exactly 0.0 / 0.00 in every cell — the instrument's
+noise floor on byte-identical builds, again. `bob_sa1`'s large stratum is *identical* to the null on
+all three measures, which is the direct empirical confirmation of the byte-identity argument I used to
+show the gate was unreachable. And **the mechanism fired**: the arms field 1.00 splasher at round 30
+on small maps where the incumbent fields 0.00.
+
+**And now the arithmetic that closes the direction.** One splasher at round 30 bought **+1.7
+per-mille** of round-30 coverage differential. From LEARNING 69, bob's round-30 differential against
+carol on small maps is **-65**, and the cliff below which bob wins ~6% of games sits at **-49**. So:
+
+> Clearing the cliff needs **+16 per-mille**. At +1.7 per splasher that is **~9-10 splashers at round
+> 30**. Fully closing the gap needs ~38. Carol achieves its lead with **2.1**. A splasher costs 300
+> paint and a tower starts the game with 500, so ten of them by round 30 is not affordable in any
+> arrangement of the spawn schedule.
+
+**Early splasher supply cannot close the small-map coverage gap.** This is the same shape as
+iteration 37's closure of soldier action utilisation, and the same order of magnitude of shortfall —
+a confirmed, correctly-signed mechanism that is ~10x too small for the hole it was aimed at.
+
+**So bob's small-map deficit is not a units-per-turn problem in either direction I have now tested.**
+Bob does not lose small maps because its soldiers waste turns (iteration 37: +3.7 per-mille,
+extrapolating to +5.4 at perfection), and not because it lacks early splashers (this iteration: +1.7
+per splasher, needing ~10). Carol converts 2.1 splashers and ~1.6 soldiers into a 65 per-mille lead
+that bob cannot reproduce with the same units. **Whatever carol is doing, the difference is not the
+unit mix — it is what the units do with their paint**, and that is where I will look next.
+
+### Changing the registered follow-up, and saying so
+
+Before this run reported I registered the properly-powered follow-up as a **census of all ~22 corpus
+maps under 1000 tiles** (~88 games), to resolve the small-map win rate exactly. **I am not running
+it**, and the reason is the secondary rather than the primary: that census would spend 88 games
+resolving a +-2-win effect whose mechanism I can now show is ~10x too small to matter. Resolving it
+more precisely does not change what to do next.
+
+Recording the change explicitly because a follow-up quietly dropped is indistinguishable from one
+that was never registered. The direction goes in the ledger as **CLOSED on magnitude, not on
+power** — the distinction that makes it safe to leave un-run.
+
+**Closed-directions ledger, ADD**: "lift the round-60 splasher gate on small maps" is CLOSED at
++2/+3 wins, mechanism confirmed firing (1.00 splasher at r30 where the incumbent has 0.00) and priced
+at +1.7 per-mille against a 16 per-mille requirement.
+
+`src/bob/` carries `SMALL_AREA = 0` and `MARKCLEAN = 0`, both exact zero arms. **`bob_iter20` remains
+the bot; HEAD's behaviour is unchanged.**
