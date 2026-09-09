@@ -1911,3 +1911,26 @@ methodological refinement that arrives already knowing which of your results it 
 hypothesis about your incentives, not about your data.** Check which way a proposed correction
 cuts *before* deciding whether it is principled; if you cannot tell the two apart on the
 statistics alone, take the one that does not favour you.
+
+## A manipulation check proves the mechanism FIRED, never that firing it HELPED (2026-09-09)
+
+The accept audit found three consecutive iterations (34, 35, 36) admitted on margins of +6, +16,
++6 against a bar that should have been +17. Two were coin flips, and my own log said so in the
+entry that accepted them — iteration 36's reads "a coin flip clears this gate a quarter of the
+time". Each was carried by a manipulation check that confirmed, often spectacularly, that the new
+mechanism did the thing it was built to do.
+
+That evidence is necessary and it is not sufficient. A manipulation check answers "did my code do
+what I think it does" — it is a *correctness* test that protects against measuring a no-op. The
+accept criterion is a different question, "did doing it win more games", and only the win margin
+speaks to it. Iteration 45's own probe is the clean illustration: the drain fell 59–69%, exactly as
+designed, *and* the tower count collapsed to one. Mechanism confirmed, outcome catastrophic.
+
+**Rule: a confirmed manipulation check may never raise a verdict from below the gate to above it.**
+Its legitimate uses are the reverse — to *reject* a candidate whose mechanism never fired (the
+result is uninformative, not negative), and to explain a result the margin has already established.
+When the margin lands short, the honest reading is "the mechanism works and does not pay", and the
+next move is a cheaper or better-targeted version, not an accept.
+
+Warning sign that this is happening: the accept prose spends more words on the mechanism table than
+on the margin, and contains a sentence conceding the margin is weak. Both were present, twice.
