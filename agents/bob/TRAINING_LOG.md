@@ -17267,3 +17267,59 @@ prediction whose *structural* call was wrong while the magnitude call was roughl
 naming: I size these quantities better than I understand them.
 
 `src/bob/` untouched. **`bob_iter20` remains the bot.**
+
+---
+
+## Iteration 52 — PROBE PRE-REGISTERED (written before the measurement exists): is bob's paint INCOME maxed?
+
+**Why this direction now.** Every closure in `CLOSED.md` #20–#27 is about how bob **spends** its paint, and
+#27 closed that entire family at the bar. **Nothing has been asked about supply since iteration 12.** The
+supply side is not virgin ground — iteration 3 added tower self-upgrade, iteration 4's paint-tower bias was
+REJECTED, iteration 12 added SRPs, and coordinate-keyed tower-type rules are CLOSED — so the live question
+is narrow: **do bob's paint towers actually reach L3, or does the upgrade path stall?**
+
+`Tower.run()` upgrades whenever `chips >= nextLevel.moneyCost + UPGRADE_RESERVE(4000)`. Iteration 3's own
+trace said chips hit **327k unspent at r2000** *before* that mechanism existed. If it now works, towers
+should be maxed and the supply is closed. If it does not, the shortfall is large and cheap to fix.
+
+**A supply-side exchange rate, derived from a gate this lineage already paid.** Iteration 47 is a natural
+experiment in the opposite direction: it cut spawns **−15%** (by draining tower paint into refills) and
+scored **−6 wins**. Read backwards, **+15% spawns ≈ +6 wins**. Bob issues 65,022 paint for ~297 units, so
++15% units needs **≈ +9,750 paint per game**, and the +10 bar needs **≈ +16,000**.
+
+This is deliberately a *different* rate from LEARNINGS 90's, and the difference is the point: 90's rate is
+for paint saved **in unit stashes by moving differently**, and it saturates for *positional* reasons —
+units end up off productive ground. Supply paint arrives in the **tower stash** and moves nobody, so the
+saturation argument does not transfer. Recording that distinction now, before the number, so I cannot
+later borrow whichever rate flatters the result.
+
+**Method, zero games.** `ReplayDump --from 1 --to 2000` prints `UPGRADE <label> hp->N` unconditionally,
+and tower HP by level is **1000 / 1500 / 2000**, so `hp->1500` is L2 and `hp->2000` is L3. Combined with
+tower `SPAWN` and `DIED` lines this reconstructs each tower's level over its whole life. Over the 50
+`bob_e0` games of run `20260909-195732`, plus the registered comparative on the 75 `alice-vs-bob`
+tournament replays (IND dropped at source).
+
+**PRE-REGISTERED:**
+
+- **Primary: FOREGONE paint income per game** = Σ over paint-tower-rounds of `(15 − paintPerTurn at that
+  level)`, i.e. the paint per turn left on the table by towers not yet at L3. (SRP's `+3S` is
+  level-independent and is excluded from both sides.)
+  - **≥ 16,000/game** ⇒ enough to clear the +10 bar at iteration 47's rate ⇒ **build the fix**.
+  - **≤ 5,000/game** ⇒ **CLOSED for the cost of one probe**; supply is effectively maxed.
+  - between ⇒ size the *achievable* part before building anything.
+- **Registered as NOT an accept test.** It measures a rate over existing games and can accept nothing.
+- **Comparative**: the same reconstruction for alice. If alice's paint towers are no better upgraded than
+  bob's, the shortfall is a property of the game's economy rather than of my policy — the reading that
+  closed iterations 46 and 51.
+- **A confound I am naming in advance**: a tower that dies young cannot be upgraded, so foregone income
+  partly measures **tower survival**, not upgrade policy. I will therefore report foregone income split by
+  whether the tower ever became upgradeable (survived long enough to afford it) — and **if most of the
+  shortfall is dead towers, this closes as an upgrade question and re-opens as a tower-defence one**,
+  which is a different iteration.
+- **Prediction, registered with its mechanism**: the upgrade path *works* and most surviving paint towers
+  reach L3, so foregone income lands **below 5,000** and this closes. Bob's chips are abundant and the
+  trigger is cheap. **Scoring my own series honestly: my last five predictions got the magnitude roughly
+  right and the structural call wrong**, so the useful part of this prediction is the number, not the
+  story attached to it.
+
+`src/bob/` untouched. **`bob_iter20` remains the bot.**
