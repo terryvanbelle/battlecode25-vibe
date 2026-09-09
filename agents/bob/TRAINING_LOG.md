@@ -13655,3 +13655,86 @@ Note what this does NOT establish. It does not say bob's opening is good; it say
 what separates these games. And it does not name carol's mechanism — "claims them first", "destroys
 bob's", and "makes the ground unusable" all produce this table, and I have not yet run the case that
 separates them.
+
+### `bob_rush` REJECTED as a regime instrument — read against its pre-registered criterion
+
+Run `20260909-083527`, 48 games, 12 pinned small/ruin-poor maps, `bob_denier` in the same run on the
+same pinned maps so the length comparison is exact rather than a cross-run subtraction.
+
+Registered: *"useful if its median game length is under ~400 rounds with at least a few games under
+200; failed if it looks like bob_denier."*
+
+```
+  opponent       n   median   <=200   <=400    min    max   bob win%
+  bob_denier    24      668       0       1    226   2000      66.7%
+  bob_rush      24      760       1       5    136   2000      58.3%
+  (carol, same map class, for reference)  484       9/52                42.7%
+```
+
+**FAILED.** Median 760 against a registered threshold of 400. One game under 200. It is marginally more
+short-game-producing than the denier (5 vs 1 under 400, min 136 vs 226) and that is all.
+
+I am recording this as a rejection rather than as "promising", because the criterion was written down
+before the run precisely so that a 5-vs-1 improvement could not be talked into a pass.
+
+**Incidental**: bob_rush is a *better peer* than bob_denier — 58.3% sits inside the 30-90% peer band
+while the denier's 66.7% is drifting up. It is kept for that reason. It is not a regime instrument and
+must not be cited as one.
+
+### Why it failed, and the finding that came out of it — which is about BOB, not the archetype
+
+Mechanism check on `bob_rush__CastleDefense__botA` (T1 = bob, T2 = bob_rush):
+
+```
+  round 10   bob  sold5 spl0 tw2 twPaint 100      bob_rush  sold2 spl0 tw2 twPaint 700
+  round 30   bob  sold8 spl0 tw3 twPaint 295      bob_rush  sold4 spl0 tw3 twPaint1045
+  round 60   bob  sold6 spl0 tw4 twPaint 925      bob_rush  sold3 spl1 tw3 twPaint 995
+```
+
+**The paint floor engaged exactly as designed** — 2 soldiers against bob's 5, tower paint 700 against
+100. But bob_rush shows `spl0` until round 60 *with the round-60 gate removed*. The two halves of the
+policy fought each other: throttling spawn volume also throttles the splasher share, because the mix is
+defined over cumulative spawn **count**. I bundled two mechanisms into one archetype and they
+interfered — my own error, and the same non-additivity doctrine 5b describes, committed while building
+an instrument rather than a candidate.
+
+**But chase why, because it indicts bob.** `SPLASHER_SLOTS = 0b01100` puts the splasher slots at
+positions **2 and 3** of each tower's own five-spawn cycle (`spawned` is per-robot state, so each tower
+counts separately):
+
+```
+  tower's spawn #0  SOLDIER    #1  SOLDIER    #2  SPLASHER    #3  SPLASHER    #4  MOPPER
+```
+
+And the gate does not *delay* those slots, it **converts them**:
+
+```java
+: (((SPLASHER_SLOTS >> slot) & 1) != 0 && rc.getRoundNum() > 60) ? UnitType.SPLASHER
+: UnitType.SOLDIER;                       //  <- a splasher slot before round 60 becomes a SOLDIER
+```
+
+`spawned++` still runs, so the slot is consumed. Therefore **before round 60 bob's realised mix is
+exactly 4 soldiers : 1 mopper**, and the paint that iteration 20 allocated to a splasher is spent on a
+soldier — the one unit type that cannot overwrite enemy paint, which is the thing that needs doing.
+
+In a ruin-poor game bob spawns 7-8 units *in total* and cannot afford any after round 30. So:
+
+**Iteration 20 — my last accepted change — is not merely inert in the games I lose. It is converted
+into its opposite.** It was accepted on a 25-map sample whose games run 800+ rounds, where it does
+something real; the games that decide my tournament standing against carol end at 108-183.
+
+That is doctrine 5b's blind spot with a name and a line number: the accept gate measured iteration 20
+against a baseline in a regime where the gate's own condition is satisfied, and never in the regime
+where it inverts.
+
+**Registered now, before building anything**: the discriminating check is a *mechanism* check and does
+not need the missing regime. Un-gate the splasher slots and count, in-bot at the decision point, how
+many splashers bob actually fields before round 60 on a ruin-poor map. If the answer is still ~0, the
+slot-position explanation is wrong and affordability is the whole story.
+
+**Closed-directions ledger, ADD**: "bob_rush / production-policy archetypes as a route to the
+short-game regime" is CLOSED. Moving bob's production policy to the opposite pole — no chip reserve,
+early splashers, paint floor — changed the games substantially (58.3%, and clearly different traces)
+and moved the median game length from 668 to 760, i.e. **not toward the regime at all**. Game length on
+these maps is therefore not controlled by production policy, which is itself worth knowing: whatever
+lets carol end games by round 130 is a unit-behaviour capability, not a spawn mix.
