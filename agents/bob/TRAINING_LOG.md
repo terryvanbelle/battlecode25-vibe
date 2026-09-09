@@ -17917,3 +17917,88 @@ Ruin sides are assigned by nearer anchor.
   right 2, nominally right 2, plainly wrong 6; this is a *which-quantity* call, the kind I keep missing.
 
 `src/bob/` untouched. **`bob_iter20` remains the bot.**
+
+## Iteration 57 — **THE PRIMARY FIRES.** Bob leaves 18.4% of its OWN-side ruins unmarked. Zero games.
+
+75 `alice-vs-bob` replays, ruin positions from each game's round-1 paint-only grid, sides assigned by
+nearer round-1 spawn anchor. **Isolation control**: `grep -c ' IND '` = **0**.
+
+```
+  ruins/map 18.3    never marked by EITHER team: 0.20/game (1%)
+
+  bot      own-side ruins   own-side MARKED   own-side rate
+  alice              9.07              8.31           91.6%
+  bob                9.19              7.49           81.6%
+
+  contested (both marked): 4.88/game
+    alice marked first on 3.07/game (62.8%)   median lead 361 rounds
+    bob   marked first on 1.81/game (37.2%)   median lead  45 rounds
+```
+
+**Only 1% of ruins go unmarked by both teams**, so this is not a property of the maps — essentially every
+ruin is reachable and gets claimed by someone.
+
+**PRIMARY: bob's own-side mark rate is 81.6% against alice's 91.6% — exactly 10.0 points below**, meeting
+the registered *"≥10 points below ⇒ genuine reach/timing defect ⇒ worth a gate"* band. The precedence
+clause (close if bob is at or above alice) does **not** fire.
+
+**This is the first time in six iterations that the comparative says bob is BEHIND** on the nominated
+quantity — after territory, upgrades, chips, build speed and abandonment all came back with bob ahead.
+And it is behind **on its own half of the map**, so it is not opponent-inflicted.
+
+**On the boundary pass, and why it does not invert the way iteration 52's did.** Exactly 10.0 against a
+10.0 threshold is a narrow pass, and I said in iteration 52 that a narrow pass can be evidence *against* a
+direction. That was true there because the quantity was a **ceiling**. Here I registered in advance that
+this is an **achievable** quantity — the share of ruins bob could reach unopposed and did not mark — so a
+narrow pass means what it looks like. **Sizing:** 9.19 × 10.0% = **0.92 ruins per game**, which is **56% of
+the 1.64-ruin never-marked gap** and **34% of the whole 2.72 completion gap**.
+
+**The diagnostic secondary, now licensed because the primary fired**: on the 4.88 contested ruins a game,
+alice claims 62.8% of them first with a **median lead of 361 rounds**. Bob is not narrowly losing races;
+it is arriving hundreds of rounds late.
+
+### The mechanism, found in my own code
+
+`chooseRuin()` calls **only `rc.senseNearbyRuins(-1)`** — ruins inside vision, r²≤20. If none is visible,
+`workRuin` stays null and the soldier falls through to `Nav.wander()`, a **persistent-direction random
+walk**.
+
+> **Bob has no memory of ruins. It finds them by wandering into them.**
+
+**And `CLOSED.md` #6's own closing number is the motivation for the fix.** #6 closed *ruin
+selection/ranking* on the measurement that bob's mean choice set is **0.83** — i.e. a soldier usually has
+**zero or one** visible candidate, so ranking cannot help. That is precisely the evidence that the problem
+is an **empty candidate set, not a badly ordered one**. This mechanism does not re-open #6: it does not
+change how candidates are ranked, it changes what is *in* the set, by remembering ruins already seen.
+
+`src/bob/` untouched. **`bob_iter20` remains the bot.**
+
+---
+
+## Iteration 58 — PRE-REGISTERED: give soldiers a memory of ruins
+
+**Mechanism.** Each soldier records every ruin it senses. When no ruin is in vision, `chooseRuin()` falls
+back to the **nearest remembered ruin not known to be occupied**, and the soldier navigates to it instead
+of wandering. Ranking among visible candidates is untouched (so `CLOSED.md` #6 stays closed as written).
+
+**Which term moves, and which pays — stated before building (doctrine 46).** It moves **towers**: bob's
+own-side mark rate, sized at 0.92 ruins/game. **The payer is exploration**: `Nav.wander()`'s random walk is
+also how bob *discovers* new ruins and unpainted ground, so a soldier that always beelines to a remembered
+ruin may find fewer new ones and paint less en route. **That is the failure mode to look for**, and it is
+the same class as iterations 49/50's positional payer.
+
+**Doses** (`bob-tools/make-ruinmem-arms.sh`): `k0 = 0` **exact zero arm** (the constant is tested before
+any memory is consulted); `k1 = 1` fall back to remembered ruins; `k2 = 2` same, but also prefer a
+remembered ruin over wandering *even when* one is visible but occupied.
+
+**GATE — thresholds unchanged from iterations 45/47/49/50.** `BOT=bob_iter20`,
+`OPPONENTS="bob_k0 bob_k1 bob_k2"`, maps unset ⇒ 150 games. `delta = 25 − (iter20's wins)`.
+**VOID** unless `bob_k0` is exactly 25/50 with all 25 maps split. **≥+10** accept-eligible; **+7..+9**
+replicate; **≤+6** REJECT.
+
+**Secondaries, in order, at r≤200 (LEARNINGS 87):** (1) **mechanism engaged** — towers at r200 must rise;
+(2) **the payer** — paint actions per soldier-round and `dCov`, which is where lost exploration would show;
+(3) **the channel** — own-side ruins marked, the quantity this is aimed at; (4) **objective** — `dCov`.
+
+**Prediction**: `k1` clears +7 and `k2` is worse than `k1` (over-committing to remembered ruins costs
+exploration). Tally: right 2, nominally right 2, plainly wrong 6.
