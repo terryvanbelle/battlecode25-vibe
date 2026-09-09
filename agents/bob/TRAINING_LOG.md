@@ -16567,3 +16567,37 @@ rise; and on the objective I expect a **small positive at g1 and possible harm a
 it). An interior peak at g1 would be the shape iteration 20 found for `SPLASHER_SLOTS`.
 
 `src/bob/` untouched. **`bob_iter20` remains the bot; HEAD's behaviour is unchanged.**
+
+### Iteration 47 ADDENDUM, written while the run is in flight and BEFORE any result exists
+
+**A second failure mode, registered alongside the first.** The pre-registration named one way the dose can
+engage weakly: `tryRefill()` needs an allied tower **in vision** (r²≤20), so a soldier starving in open
+ground cannot be rescued by any threshold. There is a second, and it is at least as likely:
+
+> `tryRefill()` also requires that tower to hold **≥100 paint** (`a.getPaintAmount() >= 100`), and it
+> withdraws only down to a 50-paint reserve. If bob's towers are themselves paint-poor, a soldier will ask
+> earlier, be refused, and the dose will land on nothing.
+
+This is not idle: a tower's stash pays the **paint cost of every unit it builds** (MOPPER 100, SOLDIER 200,
+SPLASHER 300 — engine-verified, iteration 41), money towers have `paintPerTurn == 0` and never regain paint
+at all, and iteration 33's opening dump showed bob's towers sitting at 200–280 paint with the `starved`
+counters appearing from round 30 and `twPaint` then living at **50–200**. A tower at 150 paint refuses
+every refill request while still being able to build a soldier.
+
+**So the secondaries have a three-way reading, fixed now:**
+
+- `xfer` **rises** with dose ⇒ the mechanism engaged; read secondaries 2–4 as registered.
+- `xfer` **flat** and `twPaint` **low** ⇒ the tower stash is the binding constraint, not the threshold.
+  The refill threshold is then the wrong knob and the direction closes *here*, but it points at a
+  different, unclosed one: **paint income**.
+- `xfer` **flat** and `twPaint` **healthy** ⇒ proximity is the binding constraint (soldiers starve away
+  from towers), which is the failure mode already registered.
+
+I am adding `twPaint` to the census read for exactly this reason. Note that it is **not** a new gate — the
+primary and its thresholds are unchanged and frozen. This only fixes in advance *how I will explain* a
+null, so that the explanation cannot be chosen after seeing which one flatters the iteration.
+
+**And a number I already have, from validating the census tooling on iteration 45's replays** (two
+BunnyGame replays, stride 1, whole game): bob spawns **44.5** units and loses **33.5** per game, of which
+**26.0 are starvation** — 78%, independently reproducing iteration 44's 89% figure on a different corpus
+with a different instrument. Whatever iteration 47 says about the *fix*, the *defect* is confirmed twice.
