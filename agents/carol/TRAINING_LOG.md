@@ -12871,3 +12871,52 @@ the fact: **I expect (a)**, because two of the three gates were coin flips and t
 one instrument in this project that cannot be talked into a result. If (b) lands instead, the
 lesson is about the roster's resolution, not about my gate — and the gate correction stands
 regardless, since it was derived from an identity rather than from any outcome.
+
+## Iteration 45 RESULT — REJECT. The mechanism fired at full strength and did not pay.
+
+Run `20260909-081029`, `BOT=carol_iter44` on a fresh random 25-map sample, all three arms sharing
+one sample, 150 games. **Reported margins below are the BASELINE's**, per the convention registered
+before the run; the candidate's score is `50 - reported`.
+
+| arm | baseline margin | **candidate score** | candidate margin | z (sd 8.59) | verdict |
+|---|---|---|---|---|---|
+| `carol_i45_a` (fallback-only) | −4 | **27/50** | +4 | +0.47 | UNRESOLVED |
+| `carol_i45_b` (main) | +8 | **21/50** | −8 | −0.93 | UNRESOLVED |
+| `carol_i45_c` (ally-first) | +4 | **23/50** | −4 | −0.47 | UNRESOLVED |
+
+**Nothing clears ACCEPT >= 34/50. Iteration 45 is rejected.** `src/carol` stays at `carol_iter44`.
+
+Worth recording that the verdict is gate-independent: under the old (too lenient) >= 29/50 bar the
+answer is also "no accept". The gate correction did not manufacture this rejection.
+
+### Scoring my own pre-registered predictions: 1 of 3
+
+- **`a` lands in 17..33, unresolved** — **CORRECT** (27/50).
+- **`b` <= 16/50, a resolved loss** — **WRONG**. It scored 21/50. `b` is below the baseline, but not
+  resolvedly so. I had just finished criticising the two-map probe for over-reading, then wrote a
+  prediction that took the probe's effect size at face value. The containment cost is real in
+  direction and roughly half the size the probe implied.
+- **`c` (ally-first, strictly stronger containment) scores below `b`** — **WRONG**, and this is the
+  informative failure. `c` scored **23/50 against `b`'s 21/50**: the *stronger* containment did
+  *better*. There is no dose-response here at all. The three arms span 21–27/50 and the widest gap
+  (a vs b, 6 games = 12 margin = 1.28 sd on the arm-difference floor) is itself unresolved, so the
+  honest statement is that **the three arms are indistinguishable from each other and from a small
+  loss.**
+
+That kills the clean version of the containment story. Containment predicted a monotone ladder —
+more refusal to step on enemy paint, more confinement, worse result — and the ladder is flat.
+Whatever is costing `b` its 8 games is not simply "how often the unit refuses to advance".
+
+### This is the first verdict under the new rule, and the rule is what decided it
+
+Iteration 45 had the strongest manipulation check in this log: underfoot enemy paint 40.7% -> 12.3%,
+mean drain −69%, doses correctly ordered, no arm near the bytecode limiter. The mechanism did
+exactly what it was designed to do, at a size far above noise — and bought nothing. Under the habit
+that produced iterations 34, 35 and 36, that table plus `a` at 27/50 is an accept. Under the rule
+committed this morning it is a reject, because a manipulation check may not lift a verdict from
+below the gate to above it.
+
+**The paint-drain thesis is not thereby refuted; the cheap way of acting on it is.** Cutting the
+drain by three quarters is worth nothing if the price is the ground you had to cross to spend the
+paint. Any successor has to buy the drain reduction without a movement restriction — the drain and
+the confinement came bundled in every arm here, including the "free" one.
