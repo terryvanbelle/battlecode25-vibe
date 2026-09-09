@@ -32,6 +32,8 @@ gssh "
     b=\$(basename \"\$f\")
     java -classpath \".:\$BC_JAR\" com.google.flatbuffers.ReplayDump \"\$f\" --every $AT 2>/dev/null |
       awk -v F=\"\$b\" '
+        /^=== GameHeader/ { if (match(\$0,/team1=[^ ]+/)) t1=substr(\$0,RSTART+6,RLENGTH-6);
+                            if (match(\$0,/team2=[^ ]+/)) t2=substr(\$0,RSTART+6,RLENGTH-6) }
         /^=== MatchHeader/ { hdr=\$0 }
         /^round .* \\| T1 / { rn=\$2; if (rn % $AT == 0 || rn==$AT) { last[rn]=\$0 } }
         /^=== MatchFooter/ { foot=\$0 }
@@ -41,7 +43,7 @@ gssh "
           if (match(foot,/winType=[A-Z_]+/)) ty=substr(foot,RSTART+8,RLENGTH-8);
           if (match(foot,/rounds=[0-9]+/)) rr=substr(foot,RSTART+7,RLENGTH-7);
           line = last[$AT];
-          printf \"%s|%s|%s|%s|%s\\n\", F, w, ty, rr, line;
+          printf \"%s|%s|%s|%s|%s|%s|%s\\n\", F, t1, t2, w, ty, rr, line;
         }'
   done
 "
