@@ -60,7 +60,7 @@ public class RobotPlayer {
      * measurement-neutral -- it shifts the replay hash, so a dose pair must share one tag if
      * doctrine #3's byte-identity check is to work on raw hashes.
      */
-    static final String BUILD = "i50a";
+    static final String BUILD = "i50aH";
 
     // ---- Iteration 34: fewer MONEY towers, because paint binds and chips do not -------------
     // towerTypeFor makes a ruin a money tower when k % MONEY_MOD == 0, so MONEY_MOD sets the

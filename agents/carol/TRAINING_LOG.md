@@ -15163,3 +15163,106 @@ exactly what "install the check where the mistake happens" means here. Recorded 
 - **Then**: screen `carol_i50_a` vs `carol_iter44` on the pinned 25 maps, gate `>= 34` accept,
   `<= 30` reject. The placebo maps `Brat` and `DefaultSmall` are in that sample and must again come
   back identical to the incumbent.
+
+## RETRACTION — "cause 1 confirmed" was an over-read, and the experiment never isolated the branch
+
+Superseding the entry above in place, not deleting it: decisions taken while it stood need to find
+that it was withdrawn and why.
+
+**What I claimed**: that `sD = 0` at gate 1500 versus `sD = 2` at gate 300 confirmed the chips gate
+was blocking the completion branch.
+
+**What undermines it**: I then hoisted the completion loop above the gate and re-ran `carol_i50_a`
+at gate 1500. The result is **identical on every counter — `sA` 10, `sM` 4, `sD` 0, `sP` 40 — and
+identical peak bytecode, 7059.** If the hoist had changed what executed, peak bytecode would
+almost certainly have moved, because the loop now runs 9 extra engine calls on every soldier turn
+below the gate. Identical-to-the-digit is doctrine 3's arm-to-arm signature for *the change never
+executed*.
+
+**Two readings, and I am not choosing between them by argument:**
+
+1. **Genuine null.** The hoist changed nothing because no pattern on that side was ever completable
+   in the first place — in which case `i50_b`'s `sD = 2` came from the lower gate raising the rate
+   of the **whole pipeline** (`sA` 10 -> 31, so far more marking and painting too), not from
+   unblocking completion. Cause 1 would then be **refuted**, not confirmed.
+2. **Stale replay.** I deleted the *local* replay before re-running, but `vm-match.sh` pulls from
+   the **remote** match directory, which still held a file of the same name. If the remote game did
+   not actually re-run, the old replay would be re-pulled silently and look like a fresh result.
+
+**Discriminating test, in flight**: `BUILD` bumped `i50a` -> `i50aH`, one match. The tag is stamped
+into every indicator string, so if the replay reads `i50aH` the build is fresh and reading 1 holds;
+if it reads `i50a` the replay is stale, reading 2 holds, **and several of today's single-match
+probes need re-checking** — which is why this is worth a game rather than a guess.
+
+### What BOTH versions took for granted, which is the part that is wrong either way
+
+Doctrine: when retracting, do not only ask what was wrong — ask what both versions assumed.
+
+**Both assumed that changing `SRP_MIN_CHIPS` isolates the completion branch. It does not.** That
+one constant gated *three* branches at once — completing, painting an existing pattern, and marking
+a new one. So `i50_b` was never a single-branch experiment, and no reading of it can attribute an
+effect to completion specifically. I designed a manipulation that moves three things and then
+reasoned as though it moved one.
+
+That is the same error as doctrine 5b's "an ablation prices a CODE PATH, not a concept", arriving
+in the *design* of a probe rather than in the reading of an ablation, and it is independent of
+which reading above survives. **The fix is to instrument the branches separately** — a counter for
+"completion was possible and the gate refused it" would have answered the original question
+outright, with no second arm at all, and is what I should have built before spending either game.
+
+**Status: iteration 50's mechanism is NOT yet delivering, the cause is NOT established, and no
+screen may be run until it is.** The hoist is kept regardless, because a delivery path under an
+entry gate is wrong on its own terms even if it was not the binding constraint here.
+
+## The discriminating test RESOLVES the retraction: the build was fresh, so cause 1 is REFUTED
+
+`BUILD` bumped `i50a` -> `i50aH`, one match vs `carol_iter44` on `DefaultMedium`.
+
+```
+BUILD tags in replay: {'i50aH'}
+counters: sA=10  sM=4  sD=0  sP=40   peak bc 7059
+```
+
+**The replay carries the new tag, so `vm-match.sh` is serving current code and reading 2 (stale
+replay) is eliminated.** Nothing else in today's single-match probes is in doubt; that was the
+outcome worth a game to rule out.
+
+**Therefore reading 1 holds and cause 1 is refuted.** With the completion loop hoisted above the
+chips gate, the game is *byte-identical* to the version with it below — every counter and the peak
+bytecode unchanged. The hoisted loop adds engine calls that all return false and changes no action,
+so the gate was never blocking an *available* completion. It could not have been the reason
+`sD = 0`.
+
+Both facts reconcile exactly, which is what licenses believing them (the tell for a wrong referent
+is two artefacts that should agree and don't): peak bytecode is a *maximum*, and the heaviest turn
+is one that runs full `srpWork` including step 3's nine `canMarkResourcePattern` calls — which only
+happens **above** the gate, in both builds. So the peak turn is the same turn in both, and the extra
+below-gate calls never approach it. Nothing is left unexplained.
+
+**So `i50_b`'s `sD = 2` is attributable to the lower gate raising the rate of the whole pipeline
+(`sA` 10 -> 31: far more marking and far more painting), not to unblocking completion.** Which is
+exactly the confound the retraction identified: one constant, three branches.
+
+### Where iteration 50 actually stands
+
+The live hypothesis is now **throughput**: a pattern needs 25 tiles fixed by passing soldiers, and
+at gate 1500 too few patterns get enough traffic to ever close, while at gate 300 enough do. Cause
+2 (soldiers overwriting each other's overlapping marks) remains **unmeasured** and is still live —
+it would produce the same throughput symptom.
+
+**The hoist is kept regardless.** A delivery path sitting under an entry gate is wrong on its own
+terms; it simply was not the binding constraint here, and I would rather carry a correct structure
+that bought nothing than leave a latent trap that happens to be dormant.
+
+### Resume point — the next thing to build is an INSTRUMENT, not an arm
+
+Do not run another dose. Both games spent here failed to attribute anything because `SRP_MIN_CHIPS`
+moves three branches at once. Build the separating counters first, in-bot, at the decision point:
+
+- `srpNear`  — turns on which an own-team pattern's marks were visible and incomplete;
+- `srpBlock` — turns on which `canCompleteResourcePattern` was FALSE while marks were visible
+  (i.e. the pattern exists but is not finished);
+- `srpOverlap` — marks visible from two centres whose 5x5s intersect (measures cause 2 directly).
+
+Those three separate throughput from overlap from gating, with no second arm and no guessing, and
+they answer the original question outright. **No screen until `sD > 0` at a gate worth shipping.**
