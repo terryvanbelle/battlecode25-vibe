@@ -44,6 +44,10 @@ import java.util.zip.GZIPInputStream;
  *
  * Usage: ReplayDump <file.bc25> [flags]
  *   --from R --to R   detailed action log window
+ *   --ind PKG         print indicator strings for teams whose package contains
+ *                     PKG (repeatable). Without it, NO team's indicator strings
+ *                     are printed: they are a bot's private debug output, and a
+ *                     tournament replay holds both teams' worth.
  *   --robot ID        per-turn track of one robot
  *   --every N         aggregate sampling stride (default 25)
  *   --map N           render the arena every N rounds (0 = off, default)
@@ -65,7 +69,19 @@ public class ReplayDump {
     // lineage lost an instrument to exactly this and caught it only because a
     // companion maximum of 0 was impossible. Counting what the window SUPPRESSED
     // makes the silence self-reporting.
-    static long indSeen = 0, indPrinted = 0;
+    static long indSeen = 0, indPrinted = 0, indWithheld = 0;
+    // Indicator strings are a bot's PRIVATE debug output -- internal counter
+    // names, state machine labels, the iteration it thinks it is on. That is
+    // closer to another lineage's notes than to its play, and a tournament
+    // replay contains both teams' worth. Reported by the lineage that saw two
+    // such lines incidentally, stopped, and used nothing from them.
+    //
+    // So IND is now opt-in per team: --ind <substring> prints only the teams
+    // whose package matches. The default withholds every team's, and the footer
+    // says how many were withheld, because silence that looks like absence is
+    // the failure this file already fixed once.
+    static final Map<Integer, String> teamPkg = new HashMap<>();
+    static final List<String> indAllow = new ArrayList<>();
     static int trackRobot = -1;
     static int every = 25;
     static int mapEvery = 0;
@@ -104,6 +120,7 @@ public class ReplayDump {
             if (i + 1 >= args.length) throw new IllegalArgumentException("flag " + flag + " needs a value");
             String val = args[++i];
             switch (flag) {
+                case "--ind": indAllow.add(val); break;
                 case "--from": fromRound = Integer.parseInt(val); break;
                 case "--to": toRound = Integer.parseInt(val); break;
                 case "--robot": trackRobot = Integer.parseInt(val); break;
@@ -132,6 +149,7 @@ public class ReplayDump {
                 StringBuilder sb = new StringBuilder("=== GameHeader");
                 for (int k = 0; k < gh.teamsLength(); k++) {
                     TeamData td = gh.teams(k);
+                    teamPkg.put((int) td.teamId(), td.packageName());
                     sb.append("  team").append(td.teamId()).append("=").append(td.packageName());
                 }
                 System.out.println(sb);
@@ -158,13 +176,20 @@ public class ReplayDump {
                 String win = toRound < fromRound ? "none (no --from/--to given)"
                                                  : fromRound + ".." + toRound;
                 System.out.println("=== action-log window " + win
-                        + ": IND seen=" + indSeen + " printed=" + indPrinted);
-                if (indSeen > 0 && indPrinted == 0)
+                        + ": IND seen=" + indSeen + " printed=" + indPrinted
+                        + " withheld=" + indWithheld
+                        + (indAllow.isEmpty() ? " (no --ind given)" : " (--ind " + String.join(",", indAllow) + ")"));
+                if (indWithheld > 0)
+                    System.out.println("!! " + indWithheld + " indicator string(s) inside the window were WITHHELD:"
+                            + " they belong to a team you did not name with --ind. A bot's indicator"
+                            + " strings are its private debug output; pass --ind <your package substring>"
+                            + " to see your OWN.");
+                if (indSeen > 0 && indPrinted == 0 && indWithheld == 0)
                     System.out.println("!! " + indSeen + " indicator string(s) occurred but NONE were printed:"
                             + " they fall outside the action-log window. Reading this dump as"
                             + " \"no indicators\" would be reading a window you did not open --"
                             + " pass --from/--to covering the rounds you care about.");
-                indSeen = 0; indPrinted = 0;
+                indSeen = 0; indPrinted = 0; indWithheld = 0;
                 for (int k = 0; k < mf.timelineMarkersLength(); k++) {
                     TimelineMarker tm = mf.timelineMarkers(k);
                     // TimelineMarker.team() is 0-BASED while everything else here is
@@ -589,7 +614,8 @@ public class ReplayDump {
                     // indicator encoding -- that would make a shared tool carry one
                     // lineage's internals.
                     indSeen++;
-                    if (print) {
+                    if (print && !indAllowed(tid)) indWithheld++;
+                    if (print && indAllowed(tid)) {
                         indPrinted++;
                         IndicatorStringAction s = new IndicatorStringAction(); s.__init(pos, bb);
                         System.out.println("round " + round + " " + lbl(id) + " IND \"" + s.value() + "\"");
@@ -599,6 +625,15 @@ public class ReplayDump {
                 default: break;
             }
         }
+    }
+
+    /** True when this team's indicator strings were explicitly requested. A team
+     *  with no package name recorded never matches: fail closed, not open. */
+    static boolean indAllowed(int tid) {
+        String pkg = teamPkg.get(tid);
+        if (pkg == null) return false;
+        for (String want : indAllow) if (pkg.contains(want)) return true;
+        return false;
     }
 
     static byte[] readAll(String path) throws IOException {
