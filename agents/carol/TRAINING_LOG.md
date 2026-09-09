@@ -13620,3 +13620,81 @@ HungerGames Rose giver memstore Oasis fix galaxy mit
 **self-calibrating** threshold derived from observed ruin density, which is the design the
 algorithm recommends when a fixed constant trades one regime's gain for another's loss. That would
 be iteration 48, and it would still have to clear the ordinary gate.
+
+## Prepared next hypothesis (iteration 48 candidate) — carol builds almost no MONEY towers
+
+Noticed while reading the `channels.py` output for iteration 47, not yet tested. Recording it now
+with its generality explicitly UNCHECKED, so a future session inherits the doubt along with the
+idea.
+
+`twPAINT` / `twMONEY` build counts from the games dumped today:
+
+| game | carol paint / money | opponent paint / money |
+|---|---|---|
+| carol vs alice, Leaf (52 ruins) | **6 / 0** | 8 / **15** |
+| carol vs alice, MoneyTower (10 ruins) | 3 / 0 | 3 / 0 |
+| `i47_1400` vs `iter44`, Leaf | 19 / 4 | 5 / 0 |
+
+On the dense map alice takes **15 money towers to carol's zero**, and carol's median treasury is
+**1360 against alice's 2380**. Chip poverty is the binding constraint behind every gate in the
+spawn path, so this is upstream of iteration 47 rather than parallel to it: iteration 47 tried to
+*lower the gate* to the treasury; raising the treasury above the gate reaches the same good by the
+other route. Doctrine 5b: two branches buying the same good are substitutes competing for one
+budget, and the order they fire in sets the allocation by accident. Both need pricing before either
+is built.
+
+`towerTypeFor` makes a ruin a money tower when `k % MONEY_MOD == 0` with `MONEY_MOD = 4`, plus a
+one-sided override that can only push toward paint. So the intended money share is **at most 25%**,
+and — the part worth checking — `k` is a fixed spatial function of the ruin's position, so **which
+ruins you happen to claim decides your money share**. A bot claiming 23 ruins gets close to the
+intended mix; a bot claiming 6 gets a lottery, and carol drew zero on Leaf. Few towers and a
+degenerate money share compound.
+
+Note the history that must be superseded rather than ignored: **iteration 34 deliberately moved
+`MONEY_MOD` 3 -> 4, reducing money towers**, on a weak 28/50 (+0.70 sd) accept — one of the three
+the corrected-gate audit flagged, and part of the stretch the census later vindicated at +38. So
+iteration 34 was a *true* effect and cannot be dismissed as noise; if it is to be reversed, it has
+to be on the staleness argument (the economy it was tuned against has changed), with evidence,
+exactly as iteration 47 had to argue against iteration 30.
+
+**Pre-checks NOT done**: generality across maps (three games, two of them the same map, and I have
+just criticised myself for generalising from two maps — this needs a proper sweep of tournament
+replays before it is worth a candidate); whether the money-share lottery is real or an artefact of
+small tower counts; and the price, since a money tower is a paint tower not built and paint is
+recorded in `RULES.md` as the resource whose exhaustion is unrecoverable.
+
+## Doctrine 16 check, run WHILE the dense census is still in flight — my instrument is in the wrong regime
+
+Recorded before the result arrives, deliberately: a caveat written after seeing the number is worth
+much less than one written before, and this one bears directly on how that number may be read.
+
+Game length on **the same `>= 24`-ruin maps**, tournament games versus my own self-play screen:
+
+| instrument | n | median rounds | share hitting the 2000-round limit |
+|---|---|---|---|
+| tournament, carol vs alice/bob | 68 | **927** | **22.1%** |
+| tournament, carol's LOSSES there | 53 | 907 | 15.1% |
+| my self-play screen `20260909-102945` | 20 | **2000** | **55.0%** |
+
+**More than half of my self-play games on dense maps run out the clock and are decided on the
+coverage tiebreak. Against alice and bob, the same maps resolve by round ~900.** The overall ruin
+coverage of the two instruments matches almost exactly (22.7% vs 20.0% of games on dense maps), so
+this is not a sampling gap — it is a *regime* gap hiding inside a well-matched sample, which is
+precisely the shape doctrine 16 warns about: *"thousands of games, many opponents, clean statistics,
+all drawn from the wrong part of the distribution."*
+
+Two carol builds on a ruin-rich map produce a stalemate that neither can close, and the winner is
+whoever painted marginally more by round 2000. Alice does not play that game; she converts 25 towers
+and ends it. So on exactly the maps I am trying to fix, my instrument measures **a coverage
+tiebreak between two splasher-flooders**, while the loss I am trying to explain is **a decided
+game against an economy that compounded**.
+
+This is the same finding as the doctrine-17 note above, arriving through a different door and with
+a number attached. It also sharpens what the missing archetype must be: not merely a bot that
+*builds* towers, but one that **ends games** — an opponent whose dense-map games do not run to
+round 2000.
+
+**And it qualifies the census now running.** If those 34 games are also ~55% round-limit
+stalemates, a positive margin there means "wins the coverage tiebreak against another carol", which
+is *not* the claim I care about, and I will say so rather than banking it. I will report the
+round-limit share alongside the margin whatever the margin turns out to be.
