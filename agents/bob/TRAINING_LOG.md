@@ -13738,3 +13738,131 @@ early splashers, paint floor — changed the games substantially (58.3%, and cle
 and moved the median game length from 668 to 760, i.e. **not toward the regime at all**. Game length on
 these maps is therefore not controlled by production policy, which is itself worth knowing: whatever
 lets carol end games by round 130 is a unit-behaviour capability, not a spawn mix.
+
+---
+
+## THE MECHANISM, closed by enumeration rather than by experiment: carol POISONS bob's ruin patterns
+
+Three threads I had been chasing separately turn out to be one thing. The evidence is an arena dump at
+round 40 of `carol-vs-bob-on-CastleDefense` (the 109-round loss), plus two engine facts and one code
+path. No games were spent on this.
+
+**Engine facts, both already in `RULES.md` and both verified there rather than inferred:**
+- line 71-74: *"Only soldiers paint single tiles ... CANNOT overwrite enemy paint ... enemy territory
+  is only reduced by splashers/moppers."*
+- line 112: a tower is built by painting the ruin's **5x5 pattern** and then `completeTowerPattern`.
+
+Together: **one enemy-painted tile inside a ruin's 5x5 makes that ruin unbuildable by a soldier,
+permanently, until a mopper or splasher clears it.**
+
+**The arena dump.** carol = lower-case, bob = UPPER-CASE. The ruin at (2,7) and its surroundings:
+
+```
+   9 BbaaabSaaaAanaA##a#.        cols 0-4 of the ruin's 5x5:   B b a a a
+   8 bBa*aBbbAaAAaAA#aa..                                      b B a * a
+   7 bSoaa##bb#aAAAa#aa..                                      b S o a a
+   6 bBSaa##bb##aSa*Aaaa.                                      b B S a a
+   5 BbSa*a#bb##bb##aa*aa                                      B b S a *
+```
+
+**Ten of the twenty-five pattern tiles carry carol's paint — and bob has THREE SOLDIERS (`S`) sitting
+on the ruin's own column.** They are present, alive, and physically unable to finish the pattern. This
+is the discriminating case doctrine 2 demands: "bob's soldiers never go there" and "bob's soldiers go
+there and are blocked" produce the same `acts[p1]` trace, and the dump separates them. It is the second
+reading that is true.
+
+**The code path, `Soldier.chooseRuin()`:**
+
+```java
+if (workRuin != null) {
+    // drop it if it's visible and now occupied
+    if (rc.canSenseLocation(workRuin) && rc.senseRobotAtLocation(workRuin) != null) workRuin = null;
+}
+```
+
+**A soldier releases its ruin only when a tower appears on it.** There is no test for a pattern it
+cannot complete. So a soldier that commits to a poisoned ruin stays committed until it dies.
+
+### This retro-explains the "livelock" I could not build a census for
+
+On 2026-09-08 I traced `id12239`: two distinct tiles over thirty turns, paint draining every turn,
+nothing ever completed, death by exhaustion in place — and I then correctly retracted "distinct tiles
+per window" as a statistic because a soldier painting a ruin pattern *should* occupy few tiles, so the
+number could not separate the pathological case from the benign one. I wrote that the fix was a
+**conjunction** and that I would have to build a census for it.
+
+**The census is unnecessary.** The conjunction's benign reading — productively parked at a ruin — and
+its pathological reading — parked at a ruin it can never finish — are separated not by a statistic but
+by *whether the pattern contains enemy paint*, which is a fact about the board readable in one arena
+dump. `id12239` was a soldier parked on a poisoned ruin. That is doctrine 3b's preference for closing a
+question by enumeration over closing it by experiment, and it saves the whole instrument.
+
+**Supersede, do not delete**: the 2026-09-08 entries calling this "navigation livelock" and pointing at
+`Nav.java`'s stuck detector are wrong about the cause. The `Nav.java` observation — that the detector
+cannot fire on a moving robot — remains true as a code fact and is simply not what killed `id12239`.
+
+### One diagnosis, three symptoms
+
+- **The tower pin** (2.6 towers vs carol, 4.6 vs alice): bob's ruins are poisoned, so bob cannot build.
+- **The `spl0` and the dead chips** ($1,850-$3,569 unspent): bob cannot convert chips without towers,
+  and cannot build towers without clearing paint it has no unit assigned to clear.
+- **The "livelock"**: soldiers committed to poisoned ruins until they starve.
+
+And it explains the alice/carol asymmetry that started the day, without any appeal to strength: whatever
+alice does, she does not put paint inside bob's ruin patterns early. carol does — her own accepted
+iteration is titled `DENIED RUINS` in the committed tournament report, which is sanctioned shared
+information and is consistent with, though not proof of, the reading above.
+
+---
+
+## Iteration 34 — REGISTERED BEFORE THE RUN REPORTS. `bob_ug`: remove the round-60 splasher gate.
+
+**Exactly one line differs from `src/bob` across the whole bot** (verified by per-file diff): the
+`&& rc.getRoundNum() > 60` conjunct is deleted. No bundling.
+
+**Hypothesis.** The gate does not delay bob's splasher slots, it *converts* them to soldiers while
+still consuming the slot, so before round 60 bob's realised mix is 4 soldiers : 1 mopper. Splashers are
+one of the two unit types that can reduce enemy territory. Removing the gate gives bob that capability
+during the phase in which its short games are decided.
+
+**Stage 0 identity check — PASSED.** Run `20260909-085325`, 8 games, 4 ruin-poor maps: arms are not
+byte-identical, so the mechanism executes.
+
+**Mechanism check — PASSED, and this was the check I registered as discriminating.** I wrote: *"Un-gate
+the splasher slots and count how many splashers bob actually fields before round 60 on a ruin-poor map.
+If the answer is still ~0, the slot-position explanation is wrong and affordability is the whole
+story."* On `CastleDefense` (T1 = `bob_ug`, T2 = baseline `bob`):
+
+```
+  round 20   bob_ug  sold6 spl1  cov288      bob  sold7 spl0  cov276
+  round 40   bob_ug  sold6 spl1  cov450      bob  sold8 spl0  cov315
+  round 60   bob_ug  sold3 spl1  cov471      bob  sold5 spl0  cov344
+```
+
+A splasher at **round 20**, against zero all game for the baseline, and a coverage lead that opens to
+**+127 per-mille by round 60**. The slot-position account is correct; affordability is not the whole
+story.
+
+**And then it lost that game at round 733.** That is not a contradiction, it is the whole problem
+restated: the lead is built in the first 60 rounds and self-play games do not end there.
+
+**Pre-registered gate**, full corpus, 150 games, `BOT=bob_ug OPPONENTS=bob_iter20`, in the settled unit
+`wins_above_half` (`bob-tools/gate.py`; sd 4.80 wins per 150):
+
+- **>= +10 accept, +7..+9 replicate, <= +6 reject.**
+
+**And a pre-registered warning about how to read a null, written now so it cannot be written later.**
+Everything measured today says self-play cannot produce the regime this mechanism acts in: 0 games under
+200 rounds in ~4,900, and this very arm's four ruin-poor maps ran 733-2000 rounds against a baseline
+that carol finishes in 108-133. So:
+
+- A **pass** is a genuine accept and I will take it.
+- A **null is NOT evidence the mechanism is worthless**, and it is equally NOT a licence to accept
+  anyway. It means the instrument cannot see it, which is a statement about my pool, and the honest
+  consequence is that iteration 34 stays **unaccepted and open** — not shipped on a story.
+- What a null *would* license is the safety reading: the corpus contains the long games where this
+  change could do harm, so a null there is real evidence it does **no harm** in the regime bob currently
+  wins. That is worth having and is not the same as efficacy.
+
+I am writing this before the numbers arrive because after they arrive the convenient reading is
+available, and doctrine 6 says a flagged caveat used anyway is worse than one never noticed.
