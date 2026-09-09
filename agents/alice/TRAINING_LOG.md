@@ -14815,3 +14815,136 @@ pinned jar, but `javap` is not on the non-interactive-ssh `PATH` on `battlecode-
 `gssh "javap ..."` fails with `command not found`. It lives at `~/jdk21/bin/javap`. Worth
 either adding to the remote `PATH` or documenting in the tool's header, since the charter
 directs every engine probe through that path.
+
+## Scheduled API sweep — triggered by needing a map-level quantity, and it found nothing new
+
+TRAINING_ALGORITHM Phase 0.2 says to sweep the `RobotController` surface **on a trigger**.
+Mine: iteration 41's named follow-up needs an in-game estimate of map ruin density, so I went
+looking for an engine call that supplies one. `javap` on the pinned 3.1.0 jar gives 68 methods;
+36 of them `src/alice` never calls. Three are whole mechanics:
+
+| mechanic | status | why it stays closed |
+|---|---|---|
+| **resource patterns** (`markResourcePattern`, `completeResourcePattern`, `getResourcePattern`) | **closed with a recorded re-open condition** | Iteration 10 measured it three times on disjoint samples: 13/24, 13/24, 14/24 — all within 1 sd of even. Closed *conditionally*: "a future bot that expands properly and then runs out of chips would be a genuine re-open." |
+| **`mopSwing`** | closed | Costed from the engine constants; the write it performs is to *robot* paint, not tile paint (`LEARNINGS.md:2059-2078`). |
+| **messaging** (`sendMessage`/`readMessages`/`broadcastMessage`) | closed | Examined at length; `alice_commcensus` exists as the probe snapshot. |
+
+**The resource-pattern re-open condition is the interesting one, because today's data speaks
+directly to it — and it says NO, in the opposite direction from the one I would have guessed.**
+The condition is *running out of chips*. Today's traces show medians of **$13,400** on
+`BatSignal` and **$10,365** on `Portal`, with **0%** of turns below `CHIP_RESERVE`. Chips are in
+large surplus, not scarce. An SRP is a chip *sink* that buys income; buying more income with an
+unspent pile is iteration 26's error with a new label.
+
+> **A recorded re-open condition turned a tempting lead into a one-grep decision.** The sweep
+> surfaced "a whole game mechanic your bot never touches", which is the single most seductive
+> output this loop produces — and the condition written down at iteration 10 answered it without
+> a game. This is the same control that closed iteration 40 unbuilt. Two for two: the value is
+> not in the note existing, but in it carrying a *falsifiable condition* rather than a verdict.
+
+**Net result of the sweep: no missed mechanic.** That is a real outcome, not a wasted step — the
+failure mode it guards against is not knowing a call exists, and the check costs a `javap` and a
+grep. It also did not find what triggered it: **there is no engine call for map-wide ruin count**.
+`senseNearbyRuins` is vision-limited, so a ruin-density estimator would have to be accumulated by
+the bot (distinct ruins ever seen, against tiles explored), which is a real cost to design and
+prices the conditional follow-up accordingly.
+
+## Iteration 41a REJECTED at the screen — run `20260909-092259` — and the arm was not what I registered
+
+Convention as registered: `BOT=alice_iter39` (baseline), arms as opponents, so an arm is good
+when the BOT loses. `gate-read.sh` prints the BOT's side; inverted below.
+
+| arm | dose | BOT record | arm net swept | split | advance at +4? |
+|---|---|---|---|---|---|
+| `alice_i41k0` | **control** | 25–25 | **+0** | **25** | — |
+| `alice_i41k8` | 1 in 8 | 26–24 | **−1** | 20 | no |
+| `alice_i41k4` | 1 in 4 | 25–25 | **+0** | 15 | no |
+
+> **Pre-registered check 3 PASSED perfectly: the zero-dose control returned net swept 0 with
+> all 25 maps split by side.** A true null looks exactly like this and my previous "null"
+> (`alice_phase`) did not — it moved a census by +12. The counter-instead-of-`rnd()` construction
+> did what it was built to do, and that is worth as much as the verdict itself: it means the two
+> live arms are being read against a floor I have actually verified rather than assumed.
+
+**Neither dose advances. Iteration 41a is REJECTED.**
+
+### The pre-registered mechanism falsifier did NOT fire
+
+Registered before the run: the gain must concentrate on ruin-sparse maps. Splitting the 25-map
+sample at its median ruin count:
+
+| arm | sparse half | rich half | total |
+|---|---|---|---|
+| `alice_i41k0` | +0 | +0 | +0 |
+| `alice_i41k8` | +0 | −1 | −1 |
+| `alice_i41k4` | **+2** | **−2** | **0** |
+
+`k4` is `+2 / −2` — **cancellation in the predicted direction**, which is the exact failure mode
+I named in advance as the reason to register the split rather than read a headline. A total of
+`0` from cancellation and a total of `0` from no effect are indistinguishable in the summary
+line, and only the pre-registered split separates them. The magnitudes (±2 on ~12 maps) are
+well inside noise, so this **supports the direction and establishes nothing about the size**.
+
+### BITE: the mechanism fires hard, so the null is informative
+
+`alice_i41k4__BatSignal__botB.bc25`, `T1 = alice_i41k4`, `T2 = alice_iter39`:
+
+| round | k4 splashers | baseline splashers | k4 coverage | baseline coverage |
+|---|---|---|---|---|
+| 200 | 0 | 0 | 529 | 403 |
+| 400 | 5 | 0 | 529 | 449 |
+| 600 | 9 | 0 | 618 | 356 |
+| 800 | **13** (+25 built) | 5 | **640** | 339 |
+
+Not near-inert — on this map it is a rout. So the corpus-level `0` is a real answer, not the
+iteration 38 error of testing on ground where the mechanism does not act.
+
+### But `+spl0` through round 200 with `+sold14` should not have been possible — and it exposed a defect in my own arm
+
+With `SPLASH_EVERY = 4` firing from round 1, ~3 of those 14 spawns should have been splashers.
+Reading the spawn loop rather than guessing:
+
+```java
+int off = rnd(8);
+for (int i = 0; i < 8; i++) {
+    MapLocation loc = rc.getLocation().add(directions[(i + off) % 8]);
+    if (rc.canBuildRobot(want, loc)) { rc.buildRobot(want, loc); break; }
+}
+```
+
+**If `want` is unaffordable the tower builds NOTHING.** A splasher costs 300 tower paint against
+a soldier's 200, so early — when paint is tight — every splasher pick *cost a soldier* and
+produced nothing. And `spawnTick` advanced on every eligible tower **turn**, not on every
+**spawn**, so the realised splasher share was never 1-in-`k` of spawns.
+
+> **I did not test the mechanism I pre-registered.** I registered "every k-th soldier spawn
+> becomes a splasher"; I built "on every k-th eligible turn, attempt a splasher, and idle the
+> tower if it is unaffordable" — which is a *reallocation* confounded with a *net suppression of
+> unit production*. That is doctrine 14 in my own code: a condition that did not mean what I
+> believed it meant, found by reading what the code computes rather than trusting the name I
+> gave it.
+
+**The confound's predicted sign matches the observed split**, which is why it is worth fixing
+rather than filing: lost spawns hurt most where soldiers are worth most — ruin-rich maps, where
+there is still expansion to do. Observed: `−2` on the rich half.
+
+**This is not the goalposts moving.** The gate stays at `+4` to advance and `+12` to accept, the
+convention is unchanged, and `41a` stays rejected on its own merits. What changes is that the
+registered hypothesis has still never been measured.
+
+## Iteration 41b — the same hypothesis, faithfully implemented
+
+`src/alice_i41bk{0,8,4}`, screen `20260909-094518`, identical gate. Three fixes, all forced by
+the defect above:
+
+1. Choose a splasher only when one is **due by spawn count**, not by turn count.
+2. If the splasher is unaffordable, **fall back to the soldier** instead of idling the tower, so
+   the arm can no longer suppress total production.
+3. **The splash slot is not consumed on a failed attempt** — it is retried at the next spawn, so
+   the realised share tracks the dose instead of decaying wherever paint is tight.
+
+`SPLASH_EVERY` remains a compile-time constant, so at 0 javac eliminates every added statement
+and the control stays a true null, consuming no extra PRNG draws. **Standing pre-check still
+open**: bytecode. The fallback adds a second 8-way `canBuildRobot` scan on the failure path;
+iteration 39 peaked at 12,796 against a 20,000 tower limit, so there is headroom, but I will
+read `OVR=`/`near=` off this run's replays before any census rather than assuming it.
