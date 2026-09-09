@@ -3001,3 +3001,29 @@ partitioned nothing. Same family as iteration 42's mis-stated accounting conditi
 partition should cover the plane — here, the honest form was simply the sign of each ratio, with no
 magnitude threshold at all. And when a registered gate fails to fire, record that it failed to fire;
 do not retro-fit the branch that "would have" caught it.
+
+## 81. Check a rate against its own hard ceiling before you believe it (2026-09-09)
+
+Preparing iteration 46 I computed "carol's soldiers paint **3.6x** as often as bob's" — 1.343 against
+0.372 paints per soldier-round. A robot gets **one action per turn**, so the ceiling on that rate is
+**1.0**. Carol's number was above its own ceiling, and that alone was enough to kill it without knowing
+why.
+
+The why: `InternalRobot` has **three** `addPaintAction` call sites, not one — `soldierAttack`, and two in
+`splasherAttack`, the second firing **once per tile of the splash footprint** (up to 13 tiles, since
+`SPLASHER_ATTACK_AOE_RADIUS_SQUARED = 4`). So `acts[p]` is soldier paints *plus* splash footprint and is
+not soldier-attributable. Carol fields 62.5% splashers, so up to **79%** of carol's "paints" are footprint.
+
+**This is the third denominator failure in one session** — LEARNING 76 (a mechanism that shrinks its own
+denominator), LEARNING 79 (numerator and denominator counting different populations), and now a numerator
+fed by a source the denominator does not contain. All three produced a confident, quotable, wrong number,
+and all three were caught before publication by a cheap check.
+
+**Doctrine: every rate has a physical ceiling — state it and test against it.** One action per turn, one
+move per turn, 17500 bytecode. A rate that breaks its ceiling is a broken instrument, and the check costs
+nothing and needs no second measurement.
+
+**And the honest form of the finding is a BOUND, not a point.** Alice barely splashes, so alice's soldier
+rate is pinned at 0.409–0.414; bob's is 0.288–0.372; carol's is 0.278–1.343, i.e. **not identifiable**.
+The publishable claim is the narrow one that survives: alice's soldiers paint at least 11% more often than
+bob's, with essentially no splashers. Report the interval when the counter cannot do better.

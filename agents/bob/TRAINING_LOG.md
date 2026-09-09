@@ -16072,3 +16072,50 @@ iteration 43 failure mode), **dTiles** (the objective), tower count at r200.
 Arms are UNCOMMITTED working-tree dirs (`src/bob_m0`, `src/bob_mS`, `src/bob_mL`, `src/bob_mX`),
 regenerable with `bob-tools/make-mopper-arms.sh`. `src/bob` is unchanged, so **HEAD still plays
 `bob_iter20`'s behaviour.**
+
+### Iteration 44 ADDENDUM (written while iteration 45 was running) — a per-soldier claim I computed, tested, and killed
+
+Preparing iteration 46 I computed per-unit-type action rates over the same 300 games:
+
+```
+    team     soldR      splR      mopR |  paint/soldR  splash/splR  unpaint/mopR
+   alice    171909      1110     56571 |        0.414        0.057         0.125
+     bob    363186     40646     31035 |        0.372        0.057         0.150
+   carol     59653     80625        63 |        1.343        0.061         0.175
+```
+
+The headline that jumped out was **"carol's soldiers paint 3.6x as often as bob's"**. It is **false**, and
+the thing that caught it was a ceiling check: a robot gets **one action per turn**, so no per-soldier-round
+action rate can exceed **1.0**. Carol's reads **1.343**. A rate above its own hard ceiling is not a
+finding, it is a broken denominator.
+
+**The engine says why.** `InternalRobot` has three `addPaintAction` call sites, not one: `soldierAttack`,
+and **two inside `splasherAttack`** — the second sits behind `isWithinDistanceSquared` and fires **once per
+tile in the splash footprint**. With `SPLASHER_ATTACK_AOE_RADIUS_SQUARED = 4` that is up to **13 tiles per
+splash** (and `SPLASHER_ATTACK_ENEMY_PAINT_RADIUS_SQUARED = 2`, 9 tiles, for clearing enemy paint). So
+`acts[p]` is **soldier paints plus splash footprint tiles**, and is not attributable to soldiers at all.
+
+**Bounding it honestly** (upper bound = all `p` are soldiers; lower bound = every splash painted its full 13):
+
+| team | splashes/game | soldier paint rate, bounded | identifiable? |
+|---|---|---|---|
+| alice | 0.4 | **0.409 – 0.414** | yes — alice barely splashes |
+| bob | 7.8 | **0.288 – 0.372** | loosely |
+| carol | 32.6 | 0.278 – 1.343 | **no** — 79% of carol's paints may be footprint |
+
+**What survives, and it is worth having**: alice's soldiers paint **0.414** times per soldier-round against
+bob's **at most 0.372** — alice is at least **11%** ahead on the one rate that is cleanly identifiable for
+both, and alice does it with **essentially no splashers**. What does *not* survive is any statement about
+carol's soldiers, which these counters cannot identify at all.
+
+**A knock-on correction to iteration 44's own metric, which I am recording rather than leaving implicit.**
+My `conv = dTiles / acts` used `acts = p + s`, which **double-counts every splash** — once as its footprint
+tiles in `p`, once as the splash in `s`. The inflation is ~6% of carol's denominator and ~1.4% of bob's.
+Correcting it moves `ratio_acts` vs carol from 0.552 to about 0.587: **Branch 2 still fires and every
+iteration 44 conclusion stands**, because the headline quantities (`dTiles`, coverage) are the engine's own
+and are untouched. Small enough not to matter here; recorded because next time it might be.
+
+**And splash rates are the one clean cross-lineage comparison in that table**: 0.057, 0.057, 0.061 splashes
+per splasher-round. All three lineages' splashers act at ~6% of turns, bob's included. **Bob's splashers are
+not idle relative to carol's** — carol simply fields twenty times as many of them. That closes, before it
+was started, the "wake up bob's splashers" direction I would otherwise have proposed for iteration 46.
