@@ -2265,3 +2265,132 @@ the one most worth testing. **Note also what survives**: the `Nav.java` code fac
 that can only fire on a robot that does not move, inside a policy that always moves — is unaffected. A
 mechanism can be certainly present and of entirely unmeasured importance, and those are two claims,
 not one.
+
+---
+
+## 54. Two of my headline statistics were pooled over opponents whose strength was changing (2026-09-09)
+
+**The mistake.** I published two findings that drove four iterations: *"bob's losses are getting faster,
+median 2000 → 1431 → 1098 → 703, so bob is increasingly being ended early"* and *"bob's win rate is
+monotone in map ruin count, z = −3.51 over 1,208 games"*. Both are correctly computed. Both are pooled
+over alice and carol, and carol advanced roughly fifteen accepted iterations across that window.
+
+**Decomposed by opponent:**
+
+```
+  bob's median loss duration     vs alice: 636 → 899 → 952 → 952   (getting LONGER)
+                                 vs carol: 1591 → 1152 → 597 → 542 (collapsing)
+
+  ruin-count gradient            vs alice: 72.2% → 77.5%, NON-monotone, r=+0.101 z=+2.15
+                                 vs carol: 33.3% → 85.3%, monotone,     r=+0.355 z=+8.70
+```
+
+Against alice the ruin-*poorest* bucket is one of bob's *better* ones. "bob is bad on ruin-poor maps" is
+close to false; "carol beats bob on ruin-poor maps" is the true statement, and it is a different claim
+with a different fix.
+
+**Why it survived so long.** Doctrine 5's tell is *two artefacts that should agree and don't* — and here
+the two series were moving in **opposite directions** and I averaged them into one median. Averaging
+destroys the tell. A pooled statistic does not merely lose power against a heterogeneous population, it
+actively conceals the disagreement that would have exposed it.
+
+**The control that broke it open was free, and I nearly missed it.** alice and bob played
+byte-identical builds across two consecutive tournaments; that pair reproduced **150/150 including exact
+round counts**. I found it by reading the *builds* column of the report before the numbers — which is
+now the habit.
+
+**The mechanism, not the note.** Read the builds column FIRST, and never pool a cross-lineage statistic
+over opponents without checking whether their builds moved in the window. A tournament report names
+every bot's commit; the check costs one glance and it converts "is this confounded?" from a judgement
+call into a lookup.
+
+---
+
+## 55. My entire opponent pool cannot produce the games I lose (2026-09-09)
+
+Census over every gauntlet this lineage has ever run — **~4,900 games, 68 distinct opponents**:
+
+```
+  opponent             n    median rounds   games <=200
+  bob (self)         300         894              1
+  bob_iter11         300         816              0
+  bob_denier         100         949              0     <- the archetype BUILT to be unlike me
+  examplefuncsplayer 200         314             36     <- but beaten 100/100, so gates nothing
+  ...64 more, every one with <=1 game under 200 rounds
+```
+
+Against carol, **6.0%** of games end by round 200 and the ruin-poor median is **484** against
+self-play's **818 on the same maps**. My losses concentrate exactly there.
+
+So iterations 31, 32 and 33 were opening interventions evaluated entirely inside a pool that cannot
+generate the opening failure they targeted. **That is one explanation for three nulls, and it is better
+than the three separate ones I wrote.** Each of those post-mortems reasoned about the mechanism; none
+asked whether the instrument could have detected any mechanism at all.
+
+**And the repair attempt failed too, which is the part worth carrying.** I built `bob_rush`, an
+economy-first archetype at the opposite production pole, with its acceptance criterion pre-registered as
+a *regime* criterion (median under ~400 rounds) rather than a strength one. It came back at median 760
+and one game under 200. **Moving production policy to the opposite pole moved median game length the
+wrong way, 668 → 760.** Game length is not controlled by the spawn mix, so whatever lets carol finish by
+round 130 is a unit-behaviour capability. A negative result about my own instrument, bought for 48 games.
+
+**The general form**: before spending a run, ask what the sample's *outcome distribution* looks like,
+not just its size. A 150-game run containing zero instances of the condition under test is not an
+underpowered measurement of the mechanism, it is a measurement of something else. Doctrine 4 says size
+the condition first; this is what it looks like when nobody does.
+
+---
+
+## 56. A gate that CONVERTS instead of delaying inverts the feature it guards (2026-09-09)
+
+`Tower.java`, my accepted iteration 20 ("spawn 2 splashers per 5 units"):
+
+```java
+UnitType want = (slot == 4) ? UnitType.MOPPER
+               : (((SPLASHER_SLOTS >> slot) & 1) != 0 && rc.getRoundNum() > 60) ? UnitType.SPLASHER
+               : UnitType.SOLDIER;
+...
+spawned++;   //  <- the slot is consumed either way
+```
+
+I had read this as *"splashers start at round 60"*. It is not. Before round 60 a splasher slot falls
+through to **SOLDIER** and `spawned++` still consumes it, so the mix is not delayed, it is **4 soldiers
+: 1 mopper**. The paint iteration 20 allocated to a splasher buys a soldier — and a soldier is the one
+unit that **cannot overwrite enemy paint**, which is precisely the job the splasher was added to do.
+
+In a ruin-poor game bob spawns 7-8 units in total and can afford none after round 30, so the whole of
+iteration 20 lands inside the inverted window.
+
+**So my last accepted change is not merely inert in the games I lose. It is converted into its
+opposite.** It was accepted on a 25-map sample whose games run 800+ rounds, where the gate's condition
+is satisfied for 93% of the game; the games that decide my tournament standing end at 108-183.
+
+**The habit this installs.** When reading a guarded expression, do not ask "when does the feature turn
+on" — ask **"what does this evaluate to when the guard is false, and is that value neutral?"** A guard
+whose false branch is a different *action* rather than *no action* is not a gate, it is a substitution,
+and its cost is the difference between the two actions rather than zero. In a chained ternary the false
+branch is whatever comes next, which is easy to read past precisely because it is not written beside
+the condition.
+
+Corollary for accept gates: a feature whose guard condition is satisfied in nearly every game of the
+evaluating sample has never been measured in the state where the guard is false.
+
+---
+
+## 57. `javap` with stderr suppressed reported "no such method" when there was no JDK (2026-09-09)
+
+I probed the engine with `javap -p -c -cp "$(tools/engine-jar.sh)" ... | grep ... 2>/dev/null` and got
+empty output, which reads exactly like *"that method does not exist"*. There is **no `javap` on this
+machine at all** — the JDK lives on battlecode-dev — and `2>/dev/null` swallowed
+`javap: command not found`.
+
+Empty output from a filtered probe is ambiguous between *"the tool ran and found nothing"* and *"the
+tool never ran"*, and suppressing stderr destroys the only thing that distinguishes them. I had already
+been warned about the neighbouring trap (the stale `battlecode25-java-1.0.0.jar` beside the real 3.1.0)
+and had used the sanctioned `engine-jar.sh` to avoid it — so the guard I remembered was in place and
+this one, one layer down, was not.
+
+**The mechanism.** Never redirect stderr on a probe whose *absence of output* is the result you intend
+to read. Use `tools/engine-jar.sh --remote` and run `javap` on the VM, and if a probe returns nothing,
+re-run it without `2>/dev/null` before believing it. A confident false negative from a tool that never
+executed is indistinguishable, in a log, from a real finding.
