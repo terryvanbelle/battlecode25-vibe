@@ -18316,3 +18316,128 @@ pre-check it needs first, in the shape that closed iteration 50 for 8 games: *ho
 paint actions after r200 are on tiles one of its own mops created, and what is the ceiling if every
 mop were converted?* If most post-saturation painting is not mop-fed, the cap is not binding and
 this closes too.
+
+## Iteration 52 pre-check — PRE-REGISTERED, and it can close the mopper direction as easily as open it
+
+**Noted from the coordinator, and adopted:** `tools/map-subset.py` already does the win-rate half of
+a map-subset cut natively, with all three pair rates and the two-proportion z, and refuses to print
+a pooled rate alone. I built that half by hand yesterday. The per-tower production metric is mine
+and stays mine, but the win-rate half goes through the tool from here.
+
+**The claim to test.** The pricing chain ended: alice's per-tower deficit = its upkeep loss = long
+soldier lifetime = idle turns = no paint targets. After the board saturates (r200–400, 0–4%
+unpainted) and given the verified trap that **a soldier cannot paint an enemy tile**, alice's only
+legal productive target is an **empty** tile — and in this bot empty tiles are manufactured by its
+own moppers. If that is right, **mopper throughput is a hard cap on soldier output**, and soldier
+output is what the entire per-tower gap reduces to.
+
+**Measurement, zero games.** On alice-vs-carol replays from `20260909-1300` (small maps), classify
+every alice `PAINT` after **round 200** by the most recent prior event on that same tile:
+
+| class | meaning |
+|---|---|
+| **alice UNPAINT** | **mop-fed** — alice's own mopper manufactured this target |
+| carol UNPAINT | the enemy's mopper manufactured it and alice took it |
+| alice PAINT | **repaint of ground alice already held** — no coverage gain |
+| carol PAINT | overwrote live enemy paint — only a splasher can do this |
+| no prior event | virgin tile — the frontier, which the census says is nearly gone |
+
+**Prediction.** After r200 the mop-fed class dominates, and alice's paint rate tracks its mop rate.
+
+**Kill condition, registered now.** If the mop-fed class is **under 50%** of alice's post-r200 paint
+actions, then mopper throughput is **not** the binding cap, the pricing chain's last link is wrong,
+and this direction closes — for zero games, the way iteration 50 closed for eight.
+
+**A second thing this can find, and I am naming it in advance so it cannot be a post-hoc rescue.**
+If the **alice PAINT** class (repainting ground alice already owns) is large, that is a *different*
+and bigger defect than the one I am testing: paint actions bought at 5 paint each that buy **zero**
+coverage. I am registering it as a pre-specified secondary outcome so that finding it counts as a
+finding rather than as a consolation prize for a failed primary.
+
+**Instrument check I owe up front.** `SplashAction` carries only its centre and not its footprint,
+so splash-painted tiles do not register as `PAINT`. That biases the classification by *omitting*
+splash paints entirely rather than misclassifying them. Alice splashes 4.3 times by r300 against
+384.9 paint actions, so for **alice's** column the bias is under ~1% — but it means I cannot read
+this table as a statement about carol, and I will not.
+
+## Iteration 52 — the registered bar FAILS, the direction closes, and the secondary was killed by its own discriminator
+
+`tools/paint-trace.sh` over all 38 alice-vs-carol small-map replays from `20260909-1300`, 108,417
+paint/unpaint actions, **zero games played**. Every alice `PAINT` after r200 classified by the most
+recent prior action on that tile.
+
+| class | whole game (27,746 paints, 33 games) | decisive window r200–400 (5,622) |
+|---|---|---|
+| **mop-fed (own)** | **23.7%** | **37.7%** |
+| enemy-mop-fed | 0.0% | 0.0% |
+| repaint own | 27.0% | 17.5% |
+| over enemy | 44.7% | 28.4% |
+| no prior action | 4.5% | 16.5% |
+
+> **PRE-REGISTERED BAR: mop-fed >= 50%. Measured 23.7% over the game and 37.7% in the decisive
+> window. The bar fails on both cuts. Mopper throughput is NOT the binding cap, and the direction
+> closes.**
+
+### Why it fails — and it corrects the last link of my own pricing chain
+
+I wrote, one entry ago: *"after saturation a soldier's only legal productive target is an empty tile,
+and empty tiles are created by exactly one thing in this bot — a mopper clearing enemy paint."*
+
+**That is true of SOLDIERS and false of the BOT.** Splashers overwrite **live enemy paint directly**
+and need no mop at all: `over enemy` is 28–45% of alice's post-r200 painting. The chain
+per-tower deficit -> upkeep -> lifetime -> idle turns -> no targets was sound up to its last link,
+and the last link assumed the soldier's constraint was the bot's constraint. It is not.
+
+**The engine trap is now confirmed at corpus scale, which is the compensating result.** Across
+**12,409** `over enemy` events, the unit type is **SPLASHER 12,409, SOLDIER 0**. Not one soldier
+ever painted an enemy tile in 33 games. Iteration 23's guard is verified in the field, not just in
+the source.
+
+### The pre-specified secondary FIRED — and its own discriminator then killed it
+
+I registered in advance that a large `repaint own` class would be a bigger defect than the one I was
+testing: paint actions bought at 5 paint that buy zero coverage. It fired — **6,488 same-shade
+repaints, 23.4% of all post-r200 paint actions.** Nearly a quarter of alice's painting appearing to
+buy nothing.
+
+**Split by unit type: SPLASHER 6,488, SOLDIER 0.**
+
+> **It is not waste and not a defect.** Every same-shade repaint is a splasher's area footprint
+> re-covering ground alice already held — the unavoidable geometry of an area weapon, not a
+> targeting decision any code makes. **Zero soldiers did it.** Without the unit-type split I would
+> have published "alice burns 23% of its paint actions repainting its own ground" as a headline
+> defect, and it would have been the shape of a splash.
+
+That is the third control this session to overturn a headline before it left my workspace, after the
+`worst > chosen` impossibility and the winner's-curse null.
+
+### Instrument correction — my own pre-registered caveat was wrong, in the safe direction
+
+I registered: *"`SplashAction` carries only its centre and not its footprint, so splash-painted tiles
+do not register as `PAINT`."* **They do.** The engine emits a `PaintAction` per tile of a splash,
+attributed to the `SPLASHER`, which is exactly how the 12,409 `over enemy` events are visible at all.
+The earlier **conversion census carried the same wrong caveat** and should be read with that in mind.
+
+**Consequence I have to own:** `act_p` includes splasher output, so my "paint actions per soldier
+spawned" figures conflated splashers into soldiers. At r300 on small maps alice splashes ~4.3 times,
+so the contamination is ~15% — the honest soldier figure is ~17 rather than 20.3. The **budget-derived**
+number from iteration 49 (19.7, from 200 tank + 36 refill − 138 upkeep) is the trustworthy one because
+it comes from the soldier's own paint accounting, and the two agreeing to 3% was partly luck. The
+pricing conclusions survive at this precision, but the *method* of dividing `act_p` by soldiers was
+wrong and I am not going to keep using it.
+
+### One unregistered observation, flagged as such
+
+In the decisive r200–400 window alice performs **5,622** paint actions to carol's **12,365** — it is
+**out-painted 2.2 to 1** exactly where the game is decided. That is the per-tower production gap
+seen directly in actions rather than inferred from a ratio. It is unregistered and I am recording it
+as an observation, not a result.
+
+### Where this leaves the direction
+
+**Closed:** mopper throughput as the cap on alice's painting. **Closed:** same-shade repainting as a
+defect. **Standing and unexplained:** alice's 2x per-tower production deficit, whose last surviving
+explanation — soldier upkeep — is real in size (105% of the gap) but whose collectable fraction has
+now been measured twice and found small (iteration 50: 17% ceiling). The honest state is that I have
+an exact *description* of the deficit and no mechanism that can pay for it, which is a better place
+than four sessions ago when I had neither.
