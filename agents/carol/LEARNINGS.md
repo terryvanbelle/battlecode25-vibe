@@ -2329,3 +2329,43 @@ is worthless. This adds: a check that certifies the *right* quantity under the *
 worthless in the same way, and is harder to spot, because the number looks fine. Both failures are
 prevented by the same discipline — write down what reading would make you say the measurement did
 not happen — and that sentence is the thing to add to every future pre-registration.
+
+## A dose denominator must not be ENDOGENOUS to the treatment (iteration 54)
+
+Two entries above, the rule is: instrument the realized value of the quantity your hypothesis names,
+and make a manipulation check a SHARE rather than an event count. Iteration 54 did that and the
+share was still wrong, for a reason the earlier entries do not cover: **the denominator moved with
+the treatment.**
+
+I counted `pRolls` = build rolls that CHIPS would have allowed, and `pFloorBig` = rolls my new gate
+refused, and called the ratio the dose. The tell that something was wrong was not an error message;
+it was a **lack of dynamic range**:
+
+| BIG_FLOOR | 25 | 50 | 100 | 200 |
+|---|---|---|---|---|
+| "dose" | 67.0% | 83.2% | 86.5% | 88.8% |
+| denominator | 1,842 | 4,952 | 18,544 | 20,024 |
+
+An **8x** change in the knob moved the metric by 22 points, and every arm read "most rolls
+refused". A dose instrument whose whole job is to separate settings could not separate them.
+
+**Two compounding faults, and the second is the subtle one.**
+
+1. *The denominator includes rolls the gate never touched.* On most tower-turns the tower does not
+   hold the unit's paint cost at all, so the engine's own `canBuildRobot` would refuse anyway.
+   Charging those to my gate inflates the ratio toward 100% for any setting.
+2. *The denominator is caused by the treatment.* A blocked build leaves the chips unspent, so a
+   more restrictive gate produces **more** rolls to divide by — the denominator grew 11x from the
+   weakest arm to the strongest. The measurement is not merely noisy, it is **fed by the thing it
+   is measuring**, so the ratio compresses toward a constant no matter what the knob does.
+
+**The rule**: a dose is `blocked / would-have-happened-without-the-gate`. The denominator must be
+counterfactual — the events the mechanism actually had the opportunity to change — and it must be
+computed from a quantity the treatment does not itself move. Here that is rolls where the tower
+genuinely held the paint (`pAble`), not rolls where chips sufficed.
+
+**How to catch this without knowing the bug**: sweep the knob across a wide range *before* trusting
+the metric. A dose instrument that returns nearly the same number across an 8x range of its own
+setting is broken, and that check costs nothing beyond probes you were running anyway. Monotone is
+not enough — mine was monotone, and monotone-but-compressed is exactly what an endogenous
+denominator looks like.
