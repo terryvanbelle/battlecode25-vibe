@@ -15108,3 +15108,58 @@ the emergent design wants.
   the issue; the mechanism not delivering is.
 
 **Resume point**: read the `i50_b` counters first, then take the branch above.
+
+## Iteration 50 — the discriminating experiment RESOLVES it: cause 1. My own gate was blocking completion.
+
+`carol_i50_b` = `carol_i50_a` with `SRP_MIN_CHIPS` 1500 -> 300 (just above the engine's 200-chip
+completion cost), one match vs `carol_iter44` on `DefaultMedium`. Nothing else differs.
+
+| arm | gate | `sM` marks | `sD` **completed** |
+|---|---|---|---|
+| `i50_a` | 1500 | 4 / 6 | **0** |
+| `i50_b` | **300** | 5 | **2** |
+
+**Cause 1 confirmed, cause 2 eliminated as the binding constraint.** Patterns *were* being finished
+all along — the bot simply could not close them, because `srpWork` returned at
+`chips < SRP_MIN_CHIPS` and that early return sat **above** the completion loop. A pattern already
+paid for in paint, needing only the engine's 200 chips, was refused because the treasury was below
+a threshold that exists to decide something else entirely.
+
+Note what this did NOT need: any argument about which cause was more likely. Both hypotheses
+predict `sD = 0` identically, so the trace could not separate them and one cheap game did.
+
+### The fix is structural, not a dose
+
+The completion loop now runs **above** the chips gate. `SRP_MIN_CHIPS` decides whether it is worth
+**starting** a pattern; it must never block **closing** one, and `canCompleteResourcePattern`
+already enforces the 200-chip cost itself, so no guard is lost. All three arms rebuilt, COMPILE-OK.
+
+### THE SAME BUG SHAPE, TWICE IN ONE DAY — and that is the finding worth keeping
+
+Iteration 49: the **timeout that releases a soldier** sat inside a guard the held state closed.
+Iteration 50: the **completion that delivers the income** sat inside a guard meant only for entry.
+
+Both are one error: **a guard written for the ENTRY condition of a mechanism silently placed
+across its EXIT or DELIVERY path.** Both produce a mechanism that pays its full cost and never
+collects, and both are invisible in a win rate — they read as "the idea does not work".
+
+Doctrine 19 says a lesson written down is not a control, and that the test is whether the next
+session could make the mistake without reading anything. So the control is a code-shaped one, not
+a note: **in any gated mechanism, the guard goes on the branch that STARTS work, never on the
+function.** The two are distinguishable by inspection in seconds once you know to look, which is
+exactly what "install the check where the mistake happens" means here. Recorded in `LEARNINGS.md`.
+
+### Status and resume point
+
+- `carol_i50_{a,b,0}` rebuilt with the fix; `vm-compile.sh` COMPILE-OK; `src/carol` untouched, so
+  HEAD still plays the accepted `carol_iter44` in the tournament.
+- **In flight**: one match `carol_i50_a` vs `carol_iter44` on `DefaultMedium`, to confirm `sD > 0`
+  at the intended gate of 1500 now that completion is no longer blocked.
+- **Also owed before any screen**: re-verify the zero arm. `carol_i50_0`'s pre-fix replay hash is
+  saved (`ddd719ea…`, 2583504 bytes) specifically so the post-fix zero arm can be compared against
+  it — the completion loop now runs above the gate in that arm too, and although it can never fire
+  (the zero arm never marks anything, so there is no own-team pattern to complete) that is an
+  argument, and the hash is the measurement.
+- **Then**: screen `carol_i50_a` vs `carol_iter44` on the pinned 25 maps, gate `>= 34` accept,
+  `<= 30` reject. The placebo maps `Brat` and `DefaultSmall` are in that sample and must again come
+  back identical to the incumbent.

@@ -629,12 +629,19 @@ public class RobotPlayer {
      * Returns true if it used this turn's action, so the caller does not spend it twice.
      */
     static boolean srpWork() throws GameActionException {
-        if (rc.getChips() < SRP_MIN_CHIPS) return false;
         MapLocation me = rc.getLocation();
 
-        // 1. Complete anything already finished nearby. Cheap: 9 candidate centres, and the
-        //    engine's own check decides. Completing is not an "action", so it never competes
-        //    with painting -- it is pure upside on any turn it is possible.
+        // 1. Complete anything already finished nearby -- ABOVE the chips gate, deliberately.
+        //    SRP_MIN_CHIPS decides whether it is worth STARTING a pattern; it must never block
+        //    CLOSING one that is already paid for in paint and only needs the engine's 200 chips
+        //    (which canCompleteResourcePattern checks for itself). Measured, not assumed: with
+        //    this loop below the gate, sD was 0 on both sides at SRP_MIN_CHIPS=1500 and 2 at 300
+        //    -- the gate, not the mechanism, was the reason nothing ever completed.
+        //
+        //    This is iteration 49's freeze bug one level down, and the second instance in a day
+        //    of the same shape: an EXIT/DELIVERY path sitting inside a guard meant only for the
+        //    ENTRY path. The general rule now in LEARNINGS: for any gated mechanism, check that
+        //    the guard covers only entry, never completion or release.
         for (int i = 0; i < 9; i++) {
             MapLocation c = me.translate(SRP_DX[i], SRP_DY[i]);
             if (rc.canCompleteResourcePattern(c)) {
@@ -643,6 +650,7 @@ public class RobotPlayer {
                 return false;
             }
         }
+        if (rc.getChips() < SRP_MIN_CHIPS) return false;
         if (!rc.isActionReady()) return false;
 
         // 2. Advance any pattern whose marks are visible from here, whoever laid it. This is the

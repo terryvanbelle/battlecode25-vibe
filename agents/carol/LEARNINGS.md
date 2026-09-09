@@ -2208,3 +2208,33 @@ direction on evidence that never tested it — and would have discarded the one 
 ablation prices a CODE PATH, not a concept". Mine says: *"Park a soldier to lay an SRP — CLOSED.
 Re-opening requires a design in which laying a pattern does not suspend movement."* That is a
 testable predicate, and iteration 50 satisfies it.
+
+## A guard belongs on the branch that STARTS work, never across the whole mechanism
+
+Two iterations in one day died of the same error wearing different clothes:
+
+- **Iteration 49**: the `SRP_PATIENCE` timeout that **releases** a parked soldier sat inside
+  `if (ruin == null)`, a guard the held state could close. Soldiers froze permanently.
+- **Iteration 50**: the completion call that **delivers** the income sat below
+  `if (chips < SRP_MIN_CHIPS) return`, a threshold whose job is to decide whether to *start* a
+  pattern. Measured: `sD = 0` at gate 1500, `sD = 2` at gate 300 — patterns were being finished
+  the whole time and the bot could not close them.
+
+**The general shape: a guard written for a mechanism's ENTRY condition, silently placed across its
+EXIT or DELIVERY path.** The symptom is identical both times and is the most expensive one
+available — the mechanism pays its full cost and never collects, so it reads in a win rate as
+"the idea does not work", and the direction gets closed having never been tested.
+
+Doctrine 19 says a written lesson is not a control, and the test is whether the next session could
+make the mistake without reading anything. So the control is code-shaped and takes seconds:
+**for every gated mechanism, list its branches and ask of each — does this START work, or FINISH
+or RELEASE it? Only the first may sit under the gate.** Completion, timeout, cleanup and release
+paths go above it. In iteration 50's case the engine already enforced the real cost
+(`canCompleteResourcePattern` checks its own 200 chips), so hoisting the branch lost no safety at
+all — which is the usual case, because the engine's own `can*` check is the correct guard for a
+delivery path and a bot-level threshold almost never is.
+
+Note also how it was resolved: two hypotheses (my gate, versus soldiers overwriting each other's
+marks) predicted **identical** `sD = 0`, so the trace could not separate them. One game with one
+constant changed did. Cross-references **"Two of my own mechanistic stories, both tidy, both wrong,
+both killed by one game"** — same remedy, third instance.
