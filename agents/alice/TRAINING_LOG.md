@@ -17143,3 +17143,56 @@ search that finds the ruins the r300 census says are still unclaimed (median 65%
 games above 90%).
 
 Both numbers are on the table before the arm is built, which is what §3 asks for.
+
+## Iteration 47 — PRE-REGISTERED before any run is read
+
+**Mechanism, one change.** A soldier that reaches the unresolvable state — a ruin whose pattern is
+*marked*, whose every mismatched tile is *enemy paint*, with its action still in hand — records
+that ruin and refuses to target it again for `I47_AVOID` rounds. With no other open ruin in sight
+(probe v2: 100.0% of such turns), targeting falls through to `wander`, the iteration-12 ballistic
+run. Nothing else changes: the paint loop's decisions are byte-for-byte the original, and
+`I47_AVOID = 0` is behaviourally identical to `src/alice` — **verified, not assumed**:
+`alice_i47a0` vs `alice_iter43` on the pinned maps reproduced the control's three losses at
+identical round counts (r1556 / r1511 / r1907, runs `20260909-154359` vs `20260909-150713`).
+
+**Bite (pre-check 3): the mechanism acts, verified before the screen.** `alice_i47a50` on those
+same three maps changed **every round count** (r1144/r1262/r1947/r2000/r1123/r1235 against the
+control's r1556/r1556/r1511/r1511/r1907/r1907) and swept `boxofchocolates`. Six games is far below
+the noise floor and is **not** evidence of strength — it is evidence the branch fires.
+
+**Pre-check 1 (SCARCITY) — and this is the strongest alignment I have had.** The resource freed is
+soldier **position and movement**. The resource my own census says is binding is **ruin-capture
+tempo**: the game is decided by tower count at r300 (r = 0.858, the r300 leader wins 16/18), and
+ruin capture is the one resource that is *not* saturated by then (median 65% of ruins captured,
+0/29 games above 90%). Freed resource and binding resource are the same object. Iterations 20, 26
+and 39a all died because they were not.
+
+**Pre-check 4 (DIVERSION) — what were these turns doing before, measured.** 6,424 turns, 45.8%
+standing within d²<=2 of the blocked ruin, 54.2% walking toward it. The **action** is not diverted:
+the iteration-22 opportunistic area-paint branch runs after the ruin block and spends it on the
+nearest empty tile, in the arm exactly as in the control. Only movement is redirected.
+
+**Rival explanation, named now, and it is iteration 44's exact shape.** *The standing may be the
+work.* A soldier parked at a contested ruin still paints around it, still occupies ground the enemy
+wants, and is still present if a mopper arrives and unblocks the pattern. Iteration 44 died because
+"idling" turned out to be accumulation. I cannot price that from the counters I have, and the gate
+below does not pretend to — it measures the net. **If the arm loses, this is the first hypothesis
+to test, not a post-hoc excuse.**
+
+**Pre-registered gate**, in `net_swept = SW − SL = wins − N`, this lineage's unit, against its
+measured corpus floor of **sd 5.29**:
+- **Screen**: 40-map paired run, `alice_i47a50` vs `alice_i47a0`. Advance at **net swept >= +4**.
+- **Census**: full 75-map corpus, 150 games. **Accept at net swept >= +12** (2.27 sd). Below +12:
+  reject.
+
+**Pre-registered dose ordering.** `alice_i47a250` runs on the *same* 40-map sample, so its
+comparison with `a50` is exact rather than across-run. A mechanism that works should not be
+*better* at 250 than at 50 by more than noise: 250 rounds is an eighth of the game to abandon a
+ruin a mopper may unblock. I register now that **if a250 beats a50 materially, I do not have the
+mechanism I think I have** — that pattern would say the gain comes from wandering more, not from
+abandoning *unresolvable* ruins specifically, and I will say so rather than accept the better arm.
+
+**Pre-registered falsifier on the mechanism.** A win must come through ruin capture. On the census
+replays the arm must show **more towers at r300** than the control. If it clears +12 with tower
+count at r300 flat or lower, the mechanism is not what won, and I will log it as an unexplained
+gain rather than as evidence that abandoning unresolvable ruins works.
