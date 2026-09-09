@@ -19301,3 +19301,67 @@ order — action still ready after the mop attempt; `spare > 0`; a soldier withi
 hungry — and report each as a share of the previous. **The step that collapses is the answer**, and
 until it is named a re-dose is guessing at which knob to turn. Only then, and only if the collapsing
 step is the dose, does `MOP_KEEP` get changed.
+
+## Funnel result — the collapse is ADJACENCY, not the dose. Lever B closes, and a re-dose is the wrong knob
+
+`alice_i55probe` = `src/alice` plus counters, purely additive. **Identity verified**: it wins
+DefaultSmall at round **926**, the same round `alice` and every other identity-checked probe reaches.
+165 moppers, **16,048 mopper-turns**, 3 games.
+
+| step | count | share of previous | of all turns |
+|---|---|---|---|
+| mopper turns | 16,048 | — | 100% |
+| action still FREE after the mop attempt | 7,289 | 45.4% | 45.4% |
+| ... AND spare paint above `MOP_KEEP` | 4,374 | **60.0%** | 27.3% |
+| **... AND a SOLDIER within r²<=2** | **873** | **20.0%** | 5.4% |
+| ... AND that soldier hungry — **would fire** | 187 | 21.4% | **1.2%** |
+
+**The instrument validates itself: a predicted 1.2% against the ~1% firing actually observed in the
+ablation.** The funnel and the live lever agree, so the funnel is measuring the real thing.
+
+### My retraction was right, and the dose is not the answer
+
+I retracted `MOP_KEEP = 50` as the cause before running this, on arithmetic. **Confirmed: 60% of
+free-action turns pass the dose step**, so the threshold costs 40% while adjacency costs **80%**.
+And the counterfactuals settle it:
+
+| change | firing rate |
+|---|---|
+| as built | **1.2%** |
+| `MOP_KEEP = 0` — the dose removed entirely | **1.94%** |
+| adjacency solved instead | 5.83% |
+
+> **Removing the dose completely lifts firing from 1.2% to 1.9%. A re-dose is the wrong knob**, and
+> had I gone straight to it — which was my registered next step until I stopped to measure — I would
+> have spent another build and another 6 games moving a mechanism from *dead* to *slightly less dead*.
+
+### And fixing the real step costs the property that made the lever safe
+
+Only **20%** of a mopper's free-action turns have any soldier beside it. To change that the mopper
+must **move toward hungry soldiers** — and its movement is currently spent walking toward enemy
+paint, which is alice's only conversion channel (iteration 52: mop-fed tiles are 23.7% of post-r200
+paints). So the fix converts the lever from **non-diverting by construction** — the one property that
+let it clear iteration 44's re-open standard — into a genuine diversion of the unit whose output
+feeds a quarter of alice's painting. **That is iteration 44's failure family, entered deliberately.**
+
+**Lever B is CLOSED on reachability.** Not "it didn't help" — it *cannot act*, the dose cannot make
+it act, and the change that would make it act removes the reason it was safe to try.
+
+### That is the seventh pre-check this session to close its own direction
+
+And the second in two iterations to catch me heading for the wrong knob: the ablation showed lever B
+fired 1%, and the obvious inference — *"my threshold is too high"* — was wrong, cheap to check, and
+would have cost a build. **Naming the funnel step that collapses, rather than the first plausible
+cause, is what separated a dose change from a closure.**
+
+### Standing state of the whole direction
+
+Both levers from the stack-versus-census decision are now resolved: **A rejected** (fires, harmful,
+−125.7 paint actions), **B closed on reachability** (cannot fire, 1.2%). The bundle census was never
+run, and by the decision table I wrote before building, that was the correct outcome rather than a
+missed opportunity — **the pre-gate saved 150 games and the funnel saved a further build.**
+
+The per-tower production deficit stands, fully described and with no affordable mechanism found.
+Every route measured today: upkeep rate (uncollectable), soldier endurance (arithmetic, not a branch
+bug), ruin supply (abundant but pattern-completion limited), commitment (7%), heading (harmful),
+upgrade priority (−2), mopper transfer (cannot fire).
