@@ -51,7 +51,27 @@ line refs below are to `engine/src/main/battlecode/world/*.java`.
     `processEndOfTurn` is `addPaint(-allyRobotCount)`, so standing on your own
     paint waives only the *terrain* penalty, never the crowding one. A fully
     surrounded robot pays -8/turn anywhere on the map (200-paint soldier stash,
-    100-paint mopper). Only robots count; adjacent towers are free.
+    100-paint mopper).
+  - **CORRECTED 2026-09-09 [E]: adjacent ally TOWERS ARE COUNTED. This line
+    previously read "Only robots count; adjacent towers are free" and that was
+    WRONG.** Verified by javap against the pinned 3.1.0 jar, whole call chain:
+    `processEndOfTurn` calls
+    `GameWorld.getAllRobotsWithinRadiusSquared(location, 2, myTeam)` and then
+    increments the counter for **every** returned element whose `ID != my ID` —
+    the loop has a self-exclusion test and **no `isRobotType()` filter**. And
+    `getAllRobotsWithinRadiusSquared` itself filters only on `getTeam()`, adding
+    any non-null `getRobot(loc)`; towers are `InternalRobot`s occupying a tile,
+    so they are returned. Both halves must be false for towers to be free and
+    neither is.
+  - Why this matters and is not pedantry: units are SPAWNED adjacent to a tower,
+    `goRefill` deliberately walks units TO a tower, and units gather at ruins
+    where towers get built — so this is a tax on the bot's three most common
+    unit positions, and it is denser on small maps where towers are closer
+    together. Magnitude is per-turn -1 (or -2 on enemy paint) per adjacent
+    tower, so it must be MEASURED before being acted on, not assumed large.
+    See LEARNINGS "unit population has an interior optimum" — that retraction's
+    re-open condition is "measure adjacency on a corrected trace", and this
+    correction changes what has to be counted in that trace.
 - 0 paint at end of turn → -20 HP/turn, and cannot move/act (except disintegrate) until refilled.
 - Low paint cooldown scaling: below 50% stash, cooldowns multiplied by
   (100 - 2*X)% extra where X = paint %. (INCREASED_COOLDOWN_* in GameConstants).

@@ -17697,3 +17697,74 @@ points — not a candidate.
 whose outcomes differ for many reasons, it points opposite to the mechanism I just refuted, and
 reading it as "build fewer paint towers" would be the wrong-referent error this log has now made
 five times. Recorded as an observation with no action attached.
+
+## Engine probe, zero games: my own RULES.md had the clumping tax WRONG — adjacent ally TOWERS are taxed
+
+Chasing the small-map upkeep question I went to rung one of the ladder and read
+`InternalRobot.processEndOfTurn` off the pinned 3.1.0 jar instead of my digest of it. The full
+verified formula:
+
+```
+mult = (type == MOPPER) ? 2 : 1
+adj  = |{ r in GameWorld.getAllRobotsWithinRadiusSquared(loc, 2, myTeam) : r.ID != myID }|
+tile = teamFromPaint(getPaint(loc))
+  NEUTRAL  -> addPaint(-1*mult); addPaint(-adj)
+  OPPONENT -> addPaint(-2*mult); addPaint(-2*adj)
+  ALLY     ->                    addPaint(-adj)
+```
+
+My `RULES.md` said: *"Only robots count; adjacent towers are free."* **That is wrong.** The
+adjacency loop excludes **only self, by ID**, and carries **no `isRobotType()` filter**; and
+`getAllRobotsWithinRadiusSquared` filters only on `getTeam()`, adding any non-null
+`getRobot(loc)`. Towers are `InternalRobot`s occupying a tile, so they are returned and counted.
+**Both halves would have to be false for towers to be free, and neither is.** Corrected in
+`RULES.md` with the call chain and an `[E]` provenance tag.
+
+**This is the "verify the predicate, not the proxy" lesson landing on my own digest**, and it is
+the same shape as the `mopSwing` error: a statement that was *nearly* right (the tax is real, the
+magnitude is right, the tile multipliers are right) with one clause that was never checked. A
+digest is a proxy for the engine, and I had been reasoning off it for iterations.
+
+**Why it is material rather than pedantic.** The bot puts units adjacent to towers as a matter of
+policy in three places: units are **spawned** adjacent to a tower, `goRefill` **walks them to** a
+tower, and units **gather at ruins** where towers then get built. So the corrected tax falls on
+this bot's three most common unit positions. It is also structurally denser on small maps, where
+5.1 towers sit in 400–900 tiles rather than 10.3 in 2360–3600.
+
+**And it changes what the standing re-open condition requires.** LEARNINGS §3 retracted "unit
+population has an interior optimum set by the clumping tax" — but the retraction was of the
+*instrument*, not the mechanism, and its re-open condition is explicit: *"Do not plan against
+clumping without first measuring adjacency on a corrected trace."* That condition is unmet to this
+day, and I now know the trace has to count something my digest said was free. So this direction is
+**open and unmeasured**, not closed.
+
+**Not yet a candidate, and deliberately not sized by guess.** −1/turn per adjacent tower is small
+against a 200 tank; whether it matters is entirely a question of *how many turns* a unit spends
+adjacent to towers and allies, which is exactly what has never been counted. Sizing by intuition
+here is how iterations 44–47 started. The next thing I build is the counter, not the fix.
+
+### What the ledger already says, and it is the sharpest number of the session
+
+Alice's paint budget by r300, from the same 76 replays (soldier 200 paint, 5/paint action, so a
+tank funds **40** paint actions):
+
+| | SMALL 19 | LARGE 19 |
+|---|---|---|
+| soldiers spawned by r300 | 19.0 | 25.4 |
+| soldiers alive at r300 | 7.2 | 15.3 |
+| **soldier mortality by r300** | **62%** | **40%** |
+| paint spent on spawns | 4,977 | 6,226 |
+| spawn spend **per tower** | **969** | 602 |
+| paint actions per soldier **spawned** | **20.3** | 34.0 |
+| **share of the 40-action tank converted** | **51%** | **85%** |
+
+> **On small maps alice's soldiers convert about half their paint tank into painted tiles before
+> dying; on large maps they convert 85%.** Same code, same per-turn productivity — the difference
+> is how much of each 200-paint tank reaches the ground instead of going to upkeep and death.
+
+This reconciles a number I already had and never questioned: the iteration 22 paint-budget census
+measured *"a median of 20 paint actions of the 40 the tank allows, upkeep 40–42%"*. **That census
+ran on `box` (31x31) and `UnderTheSea` — and 20.3 is exactly my small-map figure.** I recorded 20/40
+as *the* property of a soldier. It is the property of a soldier **on a small map**; on large maps
+the same code gets 34/40. A constant in my own LEARNINGS turns out to be a variable in map size,
+and the axis was never tested because the census used two maps.
