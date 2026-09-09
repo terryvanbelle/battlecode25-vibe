@@ -16483,3 +16483,89 @@ It also sharpens iteration 55's stakes. `carol_conv` is my attempt to reproduce 
 the one mechanism I can name (soldier-driven ruin conversion). If it fails condition 1 while
 passing condition 3, then whatever bob does on ruin-dense maps is something else entirely, and I
 will have narrowed it by elimination rather than guessed at it.
+
+## Iteration 55 RESULT — the instrument FAILS, and the failure kills a bigger thing than the instrument
+
+Run `20260909-161537`, `carol` vs `carol_conv`, **full 75-map corpus, both sides, 150 games**.
+
+### The three pre-registered conditions
+
+| # | condition | registered bar | measured | verdict |
+|---|---|---|---|---|
+| 1 | **sensitivity** rho(carol win, ruins) | negative, \|z\| >= 3 | **rho = -0.0484, z = -0.59** | **FAIL** |
+| 2 | rung viability | win% in [30%, 90%] | **78.0%** (117/150) | PASS |
+| 3 | mechanism: conv converts more | soldiers & towers exceed carol's | **245 vs 9 soldiers** | **PASS** |
+
+Buckets (shape only — same games as the z, not corroboration):
+
+| ruins | carol vs `carol_conv` | carol vs alice/bob (tournament) |
+|---|---|---|
+| <= 11 | 84.2% | 67.1% |
+| 12-17 | 86.8% | 59.2% |
+| 18-23 | 70.0% | 36.2% |
+| >= 24 | 70.6% | 25.0% |
+| **spread** | **+13.6** | **+42.1** |
+
+Directionally right, nowhere near the bar; 95% CI [-0.209, +0.112] comfortably contains zero. As an
+instrument `carol_conv` is **BLIND**, by the same tool and the same threshold I applied to the old
+gate. It does not go into `roster_extra.txt`.
+
+### Condition 3 passed so hard that it answers a different question
+
+Mechanism check, `carol` vs `carol_conv` on **Leaf (52 ruins)**, the densest ground in the corpus:
+
+| | soldiers built | splashers | moppers | final towers | final coverage |
+|---|---|---|---|---|---|
+| `carol` | **9** | 78 | 0 | **15** | **672** |
+| `carol_conv` | **245** | 9 | 9 | **16** | 212 |
+
+**245 soldiers bought exactly one more tower than 9 soldiers did.**
+
+That is the finding, and it is much larger than the iteration that produced it. The whole causal
+chain this lineage has been working from since iteration 47 reads: `SPLASH_FLOOR` suppresses
+soldiers -> only soldiers call `workOnRuin` -> therefore carol cannot convert ruins -> therefore she
+loses ruin-dense maps. Every link is individually true. **The chain still does not carry, because
+soldier supply is not what limits tower count.** A 27x increase in soldiers moved tower count by
+one, from 15 to 16.
+
+**Soldiers are necessary for conversion and are not the binding constraint on it.** Those are
+different claims and I have been treating them as the same claim for eight iterations.
+
+### What is the constraint, then — a lead, explicitly not a conclusion
+
+The trace points at paint, not soldiers: `carol_conv` shows `starved57` at round 1000 and
+`starved` climbing all game, i.e. its soldiers run out of paint. Ruin conversion needs a soldier to
+paint a 5x5 pattern, paint comes from paint towers, and `carol_conv` spent its economy on soldiers
+that then had nothing to paint with. Meanwhile its coverage collapsed to 212 against carol's 672,
+which is why it loses 78-22 despite matching her tower count.
+
+This dovetails with the absorbing state the parallel session found (a team at $60 and 1000 capped
+paint, frozen), and with iteration 56's proposal to choose tower type from the binding resource
+rather than from a coordinate modulus. Three separate observations now point at **which resource
+binds**, rather than at unit mix. I am not declaring that solved — it is the next hypothesis, not
+this iteration's result.
+
+### Scope of the claim, stated because the two halves have very different power
+
+- The **gradient failure (condition 1) is well-powered**: 150 games, full corpus, both sides.
+- The **245-vs-9 mechanism result is ONE game on ONE map.** The effect is enormous and the direction
+  is not in doubt, but "27x soldiers buys +1 tower" is a single-map observation and I am not
+  entitled to a corpus-wide constant from it. What it licenses is exactly what I am using it for:
+  killing the *sufficiency* of the soldier-supply story, which a single decisive counterexample can
+  do. Sizing the real constraint needs its own measurement, and that is iteration 57's job.
+
+### The ledger
+
+**CLOSED DIRECTION: "carol loses ruin-dense maps because `SPLASH_FLOOR` starves her of the soldiers
+that convert ruins."** Killed by construction: an arm with the off-switch removed builds 27x the
+soldiers, converts to within one tower of the baseline, and shows no ruin gradient over the full
+corpus. Re-opening requires evidence that soldier supply binds tower count somewhere, which this
+directly contradicts.
+
+**What this does NOT close.** The cross-lineage ruin gradient itself is untouched and still
+unexplained — alice and bob still beat me 79.4% and 70.6% on `>= 24`-ruin maps. I have removed the
+leading explanation for it, which is progress of the kind that stops future iterations being spent
+on a chain whose links are true and whose conclusion is false.
+
+`src/carol` is unchanged; `carol_conv` stays in the tree as a documented archetype and a
+counterexample, not as a roster rung.
