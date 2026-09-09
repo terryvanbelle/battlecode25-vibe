@@ -78,10 +78,33 @@ Ground truth from: official specs.pdf (V3.1.0 changelog current) + reflection du
   only within r²≤2 of center (`SPLASHER_ATTACK_ENEMY_PAINT_RADIUS_SQUARED=2`). **Moppers** remove
   enemy paint (attack r²≤2). So enemy territory is only reduced by splashers/moppers.
 - Primary vs secondary ally colors are identical for territory; only matter for pattern matching.
-- **Paint penalties per turn** (from robot's own stash): end turn on neutral −1, on enemy −2
-  (`PENALTY_NEUTRAL/ENEMY_TERRITORY`); PLUS 1 × (# adjacent allied robots in the 8 neighbors),
-  doubled while in enemy territory. Moppers pay **2×** the territory penalties
-  (`MOPPER_PAINT_PENALTY_MULTIPLIER=2`).
+- **Paint penalties per turn** — CORRECTED 2026-09-09 from `InternalRobot.processEndOfTurn`
+  bytecode (the previous wording read as if the crowding rider only attached to a territory
+  penalty; it does not, and that changes where the leak is). The engine does exactly:
+
+  ```
+  mult  = (type == MOPPER) ? 2 : 1
+  crowd = |getAllRobotsWithinRadiusSquared(myLoc, 2, myTeam)| excluding self
+  tile  = teamFromPaint(paint at myLoc)
+  if      tile == NEUTRAL : addPaint(-1*mult); addPaint(-crowd)
+  else if tile == ENEMY   : addPaint(-2*mult); addPaint(-2*crowd)
+  else /* MY OWN PAINT */ : addPaint(-crowd)
+  if paintAmount == 0 && isRobotType: addHealth(-20)
+  ```
+
+  Three consequences the old wording hid:
+  1. **Crowding is charged on your OWN paint too.** Standing on own paint is free for territory
+     but still costs **1 paint per adjacent ally**, everywhere on the map, all game. Clustering
+     is an *unconditional* leak, not a territory-dependent one.
+  2. **`crowd` counts ALL allied robots in r²≤2 — TOWERS INCLUDED.** A soldier parked beside its
+     own tower (refilling, or building a ruin pattern) pays crowding paint for the tower itself.
+     This is a direct cost of the behaviour iteration 47 increased.
+  3. **The MOPPER 2× applies only to the TERRITORY term**, not to crowding. On enemy paint the
+     crowding term is `-2*crowd` for every unit type — that is the *territory* doubling applied
+     to crowding, not the mopper multiplier.
+
+  `MatchMaker.endTurn(ID, health, paintAmount, ...)` is called immediately after, so the
+  per-robot `paint` in a replay's Turn record is the value **after** this penalty.
 - **Low-paint cooldown**: stash <50% full (`INCREASED_COOLDOWN_THRESHOLD=50`) ⇒ cooldowns
   increased by (100−2X)% where X = percent full (intercept 100, slope −2).
 - **Zero paint**: cannot move or act (except disintegrate), loses `NO_PAINT_DAMAGE=20` HP/turn.

@@ -16723,3 +16723,81 @@ attributes the whole residual to penalties. **It is iteration 48's probe, not it
 and I am registering it as an estimate so it cannot later be quoted as a finding.
 
 `src/bob/` untouched. **`bob_iter20` remains the bot; HEAD's behaviour is unchanged.**
+
+---
+
+## Iteration 48 — PROBE PRE-REGISTERED (written before the measurement exists): how much paint does bob burn on CROWDING?
+
+**Why this, and why it is the only direction iteration 47 left open.** `CLOSED.md` #23/#24: all three
+sources of `acts` are closed, and each bottomed out in a fixed **paint** budget. The explicit re-open
+condition I registered on #23 was: *a mechanism that keeps units alive by making them **spend less**,
+rather than by feeding them, draws on no tower pool at all.* This is that mechanism.
+
+**The engine fact, bytecode-verified today and NOT what my own RULES.md said** (now corrected there):
+
+```
+mult  = (type == MOPPER) ? 2 : 1
+crowd = |getAllRobotsWithinRadiusSquared(myLoc, 2, myTeam)| excluding self
+if   tile NEUTRAL : addPaint(-1*mult); addPaint(-crowd)
+elif tile ENEMY   : addPaint(-2*mult); addPaint(-2*crowd)
+else /* OWN */    : addPaint(-crowd)
+```
+
+Three things I had wrong, each of which moves the target:
+
+1. **Crowding is charged on your own paint too.** My digest read as though the crowding rider only
+   attached to a territory penalty. It does not. Standing on own paint costs nothing for territory and
+   still **1 paint per adjacent ally** — everywhere, all game. That makes clustering an *unconditional*
+   leak rather than a situational one.
+2. **`crowd` counts every allied robot in r²≤2, TOWERS INCLUDED.** A soldier parked beside its own tower —
+   refilling, or building a ruin's 5x5 — pays crowding paint **for the tower**. That is a direct,
+   previously invisible cost of exactly the behaviour iteration 47 dialled up, and it is a candidate
+   explanation for why refilling more was strictly harmful.
+3. The MOPPER 2× applies only to the territory term, not to crowding.
+
+**Why this is a *free* saving, which is the whole point.** Every mechanism since iteration 43 has been a
+transfer: quality bought with volume (43, 45), army bought with stash (47). Moving to a less crowded tile
+costs **nothing** — movement and action cooldowns are separate, the unit was going to move anyway, and no
+tower pool is touched. There is no displaced unit and nothing to pay it out of.
+
+**Method, and it needs no new engine tooling.** `ReplayDump --map-at R` renders the arena with every
+robot drawn on it, case-encoding team and letter-encoding type, and `posOf` is cleaned on death from both
+paths (`diedIds` and `DieAction`), so there are no ghosts. Parse the grid at sampled rounds over the **50
+`bob_g0` games** of run `20260909-181512` (`g0` is the shipping behaviour) and, for every bob mobile unit,
+count allied robots — **mobile and tower** — within r²≤2.
+
+**Sampling is legitimate here and I am saying why, because LEARNINGS 85 says the opposite for the other
+case.** Crowd is an **instantaneous** quantity, so sampling rounds estimates its mean without bias. The
+stride bug in LEARNINGS 85 bit a **cumulative** counter, where skipped rounds are lost rather than
+averaged. Different estimator, different failure mode.
+
+**PRE-REGISTERED, before the numbers exist:**
+
+- **Primary reading: mean `crowd` per bob mobile-unit-round.**
+  - **≥ 0.30** ⇒ a real, free lever; build the de-clumping movement tiebreak.
+  - **≤ 0.05** ⇒ **CLOSED for the cost of one probe.**
+  - **0.05–0.30** ⇒ size the *avoidable* part against the deficit before building anything.
+- **Registered as NOT an accept test.** It measures a rate over existing games and can accept nothing.
+- **The avoidability split, registered as decisive rather than descriptive**: report `crowd` decomposed
+  into **tower-adjacency** and **mobile-mobile**. Tower adjacency is largely *not* avoidable — a soldier
+  must stand next to a ruin to build its pattern and next to a tower to refill — whereas mobile-mobile
+  crowding is exactly what a movement tiebreak removes. **If the majority of crowd is tower-adjacency,
+  the primary threshold does not license building the tiebreak**, and I will say so rather than quote the
+  total.
+- **Comparative, on the same 75 alice-vs-bob tournament replays iteration 46 used** (sanctioned by
+  MULTI_AGENT rule 3; all `IND` lines dropped at the source per RULES.md): if alice's crowd per unit-round
+  is as high as bob's, crowding is a property of the game and not of my bot, and the direction closes
+  regardless of bob's absolute number. That control is what made iteration 46 conclusive.
+- **Sizing, registered now**: the small-map deficit is 91 tiles. A paint action costs 5 paint and returns
+  `conv` ≈ 0.71–0.90 tiles, so **1 paint ≈ 0.15 tiles** and closing the gap needs **≈600 paint per game**.
+  Bob runs ~20,000 mobile-unit-rounds per game, so a mean crowd of 0.30 is ~6,000 paint — ten times the
+  requirement. **I am flagging that ratio as a seduction risk in advance**: a ceiling ten times the target
+  is exactly the shape that preceded iterations 43, 45 and 47, and in every one of those the mechanism
+  engaged and the objective did not move. The threshold above is set from the decision it forces
+  (LEARNINGS 80), not from this ratio.
+- **Prediction, registered with its mechanism**: bob's crowd **exceeds** alice's, and the **tower-adjacency
+  share is the larger half** — because bob does 2.2x alice's pattern flips (iteration 46), and pattern work
+  is precisely what parks soldiers against ruins and towers. If that prediction is right, the primary may
+  pass while the *avoidable* part fails, which is why the split is registered as decisive.
+
+`src/bob/` untouched. **`bob_iter20` remains the bot.**
