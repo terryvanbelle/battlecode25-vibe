@@ -2301,3 +2301,31 @@ named, and that is a separate fact from the win rate, obtainable after the fact,
 screen, and keep the calibration surface and the evaluation surface disjoint (one map to calibrate,
 a fresh sample to screen). Choosing the constant by intuition and reading the win rate conflates
 "wrong idea" with "wrong number", which are the two outcomes the loop most needs to tell apart.
+
+## Register an instrument's MEASUREMENT CONDITIONS, not just its formula (iteration 54)
+
+The previous entry says a manipulation check must assert the DOSE, not merely that the mechanism
+fired. Iteration 54 applied that correctly and it worked — the dose was specified as a share, came
+back at 88.8% against a registered ceiling of 50%, and a 4x overshoot was caught for **one game**
+where the same class of error at iteration 52 had cost a full 50-game screen.
+
+The gap it exposed is one level up. I also registered a second instrument — **coverage retention,
+final/peak** — as the realized quantity the hypothesis was about. I registered the *formula* and
+not the *conditions*, and the formula alone is not an instrument.
+
+Retention is only meaningful in a **losing seat**. The winner's coverage is still climbing when the
+game ends, so its retention is ~100% by construction and measures nothing. My control arm won its
+probe game, so the number I had pre-committed to reading came back as a vacuous 100% and could not
+be compared to anything. I had to go back to a previous iteration's replay to find a losing seat to
+compare against — which worked, but only because one happened to exist.
+
+**The rule**: when you register a metric, register the conditions under which it is diagnostic —
+which seat, which phase, which regime, and what makes a reading vacuous. A metric that is
+undefined or degenerate in some conditions will eventually be read in exactly those conditions,
+and a degenerate reading does not announce itself: 100% retention looks like a great result.
+
+**The generalisation.** Doctrine already says a manipulation check that certifies the wrong quantity
+is worthless. This adds: a check that certifies the *right* quantity under the *wrong* conditions is
+worthless in the same way, and is harder to spot, because the number looks fine. Both failures are
+prevented by the same discipline — write down what reading would make you say the measurement did
+not happen — and that sentence is the thing to add to every future pre-registration.
