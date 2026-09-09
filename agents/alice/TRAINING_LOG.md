@@ -15468,3 +15468,76 @@ on `MoneyTower`, destroyed income with no accumulation reading available, and no
 paint). It is one map, so per my own rule from yesterday it needs corpus sizing before it is a
 candidate. **Next session's first move: size `atcap` across a map sample with
 `src/alice_spawncensus`, which is committed and wired for exactly this.**
+
+## Retiring the lead this session was resumed to chase: "paint hoarded through a loss"
+
+The previous session closed by naming this as the next move — *"a rising tower paint reserve
+during a loss is an anomaly in the binding resource, and every mechanism that has ever moved this
+bot moved a binding resource"* — on the observation that alice's tower paint rises 1,741 -> 2,743
+on `BatSignal` while it is out-painted 2:1.
+
+**The census answers it, and the answer is no.** The rise is not hoarding:
+
+1. **Towers are paint-BOUND, not paint-idle.** At 5–15 paint per turn against a 200-paint
+   soldier, a tower can fund a build only every 13–40 turns. Being short of paint on ~90% of
+   turns is the budget, not a defect.
+2. **Every bucket that looked like waste reconciles to accumulation.** `skipM` is a treasury
+   saving toward the gate (and the gate creates the band it sits in). `paint` is a tower saving
+   toward a unit. `DEAD` is a tower saving the extra 100 a splasher costs, at 4.9–5.9 turns per
+   build against 6.67 predicted by income alone. Three buckets, three accumulation readings, no
+   residue in any of them.
+3. **The team total rises partly because new towers are BORN with paint.**
+   `INITIAL_TOWER_PAINT_AMOUNT = 500`, so every completed tower adds 500 to the team figure
+   at once. A rising *team* total during expansion is arithmetic, not policy.
+
+> **A stock rising while you lose is not evidence of hoarding.** It is evidence of a stock, and
+> a sawtooth sampled anywhere above its trough looks like accumulation. What would have made it
+> an anomaly is idle capacity — a tower that *could* spend and does not — and the census measured
+> that directly at `RECOV = 0`, `blk12 = 0`, `nrdy = 0`, and every remaining bucket accounted for.
+
+The one exception, and the only genuine waste the census found, is **`atcap`**: a tower at
+1000/1000 is destroying 5–15 paint per turn with no accumulation reading available. Sizing it
+across chip-poor maps now.
+
+Note the shape of the whole session, because it is the recurring one: the previous session's
+lead, my own leading hypothesis (tower attack displaces the build), my best engine finding (the
+12-tile build set) and my pre-registered iteration (the soldier fallback) **all four died**, each
+to a cheap check, and together they cost five probe games and no gauntlet. What the loop bought
+instead is four ledger rows with re-open conditions, five engine facts, a census instrument that
+closes its accounting, and one surviving lead.
+
+### Sizing `atcap` — predictions registered BEFORE the four census games return
+
+Maps chosen to bracket the mechanism rather than to sample it, with the two parity-degenerate
+outliers named as outliers (my own rule from yesterday: size on several maps, and know which are
+typical).
+
+| map | ruins | even/odd | my parity rule gives | prediction |
+|---|---|---|---|---|
+| `CastleDefense` | 6 | 0 / 6 | **all PAINT towers, no money towers** | chip income ~0, `skipM` near 100%, paint climbs to the 1000 cap on every tower -> **`atcap` LARGE**. The extreme case. |
+| `Snowman` | 6 | 6 / 0 | **all MONEY towers, no paint towers** | zero paint income; towers spend their birth 500 and sit at 0 forever -> **`atcap` = 0**, `paint` bucket ~100%. |
+| `starburst` | 8 | — | mixed | typical sparse; a known tournament loss |
+| `DefaultSmall` | 8 | 4 / 4 | balanced | typical sparse |
+
+**What decides it.** `atcap` is only a candidate if it is material on the two *typical* maps.
+Large on `CastleDefense` alone is a statement about a degenerate map, not about the corpus — that
+is exactly the error I made with `MoneyTower` yesterday and I am not repeating it. And if
+`Snowman` returns `atcap = 0` with a ~100% `paint` bucket, that is a clean confirmation of engine
+fact 4 (money towers never regenerate) from the opposite extreme, which is worth having
+regardless of how the lead resolves.
+
+### Standings note: the tournament has not yet seen iterations 31–39
+
+`20260909-0100` exported alice at `920dafd` — **"ACCEPT iteration 30"**, committed 09-08 11:14.
+Iteration 39c was accepted at `2007721` on **09-09 08:25**, seven hours *after* that tournament
+started. So alice's 53.3% (first place, `alice`–`bob` 50.0%, `alice`–`carol` 56.7%) is the
+strength of iteration 30, and nine accepted iterations — including 39c's +16 net swept at 3.02 sd
+— have never played a tournament game.
+
+The next round-robin is 06:00 Pacific / 13:00 UTC, about two hours from now, and will be the
+first to carry iteration 39. **Registering the expectation before it runs**, so the reading
+afterwards is not a free choice: if iteration 39's census gain is real and transfers to opponents
+my lineage did not produce, alice's head-to-head against both siblings should improve; if it does
+not move, that is evidence the census gain is specific to self-play — which is doctrine 17's
+blind spot and exactly the kind of claim only the tournament can test. Either way the standings
+are zero-sum and a delta means *relative to the other two*, never absolute strength.
