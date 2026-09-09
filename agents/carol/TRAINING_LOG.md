@@ -16179,21 +16179,41 @@ reason the bracket no longer applies, not a new constant inside it.
 distinct, so `MaxConsecutiveRejects` does not force a move by the letter of the rule. I am moving
 anyway, and the next entry says why the streak itself is the evidence.
 
-## Iteration 54 Stage 1: **REJECT at 25/50 (50.0%)** — a dead-centre null at the calibrated dose
+## RECONCILIATION — two carol sessions logged iteration 54 in parallel
 
-Run `20260909-155554`, fresh 25-map sample: `carol_i54_b` **25/50**, swept-win **5**, swept-loss
-**5**, split-by-side **15**. Below the pre-registered `>= 34` screen line, so **REJECT** as
-registered. No census is spent — that is exactly what the screen stage exists to prevent.
+The coordinator launched a second carol session against this workspace while the first was still
+live; both ran for about half an hour and both wrote iteration 54 up. That was a launch error, not
+a fork of the ledger, and both sessions have been stopped. Nothing was lost and nothing is at risk.
+Per the algorithm's "supersede in place; do not delete", I have merged rather than discarded, and
+where the accounts differ **the measurements are the arbiter**.
 
-The 5/5 sweep split with 15 split-by-side maps is the signature of a genuinely neutral change
-rather than a noisy one: the two arms trade sides on three fifths of the sample and sweep an equal
-number of the rest.
+**They agree, independently, on every measured quantity** — which is the most useful thing about
+having accidentally run the experiment twice:
 
-**The result is symmetrical with iteration 52's**, which also returned exactly 25/50 at its
-calibrated dose after its first dose overshot. Two mechanisms in a row that (a) overshot on the
-first setting, (b) were calibrated to a sane realized dose, and (c) landed on precisely 50%. That
-pattern is worth naming rather than treating as coincidence, and I take it up below.
+| quantity | account A | account B | reconciled |
+|---|---|---|---|
+| screen result | 25/50 | 25/50 | **25/50 (50.0%)** |
+| swept-win / swept-loss / split | 5 / 5 / 15 | 5 / 5 / 15 | **5 / 5 / 15** |
+| corrected dose at `BIG_FLOOR=50` | 31.5% | "32%" | **31.5%** (same figure, rounded) |
+| verdict against the pre-registered gate | REJECT | REJECT | **REJECT** |
+| arm chosen by the registered rule | `BIG_FLOOR=50` | `BIG_FLOOR=50` | **50** |
 
+Two sessions, the same committed pre-registration, the same arm-selection rule applied to the same
+counters, the same verdict. That is a stronger statement about the rule than either session could
+make alone: the selection really was mechanical, because it was performed twice by two readers who
+could not see each other and came out identical.
+
+The unique material from each account is kept in full and appears once: the corrected-dose table
+and the rule application above, and the absorbing-state diagnostic below. Only the redundant
+re-narration of the verdict has been folded away.
+
+**One observation worth keeping from the second account:** this 25/50 is *symmetrical with
+iteration 52's*, which also returned exactly 25/50 at its calibrated dose after its first dose
+overshot. Two mechanisms in a row that (a) overshot on the first setting, (b) were calibrated to a
+sane realized dose, and (c) landed on precisely 50%. Naming the pattern rather than treating it as
+coincidence: at a *sane* dose both mechanisms are neutral, and the first-setting overshoot was what
+made each look like it was doing something. A mechanism that only registers when it is dosed hard
+enough to distort the bot is not a mechanism with a working range.
 ---
 
 # INSTRUMENT FINDING — my accept gate is measurably BLIND to my largest deficit (zero VM cost)
@@ -16331,7 +16351,21 @@ it: **in the games that matter most, paint was never the binding resource.** My 
 cap and whose chips are at 60. Iteration 54 was aimed at one pole of a two-pole failure, and the
 sampled losses landed disproportionately on the other pole.
 
-### Iteration 55, named and grounded — the tower-type rule is state-blind
+### Iteration 56 (renumbered from 55), named and grounded — the tower-type rule is state-blind
+
+**On the number.** Both sessions independently reached for "iteration 55". Mine is already
+pre-registered, committed and *in flight* as a 150-game corpus run (`carol_conv`, below), so this
+proposal takes **56** and keeps its content untouched. The renumbering is bookkeeping; the
+hypothesis below is the second session's and it is a good one.
+
+**These two are not rivals, and the connection is the interesting part.** The absorbing state
+described above *is* a ruin-conversion failure seen from the inside: a team holding $60 against a
+250-chip soldier cannot build the only unit that calls `workOnRuin`, so it cannot claim a ruin, so
+it cannot build a tower, so it never earns the chips. And the diagnostic's own control — on
+`Dominoes` **both** teams freeze, one of them `carol_iter44` — makes it **lineage-wide**, which is
+precisely the shape of deficit a self-play gate cancels to zero. The second session found, from
+four replays, an independent instance of the pathology the first session measured at
+rho = +0.009 over 5,768 games. Two methods, one disease.
 
 Both poles are the same disease: **tower composition decides which resource binds, and this bot
 chooses tower type by a rule that cannot see its own resource state.** `src/carol` decides each

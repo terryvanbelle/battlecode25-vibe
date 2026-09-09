@@ -22,3 +22,5 @@ c725146|census iter30->iter36 = +38: unresolved != rejected; accept decisions mo
 cf62b87|first opponent that closes a dense map (carol_racer archetype)
 b9e91a2|register an instrument's MEASUREMENT CONDITIONS (which seat/phase), not just its formula
 903d012|dose denominator must be counterfactual and exogenous; sweep the knob wide to detect a broken one
+590ad1d|accept gate measured BLIND to the ruin gradient (self-play rho +0.009 over 5,768 games vs tournament -0.346); ruin verdicts since iter44 are unresolved, not settled
+07c2846|ruinsight: every ruin-conversion gate must be checked SEES IT / BLIND before its verdict is read
