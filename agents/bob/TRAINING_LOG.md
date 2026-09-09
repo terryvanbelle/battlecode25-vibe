@@ -14008,3 +14008,56 @@ downstream of a *production* question, and the honest order is to settle whether
 at all in these games before improving what one would do. Note that this is the same shape as iteration
 34, which is about fielding splashers: both say bob's problem in short games is that it holds none of
 the units that can reduce enemy territory, and that is one question, not two.
+
+### The dead-chips mystery is the SAME mechanism — and it closes yesterday's "strongest untested lead"
+
+On 2026-09-08 I logged, and explicitly did not chase: *"bob finishes a won game with $269,370 unspent
+while starving for paint all game ... the strongest untested lead I now hold: bob has a large,
+permanently idle resource and a permanently binding one, and no mechanism converting between them.
+(`srp0-2` all game is the other half of that picture.)"*
+
+bob **does** have the converter. `Soldier.java`'s iteration-4 comment states it: an SRP is 200 chips for
+**+3 paint/turn on every allied paint tower**, and *"chips are this bot's dead resource ... SRPs convert
+the dead resource into the scarce one."* So the question was never "is there a converter" but "why does
+it not run".
+
+The counters answer it, and the contrast is exactly along the regime boundary:
+
+```
+  CastleDefense vs carol (ruin-poor LOSS)   srp0 on 32 of 32 sampled rounds — never once nonzero
+  Leaf          vs carol (ruin-rich WIN)    srp reaches 5-6, active for most of the game
+```
+
+And the code path:
+
+```java
+chooseRuin();
+if (workRuin != null) { workOnRuin(); }
+// 1b. SRP construction, only when there is no ruin to capture.
+if (workRuin == null && workOnSrp()) return;
+```
+
+**The SRP branch is gated behind having no ruin to work.** A soldier permanently committed to a poisoned
+ruin — which `chooseRuin()` never releases, since its only release condition is a tower appearing —
+never reaches the converter. So the chain closes: carol poisons the pattern, the soldier commits
+forever, the soldier cannot complete it, the SRP branch is gated out, and bob's chips stay dead in
+precisely the games where paint is the binding constraint.
+
+**But I am not claiming that gate is the whole explanation, because my own choice-set measurement
+refutes the strong version.** Two of the six soldiers in the round-40 dump had **zero** ruins in vision,
+so for them `workRuin == null` and `workOnSrp()` did run — and bob still shows `srp0` all game with
+$1,850+ in hand, well above `SRP_MIN_CHIPS = 500`. So a second route must also be operating, and the
+obvious candidate is that **an SRP is also a painted 5x5 pattern, so enemy paint denies it the same way
+it denies a tower pattern** — on a contested 20x20 board there may be no clean 5x5 anywhere bob can
+reach.
+
+Two routes, one root cause: **enemy paint denies bob's patterns, both kinds.** That is a stronger and
+simpler statement than either route alone, and it is why I am recording both rather than picking the
+tidier one.
+
+**The discriminating check, registered and NOT run**: instrument the *decision*, not the outcome —
+count, in-bot, how often `workOnSrp()` is reached at all versus how often it is reached and finds no
+valid pattern centre. Those two numbers separate "gated out by ruin commitment" from "reached but
+denied by enemy paint", and a zero at the output cannot tell them apart. This is doctrine's
+instrument-the-decision rule, and the count of the *reached* branch is the number that does not exist
+today.
