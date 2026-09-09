@@ -16406,3 +16406,66 @@ which keeps the estimate a **lower bound** on redundancy.
   trigger from the decision it forces, not from the outcome expected.
 
 `src/bob/` untouched. **`bob_iter20` remains the bot.**
+
+## Iteration 46 — **CLOSED for the cost of one probe. Bob's redundant repainting is EXACTLY ZERO.**
+
+75 `alice-vs-bob` tournament replays, full action stream to r ≤ 200, 77,067 action lines, **72,167 PAINT
+actions classified**. Zero gauntlet games spent.
+
+**Isolation control held**: `grep -c ' IND '` over the collected census returns **0**. Other teams'
+indicator strings were dropped on the VM before transmission, as registered this morning — filtered at
+the source, not by my choosing not to look.
+
+**Accounting VOID condition PASSED** for both teams: `new + flip + REDUNDANT + skip_unknown` equals the
+PAINT count exactly (`closes: YES`).
+
+```
+    team    paint      new    flip   REDUND  REDUND%  skipUnk  splash  closes
+   alice    36058     2107     642        0     0.0%    33309      41     YES
+     bob    36109      937    1440        0     0.0%    33732     538     YES
+```
+
+Small / medium / large, for bob: **0.0% / 0.0% / 0.0%**.
+
+**Verdict against the registered gate**: `REDUNDANT ≤ 5%` ⇒ **the direction is CLOSED**. It is not near
+the line; it is **zero occurrences in 2,377 classified repaints**.
+
+**Why the 92% `skip_unknown` is not the weakness it looks like — and I checked this before believing the
+zero.** A tile's *first* paint in the window is unclassifiable, and 33,732 of bob's 36,109 paints are
+first paints. But **a first paint cannot be a redundant repaint by definition**. The classified base is
+therefore exactly the set of candidate repaints, which is the correct denominator for the question, and
+redundancy is **0 of 2,377**. Excluding first paints is not a limitation here, it is the right partition.
+(Incidentally: tiles are painted ~**1.08 times per game** — there is barely any repainting at all.)
+
+**My registered prediction was WRONG, and cleanly so.** I predicted bob's redundancy would exceed
+alice's and be higher on large maps, on the basis that iteration 42 measured bob's "painted own tile"
+exit at 15.8% of large-map soldier-turns. Both halves fail: bob and alice are both at exactly zero.
+
+**And the probe explains iteration 42's number instead of contradicting it.** Bob's "painted own tile"
+turns are **FLIPS** — repainting a tile of my own team in my team's *other* colour, which is exactly what
+tower and SRP pattern work requires. Bob does **1,440** flips to alice's **642**, 2.2x as many (4.0% of
+paints against 1.8%). That is not waste; it is the mechanism by which patterns get completed, and bob
+does more of it because bob does more pattern work.
+
+### The consequence, which is larger than the probe
+
+Iteration 44 put bob's small-map `conv` at 0.713 against alice's 0.917. That deficit has exactly two
+possible sources: **bob repainting its own ground**, or **alice taking bob's ground away**. This probe
+eliminates the first **completely**. So:
+
+> **Bob's conversion deficit is caused by alice, not by bob.** It is alice's 47 unpaints a game, not any
+> inefficiency of mine.
+
+And **iteration 45 showed bob cannot buy its way out of that** — raising mopper share to alice's level
+improved `conv` exactly as intended (0.802 → 0.910 on small maps) and lost 5, 6 and 11 games doing it.
+
+**So the `conv` term is now closed from both ends**: bob wastes nothing that could be reclaimed, and the
+one mechanism that addresses the enemy's removal costs more than it returns. Combined with composition
+being a local optimum in both directions (iterations 20 and 45), **`acts` is the only remaining term of
+`tiles = acts × conv`**, and it must be raised by units acting more often or living longer — not by
+changing what bob builds, and not by painting better.
+
+That is a much smaller search space than I had this morning, and every wall of it was measured rather
+than assumed.
+
+`src/bob/` untouched. **`bob_iter20` remains the bot.**

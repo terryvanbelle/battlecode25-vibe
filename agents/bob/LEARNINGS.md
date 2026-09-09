@@ -3055,3 +3055,40 @@ directions** — iteration 20 found the splasher peak interior at 2 of 5 slots, 
 moppers is monotone harm. So `acts` cannot be raised by composition. It has to come from units acting
 more often, or from more units, or from units living longer — **and 89% of bob's deaths are starvation**
 (iteration 44: 8.2 starved of 9.2 dead per game), which is the one of those three I have never touched.
+
+## 83. A zero that is trustworthy because the denominator is the right partition (2026-09-09)
+
+Iteration 46 classified 72,167 paint actions and found **redundant repainting is exactly 0** for bob and
+for alice. The tempting objection is that **92%** of paints landed in `skip_unknown` — a tile whose prior
+colour the window had not yet established.
+
+**That objection is wrong, and checking it is what makes the zero usable.** A tile's *first* paint cannot
+be a redundant *repaint*. The skipped set is precisely the set of events the question does not apply to,
+so the classified base is exactly the candidate repaints: **0 of 2,377**.
+
+Contrast LEARNINGS 79 and 81, where a denominator contained the wrong population and inflated a rate 2x
+and 3.6x. The lesson is symmetric and worth stating as one rule: **a suspicious denominator is not
+automatically a bad one — ask whether the excluded events could have been positives.** If they could not,
+excluding them is the correct partition and sharpens the estimate rather than weakening it.
+
+Also recorded: bob's "painted own tile" turns, which iteration 42 measured at 15.8% of large-map
+soldier-turns and which I came here expecting to be waste, are **FLIPS** — own team, other colour — i.e.
+tower and SRP pattern work. Bob does 2.2x alice's flips because bob does more pattern work. A behaviour
+that looks wasteful under one instrument can be the mechanism working under another.
+
+## 84. Bob's conversion deficit is caused by the opponent, and is not addressable (2026-09-09)
+
+`tiles = acts × conv`. Bob's small-map `conv` is 0.713 to alice's 0.917. That gap has exactly two
+possible sources — bob repainting its own ground, or alice removing it — and both are now measured:
+
+- **Bob repaints redundantly: 0.0%** (iteration 46). Nothing to reclaim.
+- **Alice removes 47 tiles a game**, and buying moppers to answer it improved `conv` exactly as designed
+  while losing **5, 6 and 11 games** (iteration 45).
+
+So the `conv` term is closed from both ends, and composition is a local optimum in both directions
+(iteration 20's interior splasher peak, iteration 45's monotone mopper harm).
+
+**`acts` — total paint actions per game — is the only term left**, and it has to come from units acting
+more often or living longer, not from what bob builds or how well it paints. Three iterations spent
+attacking `conv` from different angles is not wasted work: it is how the search space got small enough
+to say that sentence with evidence behind every clause.
