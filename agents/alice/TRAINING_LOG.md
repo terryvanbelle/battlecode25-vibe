@@ -17907,3 +17907,219 @@ Not in self-play. The gap is opponent-driven, so the only instrument that contai
 tournament replay set — which is where this session's one solid finding also came from, for zero
 games. The next hypothesis has to be framed as *what carol does to alice's soldiers on a small map
 that alice does not do to itself*, and measured there.
+
+## The ledger caught a duplicate AND an un-annotated retraction — my iteration 49 probe partly re-ran work already on disk
+
+Grepping before proposing the next thing, I found `alice_upkeepcensus` at log line ~10248:
+**UnderTheSea, 76,105 robot-turns, upkeep 0.761/robot-turn, terrain 48.2% / adjacency 51.8%,
+45% of all unit paint.** That is the same base measurement iteration 49's probe made.
+
+**So LEARNINGS section 3's re-open condition was ALREADY discharged and the entry never said so.**
+The retraction reads *"Do not plan against clumping without first measuring adjacency on a
+corrected trace"* — and a corrected trace had been run, and its result recorded in the log, and
+LEARNINGS was never annotated. I then re-ran it. This is my own lesson
+*"'supersede in place' must ANNOTATE the old entry, not merely append a new one"* failing on the
+exact entry that lesson was written for. Annotating both the archive entry and the new index now.
+
+**What iteration 49 genuinely added over the existing census**, so the duplication is bounded and
+recorded honestly: the **size split** (which is what killed the direction), the **tower-vs-unit**
+split of adjacency (which sized the RULES.md correction at 3.8–17.8%), **soldier lifetime** as the
+cancelling variable (87.8 vs 220.0 turns), and the ledger closing against an independent
+instrument. It also **replicates** the old figure — UnderTheSea's 0.761/robot-turn sits between my
+1.154 (small) and 0.683 (large).
+
+## And it caught the standing instruction I was about to walk past
+
+The same entry closes with: *"Anyone picking this up should size the COLLECTABLE fraction first —
+the pre-check that this session's three dead mechanisms all needed and only got twice."*
+**Iteration 49 sized the TOTAL, not the collectable fraction.** So the instruction is still unmet.
+
+It also records what is already closed, which I am not re-opening:
+
+- the **slide** preference is dead on reachability — it **fires 4 times a game**;
+- "break up when crowded" is dead on distribution — mean adjacency 0.362, only **1.3%** of turns
+  have 3+ adjacent allies;
+- and "always prefer the less crowded move" **collides with the ballistic wander** that iterations
+  12 and 14 bought.
+
+### Iteration 50 pre-check — PRE-REGISTERED, and it is a reachability test, not a mechanism
+
+**The gap in the closure.** All three closed items are about the *adjacency* half and about moves
+taken *every* turn. `wander()` has exactly one other choice point, and it is untouched by any of
+them: when `wanderSteps` runs out it re-rolls the heading as **`directions[rnd(8)]` — uniformly at
+random, considering nothing.** Choosing that heading by what it walks into **preserves ballistic run
+length exactly** (`WANDER_RUN` stays 25, the run stays straight), so it does not collide with
+iterations 12/14. It is the direction that becomes informed, not the length.
+
+**And the leverage is the opposite of the slide's.** `WANDER_RUN = 25` against a mean soldier life
+of **87.8 turns** means roughly **3.5 heading choices govern a soldier's entire life** — each one
+steering the next 25 turns. The slide fires 4 times a game and steers one turn each.
+
+**The target is the TERRAIN half, which none of the closures touch**, and there is an engine reason
+it is the right half: **a soldier cannot repaint an enemy tile** — `assertCanAttack` debits the full
+5 paint and does nothing, and iteration 23 guards both attack sites precisely for this. So a soldier
+standing on enemy paint is paying −2/turn plus **doubled** adjacency with **no way to fix it except
+to move**. My probe measured that state at **29.8%** of soldier-turns on DefaultSmall, 27.7% on
+Racetrack, 28.9% on mit.
+
+**The pre-check, and it is the one that killed iteration 47.** Iteration 47 died because its choice
+set was a **singleton on 100% of turns** — the ranking had nothing to rank. So before writing any
+heading rule I measure whether the 8 candidate headings actually differ:
+
+> At each heading re-roll, bucket the tiles in vision (r^2=20) by which of the 8 directions they lie
+> in, and record the ally-paint share of each bucket. Report the share of the direction actually
+> chosen at random, the best available, and the worst.
+
+**Kill condition, registered now.** If `best − chosen` ally-share is small — under **10 percentage
+points** — the choice set is effectively degenerate, the mechanism has nothing to choose, and I close
+it on reachability for zero further games, exactly as iteration 47 closed.
+
+**Why this one IS gradeable on my own gauntlet, stated in advance because iteration 49 was not.**
+This mechanism does not claim to close the gap to carol, and it is not measured against carol. It
+claims to raise **alice's own paint efficiency**, and both arms of the screen are alice, so the arm
+whose soldiers keep more of their tank paints more and wins on ground. That is a within-lineage
+improvement, which my own correction says the gauntlet **can** measure — unlike "has the gap to
+carol closed", which it cannot. I am writing that down before the run rather than discovering it
+after.
+
+**Measurement caveat, stated now:** the counter runs in the `finally` block, so vision is sampled
+from the tile the unit moved to rather than the one it re-rolled on — one step of offset. It is a
+reachability estimate, not an exact replay of the decision, and I am not going to run the sensing
+mid-`wander()` where an overrun could suppress the move and silently change play.
+
+## Iteration 50 pre-check — TWO controls stood between the headline and the truth, and my registered bar was void
+
+The first run said the choice set was emphatically real: headroom (best sector's ally share minus
+the randomly-chosen sector's) of **+498.6** per mille on DefaultSmall against a registered bar of
++100. I did not report that, because the same output contained an impossibility.
+
+### Control 1 — an internal consistency check caught a probe bug
+
+`Racetrack` came back **chosen 415.2, best 808.7, worst 497.0**. A sample cannot score *outside*
+`[worst, best]`, so `worst > chosen` is not a surprising number, it is a broken one.
+
+**The fault, found by reading the aggregation rather than guessing:** when the randomly-drawn
+heading points off the map its 45-degree sector holds no visible tiles, so `chosen` was left at
+**0** and accumulated anyway. Every edge-adjacent re-roll therefore contributed a spurious zero,
+dragging the chosen mean down and inflating the headroom. Fixed with a `chosenValid` flag that
+drops the sample instead. Identity re-verified after the fix (DefaultSmall still round 926).
+
+**The correction is large**: DefaultSmall's chosen ally-share goes 362.1 -> **548.9**, and the
+headroom +498.6 -> **+357.7**.
+
+### Control 2 — the noise floor, which shows my PRE-REGISTERED BAR WAS NOT A BAR
+
+`best of 8 sectors` is a **maximum of eight noisy ~9-tile estimates**, so `best - chosen` is
+upward-biased *even when paint is spatially random and there is nothing to steer toward*. Simulated
+(400k trials, 8 sectors x 9 tiles):
+
+| p(ally) | tiles/sector | null headroom |
+|---|---|---|
+| 0.40 | 6 / 9 / 12 | 283 / 233 / 202 |
+| 0.43 | 6 / 9 / 12 | 284 / 234 / 203 |
+
+> **The winner's-curse floor is ~190-230 per mille. I registered a bar of 100.** Pure noise clears
+> my bar by a factor of two, so it could never have rejected anything. I registered a threshold
+> against **zero** when the correct reference was the **noise floor** — the same error class as the
+> iteration 44 census bar of +4, and METHODS.md section 4 exists to prevent exactly it.
+
+**I am voiding that gate rather than quietly replacing it.** Substituting a new bar now and
+declaring a pass would be choosing a threshold with the results already on screen, which is the
+thing pre-registration exists to stop.
+
+### What the corrected numbers actually say — and they are SPLIT
+
+| map | chosen | best | observed headroom | null | **excess** |
+|---|---|---|---|---|---|
+| DefaultSmall (400) | 548.9 | 906.7 | 357.7 | 227.8 | **+129.9** |
+| Racetrack (625) | 705.4 | 860.0 | 154.6 | 189.0 | **−34.5** |
+
+One map shows structure beyond noise; the other is **below** its own noise floor. My own standing
+lesson is that *one map cannot size a corpus quantity* — and two maps disagreeing cannot either.
+So this is **neither a pass nor a kill: it is an inconclusive pre-check with a voided gate**, and
+the honest move is to resolve it rather than argue it. Extending to eight maps now; the analysis is
+automatic and it is one game per map.
+
+**Priced in advance, so the answer is interpretable either way.** Taking DefaultSmall's +129.9 at
+face value: a heading with ~13 percentage points more ally paint shifts turns from enemy tiles
+(−2/turn) to ally tiles (0/turn), worth ~0.26 paint/turn, ~23 paint over an 87.8-turn life, about
+**4.6 paint actions**. That is a third to a half of the gap, at essentially zero cost since the
+heading is drawn anyway — worth having if it is real, and worth nothing if it is noise. Which is
+precisely why the extension is the right spend and a mechanism is not.
+
+**One geometric caution I will not overstate.** A heading governs **25** tiles of travel but vision
+reaches only ~4.5, so the choice is informed about roughly a fifth of the run it steers. Paint is
+spatially autocorrelated, so the informative fraction is higher than that ratio alone implies — I
+am recording the concern without converting it into a number I have not measured. If the eight-map
+extension comes back positive, **persistence over the 25-turn run is the next rung**, not a build.
+
+## Iteration 50 pre-check RESOLVED at 8 maps — the structure is REAL, and the mechanism is still too small. Closed on magnitude
+
+Extended to 8 maps, 1 game each, `alice_i50probe` vs `alice_iter43`. Identity holds throughout
+(DefaultSmall round 926 as `alice`; `mit` reproduces the i49 probe's round 792 exactly).
+
+| cut | n | mean excess over the noise floor | sd | t | maps positive |
+|---|---|---|---|---|---|
+| **SMALL (400–625)** | 5 | **+67.7** per mille | 63.7 | **+2.38** | **4/5** |
+| **LARGE (3200–3600)** | 3 | +19.0 per mille | 21.2 | +1.56 | 2/3 |
+
+**The choice set is NOT degenerate on small maps, and the structure sits exactly where my deficit
+is.** That is a real finding and it is the opposite of iteration 47, whose choice set was a
+singleton 100% of the time. It is also, notably, the first quantity this session that is both
+size-conditional *and* pointed the right way.
+
+*(The `VERDICT:` labels my tool prints use an arbitrary +50 cutoff I chose after seeing data. They
+are a reading aid and not a gate; the numbers above are the evidence.)*
+
+### And it dies anyway, on the objective it was proposed for
+
+The mechanism was proposed to close a **13.7 paint-action** per-soldier gap. Its ceiling:
+
+| step | value |
+|---|---|
+| excess ally share available | 67.7 per mille = **6.8 percentage points** |
+| turns shifted from enemy (−2/turn) to ally (0/turn) | 0.135 paint/turn |
+| over an 87.8-turn soldier life | 11.9 paint = **2.4 paint actions** |
+| **against the 13.7-action gap** | **17% — CEILING** |
+
+> **Even a perfect implementation — choosing the best of eight sectors every time, with the
+> structure persisting undiminished across all 25 turns of the run — closes 17% of the gap it was
+> built for.** That is a closure on **magnitude**, not on power: no larger sample overturns it,
+> because the bound comes from what is available to collect, not from how precisely I measured it.
+
+And the ceiling is generous to the point of being unreachable. Vision reaches ~4.5 tiles while a
+heading governs **25**, so most of the run is steered on information the unit never had; and the
+"perfect" figure assumes every shifted turn moves from the *worst* terrain to the *best*.
+
+### What I am NOT doing, because it is the error this log has made five times
+
+There is a residual, different claim available: 2.4 actions on a ~20-action baseline is **+12% paint
+output**, and *that* might be worth having on its own terms. **It is a different objective from the
+one I registered**, and quietly switching to it because the first objective failed is the
+wrong-referent error — the same move as reading a sparseness number as a size effect. So I am
+recording it as a **separate and unproven** direction rather than banking it:
+
+> **Open, not closed:** "an informed wander heading is worth ~+5–12% soldier paint output as an
+> absolute gain." **Deciding unknown: PERSISTENCE.** The ceiling above assumes the sector's paint
+> composition still holds 25 turns later; vision covers ~18% of the run. The measurement that
+> settles it: at a re-roll, record the chosen sector's ally share, then record the tile types the
+> unit actually stands on over the following 25 turns, and correlate. Until that number exists the
+> +12% is an upper bound with no lower bound, and I will not screen a mechanism on it.
+
+### The pre-check paid for itself, and that is the transferable part
+
+**Eight games killed this.** Iterations 44, 45, 46 and 47 each spent a 50–150 game screen or census
+to learn the same class of thing. The difference was not insight — it was asking *"how much is
+there to collect"* before *"does it help"*, which is METHODS.md section 2, and this is the first
+time this lineage has applied it to a mechanism **before writing the mechanism** rather than after.
+
+Three controls stood between the first screenful and this verdict, and each moved the answer:
+
+1. an **internal consistency check** (`worst > chosen` is impossible) caught a probe bug that
+   inflated the headroom by ~140 per mille;
+2. a **simulated noise floor** showed my pre-registered bar of 100 sat *below* the ~200 winner's-curse
+   floor, so the gate could never have rejected anything and had to be voided rather than applied;
+3. **extending 2 maps to 8** turned a split, uninterpretable result into a clean size-conditional one.
+
+Without any one of them I would have reported "+498.6 against a bar of 100, emphatically passes"
+and built the mechanism.
