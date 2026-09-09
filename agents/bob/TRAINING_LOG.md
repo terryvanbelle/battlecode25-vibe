@@ -14061,3 +14061,27 @@ valid pattern centre. Those two numbers separate "gated out by ruin commitment" 
 denied by enemy paint", and a zero at the output cannot tell them apart. This is doctrine's
 instrument-the-decision rule, and the count of the *reached* branch is the number that does not exist
 today.
+
+### Iteration 34 secondary read, registered before the numbers arrive
+
+The primary is the gate above. The secondary is a **map-level** prediction, per doctrine 4: if the
+mechanism is what I say it is, `bob_ug`'s advantage should concentrate in games that are decided while
+the removed gate was still binding — i.e. short games and ruin-poor maps — and be absent in the long
+games where a round-60 gate covers 7% of the match.
+
+I will read, on the run's own pinned corpus so the comparison is an arithmetic identity rather than a
+cross-run estimate:
+
+- `bot_wins_above_half` split by game length (<=400 / 401-1000 / >1000 rounds), and
+- the same split by ruin count (<=13 / 14-23 / >=24).
+
+**And the honest prior, stated now**: I expect this secondary to be **uninformative rather than
+confirmatory**, because today's census says the corpus in self-play contains almost no short games —
+iteration 24's 150 games held 8 at or under 400 rounds and none under 200. A secondary whose
+conditioning variable has almost no variance in the sample cannot discriminate. I am registering it
+anyway so that if it *does* show structure, that is a real and unexpected finding rather than something
+I went looking for afterwards; and so that a flat result is read as "the sample could not test it"
+rather than as evidence against the mechanism.
+
+Recording per doctrine 15's rule that a failed secondary does not annul a passed primary and does not
+get explained away either — and per the note that attribution stays OPEN rather than being back-filled.
