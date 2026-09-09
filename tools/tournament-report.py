@@ -34,6 +34,41 @@ def runs():
                   if p.is_dir() and RUN_ID.match(p.name) and (p / "results.csv").is_file())
 
 
+def played_commits(run):
+    """{bot: commit} from a run's bots.txt, or {} if absent."""
+    f = run / "bots.txt"
+    if not f.is_file():
+        return {}
+    out = {}
+    for line in f.read_text().splitlines():
+        parts = line.split()
+        if len(parts) >= 2:
+            out[parts[0]] = parts[1]
+    return out
+
+
+def duplicate_pairs(cur, prev):
+    """Matchups whose BOTH commits are unchanged since `prev`.
+
+    Those games are byte-identical to the previous run -- the engine is
+    deterministic, so the same two commits on the same map produce the same game,
+    same winner, same round count. Pooling two tournaments therefore multiplies
+    apparent n while adding no information, and any z-score computed over the
+    pooled set is inflated. Two lineages hit this independently: one found a pair
+    reproducing 150/150 exactly, the other found its "0/8 on 23 maps" was really
+    0/2 printed four times.
+    """
+    if prev is None:
+        return []
+    c, pv = played_commits(cur), played_commits(prev)
+    if not c or not pv:
+        return []
+    bots = sorted(c)
+    return [(x, y) for i, x in enumerate(bots) for y in bots[i + 1:]
+            if c.get(x) == pv.get(x) and c.get(y) == pv.get(y)
+            and c.get(x) is not None and c.get(y) is not None]
+
+
 def load(run):
     """-> (wins, played, h2h, sweeps, rows, maps-played)"""
     rows = list(csv.DictReader((run / "results.csv").open()))
@@ -196,6 +231,19 @@ def main():
             pt = ph.get((x, y), 0) + ph.get((y, x), 0)
             d = (pct(h2h[(x, y)], t) - pct(ph.get((x, y), 0), pt)) if comparable and pt else None
             L.append(f"| {x} vs {y} | {h2h[(x, y)]}–{h2h[(y, x)]} | {pct(h2h[(x,y)], t):.1f}% |{arrow(d)} |")
+
+    dups = duplicate_pairs(cur, prev)
+    if dups:
+        L.append("\n## !! Do not pool these games with the previous run\n")
+        L.append("These matchups played **byte-identical commits** in "
+                 f"`{prev.name}`, so their games here reproduce that run exactly "
+                 "— same winners, same round counts. The engine is deterministic, "
+                 "so pooling the two tournaments multiplies apparent sample size "
+                 "while adding no information, and any z-score over the pooled set "
+                 "is inflated.\n")
+        for x, y in dups:
+            L.append(f"- **{x}–{y}** — unchanged since `{prev.name}`; 150 duplicate games")
+        L.append("\nDeduplicate on the **commit pair**, not the run id.\n")
 
     L.append("\n## Swept maps\n")
     L.append("Won from *both* sides, so a sweep is immune to spawn advantage.\n")

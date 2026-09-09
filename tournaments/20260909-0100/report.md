@@ -19,6 +19,15 @@
 | alice vs carol | 85–65 | 56.7% |   -6.0 |
 | bob vs carol | 64–86 | 42.7% |   -4.0 |
 
+## !! Do not pool these games with the previous run
+
+These matchups played **byte-identical commits** in `20260908-1300`, so their games here reproduce that run exactly — same winners, same round counts. The engine is deterministic, so pooling the two tournaments multiplies apparent sample size while adding no information, and any z-score over the pooled set is inflated.
+
+- **alice–bob** — unchanged since `20260908-1300`; 150 duplicate games
+
+Deduplicate on the **commit pair**, not the run id.
+
+
 ## Swept maps
 
 Won from *both* sides, so a sweep is immune to spawn advantage.
