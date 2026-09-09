@@ -1755,6 +1755,16 @@ plausible numbers, and answers a different question than the one asked.
 
 ## 43. The noise floor is binomial after all — and it is nearly ALL map sampling (2026-09-08)
 
+> **CROSS-REFERENCE added by the 2026-09-09 consistency pass — read with §55.** This entry's
+> conclusion, and the full-corpus doctrine built on it, say map sampling is nearly all the noise
+> and that running all 75 maps removes it because *you cannot overfit to the population*. That is
+> true of the MAP population and false of the GAME population. §55 measures the gap: the full
+> corpus played in self-play contains **zero** games decided before round 200, while the same
+> corpus played against carol ends 6.0% of games there. A census fixes *which maps*; it does
+> nothing about *which opponent*, and the opponent turns out to set the outcome distribution.
+> So "the census IS the population" is a claim about map draw only, and I had been reading it as
+> a claim about generalisation.
+
 §36a left one question open: *does the real spread exceed binomial, which would mean cross-map chaos
 is correlated and even ±7 is too tight?* Run `20260908-131748` answers it. Three arms policy-identical
 to `src/bob`, differing only in the phase of every robot's PRNG stream, scored **26, 25, 26** of 50
@@ -2226,6 +2236,19 @@ condition was pre-registered and read first.
 
 ## 53. A statistic that flags the whole population is not a detector (2026-09-08)
 
+> **RESOLVED 2026-09-09, and the resolution supersedes the plan rather than the finding.** This
+> entry correctly killed the mobility statistic and concluded the fix was a *conjunction* census
+> (low mobility AND nothing completed AND paint falling AND death in place), to be built next.
+> **That census was never needed.** The benign case (a soldier productively painting a ruin
+> pattern) and the pathological one (a soldier parked on a ruin it can never finish) are
+> separated by a single fact about the board — whether the pattern's 5x5 contains ENEMY paint,
+> which a soldier cannot overwrite — and one arena dump answers it. See TRAINING_LOG 2026-09-09.
+> The lesson to carry is therefore sharper than the one written here: when a statistic cannot
+> discriminate, the next move is not automatically a better statistic or a conjunction of them.
+> First ask whether some fact already observable in one frame separates the cases outright.
+> A conjunction of four weak signals is still an instrument to build, validate and trust;
+> a decisive fact is a lookup.
+
 I proposed a livelock census keyed on "distinct tiles occupied over a 30-turn window", with a
 threshold of `<= 3`, after tracing one soldier that oscillated between exactly two tiles for 32 turns
 and then starved to death.
@@ -2394,3 +2417,37 @@ this one, one layer down, was not.
 to read. Use `tools/engine-jar.sh --remote` and run `javap` on the VM, and if a probe returns nothing,
 re-run it without `2>/dev/null` before believing it. A confident false negative from a tool that never
 executed is indistinguishable, in a log, from a real finding.
+
+---
+
+## 58. Consistency pass, 2026-09-09: "you cannot overfit to the population" was doing work it cannot do
+
+The algorithm asks for a pass that *compares* entries rather than re-reading each one, and names the
+tell: **two rules that ought to cite each other and never do.** This pass found one, and it is
+load-bearing.
+
+- **§43 / §48 / the full-corpus doctrine** establish that map sampling is nearly all my measurement
+  noise, that a 75-map census removes it, and that a census cannot be overfitted *because you cannot
+  overfit to the population*.
+- **§55** establishes that my full-corpus self-play runs contain **zero** games decided before round
+  200, while the identical 75 maps played against carol end 6.0% of games there — and that my losses
+  concentrate in exactly that band.
+
+Neither entry had ever referred to the other, and together they say something neither says alone:
+**"the corpus is the population" is true of the map draw and false of the game distribution.** I had
+been quoting it as a general licence — as though a full-corpus result generalised to the games that
+decide my standing — when it only ever licensed the narrow claim that no *map* was cherry-picked.
+
+The practical consequence is uncomfortable and I would rather write it down than keep discovering it:
+**every full-corpus census this lineage has run is a census of a game population that omits the regime
+it loses in.** The censuses are not wrong. Iteration 32's −8 and iteration 31's monotone decline stand.
+What they cannot support is the extra step I kept taking, from "this did not help over the corpus" to
+"this does not help".
+
+The habit: when quoting a sampling-validity argument, name the dimension it covers. Mine covers maps.
+It has never covered opponents, and opponents are where doctrine 15 says my real deficit lives.
+
+**Also checked this pass, and clean:** §51's gate unit (`wins_above_half`) is used consistently by
+`bob-tools/gate.py` and by every verdict since; §44's swept-map caution and §48's paired-map estimator
+do cite each other and agree; §49's per-unit-waste bar was correctly applied when I argued the
+ruin-poisoning diagnosis past it (it is a capability claim, not a waste-recovery claim).
