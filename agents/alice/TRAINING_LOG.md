@@ -17486,3 +17486,214 @@ That is a materially stronger form of the same claim, and it comes free from a r
 in sd from each run's own decisive count, plus the FPC for sampled screens), §8 as a standing
 pre-check with a number, and §9/§10 for the manipulation check, which is the concrete thing I would
 do differently if I rebuilt iteration 47.
+
+# Session 2026-09-09 (resumed) — locating the small-map defect in tournament replays
+
+State on resume, established from git and `gauntlet-collect.sh --list` rather than from memory:
+iteration 43 is the live bot; **44, 45, 46 and 47 were all rejected**; all 12 remote runs are
+collated and every one has a verdict in this log, so nothing was lost to the session death. The
+last entry left iteration 48 (mopper memory) as a *candidate*, explicitly not built, with a
+pre-check owed.
+
+## Before proposing anything I greped my own closed-directions ledger, and it closed two of my three leads
+
+Per METHODS.md §13, by name, before opening anything:
+
+| lead | ledger says | verdict |
+|---|---|---|
+| **SRPs / resource patterns** as the big unused mechanic | **iteration 10: REJECTED** — 13/24, 13/24, 14/24 across 72 games on three disjoint samples. Re-open condition: *"the chip constraint becomes binding in r0–r400"* | **stays closed** — this session's money histogram shows the treasury parked under `CHIP_RESERVE`, i.e. chips are *not* starved. Re-open condition not met. |
+| **`mopSwing`**, still never called after 48 iterations | LEARNINGS: I costed it from `MOPPER_SWING_PAINT_DEPLETION = 5` as a 3-tile ground converter, then disassembled it — **no tile-paint write exists in the method**. It drains *robot* paint. | **stays closed** — it is a combat mechanic, and 86% of games end on painting with zero decided by tower destruction. |
+| **map size** (`getMapWidth`/`getMapHeight`, never called) | nothing in the ledger | **open** |
+
+The API-sweep list said "resource patterns unused", and that is true of the *current* bot — but it
+is unused because iteration 10 tried it and it was rejected, not because it was never considered.
+**An unused-API sweep reports absence of calls, not absence of history**, and only the ledger tells
+the two apart. That cost about two minutes and saved re-running a 72-game direction.
+
+## The one open lead, and why I am censusing before building
+
+The cross-lineage deficit axis is **map SIZE**, established under control (small-but-not-sparse
+−21.4, z = −3.84; sparse-but-not-small +2.4, z = +0.44). Alice is **41.2%** vs carol on the 19
+smallest maps and **78.9%** on the 19 largest. The bot cannot express a size-conditional policy at
+all, since it never reads the map dimensions.
+
+But I have **no located defect** behind that axis — only the axis. Iterations 44–47 were four
+mechanisms proposed without one, and all four failed; this log's own diagnosis is that *"this
+lineage's failure mode is generating mechanisms faster than it locates defects."* So the next move
+is a census, not a mechanism, and it costs **zero games**: 150 alice-vs-carol replays from
+tournament `20260909-1300` are already on disk on battlecode-dev, and MULTI_AGENT.md rule 3 makes
+tournament replays sanctioned shared ground.
+
+### PRE-REGISTERED, written before any replay is dumped
+
+**Question.** Where does the small-map game diverge — in the expansion race, or downstream of it?
+
+- **H1 (expansion).** Alice arrives at r300 with **fewer towers** than carol on small maps. This is
+  the straight transfer of my own strongest structural finding: in self-play the r300 tower leader
+  wins **13/14**, and r(tower diff, coverage diff) at r300 = **+0.900**.
+- **H2 (conversion).** Alice arrives at r300 **level or ahead** on towers and still loses the race
+  to 70% coverage. The defect would then be downstream of expansion.
+
+**I predict H1**, because every instrument I own says r300 towers decide the game.
+
+**The discriminating outcome, named in advance.** If mean (alice − carol) towers at r300 on the
+small sample is **>= 0** while alice's win rate there is ~41%, then **H1 is refuted and my r300
+finding does not transfer cross-lineage.** That is the observation that would make me drop the
+hypothesis (METHODS.md §12), and it would be worth more than a mechanism: it would put a measured
+boundary on the instrument I have accepted and rejected six iterations with.
+
+**The large sample is the control, not decoration.** Whatever the small sample shows must *invert*
+on the large maps, where alice wins 78.9%. A quantity that looks the same in both cuts is not the
+size effect, however bad it looks.
+
+**Sample.** alice-vs-carol, 19 smallest and 19 largest maps by area, both sides = 38 + 38 = 76
+games, from run `20260909-1300` only (the 0100 run's alice games are a different commit; I am not
+pooling runs — the report warns that deterministic games pool without adding information).
+
+## Census result — H1 is REFUTED on its own pre-registered terms. Alice LEADS on towers at r300 and loses anyway
+
+`tools/tournament-census.sh` (new, mine) over 76 alice-vs-carol replays from `20260909-1300`,
+19 smallest and 19 largest maps by area, both sides. **Zero games played** — every replay was
+already on disk. Alice's columns are resolved from each replay's `GameHeader`, never from the
+filename order.
+
+| | SMALL 19 | LARGE 19 |
+|---|---|---|
+| alice wins | **15/38 = 39.5%** | **30/38 = 78.9%** |
+| median game length | **496** | 1239 |
+| ended before r300 | 8/38 (alice won **1**) | 0/38 |
+| **towers at r300 (alice − carol)** | **+0.53** | +5.32 |
+| **coverage at r300 (alice − carol)** | **−159.7‰** | **+46.7‰** |
+
+The 39.5% reproduces the 41.2% the tournament cut gave me, so the sample is the effect.
+
+### The pre-registered discriminator fired
+
+I registered: *"if mean (alice − carol) towers at r300 on the small sample is >= 0 while alice's
+win rate there is ~41%, then H1 is refuted."* It is **+0.53**, and the win rate is 39.5%.
+**H1 is refuted and H2 stands: alice reaches round 300 with a tower LEAD and a 160-per-mille
+coverage DEFICIT, and loses.** I predicted H1 and I was wrong.
+
+**What is NOT refuted is the r300 finding itself.** Inside the small sample the r300 tower lead
+still predicts the winner cross-lineage — 79% when alice leads, 29% level, 11% behind — which is
+the same shape as the 83/62/21 I measured in self-play. So the instrument transfers; what fails is
+my *assumption about which side of it alice sits on*. I had never checked, in six iterations of
+building toward the expansion race, that alice was actually losing it. **It is winning it.**
+
+### The control inverts, which is what makes this the size effect and not a general defect
+
+I registered that the quantity must invert on the large cut. Coverage at r300 does exactly that:
+**−159.7‰ small, +46.7‰ large.** Towers do not invert (alice leads in both), so towers are not the
+size-dependent quantity and coverage is.
+
+### Reading my own instruments for absolute degeneracy, no opponent required
+
+The mechanism columns, per team, at r300:
+
+| | alice SMALL | alice LARGE | what it means |
+|---|---|---|---|
+| paint actions | **384.9** | 863.1 | alice's paint output **halves** on small maps |
+| soldiers alive | **7.2** | 15.3 | and so does its soldier count |
+| paint actions per soldier | 53 | 56 | **per-soldier productivity is unchanged** — alice is not painting worse, it is fielding half the painters |
+| starvation deaths | 17.4 | 19.2 | same absolute count against **half** the army |
+| chips idle | **$2,931** | $1,821 | alice hoards **more** chips exactly where it loses |
+| **tower paint per tower** | **145** | 221 | — |
+
+`twPaint` is the team's total tower paint (verified: 2 towers, `twPaint710` at round 1 = 1000 birth
+paint − 200 soldier − 100 mopper + income), so dividing by `tw` is legitimate.
+
+> **A soldier costs 200 tower paint. On small maps alice's towers hold an average of 145 each —
+> below the price of the unit that paints. On large maps they hold 221, above it.**
+
+That is a threshold crossing in **my own bot**, measured with no reference to any opponent, and it
+lands on exactly the axis my cross-lineage deficit lives on. It is also the **absorbing state**
+already in my LEARNINGS (§3c): tower paint falls below the soldier price, only the 100-paint mopper
+is affordable, and the tower never saves back up. I recorded that mechanism eleven months of
+iterations ago and never once checked whether it was *size-conditional*. It is.
+
+**The bias runs the safe way.** The 8 small-map games that ended before r300 are excluded from the
+r300 means, and alice won only 1 of them. Its fastest losses are therefore missing from the
+averages, so the −159.7‰ coverage gap is if anything **understated**.
+
+### What I am NOT concluding
+
+Carol fields ~5 splashers and 0 moppers to alice's ~1 and ~2.4, and gets far more coverage per
+tower. That is carol's design and I am not reasoning from it or toward it — it enters here only as
+the yardstick that made the size split visible. Every claim above that I intend to act on is a
+statement about **alice** measured against **alice**: paint output halves, soldier count halves,
+per-soldier productivity does not, chips idle rise, tower paint per tower crosses below 200.
+
+**Next step is a probe, not a mechanism.** The obvious story — on a 496-round game alice buys chip
+income it never spends instead of the paint income that buys painters — requires the **paint-vs-money
+tower mix**, which this census does not carry. Four iterations in a row died from proposing a
+mechanism before locating the defect; the mix is readable from replays already on disk.
+
+## The tower-mix probe REFUTES my own explanation, for zero games — the mix is flat across the size axis
+
+The story I wrote one entry ago: *"on a 496-round game alice buys chip income it never spends
+instead of the paint income that buys painters."* It requires alice's paint/money tower mix to
+tilt toward money on small maps. `tools/tower-mix.py` reconstructs the mix at r300 from the tower
+event stream of the same 76 replays — **again zero games played**.
+
+| | alice paint towers | alice money towers | **paint share** |
+|---|---|---|---|
+| SMALL 19 | 2.77 | 2.47 | **52.9%** |
+| LARGE 19 | 5.32 | 5.03 | **51.4%** |
+
+**The mix is 1.5 points apart across an axis that moves the win rate by 39 points. My explanation
+is refuted.** Alice does not over-buy money towers on small maps; it builds very close to 50/50
+everywhere, which is what a bot with no access to `getMapWidth`/`getMapHeight` would be expected to
+do — the same policy on every map, because it cannot tell the maps apart.
+
+**The reconstruction's own control fired, and I am not averaging through it.** On 2 of 30 small-map
+games the rebuilt total disagreed with the engine's `tw` (DefaultSmall 5 v 4, FourCorners 9 v 7).
+Worst-case correction — assume **every** phantom tower was a PAINT tower, the direction that most
+favours my hypothesis — moves the small paint share from 52.9% to **51.9%**, against 51.4% on the
+large cut. **The conclusion survives the maximum possible error**, which is the only reason I am
+willing to state it from a reconstruction that failed its own check.
+
+### Tooling report — an unwindowed dump gives tower BIRTHS without tower DEATHS
+
+Not a workaround; reporting it per the standing rule. In `tools/replaydump/ReplayDump.java`:
+
+- tower spawns print **unconditionally**: `if (print || tower)` (line ~518);
+- `DieAction` deaths print **only inside the action window**: `if (print) ...` (line ~593);
+- the round-level `diedIds` list prints unconditionally (line ~165) but evidently does not carry
+  these deaths.
+
+So a dump taken without `--from/--to` shows every tower being born and no tower dying, and any
+reconstructed tower population silently over-counts, always in the same direction.
+
+**The discriminating case, already on disk** (`DefaultSmall`, alice = T1): a `PAINT_TOWER` spawns
+at **(7,7) at round 60**, and another `PAINT_TOWER` spawns at **the same tile (7,7) at round 360**,
+with no `DIED` line anywhere between them. A tile cannot hold two live towers, so the first one
+died unobserved. Engine `tw`=4 against my rebuilt 5 confirms it. That is a missing event, not a
+mislabelled one — the count is wrong, not the name.
+
+### Where this leaves the direction — the census finding stands, the mechanism story does not
+
+What survives is measured and mine, and none of it depends on the mix:
+
+- alice reaches r300 on small maps with a tower **lead** (+0.53) and a **−160‰ coverage deficit**;
+- paint output halves (385 v 863) while **per-soldier productivity does not** (53 v 56/soldier);
+- so the deficit is **soldier COUNT**, not soldier quality: 7.2 alive against 15.3;
+- tower paint per tower is **145** on small against 221 on large — below the 200 the soldier costs;
+- and alice loses **22.2** units by r300 on small maps against 20.1 on large — **the same absolute
+  turnover on half the tower base** (4.2 deaths per tower against 1.9), 78% of it starvation.
+
+> The treadmill is the finding: on a small map alice's towers each fund **2.2x** as many
+> replacements out of a paint stock that is **35% smaller per tower**. Every 200 paint spent on a
+> soldier that starves before it converts its tank is tower paint that never becomes coverage.
+
+**What I explicitly do NOT yet know is the direction of that loop.** Fewer towers -> less paint ->
+starvation -> replacement cost -> fewer live painters -> less coverage is a cycle, and a census
+cannot tell me where a mechanism should enter it. Naming an entry point from a correlation is
+precisely the error that produced iterations 44-47, so I am stopping the direction here rather
+than proposing arm number five, and the next move is the probe that separates the loop's entry
+points — not a candidate.
+
+**Also noted and deliberately NOT acted on:** in games alice lost, its paint share was *higher*
+(56.2% small, 62.1% large) than in games it won (50.0%, 49.6%). That is a correlation across games
+whose outcomes differ for many reasons, it points opposite to the mechanism I just refuted, and
+reading it as "build fewer paint towers" would be the wrong-referent error this log has now made
+five times. Recorded as an observation with no action attached.
