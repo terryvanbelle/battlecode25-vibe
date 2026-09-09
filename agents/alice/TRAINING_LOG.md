@@ -16840,3 +16840,47 @@ after the expansion race is already won. Two regimes, not one:
 work is in regime 1, or in the specific failure of regime 2 — not in a fourth attempt to make
 saturated soldiers or moppers slightly better. Recording that before proposing anything, because
 this lineage's failure mode is generating mechanisms faster than it locates defects.
+
+## The priority-split probe REFUTES my own explanation of iteration 46 — and that is the result
+
+I closed the iteration 46 reject by naming a cause: *"priority 1 plausibly takes the decision
+before the tie-break is consulted."* I also wrote that it was **a hypothesis, not a finding**,
+and that the count had to come before any arm touched priority 1. I ran the count. **It says I
+was wrong.**
+
+`alice_i47probe` = `src/alice` plus counters, no behaviour change. **Identity verified on two
+maps, not assumed**: probe and `alice_i46ctl` (an identity copy of `src/alice`) both lose Bunny
+at round **1618** and Castle at round **700**, same opponent, same maps.
+
+Per-mopper counters at end of game, summed:
+
+| map | mops | b0 (pattern-blocking) | b1 (robot on tile) | b2 (plain) | tie-break reachable |
+|---|---|---|---|---|---|
+| Bunny (7 moppers) | 128 | **0** | 14 (11%) | 114 (89%) | **85 (66%)** |
+| Castle (2 moppers) | 12 | **0** | 5 (42%) | 7 (58%) | **6 (50%)** |
+
+**Priority 1 is a minority, not a monopoly, and the iteration 46 tie-break was reachable on 50–66%
+of all mops** — every one of them cleanly, with no priority-0 or priority-1 candidate present to
+override it. The mechanism was not starved of decisions. It got two-thirds of them and moved
+neither kept-share nor games.
+
+> **So iteration 46 is a real null of the stated mechanism, not a plumbing failure.** The
+> conclusion that survives: **"enemy robots within r^2<=2 of the tile" does not select
+> higher-retention tiles.** The offline signal is real and replicated 6/6 — a handed-back tile
+> has more enemy activity beside it — but the in-game predictor I built for it does not pick that
+> signal up. A correlate measured in a replay is not the same object as a predicate a robot can
+> evaluate, and I treated them as interchangeable.
+
+**And the correction matters more than the original claim.** Had I not run the count, the record
+would carry "priority 1 blocks the tie-break" as the reason, and the obvious next iteration would
+have been to demote priority 1 — an arm aimed at a cause that does not exist, on a map where it
+accounts for 11% of mops. That is iteration 44's exact shape. The count cost two matches.
+
+### A side observation, flagged and deliberately not acted on
+
+**`b0 = 0` on both maps: iteration 19's pattern-blocking priority fired ZERO times in 140 mops.**
+Iteration 19 was accepted, and its census was real (637 samples stalled at 22 of 24 pattern
+tiles). Two maps are not a corpus and this is not a claim that the branch is dead — Bunny and
+Castle may simply be maps where patterns do not stall. Recorded as a **trigger for a corpus-wide
+count**, not as a finding, and explicitly *not* as grounds to touch iteration 19. Writing it down
+because an unrecorded anomaly is one a future session pays to rediscover.

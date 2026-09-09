@@ -2916,3 +2916,56 @@ Here it is a frontier estimate, and the capability that would supply one is the 
 API sweep has now flagged twice in this lineage: `sendMessage` / `broadcastMessage` /
 `readMessages` — **unused for 45 iterations**, against towers that already form a global backbone
 at r² <= 80.
+
+## Theme: measure whether the THING the mechanism points at exists, before building the mechanism
+
+Iteration 45 closed by naming the missing capability — "a representation of where unpainted
+ground is" — and pointed at the messaging API, unused for 45 iterations, to supply it. It was a
+good story: a real defect (soldiers idle on 70–96% of turns), a real unused capability, and a
+tower backbone at r^2 <= 80 to carry it.
+
+**The board is 96–100% painted from round 200–400.** On one map, unpainted tiles hit literally
+zero at round 200 and stayed there. There is no frontier, so there was nothing for the message
+to say. A whole comms layer would have been built to broadcast the location of ground that does
+not exist.
+
+The census cost five replay dumps of games already on disk. The layer would have cost days.
+
+> Before building the mechanism that supplies missing information, **measure the information**.
+> "My bot cannot see X" and "there is an X to see" are different claims, and the second one is
+> usually cheaper to check.
+
+This is the same family as the pre-checks already installed, but it fires one step earlier than
+any of them. Pre-check 4 asks what the redirected turns were doing; this asks whether the
+destination exists at all.
+
+## Theme: a correlate you measured in a replay is not a predicate a robot can evaluate
+
+Iteration 46 rested on a discriminator that replicated in **6 of 6** team-map cells: a mopped tile
+that the enemy repaints has more enemy paint activity beside it than one I keep (1.50 vs 0.79 and
+so on). Solid, replicated, and pointing at a real leak — 26–85% of the tiles my moppers clear are
+handed straight back, at a median of **one round**.
+
+I implemented it as "enemy robots within r^2 <= 2 of the candidate tile", which is what a mopper
+can actually sense. Result: net swept **−1**, and the pre-registered falsifier showed kept-share
+did not move (arm 61.7/51.3/64.5% against control 52.1/75.8/51.6%).
+
+My first explanation was that a higher priority was stealing the decision. **A counter probe
+refuted it**: the tie-break was reachable on 50–66% of all mops, cleanly. The mechanism got the
+decisions and did nothing with them.
+
+> The replay correlate and the in-game predicate are **different objects**. "Enemy activity here
+> over the last five rounds, measured from a full action log" is not "enemy robots I can see
+> right now within r^2 <= 2", and a signal can be strong in the first and absent in the second.
+> When a census motivates an arm, state the translation from correlate to predicate explicitly,
+> and treat it as a step that can fail on its own.
+
+Two things saved this from being recorded wrongly. The **pre-registered falsifier**, written to
+protect an accept, did its best work on a reject: it separated "retention rose but games didn't
+follow" (which would have killed the whole conversion direction) from "the mechanism didn't move
+its own quantity" (a defect in one arm). And the **counter probe**, which I committed to running
+before building anything on my own explanation, killed that explanation for two matches — the
+alternative was an arm aimed at a cause accounting for 11% of the decisions.
+
+> An explanation for your own null is a hypothesis with a flattering shape. Cost it a probe
+> before it costs you an iteration.
