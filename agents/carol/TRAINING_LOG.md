@@ -15266,3 +15266,215 @@ moves three branches at once. Build the separating counters first, in-bot, at th
 
 Those three separate throughput from overlap from gating, with no second arm and no guessing, and
 they answer the original question outright. **No screen until `sD > 0` at a gate worth shipping.**
+
+## Iteration 51 — the SRP economics, priced from the engine, and the THIRD instance of my own bug shape
+
+### First: the tournament and the pooling caveat (addressed before anything else)
+
+`20260909-1300` is in: **carol 47.3% (-3.0), alice 61.3% (+8.0), bob 41.3% (-5.0)**. I am second of
+three. alice gained +6.0 on me head-to-head after accepting her iteration 43.
+
+The report flags **bob–carol** as a non-poolable pair: all 150 games reproduce `20260909-0100` to
+the round count. My HEAD has not moved since iteration 44 (`5be82ca`), so that is expected and it
+means **this tournament carries no new information about the bob–carol pair at all**. My only live
+cross-lineage signal this run is alice–carol, and it moved against me.
+
+This compounds a contamination I had already logged at line ~14066: my own `ruingradient.py` pools
+all six tournaments with no repeat exclusion, and alice/bob were byte-identical across
+`20260908-1300`/`20260909-0100`. With bob–carol now also duplicated across `0100`/`1300`, that pool
+holds **at least two** duplicated pair-runs. The rule I am adopting, from the coordinator's fix:
+**deduplicate on the GAMES (winner + round count), never on the run id and never on the commit
+pair** — a commit hash is a proxy for behaviour, and a commit that changes the hash while leaving
+play identical is exactly what defeated the old detector. Any pooled |z| out of `ruingradient.py`
+remains a quantity I am not entitled to quote; the per-run figures I actually used are unaffected.
+
+### The map-provenance caveat, checked against my own evidence
+
+The coordinator fixed `gauntlet-collect.sh` to record map-list provenance rather than infer it, and
+warned that summaries collated before the fix can label a **pinned** run "sampled". I checked mine
+by hashing `maps.txt` across my last 14 runs: `20260909-{121211,122428,125655}` share one hash,
+`{104327,110144,110031,105442}` a second, `{112249,111613}` a third. Three independent 25-of-75
+draws are never identical, so those were pinned and mislabelled, exactly as warned. **No verdict of
+mine inverts** — my log already calls them pinned head-to-heads, which is what they were.
+
+But it surfaces a fault in my own pre-registration that the label was hiding. Iterations 48, 49 and
+50 were **all** screened against the same pinned 25-map list, and my iteration-50 resume point
+pre-registered the accept gate on that same list. AGENT.md permits pinning for a regression check,
+an ablation, or chasing one map, and forbids a standing list as an accept surface for the exact
+reason that accepted iterations drift toward it. **Correction, binding from here: probes and
+ablations may pin; an accept screen draws a fresh sample.** Iteration 51's screen below is the
+first run under that rule (and the first of mine to record `maps.src`).
+
+### Pricing SRP from the engine before spending a fourth iteration on it
+
+Three iterations (48, 49, 50) have gone into resource patterns without one ever completing. Before
+a fourth, I priced the mechanism out of `battlecode25-java-3.1.0` via `tools/engine-jar.sh --remote`
+(`javap` lives at `~/jdk21/bin/javap` on the VM, not on `PATH` — worth recording, the bare call
+fails):
+
+| constant | value |
+|---|---|
+| `COMPLETE_RESOURCE_PATTERN_COST` | 200 chips |
+| `EXTRA_RESOURCES_FROM_PATTERN` | 3 |
+| `RESOURCE_PATTERN_ACTIVE_DELAY` | 50 rounds |
+| `MARK_PATTERN_PAINT_COST` | 25 paint |
+| `PATTERN_SIZE` | 5 (so 25 tiles) |
+
+And two decompiled facts that matter more than the constants:
+
+- `extraResourcesFromPatterns(team)` is `getNumResourcePatterns(team) * 3`, and `processBeginningOfRound`
+  adds it to **each** tower's income inside the `moneyPerTurn != 0` guard. So patterns **stack
+  linearly**, and the payoff is `3 x patterns x money towers` chips/round. That is a large prize:
+  4 money towers and 3 patterns is +36 chips/round against a base of 80.
+- `getNumResourcePatterns` counts a centre only when `resourcePatternLifetimes[i] >= 50`, and
+  `updateResourcePatterns()` re-runs `checkResourcePattern` **every round**, resetting the centre to
+  `NEUTRAL` and the lifetime to **0** the instant any tile stops matching. So a pattern pays nothing
+  for its first 50 rounds and, if a single tile is disturbed, must be re-completed for another 200
+  chips and another 50 rounds. Break-even is `50 + 200/(3M)` rounds after completion — 117 at one
+  money tower, 67 at four. Median game here is 973 rounds (n=150), so time is *not* the obstacle.
+
+The prize is real and the clock is affordable. That is what justified one more iteration rather
+than abandoning the line on the record so far.
+
+### The mechanism: the chips gate was still sitting across a delivery path
+
+`srpWork` had `if (rc.getChips() < SRP_MIN_CHIPS) return false;` above **both** step 2 (paint a tile
+of an already-marked pattern) and step 3 (mark a new centre). Painting a marked tile costs **5 paint
+and zero chips**; it delivers work already paid for. `SRP_MIN_CHIPS` exists solely to decide whether
+starting a pattern is affordable, and starting is step 3 alone.
+
+`carol_i51_a` moves the gate to sit **between** step 2 and step 3. One line, one mechanism.
+
+**This is the third instance of the same bug shape in this one file** — iteration 49 put the release
+timeout under the held-state guard, iteration 50 put the completion loop under the entry gate, and
+both were written up in LEARNINGS *before* I found this one. That is the finding worth more than the
+change: **fixing the instance that prompted the doctrine did not make me re-audit the other branches
+under the same guard.** A doctrine applied only where it was learned is not a control. The audit that
+was owed was mechanical and takes a minute: list every branch under a gate, and ask of each whether
+it STARTS work or DELIVERS it.
+
+### Pre-registered, before the screen returns
+
+- **Stage 0** (run): one game per map on DefaultMedium, DefaultLarge, galaxy vs `carol_iter44`.
+  Gate `sD > 0`. Control `carol_i50_a` is deterministically `sD = 0` on DefaultMedium (measured twice).
+- **Stage 1**: 50 games vs `carol_iter44`, **fresh** 25-map sample — run `20260909-140715`.
+  **ACCEPT >= 34/50, REJECT <= 30/50, 31-33 inconclusive.**
+- **Prediction, recorded now: near-null to slightly negative.** See the arithmetic below — I do not
+  expect this to pass, and I am running it to convert an argument into a measurement.
+
+### Stage 0: the gate move works, and the arithmetic still kills it
+
+BUILD tag reads `i51a` in all three replays, so every one is a fresh build (the iteration-50
+retraction's stale-replay failure mode is excluded by construction now).
+
+| map | sA | sM | sD | sP | tiles demanded (25·sM) | served |
+|---|---|---|---|---|---|---|
+| DefaultMedium | 26 | 11 | **1** | 50 | 275 | **18%** |
+| DefaultLarge | 3 | 2 | 0 | 6 | 50 | **12%** |
+| galaxy | 138 | 5 | 0 | 17 | 125 | **14%** |
+
+(control `i50_a` on DefaultMedium: sA 10, sM 4, sD 0, sP 40.)
+
+**A pattern completed for the first time in four iterations** — so the gate move is real and stage 0
+passes on its letter. But it passes on one map of three, and the table shows why that is the ceiling
+rather than a start: **every map serves 12-18% of the tiles its own marks demand.** A pattern needs
+100%. The gate move — the largest structural lever available short of parking a soldier — bought
+about 25% (sP 40 -> 50). Closing a 5-8x shortfall is not a dose away.
+
+`galaxy` isolates a second, independent limit: **sA 138 attempts produced sM 5 marks**, so on 133
+turns above the gate not one of the 9 candidate centres was legal. Where soldiers actually are,
+`canMarkResourcePattern` mostly refuses.
+
+### The dilemma this line of work has actually found
+
+The binding constraint is **spatial coincidence, not the gate**. Step 2 fires only when a mismatched
+mark sits within r²=9 of a soldier that has its action. Marks are laid wherever a soldier happened to
+be solvent and idle, and then abandoned — soldiers roam, so almost no mark ever sees a second visit.
+
+- Give patterns locality by **parking** a soldier on them: iteration 49, **7/50**. Catastrophic.
+- Do not park: patterns are served at 12-18% and never close.
+
+Those are the two ends, and both are measured, not argued. That is the honest output of iterations
+48-51: **SRP's prize is large and its delivery mechanism is 5-8x short in this bot's architecture**,
+and the shortfall is not in any constant I can tune.
+
+### Stage 1 verdict: **REJECT at 14/50 (28%)** — and the miss in my own prediction
+
+Run `20260909-140715`, fresh 25-map sample, `carol_i51_a` vs `carol_iter44`:
+**14/50 (28%)**, swept-win 1/25, swept-loss 12, split 12. Pre-registered reject line was <= 30/50.
+This is not close, and it is a reject on the gate as written.
+
+**My prediction was "near-null to slightly negative". It was directionally right and badly
+understated: I called a null and got -22 points.** Recording the miss because the reason is the
+interesting part, and it is the mirror image of the mechanism I was pleased with.
+
+Moving the chips gate below step 2 did exactly what I designed it to do — it let the
+pattern-painting loop run on **every** soldier turn instead of only on the ~50 turns a game that
+cleared 1500 chips. What I priced as "bounded by how many patterns step 3 started" is bounded by
+the wrong thing: each mark creates a standing 25-tile attractor, and every soldier that passes
+within r²=9 of any tile of it now diverts **its one attack per turn** into a pattern that (12-18%
+service rate) will almost certainly never close. 11 marks on DefaultMedium is 275 paint of marking
+plus ~250 paint of attacks, ~525 paint a game, for one completed pattern.
+
+So the mechanism **scales its cost faster than its delivery**: the same change that took `sD` from
+0 to 1 took the win rate from ~50% to 28%. That is the cleanest possible demonstration that the
+12-18% service rate is not a starting point to be improved but the thing that makes the whole
+mechanism negative-sum — a pattern served at 15% is strictly worse than never marking it, because
+the paint is spent either way and only the completion pays.
+
+### SRP is closed for this lineage, and here is the price tag
+
+Iterations 48, 49, 50, 51. Verdicts: reject (22/50), reject (7/50), no-deliver + retraction,
+reject (14/50). What the four bought, which is worth more than the four rejects cost:
+
+1. **The prize is real and stacks** — `3 x patterns x moneyTowers` chips/round, linear, forever.
+   Nobody should re-open this thinking the payoff was too small. It is not.
+2. **Delivery is 5-8x short, on every map, at both ends of the design space.** Park a soldier to
+   give patterns locality: 7/50. Do not park: 12-18% service and 14/50. Both measured.
+3. **The shortfall is not in any constant.** The gate move was the largest structural lever short
+   of parking, and it moved service ~25% while making the bot 22 points worse.
+4. The binding constraint is **spatial coincidence** between roaming soldiers and abandoned marks,
+   which is an architecture property of this bot, not a tuning surface.
+
+**Re-entry condition** (per the "a deferred iteration needs a written re-entry condition" doctrine):
+re-open SRP only if this bot acquires a reason for soldiers to *dwell* — a territory-holding or
+defensive-station behaviour adopted for its own sake, whose locality SRP could then free-ride on.
+Do not re-open it by proposing parking again; parking has been measured at 7/50.
+
+`src/carol` is untouched throughout. HEAD still plays accepted `carol_iter44`.
+
+## Where the remaining headroom actually is — from the tournament, not from my own pool
+
+With SRP closed I went to the sanctioned cross-lineage channel rather than inventing a mechanism.
+`20260909-1300`: I am 2nd of 3 at 47.3%, alice 61.3% (+8.0), and alice takes our head-to-head 62.7%.
+
+**Conditioning on the round a game REACHES** (not on its final length — final length is caused by
+who won, so bucketing by it is conditioning on the outcome; "reached round R" is observable at
+round R and is legitimate):
+
+| pair | all games | games reaching r500 | drop |
+|---|---|---|---|
+| alice–carol, `20260908-1300` | 37.3% | 26.5% | **+10.8** |
+| bob–carol, `20260908-1300` | 53.3% | 39.4% | **+13.9** |
+| alice–carol, `20260909-0100` | 43.3% | 33.6% | **+9.7** |
+| bob–carol, `20260909-0100` | 57.3% | 45.8% | **+11.5** |
+| alice–carol, `20260909-1300` | 37.3% | 25.4% | **+11.9** |
+
+(`bob–carol 20260909-1300` is the flagged byte-identical repeat of `0100` and is **excluded**, not
+listed twice — dedupe on the games, per the note at the head of iteration 51.)
+
+**Five independent pair-runs, two different opponents, +9.7 to +13.9 every time.** Replicating
+across two opponents is what makes this a property of *my bot* rather than of a matchup. And in
+`20260909-1300` I win **81% (26/32) of all games decided before round 500** and 18-31% of
+everything after.
+
+**It has a birthday.** In `20260908-0100` the drop was -0.7 (alice) and +3.3 (bob) — absent. It
+appears at `20260908-1300` and has been stable since. That is exactly the tournament where my win%
+jumped 32.3% -> 45.3%. **So my lineage's largest accepted gain bought a stronger OPENING and left
+the mid-game untouched**, which is a far more specific account of my remaining headroom than "lose
+to alice" and I could not have got it from my own pool, where every opponent shares my openings.
+
+**The honest limit of this**: it is descriptive. "Reached r500" still correlates with already being
+behind, so this locates *when* my advantage evaporates, not *what* evaporates. Naming the mechanism
+is the next iteration's job, and it must start with a measurement in the r500-800 window (unit
+counts, paint, territory share against a tournament opponent), not with a guess.

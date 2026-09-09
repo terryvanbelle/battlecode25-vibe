@@ -31,6 +31,24 @@ Engine-verified facts marked [E].
   AND +3 chips/turn to every money tower** [E: `extraResourcesFromPatterns` added in both
   branches of `processBeginningOfRound`]. SRPs can overlap-tile? No — shape chosen to prevent
   tiling; centers marked in MapInfo.isResourcePatternCenter().
+- **SRP economics, decompiled at iteration 51** [E: `GameWorld`, engine 3.1.0]. The numbers, so a
+  later session does not re-derive them:
+  `COMPLETE_RESOURCE_PATTERN_COST=200`, `EXTRA_RESOURCES_FROM_PATTERN=3`,
+  `RESOURCE_PATTERN_ACTIVE_DELAY=50`, `MARK_PATTERN_PAINT_COST=25`, `PATTERN_SIZE=5` (25 tiles).
+  - **Patterns STACK linearly**: `extraResourcesFromPatterns(team)` is literally
+    `getNumResourcePatterns(team) * 3`, and it is added to **each** tower's income. Total is
+    `3 x patterns x towers-of-that-kind` per round. Two patterns are worth exactly twice one.
+  - **Nothing pays for the first 50 rounds.** `getNumResourcePatterns` counts a centre only when
+    `resourcePatternLifetimes[i] >= 50`.
+  - **A pattern is re-checked EVERY round and is destroyed by one wrong tile.**
+    `updateResourcePatterns()` runs `checkResourcePattern` on every centre each round; on failure it
+    sets the centre to `Team.NEUTRAL` and the lifetime to **0**. Recovery costs another 200 chips
+    *and* another 50 rounds. Note the threat is mostly **your own soldiers**: ordinary painting lays
+    ALLY_PRIMARY over a tile the pattern needs as ALLY_SECONDARY, and nothing in this bot protects
+    a completed pattern from that.
+  - Break-even after completion is `50 + 200/(3 x moneyTowers)` rounds: 117 at one money tower,
+    67 at four. Median game here is ~973 rounds, so **time is not what makes SRP fail** — see the
+    iteration 48-51 entries, where delivery runs 5-8x short of what the marks demand.
 
 ### Paint drain (end of each robot turn) [E]
 

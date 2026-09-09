@@ -2238,3 +2238,35 @@ Note also how it was resolved: two hypotheses (my gate, versus soldiers overwrit
 marks) predicted **identical** `sD = 0`, so the trace could not separate them. One game with one
 constant changed did. Cross-references **"Two of my own mechanistic stories, both tidy, both wrong,
 both killed by one game"** — same remedy, third instance.
+
+## A doctrine applied only where it was learned is not a control (iteration 51 — the THIRD instance)
+
+The two entries above this one record the same bug shape twice in one day: iteration 49 put a
+state's release timeout inside a guard the state closed; iteration 50 put a pattern's completion
+loop inside a gate meant only for entry. I wrote them both up, and I wrote the general rule —
+*a guard belongs on the branch that STARTS work, never across the whole mechanism.*
+
+Then at iteration 51 I found a **third instance in the same function**, under the **same gate**,
+that had been there the whole time. `srpWork`'s chips gate sat above both step 2 (paint a tile of
+an already-marked pattern — 5 paint, **zero chips**) and step 3 (mark a new centre). Step 2 delivers
+work already paid for; only step 3 starts anything.
+
+**Why I missed it is the lesson.** When iteration 50's investigation pointed at the completion
+branch, I hoisted the completion branch and stopped. I never asked the general question of the
+other branches under that same gate, even though I had just finished writing the general rule down.
+The doctrine got applied to the instance that prompted it and no further.
+
+**The control is an audit, not a resolution**, and it is mechanical enough to actually run:
+
+> When you move one branch out from under a guard, **enumerate every remaining branch under that
+> guard** and classify each as STARTS work or DELIVERS work. Delivery paths move out with it.
+
+Cost of the audit: under a minute, by inspection. Cost of not running it: iteration 50 concluded
+"the gate was never blocking an available completion" and moved on, while the gate *was* throttling
+the supply of pattern-painting that made completions possible in the first place — so the iteration
+50 verdict was correct on its own narrow question and still left the mechanism broken.
+
+**The generalisation beyond guards**: a lesson is filed against the case that taught it, and the
+next instance rarely announces itself as the same lesson. Doctrine 19 says the test of a control is
+whether the next session could make the mistake without reading anything. Add a second test: **could
+*I* make it again in the same hour, having just written it?** Here the answer was yes, three times.
