@@ -18758,3 +18758,74 @@ what a *pattern-completion* constraint looks like and is not what a discovery co
 soldier turns, how many end with the pattern still incomplete, and how much paint does alice spend
 per tower it actually completes. That is the pre-check, and it is the same one that has closed three
 directions today for a handful of games each.
+
+## The pre-check ANSWERS its question, and it DEMOTES the mechanism that motivated it
+
+`tools/ruincoords/RuinCoords.java` (mine, modelled on the corpus scanner, reading the engine jar's
+own `.map25` flatbuffers) gives every ruin's coordinates; **counts cross-checked exactly** against
+`ruin_parity.txt` on four maps before use. `tools/ruin-why.py` then classifies every ruin in the 38
+small-map alice-vs-carol games at r300 and counts alice's paint actions inside the 5x5 pattern
+centred on it. **Zero games played** — the paint trace and tower events were already on disk.
+
+| class | n | mean alice paints in the 5x5 | median | **distinct alice painters** |
+|---|---|---|---|---|
+| **alice-built** | 106 | **30.9** | 28 | **4.53** |
+| **UNCLAIMED** | 146 | **16.2** | 16 | **2.41** |
+| opp-built | 96 | 1.5 | 0 | 0.35 |
+
+**The three-way gradient is its own internal control.** If painting near ruins were incidental —
+soldiers just passing through — it would be flat across the classes. It runs 30.9 / 16.2 / 1.5. Alice
+demonstrably *works* these sites.
+
+| unclaimed ruins by how much alice painted | n | share |
+|---|---|---|
+| **ZERO — never worked** | 25 | **17.1%** |
+| 1–4 — passed through | 12 | 8.2% |
+| 5–14 — started | 34 | 23.3% |
+| **15+ — heavily worked** | 75 | **51.4%** |
+
+### The answer: it is a PATTERN-COMPLETION limit, not discovery and not economy
+
+> **Only 17% of unclaimed ruins were never touched.** Half of them were heavily worked and
+> abandoned at a median of **16 paints against the 28 a completed tower takes** — alice gets about
+> **57% of the way** and stops.
+
+And the distinct-painter column confirms the arithmetic I stated when I registered this, exactly:
+
+> **A completed tower takes 4.53 different alice soldiers. An abandoned one got 2.41.**
+> A soldier delivers ~20 paint actions to the ground in its entire life and a tower pattern costs
+> ~28, so **one soldier cannot complete one tower** — it contributes ~7 paints and then starves or
+> is pre-empted. Completion is a relay, and alice's relay drops the baton about half the time.
+
+The code says why, and it needed no probe: `runSoldier` calls `senseNearbyRuins(-1)`, which sees
+only **r²=20**, picks the *nearest* ruin **this turn**, and holds no commitment and no memory; and
+`goRefill(rc)` runs *first* and `return`s, so a hungry soldier abandons the pattern outright.
+
+### So symmetry inference is DEMOTED, on the pre-check that was registered to test it
+
+It is a **discovery** tool, and discovery is at most **17%** of the unclaimed supply — and even that
+17% is the *hardest* 17%, since those ruins are the ones no alice unit ever reached. The direction
+is not closed (the supply finding stands and iteration 9's re-open condition is still met), but it
+is no longer the lead, and **I am not building it.** That is the fourth time this session a
+pre-check has demoted or killed the mechanism that motivated it, each for a handful of games or
+none: the iteration-47-shaped singleton test, the winner's-curse null, the actor-split, and now this.
+
+### What is now located, and what I owe before touching it
+
+**The defect, stated in one line:** alice's expansion is limited by *soldier endurance at a ruin* —
+completion needs a ~4.5-soldier relay, each soldier can only carry ~7 of the 28 paints, and nothing
+in the bot holds a soldier on a ruin or brings the next one to the same one.
+
+Priced against the gap this session has been chasing: alice abandons **3.8 ruins per game** at a
+median 16 paints, so roughly **61 paint actions per game — 16% of alice's entire r300 output — goes
+into tower patterns that never become towers.** Unlike the splasher repaints, this **is** a decision:
+which ruin to work, and whether to stay.
+
+**Registered before any mechanism, because every mechanism this session that skipped this step
+failed:** the candidates (hold a soldier on a nearly-complete pattern; steer the next soldier to the
+most-complete one; stop starting patterns that cannot be finished) all assume the abandonment is
+*avoidable*. It may not be — if a soldier abandons because it **starved**, no targeting rule keeps it
+there. **The discriminator: of alice's abandonments, what fraction end with the soldier DEAD versus
+the soldier ALIVE and elsewhere?** Dead is an endurance limit and a targeting rule cannot fix it;
+alive-and-elsewhere is a decision and it can. That is one probe, and it decides which of three
+mechanisms is even eligible.
