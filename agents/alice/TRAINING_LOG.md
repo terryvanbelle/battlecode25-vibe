@@ -16792,3 +16792,51 @@ fraction of mops resolve at priority 0 / 1 / 2. If priority 1 is rare, this expl
 and the retention signal is simply too weak to matter. **That count is the next artifact, and it
 must come before any arm that touches priority 1** — this lineage has now paid twice (44, and
 45's killed draft) for building on an unmeasured claim about how often a branch fires.
+
+## The structural finding of the session: the game is decided by ROUND 300, in the expansion race
+
+Taken from the 19 games of the iteration 45 census whose replays were already on disk — no games
+played. For each, the round-300 snapshot and the eventual winner:
+
+| quantity | result |
+|---|---|
+| tower lead at r300 and coverage lead agree in sign | **14 / 14** (5 games tied on towers) |
+| Pearson r(tower diff, coverage diff) at r300 | **+0.900**, n = 19 |
+| the r300 tower leader wins the game | **13 / 14** |
+
+Both sides here are near-identical bots (`alice_i45` vs `alice_i45ctl`, differing in one
+soldier branch), so the spread in tower count is **not** a design difference — it is how the
+expansion race happened to break. And it decides the match 13 times in 14.
+
+**What this does and does not license.** It does *not* say "a change that adds a tower wins a
+game" — towers-to-coverage is partly definitional, since towers paint their own patterns and
+spawn the units that paint everything else. What it does say, and this is the part that matters,
+is **where the game is decided**: before round 300, in ruin capture. After that the board is
+saturated (this session's other census) and the leader converts its lead.
+
+**It also converges with the most expensive result this lineage has.** Iteration 44 lost −58 net
+swept — the largest negative ever measured here — and the trace said why: it diverted soldiers
+from ruin capture, and *"towers 4 v 8 by round 200"*. That reading is now installed as pre-check
+4 in `gate-read.sh`, where it names **ruin-capture tempo** as the binding resource. Two
+independent routes, one from a catastrophic arm and one from a 19-game correlation, arrive at the
+same variable.
+
+### The single exception is my standing open problem, and it now has a shape
+
+**`Bunny__botA`: T1 led 11 towers to 7 and 627 per-mille to 344 at round 300, and LOST.** It is
+1 of 14, and it is the same game whose trajectory I censused earlier today: T1 peaked at 636
+per-mille around r400 and fell to **518** by r1200 while T2 climbed to 463. A four-tower,
+283-per-mille lead thrown away over 800 rounds.
+
+That is the **coverage decline** my log has carried as unexplained since iteration 42, and it is
+now localised: it is not a slow leak across all games, it is a distinct failure mode that strikes
+after the expansion race is already won. Two regimes, not one:
+
+1. **the expansion race to ~r300** — decides 13 of 14 games;
+2. **the collapse** — decides the rest, and only from a winning position.
+
+**Next direction, and I am naming it without a mechanism yet, on purpose.** Iterations 44, 45 and
+46 all intervened in the post-saturation phase, which this says is mostly decided already. The
+work is in regime 1, or in the specific failure of regime 2 — not in a fourth attempt to make
+saturated soldiers or moppers slightly better. Recording that before proposing anything, because
+this lineage's failure mode is generating mechanisms faster than it locates defects.
