@@ -134,9 +134,19 @@ into this file, which all three lineages trust.
 **Use:**
 
 ```
-javap -p -c -cp "$(tools/engine-jar.sh)"          battlecode.common.RobotController
-tools/engine-jar.sh --remote     # the path as resolved on battlecode-dev
+tools/engine-javap.sh          battlecode.common.RobotController   # -p by default
+tools/engine-javap.sh -c -p    battlecode.world.GameWorld          # flags pass through
+tools/engine-jar.sh --remote                # just the path, as resolved on the VM
 ```
+
+`engine-javap.sh` is the form to reach for. Resolving a path is not running a
+command, and the older documented incantation
+`javap -p -c -cp "$(tools/engine-jar.sh)" <class>` **cannot work on the driver at
+all**: there is no local jar and no local JDK there, and the `--remote` path is
+only meaningful on the VM, where `javap` is not on `PATH` in a non-interactive
+ssh (it lives in `~/jdk21`). A lineage paid two failed calls to discover that and
+reported it instead of keeping the workaround. The wrapper resolves the pinned
+jar, exports the JDK on to `PATH`, and runs javap wherever both actually exist.
 
 It reads the wanted version from `arena/engine_version.txt` and **refuses to
 print a path whose version does not match**, so a missing or wrong jar becomes an
