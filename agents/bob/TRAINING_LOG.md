@@ -16880,3 +16880,59 @@ the grid's 18.7 soldiers/frame reproduces the exact census's 17,363 soldier-roun
 mobile-unit-round estimate's denominator by 1.7x until the two instruments were made to meet.
 
 `src/bob/` untouched. **`bob_iter20` remains the bot.**
+
+---
+
+## Iteration 49 — PRE-REGISTERED (written before the run exists): prefer less-crowded tiles when moving
+
+**Licensed by iteration 48's probe**, which passed its primary (0.687 crowd per mobile-unit-round against
+a ≥0.30 threshold), passed the avoidability split (87.4% mobile-mobile, not tower-adjacency), and passed
+the comparative control (bob 0.624 vs alice 0.475 on the same 75 tournament games).
+
+**The mechanism.** Candidate moves are ranked by directness (index `i`, 0 = straight at the target); the
+move chosen minimises `crowd(tile) * DECLUMP + i`, where `crowd` counts allied robots (towers included)
+within r²≤2 of the candidate tile. Strict `<` keeps the more direct candidate on a tie, so it deviates
+only when that actually buys a paint point. Applied to **both** `navTo` and `wander`'s new-direction pick,
+because the mechanism is one thing and splitting it would under-dose. `wander`'s RNG draws are unchanged
+in number and order (LEARNINGS 35).
+
+**Doses** (`bob-tools/make-declump-arms.sh`): `d0 = 0` (**exact zero arm** — the constant is tested before
+anything is sensed; verified by diff that every addition sits inside a `DECLUMP == 0` guard), `d1 = 1`
+(one ally is worth one step of directness), `d3 = 3` (crowding dominates; max rank is 4).
+
+**Which term moves and which pays — stated before building, per doctrine 46.** It moves **paint supply**:
+paint not burned on crowding stays in the unit's stash and becomes paint actions. **The registered payer
+is NOT paint** — movement and action cooldowns are separate, so a unit that was going to move anyway pays
+nothing. **The payer is POSITION**: units cluster because they are going to the same place, so spreading
+them may put them off the ground that matters. That is what secondary 2 is built to catch.
+
+### PRE-REGISTERED GATE — thresholds unchanged from iterations 45 and 47
+
+`BOT=bob_iter20`, `OPPONENTS="bob_d0 bob_d1 bob_d3"`, maps unset ⇒ 150 games.
+`delta = 25 − (iter20's wins vs that arm)`.
+
+- **VOID** unless `bob_d0` lands at exactly **25/50 with all 25 maps split by side**.
+- **delta ≥ +10** accept-eligible; **+7..+9** replicate on a fresh sample; **≤ +6** REJECT.
+
+**Secondaries, in this order:**
+
+1. **Mechanism engaged**: crowd per mobile-unit-round must **fall** monotonically with dose, measured by
+   `bob-tools/crowd-census.sh` on this run's own replays — the same instrument that sized the defect. If
+   it does not fall, the dose did not land and nothing else in the run means anything.
+2. **The payer (position)**: **tower count** and **conv**. Bob builds towers by parking soldiers on ruin
+   patterns, which is inherently crowded work; if de-clumping pulls them off ruins, towers fall. If towers
+   or conv drop in proportion to the crowd saving, **this is a transfer after all and I will say so**
+   rather than quote the paint saved.
+3. **The channel**: **paint actions per game must rise**. That is the mechanism's whole claim — saved
+   paint becoming painting. Crowd falling while paint actions stay flat means the paint was saved and
+   never spent, which is a different (and much weaker) result.
+4. **The objective**: `dCov` **windowed to r≤200**, per LEARNINGS 87 — a whole-game read is a post-outcome
+   quantity for arms whose win rate the treatment changes, and it fabricated a −16% effect last iteration.
+
+**Prediction, registered with signs**: crowd falls monotonically and substantially; paint actions rise;
+tower count roughly flat at `d1` and **down at `d3`**, giving an interior peak at `d1`. I was wrong about
+the shape in iteration 47 (I predicted an interior peak and got a flat negative), and wrong about the
+tower/mobile split in iteration 48, so this prediction has a poor recent record and is registered as a
+falsifiable guess rather than an expectation.
+
+`src/bob/` untouched. **`bob_iter20` remains the bot.**
