@@ -189,6 +189,17 @@ both directions, and do not let a reject you agree with quietly answer a questio
   band every paint tower's stash passes through on each refill cycle, so it took +113 builds per
   250 rounds against soldiers' +35. The fix names the state instead of a band: a MONEY tower has
   `paintPerTurn == 0` [E], so its stash really is finite and idle. → TRAINING_LOG, *"Correction 1 (D1b)"*
+- CHECK A PRE-REGISTERED BAND FOR FEASIBILITY WHEN YOU WRITE IT — the C1b lesson applies to
+  manipulation checks, not just to re-open conditions. I registered "HOME must be 5-25% of splasher
+  turns" and measured 58.8%/63.8%; the band was unreachable at ANY dose, because a splasher carries
+  6 splashes, acts once per 5 turns (30 working turns) and needs 20-40 moves for a round trip, so
+  travel is inherently 40-60% of the duty cycle. One line of arithmetic, not done. Worse, the band
+  could not DISCRIMINATE (doctrine 15): 64% HOME is predicted equally by "logistics uselessly took
+  over" and "logistics work and the trip is long". → TRAINING_LOG, *"The overshoot band was infeasible"*
+- A PER-UNIT RATE IS BLIND TO A POPULATION EFFECT. I registered D3 as "each stranded splasher fires
+  more often"; the fire rate was FLAT (23.7% -> 22.6%/25.2%) while standing splashers went 4 -> 22-32
+  and towers 7 -> 17-22. The mechanism was survival, not throughput. When a treatment can change how
+  many units exist, register ABSOLUTE counts alongside every share. → TRAINING_LOG, *"So the mechanism is NOT the one I registered"*
 
 ## Housekeeping
 
