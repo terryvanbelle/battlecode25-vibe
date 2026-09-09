@@ -45,6 +45,7 @@ Companion files, and what each is for:
 ## B. Gates, sampling, noise and what a margin can carry
 
 - **12b. NEW.** **A measurement's window is part of the measurement.** I carried iteration 44's r≤200 composition (83.5% soldiers) as if it were whole-game (it is 48%), inflating a denominator 1.7x until two instruments were made to disagree. → #89
+- **12c. NEW — the sizing rule that replaces the theoretical one.** **1.0 paint/unit-round saved ≈ 25 wins/50, and it SATURATES** (iter49 saved 0.240 → +6; iter50 saved 0.285 → +6). So +10 needs ≥0.40 saved, and the largest saving in bob's whole budget (crowding's avoidable 0.600) already saturates at +6 — **no paint-saving movement mechanism can reach +10**. The old "1 paint ≈ 0.15 tiles" theoretical rate was ~8x optimistic. Check the next idea against this before building. → #90
 - **13.** My 50-game arm cannot resolve anything smaller than a **~14-point** effect — which is most of what I test. Size the effect against the instrument first. → #37
 - **14.** The noise floor is binomial, and it is nearly **all map sampling**. → #43
 - **15.** Swept-map counts are **not** noise-immune: 5–6 each way is what pure noise looks like. → #44
@@ -66,6 +67,7 @@ Companion files, and what each is for:
 
 ## C. Instruments lie plausibly — how mine have failed
 
+- **30b. NEW.** **The DIRECTION of an instrument's error matters more than its magnitude, and you must establish it BEFORE you look.** An error running against your hypothesis turns a two-sided error bar into a one-sided bound: 2,484 team-frames, zero with the paint reconstruction under-counting, so every territory figure was a lower bound and the bias could not be why anything cleared. → #91
 - **31.** Instrument bugs produce **plausible** output. A number that looks reasonable is not a passing test. → #8
 - **32.** My own instrument reported a silent **zero** and only a sanity read caught it. → #70
 - **33.** A greedy regex made every row of a probe table report the **wrong team**. → #45

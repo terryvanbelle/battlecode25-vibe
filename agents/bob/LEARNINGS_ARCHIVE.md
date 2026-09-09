@@ -3255,3 +3255,56 @@ census's 17,363 soldier-rounds ÷ ~930 rounds = 18.7.
 quoting a statistic without its window. **A measurement's window is part of the measurement**, and a
 figure lifted out of one — especially into a whole-game denominator — is a different quantity wearing the
 same name.
+
+## 90. An exchange rate, measured rather than assumed — and it saturates (2026-09-09)
+
+For 50 iterations this lineage sized mechanisms by a *theoretical* conversion: a paint action costs 5
+paint and returns `conv` ≈ 0.7–0.9 tiles, so 1 paint ≈ 0.15 tiles, so the 91-tile small-map deficit needs
+~600 paint per game. That number licensed several builds and **it is wildly optimistic**, because it
+assumes every saved paint becomes a paint action at full conversion.
+
+Iterations 49 and 50 supply the real rate, because they saved a *measured* quantity of paint and were
+scored on a gate:
+
+```
+  iter49 d3    crowd 0.674 -> 0.434   saved 0.240 paint/unit-round   ->  +6 wins / 50
+  iter50 e9w   crowd 0.589 -> 0.304   saved 0.285 paint/unit-round   ->  +6 wins / 50
+```
+
+> **Best observed rate: 1.0 paint per unit-round saved ≈ 25 wins out of 50.** A mechanism must therefore
+> save **≥0.40 paint/unit-round** to reach a +10 bar.
+
+**And the rate saturates, which is the part that closes a whole family.** A 19% larger saving bought
+exactly zero extra wins. So the linear rate holds only in the first tranche, and the largest saving
+available anywhere in bob's paint budget — crowding's avoidable 0.600 per unit-round — already saturates
+at +6 when half of it is taken. **No paint-saving movement mechanism can reach +10**, and that can now be
+said before building one.
+
+**Why this is worth more than the closure it produced.** It converts "is this idea big enough?" from an
+argument into an arithmetic check against a number the lineage measured itself, and it is what let
+iteration 51 close the territory penalty (0.035 free paint/unit-round ⇒ ~+0.9 wins) **without spending a
+game**. The general form: **when two iterations have paid a gate for a measured quantity of the same
+resource, you own an exchange rate — write it down, and check the next idea against it before building.**
+
+## 91. A reconstruction whose error runs AGAINST the hypothesis is a one-sided bound (2026-09-09)
+
+Iteration 51 needed the tile colour under each unit, which comes from ReplayDump's *reconstructed* paint
+grid — and the reconstruction is known to be incomplete, because splash footprints are not in the replay
+schema. The obvious worry was that missing splashed tiles would read as unpainted, inflating the NEUTRAL
+class and **overstating** the very penalty I was hoping to find.
+
+Checking the frame-level coverage figures **before reading any result** showed the error runs the other
+way, and unanimously: across **2,484 team-frames in two corpora, not one had the reconstruction
+under-counting painted tiles** (gauntlet median +6 per-mille, tournament median +6, zero negatives).
+Over-counting painted tiles *understates* NEUTRAL, so every territory figure was a **lower bound**.
+
+**The direction of an instrument's error matters more than its magnitude.** An error that runs against
+your hypothesis converts a two-sided error bar into a one-sided bound: if the number clears a threshold
+despite the bias pushing it down, **the bias cannot be why it cleared**. That is a strictly stronger
+epistemic position than "±1%", and it costs nothing extra to establish.
+
+**It is only available if the check runs first.** Had I read the territory number and *then* gone looking
+at the coverage gap, an over-count would have been indistinguishable from a convenient one — the same
+structure as LEARNINGS 87, where a large, monotone, plausible effect turned out to be the outcome leaking
+into the covariate. So the rule is: **when validating an instrument, establish not just how big its error
+is but which way it cuts relative to what you hope to show, and do it before you look.**
