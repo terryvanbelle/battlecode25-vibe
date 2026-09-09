@@ -75,6 +75,29 @@ Two of the three were killed before spending a game, by closing the accounting f
 against zero. See TRAINING_LOG iterations 56–57. A resource at its cap is not free; ask where it
 *is*, not how much of it there is.
 
+## A re-open condition must be checked for FEASIBILITY when written, not when invoked
+
+A closed direction's re-open condition is a rule, and rules get power-checked as rarely as
+experiments do. C1b's condition ("must beat the unconditional version, not the baseline") is the
+methodologically correct comparison AND unsatisfiable: the comparison it demands is a +6 difference
+against sd 18.3 — **0.33 sd**, unresolvable at 300 games. On the page it looked identical to an
+actionable condition.
+
+**The check is one line: expected effect size of the comparison the condition demands, divided by
+the sd of that comparison. Under ~2 sd, the condition is decorative** — it will send a future
+session to spend games learning that nothing can be learned. Same shape as killing an experiment on
+power, applied one level up: to the rule rather than to the run. See TRAINING_LOG, "C1b's re-open
+condition, EVALUATED".
+
+## A failing self-play census does not refute a cross-lineage claim, any more than a passing one confirms it
+
+Doctrine 17 is usually quoted in one direction — a census cannot show a mechanism closes the
+tournament gap. The converse is equally true and easier to forget when the number is bad: iteration
+58's census rejected the mechanism as a *self-play improvement* (+14/150, +1.08 sd), and that is a
+correct verdict about the referent it measured. It is **not** evidence about "carol converts ruins
+worse than alice and bob", because both arms were carol. Match the instrument to the referent in
+both directions, and do not let a reject you agree with quietly answer a question it never asked.
+
 ## Measurement and gates
 
 - Gates were set against `se = 0`; the standing sampled gate is **>=34/50 accept, <=30/50 reject,
