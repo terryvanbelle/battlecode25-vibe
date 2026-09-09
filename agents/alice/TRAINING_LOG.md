@@ -3746,6 +3746,13 @@ Run `20260907-033915`, 48 games, 12 fresh maps, `bot.txt` label `alice_iter14`.
 | `alice_iter4` | **22/24 (91.7%)** | 10 / 0 |
 | `alice_iter12` | **13/24 (54.2%)** | 4 / 3 |
 
+> **STALE FLAG, annotated 2026-09-09.** `--stride` no longer exists. The roster rule
+> is fixed at **every 5th accepted snapshot** (positions 0, 5, 10, ...) and is not
+> changeable per invocation; the replacement is `--include N,N`, which says "the rule
+> stands, this run is an exception" — for recording a run that played a snapshot the
+> rule does not select. My roster and chart are unaffected (`roster_numbers` already
+> computed the every-5th rule). Read the paragraph below as history, not as a recipe.
+
 Recording needed `--stride 3`: the tool will not write history for a snapshot that
 is not currently in the roster, so the rungs had to be *bootstrapped* in. My
 cheaper-path reasoning was right about the games (48 rather than 120) but I had
@@ -17196,3 +17203,33 @@ abandoning *unresolvable* ruins specifically, and I will say so rather than acce
 replays the arm must show **more towers at r300** than the control. If it clears +12 with tower
 count at r300 flat or lower, the mechanism is not what won, and I will log it as an unexplained
 gain rather than as evidence that abandoning unresolvable ruins works.
+
+## Two corrections to my own tooling notes, and the falsifier is built and tested
+
+**1. `replay-dump.sh --every N` is NOT broken. My earlier note was a misreading.**
+The entry above ("A tooling note for the coordinator (not a bug — a sharp edge)") reported that
+`--every N` "did not reduce the per-round summary output; I got every round." I declined to file
+it as a defect and wrote down the discriminating check: *"one dump with `--every 50`, counting
+summary lines."* I have now run it. On a 1556-round game `--every 50` yields **34 summary lines**
+= the 3 opening rounds the tool always prints, plus 1556/50. **The flag is honoured.** What I saw
+originally was rounds 1, 2, 3 printed consecutively at the top of the dump and read that as "every
+round"; the sampled rounds were further down, past where I had truncated the output.
+
+Declining to file it was the right call, and the cost of the wrong observation was one dump. The
+lesson is the one already in the project instructions and it applied to me verbatim: **run the
+discriminating case before you name the fault.** I named it in September and ran it today.
+
+**2. `track_vs_old_bots.py --stride` no longer exists** (coordinator, today). The roster rule is
+fixed at every 5th accepted snapshot, which is what my roster already uses, so my chart and
+history are unaffected; the replacement `--include N,N` records a one-off exception without
+changing the rule. The only reference in this workspace was a historical line in this log, now
+annotated in place so it is not copied as a recipe.
+
+**3. Falsifier built: `tools/r300-towers.sh`.** Reads the pre-registered iteration 47 falsifier —
+arm-minus-control tower count at round 300 — off a set of replays, labelled by which team is the
+arm. It found a bug in itself before first use: a single greedy regex over the summary line
+reaches **the other team's** `tw` field, so for `armIdx=1` it reported T2's tower count. Split on
+`|` instead, and verified on the discriminating case — the three probe replays where T1 and T2
+have *different* tower counts (Bunny 10 v 9, gridworld 9 v 10, boxofchocolates 3 v 3). A wrong
+label and an inverted result look identical in the output, and this one would have inverted the
+falsifier for exactly half the games.
