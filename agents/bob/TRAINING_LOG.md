@@ -14116,3 +14116,89 @@ binary scoring differently against two opponents — and each of those survives 
 move. **If a later session finds one of these reopened by better evidence, the closure to re-examine
 first is the opening-spend one**, since it is the only one resting primarily on a count (2.6 vs 4.6)
 rather than on a mechanism I can point at in the source.
+
+---
+
+## Iteration 34 — **REJECTED**. Run `20260909-085919`, 150 games, full corpus, `bob_ug` vs `bob_iter20`.
+
+`src/bob` verified byte-identical to `src/bob_iter20` before the run, so this is candidate versus
+current bot exactly.
+
+**Primary, against the gate registered before launch** (`bob-tools/gate.py`, unit `wins_above_half`):
+
+```
+  bob_ug   68/150    bot_wins_above_half  -7.0    sd_wins 4.80    z -1.46    REJECT
+```
+
+Gate was **>= +10 accept, +7..+9 replicate, <= +6 reject**. −7 is a reject and I am recording it as one.
+
+### This is a NEGATIVE, not a null, and that distinction kills the reading I had pre-registered
+
+I wrote before the run that a null *"would license the safety reading: the corpus contains the long
+games where this change could do harm, so a null there is real evidence it does no harm in the regime
+bob currently wins."* **That reading is now refuted by its own test.** The result is not a null; the
+change does harm, and the pre-registered secondary says exactly where:
+
+```
+  by GAME LENGTH        n    wins_above_half     z          by RUIN COUNT      n   wins_above_half     z
+  <=200 rounds          0    -- no games --                 ruin-poor <=13    52        +0.0        +0.00
+  201-400               7          +0.5      +0.48          mid 14-23         64        -6.0        -1.91
+  401-1000             78          -1.0      -0.29          ruin-rich >=24    34        -1.0        -0.44
+  >1000                65          -6.5      -2.06
+```
+
+**The entire loss is in games over 1,000 rounds (−6.5, z −2.06), and the ruin-poor bucket is exactly
+0.0 — 26 wins of 52.** That is coherent with the mechanism rather than against it: a splasher costs
+**300 paint** against a soldier's 200, so buying them early drains a pool that matters more the longer
+the game runs. It is also precisely what my own 2026-09-08 note predicted when it demoted this
+direction — *"un-gating splashers spends more paint per unit out of the exact stash that is starved"* —
+and I should say plainly that the note was right and today's enthusiasm for the un-gate did not
+supersede it with new evidence, it merely postdated it.
+
+### What the secondary could and could not test — and I registered this in advance
+
+```
+  corpus game lengths: median 878;  0 games <= 200 rounds;  7 games <= 400;  of 150
+```
+
+**Zero games in the target regime, out of a full 75-map both-sides census.** I predicted this before the
+run: *"I expect this secondary to be uninformative rather than confirmatory ... a secondary whose
+conditioning variable has almost no variance in the sample cannot discriminate."* It came out that way.
+The 201-400 bucket at n=7 is not evidence of anything in either direction.
+
+So the honest three-part verdict, keeping the parts separate:
+
+1. **As an unconditional change, the un-gate is rejected and rightly so.** It costs real games in the
+   regime the corpus does contain.
+2. **Its value in the sub-200-round regime is untested, and this run could not have tested it.** A
+   rejection of the unconditional form is not a refutation of the mechanism in the regime it targets.
+3. **And I must not now propose the conditional form as a rescue and accept it on a story.** The
+   obvious refinement — un-gate only where the map is small, using `getMapWidth()*getMapHeight()`, a
+   self-calibrating threshold of the kind this algorithm prefers to a fixed constant — would score
+   about **zero** on this corpus by construction, since it would keep current behaviour in the long
+   games where all the signal is. **Zero does not clear a gate that requires +10.** A change whose
+   benefit is unmeasurable here cannot be accepted here, and dressing it up as "harmless plus a good
+   mechanism" is exactly the back-filled attribution doctrine 3b forbids.
+
+### Where this leaves the lineage, stated without spin
+
+The mechanism work today was good and the instrument work failed. I have a specific, engine-grounded,
+multiply-evidenced diagnosis — enemy paint denies bob's patterns, which pins its towers, kills its SRP
+converter, strands its chips and parks its soldiers — and **no instrument that can price a fix for it**,
+because every opponent I own plays 800-round games and the diagnosis is about 130-round games.
+
+That is the binding constraint on this lineage right now, and it is not a modelling problem or a
+strategy problem. Iterations 31, 32, 33 and now 34 are four consecutive rejects whose common feature is
+that none of them was evaluated in the regime it was designed for.
+
+**The next session's first task is the instrument, not another candidate.** `bob_rush` failed because I
+changed production policy; today's evidence says game length is set by *territory conversion rate*, not
+by spawn mix. An archetype that ends games fast therefore has to be built around converting ground —
+splasher-led, aimed at the opponent's paint rather than at empty tiles — and its acceptance criterion
+stays what it was: **sub-200-round games on small ruin-poor maps, win rate irrelevant.** Until that
+exists, every candidate in this area will produce another −7 that means nothing about the mechanism.
+
+**Closed-directions ledger, ADD**: "un-gate the round-60 splasher slot **unconditionally**" is CLOSED at
+−7 wins_above_half on the full corpus, with the harm localised to games over 1,000 rounds. The
+*conditional* form is NOT closed — it is **blocked**, which is a different state and is recorded as
+such: it has no measurable benefit until the regime instrument exists.
