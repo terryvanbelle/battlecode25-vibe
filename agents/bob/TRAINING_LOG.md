@@ -14951,3 +14951,58 @@ underpowered (~8 small maps in a 25-map draw, ~16 games per arm) and must not be
 Arms are UNCOMMITTED working-tree dirs (`src/bob_sa0..2`), regenerable with
 `bob-tools/make-smallarea-arms.sh`. `src/bob` carries `SMALL_AREA = 0` and `MARKCLEAN = 0`, both exact
 zero arms, so **HEAD still plays `bob_iter20`'s behaviour.**
+
+### Iteration 40 — a PRE-REGISTRATION ERROR, recorded before the run reports
+
+Written while run `20260909-125651` is still in flight and no arm score has been seen. I am recording
+this now precisely so it cannot be mistaken for a gate loosened after the fact.
+
+**The sample drawn for this run** (`gauntlet/20260909-125651/maps.txt`), classified by area:
+
+```
+  area < 1000  (sa1 and sa2 both fire)  :  8 maps = 16 games/arm
+  1000 - 1499  (sa2 only fires)         :  4 maps =  8 games/arm
+  area >= 1500 (neither fires)          : 13 maps = 26 games/arm
+```
+
+**On every map where the gate does not fire, the arm is BYTE-IDENTICAL to the null**, because
+`SMALL_AREA` only enters through `G.mapW * G.mapH < SMALL_AREA`; when that is false the expression
+reduces to the incumbent's `getRoundNum() > 60`, the code path is identical and the PRNG stream is
+untouched. Those games therefore reproduce the null's games exactly.
+
+**Two consequences, one good and one disqualifying.**
+
+*Good*: there is no dilution. The 34 non-firing games contribute exactly zero to `vs null`, so the
+full-50-game margin **is** the small-map margin, measured with no added noise. The stratum is not a
+noisy subset of the headline; it *is* the headline.
+
+*Disqualifying*: **my pre-registered +10 accept gate is unreachable for `bob_sa1`.** The null is 25/50
+with all 25 maps split, so it takes 17/34 on the non-firing maps and 8/16 on the small maps. `bob_sa1`
+inherits that 17/34 exactly. Its maximum possible score is therefore `17 + 16 = 33/50 = +8` — achieved
+only by winning every single small-map game on both sides. **A gate of +10 cannot be met even by a
+perfect arm.** (`bob_sa2` fires on 12 maps, so its ceiling is `13 + 24 = 37/50 = +12`, reachable but
+barely.)
+
+**So the gate I registered is miscalibrated for a stratum-scoped mechanism**, and I registered it that
+way by copying a gate calibrated for whole-corpus changes onto a change that can only touch a third of
+the corpus. That is my error, made in `d575839`, and it is the second time this session that a
+carefully-worded pre-registration turned out not to say what the code does (iteration 38's safety
+argument was the first).
+
+**What I will and will not do with this run.** I will **not** retro-fit a looser gate and call the
+result an accept — that is exactly the move the whole pre-registration discipline exists to prevent.
+I will report `vs null` against the registered gate as it stands, note that `bob_sa1` was competing
+against an impossible bar, and treat any positive result as **motivating a properly-powered
+follow-up, not as an accept.**
+
+**The correctly-powered follow-up, registered now.** Because the arms are byte-identical outside the
+stratum, the exact experiment is a **census of the stratum**: play `bob_sa0` / `bob_sa1` on ALL ~22
+corpus maps under 1000 tiles, both sides (~88 games), which removes map-sampling error from the
+stratum entirely rather than reducing it. The corpus-wide effect then follows exactly, with no
+extrapolation, as `stratum margin` (the non-stratum games being byte-identical by construction).
+
+**This is stratified sampling, not a hand-picked map list, and the distinction matters.** AGENT.md
+forbids a *standing* map list because accepted iterations drift toward it. Here the stratum is defined
+by a map property fixed in advance by the mechanism's own conditioning variable, the mechanism is
+provably inert outside it, and the accept decision still has to weigh the stratum by its true share of
+the 75-map corpus — which the tournament, playing all 75 uniformly, will audit twice a day regardless.
