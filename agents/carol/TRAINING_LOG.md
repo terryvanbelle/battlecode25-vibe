@@ -12813,3 +12813,61 @@ turns halved), so it should clear a resolved threshold, and I will hold it to on
 Note the run's reporting convention, so no future session inverts it: **`BOT=carol_iter44`, so the
 summary reports the BASELINE's wins. Each candidate's score is `50 - reported`.** All three arms
 share one map sample, so the a/b/c ordering is exact within the run.
+
+## AUDIT: re-scoring every past accept against the corrected gates
+
+A gate that was ~1.0 sd while labelled 2.0 sd admits a marginal candidate roughly one time in six
+by chance. I have 18 accepts. So the audit is owed, and it is cheap — every headline number is
+already in this log. Sampled gate: **ACCEPT >= 34/50, UNRESOLVED 31..33, REJECT <= 30**
+(sd(margin) 8.59). Pinned-map runs carry **no sampling term**, so their floor is the perturbation
+piece alone, `2*sqrt(n_maps * 0.44)`.
+
+| iteration | design | headline | margin | z on the corrected floor | verdict now |
+|---|---|---|---|---|---|
+| 18 | 20 maps **pinned**, 40 games | 27/40 | +14 | +2.36 sd (floor 5.93) | **holds** |
+| 21 | 20 maps **pinned**, 40 games | 26/40 | +12 | +2.02 sd (floor 5.93) | **holds, barely** |
+| 29 | 25 sampled, 400 games | 88%, swept 19–0 | large | far above | **holds** |
+| 30 | sampled ladder | accepted on dose ordering | — | — | holds (ladder, not margin) |
+| **34** | 25 sampled, 100 games | **28/50** | **+6** | **+0.70 sd** | **REJECT** |
+| **35** | 25 sampled, 100 games | **33/50** | **+16** | **+1.86 sd** | **UNRESOLVED** |
+| **36** | 25 sampled, 100 games | **28/50** | **+6** | **+0.70 sd** | **REJECT** |
+| 44 | full census, 150 games | 97/150 | +44 | +3.83 sd | **holds** |
+
+**Iterations 34, 35 and 36 are three consecutive accepts, none of which clears the corrected bar,
+and two of which are a coin flip.** My own log said so at the time — iteration 34's entry is titled
+"28/50 with a weak margin", and iteration 36's says in as many words that "a coin flip clears this
+gate a quarter of the time". Both were accepted anyway, on the strength of a confirmed mechanism
+check. That is the pattern: **a manipulation check that confirms the mechanism fired was repeatedly
+allowed to substitute for evidence that firing it helped.** Those are different claims, and only
+the second is the accept criterion.
+
+### This lines up exactly with the flat roster line, and the two together are testable
+
+The frozen roster says iteration 30 -> 44 is flat (96.9% -> 96.6% on shared rungs). The audit says
+the three accepts inside that stretch are unsupported. But the census says `carol_iter44` beats
+`carol_iter36` by **+44 (+3.83 sd)** — a large, solidly-measured real gain. Those three facts do
+not sit together comfortably, and there are exactly two readings:
+
+- **(a) the marginal stretch destroyed value.** Iterations 34–36 were accepted on noise and were net
+  *regressions*; iteration 44's +44 over `iter36` mostly bought back ground iteration 30 already
+  held, landing the lineage where it started.
+- **(b) the roster is simply blind.** Five of eight rungs are pinned at 100%, so a real gain from 30
+  to 44 is invisible to it, and iterations 34–36 were small-but-real.
+
+**These are distinguishable by one measurement I have never run: a full-corpus census of
+`carol_iter36` vs `carol_iter30`.** It prices the entire suspect stretch directly, with my
+strongest instrument, against a baseline from before the gate went soft.
+
+**Pre-registered, before the run:**
+
+- **`carol_iter36` vs `carol_iter30`, full 75-map corpus, 150 games.** Gate as standing:
+  ACCEPT >= +23, REPLICATE +16..+22, REJECT <= +15.
+- **Reading (a) predicts a margin <= 0** — the stretch was flat or negative.
+- **Reading (b) predicts a margin >= +16** — the stretch was worth something the roster cannot see.
+- **+1..+15 is the awkward middle**: real but small, and below what three accepts should have bought.
+
+I am recording which way I expect it to go, so I cannot claim either result as confirmation after
+the fact: **I expect (a)**, because two of the three gates were coin flips and the roster is the
+one instrument in this project that cannot be talked into a result. If (b) lands instead, the
+lesson is about the roster's resolution, not about my gate — and the gate correction stands
+regardless, since it was derived from an identity rather than from any outcome.
