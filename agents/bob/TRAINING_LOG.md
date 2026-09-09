@@ -15089,3 +15089,123 @@ at +1.7 per-mille against a 16 per-mille requirement.
 
 `src/bob/` carries `SMALL_AREA = 0` and `MARKCLEAN = 0`, both exact zero arms. **`bob_iter20` remains
 the bot; HEAD's behaviour is unchanged.**
+
+---
+
+## Iteration 41 — the spawn rotation has no fallback. PROBE PRE-REGISTERED (design written before the run existed).
+
+### What put me here: a zero-game census of the tournament's own bob-vs-carol games
+
+New instrument, `bob-tools/early-paint-census.sh` + `bob-tools/early_paint_agg.py` + `bob-tools/traj_agg.py`,
+over the 150 bob-vs-carol replays of tournament `20260909-1300` (the sanctioned cross-lineage channel;
+zero new games). Rounds 1-30, **exact** unit-rounds at stride 1:
+
+```
+stratum  bob% |   who   soldRnd  splRnd  paintAct  splash  tiles/soldRnd  splashes/splRnd  cov30  twP30
+  small  14.0 |   bob     151.2     0.0     100.5     0.0          0.665            0.000  187.6    157
+             |  carol      45.1    59.2     146.4     9.6          0.479            0.162  263.1    500
+ medium  54.0 |   bob     150.6     0.0     117.3     0.0          0.779            0.000  131.9    171
+             |  carol      44.9    57.8     148.2     9.4          0.568            0.163  159.7    426
+  large  60.0 |   bob     148.7     0.0     115.7     0.0          0.778            0.000  105.2    161
+             |  carol      45.9    57.7     149.1     9.5          0.563            0.164  120.9    419
+```
+
+**This refutes the framing I closed iteration 40 with.** I wrote "the difference is not the unit mix — it
+is what the units do with their paint". It is the unit mix, and my soldiers are the *better* half of it:
+**bob's soldiers paint 0.67-0.78 tiles per soldier-round against carol's 0.48-0.57.** Per-unit, my
+soldiers out-work hers. Carol's splashers run at **0.162 splashes per splasher-round against a hard
+ceiling of 0.20** (action cooldown 50, so one action per five turns) — 81% of theoretical — and each
+splash paints ~13 tiles, so a splasher delivers ~2.1 tiles per unit-round to a soldier's 0.7.
+
+So the deficit is not utilisation and not paint discipline. Bob fields 150 soldier-rounds and no
+splasher-rounds; carol fields 45 and 58. **Superseding, in place, the closing sentence of iteration 40.**
+
+### The trajectory, and the thing I did not expect
+
+Same census at stride 25 over the whole game (`bob-tools/traj_agg.py`), team means over 150 games:
+
+```
+ round |   who   sold   spl   mop   tw  twPaint  chips    cov   +sold  +spl
+     2 |   bob   4.00  0.00  0.00  2.0      220   1560   63.7    2.00  0.00
+       | carol   1.41  1.40  0.00  2.0      319   1648   63.2    0.00  0.87
+    25 |   bob   5.83  0.00  0.00  2.4      307   1371  132.8    1.83  0.00
+       | carol   1.49  2.06  0.00  2.2      382   1802  162.8    0.08  0.71
+    75 |   bob   5.29  0.00  0.54  3.6      677   1483  194.5    0.81  0.00
+       | carol   2.19  1.89  0.00  3.6      998   1421  242.8    0.29  0.69
+   100 |   bob   5.61  0.06  0.54  4.0      838   1935  210.8    1.45  0.06
+       | carol   1.93  2.28  0.00  3.9     1200   1615  272.8    0.37  0.82
+   200 |   bob   6.49  2.45  1.20  5.4     1000   3462  280.4    1.55  0.66
+       | carol   2.42  4.57  0.01  4.8     1444   1512  349.1    0.46  1.26
+```
+
+**Bob's mean tower paint per tower is 185-210 for the entire game** (677/3.6, 838/4.0, 947/4.9,
+1000/5.4 at r75/100/150/200). Carol's is ~300. That band is the whole story, because of an engine fact
+I verified rather than assumed.
+
+### The engine fact, javap-verified on the pinned 3.1.0 jar
+
+`RobotControllerImpl.assertCanBuildRobot` throws on **`robot.getPaint() < type.paintCost`** and on
+`teamMoney < type.moneyCost`. Paint costs: **MOPPER 100, SOLDIER 200, SPLASHER 300.**
+
+And `Tower.run()` does this:
+
+```java
+UnitType want = (slot == 4) ? MOPPER : (splasherSlot && splasherOk) ? SPLASHER : SOLDIER;
+if (chips >= want.moneyCost + reserve) {
+    for (8 dirs) if (rc.canBuildRobot(want, l)) { rc.buildRobot(want, l); spawned++; break; }
+}
+```
+
+**There is no fallback, and `spawned` advances only on success.** A tower holding 200-299 paint can
+build a soldier and cannot build a splasher — so on a splasher slot it builds *nothing*, and because
+the slot counter does not advance it retries the same unaffordable slot next turn. `SPLASHER_SLOTS =
+0b01100` puts a splasher on **2 of every 5 slots**, and bob's towers live at 185-210 paint. Worse, a
+MONEY tower has `paintPerTurn == 0` (RULES.md, engine-verified) and therefore **never regains paint at
+all**, so a money tower that lands on a splasher slot below 300 paint is stuck there permanently.
+
+The trajectory shows the shape: the round-60 gate lifts, and bob still builds **0.00 splashers per 25
+rounds at r75 and 0.06 at r100** while building soldiers throughout. The slots are being reached and
+declined.
+
+**A confound I killed before it could be raised.** My tower attacks (step 1) before it spawns (step 3),
+so "contact blocks production" would produce the same trajectory. It does not: in `attack(loc, bool)`
+the `addActionCooldownTurns` call sits behind `ifeq` on `getType().isRobotType()`, so **a TOWER attack
+adds no action cooldown**. Attacking and building in the same turn is legal and my order is the right
+one. Adding to RULES.md.
+
+### The probe, and why a bare stall count would not be a measurement
+
+"The tower built nothing" has two causes that call for opposite work, and one number cannot separate
+them. `bob-tools/make-spawnprobe-arms.sh` builds two arms and classifies **every tower-turn**:
+
+- **B** — built something.
+- **R** — wanted `want`, could not build it, **but a different type WAS buildable**. A recoverable
+  rotation stall; a fallback would have produced a unit for free.
+- **N** — wanted `want`, could not build it, and no type was buildable either. Genuine bankruptcy;
+  a fallback buys nothing and the target is upstream paint income instead.
+
+`bob_sq0` is a byte-identical baseline; `bob_sq1` adds only `canBuildRobot` queries (pure — no
+cooldown, no state, no RNG) and `setIndicatorString`. **It draws no RNG**: `G.rng.nextInt(8)` stays
+inside the original guard, because a PRNG draw inside a conditional makes that conditional part of the
+behaviour (LEARNING 35; LEARNING 52 is about skipping exactly this check).
+
+**PRE-REGISTERED, before the run exists:**
+
+- **VOID unless `bob_sq0` and `bob_sq1` agree on every (map, side)** — same winner, same round count.
+  The instrumented build must be provably inert before I believe a number it reports.
+- **Primary reading: `R / (R + N)`**, the share of failed spawn attempts that a fallback would rescue.
+  - `>= 0.30` — the stall is real and a fallback is worth an iteration.
+  - `<= 0.10` — bankruptcy dominates; **the fallback idea is closed for the cost of this probe**, and
+    the target becomes paint income.
+  - in between — report as unresolved and size again before building anything.
+- **Registered secondary**: `R` should be concentrated on `w=SPLASHER` turns. If R is mostly
+  `w=SOLDIER` (a tower under 200 paint that could still afford a mopper) the mechanism is real but is
+  not the splasher slot, and the fix is a different one.
+- **Registered in advance as NOT an accept test.** This probe measures a decision rate, not games. It
+  cannot accept anything; it decides only whether the fallback earns a full evaluation.
+
+Maps pinned to 3 small + 3 large (`CastleDefense DefaultSmall Justice maze mit gardenworld`), because
+the mechanism's payoff is plausibly regime-dependent and a random draw would mix the two (doctrine 4).
+6 maps x 2 arms x 2 sides = 24 games.
+
+`src/bob/` is untouched; `bob_iter20` remains the bot and HEAD's behaviour is unchanged.
