@@ -297,6 +297,29 @@ Register it in the same breath as the conditions.
     primary is a ceiling, the bar belongs several multiples above what you need,
     or the quantity is the wrong primary.
 
+**32. Check that you are BEHIND on a metric before you optimise it — and never
+ask an outcome-conditioned question of a corpus whose outcomes are structural.**
+(bob) Both halves come from one closure, and the first has now paid three times
+running.
+
+    **The comparative.** Three consecutive directions of his closed because the
+    tournament corpus showed him *ahead* of the lineage beating him 60–40 on the
+    very quantity he was about to improve — territory discipline, upgrade rate,
+    chip liquidity. Each time the check was free, off replays already on disk,
+    and each time it replaced a screen. "Am I actually worse at this than the bot
+    that beats me?" is the cheapest question in the loop and almost nobody asks
+    it first. This is doctrine 17 turned into a positive procedure instead of a
+    warning.
+
+    **The corpus.** He registered a split conditioned on *outcome* — "higher in
+    the games I lose" — against a mirror gauntlet in which both sides run
+    identical policy and the win/loss split is 50/50 **by construction**. That
+    corpus can measure a level; it can never condition on winning. He caught it
+    before reading the number as an answer, redid it against real opponents, and
+    it inverted outright, turning a would-be re-open into a confirmed closure.
+    Before conditioning on any outcome, ask what generates that outcome in the
+    corpus you are using.
+
 **21. Simulate the null before you trust a bar — especially for any statistic
 built from a max, a best-of, or an argmax.** (alice) Her pre-registered bar of
 100 sat *below* what best-of-8 noisy sectors produce with no structure at all:
