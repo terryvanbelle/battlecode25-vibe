@@ -17080,3 +17080,81 @@ before pricing any throughput mechanism: *what is the budget, and is it already 
 now require it and are silently withheld without it (the tool says so in its footer — the
 self-reporting silence its author built in did its job). My splasher-tag census returned 0 rows
 for that reason and has not been re-run. Not a bug; recording it so the next session passes `--ind`.
+
+---
+
+# Iteration 58 — PRE-REGISTERED. The SOLDIER FLOOR: a rate limit, not a threshold.
+
+## Why I am working next to an area I said to leave, stated plainly so it can be audited
+
+After iteration 57 I wrote that three consecutive rejects in tower/economy constants closes that
+thread and "the next attempt must leave the economy-constant area." This iteration is **adjacent**
+to it and I am proceeding anyway, for two reasons I am putting on the record rather than sliding
+past:
+
+1. **It is a different kind of object.** Iterations 30/47/49/57 all searched for a better *value* of
+   a threshold. This changes no threshold. It adds a **rate limit** — at most one
+   `SPLASH_FLOOR`-exempt soldier per tower per `SOLDIER_GAP` rounds — so the volume is bounded by a
+   clock rather than by a gate. Iteration 47 flooded the mix to ~98% soldiers precisely because a
+   threshold change is unbounded; this cannot do that by construction.
+2. **My own pre-written re-open condition for C1 is satisfied.** I recorded it as: *"re-open only
+   if a mechanism makes the soldier gate reachable **without moving the treasury's own limit
+   cycle**."* A floor of ~1 standing soldier costs 250 chips a rebuild against a 22,220-chip game
+   budget — **1.1%** — which does not move the limit cycle. That is what a ledger with checkable
+   re-open conditions is *for*, and this is the first time one has fired.
+
+**If this rejects, the soldier direction closes as a class and I leave the area entirely.** I am
+registering that now so the next session does not relitigate it.
+
+## The trace this rests on (no VM games spent to obtain it)
+
+Soldier `id12362` on Leaf: alive rounds 2–220, **4 towers completed** (r73/108/139/169), refilling
+from each tower it built, productive on 47% of turns, then **starved to death at r220** — after
+which carol built **no soldier for the remaining 527 rounds**. The loop is self-extending and
+demonstrably works; it simply terminates and has no restart.
+
+## Magnitude, in the units of the gap (standing question 1)
+
+Observed rate: **1 tower per ~42 soldier-rounds**. One soldier maintained across the 527 idle
+rounds is **~12 towers** against a measured deficit of **17–20**. Price: ~250 chips + 200 paint per
+rebuild, a handful of times per game.
+
+## Grows or reallocates? (standing question 2)
+
+**Both, in the order that matters.** It is a ~1% reallocation of chips that unlocks tower growth,
+and towers are the only thing in this bot that raises income. Unlike iteration 57 — which bought
+chips with paint *capacity* and so paid for income twice — this buys towers with a rounding error.
+
+## Arms and doses
+
+`BOT=carol_iter44`, one shared 25-map sample, both sides. The **zero arm is byte-identical by
+construction**: `SOLDIER_GAP = 0` disables the branch entirely, and `src/carol` is already
+byte-identical to `carol_iter44`.
+
+| arm | `SOLDIER_GAP` | soldiers built/game (est., ~7 towers) |
+|---|---|---|
+| `carol_i58_1000` | 1000 | ~5 |
+| `carol_i58_500` | 500 | ~10 |
+| `carol_i58_250` | 250 | ~21 |
+
+## Pre-registered gate — in candidate wins out of 50
+
+> **>= 34 ACCEPT | 31-33 UNRESOLVED (no accept without a disjoint-sample replication) | <= 30 REJECT**
+
+**Dose prediction (registered):** the trace says soldiers are worth a great deal at n=2 and nothing
+at n=245, so I expect an **interior optimum**, with `500` at least as good as both neighbours and
+`250` at risk of flooding the mix the way iteration 47 did. A monotone ladder either way is also
+informative.
+
+**The decisive clause, registered in advance:** *if all three arms land at or below the baseline,
+the standing-population story is wrong, the soldier direction closes as a class, and I leave it.*
+
+**Mechanism check (doctrine 5 stage 0, pre-registered):** soldier builds must rise above the
+baseline's 2 on Leaf, **and** final tower count must rise above 8. Iterations 42 and 45 died on
+exactly the link where soldiers rose and towers did not, so both halves are required — soldiers
+alone is a fail, not a pass.
+
+**Map-level secondary, with its base rate stated:** gain should concentrate on ruin-dense maps.
+**This prediction has now failed three times in this lineage** (47 flat, 34 non-significant, 57
+inverted). Registered because it is the mechanism's own claim; it will not be used to rescue a
+failed primary, nor read as corroboration of a passed one (doctrine 14 — same games).
