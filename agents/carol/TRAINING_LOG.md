@@ -16756,3 +16756,118 @@ gap it closes has not been costed.
 Any spawn-gate, floor, reserve or unit-mix change is a *reallocation* of that fixed budget and is
 bounded by it. Only tower count grows it. State which of the two a candidate is, in one line, before
 building.
+---
+
+# Iteration 57 — PRE-REGISTERED before a single game was scored. `MONEY_MOD`, the income lottery.
+
+## Why this constant, and why now
+
+My own log pre-authorised it: the iteration-34 correction entry ends *"iteration 34 is now a **weak**
+accept with no independent corroboration, and it should be one of the first candidates for an
+ablation **if the lineage stalls**."* Eleven iterations without an accept is a stall, and
+TRAINING_ALGORITHM's "never idle" list puts ablating carried features first. So this is a
+pre-committed trigger firing, not a fresh opinion about an old accept.
+
+## The evidence that says it is the right constant (all gathered today, all free)
+
+`towerTypeFor` makes a ruin a money tower iff `k % MONEY_MOD == 0`, `k = min(x,W-1-x) + min(y,H-1-y)`,
+`MONEY_MOD = 4`. From the tournament replays:
+
+| map | ruins | carol MONEY towers built | paint | outcome |
+|---|---|---|---|---|
+| Leaf | 52 | **0** | 6 | loss |
+| DonkeyKong | 46 | **0** | 3 | loss |
+| headphones | 32 | 1 | 4 | loss |
+| BatSignal | 10 | **2** | 4 | **win** |
+
+The six Leaf sites were (12,11) (13,20) (19,20) (21,26) (27,28) (32,28), giving k = 23, 33, 39, 47,
+55, 55 — `k%4` = 3,1,3,3,3,3. **Not one hit the money branch.** Carol's chip income for that entire
+725-round game was therefore the single lv2 money tower she *starts* with: 30/turn nominal,
+**30.6/round measured**, an exact match.
+
+**So carol's whole economy is a 1-in-4 lottery over the handful of ruins she reaches, with no
+feedback.** At 6 builds, P(zero money towers) = 17.8%; at 9, 7.5%. It returned zero on both maps
+she was swept 0-4 on. The positive feedback loop that follows is the whole ruin gradient:
+money towers -> chip income -> treasury level -> whether any build gate is reachable -> soldiers
+alive -> ruins claimed -> towers.
+
+## Magnitude, priced in the units of the gap FIRST (the standing question)
+
+Coverage gap on Leaf: **481 tiles** (207 vs 688). At `MONEY_MOD = 2`, roughly half of ~6 built
+towers become money towers: +3 lv1 money towers = +60 chips/round, taking income from 30.6 to ~90.
+Over 725 rounds that is ~+43,000 chips against a current total budget of 22,220 — and at carol's
+own realised 5.0 tiles per splasher, even half of it converts to ~270 tiles, **~56% of the gap.**
+
+Compare the candidate I killed this morning at **3.1%**. This one is not too small. It may well be
+too *large* — halving her paint towers could starve the build capacity that spends the chips — and
+that is exactly what the ladder is for.
+
+## Grows the budget or reallocates it? (the second standing question)
+
+**Grows it.** Money towers are the only mechanism in this bot that raises chip income. Every
+spawn-gate, floor and reserve change I have tried since iteration 30 reallocates a fixed ~22k.
+
+## Arms, and the control that can vindicate the incumbent
+
+One shared 25-map sample, both sides, `BOT=carol_iter44`, 150 games, run launched before this
+entry was written. Each arm differs from `src/carol` by **exactly one line** (verified by diff).
+
+| arm | `MONEY_MOD` | meaning |
+|---|---|---|
+| (incumbent) | 4 | zero arm — `src/carol` is byte-identical to `carol_iter44` |
+| `carol_i57_3` | 3 | iteration 34's *previous* value, which it moved away from |
+| `carol_i57_2` | 2 | twice the money towers |
+| `carol_i57_6` | 6 | **the control**: fewer still, continuing iteration 34's direction |
+
+**`carol_i57_6` is the arm that can prove me wrong**, and it is in the ladder for that reason. If
+income is the binding constraint, 6 must be the worst arm. If 6 *beats* 4, then iteration 34's
+direction was right, my income story is wrong, and the finding is that the paint side matters more
+than the chip side even where chips are visibly pinned.
+
+## Pre-registered gate — stated in the unit, per doctrine 1
+
+My standing sampled gate, in **candidate wins out of 50** (the tool reports the BASELINE's wins, so
+candidate = `50 - reported`; sd of a 50-game margin is 8.59):
+
+> **>= 34/50 ACCEPT   |   31-33 UNRESOLVED (may not accept without replication on a DISJOINT
+> sample)   |   <= 30/50 REJECT**
+
+**Dose-response prediction (registered):** if the income story holds, the ordering is
+`2 >= 3 > 4 > 6`, monotone in money-tower supply. A curve peaking at 3 is also consistent (an
+interior optimum, doctrine 2's stronger evidence). Any ordering that puts **6 above 4** falsifies
+the story outright.
+
+**Map-level secondary (registered, with its base rate stated honestly):** the gain should be larger
+on maps with >= 18 ruins than on maps with <= 17, since that is where carol is chip-pinned.
+**I record now that this exact prediction has FAILED TWICE in this lineage** — flat at −4/−4 for
+iteration 47, and non-significant (+0.244, t = 1.21) for iteration 34 after correction. I am
+registering it anyway because it is the mechanism's own claim, but I will not treat its failure as
+decisive against a passed primary (doctrine 17), nor its success as corroboration of the margin
+(doctrine 14 — the buckets and the margin come from the same games).
+
+## Stage 0 — PASSED, and read narrowly on purpose
+
+`carol_i57_2` vs `carol_iter44` on Leaf: **candidate wins at round 1665 by painting out.**
+`carol` vs `carol_iter44` on Leaf: **baseline wins at round 2000 on tiebreak.** Same map, same
+opponent, opposite result, so the arms are not byte-identical and the mechanism executes.
+
+**That is the entirety of what I am claiming from it.** Iteration 47's stage 0 on this same map
+looked *better* than this (25 towers to 5, coverage 701 to 179) and its full screen came back
+21/50. My own LEARNINGS carries the entry — *"replay inspection is for MECHANISM, never for
+VERDICT"* and *"a one-map, one-side result is close to information-free"* — and this is the third
+time that entry has had to fire. The verdict is the screen.
+
+## Pre-checks NOT done, named rather than implied
+
+1. **Trigger frequency on ruin-POOR maps.** I sized the money-tower shortfall on dense maps. On
+   BatSignal carol already builds 2 and wins; `MONEY_MOD = 2` would push her to ~3-4 there, and I
+   have not checked whether that starves the paint side on the maps she currently wins. The screen's
+   25-map sample spans both regimes, so it will show up as a one-directional regression if it is real.
+2. **The second-order cost RULES.md warns about** ("a change that buys chips with paint income is
+   charged twice"). My argument that it does not apply — three of carol's eight Leaf towers sit at
+   the 1000 paint cap, so the forgone paint income is being discarded anyway — rests on a
+   *round-400 snapshot of 8 towers*, not a census. The full-game paint-cap occupancy measurement
+   failed to complete and I have not retried it.
+3. **Play-symmetry.** `k % MONEY_MOD` is invariant under both map symmetries for any modulus, so
+   the property is preserved by construction — but I have not re-verified it empirically for the
+   new values, and the mirror check is cheap.
