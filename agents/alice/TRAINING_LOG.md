@@ -17343,3 +17343,78 @@ number I have covers it.
 3. **Freezing the accepted snapshot from the same text that becomes the live tree**, rewriting only
    the package line and refusing to overwrite. My snapshots are made by exactly this `sed` on the
    package line, but nothing *enforces* it or refuses an overwrite. Noted for my next accept.
+
+## The mopper probe RETRACTS my own "b0 = 0" trigger — iteration 19 works, and the wall is vision
+
+`alice_i48mprobe` = `src/alice` plus counters, purely additive (the only replaced line is the
+indicator string). Run `20260909-163422`, same three pinned maps, **219 moppers, 22,415 mopper
+turns**. This instruments the mopper's *decision*, which is what separates "never ranks a blocking
+tile first" from "never sees one" — a distinction a zero cannot make.
+
+| | count | share of 22,415 turns |
+|---|---|---|
+| action ready | 12,210 | 54.5% |
+| adjacent mop chose **pattern-blocking** (`b0`) | **425** | 1.9% |
+| adjacent mop chose robot-on-tile | 453 | 2.0% |
+| adjacent mop chose plain enemy paint | 3,035 | 13.5% |
+| adjacent mop had no candidate | 8,297 | 37.0% |
+| **travel target was pattern-blocking** (`v0`) | **2,778** | **12.4%** |
+| travel target was plain enemy paint | 15,704 | 70.1% |
+| travel found no enemy paint at all | 3,933 | 17.5% |
+| supply: pattern-blocking share of enemy tiles seen | 27,759 / 341,018 | **8.14%** |
+
+### Retraction
+
+My iteration 46 post-mortem recorded: *"`b0 = 0` on both maps: iteration 19's pattern-blocking
+priority fired ZERO times in 140 mops."* I flagged it as **"a trigger for a corpus-wide count, not
+a finding, and explicitly not as grounds to touch iteration 19."** The count is now run and **it
+does not replicate**: `b0` = 425 of 3,913 mops, **10.9% of mops**. Iteration 19's branch fires.
+
+The old zero is not obviously a bug — I re-read `alice_i47probe`'s counter and its
+`if (bestPri == 0) p47pri0++` is correct. It is most likely a small-sample artefact: 128 mops from
+**7 moppers** in one game, at a true rate near 4% on that map, which lands on zero often enough to
+happen. The lesson is the one I acted on at the time and am glad of: **I recorded it as a trigger
+rather than a finding, and did not build an iteration on it.** Had I "fixed" a branch that fires
+10.9% of the time on the theory that it fires 0%, the arm would have been aimed at nothing.
+
+### And a fresh error of exactly the same shape, made today, caught within minutes
+
+I read the Bunny mopper dump **while it was still being written** — 849 of an eventual 14,390 lines
+— and computed `b0` = 41% of mops. The finished file says **4.1%**. A ten-fold error, from the
+early game where open ruins are plentiful, and I had already started reasoning from it. Partial
+output from a running job is a biased sample of the *early game*, not a small random sample of the
+game. **Do not read a dump until its writer has exited.**
+
+### What the finished numbers actually say
+
+**The mopper's targeting is already optimal within its vision, and iteration 19 is doing its job.**
+Pattern-blocking tiles are **8.14%** of the enemy paint a mopper sees; it aims travel at them on
+**12.4%** of turns and spends **10.9%** of its mops on them. Both are *above* supply share, which
+is precisely what a priority is supposed to do. There is no ranking defect left to fix here.
+
+`v0` is not a preference statistic — it is a **visibility** statistic. The travel branch gives
+priority 0 absolute precedence over priority 1 regardless of distance, so a blocking tile in vision
+is *always* chosen. Therefore `v0` = 12.4% is exactly "the fraction of mopper turns on which any
+pattern-blocking tile is visible at all", and its complement is the finding:
+
+> **On 87.6% of mopper turns there is no pattern-blocking tile within vision to go to.**
+
+So the pincer framing in my earlier entry was **wrong on the mopper side**, and I withdraw it. The
+remedy is not broken and not starved of ranking; it is starved of *sight*. Which is the same wall
+iteration 47 hit on the soldier side, where the choice set was a singleton 100% of the time — and
+that is now two independent instruments, on two different unit types, hitting the identical
+structural limit: **this bot's units act on r²=20 of local information, and the objects that decide
+the game are further apart than that.**
+
+### Where that points, and the one constraint that shapes it
+
+Not comms: `RULES.md` — robot↔tower only, needing r²<=20 *and* a 4-adjacent ally paint path. A
+stalled soldier cannot tell a mopper anything. Not markers: also local. What is left is **memory**,
+which is free, legal, and entirely unused by this lineage — a unit remembering a location it saw
+earlier and navigating back to it. Every unit in this bot acts on what it can see *this turn*.
+
+**Iteration 48 candidate (not yet pre-registered, and deliberately not built tonight):** a mopper
+that remembers the last pattern-blocking tile it saw and returns to it when nothing better is in
+vision. It attacks the measured 87.6% directly. Its price must be costed against `v1` — the 70.1%
+of turns now spent walking to plain enemy paint, which is real coverage work, not idling. That
+costing is the pre-check iteration 44 failed and iteration 47 passed, and it comes before any code.
