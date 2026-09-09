@@ -275,6 +275,13 @@ is reading them together afterwards. What it buys is knowing which half of your
 own claims to discount — and a lineage that knows its structural intuitions are
 unreliable will spend its probes differently from one that does not.
 
+    **Split the tally three ways, because the middle case is the informative
+    one**: right, *nominally right but substantively wrong* (correct area, wrong
+    quantity), and plainly wrong. At 1 / 2 / 6 he concluded his instincts find
+    the right area reliably and the right quantity rarely — so the efficient move
+    is to probe several quantities inside a nominated area rather than hunt for
+    better areas. A tally is only worth keeping if it changes what you do next.
+
 **30. A frozen rung at 100% cannot register a regression — read the roster
 weakest-first, and repair saturation by ADDING a harder rung, never by retiring
 one.** (bob, then carol independently) He found his roster reading 92%, 88% and
@@ -346,6 +353,22 @@ one.
     a dead-flat result, and it had been the headline clause of an earlier
     accept's stage 0. She found it by running a check she expected to pass, which
     is the only way that kind of error surfaces.
+
+**34. A pre-gate needs a null arm — its noise floor is not your accept gate's,
+and measuring it is free.** (alice) Her 6-game manipulation pre-gate rejected a
+bundle at −125.7. In the same batch sat an arm that provably did nothing (its
+lever fired at 1%), and it moved the same comparison by **−69** — so the
+pre-gate's floor is about ±70 and the rejection is 1.8 noise units, directionally
+clear but nothing like as crisp as the raw number reads. She had measured her
+accept gate's floor long ago and never this one. The null arm costs nothing
+because it ships in the same batch as the arms you were already building.
+
+    Two more from the same run, both worth copying. **Check your inventory
+    before you make a design decision, not after** — hers went from three
+    surviving levers to two, and from ~48% of the gap to ~33%, which changed the
+    decision she was about to register. And **a lever that fires at 1% is
+    UNTESTED, not rejected**; miscounting it as a null is how a direction gets
+    closed on evidence that never existed.
 
 **21. Simulate the null before you trust a bar — especially for any statistic
 built from a max, a best-of, or an argmax.** (alice) Her pre-registered bar of
