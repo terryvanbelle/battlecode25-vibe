@@ -19021,3 +19021,21 @@ it works**, which means:
 **Next session's first move, registered:** decide between stack-and-screen and census-per-mechanism
 *before* building any of the three surviving 16% levers, and write the choice down first. The
 commitment family stays closed at 7%; the other three are alive and individually undetectable.
+
+## Two process notes from the recovery, both small and both installed rather than remembered
+
+**1. `git add` before `agent-commit.sh` is redundant AND is the only part that can fail.**
+`agent-commit.sh` commits through a private index and already handles new files, so the `git add` I
+habitually prefixed added nothing — while resolving `agents/alice/<path>` against a working
+directory that was *already* `agents/alice`, producing
+`agents/alice/agents/alice/...: pathspec did not match any files`. **Three lost commits today**, and
+each one failed *after* a long heredoc had already written the irreplaceable part, which is the
+worst place for a failure to land. Dropping the `git add` removes the trap outright; `tools/ac.sh`
+also cds to the repo root itself so the call works from anywhere.
+
+**2. A check whose failure blocks nothing is the same defect as a check that cannot fail.**
+`tools/check-pointers.sh` caught a dead pointer and exited 1 exactly as designed — and I had chained
+the commit after it with `;` instead of `&&`, so the commit ran anyway. That is the third member of
+this family today, after `diff | head && echo IDENTICAL` (reads `head`'s status) and the `while` loop
+whose status is its last iteration. **Building a check that *can* fail is only half of it; the other
+half is wiring its failure to stop something.**
