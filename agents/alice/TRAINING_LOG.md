@@ -18245,3 +18245,74 @@ compound of unit mix (moppers paint nothing — they contribute `act_u`, 142 of 
 (22.2 dead by r300) and upkeep (47–74% of a soldier's budget, already measured). Sizing those three
 against the ~2x gap tells me which one can carry it, and whether any of them can — the METHODS
 section 2 pricing that closed iteration 50 for 8 games. That comes before a mechanism.
+
+## Pricing the per-tower gap — it is EXACTLY the upkeep loss, the lever is TIME, and the binding guard is not what I assumed
+
+Zero games; all figures already measured this session.
+
+| quantity | value |
+|---|---|
+| alice spawn paint by r300 (small maps) | 4,980 (soldiers 3,800 = 76%) |
+| paint actions performed | 384.9 = **1,924 paint on the ground** |
+| **soldier tank -> ground conversion** | **50.6%** (iteration 49 measured upkeep at 47–58% — consistent) |
+| **gap to per-tower parity with carol** | +77.5/tower x 5.1 = **+395 paint actions** |
+| **alice's soldier paint lost to upkeep** | 1,876 paint = **375 paint actions** |
+
+> **The gap is 105% of the upkeep loss.** They are the same quantity to within measurement error.
+> Alice's entire per-tower production deficit is its soldiers failing to get half their tank onto
+> the ground.
+
+### The lever is TIME, not the per-turn rate — which is why iterations 49 and 50 were aimed wrong
+
+Upkeep is charged **per turn**, so the loss is `lifetime x rate`, and alice's soldiers take **87.8
+turns** to spend a 200-paint tank. The ledger closes exactly: 20.3 actions x 5 = 101 paint on the
+ground, 87.8 turns x 1.154 = 101 paint on upkeep, total 202 against a 200 tank.
+
+| if the tank were spent in | upkeep | paint actions |
+|---|---|---|
+| 87.8 turns (today) | 101 | **20.3** |
+| 60 turns | 69 | 26.2 |
+| 40 turns | 46 | **30.8** |
+
+At 40 turns that is **+10.5 actions per soldier x 19 soldiers = +200 paint actions, 50% of the
+gap** — against iteration 50's heading mechanism at 2.4 per soldier (12%). Iterations 49 and 50
+both attacked the *rate*; the rate is nearly irreducible and the **duration** is where the money is.
+
+### So why are soldiers idle 77% of their turns? Engine-verified, and it is NOT readiness
+
+`InternalRobot.addActionCooldownTurns`, javap against the pinned 3.1.0 jar:
+
+```
+X = round(100 * paintAmount / paintCapacity)
+if (X < 50 && isRobotType())  cd += round(cd * (100 - 2*X) / 100)
+```
+
+So below half paint a robot's cooldowns scale up: **x1.5 at 25% paint, x2.0 at 0**, and
+`addMovementCooldownTurns` reads `paintAmount` the same way. My `RULES.md` line on this is
+**correct as written** — verified, not corrected. A real vicious cycle exists: low paint -> slower
+acting -> more turns -> more upkeep -> lower paint.
+
+**But it is not the binding guard, and the arithmetic says so plainly.** Even a *fully starved*
+soldier at cooldown 20 could act every 2nd turn — **50%** of its turns. Alice's soldiers act on
+**23%**. Readiness therefore cannot be what stops them; they are idle for want of a **target**.
+
+### Which lands on a direction this log has already closed, and names the one channel that is not
+
+The board census: **the board saturates by r200–400, with 0–4% of paintable tiles unpainted.** And
+the engine trap (iteration 23, both attack sites guarded): **a soldier cannot paint an enemy tile.**
+So after saturation a soldier's only legal productive target is an **empty** tile, and empty tiles
+are created by exactly one thing in this bot — **a mopper clearing enemy paint**. Alice performs
+**142.3 mops** by r300 against 384.9 paint actions.
+
+> The chain closes: per-tower deficit = upkeep loss = long soldier lifetime = idle turns = **no
+> paint targets** = the "no frontier" finding that already killed iterations 44, 45 and the 45
+> draft. The one input to it that has never been treated as the constraint is **mopper throughput**,
+> because empty tiles are manufactured, not found.
+
+**That is the next objective, and it is alice-only:** every post-saturation paint action alice makes
+must be *preceded by one of its own mops*, so mopper output is a hard cap on soldier output — and
+soldier output is the thing the whole per-tower gap reduces to. **It is not a mechanism yet.** The
+pre-check it needs first, in the shape that closed iteration 50 for 8 games: *how many of alice's
+paint actions after r200 are on tiles one of its own mops created, and what is the ceiling if every
+mop were converted?* If most post-saturation painting is not mop-fed, the cap is not binding and
+this closes too.
