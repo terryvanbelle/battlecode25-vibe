@@ -16999,3 +16999,84 @@ budget rather than reallocate it, and (b) not be a constant in the spawn/tower-t
 every reachable value of `SPLASH_FLOOR` and `MONEY_MOD` is now bracketed and both peak where they
 already sit. The unexplored mechanic named by today's API sweep is **communication** — carol has
 never sent a message — and that is the first place to look for something that is not a constant.
+
+---
+
+# Session note (post-57): the soldier loop WORKS, and it is never restarted
+
+Iteration 57 closed the economy-constant area, so I went to the trace rather than to another
+constant. Everything below is from tournament replays already on disk; no VM games were spent.
+
+## RETRACTION FIRST — a unit error in my own numbers, caught by an impossibility
+
+I published a "retention" table this session reading **carol 4.4% / alice 16.4%** on Leaf. Those
+numbers divided a tile count by a PER-MILLE and are **withdrawn**.
+
+The tell was an impossibility, per doctrine 17: on **Castle** (27x27 = 729 tiles total) the two
+teams' `cov` figures sum to **972**, which cannot be tile counts. `cov` is **tenths of a percent of
+paintable area**. This also reconciles the other artefact that did not fit: alice won Leaf by
+`MAJORITY_PAINTED` (>70%) at round 747 with `cov` 688 — 68.8%, crossing 700 shortly after.
+
+Corrected, on Leaf (paintable = 3600 − 160 walls − 56 ruins = 3384):
+
+| | tiles laid (est.) | held | per tile laid | per exact paint-action |
+|---|---|---|---|---|
+| carol | 4,733 | **700** | 14.8% | 31% |
+| alice | 4,200 | **2,328** | 55.4% | 69% |
+
+**The qualitative finding survives and is cleaner**: carol lays *more* paint than alice and holds
+a third as much. The multiple is 3.7x (estimated tiles) or 2.2x (exact paint actions); I quote
+both because the splash footprint is not in the replay schema and 13 tiles/splash is an upper
+bound that flatters alice, who splashes 3x less.
+
+## The soldier loop is productive — and it terminates
+
+Full per-turn track of soldier `id12362`, carol's second and last soldier on Leaf:
+
+| | |
+|---|---|
+| alive | rounds **2 – 220** |
+| towers completed | **4** (rounds 73, 108, 139, 169) |
+| refills | **5**, at rounds 44, 74, 110, 140, 171 — *each immediately after a completion* |
+| turns painting a tile | 102 = **47%** |
+| turns at paint < 50 | 66 = **30%** (engine applies a (100 − 2X)% cooldown penalty here) |
+| turns at paint == 0 | 12 = 5% (−20 hp/turn, cannot act) |
+| death | **starved**, hp 250 -> 10 |
+
+**The loop is self-extending and it works**: claim a ruin -> the new tower becomes a refill point ->
+reach the next ruin. One soldier converted a ruin every ~42 rounds. It is not confused, not
+livelocked, and not badly targeted.
+
+**It died at round 220, and carol built no further soldier for the remaining 527 rounds**, because
+the spawn gate sits at 2,250 chips against a treasury whose limit-cycle ceiling is ~1,600 (measured
+this session: 0.04% of 5,425 tower-turns clear it).
+
+## What that reframes
+
+The deficit is not soldier *productivity* and not soldier *supply in the aggregate* — iteration 55
+already killed the latter by showing 245 soldiers buy one extra tower. It is that the bot has **no
+mechanism to maintain a small standing soldier population**. Two well-fed soldiers claimed 6 towers
+in 170 rounds; 245 starved ones claimed one. **Soldiers are worth a great deal at n=2 and nothing
+at n=245**, because they share one paint pool, and carol operates at n=0 for 73% of the game.
+
+At the observed rate (1 tower per ~42 soldier-rounds), a single soldier maintained across the 527
+idle rounds is worth **~12 towers** against a measured deficit of **17–20**.
+
+## A third instance of my own error shape, caught before it cost anything
+
+I computed that carol builds on 0.9% of tower-turns while the splasher gate is reachable on 7.04%,
+and that 7.04% x 15% (the splasher's share of the roll) = 1.06% — the arithmetic closes exactly, so
+the roll-then-veto-then-build-nothing path looks like a **6.6x** loss of build throughput. It is
+not: carol spends 22,900 chips of 22,220 earned, so a fallback buys *timing and mix*, not volume.
+
+That is the same mistake as iteration 56 (dwell-time read as slack) and iteration 57 (a paint cap
+read as spare capacity), for the third time in one day: **a rate limit is not slack when the budget
+underneath it is already fully spent.** Recorded in LEARNINGS as a single control question to ask
+before pricing any throughput mechanism: *what is the budget, and is it already spent?*
+
+## Instrumentation note
+
+`tools/replay-dump.sh` has gained an `--ind` flag since earlier in this session; indicator strings
+now require it and are silently withheld without it (the tool says so in its footer — the
+self-reporting silence its author built in did its job). My splasher-tag census returned 0 rows
+for that reason and has not been re-run. Not a bug; recording it so the next session passes `--ind`.
