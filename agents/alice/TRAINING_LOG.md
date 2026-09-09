@@ -16254,3 +16254,131 @@ p = 0.903 against my own predecessor over a 75-map census). The instrument that 
 effect is the **tournament**, which I do not control and which runs twice a day. So a size-keyed
 mechanism has to be justified by a within-arm mechanism check, not by a gauntlet headline — and I
 should expect the gauntlet to score it ~0 even if it is right.
+
+## Correction to the sweep entry above — I overclaimed "my gauntlet cannot see the size axis"
+
+Written an hour earlier in this session: *"my gauntlet cannot see this axis (rho +0.014, p = 0.903
+against my own predecessor over a 75-map census)."* That is one claim too wide. What the census
+shows is that **my accepted changes have been size-neutral**, not that the instrument is blind to
+size. A mechanism that genuinely painted small maps faster would beat a predecessor that does not,
+and the gauntlet would score it. The correct statement is narrower:
+
+> The gauntlet can measure a size-keyed *improvement*; what it cannot measure is **whether the gap
+> to carol has closed**, because both arms are mine and share the deficit.
+
+Same error shape as the one this session already caught twice — a real number attributed to a
+referent wider than it supports. Catching it in my own entry from the same session is the reason
+it is written down here rather than quietly edited.
+
+## Probe before building: soldiers are IDLE on 70–96% of their turns, and it kills my iteration 45 draft
+
+`alice_i45probe` = `src/alice` plus counters, no behaviour change. **Identity verified, not
+assumed**: `alice_i45probe` vs `alice_iter39` and `alice` vs `alice_iter39` on `BatSignal` both end
+**round 1209, same winner**, so the added sensing costs no bytecode that changes play.
+
+Counters read off soldier indicator strings, at the point of the opportunistic-area paint branch.
+Buckets are disjoint and sum to `t`, verified on every sample:
+
+| | `roads` r200 (11 soldiers) | `roads` r300 (3) | `BatSignal` r380 (5) |
+|---|---|---|---|
+| soldier turns `t` | 883 | 461 | 886 |
+| action already used | 5.9% | 0.0% | 9.0% |
+| blocked by the `paint >= 15` gate | 1.5% | 0.9% | 11.5% |
+| **painted something** | **22.6%** | **3.5%** | **8.0%** |
+| **idle: action free, paint fine, nothing paintable in range** | **70.0%** | **95.7%** | **71.4%** |
+
+> A soldier spends **70% of its turns early and 96% late** with a **free action and enough paint,
+> and nothing it is allowed to paint within action range**. Painting — the win condition of 124 of
+> the 150 games in the census above — happens on 3.5–22.6% of soldier turns.
+
+### The draft mechanism this refutes, before it cost a single game
+
+My draft iteration 45 was: *when the soldier is idle, steer toward the nearest EMPTY tile in
+VISION (r² ≤ 20) instead of random-wandering; vision is wider than the action radius (r² ≤ 9), so
+there is information the bot ignores.* The probe measured exactly that, splitting the idle turns:
+
+| of the idle turns | `roads` r200 | `roads` r300 | `BatSignal` r380 |
+|---|---|---|---|
+| empty ground **in vision** (steering can act) | 28.0% | 7.7% | 11.4% |
+| **no empty tile in vision at all** | **72.0%** | **92.3%** | **88.6%** |
+
+**This is iteration 44's shape exactly**, and I was one commit from repeating it: `goRefill` was
+inert on 96.2% of the turns it existed to serve; local steering would be inert on 72–92% of its
+turns, and inert *most* where the coverage race is actually lost. The probe cost two matches. The
+version of me that skipped it would have spent 150 games learning the same thing.
+
+**The `paint >= 15` gate is also not the story.** It blocks 0.9–11.5% of turns, and a soldier
+needs only 5 paint to paint a tile, so lowering it to 5 is a real but small fix — nowhere near the
+70–96% idle bucket. Recording it as a known, sized, low-value change rather than pursuing it.
+
+### What the numbers actually say, and it is a different mechanism
+
+A soldier standing with a free action and **nothing unpainted anywhere within vision** is standing
+in *saturated* ground. Yet global coverage plateaus at **50–58%** (the control's own trace on
+`BatSignal`: 587 per-mille at r200, 579 at r300, against the 700 instant-win line). Both are true
+at once only if the unpainted 40% is **clustered beyond vision** — soldiers mill inside the
+painted core while the frontier is somewhere they cannot see.
+
+`wander` is a persistent random heading (iteration 12, dose 25) with obstacle sliding (iteration
+14). A random walk in a bounded arena has **no outward pressure**: it keeps a unit near where it
+started, and soldiers start at towers, which sit in the painted core. So the bot has no mechanism
+that sends a saturated soldier to the frontier — that is the gap, and it is a *navigation* gap,
+not a target-selection gap.
+
+**And the diverted turns are measured, per pre-check 4.** These turns paint nothing by
+construction (`painted` is a disjoint bucket) and have nothing to paint in vision. Unlike
+iteration 44, redirecting them cannot cost painting or ruin capture, because none is occurring.
+The soldier already moves on these turns; only the heading changes.
+
+### Iteration 45 PRE-REGISTERED — send a SATURATED soldier to the frontier
+
+**Hypothesis.** Soldiers idle at 70–96% because the unpainted frontier lies beyond vision and
+`wander` — a persistent *random* heading — has no outward pressure, so soldiers mill in the
+painted core they spawned in. Giving a soldier that is provably in saturated ground a long-range
+destination converts idle milling into travel to fresh ground, and coverage is the win condition
+in 124 of 150 census games.
+
+**Mechanism, one change, one unit.** In `runSoldier`'s no-ruin branch only (`wander`'s other two
+call sites are untouched): if **no unpainted passable tile is anywhere in vision**, walk toward a
+random on-map location, re-drawn on arrival or after `EXPLORE_TTL = 60` rounds. Any unpainted tile
+in vision and the mechanism returns immediately, leaving the existing path untouched.
+
+**It uses `getMapWidth`/`getMapHeight` — two calls the iteration 45 API sweep found this bot has
+never made in 45 iterations.** That is the sweep paying for itself in the same session it ran.
+
+**Control verified behaviourally, not by construction alone.** `EXPLORE` is a compile-time
+`static final boolean` and the call site is written so `false` collapses to a bare `wander(rc)`.
+Checked rather than asserted: `alice_i45ctl` vs `alice_iter39` on `BatSignal` ends **round 1209,
+same winner** — identical to `alice` vs `alice_iter39`.
+
+**BITE check, run before the census (pre-check 3).** `alice_i45` vs `alice_iter39` on the same map
+ends at **round 919** against the control's 1209 — the same win, **290 rounds sooner**. The
+mechanism acts, and it acts on the quantity it claims to. One map cannot size a corpus effect, so
+this is a bite test and nothing more.
+
+**Gate — the CORRECTED census bar, fixed before the run.** 75-map corpus, `alice_i45` vs
+`alice_i45ctl`, 150 games. **Accept at net swept >= +12** (2.27 sd on `sd_net_swept = 5.29`);
+**+7 to +11 replicates** on a disjoint sample; **<= +6 rejects**. Not +4 — see the gate correction
+entry above.
+
+**Pre-registered mechanism falsifier, and deliberately NOT a map-size cut.** The obvious
+prediction is "gain on the large half, where the frontier is furthest" — and my own bite map
+refutes it in advance: `BatSignal` is 1000 tiles, on the SMALL half, and it is where the mechanism
+showed its largest effect. Registering a prediction the evidence already contradicts would be
+theatre. The mechanism-matched prediction is about *how* games end, since the claim is that
+coverage arrives sooner:
+
+1. The arm's wins must be **more often "painted enough of the map"** (the 700-per-mille instant
+   win) than the control's, not more often round-2000 tiebreakers.
+2. Among decisive games, the arm's **median winning round must be shorter** than the control's.
+
+If the arm's margin instead comes from tiebreaker wins at the round limit, the gain is not the
+mechanism I registered and the result does not count, however good the total.
+
+**Named risks.** (1) A random destination can walk a soldier into enemy ground, where it cannot
+paint at all and can die; the TTL bounds the commitment but the travel is paid. (2) Dispersal is
+load-bearing here — iterations 12 and 14 tuned `wander` precisely for it, and Phase 0 #7 warns
+that a "fairer" heading can destroy real cohesion. (3) A full-vision scan per wander turn costs
+bytecode; the probe's max was ~3,750 of a soldier's 17,500, so there is headroom, but the census
+must be read with the bytecode monitor's `OVR`/`near` counters, which are already in the indicator
+string.
