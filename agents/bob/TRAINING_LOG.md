@@ -14791,3 +14791,53 @@ out for the cost of four games and I go elsewhere; iteration 29 was vetoed this 
 
 **Do NOT launch that probe while run `20260909-120113` is in flight** — MAXJOBS <= 3 is a hard
 shared-VM rule and the gauntlet is holding the capacity.
+
+## Iteration 40 — DESIGNED, NOT BUILT (2026-09-09). The splasher gate, conditioned on MAP AREA.
+
+**This takes priority over iteration 39 (bug-nav)**, which stays designed and unbuilt. Numbering
+follows the order these were written, not the order they will run; I am recording the demotion rather
+than quietly renumbering.
+
+**Why it jumps the queue.** Iteration 39 is speculative — I have not yet shown soldiers are stuck
+often. This one targets a *measured* 50-point hole (LEARNING 68: bob wins 12% of small-map games
+against carol and 64% of large-map games) with a mechanism *already shown to be live*: iteration 34
+removed the round-60 splasher gate unconditionally and moved the result by **-7 with the harm
+localised in games over 1,000 rounds**. Long games are large maps, i.e. bob's winning regime. So
+iteration 34 did not show splashers are bad; it showed **un-gating them costs bob where bob is
+already winning**, and it never separated that from the regime where bob is being run over.
+
+That conditional has been BLOCKED since iteration 34 for want of a conditioning variable. Map area
+is it: known at round 1 from `getMapWidth`/`getMapHeight`, both already cached in `G.mapW`/`G.mapH`,
+costing no sensing and no bytecode worth counting.
+
+**Corpus area distribution** (from `bob-tools/srp-sites.csv`, zero games):
+`min 400, p33 1050, median 1500, p67 2025, max 3600`. The tercile boundary that produced LEARNING 68
+is ~1050, so a threshold near 1000-1100 selects the bottom third (22-26 of 75 maps).
+
+### Arms (planned)
+
+```
+  bob_sa0   SMALL_AREA    0   gate never relaxed; unchanged        <- EXACT zero arm
+  bob_sa1   SMALL_AREA 1000   relax the round-60 gate when W*H < 1000   (22 of 75 maps)
+  bob_sa2   SMALL_AREA 1500   relax it when W*H < 1500                  (35 of 75 maps)
+```
+
+A dose ladder on the *conditioning threshold* rather than on the mechanism, which is the right dose
+axis here: iteration 34 already measured the mechanism at full strength everywhere and got -7. The
+open question is not "how much splasher" but "over what fraction of the corpus".
+
+### Gates
+
+- **VOID** unless `bob_sa0` is 25/50 with all 25 maps split.
+- Primary gate stays the **uniform** 25-map head-to-head: >= +10 accept-eligible, +7..+9 replicate,
+  <= +6 reject. **The gate must not be narrowed to small maps** — the tournament plays all 75 maps
+  uniformly, so uniform is the target distribution, and narrowing it is exactly the hand-picked-map
+  overfitting surface AGENT.md forbids.
+- **Registered secondary, read only after the primary**: win rate within the small stratum of this
+  run's own sample. **Registered underpowered, in advance**: a 25-map uniform draw holds only ~8
+  small maps, so ~16 games per arm in the stratum. That resolves nothing on its own and I will not
+  treat it as a second gate — it is a direction check on a mechanism whose sign I have pre-committed.
+- **Pre-registered prediction**: `bob_sa1 > bob_sa2`. Iteration 34's harm was in long games, and
+  SMALL_AREA 1500 relaxes the gate on 47% of the corpus including maps whose games run long, so the
+  wider threshold should re-import iteration 34's loss. If `bob_sa2 >= bob_sa1` then game length,
+  not map area, is the real conditioning variable and area was a proxy — which I would want to know.
