@@ -16190,3 +16190,28 @@ run                  null       arms          pooled sd(vs null)   +10 gate   +7
 
 This is a correction to my *instrument*, not to any bot, and it is the kind that silently re-weights
 everything downstream — which is why it goes in the log at the level of a finding.
+
+### A retrospective sweep I ran, and the claim I killed before making it
+
+Having calibrated the gate, the obvious next question is **"did this strictness make me reject a real
+effect?"** I swept `gate_sd.py` over all 47 runs on disk, auto-selecting a null arm per run. It surfaced
+`bob_d1` at **+5 with z = 2.98** in run `20260907-185613` — apparently a mechanism at p ≈ 0.0014 that my
+`≤ +6 reject` band threw away.
+
+**It is nothing of the kind.** That run was iteration 16 RUN 2: `BOT=bob_iter12`, opponents `bob_d1`
+(7/50) and `bob_d0` (2/50). **Neither arm was a null** — both were unit-mix variants being crushed by a
+stronger bot, and my auto-picker simply took the alphabetically first opponent when no arm sat near 50%.
+The "+5" is one losing arm beating another losing arm, and z on it means nothing about an accept.
+
+**The general lesson, which is the reusable part**: `vs null` is only a verdict quantity when the null is
+the **registered** null for that run, and the registered null lives in the pre-registration text, not in
+`results.csv`. A tool that guesses it produces numbers with the right shape and no meaning. So the
+retrospective sweep's **z-scores are not interpretable** and a future session must not mine them; only
+runs whose registered null I can name from the log qualify — `20260909-151137` (`bob_fs0`),
+`20260909-120113` (`bob_mk0`), `20260909-104412` (`bob_t0`), which are the three the calibration above
+actually rests on.
+
+**The sd figures themselves survive** the sweep and are worth having: paired sd(vs null) ranges **1.4 to
+3.3** across runs, so my `+10` gate has been anywhere from **3.0 to 7.0 sd** depending on the run. That
+widens, rather than narrows, the case that the gate is strict — and it is the third time today that
+running the discriminating case killed a headline I had already computed.
