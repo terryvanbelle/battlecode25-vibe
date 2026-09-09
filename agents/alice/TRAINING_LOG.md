@@ -17768,3 +17768,142 @@ ran on `box` (31x31) and `UnderTheSea` — and 20.3 is exactly my small-map figu
 as *the* property of a soldier. It is the property of a soldier **on a small map**; on large maps
 the same code gets 34/40. A constant in my own LEARNINGS turns out to be a variable in map size,
 and the axis was never tested because the census used two maps.
+
+## Iteration 49 upkeep probe — PRE-REGISTERED, written before the probe is run
+
+`src/alice_i49probe` = `src/alice` plus counters. Purely additive: the only replaced line is the
+indicator string, and `probeTick` runs in the `finally` block after every decision of the turn is
+already made. Identity to be verified on two maps, not assumed.
+
+**What it counts**, per robot-turn, replicating the javap-verified `processEndOfTurn`:
+adjacent ally **units** (`adjU`) and adjacent ally **towers** (`adjT`) separately, the tile the
+turn ends on (`tA`/`tN`/`tE`), and the paint actually charged (`up`), split into its adjacency part
+(`upAdj`) and its tower-adjacency part (`upT`). Splitting `upT` out is the whole point: it sizes
+the term my own `RULES.md` told me to ignore.
+
+**Question.** Alice's soldiers convert 51% of their 200-paint tank into tiles on small maps and 85%
+on large. Where does the missing half go, and is it upkeep?
+
+**Prediction.** Upkeep per robot-turn is materially higher on small maps, since both of its terms
+scale with crowding, and iteration 22's 40–42% upkeep figure was measured on `box` (31x31) —
+a small map — which matches my small-map arithmetic (~99 paint of a 200 tank ≈ 49%) rather than my
+large-map one (~30 paint ≈ 15%).
+
+**Falsifier, named in advance.** If upkeep per robot-turn is **the same on small and large maps**,
+then upkeep is not the size-conditional term and I drop this explanation — the tank is being lost
+somewhere else, and the next suspect is soldiers dying with paint still in them rather than
+spending it.
+
+### The decision rule, registered BEFORE the numbers exist (METHODS.md section 2 and 11)
+
+The gap to close is **+14 paint actions per soldier** on small maps (20.3 -> 34.0 of a 40-action
+tank). Each action costs 5 paint, so closing it requires recovering **~70 paint per soldier
+lifetime**.
+
+> **If measured total upkeep per soldier lifetime on small maps is below 70 paint, then eliminating
+> upkeep ENTIRELY could not close the gap, and I close this direction on MAGNITUDE — not on power,
+> and no larger sample can overturn it.**
+
+If upkeep is above 70, the direction stays open and the next question is what fraction is
+*recoverable*, which is a separate measurement and not one I am authorised to assume by this run.
+
+I am registering the kill condition first because this is the point where iterations 44–47 went
+wrong: each had a real defect and a mechanism that was too small for it, and none of them was
+priced before it was screened.
+
+## Iteration 49 probe — the prediction CONFIRMED, the direction DEAD, and the reason is my instrument
+
+`src/alice_i49probe` vs `alice_iter43`, 6 maps, 1,058 soldier lifetimes, 175,526 soldier-turns.
+**Identity verified, not assumed**: on `DefaultSmall` probe and `alice` both win at round **926**;
+on `maze` both win at round 2000. (The 926 is the real check — my own LEARNINGS warns that
+*"ROUND-COUNT IDENTITY is not byte-identity, the tiebreak forges the evidence"*, and a pair of
+round-2000 tiebreaks is exactly that weak case.)
+
+| | SMALL (400–625) | LARGE (3200–3600) |
+|---|---|---|
+| soldiers / soldier-turns | 433 / 38,004 | 625 / 137,522 |
+| mean soldier life | **87.8 turns** | **220.0 turns** |
+| **upkeep per turn** | **1.154** | **0.683** |
+| — adjacency part per turn | 0.704 | 0.517 |
+| — of which ally TOWERS | 3.8–17.8% of upkeep | 3.8–9.0% |
+| **upkeep per LIFETIME** | 101.3 | **150.3** |
+| paint actions per soldier | **25.3** | **15.7** |
+
+### The pre-registered items, answered exactly as registered
+
+- **Prediction: CONFIRMED.** Upkeep per robot-turn is materially higher on small maps — **1.154 vs
+  0.683, a factor of 1.7** — and it is monotone in area across the small cut (400 -> 1.827,
+  420 -> 1.133, 625 -> 0.919). Crowding is real and it is size-dependent.
+- **Falsifier: did NOT fire.** I registered "if upkeep per robot-turn is the same on small and large
+  maps, drop it." It is not the same.
+- **Magnitude rule: does NOT close it.** I registered closure if small-map lifetime upkeep were
+  below 70 paint. It is **101.3**, so the mechanism is not too small on its face.
+
+**And the ledger closes, which is the part I trust most.** For `DefaultSmall`: budget = 200 tank +
+36.2 refilled = 236.2, of which upkeep 137.9, leaving **19.7 paint actions**. My tournament census —
+a completely independent instrument, counting `PaintAction`s in replays against **carol** — measured
+**20.3** actions per soldier spawned on small maps. Two unrelated measurements agree to 3%.
+
+### So by every criterion I wrote down in advance, this direction advances. It does not, and here is why
+
+**Look at the last row.** Against carol, alice's soldiers get **20.3** paint actions on small maps and
+**34.0** on large. In self-play the probe gets **25.3** on small and **15.7** on large. The probe does
+not reproduce the level, and — decisively — **it reproduces the ordering backwards.**
+
+> **The phenomenon I built this probe to explain does not exist in the instrument I built it on.**
+> Alice-versus-alice, small maps are the *good* case for a soldier's paint budget. The deficit only
+> appears against carol. It is therefore not a property of map size acting on alice's mechanics,
+> which is the only thing self-play can measure.
+
+**The truncation confound runs the safe way**, so this is not an artifact of comparing r300 counts
+against whole-game lifetimes: at r300 on large maps 60% of alice's soldiers are still alive and
+mid-lifetime against 38% on small, so the r300 figure *understates* large-map lifetime actions.
+Correcting for it would widen the tournament gap and deepen the contradiction, not close it.
+
+**I am killing this on a ground I did not pre-register, and that deserves to be named.** Rejecting on
+an unregistered criterion is the exact move pre-registration exists to prevent, so the justification
+has to be more than "the number disappointed me". It is this: my pre-registration silently assumed
+the probe could *observe* the phenomenon. That assumption is itself testable, and it failed. A gate
+blind to an effect carries no information about it (METHODS.md section 8), so neither the confirmed
+prediction nor the passed magnitude test says anything about the cross-lineage gap. This is not
+moving the goalposts to reject — it is discovering that the measurement was not of the thing.
+
+**And I had the evidence to predict this failure before spending the games.** My own log, written
+this same session-chain: *"Spearman rho vs size = +0.014, p = 0.903 — the size axis is NULL inside
+my own lineage."* METHODS.md section 8 says to check that your instrument can register the deficit
+**before** building against it. I read that section today, quoted it in an earlier entry, and then
+built a six-game probe on the instrument my own notes call blind to this axis. The lesson is not
+"self-play is bad"; it is that **section 8 is a pre-check with a trigger, and the trigger is
+"before building", not "when the result confuses you."**
+
+### Priced anyway, for the record, because a magnitude survives the instrument failure
+
+Even taking the small-map numbers at face value: the adjacency tax is 0.704 paint/turn over an 87.8
+turn life = **61.8 paint per soldier lifetime = 12.4 paint actions**. Against a +13.7 action gap that
+is 90% — but only if adjacency were driven to **zero**, which is unreachable: units must pass one
+another, and `tryRefill` can only fire while a unit is **adjacent to a tower**, so the bot's own
+refill mechanism requires paying the tax I would be suppressing. A realistic de-clumping tie-break
+captures some fraction of 12.4 actions, and I decline to guess which.
+
+### What survives, and it is not nothing
+
+1. **The engine correction stands and is permanent**: adjacent ally towers are taxed. Now *sized* as
+   well as verified — **3.8% to 17.8% of soldier upkeep**, so it is real, it was wrong in my digest,
+   and it is a minor term. Both halves of that are worth having written down.
+2. **An absolute fact about alice, no opponent required**: its soldiers spend **47–74% of their entire
+   paint budget on upkeep**, and adjacency to allies is the majority of it on 5 of 6 maps.
+3. **Soldier lifetime is the hidden variable**: 87.8 turns on small maps against 220.0 on large. Per-turn
+   upkeep and lifetime move in opposite directions and very nearly cancel, which is precisely why the
+   per-turn number looked like a finding and the per-lifetime number is flat.
+4. **A bound on my own gauntlet, now measured rather than asserted.** The retracted clumping direction
+   (LEARNINGS section 3) had the re-open condition *"measure adjacency on a corrected trace."*
+   **That condition is now discharged**: adjacency is 0.70 paint/turn on small maps, 0.52 on large,
+   and it does not produce the cross-lineage deficit. The direction closes with a number instead of
+   staying open forever as an unmeasured maybe.
+
+### Where the small-map deficit actually has to be studied
+
+Not in self-play. The gap is opponent-driven, so the only instrument that contains it is the
+tournament replay set — which is where this session's one solid finding also came from, for zero
+games. The next hypothesis has to be framed as *what carol does to alice's soldiers on a small map
+that alice does not do to itself*, and measured there.
