@@ -187,10 +187,23 @@ paint fails.
   no tower already there; `hasRuin`; `getMoney() >= 1000`; `isValidPatternCenter`;
   no robot standing on the ruin tile; `checkTowerPattern`; team tower count < 25.
 - `markTowerPattern` costs 25 of the **robot's own** paint, needs r^2 <= 2 and
-  action-readiness, and writes a marker to **all 25 tiles including the ruin
-  centre** (`markPattern` loops dx,dy in -2..2 with no centre skip). So the ruin
-  tile always carries a mark it can never satisfy — a "paint every marked tile
-  that mismatches" loop must not treat that tile as actionable.
+  action-readiness. `markPattern` does loop dx,dy in -2..2 with **no centre
+  skip**, but every write goes through `GameWorld.setMarker`, which **returns
+  immediately when `isPaintable(loc)` is false** (bytecode offsets 0-8). A ruin
+  is not paintable, so the **ruin centre is never marked**: only the 24
+  surrounding tiles carry a mark.
+
+  > **CORRECTED 2026-09-09.** This entry used to read: *"writes a marker to all
+  > 25 tiles including the ruin centre ... So the ruin tile always carries a mark
+  > it can never satisfy — a 'paint every marked tile that mismatches' loop must
+  > not treat that tile as actionable."* That was read off `markPattern` alone
+  > and stopped one call short of `setMarker`'s guard. It is **false**, and it
+  > was one step from becoming iteration 47 — a guard for a bug that does not
+  > exist, in a loop that has shipped without one since iteration 0. Refuted
+  > twice, independently: the bytecode above, and `alice_i47ruinprobe` over
+  > **15,229 soldier ruin-turns on 3 maps**, where the ruin centre was seen as a
+  > mismatched mark **0 times** (`cm=0`) and attacked **0 times** (`ac=0`).
+  > Reading a write loop without reading its writer is the general lesson.
 
 ### Ruin parity is NOT uniform — and three maps are a tracing trap
 **Canonical copy is shared ground: `../../tools/mapdata/`** (promoted from my

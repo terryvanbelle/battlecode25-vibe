@@ -16974,3 +16974,104 @@ location, not a defect. **The next artifact is a probe that localises why a sold
 map with unclaimed ruins does not claim one**: ruins seen, patterns started, patterns completed,
 and turns spent at a ruin with an incomplete pattern. Not an arm. This lineage's ledger is full
 of mechanisms aimed at locations.
+
+## The ruin-capture probe: 42% of soldier ruin-turns are stalled on enemy paint — and it killed the arm I was about to build
+
+`alice_i47ruinprobe` = `src/alice` plus counters, no behaviour change (diff is counters only:
+every branch that decides an action is byte-for-byte the original). **Identity verified, not
+assumed**: `alice_i47ruinctl` (a byte-identical copy of `src/alice`) and the probe both played
+`alice_iter43` on the same 3 pinned maps and produced the *same winner and the same round count in
+all 6 games* (gridworld r1556, boxofchocolates r1511, Bunny r1907). Runs `20260909-150438` (probe)
+and `20260909-150713` (control). Note `src/alice` is behaviourally `alice_iter43` — 44, 45 and 46
+were all rejects — so these are mirrors, which is why every map splits by side.
+
+Counters are per-soldier, summed over each soldier's last indicator before death, 603 soldiers.
+Denominator `at` = soldier turns on which a live ruin target existed.
+
+| | count | share of `at` |
+|---|---|---|
+| **`at` ruin-target turns** | **15,229** | 100% |
+| `atk` pattern attack made | 850 | **5.6%** |
+| `se` **stalled: pattern marked, action ready, EVERY mismatched tile is enemy paint** | **6,424** | **42.2%** |
+| `um` no mark anywhere in the 5x5 | 5,274 | 34.6% |
+| `na` action already spent | 1,466 | 9.6% |
+| `oo` stalled: mismatched tiles exist, none in action range | 784 | 5.1% |
+| `fu` all 24 tiles satisfied, no completion | 431 | 2.8% |
+| `ac` attacks aimed at the ruin CENTRE | **0** | **0.0%** |
+| `cm` turns the centre mark mismatched | **0** | **0.0%** |
+| `mk` marks placed / `dn` towers completed | 29 / 21 | — |
+
+### The result that matters most is the one that killed my own iteration 47
+
+I came into this from `RULES.md`, which stated that `markPattern` marks **all 25 tiles including
+the ruin centre**, and therefore that "the ruin tile always carries a mark it can never satisfy —
+a 'paint every marked tile that mismatches' loop must not treat that tile as actionable."
+`src/alice`'s soldier loop has no centre guard. That looked like a live defect of exactly the
+iteration-23 shape (pay 5 paint, paint nothing, `break`, forfeit the turn), sitting in the hottest
+loop in the bot, warned about in my own committed notes. It was going to be iteration 47.
+
+**It does not exist.** `ac = 0` and `cm = 0` over 15,229 turns. The engine says why:
+`markPattern` really does loop -2..2 with no centre skip, but every write goes through
+`GameWorld.setMarker`, whose **first instruction is `isPaintable(loc)` with an immediate `return`
+when false** (offsets 0-8). A ruin is not paintable, so the centre is never marked at all.
+`RULES.md` is corrected in this commit, with the retraction kept in place rather than the old text
+quietly replaced.
+
+> **The general lesson is narrower and more useful than "verify your facts": I read the write loop
+> and never read its writer.** `markPattern` is three lines of bytecode away from `setMarker`, the
+> guard is the *first* thing `setMarker` does, and the fact had been sitting in `RULES.md` as a
+> committed engine truth for tens of iterations. A derived consequence ("so the loop must guard
+> the centre") inherits every assumption of its derivation, and this one had a false one.
+
+### What the probe actually found
+
+**`se` = 42.2%.** On 6,424 of 15,229 ruin-target turns the soldier is action-ready, standing at a
+*marked* pattern, and **every** mismatched tile in it holds enemy paint. A soldier can never
+overwrite enemy paint (engine, iteration 23), so this is a state it cannot resolve, ever, by any
+action available to it. It is the single largest bucket, an order of magnitude above `atk` at 5.6%.
+
+This is a **replication, not a discovery** — and that is what gives it weight. Iteration 19's own
+comment, from a census on `alice_iter14`, says: *"637 samples sat at 22 of 24 tiles against 15 that
+ever reached 24"* and *"those patterns are permanently stalled."* Iteration 19 accepted a mopper
+priority to clear exactly those tiles. Two years of loop later, on the current bot, on a different
+corpus, at a different measurement point, the state is still 42% of all ruin-turns. **The remedy
+was accepted and the defect did not move.**
+
+And the other half of the pincer is already measured: the `alice_i47probe` mop-priority count
+(entry above) found **`b0 = 0` — iteration 19's pattern-blocking priority fired ZERO times in 140
+mops on two maps.** I logged that as "a trigger for a corpus-wide count, not a finding," and
+declined to act. It now has a partner: soldiers sit stalled on enemy-painted pattern tiles 42% of
+the time, while the mopper branch built to clear precisely those tiles never fires. Two
+independent instruments, each measuring one side of the same handoff, both saying it does not
+happen.
+
+**A cost note, because the price is not what it looks like.** A stalled soldier is *not* idle: the
+iteration-22 opportunistic area-paint branch runs after the ruin block and spends the action on
+the nearest empty tile. So `se` does not waste the soldier's action — it wastes its **position and
+its movement**, and the opportunity cost is the ruin it could have been progressing instead. Any
+arm here must be priced as a reallocation against that, not against zero.
+
+### Two blind spots in this probe, recorded rather than papered over
+
+1. **`at` does not separate travelling from standing.** I dropped the distance split I had planned,
+   so `um = 34.6%` mixes "at an unmarked ruin doing nothing" with "walking toward a ruin four tiles
+   away". On boxofchocolates (19 sparse ruins) `um` is 77% of `at`, which is what long travel looks
+   like. No conclusion is drawn from `um` here.
+2. **`se` counts the state, not its persistence.** It does not show whether the same soldier is
+   stuck on the same ruin for hundreds of turns or many soldiers pass through the state briefly.
+
+### Iteration 47 is NOT built yet, and the reason is a pre-check I have not run
+
+The obvious arm — *skip a ruin whose pattern is enemy-blocked, target another* — runs straight into
+`TRAINING_ALGORITHM.md` §3, **"Reachability means the CHOICE SET, not just the guard"**, whose
+worked example is *this lineage's own shape*: a ruin-ranking function whose candidates were the
+ruins in vision, where a soldier never sees two at once, so the choice set was a singleton and
+every dose was byte-identical. If a stalled soldier typically sees exactly one open ruin, "skip it
+and pick another" has nothing to pick and silently degenerates into "wander". That is a different
+mechanism with a different price, and I would be measuring it under the wrong name.
+
+So the next artifact is **probe v2**, which adds two counters and no behaviour: the number of open
+ruins in vision at the moment the `se` state is classified (a 1 / 2 / >=3 histogram), and the
+distance split that fixes blind spot 1. It is information a robot genuinely has at runtime, so an
+in-bot counter is the right instrument for it. Cheap, on the same pinned maps, and it decides
+which mechanism iteration 47 actually is before a line of it is written.
