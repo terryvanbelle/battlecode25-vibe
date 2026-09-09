@@ -78,6 +78,7 @@ Companion files, and what each is for:
 - **36.** `setIndicatorString` is **one slot per robot per turn**; the last writer wins silently. → #72
 - **37.** A pre-registered trigger is only as good as its **proxy**. → #10
 - **38.** The map that suggested the hypothesis is the **worst** map to size it on. → #22
+- **38b. NEW.** **Run the cross-lineage comparative FIRST, as a sweep, and window it.** Three closures in a row found bob *ahead* of the bot beating it on the metric it was about to optimise; run first the sweep costs nothing and nominates instead. It corrected its own headline twice in one sitting — gross-vs-net (−37% → −4%) and whole-game-vs-window (−4% → −18% where it matters). → #94
 - **39.** Check that a number lies in its own **logical range**. → #23
 - **40.** Date-check a resume context's git snapshot before believing it. → #61
 - **41.** **Run the discriminating case** even when the source reads like a confession — I reported a real bug with a false symptom, and the symptom I named was untestable. → #63, #27
@@ -123,6 +124,7 @@ Numbers live in `RULES.md`; these are the ones that changed a decision.
 ## F. Where bob actually stands (the strategic state, and it is nearly closed)
 
 - **68.** Bob's entire deficit is **small maps**, and the tournament said so all along. → #68
+- **68b. NEW — correction to #69, which I was over-generalising.** #69's "−65 per-mille at r30" is **carol-specific**. Against **alice** bob's opening is fine (**+8** at r30); the alice gap opens **r60→r200** (+3 → −41) with both armies the *same size*. **An opponent-specific finding must carry its opponent in the sentence.** → #94
 - **69.** The round-30 cliff and the small-map deficit are the **same phenomenon**. → #69
 - **70.** `tiles = acts × conv`. **`conv` is closed from both ends**: bob's redundant repainting is exactly 0 of 2,377 classified repaints, and answering alice's 47 unpaints/game with moppers costs more than it returns. → #84, #83, `CLOSED.md` #19/#21
 - **71.** **Composition is a local optimum in both directions** — iteration 20's splasher peak is interior at 2 of 5 slots, iteration 45's mopper harm is monotone. → #82, `CLOSED.md` #20
@@ -130,6 +132,7 @@ Numbers live in `RULES.md`; these are the ones that changed a decision.
 - **72b. NEW — the model correction.** **`acts` was never the binding constraint; PAINT is.** All three sources of `acts` are now closed (composition #20, acting-more-often #22, living-longer #23) and each bottomed out in a fixed paint budget. Feeding a unit costs the paint that builds one: `tower.getPaint() >= 200` gates every SOLDIER. → #86, `CLOSED.md` #23/#24
 - **72c. NEW — where to look next.** Bob issues ~59,460 paint to units per game and converts only ~**38%** into paint actions; the residual is ≈2 paint per unit-round, the size of the engine's per-turn penalties (−1 neutral, −2 enemy, +1 per adjacent ally, doubled in enemy territory). Spending less draws on **no** tower pool — the one re-open condition on #23. **This 38% is an accounting estimate, not a measurement.** → #86
 - **72d. NEW — bob is CHIP-POOR, and the trace everyone cites is superseded.** Median chip balance reaches the L2 upgrade trigger (6,500) only ~r800 and the L3 trigger (9,000) never before r1100 — past most games' end. Iteration 3's "327k chips unspent at r2000" predates the upgrade path it motivated; **re-measure before any "bob has spare chips" argument.** → `CLOSED.md` #28
+- **72e. NEW — the single most useful table this lineage has made.** Bob has **+53% units, +69% chips, −4% standing towers, −47% territory waste, +19% upgrade reach** vs alice — and loses **60–40**. **The deficit is not in the stocks.** It is a *window*: standing towers −9%/−16%/−18% at r150/r200/r400 while the whole-game figure reads −4%, and bob's 1.94x army advantage arrives ~500 rounds too late on maps that fill by ~25% of game length. **Nominates: pattern-completion throughput in r60–400** (not chips — bob holds 69% more while building fewer towers). → #94
 - **73.** Sizing anchor, for any future mechanism: the small-map deficit is **91 tiles**; an extra soldier-round is worth **≤0.265 tiles**; so closing it needs **≈+343 soldier-rounds/game (+28%)**. Every mechanism tried before iteration 47 sized at **2–5%** of that.
 
 ## G. Process and hygiene

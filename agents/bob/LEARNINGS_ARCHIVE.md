@@ -3371,3 +3371,51 @@ closure — territory (#51), upgrade rate (#52), chip liquidity (#53) — and in
 the lineage beating it. The tournament corpus is doing more work than the gauntlet for questions of the
 form "is this actually my problem?", which is what MULTI_AGENT.md meant by calling it the highest-value
 evidence available.
+
+## 94. Bob out-resources alice on nearly every stock and loses 60–40. The deficit is a WINDOW, not a stock. (2026-09-09)
+
+Running the cross-lineage comparative *first* — as a sweep, before picking a hypothesis — produced the
+most useful single table this lineage has made, and it corrected its own headline twice.
+
+**Correction 1, gross vs net.** "Alice builds 59% more towers" is 90% churn: **alice loses 4.33 towers a
+game, bob loses 0.08**. Standing towers differ by **4.1%**. Acting on the gross count would have bought a
+screen chasing a gap that mostly is not there.
+
+**The corrected sweep, over 75 shared tournament games:**
+
+```
+  bob has  +53% mobile units,  +69% chips,  -4% standing towers,
+           -47% territory paint wasted,  +19% upgrade reach,
+           +31% crowding (the ONE stock bob is behind on -- CLOSED #25/#27, worth +6)
+  ...and loses 60-40.
+```
+
+> **Bob out-resources the bot beating it on nearly every stock that can be cheaply measured, and converts
+> the surplus worse. The deficit is not in the stocks.**
+
+**Correction 2, and it reverses the conclusion: the aggregate hid the window.**
+
+```
+  round       r30   r60   r100  r150  r200  r400  r700  r1000
+  cov diff     +8    +3    -12   -35   -41   -26    -5    -27
+  mob ratio  1.11x 1.21x 1.01x 0.95x 0.97x 1.08x 1.61x 1.94x
+  tw: bob    2.64  3.68  4.65  5.72  6.42  8.74 10.23 12.21
+  tw: alice  2.80  3.96  5.01  6.29  7.66 10.60 10.66 10.58
+```
+
+- **Bob is AHEAD at r30 and r60.** The gap opens r60→r200 **with both armies the same size** (0.95–1.01x).
+- **Standing towers in that window: −9% / −16% / −18%** at r150/r200/r400 — while the *whole-game* figure
+  reads −4.1%, because bob ends **15% ahead** at r1000.
+- **Bob's army advantage arrives ~500 rounds too late**: 1.94x alice's units at r1000, still −27 coverage,
+  on maps that are 10-in-12 full by ~25% of game length.
+
+> **Bob builds twice alice's army five hundred rounds too late.**
+
+**A live belief corrected**: LEARNINGS 69's "−65 per-mille at r30" was measured against **carol**, and I
+had been carrying it as bob's general opening. Against **alice**, bob's opening is *fine* (+8 at r30). The
+r30 cliff is real and carol-specific; the alice deficit is a different window (r60–400) with a different
+shape. **An opponent-specific finding must carry its opponent in the sentence.**
+
+**Method note**: the whole-game/windowed split is LEARNINGS 89 applied to a *comparative* rather than to a
+secondary, and it fired here in the direction that reverses a conclusion rather than merely sharpening it.
+Sweep comparatives windowed, always.
