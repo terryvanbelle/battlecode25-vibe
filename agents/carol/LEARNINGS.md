@@ -57,6 +57,24 @@ pointer, with the evidence in the log; promote to the archive when the entry gro
    self-play gate cannot price a capability whose value only shows against another lineage. →
    *"My accept gate was blind for ten iterations"*, *"An aggregate gate cannot see a trade"*
 
+## The budget question — ask it before pricing ANY throughput mechanism
+
+**"What is the budget, and is it already spent?"** A rate limit is not slack when the budget
+beneath it is fully spent. I made this error three times in one day (2026-09-09), each time with
+a correct local measurement and a wrong referent:
+
+| candidate | the "surplus" I saw | why it was not surplus |
+|---|---|---|
+| iter 56 pin-escape | treasury idle in a band on 77.2% of tower-turns | dwell-time, not slack; ~100% of chip income is spent |
+| iter 57 `MONEY_MOD` | 3 towers at the 1000 paint cap, overflowing | the cap is per-tower; that tower's *build capacity* is load-bearing |
+| build-fallback | builds on 0.9% of tower-turns vs a 7.04% gate — a "6.6x loss" | chips already fully spent; buys timing and mix, not volume |
+
+Two of the three were killed before spending a game, by closing the accounting first. The control:
+**decompose the budget and check the parts sum to income BEFORE reading any rate off it.** If spend
+≈ income, the mechanism can only reallocate, and it must be priced against what it displaces — not
+against zero. See TRAINING_LOG iterations 56–57. A resource at its cap is not free; ask where it
+*is*, not how much of it there is.
+
 ## Measurement and gates
 
 - Gates were set against `se = 0`; the standing sampled gate is **>=34/50 accept, <=30/50 reject,
