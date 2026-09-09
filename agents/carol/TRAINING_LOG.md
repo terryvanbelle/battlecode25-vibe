@@ -16105,3 +16105,36 @@ asymmetric: a rejecting screen ends the iteration cleanly, while a *passing* scr
 moment one is tempted to call it an accept and snapshot. Two of this lineage's 18 snapshots were
 re-scored out of contention when the gate was corrected (`c5790b4`), and that is the debt this
 two-stage rule exists to stop me re-incurring.
+
+### Corrected doses, read AFTER the selection rule was committed
+
+The rule was committed in `7b5f2a8` before these numbers existed. Reading them now against it:
+
+| arm | `BIG_FLOOR` | **corrected dose** `pBlocked/pAble` | old broken ratio |
+|---|---|---|---|
+| `carol_i54_0` | (zero arm) | **0.0%** | 0.0% |
+| `carol_i54_c` | 25 | **20.9%** | 67.0% |
+| `carol_i54_b` | 50 | **31.5%** | 83.2% |
+| `carol_i54_d` | 100 | **82.2%** | 86.5% |
+| `carol_i54_a` | 200 | **93.9%** | 88.8% |
+
+Aggregation: per-tower counters are cumulative, so each robot id's LAST observed value is taken
+and summed over ids (T1 only). Summing every printed round instead double-counts by ~13x and
+inflates the tower count to 104 on a 23-ruin map -- an impossible total is what caught it, the
+doctrine-17 "check a derived table against a total you already know" habit applied to a scratch
+aggregation.
+
+**The corrected instrument has the dynamic range the broken one lacked.** An 8x knob sweep moves
+it 20.9 -> 82.2 (61 points) where the endogenous ratio moved 67.0 -> 86.5 (19 points, every arm
+reading "most rolls refused"). That is the confirmation that the denominator was the fault, not the
+mechanism: same games, same knob, a metric that discriminates only after the denominator stopped
+being caused by the treatment. The zero arm reads exactly 0.0%, so the scope is exact.
+
+**Applying the registered rule:** largest `BIG_FLOOR` whose dose <= 50% is **50** (31.5%); 100 is
+already at 82.2%. So the screened arm is `carol_i54_b`, which is what run `20260909-155554` is
+playing. The selection is reproducible from the committed rule plus this table, with no post-hoc
+freedom -- and note it does NOT match what calibration-map win/loss would have chosen (`i54_c` won
+at r1395, `i54_b` at r699), which is exactly the overfitting the rule was written to prevent.
+
+Gate unchanged: 50 games vs `carol_iter44`, fresh 25-map sample,
+**ACCEPT >= 34/50, REJECT <= 30/50, 31-33 inconclusive.**
