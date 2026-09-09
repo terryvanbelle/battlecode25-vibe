@@ -2933,3 +2933,58 @@ Two further things the episode teaches:
    already forced on the probe generators, which now `grep` for their own append and abort. The seek
    generator does not, because it was not a probe generator. The rule belongs on **any** generator whose
    arms a gate will read, not just probe ones.
+
+## 78. A soldier cannot paint over enemy paint, and the wasted attack is invisible (2026-09-09)
+
+`InternalRobot.soldierAttack`, engine 3.1.0, verified via `tools/engine-jar.sh --remote`:
+
+```
+addPaint(-attackCost);                       // cost paid HERE, unconditionally
+if (isPaintable(loc)) {
+    if (getPaint(loc) == 0 || teamFromPaint(newCode) == teamFromPaint(getPaint(loc))) {
+        setPaint(loc, newCode);
+        matchMaker.addPaintAction(loc, secondary);
+    }
+}
+```
+
+**If the tile is enemy-painted, nothing happens** — no `setPaint`, no `PaintAction` — but the action and
+the paint cost were already spent one line above the check. Only moppers (and splashers) can clear enemy
+paint. A soldier told to attack enemy ground burns its turn silently.
+
+**And the replay records nothing**, so every counter I build on `PaintAction` measures *landed* paint and
+is **blind to attempts by construction**. This is why iteration 42's decision-level probe (63.8% of
+small-map soldier-turns "used the action") and iteration 44's replay census (0.305 landed paints per
+soldier-round) are not the same quantity and must never be quoted against each other as if they were.
+
+**Doctrine: know whether your counter counts the attempt or the effect.** An effect-counter cannot see
+waste — and waste is exactly what you are usually hunting.
+
+## 79. A rate whose numerator and denominator count different populations is not a rate (2026-09-09)
+
+Iteration 44, first read: `acts/soldierRound` said carol's units act **4.1x** as often as bob's. `acts`
+includes splash actions; `soldierRound` counts **only soldiers**; carol fields **56.4% splashers**. Per
+total robot-round the true factor is **2.2x**. I had the 4.1x headline written and killed it by running
+the discriminating case, which cost one column of output.
+
+This is LEARNING 76 arriving a second time in the same session from a different direction. There, a
+mechanism moved a ratio's denominator; here, the denominator counted a different population from the
+numerator. **Before quoting any per-unit rate across lineages, state which units are in the denominator
+and check the opponent fields the same mix.** Three lineages that field 0.8%, 9.8% and 56.4% splashers
+cannot be compared on any per-soldier quantity at all.
+
+## 80. I called three branches exhaustive and the observed case fell between them (2026-09-09)
+
+Iteration 44 pre-registered three branches on `(ratio_acts, ratio_tiles)` and called them exhaustive.
+Against alice the result was `ratio_acts` 0.994 with `ratio_tiles` 0.811 — equal volume, materially worse
+conversion — which needed `≥ 1.3` for Branch 1, sat 18.4% apart against Branch 2's 15% tolerance, and
+satisfied Branch 3's literal trigger while contradicting everything Branch 3 said it would mean.
+
+The 1.3 threshold was chosen to fit LEARNING 69's "bob fields 4x carol's soldiers" story. **The story was
+wrong** (bob has 2.5x carol's soldier-rounds and takes 45% *fewer* actions), so the threshold built on it
+partitioned nothing. Same family as iteration 42's mis-stated accounting condition.
+
+**Doctrine: set a branch trigger from the decision it forces, not from the outcome you expect.** A
+partition should cover the plane — here, the honest form was simply the sign of each ratio, with no
+magnitude threshold at all. And when a registered gate fails to fire, record that it failed to fire;
+do not retro-fit the branch that "would have" caught it.

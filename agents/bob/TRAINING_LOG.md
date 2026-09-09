@@ -15848,3 +15848,133 @@ small maps and 1.016 on large**, which is a within-lineage sighting of the same 
 reason the large-vs-small sign above is registered rather than discovered.
 
 `src/bob/` untouched. **`bob_iter20` remains the bot.**
+
+## Iteration 44 — probe RESULT. **Two opponents, two different diagnoses**, my prediction wrong, my branch definitions defective, and an engine fact that reframes the whole measurement.
+
+Census over `tournaments/20260909-1300`, **all 300 bob games** (150 vs alice, 150 vs carol), r ≤ 200,
+stride 1, 63,814 rows. **VOID condition PASSED**: 300/300 replays censused, alice games and carol games
+analysed as separate populations and never pooled.
+
+**The counters are lineage-neutral, and I checked that before trusting them.** `acts[p…]` counts engine
+`PaintAction` events from the replay's action stream and `cov` is the engine's own
+`teamCoverageAmounts()` — `tools/replaydump/ReplayDump.java` explicitly "prints indicator strings
+verbatim without interpreting any bot's private" format. So these are the engine's numbers for all three
+lineages, not anybody's self-report. Had they been read from indicator strings the whole comparison
+would have been meaningless, since each lineage writes its own.
+
+```
+ stratum         team    n     acts    dTiles    conv   soldRnd  a/soldR  a/roboR  splU%  mopU%
+   small        alice   48    337.4     309.5   0.917    1119.7    0.301    0.222    0.8   25.6
+                  bob   96    306.3     218.4   0.713    1005.3    0.305    0.250    9.8    8.1
+                carol   48    502.0     332.1   0.662     397.8    1.262    0.550   56.4    0.0
+   large        alice   56    569.6     589.3   1.035    1120.7    0.508    0.380    0.3   25.0
+                  bob  112    562.7     498.1   0.885    1300.8    0.433    0.362    9.4    7.0
+                carol   56    601.1     489.3   0.814     433.7    1.386    0.610   56.0    0.0
+
+PAIRED within-game (registered primary):
+ stratum   me      vs   games  ratio_acts  ratio_tiles  conv_me  conv_opp
+   small  bob   alice      48       0.994        0.811    0.748     0.917
+   small  bob   carol      48       0.552        0.560    0.671     0.662
+```
+
+### The headline, in the objective's own units
+
+**On small maps bob gains 218 tiles of coverage; alice gains 309 (+42%) and carol 332 (+52%).** Bob is
+dominated on the objective by both, and `tiles = acts × conv` splits it cleanly and *differently* per
+opponent:
+
+- **vs alice**: bob has **99% of the actions** and **78% of the conversion**. The gap is CONVERSION.
+- **vs carol**: bob has **55% of the actions** and **108% of the conversion**. The gap is VOLUME.
+
+Bob is the only one of the three that is mediocre at both. Alice is a conversion specialist (0.917,
+~0% splashers, 25.6% moppers); carol is a volume specialist (502 actions, **56.4% splashers**, conv
+0.662). Analysing the two opponents separately was the registered call and it is the entire finding —
+pooling them would have averaged a conversion deficit against a volume deficit into a meaningless middle.
+
+### A denominator confound I caught by running the discriminating case, and it was worth 2x
+
+My first read used `acts/soldRnd`, which said **carol's units act 4.1x as often as bob's** (1.262 vs
+0.305). That number is wrong, and wrong in my favour as a headline. `acts` includes splash actions but
+`soldRnd` counts only soldiers — and **carol fields 56.4% splashers**. Recomputed against total
+robot-rounds the true factor is **2.2x** (0.550 vs 0.250), not 4.1x.
+
+I had the 4.1x claim written and did not publish it, because the instruction is to run the
+discriminating case before naming the fault. The case cost one column. **A ratio whose denominator
+counts one unit type while its numerator counts all of them is not a rate**, and this is LEARNING 76's
+lesson arriving a second time in one session from a different direction.
+
+Alice, incidentally, acts *less* often per robot-round than bob (0.222 vs 0.250) and still gains 42%
+more tiles. Volume is emphatically not the whole story.
+
+### The registered branches — and a defect in them I have to record
+
+- **vs carol, Branch 2 FIRES CLEANLY**: `ratio_acts` 0.552 and `ratio_tiles` 0.560 agree to **1.4%**,
+  and `conv` is 0.671 vs 0.662. Bob converts exactly as well as carol and simply takes far fewer
+  actions. Registered consequence: **churn work is CLOSED against carol before it is started.**
+- **vs alice, NO branch fires, and that is my error, not the data's.** `ratio_acts` = 0.994,
+  `ratio_tiles` = 0.811. Branch 1 needed `ratio_acts ≥ 1.3`; Branch 2 needed the two within 15% and
+  they are 18.4% apart; Branch 3's literal trigger (`≤ 1.0`) is met at 0.994 but its stated
+  interpretation — *"bob takes fewer actions… my soldiers are not acting"* — is flatly contradicted,
+  because bob takes the **same** number.
+
+  **I called those branches "exhaustive" and they are not.** The case that actually occurred — equal
+  volume, materially worse conversion — falls in the gap between Branch 1's trigger and Branch 2's
+  tolerance. I set the 1.3 threshold to fit LEARNING 69's "4x soldiers" story rather than to partition
+  the decision space, and the story was wrong. Same class of error as iteration 42's mis-stated
+  accounting condition: **the gate was calibrated to my expectation instead of to the question.** I am
+  recording it rather than retro-fitting a branch that "would have" fired.
+
+- **My prediction was WRONG.** I registered Branch 1 (`ratio_acts > 1`, `ratio_tiles < 1`) against
+  **both** opponents. vs alice `ratio_acts` is 0.994 — not above 1. vs carol it is **0.552**, wrong by a
+  wide margin and in the opposite direction. LEARNING 69's "bob fields 4x carol's soldiers" does **not**
+  translate into more paint actions: bob has **2.5x carol's soldier-rounds and takes 45% fewer actions.**
+- **My registered secondary sign was RIGHT, and is worth less than it looks**: bob's `conv` is higher on
+  large maps than small (0.885 vs 0.713). But it is *also* higher for alice (1.035 vs 0.917) and carol
+  (0.814 vs 0.662). It is a property of the regime, not of bob, so it does not support the pattern-work
+  explanation I offered for it. Confirmed sign, refuted reasoning.
+
+### The engine fact that reframes all of it (verified, `tools/engine-jar.sh --remote`, 3.1.0)
+
+`InternalRobot.soldierAttack` decompiles to:
+
+```
+addPaint(-attackCost);                       // cost paid HERE, unconditionally
+if (isPaintable(loc)) {
+    if (getPaint(loc) == 0 || teamFromPaint(newCode) == teamFromPaint(getPaint(loc))) {
+        setPaint(loc, newCode);
+        matchMaker.addPaintAction(loc, secondary);   // <- the ONLY thing my census counts
+    }
+}
+```
+
+Two consequences, both new to this lineage's records:
+
+1. **A soldier cannot paint over enemy paint at all.** If the tile belongs to the enemy the branch at
+   `207: if_acmpne 231` skips straight to `return` — no `setPaint`, no `PaintAction`. **And the paint
+   cost and the action were already spent** at offset 58, before the check. A soldier attacking an
+   enemy tile burns its action and its paint for literally nothing, silently.
+2. **Therefore `acts[p]` counts only SUCCESSFUL paints, never attempts.** Every conclusion above is
+   about landed paint, which is the right unit for `conv` — but it means my census is **blind to wasted
+   attacks by construction.**
+
+That is the reconciliation for a discrepancy I would otherwise have had to explain away: iteration 42's
+probe put **63.8%** of small-map soldier-turns as "used its action", while this census puts bob at
+**0.305 landed paints per soldier-round**. Attempts and landings are different quantities, and the
+engine says the difference is not necessarily zero. I am **not** claiming the gap is all waste — the
+windows, maps and opponents differ too — but the mechanism by which it *could* be waste is now
+established from the engine rather than supposed.
+
+### What earns the next iteration
+
+**Iteration 45 will measure attempted-versus-landed soldier attacks directly**, which no instrument I
+own can currently see, and which the engine has just shown can differ. If bob's soldiers are attacking
+enemy-painted tiles, each one costs an action and paint and returns nothing — and it would explain the
+conversion deficit against alice (who fields **25.6% moppers**, the only unit that can clear enemy paint,
+against bob's 8.1%) without touching the volume story against carol.
+
+**Closed-directions ledger, ADD**: "reduce bob's paint churn to close the gap to carol" is CLOSED —
+bob's conversion (0.671) already equals carol's (0.662) on small maps; there is no churn gap to close in
+that direction.
+
+New instrument `bob-tools/conv_agg.py` (paired within-game ratios, robot-round denominators, opponent-mop
+covariate). `src/bob/` untouched. **`bob_iter20` remains the bot.**
