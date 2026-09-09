@@ -13013,3 +13013,58 @@ a manipulation check may only reject or explain, never lift a verdict:
   the mechanism is real, because the effect iteration 21 measured is smaller than a 50-game arm can
   resolve. **I am pre-committing to run stage 2 on the better dose even if stage 1 is unresolved**,
   so that an underpowered screen cannot be quietly read as a rejection.
+
+## CENSUS RESULT: `carol_iter36` vs `carol_iter30` — **+38**, and my prediction was wrong
+
+Run `20260909-082856`, full 75-map corpus, 150 games, both sides of every map.
+
+| | |
+|---|---|
+| **94/150 = 62.7%** | margin **+38** = **+3.31 sd** (census floor 11.49) |
+| swept W / swept L / split | 28 / 9 / 38 |
+| identity check | `2*(SW-SL) = +38`, equals the margin |
+
+Pre-registered: reading **(a)** predicted `<= 0`, reading **(b)** predicted `>= +16`, and I wrote
+down that **I expected (a)**. **Reading (b) is right and I was wrong.** The suspect stretch was
+worth +38 — a clear accept on the same gate that judges everything else here.
+
+### What this does to this morning's audit
+
+The audit stands as arithmetic and falls as inference. Iterations 34, 35 and 36 really did score
++6, +16, +6 against a bar of +17 — each individually unresolved. But their **cumulative** effect,
+measured directly with the strongest instrument I have, is **+38 at +3.31 sd**. The individual
+margins sum to +28, so the census is if anything larger than the parts. **They were three small
+TRUE effects, not three coin flips.**
+
+So the inference I was drawing — "below the bar, therefore possibly noise, therefore the lineage
+may have stalled" — is refuted by measurement. **An underpowered gate is not a wrong verdict; it is
+an unresolved one, and the two are not the same thing.** Had I applied the corrected bar
+retroactively and reverted those three iterations, I would have thrown away +38.
+
+**This is the correction to my own morning, and it cuts against the position I spent it building.**
+The fix for a gate that cannot resolve real effects is not only a stricter threshold — that alone
+just converts false accepts into false rejects. The fix is **more power**: a 50-game sampled arm
+has sd(margin) 8.59 and cannot resolve a +6 effect that is real; a 150-game census has 11.49 on a
+corpus three times the size and resolves the accumulation cleanly. Iteration 46 was already
+structured this way (screen sampled, decide on census) before this result came in, which is the
+one thing I got right in advance.
+
+Restated rule, replacing the blunt version: **when a margin lands unresolved, do not accept on the
+mechanism check and do not reject either — buy power and re-measure.** Iteration 45 is consistent
+with this: it would have gone to census and been rejected there on 27/50, and iterations 34–36
+would have gone to census and been accepted. The rule separates them correctly; "reject everything
+under 2 sd" does not.
+
+### And the frozen roster is now positively indicted, not merely suspected
+
+The chain is `iter30 -> iter36` **+38** and `iter36 -> iter44` **+44**, both census-measured at
+> 3 sd. The lineage gained a great deal between iterations 30 and 44. Over exactly that span the
+frozen roster moved **96.9% -> 96.6%** — nothing. That is no longer a puzzle to be weighed against
+other evidence; it is a demonstrated failure of the instrument. Five of its eight rungs sit at
+100% and cannot register a gain of any size, so its aggregate is dominated by rungs that are dead
+weight.
+
+The roster is auto-derived and I will not hand-edit it. What I will do is stop reading its
+aggregate as absolute strength: **only the top rungs (iter21 at 82%, iter35 at 68%, and iter44 from
+the next accept onward) carry information**, and the headline average should be read as an artefact
+of the dead rungs until enough new rungs accumulate to dilute them.
