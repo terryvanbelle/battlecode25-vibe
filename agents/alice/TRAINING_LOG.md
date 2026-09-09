@@ -16454,3 +16454,78 @@ The path-shape rival does not merely fail to explain the effect — on this map 
 the baseline**, while destination choice is 290 rounds faster. That is one map and cannot size a
 corpus quantity (this log's own rule), so it stands as a bite reading and the full ablation still
 runs. But it means the confound is unlikely to be carrying the result.
+
+## Iteration 45 REJECTED — net swept −11, and the mechanism falsifier fails in the same direction
+
+`20260909-124953`, `alice_i45` vs `alice_i45ctl`, full 75-map corpus, 150 games, 0 exceptions,
+clean tree at the pre-registration commit (`head=25d6cc3`, `dirty=0`).
+
+| | maps | SW | SL | split | record | net swept |
+|---|---|---|---|---|---|---|
+| `alice_i45` (frontier travel) | 75 | 4 | 15 | 56 | 64/150 (42.7%) | **−11** |
+
+Identity check passes (−11 = −11). The bar was **+12**; this is −11, i.e. **−2.1 sd** on my floor
+of 5.29 and on the wrong side of zero. **Rejected**, not held for replication.
+
+**And it fails its own pre-registered falsifier, which is the part that settles it.** I registered
+that a genuine gain must show as *sooner* instant wins, not round-limit tiebreakers:
+
+| | wins | median winning round | won by 70% instant win | won on tiebreaker |
+|---|---|---|---|---|
+| `alice_i45` | 64 | **1582** | 56.2% | **43.8%** |
+| `alice_i45ctl` | 86 | **972** | **73.3%** | 26.7% |
+
+Both registered predictions come out **inverted**: the arm's wins are 610 rounds *slower* and
+markedly *more* often tiebreakers. So this is not "a real gain that missed the bar" — the
+mechanism moves the game in the opposite direction from the one it was built to move it. Size cut:
+no trend (rho +0.075, p = 0.529), and both halves are equally bad.
+
+### The methodological result, and it is the one worth keeping
+
+**My bite check said the opposite, and it was strong.** On `BatSignal` the arm won the same map
+against the same opponent at **round 919 against the control's 1209** — a 290-round acceleration,
+on exactly the quantity the falsifier measures. The corpus says the arm is 610 rounds *slower* on
+median. One map did not merely fail to size the effect; **it got the sign backwards on the
+mechanism's own metric.**
+
+I did use it correctly — the pre-registration says *"this is a bite test and nothing more"* — but
+the honest thing to record is how convincing it looked. A future session holding a 290-round bite
+reading will want to treat it as evidence of benefit. It is evidence the mechanism **acts**. That
+is all pre-check 3 claims, and this run is now the counter-example that proves the distinction is
+not pedantic.
+
+### Why it loses, and it names the actual missing capability
+
+The branch fires only when **nothing unpainted is in vision** — so, unlike iteration 44, it cannot
+be stealing painting turns. What it steals is *position*. A soldier deep in the painted core walks
+toward a **random on-map point**, and iteration 24's census already established the board is
+**~90% painted by someone** by round 300. So a random destination is, with ~90% probability,
+**more saturated ground** — and the soldier crosses the map, arrives, finds saturation, and draws
+another random point. Worse, it walks *through and past* the frontier that a local walk would have
+pushed outward, and often into enemy paint it cannot touch.
+
+> **A random destination is not a frontier estimate.** I substituted randomness for information
+> the bot does not have, and paid tempo for it. The mechanism was correctly aimed at a real
+> defect — 70–96% idle soldier turns is not in doubt — and the fix supplied no information.
+
+That is the third distinct failure this session with one root: **iteration 44 acted on a branch's
+inertness, my killed iteration 45 draft would have acted inside vision where there is nothing to
+see, and iteration 45 acted on a guess about what lies outside vision.** All three founder on the
+same missing thing — the bot has **no representation of where unpainted ground is**.
+
+**The capability that would supply it is the one the API sweep has now flagged twice:**
+`sendMessage` / `broadcastMessage` / `readMessages`, unused for 45 iterations, and the log's own
+earlier verdict on it — *"this is the largest unexplored capability I own."* Towers already form a
+global backbone at r² <= 80. A soldier that could be **told** where empty ground is would not need
+to guess, and every arm above was a guess. Recording that as the next direction, with no claim
+yet as to the mechanism.
+
+**`alice_i45dir` ablation: STOOD DOWN, and recorded rather than silently dropped.** I
+pre-registered it *"whatever the census says"*. Its stated purpose was to stop me crediting map
+geometry for a **gain**; with a −11 there is no gain to attribute, and decomposing a rejected
+effect into which flavour loses less is not worth 150 games of a shared VM. The bite reading
+already had `alice_i45dir` at round 1297 — worse than both arms — so the direction-only variant is
+not a hidden winner either. The arm stays in `src/` unrun; if a future session revives frontier
+travel with a real frontier estimate, the ablation is built and waiting.
+
+`src/alice` is unchanged and stays at iteration 43.
