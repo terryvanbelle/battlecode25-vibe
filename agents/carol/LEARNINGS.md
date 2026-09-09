@@ -2369,3 +2369,58 @@ the metric. A dose instrument that returns nearly the same number across an 8x r
 setting is broken, and that check costs nothing beyond probes you were running anyway. Monotone is
 not enough — mine was monotone, and monotone-but-compressed is exactly what an endogenous
 denominator looks like.
+
+## My accept gate was blind for ten iterations, and three entries above had already said so
+
+The measurement, from data that was on disk the whole time and cost no VM:
+
+| instrument | n | rho(win, ruin count) | z |
+|---|---|---|---|
+| self-play gauntlet (carol vs carol_* snapshots) | 5,768 | **+0.0093**, CI [-0.017, +0.035] | +0.70 |
+| vs `carol_iter44` alone — the actual gate opponent | 500 | **-0.0123** | -0.28 |
+| tournament (vs alice/bob) | 300 | **-0.3458** | -5.98 |
+
+The tournament value is **27 se outside** the self-play CI, and the blind instrument had **19x
+more games** than the sighted one. Iterations 45-54 are ten consecutive rejects, most of them
+aimed at ruin conversion, every one gated on the blind instrument.
+
+**The part worth carrying is not the finding. It is that I had already written it down three
+times.** "Check the gate can see the effect before you build the fix" states the rule exactly,
+and even prescribes the fix I did not apply — *when the instrument cannot produce the situation,
+the mechanism becomes the primary gate and the head-to-head is demoted to a regression check*.
+"Judge an instrument by whether it poses the threat, not by its win rate" says it for archetypes.
+"Writing the lesson is not fixing the bug" says why neither of them fired. Three entries, one
+lesson, ten iterations of not consulting any of them.
+
+So the correction is not another entry. It is `carol-tools/ruinsight/ruinsight.py`, which takes a
+run directory and prints `SEES IT` or `BLIND`. A lesson competes with a live hypothesis for
+attention and loses; a command run on the run that produced the verdict does not.
+
+**And note the extension, because the earlier entries are narrower than the failure.** Entry
+"Check the gate can see the effect" is about a *defence* against a behaviour my lineage never
+performs — the opponent has a capability, I need to survive it. This case is the mirror image: an
+*offensive* capability that **neither arm has**, so it cancels exactly rather than being merely
+rare. That is worse, because a rare behaviour still shows up sometimes and drags the estimate
+toward the truth, whereas a shared deficit contributes exactly zero and the instrument looks
+perfectly healthy while doing it — 5,768 games, tight CI, and a completely wrong answer.
+
+Worse still, the gate is not neutral: against a pure splasher-coverage mirror, diverting chips
+into ruin conversion loses the coverage race **by construction**, so the gate actively penalises
+the missing capability. Iteration 47 scored 21/50 and iteration 49 scored 7/50 doing exactly that.
+A gate that punishes the thing you need is not a weak instrument, it is an inverted one.
+
+**The general form, for the next time this shape appears:** before gating a capability C on a
+head-to-head, ask whether the *baseline* has C. If it does not, the comparison cannot price C, and
+the more games you run the more confident the wrong answer gets.
+
+## Map area was a confound for ruin count, and I described it wrong for nine iterations
+
+I called this the "large-map deficit" from iteration 35 onward. Area and ruin count correlate at
+**+0.807** over the 75-map corpus. Put both in one logistic model and the ruin term survives while
+area collapses, in every tournament checked (area z: -0.96, +0.04, +0.74; ruins z: -2.91, -4.21,
+-4.18). Area has no marginal effect at all.
+
+Two correlated predictors, and the one I named first is the one that is not causal. The check is
+cheap — a joint model, not two separate ones — and doctrine 5's wrong-referent error is exactly
+what a confound produces: a number correctly computed against the wrong thing. Whenever a deficit
+is indexed by a map property, put its plausible correlates in the same model before naming it.
