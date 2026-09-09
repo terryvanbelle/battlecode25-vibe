@@ -16382,3 +16382,33 @@ that a "fairer" heading can destroy real cohesion. (3) A full-vision scan per wa
 bytecode; the probe's max was ~3,750 of a soldier's 17,500, so there is headroom, but the census
 must be read with the bytecode monitor's `OVR`/`near` counters, which are already in the indicator
 string.
+
+### The probe reconciles with a finding this log made at iteration 24 — and it names iteration 45's ceiling
+
+Iteration 24's decision census (4,331 action-ready soldier turns) concluded: **"by round 300 the
+map is ~90% painted, so a soldier standing anywhere is almost never standing on empty ground."**
+It killed `alice_i24a` without a gauntlet.
+
+That is the same fact my iteration 45 probe re-measured from the other side — no unpainted tile
+anywhere in vision on 72–92% of idle turns — and the two agree, which is worth stating because a
+disagreement would have meant one of them was wrong. **~90% painted by SOMEONE** against my team's
+**50–58%** coverage plateau is not a contradiction: the difference is enemy paint.
+
+**And that arithmetic bounds iteration 45 before the census reports.** If ~90% of the board is
+painted and I hold ~55%, then roughly **35% is enemy paint, which a soldier can never convert** —
+engine-verified since iteration 22/23. The empty share a travelling soldier can actually claim is
+the remaining ~10%. So:
+
+> Iteration 45 can only ever harvest the *unclaimed* remainder. It cannot, even in principle, be
+> the mechanism that carries this bot from 55% to the 70% instant-win line, because the ground
+> between those two numbers is largely enemy-painted and no soldier may touch it.
+
+The bite test is consistent with that reading rather than against it: `BatSignal` at round 919
+instead of 1209 is **reaching the same win sooner**, not reaching a win that was unavailable.
+
+I am writing this down now, with the census unread, because it is exactly the kind of ceiling this
+lineage has previously discovered *after* a good number and then quietly ignored. If iteration 45
+accepts, it is a tempo improvement with a known ceiling, and the 70% question stays open. Only the
+mopper (neutralise) and the splasher (overwrite within r² <= 2) can take enemy ground — and the
+splasher-share axis is CLOSED, with a re-open standard I am explicitly not claiming to have met
+here.
