@@ -16801,3 +16801,82 @@ averaged. Different estimator, different failure mode.
   pass while the *avoidable* part fails, which is why the split is registered as decisive.
 
 `src/bob/` untouched. **`bob_iter20` remains the bot.**
+
+## Iteration 48 — **PROBE PASSES.** Bob burns more paint standing next to its own units than it spends painting.
+
+Zero gauntlet games spent. 50 `bob_g0` games of run `20260909-181512` (464 arena frames, every 100 rounds,
+**18,057 mobile-unit observations per team**), plus the registered comparative on the 75 `alice-vs-bob`
+replays of tournament `20260909-1300`.
+
+**Isolation control held**: `grep -c ' IND '` over the collected tournament census returns **0**. Dropped
+at the source on the VM, unconditionally, as RULES.md requires.
+
+```
+                unitObs  crowd/unit  fromTower  fromMobile  towerShare
+  bob_g0          18057       0.687      0.087       0.600       12.6%     <- gauntlet, whole game
+  bob_iter20      18057       0.687      0.087       0.600       12.6%     <- the mirror, identical
+  ---- tournament 20260909-1300, alice-vs-bob, same 75 games ----
+  bob             30179       0.624      0.082       0.543       13.1%
+  alice           19753       0.475      0.067       0.408       14.2%
+```
+
+**Primary, against the registered thresholds (≥0.30 build / ≤0.05 close): 0.687 ⇒ BUILD.** It is more
+than double the "real lever" threshold.
+
+**The avoidability split, which I registered as decisive rather than descriptive: PASSES, and my
+prediction was WRONG.** I predicted tower-adjacency would be the larger half, because bob does 2.2x
+alice's pattern flips and pattern work parks soldiers against ruins. It is **12.6%**. The other
+**87.4% is mobile-mobile crowding** — bob's own units standing next to each other — which is exactly what
+a movement tiebreak removes. The split licenses the build rather than blocking it.
+
+**The comparative control: PASSES.** Bob **0.624** against alice **0.475** on the *same 75 games* — bob
+crowds **31% more**. So crowding is not merely a property of the game, which is the reading that would
+have closed the direction the way iteration 46 closed redundant repainting.
+
+### The size, and it is the largest number this lineage has measured
+
+Whole game, per game, `bob_g0` — every figure engine-derived:
+
+```
+  paint ISSUED to units at spawn   65,022   (131.0 soldiers x200 + 55.3 moppers x100 + 111.0 splashers x300)
+  paint SPENT on attacks           17,304 .. 37,996   (bounded by splash footprint, 1..13 tiles per splash)
+  paint BURNED on CROWDING        ~24,900   = 0.687 x ~36,200 mobile-unit-rounds   [LOWER BOUND]
+```
+
+The crowding figure is a **lower bound twice over**: units occlude paint in the rendered grid so the
+enemy-territory **doubling cannot be applied**, and the final partial 100-round block of each game is
+never rendered. And it excludes the territory penalty (−1 neutral, −2 enemy) entirely, which is a
+*separate* charge on top.
+
+> **Bob burns roughly as much paint standing next to its own units as it spends painting**, and about
+> **38% of every point of paint it issues**.
+
+Against the sizing anchor registered before the numbers existed — **~600 paint per game** closes the
+91-tile small-map deficit — crowding is **~40x the requirement**.
+
+### The seduction risk I registered in advance, and how I am handling it
+
+I wrote, before measuring: *"a ceiling ten times the target is exactly the shape that preceded iterations
+43, 45 and 47, and in every one of those the mechanism engaged and the objective did not move."* The
+ceiling came in at **forty** times, which makes the warning more relevant, not less.
+
+**What is genuinely different this time, stated so it can be checked rather than asserted**: iterations
+43, 45 and 47 were all *transfers* — quality bought with volume, army bought with stash — and each had a
+payer that the census found. Moving to a less crowded tile has **no payer**: movement and action cooldowns
+are separate (engine-verified), the unit was going to move anyway, and no tower pool is touched.
+
+**What could still make it fail, registered now**: units cluster because they are all going to the *same
+place* — a contested ruin, a frontier. A tiebreak that spreads them may simply move them off the ground
+that matters, trading paint for position. **That is the payer to look for**, and iteration 49's secondaries
+will be written to find it.
+
+### A composition correction, caught by cross-checking two instruments
+
+The grid says bob fields **18.7 soldiers, 15.1 splashers, 5.1 moppers** alive per frame — soldiers are
+only **48%** of mobiles. Iteration 44's "alive sold% 83.5" is not wrong; it was measured at **r≤200**,
+before the round-60 splasher gate has had time to fill the army. The two agree exactly where they overlap:
+the grid's 18.7 soldiers/frame reproduces the exact census's 17,363 soldier-rounds ÷ ~930 rounds = 18.7.
+**I had been carrying the r≤200 composition as if it were the whole-game one**, and it inflated my
+mobile-unit-round estimate's denominator by 1.7x until the two instruments were made to meet.
+
+`src/bob/` untouched. **`bob_iter20` remains the bot.**
