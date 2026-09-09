@@ -17666,3 +17666,88 @@ be strong evidence that the splasher-primary local maximum is the better one.
 **I am not starting it in this session.** It is a large build that deserves a clean context, and I
 have spent this session accumulating a survey it should be built *from*, not alongside. The handover
 state is: closure map complete, four capability gaps quantified, and the rewrite scoped.
+
+---
+
+# Iteration 59 — the from-scratch soldier-primary rewrite (`carol_r1`). PRE-REGISTERED BEFORE ANY GAME.
+
+Registered at the end of the previous session and started from the committed survey rather than
+from the context that produced it. Everything below is written before a single VM game is spent.
+
+## Why a rewrite is the honest next move, not an escape from a bad run
+
+The closure map is complete: every parametric axis is bracketed and most sit at their incumbent
+value. The closures are **mutually load-bearing** — soldiers need chips, chips need towers, towers
+need soldiers; upgrades needed idle chips, which needed SRPs, which are closed — so they are one
+structure rather than eight independent facts. Iteration 47 took the one-constant step toward
+soldier-primary (`SPLASH_FLOOR = 0`) and scored **11/50, worse than either endpoint of the ladder**,
+which is doctrine 5b's destructive-pair logic operating across an entire design.
+
+TRAINING_ALGORITHM names this exact condition for a from-scratch rewrite, and names structural
+exploration as a first-class track rather than a fallback. It is the track this lineage has never
+taken.
+
+## The candidate: `src/carol_r1`, 653 lines, written from scratch
+
+Not a fork with knobs moved. Five design decisions, each derived from the resource arithmetic
+rather than inherited one iteration at a time. The full derivations are in the file header; the
+summary and the part that is genuinely new:
+
+| # | decision | derivation |
+|---|---|---|
+| D1 | **spawn is surplus-matched, not a random roll** | the incumbent's three inherited floors jointly make a soldier need chips >= 2250 and a splasher only 1600 — that *is* the 2-soldier/41-splasher mix. `carol_r1` picks the unit whose cost vector fits the current surplus, with soldier as the default and no arm able to starve it |
+| D2 | **`MONEY_MOD` 3, not 4** | 4 was measured optimal at 8 towers and 2 soldiers, i.e. permanent saturation. Saturated balance is `20M/250 = 5P/200` -> P = 3.2M (24% money). In *growth*, each ~3 soldiers also completes a 1000-chip ruin, so chips/soldier ~583 and P = 1.37M (42% money). A bot that never leaves growth wants more money towers than the incumbent's key gives it |
+| D3 | **paint logistics with hysteresis** — the structural addition | `transferPaint` is hardcoded r²<=2 for every unit [E, iter 38]: a unit must physically touch a tower and can never top up in passing. The incumbent only refills when it *happens* to stand next to one. Iteration 58's trace: soldier id12362 built 4 towers, refilled from each, then **starved to death at r220**, after which carol built no soldier for 527 rounds |
+| D4 | **ruin dispersal** | skip a ruin already holding >= 2 allies within r²<=8. A no-op at 2 soldiers; at 100 it is what stops the swarm paying the adjacency drain (-1/ally, -2 on enemy ground) to duplicate work |
+| D5 | **moppers aimed at denied ruins** | iteration 44's mechanism: one enemy tile in the 5x5 denies a ruin to soldiers permanently, and carol's UNPAINT is **0 on every map** against alice's 740. The incumbent's answer was to *ban* the ruin — correct when nothing can clear it, a capitulation once moppers exist |
+
+**Carried over deliberately and unchanged**: tower attack, the symmetry-invariant tower-type key,
+the exploration loop, `stepToward` with its ID-parity tiebreak, and opportunistic-only upgrades.
+These are measured-good or measured-neutral and are not what the rewrite tests; changing them would
+confound the comparison.
+
+## The claim this rests on, stated so it can be wrong
+
+**I believe iteration 47's 11/50 was a logistics failure, not a verdict on soldier-primary.**
+Raising soldier count without D3 produces a swarm of dry, inert soldiers: at 0 paint a robot takes
+-20 HP/turn and cannot act at all. If that is right, D3 is the load-bearing piece and D1/D2/D4/D5
+are what let it pay. If it is wrong, the rewrite fails in the same place iteration 47 did and I
+will be able to see which, because stage 0 measures the dry share directly.
+
+## Stage 0 — mechanism check, registered before the run (2 games, Leaf)
+
+`carol_r1` vs `carol_iter44`. All three clauses required; soldiers alone is a fail, exactly as in
+iteration 58, because iterations 42 and 45 both died on the link where soldiers rose and towers
+did not.
+
+1. **towers built > 8** (the incumbent's Leaf figure; the deficit is 25)
+2. **soldiers built > 2** (the incumbent's Leaf figure)
+3. **the refill mechanism fires and works**: `rf=` trips > 0, and dry soldier-turns must be a small
+   share — this is the clause that discriminates the rewrite from iteration 47's failed step, and
+   it is the one I most expect to be informative whichever way it falls.
+
+**Abort clause**: if `carol_r1` builds 0 towers or loses both games inside 400 rounds, it is broken
+rather than weak, and I fix or withdraw it rather than spending a census.
+
+## Accept gate — the standing census gate, unchanged
+
+Full 75-map corpus, both sides, 150 games, `carol_r1` vs `carol_iter44`. From my own calibrated
+chaos floor: **sd 6.48 on a 150-game win count = 12.96 on the margin** (unit stated explicitly, per
+doctrine 7).
+
+> **margin >= +26 (88/150) ACCEPT | +18..+25 (84–87) REPLICATE | <= +17 (<=83) REJECT**
+
+**Registered expectation, so a shrunken result cannot be re-read later as a surprise:** a rewrite
+is not a marginal knob and I expect a *wide* outcome in either direction rather than a near-50%.
+The two informative results are a clear accept and a clear reject; a result inside the replicate
+band would be the genuinely awkward one and I will treat it as unresolved rather than reaching for
+a rescue.
+
+**The decisive clause, registered in advance:** if `carol_r1` passes stage 0 — i.e. it demonstrably
+builds the soldiers, the towers and the logistics the architecture calls for — and still rejects on
+the census, then **the splasher-primary local maximum is the better of the two architectures for
+this lineage**, that is a real finding rather than a failed attempt, and I will record it as the
+answer to the structural question rather than re-running the rewrite with different constants.
+
+**What the census cannot do (doctrine 17).** Both arms are carol. A census against my own snapshot
+licenses "this beats my predecessor", never "this closes the tournament gap".
