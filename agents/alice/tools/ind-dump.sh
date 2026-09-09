@@ -19,6 +19,15 @@ ROOT="$HERE/../../.."
 source "$ROOT/tools/lib.sh"
 
 PKG="${1:?usage: ind-dump.sh <pkg> <replay.bc25> ...}"; shift
+# DUMP_GREP overrides what is pulled back. Default is this bot's indicator
+# strings, which NEED the action-log window. UPGRADE / tower-SPAWN / DIED lines
+# print unconditionally, so DUMP_WINDOW=0 skips the window and the dump is far
+# cheaper -- no action log is generated at all.
+GREP_PAT="${DUMP_GREP:- IND }"
+WINDOW="${DUMP_WINDOW:-1}"
+# DUMP_EVERY: when set, keep the per-round aggregate lines (drop --quiet) at that
+# stride. Needed for twPaint/cov comparisons, which live on the summary line.
+EVERY="${DUMP_EVERY:-}"
 [ "$#" -ge 1 ] || { echo "no replays given" >&2; exit 1; }
 
 WANT_VER="$(cat "$ROOT/arena/engine_version.txt")"
@@ -44,7 +53,17 @@ gssh "
   javac -d . -classpath \"\$BC_JAR\" ReplayDump.java 2>/dev/null || { echo '!! javac failed' >&2; exit 1; }
   for k in \$(seq 1 $i); do
     echo \"=== FILE \$k\"
-    java -classpath \".:\$BC_JAR\" com.google.flatbuffers.ReplayDump in\$k.bc25 \
-         --quiet --from 1 --to 100000 --ind $PKG 2>/dev/null | grep ' IND ' || true
+    if [ "$WINDOW" = "1" ]; then
+      java -classpath \".:\$BC_JAR\" com.google.flatbuffers.ReplayDump in\$k.bc25 \
+           --quiet --from 1 --to 100000 --ind $PKG 2>/dev/null | grep '$GREP_PAT' || true
+    else
+      if [ -n "$EVERY" ]; then
+        java -classpath \".:\$BC_JAR\" com.google.flatbuffers.ReplayDump in\$k.bc25 \
+             --every $EVERY 2>/dev/null | grep -E '$GREP_PAT|GameHeader' || true
+      else
+        java -classpath \".:\$BC_JAR\" com.google.flatbuffers.ReplayDump in\$k.bc25 \
+             --quiet 2>/dev/null | grep -E '$GREP_PAT|GameHeader' || true
+      fi
+    fi
   done
 "

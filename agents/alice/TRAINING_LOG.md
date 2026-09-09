@@ -18549,3 +18549,126 @@ opens there, just later, with ~400 rounds of a 1239-round median game left to ac
 25-map screen therefore samples a mechanism whose firing time varies hugely by map. **If this comes
 back null I may not conclude the mechanism is inert** — I will owe the manipulation-check share
 before saying anything about why.
+
+## Stall track step 2 — `reference/RESEARCH.md`, and it names a mechanic I flagged as AFFORDABLE at iteration 2 and never built
+
+The cross-year "short list, when stuck" item 2: *"Check whether symmetry inference exists in your
+bot. It is standard everywhere else, it needs no communication, and it is exact rather than
+heuristic."* TRAINING_ALGORITHM Phase 0.8 says the same thing independently.
+
+**Alice has none.** My own log's iteration-0 inventory table reads `| map symmetry inference | none |`
+and it still does at iteration 53. And it is not in the closed-directions ledger, because it was
+never tried — grepped, and the only hits are two places where I called it **affordable**:
+
+> *"Bytecode is nowhere near binding — expensive logic (BFS/bug-nav, **symmetry inference**,
+> per-tile pattern computation, wider sensing loops) is affordable and should not be avoided on
+> cost grounds."* — written at iteration 2, and repeated in LEARNINGS.
+
+> **Named as affordable at iteration 2. Never built by iteration 53.** That is METHODS.md section 16
+> exactly — "selected once, deferred for something else, and never picked back up in ~13,000 log
+> lines" — happening in my own log, which is also why the sweep is supposed to run on a schedule
+> rather than on a feeling. The sweep found it; the *stall* is what made me read the list properly.
+
+It also needs `getMapWidth`/`getMapHeight`, which have sat on the unused-API list since iteration 29
+— so the two findings are one finding: **you cannot infer a symmetry without the map's dimensions,
+and this bot has never asked for them.**
+
+### And I am NOT going to build it on that excitement — the pre-check comes first
+
+Cross-year "standard practice" is evidence about *other years' mechanics*, not about BC25's, and
+this year has a specific reason it might buy nothing:
+
+- Symmetry maps **my** half to the **enemy's** half. It tells me where *their* ruins are, not where
+  unexplored ruins in *my* half are — and their half is contested ground I would have to walk to.
+- **Iteration 9 already closed "remember unbuilt ruins" on reachability**: 21 of Mirage's 22 ruins
+  were already built, so there was nothing left to go to. If ruins saturate, predicting *unseen*
+  ones adds no tower either.
+
+**Registered pre-check, before any code:** *at the rounds when alice's expansion is still running
+(to r258 on small maps, r824 on large), how much of the map has alice not yet seen, and how many
+unbuilt ruins are in it?* If the answer is "almost none", symmetry inference is dead on reachability
+for zero games, exactly as iteration 47's singleton choice set and iteration 50's ceiling were.
+
+That is the third time this session that the honest next step has been a pre-check rather than a
+build, and the first two closed for 8 games and 0 games respectively.
+
+## Iteration 53 REJECTED — net swept **−2** against a pre-registered **+4**. And the null is fully explained
+
+Run `20260909-194831`, `alice_i53` vs `alice_i53ctl`, fresh random 25-map sample, 50 games,
+0 exceptions. `tools/gate-read.sh`:
+
+| | maps | SW | SL | split | record | net swept |
+|---|---|---|---|---|---|---|
+| `alice_i53` | 25 | 1 | 3 | **21** | 23–27 | **−2** |
+
+Identity check `wins − N = SW − SL` passes (−2 = −2). **Below the +4 screen bar. REJECT.**
+
+**A process note first: I nearly read this run while it was still being written.** My waiter counted
+*lines* in `results.txt`, but each game writes three (RESULT/REASON/EXC), so 58 lines looked like 50
+games and was 19. The partial read showed **0 swept either way, all maps split** — the classic
+"inert mechanism" signature — and it was simply an unfinished file. This is the same error as the
+mopper dump I read at 41% that finished at 4.1%, in a new disguise, and my own rule caught it:
+*do not read a dump until its writer has exited.* (Also: `pgrep -f "<run-id>"` matches **my own
+polling loop**, whose command line contains the run id. It never returns 0.)
+
+### The manipulation check, as a SHARE with a denominator the treatment cannot move
+
+Registered in advance. Counted over the 27 replays the gauntlet keeps, both arms inside each game so
+map difficulty cancels:
+
+| | money upgrades | paint upgrades | money share |
+|---|---|---|---|
+| **arm** | 65 | 148 | **30.5%** |
+| control | 252 | 223 | 53.1% |
+
+> **Suppressed share = 74.2% of the control's money upgrades.** The mechanism is not inert; it
+> engages hard, and the all-splits reading from the partial file was an artefact.
+
+### The registered falsifier, tested on its own quantity — and the first clause PASSES
+
+I registered: *"a genuine gain must arrive with more tower paint and more paint-tower upgrades."*
+
+| at r300 | arm | control | diff |
+|---|---|---|---|
+| **tower paint** | **1,856** | 1,217 | **+639** |
+| **towers** | 7.96 | 9.81 | **−1.85** |
+| coverage | 410.8 | 472.5 | −61.7 |
+
+**The mechanism did exactly what it was built to do: +639 tower paint at r300.** It converted idle
+chips into the binding resource, as designed. **And it lost anyway, because it cost 1.85 towers** —
+and towers are this lineage's master variable, with the r300 tower leader winning ~80% of games in
+every instrument I own.
+
+### Why my premise was wrong, stated precisely — and it re-confirms iteration 26 under INTERVENTION
+
+I argued: *"once expansion is finished, chips have no compounding sink, because there is no ruin left
+to convert them into."* That is wrong in two independent ways, and either alone kills it:
+
+1. **An upgrade is itself a chip sink that raises income.** A money-tower upgrade costs 2,500 and
+   returns **+10 chips/turn**, which funds further purchases — including the paint upgrades I wanted.
+   Compounding never required a ruin; it only requires that the purchase raise income. I checked
+   "can chips still buy a tower" and never asked "can chips buy a *better* tower".
+2. **`expansionFinished` is not a latch — and I quoted that as a safety feature.** It is, for
+   reverting the block. But it means expansion *resumes*, and when it did the arm had throttled the
+   income that pays the `getMoney() >= 1000` gate on `completeTowerPattern`. Fewer chips, fewer
+   towers: **−1.85**.
+
+> **Iteration 26 said "chips COMPOUND and paint does not". I built an arm on the claim that its
+> exception had arrived, and the arm re-confirmed the rule — under intervention rather than
+> correlation, which is the stronger form.** A −21 census and a −2 screen now say the same thing by
+> two different routes, and the second one moved the intermediate variable in the predicted
+> direction before losing, which is exactly the evidence a correlational study cannot give.
+
+**Honest limit on the sample.** The gauntlet keeps only the candidate's *losses*, so absolute levels
+are selected against the arm and the −1.85 towers could be selection rather than mechanism. The
+internal control is that **twPaint moved the other way (+639) in the same biased sample** — if
+selection drove everything, both columns would favour the control. So "the mechanism raised tower
+paint" is solid; "it cost exactly 1.85 towers" is directional, not precise.
+
+### What this closes
+
+**Upgrade priority is closed**, with a number and a mechanism, and the closure is not "it did
+nothing" — it is *"it did precisely what it was designed to do and the thing it bought was worth
+less than the thing it spent."* Re-open condition: **a regime where chip income cannot be converted
+into either a tower or an upgrade** — i.e. every ruin taken *and* every tower at L3. That is
+checkable, and it did not hold in 21 of 25 maps here.
