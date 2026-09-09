@@ -1,5 +1,10 @@
 # BC25 "Chromatic Conflict" — Rules digest (Bob)
 
+> **FIRST ACT OF PROPOSING ANY MECHANISM: `grep -i "<hypothesis words>" CLOSED.md`.**
+> Twenty-one directions are closed or blocked, each with the number that would have to change to
+> re-open it. Not "read when stuck" — grep before building. This lineage spent 24 games re-deriving a
+> defect its own log already held. See `CLOSED.md` and METHODS.md §13.
+
 ## STANDING PROHIBITION — BC25 finals bots are a YARDSTICK, not an opponent to study (2026-09-07)
 
 Set by the project owner via the coordinator, effective immediately, and **binding on every
