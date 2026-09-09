@@ -15339,3 +15339,54 @@ side of the paint economy — actions taken, units built, tower stock — where 
 before read only the output side (coverage).
 
 `src/bob/` is untouched. **`bob_iter20` remains the bot; HEAD's behaviour is unchanged.**
+
+---
+
+## Iteration 42 — why does a soldier's idle-paint action decline? PROBE PRE-REGISTERED (written before the run exists).
+
+**The prize, and why this one is different.** Iteration 41 put bob's soldiers at **0.665 tiles per
+soldier-round on small maps and 0.778 on large**, against a hard ceiling of 1.0. Closing that to 1.0
+takes bob from 100 to 151 tiles by round 30 — past carol's 146. Every mechanism this lineage has
+priced recently (iteration 37's action utilisation, 40's early splashers, 41's spawn stall) came out
+roughly **10x too small** for the 75-per-mille small-map coverage gap. This is the first one that is
+the right order of magnitude.
+
+**Two candidate mechanisms, needing different fixes.**
+
+- **E** — empty tiles exist in the soldier's action radius, but every one carries a mark, and
+  `paintSomething()` refuses any marked tile. Fix: paint it in the **mark's** colour, which is what
+  `workOnRuin` already does and cannot break a pattern, since it is what the pattern wants.
+- **F** — no empty tile in the action radius at all; the soldier stands inside its own territory. Fix:
+  navigation. A soldier with no ruin runs `Nav.wander()`, a persistent-direction **random walk** that
+  never seeks unpainted ground — while `Splasher.run()` already navigates to the nearest empty/enemy tile.
+
+**Why an in-bot probe and not more replay reading — this is the part I got wrong once already today.**
+Off the round-25 grid of one game, **16%** of the map's empty tiles are mark-blocked, but **69%** of
+the empty tiles *within a soldier's action radius* are (9.6 in range, 2.9 unmarked). Same quantity,
+two referents, and the global one is the wrong referent for a decision taken at r² ≤ 9. I read the
+global number first and concluded the mark rule was dead; the local number says the opposite. That is
+measurement doctrine 5 catching me in the same session I quoted it, which is the argument for
+instrumenting the **decision** rather than the board.
+
+**The classification is exhaustive over `paintSomething`'s exits**, so the codes must sum to the
+soldier-turn count: **A** action already used (ruin/SRP/tower work — *not* idle), **B** paint at or
+below `PAINT_FLOOR`, **C** painted own tile, **D** painted an unmarked empty tile, **E** empties in
+range but all marked, **F** no empty in range.
+
+**PRE-REGISTERED, before the run exists:**
+
+- **VOID unless `bob_sr0` and `bob_sr1` agree on every (map, side)** — same winner, same round count.
+- **VOID unless the accounting closes**: `A+B+C+D+E+F` must equal the soldier-turn count from the
+  census over the same games. A decomposition that does not close is not evidence.
+- **Primary**, as a share of soldier-turns: `E >= 0.15` ⇒ the mark rule is a real sink, build the
+  mark-colour fix. `F >= 0.15` ⇒ frontier navigation is the sink, build empty-seeking nav. **Both
+  `< 0.10` ⇒ this whole direction is CLOSED for the cost of one probe** — it would mean the soldiers
+  are productively busy (A dominates) and that 0.665 is not an idleness number at all.
+- **Prediction, registered as a sign**: `E > F` early and on small maps (ruin density is ~3x higher
+  per tile there, so mark coverage is higher), `F > E` late, as the board fills.
+- **Registered as NOT an accept test.** It measures a decision rate, not games, and cannot accept
+  anything; it chooses which of two fixes earns a full evaluation.
+
+Maps pinned `CastleDefense DefaultSmall Justice maze mit gardenworld` (3 small, 3 large) — the
+mechanism is plausibly regime-dependent and a random draw would mix the regimes (doctrine 4).
+24 games. `src/bob/` untouched; `bob_iter20` remains the bot.
