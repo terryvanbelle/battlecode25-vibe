@@ -17556,3 +17556,93 @@ comparative on a shared corpus is the only cheap instrument that can say *"this 
   while the magnitude calls landed, so this is registered as the guess it is.
 
 `src/bob/` untouched. **`bob_iter20` remains the bot.**
+
+## Iteration 54 — the comparative-first sweep, and it corrected its own headline TWICE
+
+Zero games; everything from censuses already on disk over the 75 `alice-vs-bob` replays of tournament
+`20260909-1300`. **Isolation control**: `grep -c ' IND '` returns **0**.
+
+```
+metric                              bob     alice   bob vs alice   verdict
+towers BUILT / game                7.85     12.52       -37.3%     (gross)
+towers LOST / game                 0.08      4.33       -98.2%     (gross)
+towers STANDING (built-lost+2)     9.77     10.19        -4.1%     bob behind
+paint towers ever / game           4.68      7.37       -36.5%     bob behind
+paint-tower income / game        41,952    46,095        -9.0%     bob behind
+foregone upgrade income / game   23,304    26,362       -11.6%     bob AHEAD
+crowd paint / unit-round          0.624     0.475       +31.4%     bob behind (CLOSED #25/#27)
+territory paint / unit-round      0.192     0.360       -46.7%     bob AHEAD
+mean chips (r31-200)              1,952     1,157       +68.7%     bob richer
+mobile unit-observations         30,179    19,753       +52.8%     bob bigger army
+paint-tower rounds at L3           31.1%     26.2%      +18.7%     bob AHEAD
+```
+
+**Correction 1: the headline was 90% churn.** "Alice builds 59% more towers" is the number I predicted the
+sweep would nominate. It is nearly an artefact: **alice loses 4.33 towers a game and bob loses 0.08**, so
+alice rebuilds constantly. **Standing towers differ by 4.1%.** Had I acted on the gross count I would have
+spent a screen chasing a gap that mostly is not there — the same *gross-vs-net* error as LEARNINGS 71/79,
+in a new costume.
+
+**So the corrected sweep says something uncomfortable and worth stating plainly:**
+
+> Bob has **53% more mobile units**, **69% more chips**, the **same standing towers**, wastes **47% less**
+> paint on territory, and upgrades **19% better** than alice — and loses to alice **60–40**. Bob
+> out-resources alice on nearly every stock I can measure and converts it worse. **The deficit is not in
+> the stocks.**
+
+The only stock where bob is genuinely behind is crowding (+31% worse), and that is `CLOSED.md` #25/#27,
+measured at +6 wins and saturating.
+
+### Correction 2 — and this one reverses the conclusion: the whole-game aggregates hid the window
+
+```
+alice-vs-bob, by round        bob mob  alice mob   ratio   bob cov  alice cov  cov diff   bob tw  alice tw
+   r30                            7.1        6.5   1.11x       157        149       +8     2.64      2.80
+   r60                            6.7        5.6   1.21x       210        207       +3     3.68      3.96
+   r100                           6.5        6.4   1.01x       249        261      -12     4.65      5.01
+   r150                           9.2        9.7   0.95x       296        331      -35     5.72      6.29
+   r200                          12.3       12.6   0.97x       343        384      -41     6.42      7.66
+   r400                          25.8       24.0   1.08x       441        467      -26     8.74     10.60
+   r700                          48.2       30.0   1.61x       475        480       -5    10.23     10.66
+   r1000                         65.4       33.7   1.94x       470        497      -27    12.21     10.58
+```
+
+- **At r30 and r60 bob is AHEAD on coverage** (+8, +3). The deficit is *not* an opening failure against
+  alice. (LEARNINGS 69's −65 at r30 was measured against **carol**; against alice the opening is fine, and
+  I had been carrying that as if it were general.)
+- **The gap opens between r60 and r200** — +3 → −12 → −35 → −41 — while the two armies are the *same size*
+  (0.95–1.01x). Same army, more coverage for alice.
+- **Standing towers in that window: bob −9% at r150, −16% at r200, −18% at r400.** The whole-game figure
+  of −4.1% averages this away against bob's late-game surplus, where bob ends **15% AHEAD** at r1000.
+- **Bob's army advantage arrives ~500 rounds too late and buys nothing.** 1.94x alice's units at r1000,
+  still −27 on coverage. 10 of 12 maps fill by ~25% of game length, so those units have nothing to paint.
+
+> **Bob builds twice alice's army and builds it five hundred rounds too late. The decisive window is
+> r60–r400, and in it bob is 9–18% behind on standing towers.**
+
+**That is the second time in one iteration that an aggregate hid the answer**, and both are LEARNINGS 89's
+rule — a measurement's window is part of the measurement — applied to a *comparative* rather than to a
+secondary. I am recording it as a strengthening of that rule rather than a new one.
+
+### What the sweep nominates, and the constraint on acting on it
+
+**Nominated: tower-expansion throughput in r60–400.** And there is a specific tension worth handing to the
+next iteration: iteration 53 showed bob is chip-blocked on 56% of r31–200 rounds by a `reserve = 1200`
+whose stated purpose is *funding tower completion* (1,000 chips a tower) — yet bob completes **fewer**
+towers than alice in exactly that window while **holding 69% more chips**. Bob is reserving money for
+towers it then fails to build. So the binding constraint in the decisive window is **not chips**; it is
+soldier throughput on ruin patterns, or ruin availability.
+
+**`grep CLOSED.md` before building, as registered.** Ruin *selection* is CLOSED (#6, choice set 0.83 —
+bob usually has only one candidate, so ranking cannot help). Opening *spend* is CLOSED (#4, re-open
+condition tested and not met, iteration 53). Neither closes **pattern-completion throughput**, which is
+what this nominates and which no iteration has measured.
+
+### Prediction, scored
+
+I predicted the sweep would nominate **paint-tower count**. Nominally right, substantively wrong: the raw
+count gap (−36.5%) is 90% alice's churn, and the real nomination is a *windowed* tower gap I did not
+anticipate. Eight predictions now — and this one failed in the way the coordinator's note predicts, with
+the magnitude landing on a metric that turned out to be the wrong quantity.
+
+`src/bob/` untouched. **`bob_iter20` remains the bot.**
