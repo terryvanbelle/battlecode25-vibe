@@ -15978,3 +15978,72 @@ that direction.
 
 New instrument `bob-tools/conv_agg.py` (paired within-game ratios, robot-round denominators, opponent-mop
 covariate). `src/bob/` untouched. **`bob_iter20` remains the bot.**
+
+---
+
+## Iteration 45 PRE-REGISTERED — buy moppers, and price what they displace.
+
+Design, gate, secondaries and prediction committed **before the run exists**.
+
+**Mechanism.** A soldier cannot paint over enemy paint (engine 3.1.0; and already in `Tower.java`'s own
+iteration-20 comment). Only moppers and splashers can clear it. Iteration 44 measured, over all 300 bob
+games of `tournaments/20260909-1300` with engine-derived counters:
+
+```
+ team  | spawn mop% | alive mop% | unpaint/game | dTiles small
+ alice |      28.5  |      24.6  |        47.0  |      309.5
+ bob   |      10.6  |       7.1  |        15.5  |      218.4
+ carol |       0.0  |       0.0  |         0.1  |      332.1
+```
+
+Bob clears **a third** of the enemy paint alice does and gains **91 fewer tiles** on small maps, the
+regime where bob wins 14%.
+
+**This is not the closed direction.** Iteration 41 CLOSED "add a cheaper-unit fallback to the spawn
+rotation" at ~0.8 units per 120 rounds. This is a different knob — *which slots build moppers*. Mopper
+paint cost is **100**, the cheapest unit, against towers that live at 185-210 paint, so mopper slots
+never stall; affordability is not what holds bob at 10.6%.
+
+**Dose**, a bitmask over `spawned % 5` evaluated before the splasher test (slots today: 0,1 SOLDIER;
+2,3 SPLASHER; 4 MOPPER), via `bob-tools/make-mopper-arms.sh`:
+
+- **`m0` = `0b10000`** — slot 4 only. **EXACT ZERO ARM**: the expression reduces to the original
+  `slot == 4`; no RNG draw, no sensing, no state touched. Verified by diff against `src/bob`.
+- **`mS` = `0b10010`** — 2/5 mopper, the extra one paid for by a **SOLDIER**.
+- **`mL` = `0b11000`** — 2/5 mopper, the extra one paid for by a **SPLASHER**.
+- **`mX` = `0b11010`** — 3/5 mopper, one of each. Extended dose.
+
+**`mS` and `mL` are the same mopper share bought from different units, and that is the point.** LEARNING
+76: a mechanism that pays for itself out of the army scores well on a per-unit ratio and nothing on the
+objective. So the displacement is measured, not averaged over.
+
+**PRE-REGISTERED:**
+
+- **VOID unless `bob_m0` returns exactly 25/50 with all 25 maps split and 0 diff-from-null.**
+- **Primary gate**, in **wins out of 50** against the null (doctrine 51 — stating the unit):
+  **≥ +10 accept-eligible, +7..+9 replicate, ≤ +6 reject.** Unchanged from iterations 38, 40 and 43 so
+  the verdicts stay comparable.
+- **Secondary 1 (mechanism engaged)**: mopper **alive-share** and **unpaints per game**, from this run's
+  own replays. Both must **rise** in `mS`/`mL`/`mX` against `m0`. Independent of the win count.
+- **Secondary 2 (the denominator — the iteration 43 failure mode)**: **total paint actions per game**.
+  If mopper share rises and total paint actions fall in proportion, this is iteration 43 repeating and I
+  will say so rather than quote a per-unit gain.
+- **Secondary 3 (the objective, and the unit LEARNING 76 demands)**: **dTiles** — net coverage gained,
+  in tiles. This is the quantity the whole iteration is sized in.
+- **Secondary 4 (price)**: tower count at r200.
+- **Prediction, registered as a sign**: unpaints per game rise monotonically with mopper share, and
+  `dTiles` rises for at least one of `mS`/`mL` against `m0`. I am **NOT** predicting whether soldiers or
+  splashers are the better thing to displace — iteration 40 taught me to register a sign only where I
+  have a mechanism, and here I have none.
+- **Branch triggers are signs, not magnitudes** (LEARNING 80): I am not setting a threshold calibrated
+  to a story again.
+
+**Honest sizing, and it is not flattering.** Doubling mopper share plausibly takes unpaints from 15.5
+toward ~30 a game: ~15 tiles denied to the enemy, plus the ground that unlocks for bob's own soldiers.
+Against a 91-tile small-map deficit to alice that is **roughly 3x too small** to close it — better than
+iterations 37/40/41's ~10x, worse than iteration 43's ~2x. I expect a reject and am running it because
+the displacement measurement is worth having either way, and because carol's 0% moppers with the *best*
+small-map tiles (332) is a standing argument that moppers may not be the lever at all.
+
+**Run**: `BOT=bob_iter20 OPPONENTS="bob_m0 bob_mS bob_mL bob_mX"`, **fresh random 25-map sample**,
+200 games. All four arms COMPILE OK on the VM before launch. `src/bob/` untouched.

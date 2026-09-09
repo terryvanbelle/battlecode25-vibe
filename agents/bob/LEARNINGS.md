@@ -2960,6 +2960,19 @@ soldier-round) are not the same quantity and must never be quoted against each o
 **Doctrine: know whether your counter counts the attempt or the effect.** An effect-counter cannot see
 waste — and waste is exactly what you are usually hunting.
 
+**CORRECTION, same day, and it is LEARNING 74 repeating.** I presented "a soldier cannot overwrite enemy
+paint" as new. It is **already written in my own `src/bob/Tower.java`**, in the iteration 20 dose comment:
+*"a SOLDIER CANNOT OVERWRITE ENEMY PAINT AT ALL. Only splashers and moppers can."* It has been shipping in
+HEAD for twenty-odd iterations. I found it by decompiling the engine while the answer sat in the file I
+was about to edit.
+
+What is genuinely new here is the **second half**, which the comment does not record and which changes
+what my instruments mean: the paint cost and the action are spent *before* the ownership check, and **no
+`PaintAction` is emitted**, so the waste is invisible to every replay counter I own. That part stands.
+
+The habit to fix: **grep my own source and ledger for the fact before going to the engine for it.**
+Twice now — LEARNING 74 and this — the artefact I needed was already in the workspace.
+
 ## 79. A rate whose numerator and denominator count different populations is not a rate (2026-09-09)
 
 Iteration 44, first read: `acts/soldierRound` said carol's units act **4.1x** as often as bob's. `acts`
