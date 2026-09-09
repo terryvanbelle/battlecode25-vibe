@@ -12,7 +12,7 @@ this works on tournament names (alice-vs-bob-on-Map.bc25) and gauntlet names
 
 Reports, for each opponent, the mean round-N coverage differential in per-mille
 (focus minus opponent). Validated on the 2026-09-09 tournament: below -49 the
-this parser reads the 9-field format and is NOT yet validated against it.
+assignments (focus as team1 and as team2), including the winner mapping.
 """
 import re
 import sys
