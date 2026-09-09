@@ -13975,3 +13975,36 @@ which the sparsity argument says should not exist.
 **Still unmeasured** (carried forward, unchanged): poisoning frequency on maps bob wins; the price of
 forfeiting a partially-painted pattern; the bytecode cost of a 25-tile pattern scan. Pre-check 1 killed
 the design before these mattered, and they will matter again for any candidate that inspects patterns.
+
+### Iteration 36 material — mopper targeting. Recorded with its reachability numbers, not started.
+
+`Mopper.java` step 4: *"Move toward nearest visible enemy paint; else wander."* The mopper enumerates
+enemy-painted tiles in vision and takes the **nearest**. It has no concept of a ruin or a pattern.
+
+So the one unit type that can unblock a poisoned ruin does so only by coincidence, and on a contested
+small map — where enemy paint is everywhere — the chance it clears the specific tiles inside a ruin's
+5x5 is small. The natural candidate is to rank enemy-paint targets that lie inside a ruin's pattern
+ahead of merely-nearest ones.
+
+**The choice-set pre-check, which killed iteration 35, PASSES here and for a structural reason.** The
+mopper's candidate set is "enemy-painted tiles in vision", which on the maps in question is large — the
+round-40 dump has carol holding 171 of 400 tiles. Iteration 35 failed because ruins are sparse; enemy
+paint is not sparse, it is the abundant thing. Same board, opposite verdict, because the two designs
+rank different sets. **That is the pre-check doing real work rather than reflexively vetoing.**
+
+**Two reachability numbers that are NOT favourable, and must be settled before building:**
+
+1. **How many moppers even exist.** Slot 4 of each tower's five-spawn cycle is the mopper, so a tower
+   produces its first mopper on its *fifth* spawn. In a ruin-poor game bob spawns 7-8 units in total
+   across two towers and can afford none after round 30. The traces show `mop0` for most of the game and
+   `mop1` late. **A targeting improvement on a unit that is not fielded is worth zero**, and this is the
+   "does the branch ever run" check applied to the unit rather than to the code.
+2. **Clearing rate versus game length.** Mopper attack is r²<=2 and mops one tile per action. The ruin
+   at (2,7) had 10 poisoned tiles. So ~10 actions plus travel, against games that end at round 108-183.
+   Plausible but tight, and it should be costed before it is built rather than after.
+
+If (1) is the binding one — and the traces suggest it is — then the mopper-targeting change is
+downstream of a *production* question, and the honest order is to settle whether bob can field a mopper
+at all in these games before improving what one would do. Note that this is the same shape as iteration
+34, which is about fielding splashers: both say bob's problem in short games is that it holds none of
+the units that can reduce enemy territory, and that is one question, not two.
