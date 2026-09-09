@@ -12973,3 +12973,43 @@ accept in this lineage has ever re-measured a previously-tuned dose after adding
 And iteration 36 is one of the three accepts this morning's audit flagged as not clearing the
 corrected bar (28/50, +0.70 sd). So a coin-flip accept silently reverted a measured optimum. The
 two findings are the same finding seen twice.
+
+## Iteration 46 — PRE-REGISTERED: restore the mopper share by dosing the gate that zeroed it
+
+**Hypothesis.** The realized mopper share is ~0.2% against an intended 10%, because
+`PAINT_FLOOR = 200` gates the mopper and only the mopper. Iteration 21 measured this dose curve
+directly and found the zero arm losing 11–29 to dose 2. Restoring a nonzero realized mopper share
+should therefore recover a previously-measured gain.
+
+**One mechanism, one constant.** `PAINT_FLOOR`, doses **200 (incumbent) / 100 / 0**. Nothing else
+changes; `MOPPER_IN_20` stays at 2. Note that "exempt moppers from the floor" and "set the floor to
+0" are the same edit, since the mopper is the only unit the predicate can select — so the ladder
+spans the mechanism's entire range and there is no untested arm hiding beyond it.
+
+**Two-stage design, forced by the corrected gates.** A 50-game arm has sd(margin) 8.59, so
+ACCEPT >= 34/50; a sampled ladder can screen a dose but is a poor instrument for a verdict. So:
+
+- **Stage 1 (screen, 100 games)**: `BOT=carol_iter44`, opponents `carol_i46_0` and `carol_i46_100`,
+  one shared 25-map sample. Picks the dose and runs the manipulation check. **Cannot accept.**
+- **Stage 2 (verdict, 150 games)**: full-corpus census of the winning dose vs `carol_iter44`,
+  scored on the standing census gate **ACCEPT >= +23, REPLICATE +16..+22, REJECT <= +15**.
+
+**Manipulation check, pre-registered as a two-sided condition** — because this morning's rule says
+a manipulation check may only reject or explain, never lift a verdict:
+
+- realized mopper share (paired `spawnmix.sh` on stage-1 replays) rises from ~0.2% toward 10%;
+- **and soldier count per game does NOT fall materially.** This is the counter iteration 45 taught
+  me to register in advance: the mopper is displacing *something*, and if it displaces the soldier
+  that claims ruins, the iteration will fail the same way iteration 38 and iteration 45 did. If
+  the share rises and soldiers collapse, I will reject regardless of the margin.
+
+**Predictions, written before the run:**
+
+- `carol_i46_0` moves the mopper share materially (>= 5% realized). If it does not, the causal
+  story is wrong and the whole iteration is void whatever the margins say.
+- The margin ladder is **NOT** predicted monotone. Iteration 21 found the dose curve concave with
+  an interior optimum, so `100` beating both `0` and `200` is the outcome I consider most likely.
+- Stage 1 will most likely land **unresolved on margin** (both arms inside 31..33 of 50) even if
+  the mechanism is real, because the effect iteration 21 measured is smaller than a 50-game arm can
+  resolve. **I am pre-committing to run stage 2 on the better dose even if stage 1 is unresolved**,
+  so that an underpowered screen cannot be quietly read as a rejection.
