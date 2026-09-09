@@ -17280,3 +17280,30 @@ enough to chase and its cause is open**, and the pre-registration's story is not
    (b) this compounding version. One line apart. If (a) alone carries the effect the warrant was
    right and the implementation was accidentally generous; if (b) is needed, the real mechanism is
    "a new tower comes with a free soldier" and the write-up changes completely.
+
+## Iteration 58 census — GATE REGISTERED before the run is launched
+
+`SOLDIER_GAP=250` vs `carol_iter44`, **full 75-map corpus, both sides, 150 games**.
+
+Derived from my own calibrated chaos floor (log ~13390): **sd 6.48 on a 150-game win count = 12.96
+on the margin.** Stating the unit explicitly, per doctrine 1, because that factor of 2 is exactly
+where this project has mislabelled a gate before:
+
+> **margin >= +26 (88/150) ACCEPT | +18 .. +25 (84–87) REPLICATE | <= +17 (<=83) REJECT**
+
+Why a census rather than the disjoint-25 my sampled gate asks for: a census does not *estimate* the
+population, it **is** the population, so it removes map-sampling error entirely rather than
+re-rolling it. The residue is engine chaos, which is what the floor above measures and what no
+number of extra maps removes.
+
+**Sanity check on the expected value, written now so it cannot be fitted later.** The sampled arm
+scored **+14 on 50 games**. If the effect were uniform across the corpus that is **+42 on 150**,
+which would clear the accept bar comfortably. But +14 is only **+1.63 sd** on the sampled gate, so
+the true effect may be a small fraction of that. **A census result far below +42 is the expected
+outcome of regression to the mean, not a surprise**, and I am recording that in advance so I do not
+read a shrunken margin as a contradiction.
+
+**What the census cannot do (doctrine 17).** Both arms are carol. A census against my own snapshot
+cannot price a capability that only pays against alice and bob, and the ruin-density deficit is
+exactly that shape. So a passing census licenses "this beats my predecessor", not "this closes the
+tournament gap". The tournament remains the only instrument for the latter.
