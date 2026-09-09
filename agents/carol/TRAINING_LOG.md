@@ -18168,3 +18168,45 @@ than quietly dropping it.
 
 **Leaf is n=1 and this lineage was burned by exactly that today**: `carol_r1` won Leaf and then lost
 the corpus 38/150. The screen decides the dose; the census decides the accept.
+
+## Iteration 60 screen — run `20260909-201717`, fresh 25-map sample, three arms, 150 games
+
+Candidate wins out of 50. **The zero arm is `carol_iter44` against itself: 25/50, margin 0 by
+construction**, not measured — it is a mirror, so it is definitional.
+
+| dose (`REFILL_LOW`) | candidate wins | margin | |
+|---|---|---|---|
+| 0 (zero arm, definitional) | 25/50 | 0 | |
+| **50** | **32/50 (64.0%)** | **+14** | **selected** |
+| 100 | 19/50 (38.0%) | −12 | |
+| 150 | 12/50 (24.0%) | −26 | |
+
+**The registered dose prediction HOLDS: the curve peaks in the interior** — 25 -> 32 -> 19 -> 12.
+Doctrine 2 says a curve peaking in the middle is stronger evidence than any single point, and that
+is what this is. It also makes mechanistic sense: the hysteresis unlatches at capacity/2 = 150, so a
+latch threshold of 150 means a splasher is latched essentially always, and 100 leaves a working band
+of only 50 paint — one splash — before it turns round again.
+
+**The registered selection rule applied mechanically**, as it was written to be: highest margin,
+must reach >= 31/50. `carol_i60_50` at 32 qualifies; the other two do not. Ties-to-smaller was not
+needed.
+
+**On the screen gate itself: 32/50 is MARGINAL (31–33), not strong.** The screen selects a dose; it
+does not decide. The census does.
+
+### The precedent I owe this entry, stated before the census returns
+
+**Iteration 58 scored exactly +14 on its 50-game screen and then REJECTED on the census** (+14 on
+150, against a +26 bar). That is the same screen margin I have just produced, from the same
+instrument, and its census outcome was a reject. METHODS item 4 is the reason: my 50-game gate,
+measured over 59 of my own arms, is worth about **1.0 sd**, not the 2.0 I once labelled it.
+
+So I am registering, before the run lands, that **a reject here is at least as likely as an accept**
+and would not be a surprise. What differs from iteration 58 is the size of the stage-0 signature —
+`noPaint` eliminated outright (41.2% -> 0.0%), standing splashers 4 -> 22, towers 7 -> 17, two
+paint-out wins where the incumbent normally grinds to a r2000 tiebreak. That is a much larger
+mechanical footprint than iteration 58 ever had. It is a reason to spend the census, not a reason to
+expect it to pass.
+
+**Census launched**: `carol_i60_50` vs `carol_iter44`, full 75-map corpus, both sides, 150 games,
+on the unchanged standing gate — **margin >= +26 ACCEPT | +18..+25 REPLICATE | <= +17 REJECT.**
