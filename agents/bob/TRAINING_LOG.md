@@ -17803,3 +17803,67 @@ all 25 tiles paintable and ruins are not. That is the split iteration 55 specifi
   *which-quantity* call.
 
 `src/bob/` untouched. **`bob_iter20` remains the bot.**
+
+## Iteration 56 — **CLOSED by sizing.** The confound was real, abandonment is 23% of the gap at its ceiling, and there is nothing "stuck" to release.
+
+75 `alice-vs-bob` replays of tournament `20260909-1300`; ruin positions from each game's round-1
+paint-only grid. **Isolation control**: `grep -c ' IND '` = **0**. Zero gauntlet games.
+
+```
+bot     ruins/map  towerMk/g  srpMk/g  srp share  ruins started  completed  ABANDONED/g  abandon%  medPersist
+alice        18.3        296        4       1.4%          12.32      10.47         1.85     15.0%           0
+bob          18.3        257      135      34.4%          10.68       7.75         2.93     27.5%           0
+```
+
+**Q1 — the confound was real, and iteration 55 was right not to bank the 51.8%.** **34.4% of bob's marks
+are SRP marks** (135/game) against alice's **1.4%** (4/game). A third of the "abandonment" signal was
+bob doing the SRP work iteration 12 accepted, on ground that by construction is nowhere near a ruin.
+Refusing to build on that number, and specifying the Chebyshev-≤2 test instead, saved a screen aimed at a
+defect that was a third artefact.
+
+**Q2 — PRIMARY: bob abandons 2.93 ruins a game to alice's 1.85, a difference of 1.08.** Registered bands
+were *≥3 more ⇒ build*, *≤1 more ⇒ close*, *between ⇒ size against the 4.67-tower gap*. **1.08 lands in
+the sizing band**, and the sizing closes it:
+
+> Eliminating **all** of bob's excess abandonment recovers **1.08 of the 4.67-tower gap — 23% — and that
+> is the ceiling**, reached only if bob never loses a ruin to the enemy or to a dying soldier. Per
+> LEARNINGS 92, a ceiling is not what a threshold should be met on. **CLOSED.**
+
+**Q3 — and iteration 33's hypothesis is refuted outright.** Median persistence on an abandoned ruin is
+**0 rounds** for both bots. Bob marks and moves on; it does **not** sit on uncompletable ruins. The
+"`chooseRuin()` holds its soldier forever" sink that has been on the record unverified since iteration 33
+**is not happening**, and there is therefore no release/patience rule to build. That closes a hypothesis
+that has been quietly waiting for two days.
+
+**The precedence clause did NOT fire this time**, and I am noting that because it matters that it is a
+real test rather than a formality: it would have closed this on the comparative had bob abandoned fewer
+ruins, and bob abandons *more* (2.93 vs 1.85). The closure here is on **sizing**, independently.
+
+### The decomposition, which is the durable output
+
+Per *distinct ruin*, bob completes 7.75 to alice's 10.47 — a gap of 2.72, which splits:
+
+```
+  never started (never marked)   1.64   60%
+  started then abandoned         1.08   40%
+```
+
+**Sixty per cent of bob's tower shortfall is ruins it never marks at all.** That is a different quantity
+from abandonment and from ruin *ranking* (CLOSED #6 — choice set 0.83, so ranking cannot help when there
+is usually one candidate). Whether it is reach, timing, or alice simply arriving first is unmeasured —
+and "alice got there first" is `CLOSED.md` #4's opponent-inflicted reading, which iteration 53 already
+found bob's own spend does not contradict. I am recording the decomposition and **not** claiming the
+mechanism.
+
+**And the gross/net lesson repeats**: 7.85 vs 12.52 towers *built* is a 4.67 gap, but only **2.72** of it
+is distinct ruins — the rest is alice rebuilding towers bob destroys (alice loses 4.33/game, bob 0.08).
+Two-fifths of the headline gap was never a gap in ground held.
+
+### Prediction, scored
+
+I predicted the SRP confound would dissolve *most* of the 51.8% (**it dissolved a third — magnitude
+wrong**) and that Q2 would come in below the 3/game threshold and close (**right**). So: the decision call
+right, the quantity call wrong again. Tally: **right 2** (55, 56-primary), **nominally right 2** (48, 54),
+**plainly wrong 6**.
+
+`src/bob/` untouched. **`bob_iter20` remains the bot.**
