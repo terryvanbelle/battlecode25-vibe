@@ -18,3 +18,4 @@ e6ad3ae|split a losing bundle to ablate the baseline for free
 2663c2f|census floor rebuilt on margin==2*(SW-SL): the old estimator measured noise from SPLIT maps, which contribute zero; gate 2.0sd = +23
 2b2ced6|sampled gate re-derived from the same identity: >=34/50 (was >=29/50, which was 0.93sd wearing a 2.0sd label)
 c5790b4|all 18 accepts re-scored; iterations 34/35/36 do not clear the corrected bar
+c725146|census iter30->iter36 = +38: unresolved != rejected; accept decisions move to full-corpus census, sampled runs screen only

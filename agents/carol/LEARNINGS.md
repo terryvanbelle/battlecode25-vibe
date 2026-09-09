@@ -1934,3 +1934,31 @@ next move is a cheaper or better-targeted version, not an accept.
 
 Warning sign that this is happening: the accept prose spends more words on the mechanism table than
 on the margin, and contains a sentence conceding the margin is weak. Both were present, twice.
+
+## SUPERSEDES the entry above: unresolved is not rejected — buy power instead (2026-09-09, same day)
+
+The rule I wrote this morning ("a confirmed manipulation check may never raise a verdict from below
+the gate to above it") was tested the same afternoon and came back half wrong. A full-corpus census
+of `carol_iter36` vs `carol_iter30` — the three iterations that rule would have retroactively
+condemned, 34, 35 and 36, each unresolved at +0.70, +1.86, +0.70 sd — returned **+38 at +3.31 sd**.
+Three small true effects, and the strict rule would have discarded all of them.
+
+**An underpowered gate produces UNRESOLVED verdicts, not wrong ones.** Tightening the threshold
+without adding power does not fix that; it only converts false accepts into false rejects, and this
+lineage would have paid +38 for the trade.
+
+The corrected rule keeps both halves:
+
+> When a margin lands unresolved, do **not** accept on the strength of a manipulation check — and do
+> **not** reject either. **Buy power and re-measure.** A 50-game sampled arm has sd(margin) 8.59 and
+> cannot resolve a real +6; a 150-game full-corpus census has 11.49 over three times the maps and
+> resolves the accumulation cleanly.
+
+It separates the cases correctly where a bare threshold does not. Iteration 45 had the strongest
+manipulation check in the log and its best arm was 27/50; sent to census it fails. Iterations 34–36
+had weak margins and confirmed mechanisms; sent to census they pass, together, by +38.
+
+**The general form, which is the part worth carrying to the next project:** when an instrument
+cannot resolve the effects you are hunting, the answer is a better instrument, not a stricter
+reading of the bad one. Both failures — accepting noise and discarding signal — come from the same
+root, and only power addresses the root.
