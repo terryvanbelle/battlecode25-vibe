@@ -15673,3 +15673,119 @@ peak soldier bytecode is **3,708 of 17,500 (21%)**. `seekEmpty`'s full-vision sc
 nowhere near the limiter, so the mechanism secondary was not measured at the edge. Doctrine 13 asks for
 the check you expect to pass, because that is the one that gets skipped and the one whose absence
 nothing else would catch.
+
+## Iteration 43 — **REJECTED.** The mechanism engaged exactly as predicted, and the ratio it improved has a denominator it also shrank.
+
+Run `20260909-151137`, 150 games, `BOT=bob_iter20 OPPONENTS="bob_fs0 bob_fs3 bob_fs8"`, fresh random
+25-map sample. Design, gate, secondaries and prediction were committed in `f24a1c3` **before** the run
+existed. This session found the run finished-but-uncollated (the classic session-death casualty) and
+collated it rather than re-running it.
+
+**VOID check PASSED.** `bob_fs0` returned exactly **25/50, all 25 maps split, 0 swept / 0 swept-against,
+0 diff-from-null** — the exact-zero arm is byte-identical in behaviour to the null, as designed.
+
+### Primary gate — REJECT
+
+```
+arm          score  vs null  swept  sweptAg  split  diff-from-null
+bob_fs0      25/50       +0      0        0     25           0/50  <- NULL
+bob_fs3      27/50       +2      7        5     13          16/50
+bob_fs8      28/50       +3      7        4     14          21/50
+```
+
+Registered: **≥ +10 accept-eligible, +7..+9 replicate, ≤ +6 reject**, in wins out of 50. `fs3` is **+2**
+and `fs8` is **+3**. Binomial sd on 50 games is ~3.5, so `fs8` sits at **0.85 sd** — not a small effect,
+an absent one. **REJECT**, unambiguously, no replicate band.
+
+The mechanism was not inert: diff-from-null is **16/50** and **21/50**, so the arms genuinely played
+different games. They just did not play better ones.
+
+### Secondary 1 (mechanism) — engaged, dose-monotone, and my registered prediction was RIGHT
+
+Computed on this run's own 150 replays (`early-paint-census.sh`, stride 1, r≤200, all 150 censused):
+
+```
+ stratum       arm    n   win%   soldRnd  paintAct  tiles/soldRnd    tw     cov
+   small   bob_fs0   18  50.0%    1050.2     324.2          0.309  4.89   397.6
+           bob_fs3   18  44.4%    1030.3     330.0          0.320  4.44   403.3
+           bob_fs8   18  55.6%    1005.1     330.6          0.329  4.33   398.6
+   large   bob_fs0   18  50.0%    1378.8     588.2          0.427  7.06   306.7
+           bob_fs3   18  61.1%    1414.6     593.2          0.419  7.06   305.8
+           bob_fs8   18  50.0%    1417.4     569.8          0.402  6.61   293.4
+     ALL   bob_fs0   50  50.0%    1264.0     480.5          0.380  6.34   362.4
+           bob_fs3   50  54.0%    1245.4     481.9          0.387  6.20   365.8
+           bob_fs8   50  56.0%    1232.6     470.9          0.382  5.98   355.9
+```
+
+Tiles per soldier-round **rises monotonically with dose on small maps** (0.309 → 0.320 → 0.329, +6.5%
+relative) and **falls monotonically on large** (0.427 → 0.419 → 0.402). I registered, as a sign: *gains
+concentrated on small maps, where F is 2.7x more common.* **That is confirmed** — and it is my first
+correct registered prediction after wrong ones in iterations 40 and 42. The mechanism did the thing it
+was built to do, in the regime it was aimed at.
+
+**A window caveat I will not paper over.** This census ran to r200; iterations 41/42's 0.665 was an
+early-window number. The two are **not comparable**, and I am not claiming a fall from 0.665 to 0.33.
+Within this run the window, maps and opponent are identical across arms, so the arm-vs-arm comparison
+above is exact; that is the only comparison I am making.
+
+### Secondary 2 (price) — the pre-registered cost is REAL, and it is bigger than the gain
+
+Tower count at the window's end falls **monotonically with dose**: ALL 6.34 → 6.20 → **5.98**; small
+4.89 → 4.44 → **4.33**, an **11% fall** on small maps. I registered tower count as a secondary for
+exactly this reason — *"a wandering soldier can stumble onto a new ruin, and a steered one is steered by
+paint instead"* — and that is what the number says. A price named before the run and then found is worth
+more than the gate it failed.
+
+### Secondary 3 — underpowered exactly as registered
+
+Small-map stratum: 50.0% / 44.4% / 55.6% on n=18. Non-monotone, ~4 games of spread. Registered in
+advance as resolving nothing, and it resolves nothing. Recorded, not interpreted.
+
+### The bytecode void condition was UNCHECKABLE, and I am recording that rather than passing it
+
+I registered *"`ov=` must stay 0 in the arms' indicator strings"*. **The seek arms do not carry an `ov=`
+field at all** — the overrun counter lived in the *idle-probe* arms' `probeTag` append, and
+`make-seek-arms.sh` copies `src/bob`, whose indicator string never had one. `grep -c 'ov=' ` over the
+whole 32,357-line census returns **0 occurrences**, not "0 overruns".
+
+This is LEARNING 70's family again with the good ending: the instrument failed as an **unmistakable
+absence**, not as a fabricated zero. I registered a condition against an instrument the arms did not
+have, and the honest record is UNCHECKED.
+
+**The discriminating argument that it is not a confound**, from data already on disk: bytecode
+starvation cuts turns short, so it would make paint-per-soldier-round **fall**. It **rose**, monotonically
+with dose, in the small-map regime where `seekEmpty` actually fires. A build being strangled by the
+limiter does not get more efficient as you give it more of the expensive behaviour. Also, for scale:
+`ROBOT_BYTECODE_LIMIT` is **17500** (engine 3.1.0, via `tools/engine-jar.sh --remote`), against a
+~69-tile vision scan. The condition was unnecessary as well as unmeasurable.
+
+### What actually killed it — and it indicts my sizing method, not just this mechanism
+
+The chain is visible end to end in the table, and every link is dose-monotone:
+
+> seek → soldiers steered by paint instead of stumbling onto ruins → **fewer ruins captured** →
+> **towers −11%** (small) → less money → **soldier-rounds −4%** (small) → **total paint actions +2%**
+> (324.2 → 330.6), i.e. flat.
+
+**Tiles per soldier-round rose 6.5% and total tiles painted did not move, because the mechanism shrank
+its own denominator.** I made the soldiers more efficient by having fewer of them.
+
+That is not a fact about frontier-seeking. It is a fact about **the unit I have been pricing prizes in
+for five iterations**. Iterations 37, 40, 41, 42 and 43 all sized their prize in *per-soldier-round*
+terms — a ratio whose denominator (army size) is downstream of tower count, which is downstream of ruin
+capture, which several of these mechanisms perturb. A mechanism that trades army size for per-unit
+efficiency scores well on that ratio and does **nothing** to the objective, which is total painted area.
+Iteration 42's "0.665 against a ceiling of 1.0, closing it takes bob from 100 to 151 tiles" implicitly
+assumed the soldier count would hold. Here it did not, and the assumption was doing all the work.
+
+**Doctrine, for my own future sessions**: *when a mechanism can move the denominator, a ratio is not a
+prize — size it in the objective's own units and register the denominator as a secondary.* I did
+register the denominator here (tower count), which is the only reason this is diagnosable at all.
+
+**Closed-directions ledger, ADD**: "give the soldier `Splasher`-style frontier-seeking on its F turns"
+is CLOSED at **+2/+3 wins out of 50** across doses 3 and 8, with the mechanism **confirmed engaged**
+(dose-monotone +6.5% tiles/soldier-round on small maps) and the pre-registered ruin-capture price
+**confirmed real** (−11% towers). Not closed for want of a working mechanism — closed because the
+mechanism pays for itself out of the army.
+
+`src/bob/` untouched. **`bob_iter20` remains the bot; HEAD's behaviour is unchanged.**

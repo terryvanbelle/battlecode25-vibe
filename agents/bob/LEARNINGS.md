@@ -2885,3 +2885,51 @@ Reported to the coordinator; the detector now compares **per-game outcomes** as 
 the report says so: *"deduplicate on the games, not the run id and not the commit pair."* The general
 form: **a hash is a proxy for behaviour, and every proxy has a failure direction.** This one fails
 safe-looking — it under-reports duplication, which inflates apparent evidence.
+
+## 76. I optimised a ratio whose denominator the mechanism itself controls (2026-09-09)
+
+Iteration 43 gave the soldier frontier-seeking. The registered mechanism secondary — tiles per
+soldier-round — **rose**, monotonically with dose, in exactly the regime predicted (small maps,
+0.309 → 0.320 → 0.329). The primary moved **+2 and +3 wins out of 50**: nothing.
+
+The chain, every link dose-monotone in the same table:
+
+> seek → soldiers steered by paint instead of stumbling onto ruins → **towers −11%** →
+> less money → **soldier-rounds −4%** → **total paint actions +2%**, i.e. flat.
+
+**Per-soldier efficiency rose 6.5% and total painted area did not move, because the mechanism shrank
+its own denominator.** I made the soldiers more efficient by fielding fewer of them.
+
+This is not a fact about frontier-seeking; it is a fact about **the unit I have priced every prize in
+for five iterations**. Iterations 37, 40, 41, 42 and 43 all sized their prize in *per-soldier-round*
+terms. That denominator is army size, which is downstream of tower count, which is downstream of ruin
+capture — and several of those mechanisms perturb ruin capture. Iteration 42's headline sizing ("0.665
+against a ceiling of 1.0 ⇒ 100 → 151 tiles by r30") silently assumed the soldier count would hold.
+
+**Doctrine: when a mechanism can move the denominator, a ratio is not a prize.** Size the prize in the
+objective's own units — total painted area — and register the denominator as a secondary. I did
+register the denominator here (tower count), which is the only reason this is diagnosable rather than
+merely disappointing. A per-unit ratio is a diagnostic; it is never the gate.
+
+## 77. A void condition registered against an instrument the arms do not carry (2026-09-09)
+
+I pre-registered *"`ov=` must stay 0 in the arms' indicator strings"* for iteration 43. The seek arms
+have **no `ov=` field at all** — the overrun counter lived in the *idle-probe* arms' `probeTag` append,
+and `make-seek-arms.sh` copies `src/bob`, which never had one. `grep -c 'ov='` over the 32,357-line
+census returns **0 occurrences**, which is not "0 overruns".
+
+Recorded as **UNCHECKED**, not passed. This is LEARNING 70's family with the good ending it prescribed:
+the instrument failed as an **unmistakable absence** rather than a fabricated zero, and an absence
+cannot be mistaken for data.
+
+Two further things the episode teaches:
+
+1. **Run the discriminating case before deciding it is a confound.** Bytecode starvation cuts turns
+   short, so it would make paint-per-soldier-round *fall*. It *rose*, dose-monotonically, in the very
+   regime where the expensive code fires. A build strangled by the limiter does not get more efficient
+   as you give it more of the costly behaviour. The data to settle it was already on disk.
+2. **Check at pre-registration time that the arm emits the field the gate names.** A void condition is
+   only a control if the generator guarantees the measurement exists — the same lesson LEARNING 70
+   already forced on the probe generators, which now `grep` for their own append and abort. The seek
+   generator does not, because it was not a probe generator. The rule belongs on **any** generator whose
+   arms a gate will read, not just probe ones.
