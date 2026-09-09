@@ -14255,3 +14255,176 @@ cannot produce my losses), 56 (a guard whose false branch is a different action 
 gate), 57 (javap with stderr suppressed reports a false negative), 58 (consistency pass: "cannot overfit
 to the population" covers maps, not opponents), 59 (pre-register three branches, not two), 60 (which of
 today's closures I would distrust first).
+
+---
+
+## Session 2026-09-09b — the instrument the last session demanded, built a different way
+
+The previous session ended with one instruction: **"The next session's first task is the instrument,
+not another candidate."** The plan on file was to build a synthetic archetype that ends games fast, so
+that short-game candidates could be evaluated in the regime they target. **I did not build that
+archetype. I built a better instrument, and I want the reasoning on the record rather than the
+substitution passed off silently.**
+
+### 0. Two housekeeping facts, because both nearly cost me a rebuild
+
+**The resume context's git snapshot was three days stale** (2026-09-06), listing `3f89699` /
+`2f72258` as recent and showing `src/bob/Soldier.java` modified. Neither is true of HEAD. Both
+commits are ancestors, dated 09-06. **Nothing was lost; the snapshot is simply not a live view.** A
+future session should date-check that block before concluding anything from it.
+
+It also surfaced **`src/bob_denier`**, committed 09-06, which my own 09-09 state-of-play failed to
+list among my instruments. It is not the archetype I need (it is a long-game paint-denial pole) but
+forgetting an existing instrument is exactly how one gets rebuilt.
+
+**All gauntlet runs were collated; iteration 34's verdict is logged. No orphaned run.**
+
+### 1. Where bob actually loses — measured per tournament, NOT pooled
+
+`tournaments/*/results.csv` carries a `rounds` column. My first pass pooled all six tournaments and
+produced **81% vs alice** — against a report saying 50.0%. The pooling was invalid: bob went
+**287/300 → 277 → 211 → 145 → 139** across the six runs as the siblings improved. That is LEARNING 54
+(pooled referents) reproducing itself on a new dataset within ten minutes of my starting. Per
+tournament, latest run:
+
+```
+                  <=200      201-400     401-1000      >1000
+  vs alice        0/2        3/16        42/68         30/64
+  vs carol        0/9        0/16        32/72         32/53
+```
+
+Decomposed as wins above 50% per bucket:
+
+```
+  vs carol   <=400: -12.5     >400: +1.5     net -11   (= the 64-86 head-to-head, exactly)
+  vs alice   <=400:  -6.0     >400: +6.0     net   0   (= the 75-75 head-to-head, exactly)
+```
+
+> **bob is 3/43 in tournament games decided at or before round 400, and +7.5 in the other 257.**
+> Against carol the short games are not *part* of the deficit — they are **more than all of it**.
+
+### 2. The free control: the alice-bob pair is byte-reproducible
+
+Doctrine 16 says to take the free controls the tournament hands you. I verified it for **my** pair:
+between `20260908-1300` and `20260909-0100`, with neither build changed,
+
+```
+  alice vs bob    150/150 identical -- winner AND exact round count
+  bob   vs carol   23/150 identical (carol's build changed)
+```
+
+**150/150 including round counts.** So the alice-bob half of the tournament is a zero-noise
+instrument: any change in it is attributable to a build change with no map or opponent noise at all.
+That is worth more than most of my gauntlet capacity and it costs nothing.
+
+### 3. Why I did not build the fast-game archetype
+
+I first tested whether "short game" is even a regime. It mostly is not:
+
+```
+  within-map sd of game length  438       between-map sd  348
+  CastleDefense 109..703    Filter 108..1071    Paintball 141..784
+```
+
+Length varies *more* between games on one map than across maps, and the 43 short games spread over
+**26 different maps**. So a synthetic opponent built to "end games fast" would be encoding my guess
+about carol's mechanism into the yardstick — and my last two archetypes (`bob_rush`, `bob_denier`)
+both failed to produce short games at all (medians 760, 949). **A third guess was not the move.**
+
+**Instead: measure the quantity that decides short games, in every game.** Coverage per-mille at a
+fixed early round is defined in all 300 games regardless of length. Validated against outcome, n=300:
+
+```
+   r30 coverage differential      n    win%   median rounds   %<=400
+        -290 .. -49              50    6.0%       434          44%
+         -47 .. -26              50   42.0%       696          12%
+         -25 ..  -6              50   46.0%       813          12%
+          -6 ..  +6              50   70.0%       998           6%
+          +6 .. +16              50   50.0%       928           8%
+         +16 .. +127             50   64.0%       992           4%
+
+   corr(r30 diff, win) = +0.357     corr(r30 diff, rounds) = +0.313
+```
+
+**Fall ~50 per-mille behind by round 30 and bob wins 6% of the time.** The relationship is sharply
+non-linear — it is a cliff at the bottom, not a gradient — which is the useful shape: it defines a
+*failure condition* rather than a quantity to maximise.
+
+New tool **`bob-tools/early-census.sh`**: compiles `tools/replaydump/ReplayDump.java` **once** on the
+VM and loops there, one CSV row per replay. It reuses that file verbatim rather than forking it, so a
+coordinator fix propagates. 300 replays in ~90s versus ~5s each for per-replay `replay-dump.sh`.
+It runs over **gauntlet** replay dirs too (`~/battlecode25-vibe/agents/bob/gauntlet/<run>/`, 150
+replays present), so this is a candidate-evaluation instrument, not only a post-hoc tournament read.
+
+### 4. What the census says the short losses ARE
+
+At round 30, averaged over 150 games per opponent:
+
+```
+                    cov    tw     spl    sold   twPaint   chips   tiles painted
+  vs carol, SHORT   bob 171  2.28  0.00   6.4     131     1525      83
+                  carol 276  2.68  1.84   1.9     521     1409     146
+  vs alice, SHORT   bob 197  2.50  0.00   6.9     152     1218      79
+                  alice 209  2.78  0.00   4.8     378      929      88
+```
+
+> **bob fields 6.4 soldiers and zero splashers and paints 83 tiles; carol fields 1.9 soldiers plus
+> 1.84 splashers and paints 146.** Three times the bodies, 57% of the output.
+
+bob has **spl 0.00 at round 30 in all 300 games** — that is `SPLASHER_SLOTS` gated behind
+`rc.getRoundNum() > 60`, so bob *cannot by construction* contest an early splasher opening. Against
+alice, who also opens splasher-free, bob is level at r30 (197 vs 209) and wins 72/132 long games.
+**The deficit is opponent-inflicted, which corroborates the 09-08 closure of "bob's own opening
+spend" rather than reopening it.**
+
+### 5. A real defect in my own `Tower.run` — found, characterised, and deliberately NOT fixed
+
+```java
+if (chips >= want.moneyCost + reserve) {          // chips ONLY
+    for (8 dirs) if (rc.canBuildRobot(want, l)) { rc.buildRobot(want, l); spawned++; break; }
+}
+```
+
+`javap` of `RobotControllerImpl.assertCanBuildRobot` confirms it tests **the tower's own paint**
+against `paintCost` *before* money ("Not enough paint to build new robot!"). So on a paint failure the
+loop builds nothing **and `spawned` is not incremented** — the 5-slot cycle cannot advance past a slot
+it cannot afford, and there is no fallback to a cheaper unit. Engine costs (pinned 3.1.0):
+SOLDIER 200 paint/250 chips, SPLASHER **300**/400, MOPPER 100/300; paint towers regenerate only
+**5/10/15** per turn by level, money towers **0**.
+
+**I hypothesised a permanent deadlock — towers jammed forever on the 300-paint splasher slot. The
+discriminating case refutes it.** A round-300 census says bob holds **5.10 splashers vs carol and 6.05
+vs alice**, with zero splashers in only 3-4 games of 275. The jam is transient, not permanent, and I
+am recording the refutation rather than keeping the story that motivated the probe.
+
+**And I am not fixing it, because both available fixes are already measured:**
+
+```
+  fall back to a cheaper unit  -> spawns MORE  -> iteration 24 (chip reserve -> 0):      -7
+  advance the slot, build none -> fewer splashers -> iteration 20 dose curve: interior peak at 2:2:1
+```
+
+Iterations 24 and 27 **bracket the spawn rate from both sides** (−7 spawning more; −7/−6/−15 spawning
+less), and iteration 20 puts the mix at an interior peak. A change that moves either axis is
+predicted-worse by measurements I already own. **Writing the fix and running it would buy a result I
+can already quote.** Logged as a known defect with a measured reason not to touch it.
+
+### 6. Where this leaves the lineage
+
+**No accept. `src/bob` untouched; `bob_iter20` remains the bot; HEAD compiles.** What changed is the
+instrument situation, which was the binding constraint named at the end of the last session:
+
+- The short-game deficit is now **quantified against external opponents** (3/43) rather than inferred.
+- A **zero-noise control** (alice-bob, 150/150) exists and is free.
+- A **continuous early-game metric** exists, is validated against outcome, and runs on gauntlet
+  replays — so a short-game candidate no longer has to win rare games to be measured.
+- The production axis (rate and mix) is **closed on both sides by prior measurement**, so the next
+  candidate must not be a production-policy change.
+
+**Next**: bob's soldiers paint 83 tiles across 30 rounds from 6.4 soldiers = **0.43 tiles per
+soldier-turn**, i.e. they are idle on ~57% of early turns while holding 200 paint and paying only 5
+per tile. Paint cannot be the early binding constraint for a fresh soldier (200/5 = 40 tiles of
+budget against 30 available turns). **So the early loss is a targeting/travel problem, not an economy
+one** — and that is the one area today's bracketing does not close. The pre-check to run first is a
+decision-level count of early soldier turns by reason for inaction (no target in range / moving /
+paint-short), never an outcome count.
