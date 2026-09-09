@@ -17491,3 +17491,82 @@ Three things that version must satisfy, all checkable before it plays a game:
 
 **What is closed regardless**: "more standing soldiers is good on average". That is answered, at
 +1.08 sd over the population, and no re-opening may assume otherwise.
+
+---
+
+# Post-58 survey — three candidates killed for zero games, and the closure map is now complete
+
+Iteration 58's closure forced me out of the economy/soldier area. This is what I found in the areas
+that remain, all from replays already on disk.
+
+## 1. The splasher decision census — carol's splashers are INERT, not starving
+
+Leaf, rounds 300–700, **1,363 splasher decision-turns** (`--ind carol`; note the tool now requires
+naming your own package, which is a good isolation control — indicator strings are private debug
+output and I should not be able to read alice's):
+
+| tag | count | % of all turns | % of **ready** turns |
+|---|---|---|---|
+| cooldown | 773 | 56.7% | — |
+| **noPaint** | 243 | 17.8% | **41.2%** |
+| lowScore | 151 | 11.1% | 25.6% |
+| **SPLASH (fired)** | 140 | 10.3% | 23.7% |
+| noTgt | 56 | 4.1% | 9.5% |
+
+**Only 24% of ready turns produce a splash, and paint takes 41%.** The decisive detail is the paint
+level on those turns: **median 15, and 0.0% at zero paint.** A splash costs 50 and a splasher has no
+cheaper action, so a splasher below 50 is **completely inert — alive, mobile, and unable to act.**
+They are stranded, not starving, and the distinction matters because it rules out the whole
+"they're dying, keep them alive" family of fixes.
+
+## 2. `SPLASH_MIN_SCORE` — confirmed dead, on fresh data, by the history pre-check
+
+I was about to dose it. The log already records it **dead** (line ~10499), and the new census agrees
+independently: fires have **mean score 19.2, median 20, min 8** against a floor of **8**, with only
+22% within 2 of the floor. A floor the incumbent is nowhere near is not a policy. **Killed for zero
+games by reading my own log first** — the second time the history pre-check has paid this session.
+
+## 3. `disintegrate` — killed on magnitude before probing further
+
+The unused-API sweep flagged it, and RULES already notes it "could recycle a stuck 0-paint robot".
+But the census above shows **0.0% of dry splashers are at 0 paint**, so the state it addresses does
+not occur. And the drain it would save is 1 paint/turn, **zero on ally tiles**, where carol's
+stranded splashers mostly sit. There is no quantity here worth a run.
+
+## 4. The mopper asymmetry, measured and NOT actioned
+
+| | carol paint acts | carol UNPAINT | opponent UNPAINT | carol moppers | opponent moppers |
+|---|---|---|---|---|---|
+| Leaf (loss) | 2,263 | **0** | **740** | **0** | 67 |
+| BatSignal (win) | 2,428 | **0** | 157 | **0** | 15 |
+
+**Carol never mops, on any map, while alice removes 740 of her tiles on Leaf.** This is a real
+capability asymmetry and it is the premise iteration 44 was built on. I am **not** acting on it,
+because acquiring moppers runs through the mopper spawn gate (2,300 chips) — structurally identical
+to the soldier gate I closed this session, and therefore inside the closed area. Recorded so the
+next session does not mistake it for an open lead.
+
+## Where this leaves the lineage — the closure map is now essentially complete
+
+| area | status |
+|---|---|
+| spawn thresholds (`SPLASH_FLOOR`, mopper gate) | **closed** — bracketed both sides, census margin 0 |
+| tower type (`MONEY_MOD`) | **closed** — measured peak at the incumbent |
+| reserve (`CHIP_RESERVE`, pin-escape) | **closed** — known-rejected, and the escape priced at 3.1% of the gap |
+| soldier supply / standing population | **closed** this session — census +14, +1.08 sd |
+| SRP | closed (48–51), re-open condition recorded |
+| movement relative to towers | closed (38/39), bracketed both directions at 17/50 |
+| splasher gating (`SPLASH_MIN_SCORE`) | **dead** — floor never binds, confirmed twice |
+| tower paint floors | closed by dose-response both ends |
+
+**Every marginal knob this bot has is bracketed, and most sit at their incumbent value.** That is
+not a complaint — it is the map, and it took ~14 iterations to draw. It also names the next move:
+TRAINING_ALGORITHM lists **high-risk structural exploration as a first-class track, not a fallback**,
+and it is the one I have never taken in this lineage.
+
+**Registered as the next direction, with the two candidates the API sweep and RESEARCH.md name:**
+communication (carol has never sent a message) and symmetry inference (standard practice elsewhere,
+exact rather than heuristic, and needs no comms). Both are structural rather than parametric. I am
+**not** starting one at the tail of a session — a structural attempt deserves a full pre-check pass,
+and the honest state to hand over is a complete closure map plus a named direction, not a half-built
+mechanism.
