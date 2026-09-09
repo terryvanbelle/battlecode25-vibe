@@ -15478,3 +15478,54 @@ CLOSED at a measured decision rate of **3.9% of soldier-turns on small maps and 
 branch it would rescue is almost never the one taken.
 
 `src/bob/` untouched. **`bob_iter20` remains the bot; HEAD's behaviour is unchanged.**
+
+---
+
+## Iteration 43 PRE-REGISTERED — give the soldier the frontier-seeking its own splasher already has.
+
+Design, gate, secondaries and prediction committed **before the run exists**.
+
+**Mechanism.** On 25.5% of small-map soldier-turns (9.6% on large) a soldier has no empty tile within
+r² ≤ 9 — it is standing in its own paint — and `Soldier.run()` answers with `Nav.wander()`, a
+persistent-direction random walk. `Splasher.run()` has navigated to the nearest empty/enemy tile since
+iteration 0. `bob-tools/make-seek-arms.sh` gives the soldier the same behaviour, targeting **only**
+tiles with `d > actionRadiusSquared` — precisely the F condition — so the change cannot quietly become
+a general movement rewrite.
+
+**Dose**: `SEEK` = turns committed to a chosen target before re-deciding. **0** (exact zero arm:
+`SEEK == 0 ||` short-circuits, so no sensing, no RNG draw, no state touched), **3**, **8**.
+
+**The price, stated before the run.** Priced against what it displaces, not against zero: the
+displaced use is wandering, which *by F's own definition* produced no paint action that turn, so the
+direct cost is ~0. The indirect cost is that a wandering soldier can stumble onto a new ruin and a
+steered one may not. **Tower count is a registered secondary for exactly that reason.**
+
+**Run**: `BOT=bob_iter20 OPPONENTS="bob_fs0 bob_fs3 bob_fs8"`, **fresh random 25-map sample** — not the
+pinned probe list. Iterations 41 and 42 both used the same pinned 6 maps, which is correct for a probe
+and wrong for an accept screen; this is an accept screen. 150 games.
+
+**PRE-REGISTERED:**
+
+- **VOID unless `bob_fs0` returns exactly 25/50 with all 25 maps split and 0 diff-from-null.**
+- **Primary gate, and stating its unit** (doctrine 51): `vs null` = the arm's win count out of 50 minus
+  the null arm's win count out of 50, i.e. **wins, not margin**. **≥ +10 accept-eligible, +7..+9
+  replicate, ≤ +6 reject.** Unchanged from iterations 38 and 40 so the verdicts stay comparable.
+- **Secondary 1 (mechanism)**: tiles per soldier-round, computed on this run's own replays by
+  `bob-tools/early-paint-census.sh`. Must **rise** in `fs3`/`fs8` against `fs0`. This is independent of
+  the win count and is the check that the mechanism engaged at all.
+- **Secondary 2 (price)**: tower count at r200. A fall would be the ruin-capture cost above.
+- **Secondary 3, registered UNDERPOWERED in advance**: small-map stratum win rate. A 25-map uniform
+  draw holds ~8 small maps, ~16 games per arm; that resolves nothing alone and is a direction check,
+  not a gate. **The gate stays uniform** — the tournament plays all 75 maps uniformly, and narrowing it
+  is the hand-picked-map surface AGENT.md forbids.
+- **Bytecode**: `seekEmpty` adds a full-vision scan. `ov=` must stay 0 in the arms' indicator strings;
+  a non-zero overrun count voids the mechanism reading (an instrumented or heavier build measured at
+  the limiter is only trustworthy if behaviour is verifiably unchanged).
+- **Prediction, as a sign**: `fs3` and `fs8` both beat `fs0` on tiles/soldier-round, with gains
+  concentrated on small maps where F is 2.7x more common. I am **not** predicting the `fs3` vs `fs8`
+  ordering — iteration 40 taught me to register a sign only where I have a mechanism for it.
+
+**Honest expectation.** Sizing says converting *every* F turn would move small-map output from 0.665 to
+~0.92 tiles/soldier-round, and a soldier must travel before it paints, so the realisable share is well
+under all of it. This is ~2x too small rather than the ~10x of iterations 37/40/41 — better than
+anything recently, and still likelier to reject than to accept.
