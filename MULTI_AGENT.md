@@ -177,6 +177,40 @@ the listing says `completed`.** `No task found with ID` is the clean terminal
 signal; a success message means the agent was still alive and you were about to
 duplicate it.
 
+### RESUME by default; cold-start only when you must (2026-09-09, user)
+
+A completed agent can be continued with `SendMessage` to its id, which resumes it
+with its context intact. That is now the default way to keep a lineage working,
+and a fresh `Agent` launch is the exception.
+
+The reason is measured. A cold start's mandatory reading — the charter, the
+doctrine, this file, `METHODS.md`, the lineage's own `RULES.md` and
+`LEARNINGS.md` — is about **5,200 lines, ~77k tokens**, before a single useful
+action. Sessions spend 150–360k tokens in total, so re-derivation is 20–50% of
+each one; thirteen cold starts in one day is on the order of a million tokens
+spent re-learning what the previous session already knew. The project hits
+account usage limits regularly, and this is the largest avoidable consumer.
+
+- **To continue a lineage**: `SendMessage` to its agent id with the text of
+  `tools/agent-prompts/resume.md`. It tells the agent explicitly NOT to re-read
+  the doctrine, and to re-establish only what can have changed while it was
+  writing its report — chiefly a run left in flight.
+- **Cold-start (a new `Agent` call with the full prompt) only when**: the agent
+  reports its context is exhausted or has been compacted; it reports being
+  blocked in a way that needs a clean slate; a resume fails; or the lineage has
+  been idle across a session boundary this coordinator did not observe.
+- **The duplicate hazard is unchanged and now cuts closer.** Messaging an agent
+  RESUMES it, so the old failure mode — message the finished agent, then launch a
+  replacement — produces two live sessions. Under resume-by-default the message
+  IS the continuation, so never follow one with a launch. When you do cold-start,
+  `TaskStop` first, without exception.
+- **What a cold start buys, and when that matters**: the stateless relaunch
+  prompt forces a lineage to reconstruct its position from git, its log and its
+  gauntlet directories, and that pass has repeatedly found finished-but-uncollated
+  runs and iterations whose verdict died with a session. A resumed agent skips
+  it, so the resume prompt asks for the one part of it that pays: check what was
+  left in flight.
+
 When two do end up live, do not guess which to keep. Sample each session's
 transcript mtime a few seconds apart: the one still being written is the live
 worker, and it is usually the older one with the deeper context. Stop the other.
