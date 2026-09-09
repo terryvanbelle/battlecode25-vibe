@@ -13068,3 +13068,40 @@ The roster is auto-derived and I will not hand-edit it. What I will do is stop r
 aggregate as absolute strength: **only the top rungs (iter21 at 82%, iter35 at 68%, and iter44 from
 the next accept onward) carry information**, and the headline average should be read as an artefact
 of the dead rungs until enough new rungs accumulate to dilute them.
+
+## Iteration 46 stage 1 (screen) — concave, exactly as pre-registered
+
+Run `20260909-085025`, `BOT=carol_iter44`, both arms on one shared 25-map sample, 100 games.
+Reported margins are the **baseline's**; candidate score is `50 - reported`.
+
+| arm | `PAINT_FLOOR` | baseline margin | **candidate** | candidate margin | z (8.59) |
+|---|---|---|---|---|---|
+| `carol_i46_0` | 0 (gate removed) | +10 | **20/50** | −10 | −1.16 |
+| incumbent | 200 | — | (25/50) | 0 | — |
+| `carol_i46_100` | 100 | −4 | **27/50** | +4 | +0.47 |
+
+**The dose curve is concave with an interior optimum at 100, which is what I predicted and wrote
+down before the run** — and it is the same shape iteration 21 found for the mopper dose itself.
+Removing the gate entirely (`0`) is clearly the worst of the three, so iteration 36 was right that
+*some* floor is needed; it was only wrong about where to put it.
+
+Neither arm resolves on 50 games (ACCEPT needs 34/50), which is also what I pre-registered, and
+per the pre-commitment made before the run I am taking the better dose to a full-corpus census
+rather than reading an underpowered screen as a rejection. **Stage 2 launched: `carol_i46_100` vs
+`carol_iter44`, 75-map corpus, 150 games, gate ACCEPT >= +23.**
+
+Note this run is scored the same way whichever gate you use, and the pre-commitment is what makes
+that true: had I not written "run stage 2 even if stage 1 is unresolved" in advance, 27/50 is
+exactly the number that invites a quiet abandonment.
+
+### Manipulation check — PENDING, and it can still void this iteration
+
+The two-sided check registered before stage 1 (mopper share must rise **and** soldiers must not
+collapse) has not returned. The paired replay sweep stalled on a large `Circuit` replay and the
+single-match fallback is queued behind the census on the shared-VM semaphore, which is correct
+behaviour and not something to work around. **The causal story — that `PAINT_FLOOR` gates the
+mopper and only the mopper — is so far established from the code and from unit costs [E], plus the
+inverted realized mix (610 soldiers / 6 moppers / 2207 splashers over 28 team-games), but NOT yet
+from a candidate-side measurement showing the share actually moved.** If it did not move, the
+margins above are some other effect wearing this iteration's name and the accept is void whatever
+the census says.
