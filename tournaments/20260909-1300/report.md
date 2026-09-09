@@ -91,3 +91,7 @@ Deltas compare against `20260909-0100`. Both runs were complete, so both
 played the full map list and the two are measured on the same ground.
 Treat a few points as noise; a pair moving together with its swept-map
 count is the signal worth chasing.
+
+**Attribution.** `carol` is unchanged since `20260909-0100` — same commit, so the same bot played. Standings are relative and a delta normally cannot separate *I improved* from *they got worse*, but a delta against an unchanged opponent can: for `alice`, `bob`, the head-to-head move against `carol` is attributable to their own changes, not to opponent drift. (The reverse also holds: a frozen bot's own delta is a readout of what the others did.)
+
+But `bob` has a changed commit whose games reproduce the previous run exactly (see above), so the commit changed and the play did not. Read that bot's zero delta as the absence of a behavioural change, not as a change that happened to score the same.

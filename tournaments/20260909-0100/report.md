@@ -91,3 +91,5 @@ Deltas compare against `20260908-1300`. Both runs were complete, so both
 played the full map list and the two are measured on the same ground.
 Treat a few points as noise; a pair moving together with its swept-map
 count is the signal worth chasing.
+
+**Attribution.** `alice`, `bob` are unchanged since `20260908-1300` — same commit, so the same bot played. Standings are relative and a delta normally cannot separate *I improved* from *they got worse*, but a delta against an unchanged opponent can: for `carol`, the head-to-head move against `alice`, `bob` is attributable to its own changes, not to opponent drift. (The reverse also holds: a frozen bot's own delta is a readout of what the others did.)

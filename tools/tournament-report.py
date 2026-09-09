@@ -373,6 +373,49 @@ def main():
                  "Treat a few points as noise; a pair moving together with its swept-map\n"
                  "count is the signal worth chasing.")
 
+        # The frozen-opponent reading. A repeated commit is a hazard when you POOL
+        # runs and a control when you COMPARE them: standings are relative, so a
+        # delta normally cannot separate "I improved" from "they got worse" -- but
+        # against an opponent that did not change, it can. One lineage derived
+        # this unprompted from the do-not-pool section, which is the sign it
+        # belonged in the report rather than in a reader's head.
+        c, pv = played_commits(cur), played_commits(prev)
+        if c and pv:
+            frozen = sorted(b for b in c if b in pv and c[b] == pv[b])
+            moved = sorted(b for b in c if b in pv and c[b] != pv[b])
+            if frozen and moved:
+                L.append("\n**Attribution.** " + ", ".join(f"`{b}`" for b in frozen)
+                         + (" is" if len(frozen) == 1 else " are")
+                         + f" unchanged since `{prev.name}` — same commit, so the same bot "
+                         "played. Standings are relative and a delta normally cannot "
+                         "separate *I improved* from *they got worse*, but a delta against "
+                         "an unchanged opponent can: for "
+                         + ", ".join(f"`{b}`" for b in moved)
+                         + ", the head-to-head move against "
+                         + ", ".join(f"`{b}`" for b in frozen)
+                         + " is attributable to "
+                         + ("its" if len(moved) == 1 else "their")
+                         + " own changes, not to opponent drift. (The reverse also holds: "
+                         "a frozen bot's own delta is a readout of what the others did.)")
+                # A commit is not behaviour. If a "moved" bot's games reproduce
+                # exactly, its commit changed and its play did not -- say so here,
+                # or this paragraph credits a hash for a zero.
+                inert = sorted({b for x, y, n, same, bc, bg in dups if bg
+                                for b in (x, y) if b in moved})
+                if inert:
+                    L.append("\nBut " + ", ".join(f"`{b}`" for b in inert)
+                             + (" has" if len(inert) == 1 else " have")
+                             + " a changed commit whose games reproduce the previous run "
+                             "exactly (see above), so the commit changed and the play did "
+                             "not. Read "
+                             + ("that bot's" if len(inert) == 1 else "those bots'")
+                             + " zero delta as the absence of a behavioural change, not as "
+                             "a change that happened to score the same.")
+            elif frozen and not moved:
+                L.append("\n**Attribution.** No bot's commit changed since "
+                         f"`{prev.name}`, so this run re-plays it in full. Every delta "
+                         "above is zero by construction, not by measurement.")
+
     (cur / "report.md").write_text("\n".join(L) + "\n")
 
     # -- running league table across every tournament --
