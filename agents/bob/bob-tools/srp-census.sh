@@ -18,6 +18,20 @@
 #     cannot detect that -- the zero arm short-circuits before the new code. So read the
 #     overrun count on the ARMS, not just on the null.
 #
+# BUG FOUND AND FIXED HERE 2026-09-09, of the silent-zero kind. ReplayDump defaults to
+# `fromRound = Integer.MAX_VALUE, toRound = -1`, so `inWindow` is false on every round and
+# IndicatorStringAction is NEVER printed unless --from/--to are passed. The first version
+# of this script passed neither, parsed no IND lines at all, and duly reported `ov=0 mx=0`
+# for every game -- which reads exactly like "no overruns" and would have cleared a
+# candidate that was overrunning on every turn. A measurement that cannot fail loudly is
+# worse than no measurement. So this now (a) passes an explicit window and (b) prints
+# ov/mx as -1 when it saw no IND lines at all, which is not a value any bot can emit.
+# TREAT -1 AS NO DATA, NEVER AS ZERO.
+#
+# The window is late in the game because `ov` and `mx` are per-robot CUMULATIVE counters
+# in RobotPlayer, so a late sample carries each surviving robot's whole history. Robots
+# that died earlier are not represented, so these are LOWER BOUNDS on the team max.
+#
 # ReplayDump labels robots "idN(T1,SOLDIER)", so team attribution comes from the label.
 # TimelineMarker.team() is 0-based in the schema and ReplayDump already prints team()+1;
 # do not re-correct it here.
@@ -43,18 +57,18 @@ gssh "
   javac -d . -classpath \"\$BC_JAR\" ReplayDump.java 2>&1 | head -3
   for f in $RDIR/*$FILT*.bc25; do
     b=\$(basename \"\$f\")
-    java -classpath \".:\$BC_JAR\" com.google.flatbuffers.ReplayDump \"\$f\" 2>/dev/null |
+    java -classpath \".:\$BC_JAR\" com.google.flatbuffers.ReplayDump \"\$f\" --from 1900 --to 2000 2>/dev/null |
       awk -v F=\"\$b\" '
         /marker r[0-9]+ team1 SRP/          { s1++ }
         /marker r[0-9]+ team2 SRP/          { s2++ }
         /marker r[0-9]+ team1 tower built/  { t1++ }
         /marker r[0-9]+ team2 tower built/  { t2++ }
-        /IND / {
+        /IND / { sawind = 1
           team = (\$0 ~ /\\(T1,/) ? 1 : 2
           if (match(\$0, /ov=[0-9]+/))  { v = substr(\$0, RSTART+3, RLENGTH-3) + 0; if (team==1 && v>o1) o1=v; if (team==2 && v>o2) o2=v }
           if (match(\$0, /mx=[0-9]+/))  { v = substr(\$0, RSTART+3, RLENGTH-3) + 0; if (team==1 && v>m1) m1=v; if (team==2 && v>m2) m2=v }
         }
         /^round / { rn=\$2 }
-        END { printf \"%s,%d,%d,%d,%d,%d,%d,%d,%d,%d\n\", F, s1,s2,t1,t2,o1,o2,m1,m2,rn }'
+        END { if (!sawind) { o1=o2=m1=m2=-1 } printf \"%s,%d,%d,%d,%d,%d,%d,%d,%d,%d\n\", F, s1,s2,t1,t2,o1,o2,m1,m2,rn }'
   done
 "

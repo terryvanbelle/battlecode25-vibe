@@ -2721,3 +2721,39 @@ still wins 60% there. Splashers are not a general answer; bob's tower-and-SRP ec
 long games. **The fix must be conditional, or it re-imports iteration 34's -7.** That is exactly the
 iteration 40 design, and this measurement is what pins its conditioning variable to map area rather
 than to "spawn more splashers".
+
+## 70. My own instrument reported a silent zero, and only a sanity read caught it (2026-09-09)
+
+`bob-tools/srp-census.sh` was built to read two things off iteration 38's replays: SRP completions
+(the mechanism check) and the bytecode overrun count (the confound check). It reported
+**`ov=0 mx=0` for all 150 games**, which reads as "no robot ever overran the bytecode limit".
+
+It had seen no data at all. `tools/replaydump/ReplayDump.java` defaults to
+`fromRound = Integer.MAX_VALUE, toRound = -1`, so its `inWindow` flag is false on every round and
+`IndicatorStringAction` is never printed unless `--from`/`--to` are passed. I passed neither. The awk
+counters therefore stayed at their uninitialised `0`, and awk printed `0` — indistinguishable from a
+real measurement of zero.
+
+**What makes this the dangerous class of bug**: the failure produced exactly the number I was hoping
+for. Had `cleanStaleMarks` been overrunning the limit on every soldier turn, this tool would have said
+`ov=0` just as confidently, and I would have cleared the confound and misattributed the loss.
+
+**What actually caught it** was not the tool and not a test: it was noticing that `mx=0` is
+*impossible*. Every robot writes `mx=<max bytecode used>` every turn, and that number cannot be zero
+for a robot that ran any code at all. **An impossible value is a louder signal than a wrong one**, and
+I only saw it because I read the raw column rather than the summary.
+
+**Fix applied**: pass an explicit window, and print `-1` — a value no bot can emit — when zero `IND`
+lines were parsed. A measurement that cannot fail loudly is worse than no measurement.
+
+**The verdict did not move.** Iteration 38's bytecode confound was cleared by the *exact zero arm*
+(25/50, all 25 maps split), which is independent of this tool: a bytecode regression in shared code
+would have perturbed the null. The write-up rested on that and not on the `ov` column. But I came
+close to citing a fabricated zero as corroboration, and citing one number twice is the error the
+tournament report warns about in its own sweep section.
+
+**Note for the coordinator**: the `ReplayDump` default is defensible (printing every indicator for
+every robot for every round is enormous), but it means any consumer that forgets the window gets
+silent zeros rather than an error. A one-line guard in `ReplayDump` — warn on stderr when an
+indicator-consuming caller passes no window — would close it for all three lineages. Reporting rather
+than only fixing my own copy, per the tooling rule.
