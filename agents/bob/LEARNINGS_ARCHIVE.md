@@ -3308,3 +3308,34 @@ at the coverage gap, an over-count would have been indistinguishable from a conv
 structure as LEARNINGS 87, where a large, monotone, plausible effect turned out to be the outcome leaking
 into the covariate. So the rule is: **when validating an instrument, establish not just how big its error
 is but which way it cuts relative to what you hope to show, and do it before you look.**
+
+## 92. I pre-registered two conditions and not their precedence (2026-09-09)
+
+Iteration 52 registered a primary threshold (*foregone paint income ≥16,000/game ⇒ build*) and a
+comparative control (*if alice is no better than bob, the shortfall is the game's economy, not my policy —
+the reading that closed iterations 46 and 51*). Both fired, in **opposite directions**: the primary
+cleared by 1.4% (16,231) and the control fired hard (alice upgrades *worse* than bob while beating bob
+60–40).
+
+**Registering both and not their precedence left me free to pick, which is exactly what pre-registration
+exists to prevent.** A gate that can be satisfied two ways is not one gate.
+
+**How it was resolved on the merits, so the resolution is checkable rather than a preference.** The
+primary measured a **ceiling** — what bob would gain if every paint tower sat at L3 from birth *for free*
+— and the confound check I had *also* registered showed that ceiling is unpurchasable: bob's median chip
+balance does not reach the L2 upgrade trigger until ~r800 and never reaches the L3 trigger before r1100,
+past the end of most games. A threshold clearing by 1.4% on a quantity that cannot be bought is not a
+licence to build. The control wins because the primary was measuring the wrong kind of number, not
+because the control was more convenient.
+
+**Two rules adopted:**
+
+1. **When registering a control alongside a primary, register which one wins if they disagree.** One line,
+   written before the data, and it removes the only degree of freedom that matters.
+2. **Say whether a primary measures a CEILING or an ACHIEVABLE quantity, and set the threshold on the
+   achievable one.** A ceiling threshold that clears narrowly is evidence *against* the direction, because
+   the achievable part is strictly smaller — which is the opposite of how a narrow pass reads at a glance.
+
+Related: LEARNINGS 87 (a large monotone effect that was the outcome leaking in) and 90 (a theoretical
+conversion factor 8x optimistic). All three are the same failure — **a number that is not the quantity the
+decision needs** — caught by a different check each time.

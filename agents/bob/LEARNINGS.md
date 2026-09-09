@@ -59,6 +59,7 @@ Companion files, and what each is for:
 - **23.** The gate's unit belongs in its **name** (`wins_above_half`, not "margin"). → #51
 - **24.** A void condition must be registered against an instrument **the arms actually carry**. → #77
 - **25.** Pre-register readings for PASS, NULL *and* NEGATIVE — I once registered only the first two and got the third. → #59
+- **25b. NEW.** **Register the PRECEDENCE between a primary and its control, not just both** — iteration 52's primary cleared by 1.4% while its comparative fired the other way, leaving me free to choose. And **say whether a primary measures a CEILING or an achievable quantity**: a ceiling threshold that clears narrowly is evidence *against* the direction, since the achievable part is strictly smaller. → #92
 - **26.** Set the trigger from **the decision it forces**, not from the outcome expected. → #80 (I called three branches exhaustive and the observed case fell between them)
 - **27.** Pooling across tournaments is invalid here (the engine is deterministic; games reproduce exactly). → #62
 - **28.** A behaviour-preserving commit defeats a commit-hash duplicate detector — deduplicate on **games**. → #75
@@ -126,6 +127,7 @@ Numbers live in `RULES.md`; these are the ones that changed a decision.
 - **72.** So **`acts` — total paint actions per game — is the only live term**, and it has exactly three sources: more units, units acting more often, or units **living longer**. Acting-more-often is now closed too (#67), so **living longer is the remaining route**. 89% of bob's deaths are starvation (8.2 of 9.2 per game). → #82, iteration 47
 - **72b. NEW — the model correction.** **`acts` was never the binding constraint; PAINT is.** All three sources of `acts` are now closed (composition #20, acting-more-often #22, living-longer #23) and each bottomed out in a fixed paint budget. Feeding a unit costs the paint that builds one: `tower.getPaint() >= 200` gates every SOLDIER. → #86, `CLOSED.md` #23/#24
 - **72c. NEW — where to look next.** Bob issues ~59,460 paint to units per game and converts only ~**38%** into paint actions; the residual is ≈2 paint per unit-round, the size of the engine's per-turn penalties (−1 neutral, −2 enemy, +1 per adjacent ally, doubled in enemy territory). Spending less draws on **no** tower pool — the one re-open condition on #23. **This 38% is an accounting estimate, not a measurement.** → #86
+- **72d. NEW — bob is CHIP-POOR, and the trace everyone cites is superseded.** Median chip balance reaches the L2 upgrade trigger (6,500) only ~r800 and the L3 trigger (9,000) never before r1100 — past most games' end. Iteration 3's "327k chips unspent at r2000" predates the upgrade path it motivated; **re-measure before any "bob has spare chips" argument.** → `CLOSED.md` #28
 - **73.** Sizing anchor, for any future mechanism: the small-map deficit is **91 tiles**; an extra soldier-round is worth **≤0.265 tiles**; so closing it needs **≈+343 soldier-rounds/game (+28%)**. Every mechanism tried before iteration 47 sized at **2–5%** of that.
 
 ## G. Process and hygiene

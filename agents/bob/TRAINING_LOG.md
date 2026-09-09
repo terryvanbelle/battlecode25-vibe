@@ -17323,3 +17323,79 @@ tournament replays (IND dropped at source).
   story attached to it.
 
 `src/bob/` untouched. **`bob_iter20` remains the bot.**
+
+## Iteration 52 — **CLOSED**, and the interesting part is that two of my own registered readings disagreed.
+
+50 `bob_e0` games of run `20260909-195732` (263 paint towers) plus the registered comparative on the 75
+`alice-vs-bob` tournament replays. **Isolation control**: `grep -c ' IND '` returns **0**. Zero gauntlet
+games spent. Both mirror teams reproduce identically (263 towers, 119 reaching L3, foregone 16,231), which
+is the instrument check.
+
+```
+             games  paintTw  reachL3   income/g   FOREGONE/g   %rndsL1   %L2    %L3
+  bob_e0        50      263      119     42,069       16,231     24.0%  35.5%  40.5%
+  ---- tournament, same 75 games ----
+  bob           75      351      135     41,952       23,304     38.3%  30.6%  31.1%
+  alice         75      552      146     46,095       26,362     35.4%  38.4%  26.2%
+```
+
+**Primary: 16,231 foregone paint per game, against a registered build threshold of ≥16,000. It clears —
+by 1.4%.**
+
+**Comparative: it fires the other way, and decisively.** I registered: *"If alice's paint towers are no
+better upgraded than bob's, the shortfall is a property of the game's economy rather than of my policy —
+the reading that closed iterations 46 and 51."* Alice is not merely no better, alice is **worse**: alice
+reaches L3 on **26.2%** of paint-tower-rounds to bob's **31.1%**, with **26,362** foregone to bob's
+**23,304** — 13% more. **Bob is already better at upgrading than the bot beating it 60–40.**
+
+### Which registered reading wins, and why I am not free to choose
+
+Two pre-registered conditions pointed opposite ways. **I did not register their precedence**, which is my
+error and is the transferable lesson here. Resolving it on the merits rather than on preference:
+
+**The comparative wins, because the primary measures a ceiling that the chip data shows cannot be
+bought.** "Foregone income" is what bob would gain if every paint tower sat at L3 from birth *for free*.
+It is not a purchasable quantity. The registered confound check tells me why:
+
+- **It is not tower death.** 144 of 263 paint towers never reach L3, but their **median life is 363
+  rounds** — ample time. I registered that "if most of the shortfall is dead towers, this closes as an
+  upgrade question and re-opens as a tower-defence one." It does not; that branch does not fire.
+- **It is chips.** `UPGRADE_RESERVE = 4000` on top of the level cost means a tower needs **6,500 chips to
+  reach L2 and 9,000 to reach L3**. Bob's median chips in hand, measured over the same 50 games:
+
+```
+   r0 1,306   r100 1,510   r200 4,240   r400 5,316   r600 5,841   r800 6,430   r1000 7,990   r1100 8,431
+```
+
+> **Bob's median chip balance does not reach the L2 trigger until ~r800 and never reaches the L3 trigger
+> before r1100** — past the end of most games (median length ~930). The towers are not failing to
+> upgrade; **bob cannot afford to upgrade them.**
+
+So the 16,231 is a ceiling priced at chips bob does not have, and a threshold that clears by 1.4% on a
+ceiling is not a licence to build. **CLOSED.**
+
+**And iteration 3's original trace is superseded.** Its motivation was "327k chips unspent at r2000 —
+chips are a dead resource." That was true *before* iteration 3 added the upgrade path. It is now false in
+the regime that decides games: bob is **chip-poor for its entire first 800 rounds**. Any future argument
+of the form "bob has spare chips" must re-measure rather than cite that trace.
+
+### What the comparative points at instead, recorded without being claimed
+
+Alice's paint income is 10% above bob's (46,095 vs 41,952) and it comes entirely from **count, not level**:
+**7.4 paint towers per game to bob's 4.7**, while upgrading a *smaller* fraction of them. Whether that is
+a type-mix difference or simply more total expansion, this census cannot say — it counted only paint
+towers. Iteration 4 tested biasing bob's mix toward paint towers and it was REJECTED, and its stated
+reason was that chips buy paint income back through upgrades. **That reason is now measurably weak**, since
+the upgrade path is chip-starved for most of the game. That is not enough to re-open iteration 4 — the
+code's own note requires "evidence that changes that arithmetic", and what I have changes one premise of
+it, not the arithmetic — but it is exactly the evidence a future session would need, so it is on the record.
+
+### Prediction, scored
+
+I predicted foregone would land **below 5,000** and close because "the upgrade path works and chips are
+abundant." **Wrong on the number** (16,231, 3x my ceiling) **and wrong on the mechanism** (chips are not
+abundant; they are the binding constraint). The direction closes anyway, on the comparative. That is six
+consecutive predictions, and this one breaks the pattern I named last iteration — this time the *magnitude*
+call was wrong too, so the honest summary is that my priors about bob's economy are simply weak.
+
+`src/bob/` untouched. **`bob_iter20` remains the bot.**
