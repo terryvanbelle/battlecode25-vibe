@@ -14542,3 +14542,81 @@ The arms are UNCOMMITTED working-tree dirs (`src/bob_t0`, `src/bob_t1`, `src/bob
 any time with `bob-tools/make-frontier-arms.sh`. **`src/bob` is also modified** — it carries the
 `FRONTIER_MODE = 0` scaffolding, which is behaviourally identical to `bob_iter20` and is deliberately
 uncommitted, so **HEAD still plays exactly `bob_iter20` in the tournament.**
+
+---
+
+## Iteration 37 — **REJECTED**. Run `20260909-104412`, 150 games. And the secondary says exactly why.
+
+```
+arm      FRONTIER_MODE   score   vs null   swept  sweptAg  split   diff-from-null
+bob_t0         0         25/50     +0        0        0      25       0/50   <- NULL
+bob_t1         1         26/50     +1        8        7      10      17/50
+bob_t2         2         28/50     +3        7        4      14      13/50
+```
+
+**The zero arm is EXACT: 25/50, all 25 maps split, 0 swept, 0 diff-from-null.** The generator and the
+short-circuit reasoning both hold, so the run is valid and not void.
+
+Gate was **+10 accept / +7..+9 replicate / <= +6 reject**. `bob_t1` at **+1** and `bob_t2` at **+3**
+are both rejects, and I record them as such.
+
+**The dose bites.** `diff-from-null` is 17/50 and 13/50 — the change really does alter games, so this
+is a null result about a live mechanism, not an inert arm quietly reproducing the incumbent.
+
+**My pre-registered prediction was correct and I am discounting it anyway.** I predicted
+`bob_t2 >= bob_t1` on the starvation argument, and got +3 vs +1. But both sit inside 1 se
+(se ~ 3.5 on 50 games), so the ordering is not resolved by this run. A prediction confirmed in a range
+where the instrument cannot discriminate is not evidence, and I am not going to bank it as one.
+
+### The secondary, read after the primary, and it converts a null into a measurement
+
+`bob-tools/early-census.sh` over the run's own 150 replays, then `early_agg.py`. **Sign convention,
+stated because my lineage has been bitten by exactly this**: the aggregator reports from
+`bob_iter20`'s perspective, so a **negative** number means the ARM is AHEAD.
+
+```
+  opponent   n   mean r30 cov diff   win%   med rounds
+  bob_t0    50        +0.0          50.0%      769     <- byte-identical null
+  bob_t1    50        -3.7          48.0%      989
+  bob_t2    50        -3.6          44.0%      881
+```
+
+**The null reads +0.0 exactly.** That is an independent confirmation of the zero arm from a completely
+different measurement channel than the win count, and it also pins the instrument's noise floor near
+zero on byte-identical builds.
+
+**The mechanism fired, in the predicted direction, and is an order of magnitude too small.** The
+seeking arms gained **+3.7 and +3.6 per-mille** of round-30 coverage. So the pre-check was right that
+idle soldier turns are a real, recoverable loss — and converting them is worth almost nothing.
+
+### The number I most want carried forward
+
+Today's tournament census put the cliff at **-49 per-mille**: below it bob wins 6% of games. The
+change addressed the 68% of idle turns that had a visible frontier tile — roughly **14.5% of all early
+soldier turns** — and bought **+3.7**. Closing the *entire* 21.3% idle bucket therefore extrapolates
+to about **+5.4 per-mille**.
+
+> **Soldier action utilisation cannot close the early-coverage gap. Perfect soldier utilisation is
+> still ~10x short of the cliff.** Whatever produces carol's r30 advantage, it is not that bob's
+> soldiers waste turns.
+
+That is a quantitative closure rather than another null, and it is the useful output of this
+iteration. It also points where the gap must come from: at r30 carol fields ~1.84 splashers and ~1.9
+soldiers to bob's 6.4 soldiers and **zero** splashers, and paints 146 tiles to bob's 83. The
+difference is **tiles converted per action**, not actions taken — and a soldier paints one tile per
+attack while a splasher paints an area for its 50 paint. Bob's problem is the *unit* doing the
+painting, not how busy it is.
+
+**A caution against the obvious next step.** That reasoning points straight back at the round-60
+splasher gate — and iteration 34 already un-gated it unconditionally for **-7**, with the harm
+localised in games over 1,000 rounds. The conditional form remains **BLOCKED, not closed**. What is
+new is that I can now price a candidate on early coverage in *every* game rather than needing to win
+rare short ones, which is precisely the instrument that blockage was waiting on. **But the gate for
+any such candidate must stay the win rate**; early coverage is the mechanism check, and today is the
+proof that a real coverage gain can be worth zero wins.
+
+**Closed-directions ledger, ADD**: "recover idle soldier turns by seeking visible unpainted ground"
+is CLOSED at +1/+3 wins, with the mechanism confirmed active at +3.7 per-mille and extrapolated to
++5.4 at perfection — against a cliff at -49.
+
+`src/bob/` is reverted to the incumbent. **`bob_iter20` remains the bot; HEAD is unchanged.**
