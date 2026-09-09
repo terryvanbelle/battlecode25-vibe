@@ -13955,3 +13955,75 @@ byte-identical configurations, so the duplicate is a **free determinism control*
 kind doctrine 16 says to take when it appears: the two runs must agree game-for-game, including
 round counts. If they do not, something in the harness is nondeterministic and that is a far more
 important finding than this experiment. I will diff them rather than discard one.
+
+## CLOCK RESULT — the pre-registered secondary PASSES. `carol_i47_1400` closes dense maps sooner.
+
+Arm 1 `20260909-105442` (`carol_iter44`), arm 2 `20260909-110031` / `20260909-110144` (the
+duplicate pair, `carol_i47_1400`), each vs `examplefuncsplayer` on the same 17 dense maps, both
+sides.
+
+### Determinism control, free from my duplicate-launch mistake
+
+**34 of 34 cells identical — same winner AND same round count.** The harness is deterministic
+exactly as the whole measurement doctrine assumes. That assumption underpins every gate in this
+project and had been verified between byte-identical *builds*, not between two independent
+*launches* of the same build; now it is verified for launches too. It is the only thing the wasted
+34 games bought, and it is worth having.
+
+### The clock
+
+| | games | wins | closed by >70% | median rounds to close |
+|---|---|---|---|---|
+| `carol_iter44` | 34 | 34 | 31 | **717** |
+| `carol_i47_1400` | 34 | 34 | 32 | **612** |
+
+**Paired on the 31 (map, side) cells both arms closed:**
+
+| | |
+|---|---|
+| `i47_1400` faster / slower / tied | **22 / 9 / 0** |
+| median round difference | **−89** |
+| mean round difference | **−112.6** |
+| sign test, two-sided | **p = 0.029** |
+
+**The pre-registered secondary passes.** `carol_i47_1400` closes a ruin-dense map roughly 15%
+sooner — about 100 rounds — and does so on 22 of 31 paired cells against a fixed third party, so
+the two arms' clocks never touched each other. This is not conditioned on any outcome the build
+causes: both arms won all 34 games, so there is no selection on winning either.
+
+**The primary was saturated and behaved exactly as I said it would**: 31 → 32 closed maps, +1
+against a ceiling of 34, and 16/17 distinct maps for both. Worth nothing, as recorded *before* the
+data arrived. The one cell that flipped (`headphones` side B, closed only by `i47_1400`) is a
+single game and I am not reading anything into it.
+
+### What this does and does not establish
+
+**Establishes**: the tower-scaling build has a real, opponent-independent throughput advantage on
+ruin-dense maps. Given that 78% of carol's dense tournament games are decided by the 70% condition
+and she goes **8-45** in them, closing ~100 rounds sooner is aimed squarely at the actual deficit.
+
+**Does not establish**: that it wins more games. Iteration 47 remains **rejected** — it lost the
+sampled screen at −8 and drew the dense census at 0, and a clock is not a gate. Nothing here
+reopens the accept, and I am not shipping a build that failed its screen on the strength of a
+secondary.
+
+**The gap in the design, and it is mine**: I measured the clock only where the mechanism should
+help. Doctrine 4 asks for a map-level prediction with *both* halves — *"gains where the condition
+holds, absent where it does not"* — and without the sparse-map arm I cannot distinguish "faster on
+dense maps" from "faster everywhere". Those two have completely different consequences: the first
+licenses a density-conditional threshold, the second says density is not the variable at all and
+the head-to-head loss comes from somewhere I have not identified.
+
+### NEXT RUN, pre-registered before launch
+
+Same clock design on the **17 SPARSEST maps** (fewest claimable ruins), both arms, both sides.
+
+- **If the speed-up is absent or reversed on sparse maps** → the effect is density-conditional, and
+  iteration 48 is the self-calibrating `SPLASH_FLOOR` derived from observed ruin density that I
+  pre-registered this morning as the only design this evidence licenses.
+- **If the speed-up is the same size on sparse maps** → density is not the conditioning variable,
+  the whole ruin framing of this iteration is wrong, and iteration 48 must instead explain why a
+  build that closes every map faster still loses the head-to-head.
+
+Launching per my own new control: `gauntlet-collect.sh --list` first, confirming no run of this
+configuration is already in flight, rather than inferring it from a log.
