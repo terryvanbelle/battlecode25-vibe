@@ -17233,3 +17233,52 @@ reaches **the other team's** `tw` field, so for `armIdx=1` it reported T2's towe
 have *different* tower counts (Bunny 10 v 9, gridworld 9 v 10, boxofchocolates 3 v 3). A wrong
 label and an inverted result look identical in the output, and this one would have inverted the
 falsifier for exactly half the games.
+
+## Iteration 47 — REJECT. The mechanism engages hard and buys nothing.
+
+Screen `20260909-155054`, fresh 40-map sample (not the probe's pinned list), 160 games,
+**0 exceptions**. Both opponents drew the *same* sample, so the two comparisons below are exact
+against each other.
+
+| pairing | record | SW | SL | split | **net swept** | pre-registered bar |
+|---|---|---|---|---|---|---|
+| `alice_i47a50` vs `alice_i47a0` | 41–39 | 4 | 3 | 33 | **+1** | **>= +4 to advance** |
+| `alice_i47a50` vs `alice_i47a250` | 40–40 | 1 | 1 | 38 | **0** | — |
+
+**+1 against a bar of +4 and a floor of sd 5.29. The screen fails; iteration 47 is rejected and
+does not go to census.** The identity column checks OK on both rows (wins−N = SW−SL), so the
+margin and the sweep counts are the same number and I am not citing it twice.
+
+**The mechanism was not starved of opportunity.** It fires on the state that is 42.2% of all
+ruin-target turns, it changed *every round count* on the bite maps, and the zero arm is verified
+byte-identical. This is a null of the stated mechanism, not a plumbing failure — the same standard
+I applied to iteration 46 after the priority probe.
+
+**The dose falsifier did not trigger, and gives no support either.** I registered that if `a250`
+materially beat `a50` I would not have the mechanism I claimed. It did not: 40–40, net 0, with
+**38 of 40 maps split by side**. Five-fold more avoidance changes nothing measurable. That is
+itself informative — if abandoning unresolvable ruins were converting into capture, the amount of
+abandonment ought to matter somewhere across a 5x range, and it does not.
+
+### What the null actually says, and why it makes the next step clearer rather than murkier
+
+The pre-registered rival explanation was **"the standing may be the work"** — iteration 44's shape.
+The result is consistent with it, and with a second reading I cannot separate from it on this
+evidence: **the freed movement has nowhere to go.** Probe v2 already established that at the
+moment of the stall the soldier sees exactly one open ruin, 100.0% of the time. Abandoning it
+hands the soldier a ballistic wander across a board whose ruins are, by then, mostly claimed. Both
+readings say the same operational thing:
+
+> **The soldier side of this defect cannot be fixed by soldier-side reallocation.** I have now
+> tested the only two things a soldier can do in the unresolvable state — stand there (control) or
+> leave (arm) — and they are worth the same to within noise. The 6,424 turns are not recoverable
+> by choosing better between them, because those are the only two choices there are.
+
+That is a real narrowing, and it is worth more than the +1. It leaves the pattern itself as the
+only remaining object: **the enemy paint has to be cleared, and no soldier can ever clear it.**
+Which points at the mopper half of the pincer — already built as `alice_i48mprobe` and launched
+while this write-up was in progress — and raises the stakes on its question, because the soldier
+side is now closed by measurement rather than by assumption.
+
+**Cost of the rejection: one 160-game screen and two 6-game checks.** The probe that preceded it
+saved a great deal more than that by killing the ranking version of this arm before it was built.
