@@ -353,7 +353,17 @@ public class RobotPlayer {
         // tiles per unit of BUILD paint than a soldier and costs ~4x less per tile in chips
         // (re-measured AFTER iteration 29 fixed the soldier, since the soldier is what it
         // displaces). Chips are team-shared, so every tower evaluates this identical predicate
-        // and they coordinate without communicating. SPLASH_FLOOR = 0 is the current code.
+        // and they coordinate without communicating.
+        //
+        // SPLASH_FLOOR IS 2000, NOT 0. An earlier version of this comment claimed "SPLASH_FLOOR = 0
+        // is the current code", which was false and contradicted the line directly beneath it.
+        // The value matters and is easy to misread: with reserve = CHIP_RESERVE = 1200, a SPLASHER
+        // needs chips >= 1600 (it is exempt from the floor), while a SOLDIER needs
+        // chips >= 1200 + 250 + 2000 = 2250 and a MOPPER >= 2300. The CHEAPER unit is gated
+        // HIGHER, at a level a ~1,400-chip median treasury reaches only in spikes -- which is why
+        // the realized mix is ~95% splasher / ~5% soldier, and why only 2-3 soldiers are built per
+        // game. Soldiers are the only unit that calls workOnRuin, so this constant is also the
+        // lineage's ruin-conversion throttle. See src/carol_conv, the archetype that sets it to 0.
         final int SPLASH_FLOOR = 2000;
         boolean afford = chips >= reserve + want.moneyCost;
         if (afford && want != UnitType.SPLASHER && chips - want.moneyCost < SPLASH_FLOOR) {
