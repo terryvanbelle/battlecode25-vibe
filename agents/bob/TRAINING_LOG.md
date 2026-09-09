@@ -17867,3 +17867,53 @@ right, the quantity call wrong again. Tally: **right 2** (55, 56-primary), **nom
 **plainly wrong 6**.
 
 `src/bob/` untouched. **`bob_iter20` remains the bot.**
+
+---
+
+## Iteration 57 — PROBE PRE-REGISTERED: of the ruins bob never marks, are they bob's to take?
+
+**The quantity.** Iteration 56 decomposed bob's tower shortfall: of 2.72 distinct ruins per game, **1.64
+(60%) are ruins bob never marks at all**. Three hypotheses were left live: **reach** (bob cannot get
+there), **timing** (bob gets there later), and **the opponent arrived first** — the last already carrying
+`CLOSED.md` #4's opponent-inflicted reading.
+
+**They are separable, and the separator is which half of the map the ruin is on.** Every BC25 map is
+symmetric (RULES.md), so each team has a near half. The decisive question is therefore not "how many ruins
+does bob mark" but:
+
+> **Does bob mark the ruins on its OWN side?**
+
+If bob marks its own-side ruins as completely as alice marks hers, the shortfall is contested ground and
+the finding is opponent-inflicted — consistent with #4, and closed. If bob leaves its **own** ruins
+unmarked, that is a reach or timing defect in bob's code, it is not the opponent's doing, and it is worth
+a gate.
+
+**Method: zero new VM work.** Everything comes from `ru_tour.tsv`, already collected — ruin positions from
+each game's round-1 paint-only grid, all MARK lines with team and round, all tower SPAWNs. Each team's
+start anchor is taken from its **round-1 soldier spawn location** (towers spawn adjacent to themselves).
+Ruin sides are assigned by nearer anchor.
+
+**PRE-REGISTERED:**
+
+- **PRIMARY: own-side ruin mark rate — bob's share of its own-side ruins marked, versus alice's share of
+  hers.**
+  - **bob ≥ 10 percentage points BELOW alice** ⇒ a genuine reach/timing defect in bob's own half ⇒ worth a
+    gate; propose a mechanism.
+  - **bob within 5 points of alice, or above** ⇒ the shortfall is contested ground ⇒ **CLOSED**, and #4's
+    reading is confirmed a third time.
+  - between ⇒ size against the 1.64-ruin gap.
+- **This is an ACHIEVABLE quantity, not a ceiling** (LEARNINGS 92): it is the share of ruins bob actually
+  could reach unopposed and actually did or did not mark.
+- **PRECEDENCE, registered**: if bob's own-side rate is **at or above** alice's, the direction closes
+  **regardless** of what the contested-ruin numbers say. Five closures have now turned on the comparative;
+  it wins here too.
+- **Corpus: tournament games only** (LEARNINGS 93) — cross-lineage comparative.
+- **Secondary, diagnostic only**: for contested ruins (both teams mark), who marks first and by how many
+  rounds. This separates *timing* from *reach* if the primary fires, and is **not** licensed to rescue a
+  closure if it does not.
+- **Registered as NOT an accept test.**
+- **Prediction**: bob's own-side rate is **close to alice's** and this closes — i.e. I again predict my own
+  nomination fails, and that the 60% is alice reaching across rather than bob failing at home. Tally:
+  right 2, nominally right 2, plainly wrong 6; this is a *which-quantity* call, the kind I keep missing.
+
+`src/bob/` untouched. **`bob_iter20` remains the bot.**
