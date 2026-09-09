@@ -17399,3 +17399,54 @@ consecutive predictions, and this one breaks the pattern I named last iteration 
 call was wrong too, so the honest summary is that my priors about bob's economy are simply weak.
 
 `src/bob/` untouched. **`bob_iter20` remains the bot.**
+
+---
+
+## Iteration 53 — PROBE PRE-REGISTERED (written before the measurement exists): does bob's own CHIP reserve block its spawns?
+
+**Why now.** Iteration 52 overturned a founding premise: bob is **chip-poor**, not chip-rich. Chips do not
+only buy upgrades — **they buy units**. `Tower.run()` spawns only when
+`chips >= want.moneyCost + reserve`, and `reserve = (round <= 30) ? 0 : 1200`. So from **round 31** a
+soldier costs an effective **1,450 chips**, a mopper 1,500 and a splasher 1,600.
+
+Iteration 52 measured bob's median chip balance at **1,306** over r0–99 and **1,510** over r100–199. **The
+soldier threshold sits inside that band.**
+
+**And the round is not a coincidence I am inventing after the fact.** LEARNINGS 69 established that bob's
+whole deficit is the **round-30 coverage cliff** (below −49 per-mille at r30, bob wins **5.9%**; above it,
+**53.4%**), replicated on two different opponents and map draws. Bob's reserve switches on at **round 31**.
+A policy discontinuity and the measured failure discontinuity are at the same round.
+
+**This is `CLOSED.md` #4's re-open condition, verbatim.** That entry closed "candidates that reshape bob's
+own opening spend" because the deficit looked opponent-inflicted, and its re-open condition is *"evidence
+that bob's **own** spend binds in a game it loses."* This probe is built to produce exactly that evidence
+or to fail to.
+
+**PRE-REGISTERED:**
+
+- **Primary: the share of rounds in r31–200 where bob's chips are below 1,450** (the soldier threshold),
+  **split by whether bob won or lost that game.**
+  - **≥40% blocked AND materially higher in losses than in wins** ⇒ bob's own spend binds in games it
+    loses ⇒ **CLOSED #4 re-opens** and `reserve` is the mechanism to dose.
+  - **≤15%** ⇒ the reserve does not bind ⇒ **CLOSED for the cost of one probe.**
+  - between ⇒ size before building.
+- **This primary is an ACHIEVABLE quantity, not a ceiling** — stated explicitly per LEARNINGS 92. It counts
+  rounds where a constant I control demonstrably refused a purchase bob could otherwise have made; it is
+  not "what bob would have if chips were free."
+- **Control, WITH ITS PRECEDENCE REGISTERED — the half of LEARNINGS 92 I got wrong last iteration.** The
+  same measurement over **r1–30**, where `reserve = 0` and the soldier threshold is just **250**. If bob is
+  blocked at a similar rate *there*, then early chip scarcity is the game's economy and not my constant,
+  and the reserve is exonerated. **If the control and the primary disagree, THE CONTROL WINS** and the
+  direction closes regardless of the primary's value.
+- **Comparative**: alice's chip balance over the same rounds on the 75 tournament replays. I cannot know
+  alice's reserve, but unit money costs are engine constants (250/300/400), so "is alice also sitting below
+  400 chips early?" is comparable and answers whether early chip poverty is universal.
+- **Registered as NOT an accept test.** It measures rates over existing games and can accept nothing.
+- **Prediction, registered with its mechanism**: bob is blocked **>50%** of r31–200 rounds and the block
+  rate is higher in losses; the r1–30 control shows a **much lower** block rate, because the threshold there
+  is 250 rather than 1,450. **My last six predictions have been wrong on the structural call and the most
+  recent was wrong on magnitude by 3x, so this is registered as a guess with an explicitly poor record** —
+  and per the coordinator's note, a two-point series is not a pattern, so I am not claiming one.
+
+Zero gauntlet games; this reads census data already on disk. `src/bob/` untouched. **`bob_iter20` remains
+the bot.**
