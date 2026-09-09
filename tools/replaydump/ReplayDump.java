@@ -149,7 +149,16 @@ public class ReplayDump {
                         + " winType=" + WinType.name(mf.winType()) + " rounds=" + mf.totalRounds());
                 for (int k = 0; k < mf.timelineMarkersLength(); k++) {
                     TimelineMarker tm = mf.timelineMarkers(k);
-                    System.out.println("  marker r" + tm.round() + " team" + tm.team() + " " + tm.label());
+                    // TimelineMarker.team() is 0-BASED while everything else here is
+                    // 1-based (SpawnAction.team() must be, since paintCode() does
+                    // (team-1)*2 and the coverage census validates against the
+                    // engine). Printing the raw byte under a "team" prefix therefore
+                    // attributed every marker to the OPPOSING side. Caught by a
+                    // lineage that ran the discriminating case: its markers flipped
+                    // team1 -> team0 when it moved from T2 to T1 between runs. A
+                    // rendering off-by-one, not a mis-attribution in the data -- no
+                    // verdict moved, but every marker anyone read was mislabelled.
+                    System.out.println("  marker r" + tm.round() + " team" + (tm.team() + 1) + " " + tm.label());
                 }
             }
         }
