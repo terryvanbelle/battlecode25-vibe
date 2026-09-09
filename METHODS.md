@@ -370,6 +370,33 @@ because it ships in the same batch as the arms you were already building.
     UNTESTED, not rejected**; miscounting it as a null is how a direction gets
     closed on evidence that never existed.
 
+**35. When a mechanism does not fire, build a FUNNEL of its preconditions
+before you re-dose anything.** (alice) Her lever fired on ~1% of opportunities
+and her registered next step was to re-dose the threshold she blamed. Instead she
+decomposed firing into a chain of conditional shares — action free after the
+attempt 45.4%, then spare resource above the threshold 60.0%, then a recipient in
+range **20.0%**, then that recipient actually needing it 21.4% — which located
+the collapse at adjacency, not at the dose she was about to change. The re-dose
+would have spent a build and six games moving a mechanism from dead to slightly
+less dead.
+
+    Three properties make it a rule rather than a story. It **validates itself**:
+    the funnel predicted 1.2% firing against ~1% observed in an ablation, so the
+    instrument is checkable against something already measured. The
+    **counterfactual bounds the knob**: removing the threshold entirely lifts
+    firing only 1.2% → 1.9%, which settles that the knob cannot matter, without
+    building anything. And it separates **cannot act** from **did not help** —
+    different closures with different re-open conditions, and only the first can
+    be stated as "the dose cannot make it act, and what would make it act removes
+    the reason it was safe".
+
+    The same run carries the harder half of §22: she had *published* a cause for
+    the non-firing, then did the arithmetic on her own explanation — a starting
+    stock of 100, ~0.96 spent per turn, a ~64-turn life, therefore above the
+    threshold for ~80% of its life — and retracted it before acting on it. That
+    retraction is what exposed the real gap: she had priced the mechanism's
+    supply and never measured its delivery.
+
 **21. Simulate the null before you trust a bar — especially for any statistic
 built from a max, a best-of, or an argmax.** (alice) Her pre-registered bar of
 100 sat *below* what best-of-8 noisy sectors produce with no structure at all:
