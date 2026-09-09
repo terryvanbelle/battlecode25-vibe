@@ -16739,7 +16739,7 @@ a direction. Never delete a row; supersede in place.
 | C3 | **SRP / resource patterns** | mark-and-complete, `SRP_MIN_CHIPS` doses 1500 and 300 | delivery runs **5-8x short** of what the marks demand in this architecture (iters 48-51) | this bot acquires a reason for soldiers to **dwell** — a territory-holding or defensive-station behaviour adopted for its own sake, whose locality SRP can free-ride on |
 | C4 | **tower paint floors for expensive units** | `PAINT_FLOOR` dose ladder | killed by dose-response at **both ends** (iter ~44 region) | a new unit type or paint source changes the accrual rate |
 | C5 | **lower `CHIP_RESERVE`** | reserve lowered/disarmed early | rejected **with a trace**: the 1,980 starting chips are exactly the first tower completion; spending them on ~7 early soldiers left the bot a tower behind by round 300 (iter 4) | the change is confined to the LATE game and leaves the opening reserve armed |
-| C1b | **soldier RATE LIMIT (not threshold)** — iteration 58 | one exempt soldier per tower per SOLDIER_GAP rounds | **re-opened C1 legitimately**: C1's written condition was "makes the soldier gate reachable without moving the treasury's limit cycle", and a rate limit does exactly that. First time a ledger re-open condition has fired. Outcome recorded at iteration 58 | — |
+| C1b | **soldier RATE LIMIT / standing soldier population** — iteration 58 | exempt soldier per tower per SOLDIER_GAP rounds; doses 1000/500/250 | screen 29 / 26 / **32**/50 (best = +14, UNRESOLVED); **full 75-map CENSUS of the best dose: 82/150, margin +14, +1.08 sd — REJECT** on a gate registered before launch. Closed by my own pre-registered clause: "if this rejects, the soldier direction closes as a class" | **only** as a version CONDITIONAL on ruin density — see the re-open condition below, which is specific and checkable |
 | C6 | **free the pin-escape's duty cycle** | proposed: fix the pin detector's band from [1200,1450) to [1200,1600) so it fires | **killed on magnitude before any games** — releases 1,200 chips ONCE = 3 splashers = ~15 tiles against a 481-tile gap = **3.1%** (iter 56) | carol's income per round rises enough that a one-off 1,200 chips is material, i.e. this is downstream of an income fix, never upstream of one |
 | C7 | **ruin-dense maps merely amplify skill gaps** | pair decomposition over three tournaments | refuted **in the wrong direction**: the alice-bob pair (the one without me) has rho **negative** every time (−0.105, −0.186, −0.186) while both pairs containing me are positive (iter 55) | — (this is a refuted premise, not a shelved direction) |
 
@@ -17406,3 +17406,88 @@ tower born at R also gets a rate-rule firing at R+1000, so both paths are live. 
 mainly in **timing** — the compounding version fires up to `SOLDIER_GAP` rounds earlier — rather than
 in the number of exemptions over a long game. That is exactly why the arms are so hard to separate,
 and it is a better statement of the problem than the experiment I had queued.
+
+## Iteration 58 CENSUS RESULT — REJECT on the registered gate. And the aggregate is hiding a trade.
+
+Run `20260909-185819`, `carol_i58_250` vs `carol_iter44`, **full 75-map corpus, both sides, 150
+games**. Gate registered at `2561d28` before launch.
+
+| | |
+|---|---|
+| candidate | **82/150** |
+| margin | **+14** (+1.08 sd against sd 12.96) |
+| swept W / swept L / split | **17 / 10 / 48** |
+| identity `margin == 2*(SW−SL)` | **True** (14 = 2·(17−10)) |
+| gate | `>= +26` ACCEPT, `+18..+25` REPLICATE, `<= +17` **REJECT** |
+
+**REJECTED. `src/carol` stays at `carol_iter44`.**
+
+### The advance prediction about regression to the mean was correct
+
+I wrote before launch: *"+14 on 50 games is +42 on 150 if uniform… a census margin well below +42
+is regression to the mean and not a contradiction."* The sampled arm scored **+14 per 50 games**;
+the census scored **+14 per 150 games** — the same integer on a denominator three times larger, so
+the per-game effect is **one third** of the sampled estimate. Writing that down in advance is what
+stops a shrunken margin being argued away, and it is why I am not arguing it away.
+
+### The pre-registered secondary REPLICATES, and it inverts the meaning of the reject
+
+| ruin bucket | candidate | margin | |
+|---|---|---|---|
+| **<= 17 ruins** | 35/76 = **46.1%** | **−6** | −0.69 sd |
+| **>= 18 ruins** | 47/74 = **63.5%** | **+20** | **+2.32 sd** |
+
+On the 25-map screen this was +2 / +12; on the full corpus it is **−6 / +20**. The prediction was
+registered *before both runs*, with its three prior failures named, and it has now passed twice and
+strengthened. **The overall +14 is the sum of two opposing effects.**
+
+**This is my own LEARNINGS entry firing: "an aggregate gate cannot see a trade."** It is also
+iteration 47's shape recurring — that census netted exactly 0 while winning races 13-5 and losing
+grinds 4-12. The difference is that iteration 47's split was post-hoc and partly definitional;
+**this one is pre-registered on a map property fixed before the game starts**, which is the form
+that cannot be fitted after the fact.
+
+So the honest statement is not "the mechanism does not work". It is: **the mechanism pays where
+carol actually loses (+20, 2.3 sd, on ruin-dense maps) and costs her where she already wins (−6),
+and the net does not clear a gate calibrated to reject.**
+
+### The soldier direction CLOSES, as I pre-registered
+
+My iteration-58 pre-registration said, in advance: *"If this rejects, the soldier direction closes
+as a class and I leave the area entirely. I am registering that now so the next session does not
+relitigate it."* It rejected. **The direction is closed.** I am not re-opening it in the same breath
+on the strength of a subgroup, because that is exactly the "flagged caveat that never gets
+discharged" failure — and MaxConsecutiveRejects independently says leave.
+
+What I am doing instead is writing the re-open condition precisely, so a future session can act on
+the trade without relitigating the closure.
+
+### Attribution: never resolved, and that is now permanent for this arm
+
+`carol_i58_rl250` was built and **never run**, because it was killed on power (1.32 sd on a
+50-game screen; 2.29 sd only at 300 games and only under an assumption the census has now falsified).
+The two rules differ mainly in *timing*, so no affordable experiment separates them. The +14 is not
+attributable to the standing-population story, and never will be from this design.
+
+### C1b's re-open condition, written precisely so it is a decision and not a rediscovery
+
+The census secondary was **pre-registered before both runs** and passed twice, strengthening from
++2/+12 to **−6/+20 (+2.32 sd)**. So C1b may be re-opened by, and ONLY by, a candidate that makes
+the soldier mechanism **conditional on ruin density**, such that it cannot fire in the regime where
+it measurably costs games.
+
+Three things that version must satisfy, all checkable before it plays a game:
+
+1. **The condition must be observable in-bot.** Ruin count is not directly readable; a robot senses
+   ruins in vision (r²=20) only. So the candidate must first establish a *reachable* proxy —
+   accumulated distinct ruins seen, map area, or the iteration-25 style local census — and
+   demonstrate it correlates with the corpus ruin count. **If no in-bot proxy tracks the property,
+   the direction stays closed**, because a condition the bot cannot evaluate is not a mechanism.
+2. **It must beat the unconditional version, not the baseline.** The unconditional version is
+   already measured at +14/150. A conditional one that scores +14 has bought nothing and is a
+   more complex way to reach the same place.
+3. **The gate is the census, not a 25-map screen.** The screen over-estimated this effect threefold
+   and cost a 150-game census to correct. Any successor goes straight to the corpus.
+
+**What is closed regardless**: "more standing soldiers is good on average". That is answered, at
++1.08 sd over the population, and no re-opening may assume otherwise.
