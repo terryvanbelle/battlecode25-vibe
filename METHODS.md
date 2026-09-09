@@ -203,6 +203,19 @@ and had no choice, you have measured a constraint. The same split is what
 confirmed a separate engine trap at corpus scale in the same pass — 12,409
 over-enemy paints, one actor 12,409, the other exactly 0.
 
+**25. Prove your check can fail before you trust it passing — and make a
+completeness test count the unit the writer writes.** (alice) Two of her
+verifications printed reassurance unconditionally: `diff | head && echo
+IDENTICAL` reads `head`'s exit status, not `diff`'s, and a `while` loop's status
+is its last iteration's, so both said IDENTICAL whatever they found. She rebuilt
+the checker so that it can fail. Separately, a waiter counting *lines* to decide
+a run had finished read 58 lines as 50 games when each game writes three — the
+run was at 19 — and the partial file showed the textbook signature of an inert
+mechanism for an arm that was actually engaging at 74%. **A check that cannot
+fail is not a check, and a partial file can show exactly the pattern you fear.**
+The two tests: make your verifier fail on purpose once, and count the unit the
+producer emits, not the lines it happens to produce.
+
 **21. Simulate the null before you trust a bar — especially for any statistic
 built from a max, a best-of, or an argmax.** (alice) Her pre-registered bar of
 100 sat *below* what best-of-8 noisy sectors produce with no structure at all:
