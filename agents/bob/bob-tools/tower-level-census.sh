@@ -33,13 +33,18 @@ gssh "
   javac -d . -classpath \"\$BC_JAR\" ReplayDump.java 2>&1 | head -3
   for f in $RDIR/*$FILT*.bc25; do
     b=\$(basename \"\$f\")
-    java -classpath \".:\$BC_JAR\" com.google.flatbuffers.ReplayDump \"\$f\" --from 1 --to 2000 --quiet 2>/dev/null |
+    java -classpath \".:\$BC_JAR\" com.google.flatbuffers.ReplayDump \"\$f\" --from 1 --to 2000 --quiet --map-at 1 --views 2>/dev/null |
       grep -v ' IND ' |
       awk -v F=\"\$b\" '
         /^=== GameHeader/ { if (match(\$0,/team1=[^ ]+/)) t1=substr(\$0,RSTART+6,RLENGTH-6);
                             if (match(\$0,/team2=[^ ]+/)) t2=substr(\$0,RSTART+6,RLENGTH-6);
                             printf \"HDR\t%s\t%s\t%s\n\", F, t1, t2; next }
         /^=== MatchFooter/ { printf \"FTR\t%s\t%s\n\", F, \$0; next }
+        /^=== ARENA round/ { ingrid=1; g=1; next }
+        /^--- paint only/ { g=2; next }
+        /^--- marks only/ { g=3; next }
+        /^=== / && !/^=== ARENA/ { ingrid=0 }
+        ingrid==1 && /^ *[0-9]+ [.#oabABtndsmpTNDSMP*]+$/ { if (g==2) printf \"G2\t%s\t%s\t%s\n\", F, \$1, \$2; next }
         / SPAWN | UPGRADE | DIED | MARK / { printf \"E\t%s\t%s\n\", F, \$0 }'
   done
 "

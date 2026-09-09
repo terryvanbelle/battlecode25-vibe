@@ -17757,3 +17757,49 @@ The split earns its keep immediately: it says my instincts locate the right *are
 nominate better areas. That is what iteration 54's sweep did, and it is why this one landed.
 
 `src/bob/` untouched. **`bob_iter20` remains the bot.**
+
+---
+
+## Iteration 56 — PROBE PRE-REGISTERED: is bob ABANDONING ruins, and does it explain the tower gap?
+
+**Taking iteration 55's nomination, and probing SEVERAL quantities inside it rather than one** — which is
+the strategy my own prediction tally implies (right area reliably, right quantity rarely: 1 right,
+2 nominally-right, 6 plainly wrong).
+
+**Method.** Ruin positions come from the **round-1 paint-only grid** (`--map-at 1 --views`), where ruins
+render as `o` and units are hidden — verified on Barcode (18 ruins). A mark within **Chebyshev ≤2 of a
+ruin** is a **tower** mark; a mark near no ruin is an **SRP** mark, because `isValidPatternCenter` requires
+all 25 tiles paintable and ruins are not. That is the split iteration 55 specified and could not perform.
+
+**The cost model, registered BEFORE the numbers, because it decides what the gate may be set on:**
+
+- **It is not paint.** 392 marks a game at 1 paint each is 392 paint against a 65,022 budget.
+- **It is not paint actions.** A soldier working an uncompletable ruin *still paints the paintable tiles of
+  that 5x5*, and those still count as coverage. The painting is not lost.
+- **It is TOWER COUNT.** Bob builds 7.85 towers/game to alice's 12.52, and iteration 54 put bob 9–18%
+  behind on *standing* towers exactly in r150–400. **The only currency this mechanism can be priced in is
+  towers**, so the gate is set on towers and on nothing else.
+
+**PRE-REGISTERED:**
+
+- **Q1 — the confound split**: share of bob's 392 marks/game that are ruin-adjacent vs SRP. Descriptive;
+  it determines whether Q2 is even meaningful.
+- **Q2 — PRIMARY: ruins marked by bob but never completed into a bob tower, per game, versus alice.**
+  - **bob ≥ 3/game MORE than alice** ⇒ abandonment accounts for most of the 4.67-tower gap ⇒ build a
+    release/patience rule for `chooseRuin()`.
+  - **bob ≤ 1/game more** ⇒ **CLOSED for the cost of one probe.**
+  - between ⇒ size against the 4.67-tower gap before building.
+- **Q3 — persistence**: rounds from first to last mark on an abandoned ruin. Diagnostic: a long tail is
+  iteration 33's "holds its soldier forever"; a short one means bob tries and moves on.
+- **PRECEDENCE, registered**: **if bob abandons FEWER or equal ruins than alice, the direction closes
+  regardless of Q1 and Q3.** Four closures running have turned on the comparative; it wins here too.
+- **Corpus: tournament games only** (LEARNINGS 93) — this is a cross-lineage comparative.
+- **Q2 is an ACHIEVABLE quantity, not a ceiling** (LEARNINGS 92): it counts ruins bob actually started and
+  actually failed to finish, not what bob would have if ruins were free.
+- **Registered as NOT an accept test.**
+- **Prediction**: Q1 shows **most** of bob's unattributed marks are SRP, not tower — i.e. the 51.8% largely
+  dissolves — and Q2 comes in **below the 3/game threshold**, closing this. I am predicting my own
+  nomination fails. Tally: 1 right / 2 nominally right / 6 plainly wrong, and this is again a
+  *which-quantity* call.
+
+`src/bob/` untouched. **`bob_iter20` remains the bot.**
