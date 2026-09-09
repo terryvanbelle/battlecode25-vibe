@@ -15942,3 +15942,69 @@ tower holds 500. If that delays the first soldiers even slightly, this lineage's
 losing the race to the 70% paint condition — gets worse in exactly the games it is already losing.
 **A plausible outcome is that the mechanism fixes the spiral and loses the screen anyway**, and if
 that happens the retention number will say so and I will report both rather than only the verdict.
+
+### Zero arm passes; the manipulation check FAILS the pre-registered dose band at 88.8%
+
+- **Zero-arm control**: `carol_i54_0` vs `carol_iter44` on DefaultMedium — **win, round 830**,
+  reproducing `carol` vs `carol_iter44` exactly. Counters confirm the scope: `pFB = 0`, i.e. the
+  new clause never fires in the control, which is what "exact zero arm" has to mean here.
+- **`carol_i54_a`**: lost at round 721.
+
+The dose, which is the number the pre-registration said to look at:
+
+| arm | build rolls chips allowed | refused by the floor | **refused by the NEW scope (the dose)** |
+|---|---|---|---|
+| `carol_i54_0` | 2,400 | 16 (0.7%) | **0 (0.0%)** |
+| `carol_i54_a` | 20,024 | 18,815 (94.0%) | **17,789 (88.8%)** |
+
+I registered the acceptable band as "materially above 0 and below ~50%", on the reasoning that
+above half the tower is banking more often than it builds and is a different bot from the one the
+hypothesis describes. **88.8% is not a floor, it is a near-total build freeze**, and the arm's own
+peak coverage collapsed accordingly: 697 -> 237 per-mille.
+
+**Why 200 was the wrong number, mechanically.** A soldier costs 200 paint, so `PAINT_FLOOR = 200`
+demands **400** in the tower. The trace says a tower holds ~310 each in the healthy phase and ~68
+each in the spiral. **400 is above both**, so the widened floor never discriminated between the two
+regimes it was supposed to tell apart — it refused nearly everything, in every regime.
+
+### The hypothesis is not dead, and the registered instrument is why I can say that
+
+The quantity the hypothesis names moved in the intended direction, hard. Comparing losing seats
+(retention is only meaningful in a losing seat — the winner's coverage is still rising when the game
+ends, which is why `i54_0` reads a vacuous 100%):
+
+| losing seat | peak | final | **retention** |
+|---|---|---|---|
+| control mirror's losing side | 387 | 165 | **43%** |
+| `carol_i54_a` | 237 | 188 | **79.3%** |
+
+**The spiral is real and this mechanism stops it.** It stops it by preventing the bot from building
+at all, which is not a trade worth making — but "the intervention works and the dose is 4x too
+strong" is a completely different finding from "the idea is wrong", and only the pre-registered dose
+band separates them.
+
+**This is the iteration 52 lesson paying for itself.** There, an event-count manipulation check
+passed, and the overshoot was caught only *after* a 50-game screen had been spent reproducing an old
+result at a new setting. Here the check was written as a **share** at design time, and it caught a
+4x-larger overshoot **before** the screen. Same error, same lineage, one iteration apart; the
+difference is entirely in how the check was specified. Cost of catching it early: **one game.**
+
+**A flaw in my own probe design, recorded because it nearly cost me the reading.** I registered
+retention as the instrument without registering *which seat to measure it in*. The control won its
+probe game, so its retention is 100% and says nothing; I had to go back to iteration 53's mirror for
+a comparable losing seat. **An instrument needs its measurement conditions registered, not just its
+formula.**
+
+### Dose calibration, on the calibration map only
+
+`PAINT_FLOOR` stays at 200 for the cheap units (iteration 36's finding is untouched). A separate
+`BIG_FLOOR` governs soldiers and splashers, chosen to sit *between* the two observed tower-paint
+levels (~310 healthy, ~68 spiral) so that it can actually tell them apart:
+
+- `carol_i54_c` — `BIG_FLOOR = 25`
+- `carol_i54_b` — `BIG_FLOOR = 50`
+- `carol_i54_d` — `BIG_FLOOR = 100`
+
+Calibrated on DefaultMedium and screened on a fresh 25-map sample, keeping the tuning surface and
+the evaluation surface disjoint. The accept gate is unchanged from the pre-registration:
+**ACCEPT >= 34/50, REJECT <= 30/50.**
