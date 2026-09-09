@@ -52,6 +52,7 @@ Companion files, and what each is for:
 - **16.** The margin and the swept-map count are the **same number** (`wins − N = swept − swept-against`, exactly). Citing both is citing one number twice; what the sweep adds is **D**, the split count. → #25 (supersedes the "nearly implied" form in #15)
 - **17.** Head-to-head margins **do not chain**. → #21
 - **18.** Two numbers cannot estimate a standard deviation — 75 paired maps can. → #48
+- **18b. NEW.** **Match the corpus to the CONTRAST, not just the quantity.** I registered an outcome split ("higher in games bob loses") on a **mirror** gauntlet, whose outcomes are 50/50 by construction — it can measure a level but never an outcome-conditioned difference. Redone on tournament games the answer inverted. → #93
 - **19.** An accept gate against your predecessor is **blind to interactions** with what the predecessor already carries. → #15
 - **20.** A 2-game margin will buy you a mechanism story; replication costs nothing and refutes it. → #32
 - **21.** Distinguish a **plateau** from a **peak** before claiming an optimum. → #33
@@ -103,6 +104,7 @@ Companion files, and what each is for:
 - **57.** Closing the **fix** is not closing the **defect**. → #29
 - **58.** A heuristic that *nominates* a candidate is not evidence about it. → #16
 - **59.** My entire opponent pool cannot produce the games I lose. → #55
+- **59b. NEW — three closures in a row rested on it.** On tournament games bob is *ahead* of alice on every quantity it was about to optimise: territory discipline, paint-tower upgrade rate, and chip liquidity (alice runs on **41% less money** and wins 60–40). When a comparative shows you beating the bot that beats you on your candidate metric, that is the closure. → #93, `CLOSED.md` #4/#26/#28
 
 ## E. Engine ground truth (BC25 3.1.0) — verified, not inferred
 

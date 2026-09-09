@@ -17450,3 +17450,74 @@ or to fail to.
 
 Zero gauntlet games; this reads census data already on disk. `src/bob/` untouched. **`bob_iter20` remains
 the bot.**
+
+## Iteration 53 — **CLOSED. `CLOSED.md` #4's re-open condition is NOT met — bob holds MORE idle chips in the games it loses.**
+
+Zero gauntlet games. Two corpora: the 50 `bob_e0` mirror games of run `20260909-195732`, and — because the
+first was uninformative by construction, see below — the **75 `alice-vs-bob` tournament replays**.
+**Isolation control**: `grep -c ' IND '` returns **0**.
+
+### The reserve does bind, mechanically, and the r1–30 control proves it is the reserve
+
+```
+bob_e0, share of rounds below the soldier spawn threshold
+  r1-30    (reserve 0,    threshold  250):   0.8% blocked
+  r31-200  (reserve 1200, threshold 1450):  56.0% blocked
+```
+
+Bob is essentially **never** chip-blocked while the reserve is off and blocked on **more than half** of all
+rounds once it switches on. The registered control was built to exonerate the reserve and instead convicts
+it: this is my constant, not the game's economy.
+
+### A design flaw in my own probe, caught before it was read as an answer
+
+The registered primary requires the block rate to be **higher in games bob loses**. In the mirror gauntlet
+it read **53.6% in losses vs 58.3% in wins** — and that split **cannot** mean anything, because both teams
+in a mirror run identical policy, so any outcome difference is map and side luck rather than a policy
+effect. **I registered an outcome split on a corpus incapable of producing one.** The discriminating
+corpus is games against an opponent bob did not produce.
+
+### The discriminating case, on tournament games — and it inverts the hypothesis
+
+```
+alice-vs-bob, rounds 31-200          rounds   <1450    <400   meanChips
+  bob   ALL                           12726    54.7%    7.7%      1952
+  bob   games bob LOSES                7456    44.8%    6.0%      2276
+  bob   games bob WINS                 5270    68.8%   10.2%      1494
+  alice ALL                           12726    83.2%   11.8%      1157
+```
+
+> **Bob is blocked LESS in the games it loses (44.8%) than in the games it wins (68.8%), and holds 52%
+> MORE idle chips in losses (2,276 vs 1,494).**
+
+**Verdict against the registered gate**: the primary required *"≥40% blocked **AND** materially higher in
+losses than in wins."* The first clause passes (54.7%), the second **fails and fails in the wrong
+direction**. `CLOSED.md` #4's re-open condition — *"evidence that bob's own spend binds in a game it
+loses"* — is **not met**. **#4 stays closed**, and the data actively reaffirms its original reasoning: in
+the games bob loses, chips pile up because bob has nowhere to spend them, which is what an
+opponent-inflicted deficit looks like.
+
+**And relaxing the reserve would hand bob more of a resource it demonstrably fails to use in exactly the
+games it loses.** That is the clincher, and it is stronger than the gate that produced it.
+
+**The comparative closes it independently, for the third iteration running.** Alice sits below bob's own
+soldier threshold **83.2%** of the time on **1,157** mean chips — **41% less money than bob** — and beats
+bob 60–40. Iterations 51, 52 and 53 have now each found bob *ahead* of alice on the quantity I was about
+to optimise: territory discipline, upgrade rate, and now chip liquidity.
+
+### Gate specification, and an honest note about luck
+
+My bands were `≥40% AND higher-in-losses ⇒ re-open`, `≤15% ⇒ close`, `between ⇒ size`. **54.7% is in the
+first band but fails its AND, and is not in either other band** — the observed case fell outside my own
+branches, which is LEARNINGS 80 for the second time. It did not cost me anything here only because the
+outcome inversion and the comparative both point the same way. **That is luck, not design**, and I am
+recording it as such rather than as a gate that worked.
+
+### Prediction, scored
+
+I predicted >50% blocked in r31–200 (**right**: 54.7%), a much lower rate in r1–30 (**right**: 0.8%), and
+that the block rate would be **higher in losses** (**wrong**, and inverted). Seven predictions: the
+magnitude calls keep landing and the structural call keeps missing — which, with the two-point exception
+noted last iteration, is a real series now rather than a pattern I named too early.
+
+`src/bob/` untouched. **`bob_iter20` remains the bot.**

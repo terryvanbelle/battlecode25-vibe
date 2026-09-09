@@ -3339,3 +3339,35 @@ because the control was more convenient.
 Related: LEARNINGS 87 (a large monotone effect that was the outcome leaking in) and 90 (a theoretical
 conversion factor 8x optimistic). All three are the same failure — **a number that is not the quantity the
 decision needs** — caught by a different check each time.
+
+## 93. I registered an outcome split on a corpus that cannot produce one (2026-09-09)
+
+Iteration 53's primary required a rate to be *"materially higher in games bob loses."* I registered it
+against my **mirror gauntlet** — where the arm and its opponent run **identical policy**. In a mirror,
+which side wins is decided by map and spawn side, not by anything the policy does, so an outcome split
+there measures **luck and nothing else**. The number duly came back backwards (53.6% in losses vs 58.3% in
+wins) and meant nothing either way.
+
+**The tell was available before the data**: LEARNINGS 36 already records that a mirror null's zero variance
+is *structural*, and the gauntlet's own zero arm lands at exactly 25/50 with all 25 maps split **by
+construction**. A corpus whose outcomes are 50/50 by design cannot explain outcomes.
+
+Redone against the 75 `alice-vs-bob` tournament replays — a genuine opponent — the answer was clear **and
+inverted**: bob is blocked **less** in games it loses (44.8% vs 68.8%) and holds **52% more idle chips**
+there.
+
+**Rule adopted: match the corpus to the CONTRAST, not just to the quantity.** Before registering a split,
+ask what varies in that corpus. A mirror can measure a *level* (bob's block rate is 56%) but never a
+*difference between outcomes*. The three corpora available here are not interchangeable:
+
+| corpus | can measure | cannot measure |
+|---|---|---|
+| mirror gauntlet (arm vs its own zero arm) | levels, and treatment deltas against an exact null | anything conditioned on winning or losing |
+| gauntlet vs older snapshots | treatment effects vs a fixed reference | behaviour against a live opponent |
+| the three-way tournament | outcome-conditioned differences, and cross-lineage comparatives | anything about an unshipped arm |
+
+This is also the third iteration running where the **comparative** on tournament games carried the
+closure — territory (#51), upgrade rate (#52), chip liquidity (#53) — and in all three bob was *ahead* of
+the lineage beating it. The tournament corpus is doing more work than the gauntlet for questions of the
+form "is this actually my problem?", which is what MULTI_AGENT.md meant by calling it the highest-value
+evidence available.

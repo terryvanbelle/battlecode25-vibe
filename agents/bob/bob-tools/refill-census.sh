@@ -39,7 +39,10 @@ REPO="$(cd "$HERE/../../.." && pwd)"
 source "$REPO/tools/lib.sh"
 RUN="$1"; STRIDE="${2:-10}"; FILT="${3:-}"
 WANT_VER="$(cat "$REPO/arena/engine_version.txt")"
-RDIR="\$HOME/battlecode25-vibe/agents/bob/gauntlet/$RUN"
+case "$RUN" in
+  /*|~*|\$*) RDIR="$RUN" ;;
+  *)          RDIR="\$HOME/battlecode25-vibe/agents/bob/gauntlet/$RUN" ;;
+esac
 ensure_vm
 W="bobrefill-$$"
 gssh "mkdir -p ~/$W" >/dev/null
