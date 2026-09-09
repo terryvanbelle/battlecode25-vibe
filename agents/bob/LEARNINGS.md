@@ -2635,3 +2635,45 @@ spill, no chip refund, no effect on the tile.
 Recording the negative because the cost of checking was two minutes and the cost of *assuming* it
 refunds — and building a starvation-recycling policy on that assumption — would have been an
 iteration. **Closed as an economic mechanism.**
+
+## 68. Bob's entire deficit is SMALL MAPS, and the tournament said so all along (2026-09-09)
+
+Joining `tournaments/20260909-0100/results.csv` (the sanctioned cross-lineage channel) against the
+map geometry I already had in `bob-tools/srp-sites.csv`, split by map-area tercile:
+
+```
+                bob vs carol                    bob vs alice
+  area      games  bob win%   mean rounds     games  bob win%
+  small       50     12.0%        563           50     42.0%
+  medium      50     52.0%       1056           50     50.0%
+  large       50     64.0%       1097           50     58.0%
+```
+
+Bob wins **3 of 34** small-map games against carol, and loses **14 of 17 small maps outright** (0/2 on
+CastleDefense, DefaultSmall, Paintball, Justice, Filter, Jail, FourCorners, Brat, Fossil, SandyBeach,
+TargetPractice, catface, rain, roads).
+
+**Reconciled and stability-checked before I believed it**, per LEARNING 62. The pair totals reproduce
+the report exactly (64-86, bob swept 23, carol swept 34, 18 split). And the *previous* tournament
+`20260908-1300`, compared rather than pooled, is monotone in the same direction: 22% / 52% / 66%.
+
+**Bob is not a 46% bot. Bob is a ~60% bot on two thirds of the corpus and a ~15% bot on the other
+third**, and the average is what shows up in the standings. That is a completely different problem
+from "bob is slightly behind", and it had been sitting in a committed results file for days.
+
+**Why I did not see it**: every instrument I built aggregates over a uniform map sample, because
+that is the right sampling frame for an accept gate. A uniform average is exactly the wrong lens for
+a bimodal weakness — it dilutes a 50-point hole into a 5-point deficit. The tournament files carried
+the map name on every row the whole time; I had simply never conditioned on a map property.
+
+**The methodological consequence, and the trap inside it.** The tempting move is to gate iterations
+on small maps, and that is wrong: the tournament plays all 75 maps uniformly, so uniform IS the
+target distribution and narrowing the gate is the hand-picked-map-list overfitting surface AGENT.md
+forbids. **Keep the gate uniform; add a small-map stratum as a registered SECONDARY.** The gate
+answers "is the bot better"; the stratum answers "did it move the thing I aimed at".
+
+**And it unblocks iteration 34.** That iteration removed the round-60 splasher gate unconditionally
+for **-7, with the harm localised in games over 1,000 rounds** — which is now identifiable as bob's
+*winning* regime, the large maps. The conditional form has been BLOCKED for want of a conditioning
+variable. Map area is that variable, it is known at round 1 from `getMapWidth`/`getMapHeight` (G
+already caches both), and it was derived from cross-lineage evidence rather than invented.
