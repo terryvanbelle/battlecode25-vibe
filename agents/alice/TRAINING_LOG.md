@@ -19159,3 +19159,54 @@ I also had to discard my own first two verification attempts before trusting thi
 filter that over-matched field declarations and reported 7 phantom differences, and a method-parser
 whose regex found 5 methods in a class that has many more. **A verification I cannot explain line by
 line is not a verification**, and both of those would have been quoted as reassurance.
+
+## Iteration 54 — the PRE-GATE FAILS on both registered clauses. The census is NOT run
+
+6 games, `alice_i54` vs its byte-identical control, at r300:
+
+| quantity | ARM | CTL | diff |
+|---|---|---|---|
+| **PAINT ACTIONS** | **476.2** | **600.5** | **−124.3 (−21%)** |
+| transfers (`xfer`) | 14.3 | 18.8 | −4.5 |
+| towers | 6.8 | 8.0 | −1.2 |
+| coverage | 340.5 | 402.3 | −61.8 |
+| paint actions per soldier | 40.2 | 48.7 | −8.5 |
+
+**Registered pre-gate: (1) each lever fired, (2) paint actions RISE. Both fail.** Paint actions did
+not rise — they **fell 21%** — and transfers went **down**, not up. By the rule I wrote before
+building, **the census is not run. That is 150 games not spent**, which is the entire point of
+putting a cheap gate in front of an expensive one.
+
+**A discipline note on how I read this.** The arm lost 5 of the 6 games and `vm-match` prints the
+winner, so I saw it. **The win column is not the pre-gate and I did not treat it as one** — my own
+log says six games "is not evidence of strength, it is evidence the branch fires", and carol's
+stage-0 tool refuses to print the winner for exactly this reason. The gate was production, I measured
+production, and production is what failed.
+
+### Lever B is legal and did not fire — the sign convention is NOT the fault
+
+I suspected a sign bug, since `canTransferPaint` returning false would explain a silent no-op.
+Checked instead of assuming: `tryRefill` withdraws with `rc.transferPaint(bestLoc, -bestAmt)`, so
+**negative is withdraw and positive is give** — my lever passes a positive amount, which is correct.
+The route is legal and the call is right; the mechanism simply is not reaching its condition.
+
+The leading candidate is **`MOP_KEEP = 50` dosing the lever out of existence**: a mopper's tank is
+100 and iteration 49 measured its lifetime upkeep at **62**, so it spends much of its life *below*
+50 and `spare = paint − 50` is non-positive whenever it does. I derived that threshold from the
+engine's cooldown band and never checked it against the mopper's measured paint *trajectory* — an
+engine-derived constant is still a dose, and a dose still has to be checked against the distribution
+it will meet.
+
+### Lever A is the likely cause of the −21%, and I talked myself out of the reason while designing it
+
+While building I wrote down the objection: **a heading biased toward ally paint walks a soldier
+toward ground it cannot paint** — a soldier cannot gain coverage on a tile it already owns — and
+away from the neutral and enemy ground where work exists. I then dismissed it, on the grounds that
+discovery is not the binding limit (only 17% of unclaimed ruins are never touched). **That was the
+wrong rebuttal to the right objection**: the 17% figure is about *finding ruins*, and the objection
+was about *having something to paint*. Two different quantities, one argument — the same
+two-quantities-one-word error that produced the saturation conflation, made by me, today, while
+explicitly guarding against it.
+
+**The pre-gate caught it for six games.** That is the sixth pre-check this session to kill or demote
+its own direction, and the first to catch a flaw I had already identified and argued away.
