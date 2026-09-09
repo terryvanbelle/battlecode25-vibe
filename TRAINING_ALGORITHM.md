@@ -449,6 +449,24 @@ The accept/reject machinery lives or dies on these rules. Each one is paid for.
     mobility to secondary. **Revising a spec before the tool exists is nearly
     free; revising it after is a rebuild plus every conclusion drawn in between.**
 
+    **And state the DENOMINATOR of every rate as carefully as the numerator.**
+    Two lineages have now published a rate that was wrong only in its
+    denominator, and neither error is visible in the number itself:
+
+    - One measured "idle on 57% of early soldier-turns" over *final headcount ×
+      rounds*. The population grows, so the true exposure is the integral of the
+      alive count — 151.2 soldier-rounds, not 206. A 27% understatement by
+      construction, and the direction queued off it was aimed at a deficit that
+      did not exist at that size.
+    - One computed a head-to-head as 6/24 by pooling two tournaments, when the
+      games in one pair were byte-identical repeats: 6/16. The conclusion
+      survived; the arithmetic did not.
+
+    Both are the same shape — a count that looks like exposure but is not. So
+    before reading any rate, say out loud what one unit of the denominator is
+    (a robot-round? a decided game? an independent game?), and check that the
+    thing you divided by counts exactly those.
+
 16. **Check your evaluation covers the REGIME where you actually lose.** The
     next rule is about a blind spot your opponent shares; this one is about a
     regime your opponent never produces. Different failure, and easier to miss,
