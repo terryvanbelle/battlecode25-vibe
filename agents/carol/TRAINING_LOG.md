@@ -18667,3 +18667,64 @@ paint is not what blocks splasher production and my reading of the 26-of-357 spl
 
 **Gate:** unchanged — fresh 25-map screen at `BOT=carol_iter45`, `>= 31/50` to proceed, then the
 full-corpus census at **margin >= +26**.
+
+## Iteration 63 — KILLED AT STAGE 0 for 1 game. Its registered falsifier fired exactly.
+
+Mirage, vs `carol_iter44`. Whole-game totals.
+
+| | `carol_iter45` (zero) | `carol_i63` |
+|---|---|---|
+| soldiers built | 331 | **0** |
+| **splashers built** | **26** | **26** |
+| standing splashers | 0 | 1 |
+| towers | 9 | 2 |
+| coverage | 296 | **146** |
+| starved | 309 | 18 |
+| chips idle | $80,850 | $18,090 |
+
+> **Registered falsifier: "if soldiers are throttled and splasher builds do NOT rise, then low tower
+> paint is not what blocks splasher production and my reading of the 26-of-357 split is wrong."**
+>
+> Soldiers went **331 -> 0**. Splasher builds went **26 -> 26**. Unchanged to the unit.
+> **The falsifier fired precisely, and my reading was wrong.**
+
+Killed for one game. Two candidates killed at stage 0 for four games total, both by falsifiers I
+wrote before running them.
+
+### The invariant this exposes, which is the actual finding
+
+**Splasher production is pinned at 26 whether it competes with 331 soldiers or with none.** That
+is not a contention effect at all, and it kills the whole "soldiers are crowding out splashers"
+story that motivated both 62 and 63.
+
+The real constraint is **paint income arriving at a tower in 300-sized lumps**. A paint tower makes
+5–15/turn, so reaching a splasher's 300 takes 20–60 rounds *per tower*, and:
+
+- `carol_i63` has **2 towers** (no soldiers -> no new towers), so ~26 splashers is simply what two
+  towers can fund over 1,073 rounds.
+- `carol_iter45` has **9 towers** but soldier spam holds each at ~42 paint, so they also almost
+  never reach 300.
+
+**Two different mechanisms, the same ceiling, which is exactly why it looked like contention.**
+
+### And the chicken-and-egg that both candidates fell into
+
+Soldiers build towers; towers make paint; paint buys splashers. Throttle soldiers and you starve
+tower growth (63: 2 towers, coverage 146). Do not throttle them and they eat the paint (45: 9 dry
+towers, coverage 296). `carol_iter44` sits between by accident — its chip poverty allows exactly 3
+soldiers and 20 splashers, and it beats both with **one tower and 673 coverage**.
+
+**The quantity to control is therefore the standing soldier COUNT — a small positive number — not
+the paint a soldier is allowed to consume.** Both killed candidates controlled paint. Neither could
+express "about three soldiers", which is what the winning configuration actually is.
+
+Note the symmetry with iteration 58, which was **rejected** for trying to maintain a soldier
+*floor*. The evidence now points at a *ceiling*, on a build that has since changed architecture
+(D3 keeps soldiers alive, which is precisely why the count now runs away to 331). That is a
+different claim on a different bot, and iteration 58's rejection does not settle it — but it is
+close enough that the next session must **grep the closed-directions ledger and re-read 58 before
+building anything**, and must price the ceiling before coding it.
+
+**Not started here**: a soldier ceiling needs an in-bot observable for standing soldier count, and
+carol has no comms — a tower senses only r²=20. That is a real feasibility question and it must be
+answered *before* the mechanism is written, per the C1b lesson this log has now paid for twice.
