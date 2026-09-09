@@ -19118,3 +19118,44 @@ interact rather than add — and a bundle null could hide one helping and one ha
 pre-committing to close both on a null at exactly 0; the table above closes them only at **<= 0**,
 and I will run **one** ablation of the more suspect lever (mopper transfer, because it diverts a
 mopper's action where the heading rule diverts nothing) before writing the closure.
+
+## Iteration 54 built — the bundle, and its control verified byte-identical on every EXECUTED instruction
+
+`src/alice_i54` carries both surviving levers behind separate compile-time flags, so the ablation the
+decision table calls for is a one-character change rather than a rebuild.
+
+**Lever A — `HEAD_PICK`, the informed wander heading.** On a heading re-roll, score each of eight
+45-degree sectors of vision by the **engine's own end-of-turn terrain charge** (ally 0, neutral 1,
+enemy 2, from the javap-verified `processEndOfTurn`) and take the cheapest. **Run length is
+untouched** — `WANDER_RUN` stays 25 — so iterations 12/14 are not disturbed; only the direction
+becomes informed. The sector scan **starts at a random offset**, because a fixed compass order is
+exactly the fixed-absolute-order tie-break Phase 0 item 7 warns compounds into a per-side tempo edge
+on a symmetric map.
+
+**Lever B — `MOP_GIVE`, mopper-to-soldier paint.** Engine-verified as a mopper-only verb
+(*"Only moppers can give paint to allies!"*), never used by this lineage, since `tryRefill` filters
+to `isTowerType()` and therefore only ever *withdrew*. **Non-diverting by construction**, which is
+iteration 44's re-open standard stated as code rather than as an intention: it runs only when the
+mopper's action is **still ready after the mop attempt**, i.e. on turns with no mop available —
+iteration 49 measured that state at **37% of mopper turns**. Those turns produce nothing today.
+`MOP_KEEP = 50` is **engine-derived, not searched**: below 50% of its tank a robot's cooldowns scale
+by (100−2X)%, so keeping half keeps the mopper out of the penalty band.
+
+### The control, verified rather than asserted
+
+Compiled all three packages against the pinned jar and diffed `javap -c -p` with constant-pool
+indices and package names normalised:
+
+> **Lines REMOVED or CHANGED in the control versus `alice`: ZERO.** All 289 differing lines are
+> *additions* — three `static final` field declarations and the body of `pickHeading`, which is
+> unreachable at `HEAD_PICK = false`. **Every instruction the control actually executes is identical
+> to `alice`.**
+
+That is a stronger claim than "byte-identical" loosely used, and it is the honest one: the class is
+not identical, the **executed path** is. A dead method costs nothing at runtime, because the bytecode
+limit is per-turn execution and not class size.
+
+I also had to discard my own first two verification attempts before trusting this one — an `awk`
+filter that over-matched field declarations and reported 7 phantom differences, and a method-parser
+whose regex found 5 methods in a class that has many more. **A verification I cannot explain line by
+line is not a verification**, and both of those would have been quoted as reassurance.
