@@ -16088,3 +16088,20 @@ a later reader does not mistake it for the reason.
 50 games, fresh 25-map sample, 3 jobs. Recorded here so that if this session dies the run can be
 recovered with `../../tools/gauntlet-collect.sh 20260909-155554` rather than re-run.
 **Gate, unchanged since pre-registration: ACCEPT >= 34/50, REJECT <= 30/50, 31-33 inconclusive.**
+
+### Restating the two-stage structure BEFORE the screen returns, because it is easy to skip on a pass
+
+Process milestone `c725146` is binding: **sampled runs screen only; the accept decision is the full
+75-map census.** So the `>= 34/50` in my pre-registration is a **screen** gate, not an accept:
+
+- **Screen** (running now, `20260909-155554`): 50 games, fresh 25-map sample. `>= 34` qualifies
+  `carol_i54_b` for a census; `<= 30` rejects it outright and no census is spent.
+- **Accept** (only if the screen passes): full 75-map census vs `carol_iter44`, both sides, 150
+  games, gate **margin (W - L) >= +23** — 2.0 sd on a margin floor of sd 11.5, per milestone
+  `2663c2f`.
+
+I am writing this down now, with the screen still in flight, because the failure mode is
+asymmetric: a rejecting screen ends the iteration cleanly, while a *passing* screen is exactly the
+moment one is tempted to call it an accept and snapshot. Two of this lineage's 18 snapshots were
+re-scored out of contention when the gate was corrected (`c5790b4`), and that is the debt this
+two-stage rule exists to stop me re-incurring.
