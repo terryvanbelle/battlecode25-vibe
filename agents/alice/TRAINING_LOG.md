@@ -16529,3 +16529,180 @@ not a hidden winner either. The arm stays in `src/` unrun; if a future session r
 travel with a real frontier estimate, the ablation is built and waiting.
 
 `src/alice` is unchanged and stays at iteration 43.
+
+## Tournament `20260909-1300` — the first round-robin carrying iteration 43, and it is a clean natural experiment
+
+| | 0100 | 1300 | delta |
+|---|---|---|---|
+| alice standings | 53.3% | **61.3%** | **+8.0** |
+| alice vs bob | 50.0% | **60.0%** | **+10.0** |
+| alice vs carol | 56.7% | **62.7%** | **+6.0** |
+
+Sweeps: alice–bob **29–14** with 32 split; alice–carol **36–17** with 22 split.
+
+**Why this is unusually clean, and I checked before claiming it.** The report's own
+"do not pool" section flags **bob–carol** as reproducing all 150 games to the round count
+across the two runs — a behaviour-preserving commit on bob's side (iteration 40 scaffolding
+"defaulted to the exact zero arm"). Carol's commit is byte-identical (`5be82ca` both runs).
+So **both of my opponents played behaviourally identical bots in the two tournaments**, while
+alice moved from `920dafd` (iteration 30) to `55c8037` (iteration 43). The alice–bob and
+alice–carol pairs are *not* flagged, precisely because alice changed.
+
+That makes +10 and +6 attributable to **iterations 39c and 43 together** — not to opponent
+drift, which is the confound that normally makes tournament deltas unreadable. It is also the
+only such measurement I have: opponents my lineage did not produce.
+
+**What it does NOT license.** I may not pool 0100 with 1300 for a z-score; the flagged pair is
+bob–carol and I do not read those games anyway, but the deduplication rule the report states is
+*on the games, not the run id and not the commit pair* — a commit hash is a proxy for behaviour,
+and this run is the counter-example that proves the proxy leaks. Recorded because my instinct on
+seeing two 450-game runs was to treat them as 900.
+
+## Board census — THE FRONTIER DOES NOT EXIST, and that retires the direction iteration 45 named
+
+Iteration 45 closed by naming the missing capability as "a representation of where unpainted
+ground is", and pointed at messaging to supply it. **Before building a comms layer I measured
+whether there is anything to point at.** Five games of `src/alice` self-play, paint state
+reconstructed from the replay (`replay-dump.sh --map-at ... --views`, which prints an exact
+census and reconciles it against the engine's own coverage to within a few per-mille):
+
+| map | r100 | r200 | r400 | r700 | r1200 |
+|---|---|---|---|---|---|
+| **Bunny** (44x30) unpainted | 601 | 204 | **24** | **10** | **23** |
+| **Portal** (35x35) unpainted | — | — | **14** @r300 | — | — |
+| **Justice** (21x20) unpainted | 18 | **0** | **0** | 1 | 1 |
+| **box** (31x31) unpainted | 298 | 88 | **50** | — | — |
+
+**The board saturates by round 200–400.** From then on 0–4% of paintable tiles are unpainted, and
+on Justice it is literally **zero from round 200**. There is no frontier to find, no empty ground
+to walk to, and no information a message could carry about where it is.
+
+> Iterations 44 and 45 and the killed 45-draft were all aimed at "get the idle soldier to
+> unpainted ground". The census says the reason they could not find any is that **there is
+> almost none**. The defect was real — soldiers idle on 70–96% of turns — but the cause I
+> assigned it was wrong, and so were all three fixes.
+
+**Messaging is therefore NOT re-opened on the iteration 45 reasoning.** The channel is open (the
+iteration 23 pre-check measured 53–65% of robot turns in range of a tower) and it remains the
+largest unused capability. But the specific payload I proposed — a frontier estimate — has no
+referent. Re-opening it needs a message worth sending, and I do not have one. Recorded as a
+direction *retired for a stated reason*, not as one still pending.
+
+**What the arithmetic says instead.** My coverage peaks at 570–660 per-mille against a 700
+instant-win bar, then declines (Bunny 636 @r400 -> 518 @r1200; box 339 -> 302). With 0–2% of the
+board unpainted, **every one of the 60–130 per-mille I still need must be taken from enemy
+paint.** That is not a strategy preference; it is subtraction.
+
+**Explicitly NOT re-opening the splasher share.** Its recorded standard is *"a reason the rest of
+my bot now supports the share, not fresh evidence that the siblings still have one."* A census
+showing the situation demands conversion is a fact about the **situation**, which is the exact
+form the standard rules out. I noted this temptation at iteration 43 and decline it again here,
+with the census in hand rather than in spite of it.
+
+## The conversion census — how enemy ground actually changes hands, and where it leaks
+
+If every remaining tile must be taken from the enemy, the question is *by what mechanism*. Two
+exist: the splasher overwrites enemy paint inside r^2<=2, and the **mopper unpaints a tile to
+EMPTY so that a soldier can then paint it.** I counted both from the replay action stream.
+
+**Splashing is not the channel.** Portal, whole game: **62 SplashActions** against **691
+UnpaintActions**. `spl0` for T1 until round ~350. Whatever converts ground here, it is the mopper.
+
+**So I matched every `UnpaintAction` to the next `PaintAction` on the same tile.** This is an
+exact ledger of my only working conversion pipeline, taken from replays already on disk — zero
+games. (Caveat, stated because it bounds the reading: `SplashAction` carries only its centre and
+the footprint is not in the schema, so splash-painted tiles do not register as a repaint. With
+62 splashes against 691 unpaints the bias is small, and it can only *understate* retention.)
+
+| map | my mops of enemy paint | repainted by ME | handed back to the enemy | never repainted |
+|---|---|---|---|---|
+| Portal | 331 | **206 (62%)** | 125 (38%) | 3 |
+| Bunny | 2976 | **2203 (74%)** | 773 (26%) | — |
+| box | 39 | **6 (15%)** | 33 (85%) | — |
+
+**And the hand-back is fast.** Median latency from unpaint to repaint:
+
+| | my reclaim | enemy hand-back |
+|---|---|---|
+| Portal | **6 rounds** | **1 round** |
+| box (T2's moppers) | — | **1 round** |
+
+A one-round repaint can only be done by a unit **already adjacent**. So the tiles I lose are the
+ones I clear next to an enemy soldier that is standing right there, and my own soldier is 3–6
+rounds away.
+
+### The discriminator replicates 6/6, and it is enemy presence — not ally presence
+
+For every unpaint I scored the tile's neighbourhood at the instant it was cleared:
+
+| cell | enemy paint activity nearby, KEPT vs HANDED BACK |
+|---|---|
+| Portal T1 | 0.79 vs **1.50** |
+| Portal T2 | 0.99 vs **1.67** |
+| Bunny T1 | 1.59 vs **1.84** |
+| Bunny T2 | 0.72 vs **1.56** |
+| box T1 | 0.33 vs **0.79** |
+| box T2 | 0.30 vs **1.50** |
+
+**Six cells out of six point the same way.** The ally-presence version of the same statistic is
+5/6 (box T1 inverts), so **enemy proximity is the robust signal and ally proximity is not** — a
+distinction I would have got backwards from the "my soldier should follow the mopper" intuition
+I started with.
+
+### The measurement that killed the obvious fix, for zero games
+
+The obvious mechanism is a **gate**: don't mop a tile you cannot hold. The census prices it and
+it is a loser, because a suppressed mop does not become a better mop — it just does not happen:
+
+| Portal, gate "ally painted nearby >= 1 in prev 5 rounds" | fires | kept % | **kept TILES** |
+|---|---|---|---|
+| no gate (baseline) | 331 | 62% | **206** |
+| k >= 1 | 148 | 73% | **108** |
+| k >= 2 | 85 | 78% | **66** |
+
+Retention rises exactly as advertised and the bot ends up with **half the ground**. Every gate
+threshold on every map loses tiles against no gate. This is the same trap as the tempting
+version of iteration 44, caught this time by pricing the mechanism before building it.
+
+> **A ratio is not a quantity.** "Raise the share of mops that stick" and "gain more ground" are
+> different objectives, and the intervention that maximises the first can halve the second.
+
+**What survives is RE-RANKING, which changes no action count at all** — among candidate tiles the
+mopper already treats as interchangeable, prefer the one it can hold. That is iteration 46.
+
+## Iteration 46 — PRE-REGISTERED before any run is read
+
+**Mechanism, one change.** In `runMopper`'s adjacent-tile choice, ties are currently broken by
+`senseNearbyMapInfos` scan order. The arm breaks them by **retention**: among candidates at the
+same priority, prefer the tile with the fewest enemy robots within r^2<=2 of it (`foesNear`).
+Priorities 0 (pattern-blocking, iteration 19) and 1 (robot standing on the tile, steal paint) are
+untouched and still outrank it, so this reorders only within the plain class.
+
+**Why a tie-break bites often enough to be worth running** — answered from data already in hand,
+so it costs no probe. The neighbourhood census puts **2.65–2.98 of the 8 neighbours in enemy
+paint** at the moment of a mop, so a mopper typically has ~3 interchangeable candidates. This is
+the check that iteration 44 failed to make, and the reason it is answerable without a game is
+that the census was taken for a different purpose first.
+
+**Pre-check 4 (what were these turns doing before?): they were mopping, and they still are.**
+The change is a re-ranking, so the action count is preserved *by construction*. The verification
+is that `u` (UnpaintAction) counts in the arm and control agree within noise. If they diverge,
+the arm is doing something I did not intend and the verdict does not stand.
+
+**Pre-registered gate.**
+- **Screen**: 40-map paired run, `alice_i46` vs `alice_i46ctl`. Advance at **net swept >= +4**.
+- **Census**: full 75-map corpus, 150 games. **Accept at net swept >= +12** (2.27 sd on this
+  lineage's measured floor of 5.29). Below +12: reject.
+
+**Pre-registered falsifier, and it is the part that decides attribution.** A win must come
+through the stated mechanism. Re-running `mopflow.py` on the census replays, the arm must show a
+**higher kept-share of its own unpaints** than the control. If the arm clears +12 while
+kept-share is flat or lower, the mechanism is not what won, and I will record it as an
+unexplained gain rather than as evidence for retention-ranking.
+
+**Rival explanation, named now.** A handed-back tile is not worthless: the enemy pays soldier
+paint to repaint it, and starvation causes 72–88% of deaths in this lineage. So re-ranking away
+from hand-backs trades an enemy paint drain for a tile. The census cannot price that trade, and
+the gate above does not pretend to — it measures the net of both, which is the honest thing a
+game-level gate can do. If the arm loses, "I gave up a drain" is the first hypothesis to test,
+not a post-hoc excuse.
