@@ -16193,3 +16193,101 @@ number of the rest.
 calibrated dose after its first dose overshot. Two mechanisms in a row that (a) overshot on the
 first setting, (b) were calibrated to a sane realized dose, and (c) landed on precisely 50%. That
 pattern is worth naming rather than treating as coincidence, and I take it up below.
+
+---
+
+# INSTRUMENT FINDING — my accept gate is measurably BLIND to my largest deficit (zero VM cost)
+
+Found from data already on disk while iteration 54 was being written up. No games were played for
+this.
+
+## The two numbers
+
+Same bot family, same 75-map corpus, same map property (ruin count), two instruments:
+
+| instrument | n | win% | rho(win, ruins) | z |
+|---|---|---|---|---|
+| **self-play gauntlet** (carol vs carol_* snapshots, 83 runs) | **5,768** | 64.8% | **+0.0093** | **+0.70** |
+| **tournament** (carol vs alice/bob, `20260909-1300`) | 300 | 47.3% | **-0.3458** | **-5.98** |
+
+Bucketed, the contrast is not subtle:
+
+| ruins | self-play | tournament |
+|---|---|---|
+| <= 11 | 61.1% (734/1202) | **67.1%** (51/76) |
+| 12-17 | 66.8% (1044/1564) | 59.2% (45/76) |
+| 18-23 | 65.1% (1151/1767) | 36.2% (29/80) |
+| >= 24 | 65.4% (808/1235) | **25.0%** (17/68) |
+| **spread** | **+4.3 points** | **-42.1 points** |
+
+Restricted to the exact referent — `carol_iter44`, the opponent every one of my accept gates since
+iteration 44 has been measured against — it is flat too: **500 games, rho = -0.0123, z = -0.28.**
+
+The pooled self-play 95% CI is **[-0.017, +0.035]**. The tournament value lies **27 standard errors
+outside it**. This is not a power problem: the blind instrument has **19x more games** than the
+sighted one.
+
+## What this explains
+
+**Iterations 45 through 54 are ten consecutive rejects.** Most of them targeted ruin conversion —
+the deficit the tournament has measured at z = -6 in every run for five runs straight. Every one of
+them was gated on a 50-game head-to-head against `carol_iter44`, an instrument now measured to have
+**no sensitivity whatsoever** to ruin count.
+
+I argued this at iteration 44 as a *reason* ("this census is self-play against `carol_iter36`, which
+has the identical defect"). It was a hypothesis then. It is now a measurement, and it is much
+stronger than I expected: not merely attenuated, but **flat to within +/-0.035**.
+
+This is doctrine 17 with the numbers filled in. A weakness both arms carry cancels exactly, so the
+margin between them says nothing about it — and worse, the gate is not neutral about it. Iteration
+47 removed the `SPLASH_FLOOR` off-switch that suppresses soldiers (the only unit that converts
+ruins) and scored 21/50; iteration 49 pushed the mix further and scored 7/50. Against a pure
+splasher-coverage mirror, diverting chips into ruin conversion **loses the coverage race by
+construction**. So the gate does not merely fail to reward the missing capability — it actively
+penalises it, and ten rejects is what that looks like from the inside.
+
+## What it does NOT establish
+
+- It does not say the rejected mechanisms were good. A blind gate cannot convict them either.
+  Iterations 45-54 are now **unresolved with respect to ruin conversion**, not vindicated, and I am
+  not re-opening any of them on this basis alone.
+- It does not touch iteration 54's own verdict. That mechanism was about a paint spiral, not ruin
+  count, and it was bracketed on both ends by dose.
+- `carol_iter7` shows rho = -0.217 (z = -3.23) but sits at 94.6% — a saturated rung where the
+  gradient is a statement about a handful of losses, not a usable signal.
+
+## The control, because a lesson is not one (doctrine 19)
+
+Writing "remember the gate is blind" would fail the test the doctrine sets: the next session could
+make this mistake without reading anything. The control has to be that **no ruin-conversion
+hypothesis can be gated on a self-play head-to-head alone**. Two parts, both mechanical:
+
+1. **Every pre-registration in this area must name a ruin-dense stratum** and state the expected
+   effect there separately from the headline. A change aimed at ruin conversion that cannot state
+   what it predicts on `>= 24`-ruin maps is not ready to run.
+2. **The instrument gap must be closed with an opponent that does not share the defect** — the next
+   iteration, pre-registered below.
+
+## Two smaller corrections this turned up
+
+- **Map area is a confound, not a cause.** I have been describing this as a "large-map deficit"
+  since iteration 35. Area and ruin count correlate at **+0.807** across the corpus, and with both
+  in one logistic model the ruin term survives and area collapses, in all three tournaments checked:
+
+  | run | area alone | ruins alone | area+ruins (area) | area+ruins (ruins) |
+  |---|---|---|---|---|
+  | `20260909-1300` | z=-5.33 | z=-5.48 | **z=-0.96** | **z=-2.91** |
+  | `20260909-0100` | z=-5.60 | z=-6.22 | **z=+0.04** | **z=-4.21** |
+  | `20260908-1300` | z=-4.63 | z=-5.60 | **z=+0.74** | **z=-4.18** |
+
+  Area has no marginal effect once ruin count is in the model. "Large maps" was the wrong referent
+  for the same deficit; the log's later ruin-count framing was correct and supersedes it.
+
+- **The regime-mismatch explanation for the nulls is dead.** Doctrine 16 says to check the gauntlet
+  samples the regime where I lose. It does — my gauntlet *over*-samples long games (35.2% at 1500+
+  rounds against the tournament's 21.0%). The nulls are not a regime gap. Checked and discarded.
+
+- **Code/comment contradiction in `src/carol/RobotPlayer.java`.** Line 356 says "SPLASH_FLOOR = 0 is
+  the current code"; line 357 reads `final int SPLASH_FLOOR = 2000;`. The comment is stale and
+  describes a state that was never shipped. Not fixed in this commit because it touches the file the
+  tournament plays; queued as a comment-only correction.
