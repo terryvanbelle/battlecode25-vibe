@@ -34,26 +34,57 @@ def runs():
                   if p.is_dir() and RUN_ID.match(p.name) and (p / "results.csv").is_file())
 
 
-def duplicate_pairs(cur, prev):
-    """Matchups whose BOTH commits are unchanged since `prev`.
+def game_map(run):
+    """{(team_a, team_b, map): (winner_side, winner_bot, rounds)} for one run."""
+    out = {}
+    for r in csv.DictReader((run / "results.csv").open()):
+        if r.get("winner_bot") and r["winner_bot"] != "unknown":
+            out[(r["team_a"], r["team_b"], r["map"])] = (
+                r["winner_side"], r["winner_bot"], r["rounds"])
+    return out
 
-    Those games are byte-identical to the previous run -- the engine is
-    deterministic, so the same two commits on the same map produce the same game,
-    same winner, same round count. Pooling two tournaments therefore multiplies
-    apparent n while adding no information, and any z-score computed over the
-    pooled set is inflated. Two lineages hit this independently: one found a pair
-    reproducing 150/150 exactly, the other found its "0/8 on 23 maps" was really
-    0/2 printed four times.
+
+def duplicate_pairs(cur, prev):
+    """Matchups whose games here reproduce `prev` exactly.
+
+    The engine is deterministic, so the same two builds on the same map produce
+    the same game -- same winner, same round count. Pooling two tournaments
+    therefore multiplies apparent n while adding no information, and any z-score
+    computed over the pooled set is inflated. Two lineages hit this
+    independently: one found a pair reproducing 150/150 exactly, the other found
+    its "0/8 on 23 maps" was really 0/2 printed four times.
+
+    Detected two ways, because the cheap proxy has a real blind spot:
+
+      commits   both bots' commits unchanged since `prev`. Fast, and it can flag
+                a pair even when the games themselves diverge for another reason.
+      games     every shared game identical in winner AND round count. This is
+                the one that matters, because a commit hash is a proxy for
+                BEHAVIOUR and the two come apart: a lineage committed
+                scaffolding that defaults to its exact zero arm, changing the
+                hash while the bot played identically, and its 150 games against
+                an unchanged opponent repeated to the game. The commit test saw
+                two different commits and said nothing; the pair's win% moved by
+                exactly 0.0, which is what a byte-identical repeat looks like.
+                Genuinely changed pairs in that same run matched on 6 and 8 of
+                150, so the separation is not close.
     """
     if prev is None:
         return []
+    out = []
     c, pv = played_commits(cur), played_commits(prev)
-    if not c or not pv:
-        return []
-    bots = sorted(c)
-    return [(x, y) for i, x in enumerate(bots) for y in bots[i + 1:]
-            if c.get(x) == pv.get(x) and c.get(y) == pv.get(y)
-            and c.get(x) is not None and c.get(y) is not None]
+    gc, gp = game_map(cur), game_map(prev)
+    bots = sorted({b for k in gc for b in k[:2]})
+    for i, x in enumerate(bots):
+        for y in bots[i + 1:]:
+            keys = [k for k in gc if {k[0], k[1]} == {x, y} and k in gp]
+            same = sum(1 for k in keys if gc[k] == gp[k])
+            by_games = len(keys) >= 20 and same == len(keys)
+            by_commit = (c.get(x) is not None and c.get(y) is not None
+                         and c.get(x) == pv.get(x) and c.get(y) == pv.get(y))
+            if by_games or by_commit:
+                out.append((x, y, len(keys), same, by_commit, by_games))
+    return out
 
 
 def load(run):
@@ -227,15 +258,22 @@ def main():
     dups = duplicate_pairs(cur, prev)
     if dups:
         L.append("\n## !! Do not pool these games with the previous run\n")
-        L.append("These matchups played **byte-identical commits** in "
-                 f"`{prev.name}`, so their games here reproduce that run exactly "
-                 "— same winners, same round counts. The engine is deterministic, "
-                 "so pooling the two tournaments multiplies apparent sample size "
-                 "while adding no information, and any z-score over the pooled set "
-                 "is inflated.\n")
-        for x, y in dups:
-            L.append(f"- **{x}–{y}** — unchanged since `{prev.name}`; 150 duplicate games")
-        L.append("\nDeduplicate on the **commit pair**, not the run id.\n")
+        L.append("These matchups reproduce their games in "
+                 f"`{prev.name}` exactly — same winners, same round counts. The "
+                 "engine is deterministic, so pooling the two tournaments "
+                 "multiplies apparent sample size while adding no information, and "
+                 "any z-score over the pooled set is inflated.\n")
+        for x, y, n, same, by_commit, by_games in dups:
+            how = ("both commits unchanged, and all %d games reproduce" % n
+                   if by_commit and by_games else
+                   "both commits unchanged since that run" if by_commit else
+                   "commits DIFFER, but all %d games reproduce to the round count "
+                   "— a behaviour-preserving commit" % n)
+            L.append(f"- **{x}–{y}** — {how} ({same}/{n} identical)")
+        L.append("\nDeduplicate on the **games**, not the run id and not the commit "
+                 "pair: a commit hash is a proxy for behaviour, and scaffolding that "
+                 "defaults to an exact zero arm changes the hash while the bot plays "
+                 "the identical game.\n")
 
     L.append("\n## Swept maps\n")
     L.append("Won from *both* sides, so a sweep is immune to spawn advantage.\n")

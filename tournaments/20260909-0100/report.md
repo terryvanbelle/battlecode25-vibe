@@ -21,11 +21,11 @@
 
 ## !! Do not pool these games with the previous run
 
-These matchups played **byte-identical commits** in `20260908-1300`, so their games here reproduce that run exactly — same winners, same round counts. The engine is deterministic, so pooling the two tournaments multiplies apparent sample size while adding no information, and any z-score over the pooled set is inflated.
+These matchups reproduce their games in `20260908-1300` exactly — same winners, same round counts. The engine is deterministic, so pooling the two tournaments multiplies apparent sample size while adding no information, and any z-score over the pooled set is inflated.
 
-- **alice–bob** — unchanged since `20260908-1300`; 150 duplicate games
+- **alice–bob** — both commits unchanged, and all 150 games reproduce (150/150 identical)
 
-Deduplicate on the **commit pair**, not the run id.
+Deduplicate on the **games**, not the run id and not the commit pair: a commit hash is a proxy for behaviour, and scaffolding that defaults to an exact zero arm changes the hash while the bot plays the identical game.
 
 
 ## Swept maps

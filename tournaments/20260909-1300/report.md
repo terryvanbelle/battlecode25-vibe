@@ -19,6 +19,15 @@
 | alice vs carol | 94–56 | 62.7% |   +6.0 |
 | bob vs carol | 64–86 | 42.7% |   0.0 |
 
+## !! Do not pool these games with the previous run
+
+These matchups reproduce their games in `20260909-0100` exactly — same winners, same round counts. The engine is deterministic, so pooling the two tournaments multiplies apparent sample size while adding no information, and any z-score over the pooled set is inflated.
+
+- **bob–carol** — commits DIFFER, but all 150 games reproduce to the round count — a behaviour-preserving commit (150/150 identical)
+
+Deduplicate on the **games**, not the run id and not the commit pair: a commit hash is a proxy for behaviour, and scaffolding that defaults to an exact zero arm changes the hash while the bot plays the identical game.
+
+
 ## Swept maps
 
 Won from *both* sides, so a sweep is immune to spawn advantage.
