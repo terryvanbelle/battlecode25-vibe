@@ -14600,3 +14600,230 @@ against it. An SRP is the only purchase in the game that converts chips into **p
 200 chips for +3 paint/turn to every paint tower, engine-verified in the disassembly. That is the
 exact conversion this iteration failed to achieve by going the long way round through money
 towers.
+
+## Iteration 48 dose curve complete — the axis is FLAT then DECLINING, and the direction closes properly
+
+`carol_i48_3` (`MONEY_MOD = 3`, 32.5% intended money share) on the **same 25 pinned maps**, run
+`gauntlet/20260909-122428`.
+
+**Verified the two runs are comparable before comparing them** (this is the whole reason the maps
+were pinned): `maps.txt` from both runs and my drawn sample are all three byte-identical after
+sorting. So the dose comparison is exact, not an estimate across samples.
+
+| MONEY_MOD | money share | h2h vs `carol_iter44` | margin | sd |
+|---|---|---|---|---|
+| **4** (zero arm = incumbent) | 27.1% | — | **0** by construction | — |
+| **3** | 32.5% | 26/50 = 52% | **+2** | +0.23 sd |
+| **2** | 55.6% | 22/50 = 44% | **−6** | −0.70 sd |
+
+**No interior optimum, and no dose beats the incumbent.** The axis is flat between 3 and 4 (+2 is
+within a quarter of a standard deviation of zero) and declines at 2. Note what this does *not* say:
+it does **not** contradict iteration 34's 3 -> 4 move, because 3 and 4 are indistinguishable here —
+it says the whole neighbourhood is flat, and that the large move toward the rivals' share is the
+one that costs games.
+
+Per doctrine 2, a curve is stronger evidence than any single point, and this one is bracketed on
+both sides. The ledger entry above is therefore **properly closed** rather than closed on one arm.
+
+### The result that makes this worth the 100 games
+
+Carol's money share is the single most conspicuous difference between her policy and both rivals'
+— 24.9% against 54.0% and 53.2%, stable in every pair and every regime. It was the most obvious
+"they do X and I don't" in the entire cross-lineage census. **Matching them exactly makes carol
+worse, and the dose curve says so on both sides.**
+
+That is a falsified premise, and by the algorithm's own accounting it is worth more than the
+iteration would have been: it invalidates a whole class of future proposals of the form "carol
+should do what alice does with her towers". Copying a rival's ratio is not a strategy — the ratio
+is an output of *their* whole build, and RULES.md says the thing that scores is paint.
+
+## TOOLING BUG in `tools/gauntlet-collect.sh` — every RECOVERED run is labelled "sampled", pinned or not
+
+Reporting rather than working around, and I ran the discriminating case before naming it.
+
+**What it computes.** Line 51:
+
+```bash
+if [ -s "$OUT/maps.txt" ]; then SAMPLED=1; MAPTAG="$(wc -w < "$OUT/maps.txt" | tr -d ' ') sampled"
+```
+
+`maps.txt` is written by `gauntlet.sh` for **both** pinned and sampled runs, so the test
+`-s maps.txt` is true either way and `SAMPLED` is hardcoded to 1. `collate.sh` then keys its
+output on `SAMPLED` and prints:
+
+```
+run <id>  ws=agents/carol bot=<bot>  maps=25 sampled
+  map sample (random this run; replay with MAPS="$(cat .../maps.txt)"):
+```
+
+**The discriminating case, which distinguishes a wrong LABEL from a wrong RUN.** Both of today's
+runs were launched with `MAPS` explicitly pinned and both launch headers say `maps=25 pinned`,
+while both recovered summaries say `maps=25 sampled`. If the runs had genuinely resampled, their
+map lists would differ from my drawn file and from each other; sorted, **all three are
+byte-identical**. So the maps were pinned and only the label is wrong — this is a **labelling
+fault, not an inverted result**, and the numbers in `results.csv` are unaffected.
+
+**Why it still matters, and where it bites.** `gauntlet-collect.sh` is the *recovery* path — the
+tool a session runs after a death, when it has the least context and is reconstructing what it
+was doing. It is exactly then that a summary reading "map sample (**random this run**)" over a
+pinned ablation or regression check is most likely to be believed. The two failures it invites
+are both expensive: discarding a comparison that was exact, or **re-running it on the shared VM to
+"get comparability" it already had**. `gauntlet.sh` gets this right at launch; only the recovery
+path loses it.
+
+**Suggested fix**: `gauntlet.sh` already persists run metadata into the run dir (there is a
+comment at `gauntlet-collect.sh:58` about a recovered run persisting the workspace name). Persist
+the pinned/sampled flag the same way at launch and have `gauntlet-collect.sh` read it, defaulting
+to an explicit "unknown" rather than to "sampled" when the marker is absent — a wrong-but-specific
+default is worse than an honest unknown here, because it reads as information.
+
+## Iteration 49 — PRE-REGISTERED: build SRPs, the mechanic this lineage has never once used
+
+Written before any evaluation game is run. Built as `src/carol_i49_{a,b,0}`; compiles.
+
+### The change
+
+In `runSoldier`, when there is **no unclaimed ruin in sight** (`ruin == null`), a soldier standing
+on a legal pattern centre marks a resource pattern, stands still painting one pattern tile per
+turn, and completes it when the team can pay. ~45 lines, one mechanism, nothing else touched.
+
+Engine preconditions read from the bytecode, not from the digest —
+`assertCanMarkResourcePattern` requires SOLDIER, `assertCanActLocation(loc, 8)`,
+`isValidPatternCenter(loc, false)` and `robot.getPaint() >= 25`;
+`assertCanCompleteResourcePattern` requires team money, a centre not already completed,
+`isValidPatternCenter`, and `checkResourcePattern` (all 25 tiles already matching).
+
+**Choice set, checked before building.** A soldier's attack radius is r2=9 and the far corner of a
+5x5 is r2=8 from its centre, so a soldier on the centre can paint all 25 tiles **without moving**.
+The centre candidate is therefore the tile underfoot — a choice set of exactly one, chosen
+deliberately. Iteration 47's post-mortem is the reason I am stating this: it tuned a ranking whose
+candidate set turned out to be a singleton, and a ranking over one option is not a ranking. Here
+there is no ranking at all, by design.
+
+### CORRECTION to the price I logged three hours ago — and it runs in my favour, so it gets audited harder
+
+Earlier today I priced an SRP at "200 chips + up to 125 paint". **The 125-paint figure was wrong
+as a cost against the thing that scores.** The pattern's tiles are painted `ALLY_PRIMARY` /
+`ALLY_SECONDARY`, and `PaintType.isAlly()` returns true for both (disassembled, not assumed). Area
+painted counts ally paint of either shade, and area painted is *the* win condition and *the* first
+tiebreak. So paint spent on a pattern is still paint spent on the scoreboard.
+
+**What both versions of that price took for granted** (the retraction audit that matters, because
+a correction fixes what was noticed and inherits what was not): both assumed the soldier's 25
+pattern tiles are tiles it would otherwise have painted anyway. That is **not** true for one
+specific case — a tile already `ALLY_PRIMARY` that the pattern wants `ALLY_SECONDARY` must be
+repainted at 5 paint for **zero new coverage**. That, and not the 125, is the real paint cost, and
+its size depends on how much of the 5x5 was already ours.
+
+So the honest price is: **200 chips, plus 5 paint for every already-ours tile whose shade is
+wrong, plus up to `SRP_PATIENCE` turns of a soldier standing still instead of expanding.** The
+third term is the reallocation cost and is priced against what it displaces, not against zero.
+
+Benefit, unchanged and engine-verified: **+3 paint/turn to every paint tower and +3 chips/turn to
+every money tower, permanently.** At carol's measured mix (3.88 paint + 1.29 money towers) that is
++11.6 paint/turn against a baseline paint income of 19.4 — **+60% for 200 chips.**
+
+### PRE-REGISTERED ZERO-ARM CONTROL (this gates everything else)
+
+`carol_i49_0` sets `SRP_MIN_CHIPS = Integer.MAX_VALUE`, so `srpWork()` returns on its first line
+and the mechanism can never fire. **It must come back BYTE-IDENTICAL to `carol_iter44`.** If it
+does not, my refactor changed something other than the SRP mechanism and every number from this
+iteration is uninterpretable. This is the arm designed so doctrine 5's step-0 check runs inside
+the evaluation rather than beside it.
+
+### PRE-REGISTERED MANIPULATION CHECK (void if it fails, whatever the margin)
+
+The dose arm must show **`sD` (completed patterns) > 0** on a map with SRP sites. Instrumenting the
+DECISION as well as the outcome, per doctrine: `sA` counts turns the soldier *asked* for a centre,
+`sM` marks laid, `sD` patterns completed, `sX` patterns abandoned. A zero at `sD` with a positive
+`sA` means "ran and failed"; zero at both means "never ran" — and those are different bugs.
+
+### PRE-REGISTERED MAP-LEVEL PREDICTION — unusually crisp, and it comes with a built-in placebo
+
+`SrpScan` gives me the exact fuel per map. **Five maps have ZERO legal SRP centres**: `Brat`,
+`CastleDefense`, `DefaultSmall`, `Paintball`, `gridworld`. On those the mechanism *cannot fire*,
+so the arms must be **byte-identical there** — a placebo control I get for free rather than
+paying for.
+
+My pinned 25-map sample contains **`Brat` and `DefaultSmall`**, i.e. 4 of the 50 games are
+structural zeros. Predicted: those 4 games identical to the zero arm; the gain, if any, on the
+high-site maps. A gain that appears on `Brat` or `DefaultSmall` would mean the effect is not the
+SRP mechanism at all, and I would have to void the iteration rather than explain it.
+
+### PRE-REGISTERED WEAK LINK — the one most likely to kill this
+
+**A parked soldier is a soldier not expanding.** LEARNINGS records "survival bought with
+inactivity" as a recurring loser (halving the death rate once cost 18 peer games — units die doing
+the thing that wins), and my own doctrine-15 note names a soldier parked at a ruin painting a
+pattern as the *benign* look-alike of a livelock. The failure mode here is real and specific:
+`SRP_PATIENCE = 30` turns x many soldiers is a large amount of forgone exploration, and iteration
+14's frontier-seeking work exists because idle soldiers were the largest block of waste in the
+bot. If this rejects, that is where I will look first.
+
+### The dose axis, with a true zero
+
+| arm | `SRP_MIN_CHIPS` | meaning |
+|---|---|---|
+| `carol_i49_0` | 2147483647 | disabled — must equal `carol_iter44` |
+| `carol_i49_a` | 1500 | only build a pattern from a comfortable treasury |
+| `carol_i49_b` | 500 | build patterns nearly always |
+
+### PRE-REGISTERED GATE
+
+Unchanged and stated in its unit: **screen** vs `carol_iter44`, 25 pinned maps both sides —
+`>= 34/50` accept-eligible, `<= 30/50` reject, 31–33 unresolved. **Decision** on the full 75-map
+census, **margin (W − L) >= +23**, which is 2.0 sd on a margin floor of sd 11.5.
+
+## Iteration 49 — a PERMANENT-FREEZE bug found by reading my own guards, before spending a single gauntlet game
+
+Found while re-reading the candidate against the pre-check the algorithm names as *"read the guard
+you are nesting inside"*. The first build had two guards with **different conditions**:
+
+```java
+if (ruin == null) state += srpWork();          // SRP work runs only when no ruin is in sight
+...
+if (srpCenter == null) moveExploring(ruin);    // movement is suppressed while holding a pattern
+```
+
+**Trace of the freeze.** A soldier marks a pattern on a turn when `ruin == null`, so
+`srpCenter != null`. On any later turn where a ruin *is* visible: `srpWork()` is not called, so
+`srpTurns` is never incremented and `SRP_PATIENCE` **can never fire**; and the move is suppressed
+because `srpCenter != null`. Both exits from the state are inside guards that the state itself
+closes. **The soldier never moves again for the rest of the game**, and nothing in the code can
+release it.
+
+This is the exact shape the pre-check exists for — *"a new clause added under an outer condition
+that already excludes the targeted case can never fire"* — except one level worse, because the
+excluded clause was the **timeout that releases the state**, not merely a feature.
+
+**Fix**: ruins gate only the *start* of a pattern; an already-started pattern is advanced or
+dropped every turn regardless of ruins or treasury, because those are the only paths that can
+release the soldier. `srpWork(boolean ruinPresent)`, with the gate moved inside the
+`srpCenter == null` branch. All three arms rebuilt; `vm-compile.sh` COMPILE-OK.
+
+**Why this is worth logging rather than quietly fixing.** It cost nothing — no games, no run —
+and it would have been nearly invisible in a gauntlet result: frozen soldiers still paint the
+tile underfoot, so the bot would not have stalled outright, it would just have been quietly worse,
+and I would have concluded "SRP does not pay" and closed a direction that had never been tested.
+That is the most expensive kind of wrong answer this loop can produce, and a code read caught it.
+
+It also directly vindicates the pre-registered weak link: I registered "a parked soldier is a
+soldier not expanding" as the failure mode most likely to kill this iteration, and the *first*
+version of the code had an unbounded version of exactly that.
+
+## Engine probe: the SRP price, completed — marking costs 25 paint
+
+`RobotControllerImpl.markResourcePattern` calls `InternalRobot.addPaint(-25)` (bytecode:
+`bipush -25; invokevirtual addPaint`). So the assert's `getPaint() >= 25` is a real charge, not a
+mere threshold. The complete engine-verified price of one SRP:
+
+| term | cost |
+|---|---|
+| mark the pattern | **25 paint**, from the marking soldier |
+| tiles that were EMPTY | 5 paint each — but these score as area either way, so **not a cost against the win condition** |
+| tiles already ours in the **wrong shade** | 5 paint each for **zero new coverage** — the only genuinely wasted paint |
+| complete the pattern | **200 chips** |
+| the soldier | up to `SRP_PATIENCE` turns parked instead of expanding |
+
+against **+3 paint/turn to every paint tower and +3 chips/turn to every money tower, permanently**
+(+11.6 paint/turn at carol's measured 3.88/1.29 tower mix, on a 19.4 paint/turn base).
