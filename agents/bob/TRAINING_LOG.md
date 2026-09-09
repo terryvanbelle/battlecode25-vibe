@@ -17646,3 +17646,51 @@ anticipate. Eight predictions now — and this one failed in the way the coordin
 the magnitude landing on a metric that turned out to be the wrong quantity.
 
 `src/bob/` untouched. **`bob_iter20` remains the bot.**
+
+---
+
+## Iteration 55 — PROBE PRE-REGISTERED (written before the measurement exists): pattern-completion THROUGHPUT
+
+**The nomination, from iteration 54's sweep.** Bob is 9–18% behind alice on standing towers at r150/r200/
+r400 — the window where the coverage gap opens — while holding **69% more chips**. The reserve exists to
+fund tower completion (1,000 chips a tower) and bob is not spending it. **So the constraint in the decisive
+window is not the resource; it is the work.** No ledger entry closes pattern-completion throughput: #6
+closed ruin *selection* (choice set 0.83 — bob usually has only one candidate), #4 closed opening *spend*
+(re-open condition tested and not met, iteration 53).
+
+**And there is a documented, never-measured sink pointing the same way.** Iteration 33's opening dump
+noted that `chooseRuin()` releases `workRuin` on only two conditions — the ruin becoming visibly occupied,
+or `completeTowerPattern` succeeding — so **any ruin whose 5x5 can never be marked or completed holds its
+soldier forever.** I wrote at the time: *"I have not verified that is what is happening, and I am not
+going to assert it on a fit to eight rows."* It has been unverified since.
+
+**Method, zero games.** `ReplayDump --from 1 --to 2000` prints `MARK <loc>` and tower `SPAWN <loc>`. A
+completed tower's SPAWN location **is** its ruin centre, so marks within Chebyshev ≤2 of it belong to that
+pattern. Latency = (completion round) − (first mark at that centre). Over the 75 `alice-vs-bob` replays of
+tournament `20260909-1300`, IND dropped at source.
+
+**PRE-REGISTERED:**
+
+- **Primary: median mark→completion latency, bob vs alice, for towers completed in r60–400.**
+  - **bob ≥ 1.5x alice** ⇒ conversion speed is the bottleneck ⇒ build a fix.
+  - **bob ≤ 1.1x alice** ⇒ **CLOSED for the cost of one probe.**
+  - between ⇒ size before building.
+- **This is an ACHIEVABLE quantity, not a ceiling** (LEARNINGS 92): it is elapsed rounds under bob's actual
+  policy, not what bob would manage if everything were free.
+- **Secondary, registered as decisive rather than descriptive: ABANDONMENT** — marks laid near no
+  completed tower, as a share of all marks. If latency is *fine* but abandonment is high, the mechanism is
+  iteration 33's stuck-soldier sink and the fix is a patience/release rule, which is a different build.
+- **PRECEDENCE, registered (the half of LEARNINGS 92 I got wrong in iteration 52): if the comparative shows
+  bob FASTER than alice, the direction closes regardless of what abandonment says.** Three closures running
+  have turned on bob being ahead of the lineage beating it; that reading wins here too.
+- **Corpus: tournament games only** (LEARNINGS 93). This is a cross-lineage comparative and a mirror
+  gauntlet cannot supply one.
+- **Registered as NOT an accept test.**
+- **Prediction, with the tally split the coordinator asked for.** My record is eight, and it separates into
+  *nominally right / substantively wrong* (right area, wrong quantity — iterations 48, 54) and *plainly
+  wrong* (iterations 46, 47, 49, 51, 52, 53). I predict **bob's latency is close to alice's (≤1.2x) and
+  abandonment is where bob is bad** — i.e. I expect the *secondary* to carry it. Given the tally, the
+  honest note is that this is again a guess about *which quantity*, which is precisely the call I keep
+  missing.
+
+`src/bob/` untouched. **`bob_iter20` remains the bot.**
