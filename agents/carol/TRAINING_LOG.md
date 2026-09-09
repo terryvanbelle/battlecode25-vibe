@@ -18014,3 +18014,80 @@ soldier-turns) is a property of `carol_r1`, and `carol_iter44` fields 2 soldiers
 
 This is the honest shape of the session: the rewrite was rejected at −5.71 sd, and it paid for
 itself by telling me which architecture is right and handing me a debugged mechanism to put in it.
+
+# Iteration 60 — D3 ported into the splasher-primary incumbent. PRE-REGISTERED BEFORE ANY GAME.
+
+`src/carol_i60_50`, `_100`, `_150`, generated from `src/carol` by a script and verified to differ
+from each other **only in `REFILL_LOW`** (`diff` over the three files with the package and the dose
+normalised is empty). All three share `BUILD = "i60"` so doctrine 3's byte-identity check works on
+raw hashes across the ladder.
+
+**The zero arm is `carol_iter44` itself**, byte-identical by construction: `REFILL_LOW <= 0` returns
+from `walkHomeIfDry` before touching any state, and `src/carol` differs from `carol_iter44` only in
+a comment (verified by `diff` this session).
+
+## The deficit, measured, with no new games spent to find it
+
+From the post-58 splasher census, 1,363 splasher decision-turns on Leaf:
+
+| | share of READY turns |
+|---|---|
+| `noPaint` — alive, mobile, and unable to act | **41.2%** |
+| `lowScore` | 25.6% |
+| **fires a splash** | **23.7%** |
+| `noTgt` | 9.5% |
+
+Median paint on those turns is **15**, against a splash cost of **50**, and **0.0% sit at zero
+paint**. A splasher has no cheaper action, so one below 50 is completely inert. They are
+**stranded, not starving** — which is what makes this a logistics problem rather than a survival one.
+
+## Why the mechanism matches the deficit, rather than merely addressing it
+
+`transferPaint` is hardcoded to r²<=2 for every unit type [E, iteration 38], so a stranded splasher
+must physically walk to a tower to refill; it can never top up in passing. The incumbent's
+`refillIfPossible` only tops up when the unit already happens to be standing next to one. **Nothing
+in this lineage has ever walked to a tower.** `walkHomeIfDry` is that code, and it is the one piece
+of the rejected rewrite the census did not test — iteration 59 rejected the architecture around it,
+not the mechanism.
+
+## Magnitude, in the units of the gap (METHODS item 2)
+
+If the `noPaint` share were fully converted, the splash rate goes 23.7% -> ~65% of ready turns,
+i.e. **roughly a tripling**, on a unit the iteration-59 arithmetic prices at **2.6x a soldier's
+area throughput** against a win condition that is painted area. Full conversion is an upper bound,
+not a prediction.
+
+## Stage 0 — mechanism check, registered (2 games, Leaf, dose 100)
+
+1. **`noPaint` share of ready splasher-turns falls materially below 41.2%**, and
+2. **splash fires rise above 23.7% of ready turns** — reported as a share **and** as an absolute
+   count, because the denominator (splasher-turns) can itself be moved by the treatment if walking
+   home changes splasher lifespan (METHODS item 10; a ratio fed by the thing it measures compresses
+   toward a constant).
+3. **Overshoot band, registered as a SHARE (METHODS item 9):** turns spent in the `HOME` state must
+   land in **5%–25% of all splasher turns**. Below 5% the dose does nothing; **above 25% the
+   logistics have replaced the behaviour they were meant to enable**, and I will report the
+   mechanism as un-dosable rather than pick a smaller number after seeing the outcome.
+
+## The screen, and the SELECTION RULE registered before the numbers exist (METHODS item 11)
+
+`BOT=carol_iter44`, three arms on one **fresh random 25-map sample**, both sides, 150 games. Fresh
+rather than pinned, because this is an accept screen and a standing list measures the list.
+
+> **Selection rule: take the arm with the highest margin, provided it reaches >= 31/50. If no arm
+> reaches 31, the mechanism is reported as not dosable into band and the direction closes with no
+> census.** Ties go to the SMALLER dose, as the less invasive change.
+
+Per-arm screen gate, the lineage's standing one: **>= 34/50 strong | 31–33 marginal | <= 30 reject.**
+Noted honestly: METHODS item 4 records that this gate, which I had labelled 2.0 sd, measured at
+about **1.0 sd** over 59 of my own arms. So the screen **selects a dose; it does not decide.**
+
+**The decision is the census**: the selected arm then plays the full 75-map corpus, both sides, 150
+games, on the standing gate — **margin >= +26 ACCEPT | +18..+25 REPLICATE | <= +17 REJECT** (sd
+12.96 on the margin). Iteration 58's screen over-estimated its effect threefold and cost a census
+to correct; that is exactly why the screen is not allowed to accept here.
+
+**Dose prediction, registered:** I expect an **interior optimum**. 50 is barely above the splash
+cost and may latch too late to matter; 150 is half a splasher's 300 capacity and risks the overshoot
+band, since the hysteresis unlatch is already at capacity/2. A monotone ladder either way is
+informative and I will say so rather than reading a slope as a peak.
