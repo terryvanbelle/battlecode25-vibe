@@ -17124,3 +17124,66 @@ rediscover it: *if the accept bar is ever revisited, this is the strongest sub-t
 file.*
 
 `src/bob/` untouched. **`bob_iter20` remains the bot; HEAD's behaviour is unchanged.**
+
+---
+
+## Iteration 51 — PROBE PRE-REGISTERED (written before the measurement exists): the TERRITORY penalty, the last unmeasured term
+
+**Why.** Iteration 48 measured one half of `processEndOfTurn` (crowding, ~24,900 paint/game) and left the
+other half — the **territory** penalty, `-1*mult` on neutral and `-2*mult` on enemy paint, every turn —
+entirely unmeasured. It is the last unknown in bob's paint budget, and the budget is now the model
+everything rests on (`CLOSED.md` #24).
+
+**What is already fixed** (`bob_g0`, whole game, per game): paint **issued** to units 65,022; paint spent
+on **attacks** 17,304–37,996; **crowding** ~24,900 (lower bound). Territory is the residual, and the
+residual is currently bounded only to **~2,100–31,400** — a range too wide to decide anything, which is
+why it needs measuring rather than arithmetic.
+
+**Method.** `ReplayDump --map 100 --views` prints the units grid *and* a units-hidden **paint-only** grid
+for the same frame, so the tile colour beneath every unit is readable. Classify each bob mobile-unit
+observation as standing on **OWN / NEUTRAL / ENEMY** paint, over the 50 `bob_e0` games of run
+`20260909-195732` (`e0` is the shipping behaviour).
+
+**The instrument's bias, measured before use and registered with its DIRECTION.** The paint grid is a
+*reconstruction*: splash footprints are not in the replay schema and are never applied. I checked the
+frame-level `coverage per-mille` check and the gap is **recon 591 vs engine 584 (+7)** and **404 vs 396
+(+8)** — under 1% of the map, and **positive**, i.e. the reconstruction believes *more* tiles are painted
+than the engine does. Over-counting painted tiles **understates NEUTRAL**, so it **understates the
+territory penalty**. The result is therefore a **lower bound**, which is the safe direction for a
+threshold that licenses building something. Per-frame gaps will be reported as a distribution, not
+assumed.
+
+**And the direction of the error matters more than its magnitude, which is worth stating as a general
+point rather than a footnote.** A reconstruction whose error runs *against* the hypothesis converts the
+measurement from a two-sided error bar into a **one-sided bound**: if the number clears the threshold
+despite the bias pushing it down, the bias cannot be the reason it cleared. That is a strictly stronger
+position than "±1%", and it is only available because the check was run *before* the number was read —
+had I looked first, an over-count would have been indistinguishable from a convenient one. The general
+rule: when validating an instrument, establish not just how big its error is but **which way it cuts
+relative to what you are hoping to show**, and say so.
+
+**PRE-REGISTERED:**
+
+- **Primary: territory paint per game.**
+  - **≥ 12,000** (≈20% of paint issued) **and** the majority of it from **NEUTRAL** rather than enemy
+    ⇒ large enough to be worth a mechanism.
+  - **≤ 4,000** ⇒ **CLOSED for the cost of one probe.**
+  - between ⇒ size the avoidable part before building anything.
+- **Registered as NOT an accept test.** It measures a rate over existing games and can accept nothing.
+- **Comparative**, as in iterations 46 and 48: the same classification for **alice** on the 75
+  `alice-vs-bob` tournament replays, IND dropped at source. If alice pays the same, it is a property of
+  the game.
+- **The interpretive clause that matters most, and I am fixing it BEFORE seeing the number.** The obvious
+  mechanism for a large territory bill is *"prefer to end your turn on your own paint"* — and that moves
+  units **backward, toward already-painted ground**. That is the *same position payer* that capped
+  iterations 49 and 50 at +6, and it is worse here, because de-clumping at least moved units sideways
+  whereas this moves them away from the frontier by construction. **So a large number does NOT license
+  building the obvious mechanism.** It licenses only a design that removes the penalty *without*
+  retreating — for example painting the tile you are standing on, which converts neutral to own and is
+  productive in the same action. If no such design exists, the direction closes regardless of size.
+- **Prediction, registered with its mechanism**: bob's units are mostly on their **own** paint already
+  (bob paints where it walks), so territory will come in **below** crowding — I estimate 8,000–13,000 —
+  with NEUTRAL dominating ENEMY. My last four predictions have been wrong, so this is a falsifiable guess
+  with a poor record attached.
+
+`src/bob/` untouched. **`bob_iter20` remains the bot.**

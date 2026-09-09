@@ -24,7 +24,8 @@ set -euo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO="$(cd "$HERE/../../.." && pwd)"
 source "$REPO/tools/lib.sh"
-RUN="$1"; FILT="${2:-}"; EVERY="${3:-100}"
+RUN="$1"; FILT="${2:-}"; EVERY="${3:-100}"; VIEWS="${4:-}"
+VFLAG=""; [ -n "$VIEWS" ] && VFLAG="--views"
 WANT_VER="$(cat "$REPO/arena/engine_version.txt")"
 case "$RUN" in
   /*|~*|\$*) RDIR="$RUN" ;;
@@ -45,15 +46,18 @@ gssh "
     b=\$(basename \"\$f\")
     # ISOLATION: drop every IND line at the source (RULES.md 2026-09-09), unconditionally,
     # so this script can never be the one that leaks a tournament replay's debug output.
-    java -classpath \".:\$BC_JAR\" com.google.flatbuffers.ReplayDump \"\$f\" --map $EVERY 2>/dev/null |
+    java -classpath \".:\$BC_JAR\" com.google.flatbuffers.ReplayDump \"\$f\" --map $EVERY $VFLAG 2>/dev/null |
       grep -v ' IND ' |
       awk -v F=\"\$b\" '
         /^=== GameHeader/ { if (match(\$0,/team1=[^ ]+/)) t1=substr(\$0,RSTART+6,RLENGTH-6);
                             if (match(\$0,/team2=[^ ]+/)) t2=substr(\$0,RSTART+6,RLENGTH-6);
                             printf \"HDR\t%s\t%s\t%s\n\", F, t1, t2; next }
-        /^=== ARENA round/ { printf \"ARENA\t%s\t%s\n\", F, \$4; ingrid=1; next }
+        /^=== ARENA round/ { printf \"ARENA\t%s\t%s\n\", F, \$4; ingrid=1; g=1; next }
         /^=== / && !/^=== ARENA/ { ingrid=0 }
+        /^--- paint only/ { g=2; next }
+        /^--- marks only/ { g=3; next }
+        /^ *coverage per-mille/ { printf \"COV\t%s\t%s\n\", F, \$0; next }
         ingrid==1 && /^ *[0-9]+ [.#oabABtndsmpTNDSMP*]+$/ {
-            y=\$1; row=\$2; printf \"G\t%s\t%s\t%s\n\", F, y, row }'
+            y=\$1; row=\$2; printf \"G%d\t%s\t%s\t%s\n\", g, F, y, row }'
   done
 "
