@@ -56,7 +56,10 @@ ensure_vm
 gssh "mkdir -p ~/bc25-benchmarks/bench/src ~/bc25-benchmarks/stage-$RUN_ID" >/dev/null
 gscp -r "$STAGE/." "$USER_NAME@$IP:bc25-benchmarks/stage-$RUN_ID/" >/dev/null
 
-RTAG="benchmark-$RUN_ID"
+# Under ~/bc25-benchmarks, never the VM's shared HOME: this script names the
+# finalist bots, which the three lineages must never read. A run killed before
+# its cleanup used to leave that list sitting in a directory all three can list.
+RTAG="bc25-benchmarks/$RUN_ID-runner.sh"
 remote=$(mktemp)
 cat > "$remote" <<REMOTE
 set -uo pipefail
@@ -104,8 +107,8 @@ wait
 rm -rf ~/bc25-benchmarks/stage-$RUN_ID
 echo BENCHMARK-COMPLETE >> \$RES
 REMOTE
-gscp "$remote" "$USER_NAME@$IP:$RTAG.sh" >/dev/null
-gssh "setsid bash -c 'bash ~/$RTAG.sh > /dev/null 2>&1' </dev/null >/dev/null 2>&1 &" >/dev/null || true
+gscp "$remote" "$USER_NAME@$IP:$RTAG" >/dev/null
+gssh "setsid bash -c 'bash ~/$RTAG > /dev/null 2>&1' </dev/null >/dev/null 2>&1 &" >/dev/null || true
 rm -f "$remote"
 
 RES="bc25-benchmarks/$RUN_ID.txt"
@@ -113,7 +116,7 @@ echo "  polling every 60s ..."
 deadline=$(( $(date +%s) + 600*60 ))
 while true; do
   sleep 60
-  snap=$(gssh "cat $RES 2>/dev/null; echo '@@@'; pgrep -f '$RTAG.sh' >/dev/null && echo ALIVE") || continue
+  snap=$(gssh "cat $RES 2>/dev/null; echo '@@@'; pgrep -f '$RUN_ID-runner.sh' >/dev/null && echo ALIVE") || continue
   body=${snap%@@@*}; ctl=${snap#*@@@}
   printf '%s\n' "$body" > "$OUT/raw.txt"
   n=$(printf '%s\n' "$body" | grep -c '^RESULT ' || true)
@@ -130,7 +133,7 @@ done
 RAW="$OUT/raw.txt"
 collate_benchmark
 rm -f "$RAW"
-gssh "rm -f ~/$RES ~/$RTAG.sh" >/dev/null 2>&1 || true
+gssh "rm -f ~/$RES ~/$RTAG" >/dev/null 2>&1 || true
 
 cat "$OUT/summary.md"
 echo "wrote $OUT/"

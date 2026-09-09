@@ -40,6 +40,13 @@ working, not a tooling fault to report. Traversal and direct reads are
 unaffected, so `<scratchpad>/bob/...` works normally and writes still
 succeed; only enumeration is closed.
 
+**And the VM's HOME is shared as well — never enumerate it.** `ls ~` on
+battlecode-dev returns all three lineages' remote scratch directories, named
+after their owners; until today it also held hundreds of generated runner
+scripts, each naming a bot, its opponent arms and its exact map sample. Use
+exact paths on the VM, never a listing or a glob of `~`, and keep your own
+remote scratch under your workspace directory.
+
 **And never run an unscoped `pgrep -fa` or `ps aux`.** Process listings are not
 workspace-scoped, so "is my job still running?" returns your siblings' in-flight
 gauntlet command lines — their bot, their opponent arms, their map sample. Use

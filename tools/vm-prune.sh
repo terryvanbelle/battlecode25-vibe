@@ -72,6 +72,24 @@ prune_dir () {   # <parent-of-run-dirs> <how-many-to-keep> <label>
 for a in alice bob carol; do prune_dir "$R/agents/$a/gauntlet" "$KEEP" "$a"; done
 prune_dir "$R/arena/tournaments" "$KEEP_T" "tournaments"
 
+# Stale runner scripts in the SHARED HOME. Until 2026-09-09 every gauntlet,
+# tournament and benchmark launch dropped its generated runner and log straight
+# into ~, where all three lineages can list them -- and a gauntlet runner names
+# the bot, every opponent arm and the exact map sample, while a benchmark runner
+# names the finalist bots nobody may read. 738 entries had accumulated. The
+# launchers now write inside the run's own directory, so this only clears what
+# the old ones left behind; it is scoped to names this project generates and
+# never touches an agent's own remote scratch.
+stale=0
+for f in $(find "$HOME" -maxdepth 1 -type f \( -name 'gauntlet-*.sh' -o -name 'gauntlet-*.log' \
+             -o -name 'tournament-*.sh' -o -name 'tournament-*.log' \
+             -o -name 'benchmark-*.sh' -o -name 'benchmark-*.log' \) \
+             ! -newermt "-${GRACE_H} hours" 2>/dev/null); do
+  if [ "$DRY_RUN" = 1 ]; then echo "  WOULD remove home/$(basename $f)"
+  else rm -f "$f" && stale=$((stale+1)); fi
+done
+[ "$stale" -gt 0 ] && echo "  removed $stale stale runner script(s)/log(s) from the shared home"
+
 after=$(free_gb)
 echo "$(date -u +%FT%TZ) prune: ${after}G free after (+$((after-before))G)"
 REMOTE

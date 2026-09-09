@@ -75,7 +75,18 @@ produced.
    reads are untouched, so `<scratchpad>/<your-name>/...` behaves normally and
    writes at the root still succeed. What closes is discovery: you can no longer
    learn a sibling's filenames by accident.
-8. **Never run an unscoped `pgrep -fa` / `ps aux`.** Process listings are not
+8. **The VM's home directory is shared too — never enumerate it.** `ls ~` on
+   battlecode-dev returns all three lineages' remote scratch directories, named
+   after their owners. Worse, until 2026-09-09 every launch dropped its generated
+   runner script into that home, and a gauntlet runner names the bot, every
+   opponent arm and the exact map sample; 738 entries had accumulated and 416 of
+   them were those scripts. A lineage self-reported listing that directory. The
+   launchers now write the runner inside the run's own directory and `vm-prune`
+   clears the strays, but the home still holds working directories that are not
+   yours: use exact paths on the VM, never a listing or a glob of `~`. Keep your
+   own remote scratch under your workspace, where it is yours by construction.
+
+9. **Never run an unscoped `pgrep -fa` / `ps aux`.** Process listings are not
    scoped to a workspace, so a routine "is my job still running?" check returns
    your siblings' in-flight gauntlet command lines — bot name, opponent arm
    names, map sample. That is a live readout of what another lineage is testing
@@ -137,6 +148,34 @@ Cost of skipping it, measured: two sessions of one lineage each launched a
 gauntlet, putting up to six concurrent jobs against a `MAXJOBS <= 3` rule on a VM
 shared with two other lineages and a live BC26 project, and forked the ledger
 into two competing iteration 45s.
+
+**It then happened a fifth time, to the coordinator that wrote all of the above.**
+`ListAgents` showed the agent `completed`, a replacement was launched without the
+mandatory `TaskStop`, and the old session came back — it had a background job
+still running, and an agent resumes when its own children finish, which is
+exactly why "completed" is a snapshot and not a state. Two sessions then ran one
+lineage for half an hour and wrote two parallel accounts of the same iteration
+into one `TRAINING_LOG.md`. Neither session could see the other; the lineage
+found it by noticing commits it had not made.
+
+So the rule now has a **control at the point of damage**, because a rule that has
+to be remembered is not a control (TRAINING_ALGORITHM doctrine 19). `gauntlet.sh`
+checks, at launch, whether another gauntlet is already in flight for the same
+workspace, and says so loudly:
+
+> `!! another gauntlet is already in flight for agents/carol: 20260909-161537`
+> `!! If you did not launch it, a SECOND SESSION OF YOUR LINEAGE is running.`
+
+It is a warning, not a refusal — running several arms as parallel runs is
+legitimate. What it removes is the invisibility: the duplicate now announces
+itself to the one party who can tell whether it was expected. The scope is the
+workspace, so a lineage only ever sees its own runs.
+
+For the coordinator the operational rule is unchanged and now non-negotiable:
+**call `TaskStop` on the previous agent id before every relaunch, including when
+the listing says `completed`.** `No task found with ID` is the clean terminal
+signal; a success message means the agent was still alive and you were about to
+duplicate it.
 
 When two do end up live, do not guess which to keep. Sample each session's
 transcript mtime a few seconds apart: the one still being written is the live

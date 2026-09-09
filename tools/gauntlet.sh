@@ -104,10 +104,38 @@ python3 "$REPO_ROOT/tools/bot_identity.py" --workspace "$WS_DIR" --bot "$BOT" > 
 echo "gauntlet $RUN_ID  ws=$WS_REL bot=$BOT  opponents=[$OPPONENTS]  maps=$MAPTAG  games=$NGAMES  jobs=$MAXJOBS"
 
 ensure_vm
-gssh "mkdir -p ~/$REMOTE_REPO/$WS_REL/src" >/dev/null
+
+# Is another gauntlet for THIS workspace already in flight? Scoped to the
+# workspace, so it can only ever show a lineage its own runs.
+#
+# Not a refusal -- launching several arms as parallel runs is legitimate and
+# common. It is an alarm for the case that is not: two sessions of one lineage,
+# which forks the ledger and doubles the VM load, and which the agents cannot
+# detect for themselves. It has happened five times; the last was found by a
+# lineage noticing commits it had not made, minutes after the coordinator's own
+# written rule said to stop the old agent before launching a replacement and the
+# coordinator skipped it. A rule that has to be remembered is not a control.
+inflight="$(gssh "pgrep -af '$WS_REL/gauntlet/[0-9-]*/runner.sh' 2>/dev/null \
+              | sed 's#.*gauntlet/\([0-9-]*\)/.*#\1#' | sort -u" 2>/dev/null || true)"
+if [ -n "$inflight" ]; then
+  echo "!! another gauntlet is already in flight for $WS_REL: $(echo $inflight)"
+  echo "!! If you did not launch it, a SECOND SESSION OF YOUR LINEAGE is running."
+  echo "!! Stop, report it to the coordinator, and do not commit until it is resolved:"
+  echo "!! two sessions on one workspace fork the ledger and double the VM load."
+fi
+
+gssh "mkdir -p ~/$REMOTE_REPO/$WS_REL/src ~/$REMOTE_REPO/$WS_REL/gauntlet/$RUN_ID" >/dev/null
 gscp -r "$WS_DIR/src/." "$USER_NAME@$IP:$REMOTE_REPO/$WS_REL/src/" >/dev/null
 
-RTAG="gauntlet-$RUN_ID"
+# The generated runner used to be written to the VM's HOME as ~/gauntlet-<id>.sh,
+# beside its .log. That home is shared by all three lineages, and each script
+# names the bot, every opponent arm and the exact map sample -- 738 entries had
+# accumulated there, hundreds of them these scripts, readable by anyone who ran
+# `ls ~`. A lineage self-reported enumerating that directory. Keeping the runner
+# and its log inside the run's own directory closes the channel, and has the
+# side benefit that pruning a run now takes its script with it instead of
+# leaving one behind for the life of the VM.
+RTAG="$REMOTE_REPO/$WS_REL/gauntlet/$RUN_ID/runner.sh"
 remote=$(mktemp)
 cat > "$remote" <<REMOTE
 set -uo pipefail
@@ -169,15 +197,15 @@ done
 wait
 echo GAUNTLET-COMPLETE >> gauntlet/$RUN_ID/results.txt
 REMOTE
-gscp "$remote" "$USER_NAME@$IP:$RTAG.sh" >/dev/null
-gssh "setsid bash -c 'bash ~/$RTAG.sh > ~/$RTAG.log 2>&1' </dev/null >/dev/null 2>&1 &" >/dev/null || true
+gscp "$remote" "$USER_NAME@$IP:$RTAG" >/dev/null
+gssh "setsid bash -c 'bash ~/$RTAG > ~/$RTAG.log 2>&1' </dev/null >/dev/null 2>&1 &" >/dev/null || true
 
 RES="$REMOTE_REPO/$WS_REL/gauntlet/$RUN_ID/results.txt"
 echo "  polling every 45s ..."
 seen=0; deadline=$(( $(date +%s) + 180*60 ))
 while true; do
   sleep 45
-  snap=$(gssh "cat $RES 2>/dev/null; echo '@@@'; pgrep -f '$RTAG.sh' >/dev/null && echo ALIVE") || { echo "  (ssh retry)"; continue; }
+  snap=$(gssh "cat $RES 2>/dev/null; echo '@@@'; pgrep -f 'gauntlet/$RUN_ID/runner.sh' >/dev/null && echo ALIVE") || { echo "  (ssh retry)"; continue; }
   body=${snap%@@@*}; ctl=${snap#*@@@}
   printf '%s\n' "$body" > "$OUT/results.txt"
   n=$(printf '%s\n' "$body" | grep -c '^RESULT ' || true)
@@ -188,7 +216,7 @@ while true; do
     done
     seen=$n
   fi
-  grep -q '^BUILD-FAILED' "$OUT/results.txt" && { echo "!! remote build failed (see $RTAG.log on VM)" >&2; exit 1; }
+  grep -q '^BUILD-FAILED' "$OUT/results.txt" && { echo "!! remote build failed (see ~/$RTAG.log on VM)" >&2; exit 1; }
   grep -q '^GAUNTLET-COMPLETE' "$OUT/results.txt" && { echo "  complete ($n games)"; break; }
   printf '%s\n' "$ctl" | grep -q ALIVE || { echo "!! runner died at $n/$NGAMES games" >&2; break; }
   [ "$(date +%s)" -gt "$deadline" ] && { echo "!! poll deadline" >&2; break; }

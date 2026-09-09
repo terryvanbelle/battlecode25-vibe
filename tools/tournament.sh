@@ -101,10 +101,14 @@ NMAPS=$(echo "$MAPS" | wc -w)
 echo "tournament $RUN_ID  bots=[$BOTS]  maps=$NMAPS  pairs=[$PAIRS]"
 
 ensure_vm
-gssh "mkdir -p ~/$REMOTE_REPO/arena/src ~/$REMOTE_REPO/arena/tournaments ~/$REMOTE_REPO/arena/stage-$RUN_ID" >/dev/null
+gssh "mkdir -p ~/$REMOTE_REPO/arena/src ~/$REMOTE_REPO/arena/tournaments/$RUN_ID ~/$REMOTE_REPO/arena/stage-$RUN_ID" >/dev/null
 gscp -r "$STAGE/." "$USER_NAME@$IP:$REMOTE_REPO/arena/stage-$RUN_ID/" >/dev/null
 
-RTAG="tournament-$RUN_ID"
+# Inside the run's own directory, not the VM's shared HOME -- see gauntlet.sh
+# for why (that home had accumulated 738 entries, hundreds of them stale runner
+# scripts naming what each lineage was testing). Pruning a run now takes its
+# script and log with it.
+RTAG="$REMOTE_REPO/arena/tournaments/$RUN_ID/runner.sh"
 remote=$(mktemp)
 cat > "$remote" <<REMOTE
 set -uo pipefail
@@ -180,8 +184,8 @@ wait
 rm -rf stage-$RUN_ID
 echo TOURNAMENT-COMPLETE >> "\$RUNDIR/results.txt"
 REMOTE
-gscp "$remote" "$USER_NAME@$IP:$RTAG.sh" >/dev/null
-gssh "setsid bash -c 'bash ~/$RTAG.sh > ~/$RTAG.log 2>&1' </dev/null >/dev/null 2>&1 &" >/dev/null || true
+gscp "$remote" "$USER_NAME@$IP:$RTAG" >/dev/null
+gssh "setsid bash -c 'bash ~/$RTAG > ~/$RTAG.log 2>&1' </dev/null >/dev/null 2>&1 &" >/dev/null || true
 rm -f "$remote"
 
 RES="$REMOTE_REPO/arena/tournaments/$RUN_ID/results.txt"
@@ -189,7 +193,7 @@ echo "  polling every 60s ..."
 deadline=$(( $(date +%s) + 240*60 ))
 while true; do
   sleep 60
-  snap=$(gssh "cat $RES 2>/dev/null; echo '@@@'; pgrep -f '$RTAG.sh' >/dev/null && echo ALIVE") || { echo "  (ssh retry)"; continue; }
+  snap=$(gssh "cat $RES 2>/dev/null; echo '@@@'; pgrep -f 'tournaments/$RUN_ID/runner.sh' >/dev/null && echo ALIVE") || { echo "  (ssh retry)"; continue; }
   body=${snap%@@@*}; ctl=${snap#*@@@}
   printf '%s\n' "$body" > "$OUT/results.txt"
   n=$(printf '%s\n' "$body" | grep -c '^RESULT ' || true)
