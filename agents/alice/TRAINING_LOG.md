@@ -15726,3 +15726,154 @@ both of us", and the only instrument that can confirm transfer to opponents my l
 produce is the round-robin. The two pre-checks I recorded as not done — a replay confirmation that
 alice really fields one tower type on `gridworld`, and the possibility that the four maps share
 some other property — are **still not done**, and the second is the weakest joint in the argument.
+
+### Pre-check (b) advanced: the density confound is REFUTED, and it was the right suspect
+
+I recorded "the four maps may share some other property" as the weakest joint in iteration 43's
+argument. `tools/mapdata/README.md` — shared neutral ground, not my own workspace — names the
+suspect outright:
+
+> `gridworld` is therefore degenerate in **two independent ways** — single-parity ruins *and*
+> extreme density.
+
+So the confound is not hypothetical, and on the map contributing the most ruins (21 of the 38
+across the four) it is *real*. If ruin density were driving the arm, iteration 43's 7/8 would be
+an artefact.
+
+**It is not, and the corpus refutes it without a single extra game.** Density rank of the four,
+over the 75-map corpus (ruins per 1000 tiles):
+
+| map | density | rank | ruins | arm outcome |
+|---|---|---|---|---|
+| `gridworld` | 21.9 | **1 of 75** (densest) | 21 | SWEPT |
+| `CastleDefense` | 15.0 | 15 | 6 | SWEPT |
+| `Filter` | 11.3 | 40 (median is ~11.4) | 5 | **split** |
+| `Snowman` | 9.6 | 52 (below median) | 6 | SWEPT |
+
+The four span rank 1 to rank 52 — densest to well below median — so **"these maps are all dense"
+is false as a description of the set.** And the outcomes do not track density in the one direction
+that matters: the *sparsest* of the four (`Snowman`, rank 52) was swept, while the *denser*
+`Filter` (rank 40) was the only split. A density-driven effect predicts the opposite ordering.
+
+What does order the outcomes is **ruin count** — `Filter` has 5, the fewest, so a re-key changes
+the fewest towers there. That is the mechanism's own prediction, and I logged it before computing
+any of this.
+
+**The robustness check that costs nothing:** drop `gridworld` — the one map where the confound is
+genuinely present — and the arm reads **5/6 (83.3%)**, still clear of the pre-registered 75% bar.
+The result does not depend on the contaminated map.
+
+**What this does NOT settle.** Refuting density is not refuting every confound; with four maps a
+lattice-regularity story remains unexcluded, and I could not separate it by win rate. A graded
+"near-degenerate" arm (skew 0.75–0.88: `yearofthesnake`, `lighthouse`, `Brat`, `MoneyTower`) looks
+like the obvious control and **is not one** — parity-degeneracy and lattice-regularity both
+predict the effect concentrates at skew = 1.00 and vanishes below it, because one minority tower
+is qualitatively different from zero. Both hypotheses give ~50% there, so the arm would cost 14
+games and discriminate nothing. Naming a control that cannot discriminate, and not running it,
+is the cheaper half of this check.
+
+**The test that does discriminate is the intermediate causal link, not any win rate.** My chain is
+single parity -> one tower type -> one income stream at zero -> damage. The middle terms are
+directly observable, and the lattice story predicts nothing about them. That promotes pre-check
+(a) from a formality to the decisive measurement: censusing tower composition and per-type income
+for `alice` vs `alice_i43` on the four maps.
+
+### Pre-check (a), the code half: the parity key does determine the tower type
+
+Read before measuring, because the completion path has a fallback that *looks* like it could
+override the key (`src/alice/RobotPlayer.java`):
+
+```java
+if (rc.canCompleteTowerPattern(UnitType.LEVEL_ONE_PAINT_TOWER, ruin)) { ... }
+else if (rc.canCompleteTowerPattern(UnitType.LEVEL_ONE_MONEY_TOWER, ruin)) { ... }
+```
+
+Tried in a fixed order, PAINT first, with no reference to `wantTower` — exactly the shape of the
+absolute-order bug the algorithm's play-symmetry audit warns about. It is **benign here**:
+`canCompleteTowerPattern` succeeds only when the tiles are already painted in that type's pattern,
+and the paint came from `markTowerPattern(wantTower, ruin)`. The mark decides; the fallback order
+only picks which query answers true. So the key does select the tower type, and the parity table's
+implication holds at the code level.
+
+That is the implication confirmed, not the behaviour. The census still has to show `alice_i43`
+actually *achieves* a mix on these maps — a key that emits a mix and a bot that builds one are
+different claims, and this log has been caught by that gap before.
+
+## Iteration 43 ACCEPTED — cost bound +2, and the gain sits exactly where it was registered
+
+Run `20260909-111028`, `BOT=alice_i43` vs `alice_iter39`, full 75-map corpus, 150 games. The run
+was launched by the session that died; it is `setsid`-detached, so it ran to completion and only
+the collation was lost. Recovered with `gauntlet-collect.sh`, not re-run.
+
+`gate-read` on the whole run: **77–73, SW 19, SL 17, split 39, net swept +2**, identity column OK
+(`wins − N = +2`, `SW − SL = +2`).
+
+**Pre-registered cost bound was net swept >= −2. +2 clears it.**
+
+### The map-level falsifier — the part that could have killed this
+
+I registered: *"the effect must be concentrated on the four, and ~0 on the other 71. If gains
+appear spread across the corpus, the mechanism is not what I registered and the result does not
+count."* Decomposed:
+
+| subset | maps | record | SW | SL | split | net swept |
+|---|---|---|---|---|---|---|
+| the four single-parity | 4 | 7–1 | 3 | 0 | 1 | **+3** |
+| the other 71 | 71 | 70–72 | 16 | 17 | 38 | **−1** |
+| all 75 | 75 | 77–73 | 19 | 17 | 39 | +2 |
+
+The other 71 maps have 33 decisive maps, so sd(net swept) = sqrt(33) = 5.74 and **−1 is 0.17 sd —
+zero**. The entire corpus effect is the four maps. **The falsifier does not fire**, and the shape
+is the one the hypothesis predicted rather than one I went looking for afterwards.
+
+### The double-count I nearly walked into, and the reason it matters here
+
+The corpus sample happened to draw all four single-parity maps, and those 8 games are
+**byte-identical to the mechanism arm's 8 games** — same winners, same round counts
+(`Snowman` 1059/750, `gridworld` 989/2000, `Filter` 306L/1089, `CastleDefense` 1844/2000). The
+engine is deterministic, so this is a reproduction, not a replication.
+
+> So I do **not** have "7/8 in the arm *and* +3 on the corpus" as two agreeing results. It is one
+> measurement appearing twice. The arm and the corpus's four-map slice are the same 8 games.
+
+Honest accounting of what each part bought:
+
+- **Mechanism (4 maps, 8 games): +3.** Pre-registered, bar cleared — but a single measurement.
+- **Cost (71 maps, 142 games): −1.** This is the genuinely new information in run
+  `20260909-111028`, and it is what the corpus run was for.
+- **The +2 headline is their sum, not corroboration.** Citing it beside either component is
+  citing one number twice — the same error the sweep-vs-margin identity catches, in a new dress.
+
+That the tournament tooling grew `tools/map-subset.py` this week for the pooling form of exactly
+this mistake is not a coincidence; it is the third distinct guise the error has taken in this log.
+
+**ACCEPT.** `src/alice/` takes the iteration 43 key; snapshot frozen at `src/alice_iter43/`.
+`src/alice/RobotPlayer.java` is byte-identical to `alice_i43` modulo the package line, and
+`alice_i43` played 158 games on the VM, so HEAD compiles.
+
+**What is accepted is narrow, and the log should not inflate it later:** a key that cannot
+degenerate, worth ~+3 net swept on 4 of 75 maps and 0 elsewhere. It is not a strength gain on the
+corpus and the corpus provably cannot show one. Whether it transfers to opponents this lineage did
+not produce is a question only the round-robin can answer, and the tournament has not yet run with
+this commit.
+
+### Doctrine 20 control run on my own earlier claim — the tool corrects my arithmetic
+
+The coordinator promoted my parity finding to doctrine 20 and shipped `tools/map-subset.py`. Re-ran
+my hand-computed table through it (`--maps CastleDefense,Filter,Snowman,gridworld --last 3`):
+
+```
+alice vs bob      37.5% (6/16)  z=-0.04      38.0% (108/284)     -0.5
+alice vs carol    33.3% (8/24)  z=-3.05      64.3% (274/426)    -31.0
+bob vs carol      12.5% (3/24)  z=-3.98      54.2% (231/426)    -41.7
+```
+
+**The conclusion survives exactly** — `alice–bob` is flat (z = −0.04), both carol pairs move hard,
+so the deficit is shared and is a carol capability. **My hand numbers did not.** I logged
+`alice v bob` as 25.0% (6/24); the tool says 37.5% (6/16), having excluded the `20260909-0100`
+alice–bob games as byte-identical repeats of `20260908-1300`. I pooled duplicates into the
+denominator by hand and never noticed.
+
+The reasoning was right and the arithmetic was wrong, which is the failure mode the standing note
+warns about: *a hand-transformation is not a fix; it holds only as long as you remember.* It held
+this time. Going forward the subset cut goes through the tool, not through me.
