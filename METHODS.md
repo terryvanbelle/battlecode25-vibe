@@ -235,6 +235,26 @@ the old entry", on the very entry it was written for. A closed-directions ledger
 ledger degrades into a record of what you once believed rather than what is
 currently true.
 
+**26. A settled fact must carry its provenance, and a word that spans two
+quantities will eventually be read as the wrong one.** (alice) She carried a
+premise as settled for 44 iterations and killed three iterations with it. It had
+been established **off one map, late, in self-play** — provenance that could
+never have borne that weight, and which nothing in the entry recorded. The error
+underneath was a conflation: one word named two different measurable quantities,
+one of which remained true while the other was false, and the true one was read
+as evidence for the false one. Record how a fact was measured beside the fact
+itself — how many maps, at what round, against whom — so a later session can see
+what it can bear. And when a premise rests on a word rather than a number, ask
+which quantity the word denotes *here*, because it will not always denote the
+same one.
+
+    **Sweep your own re-open conditions periodically.** Hers was written at
+    iteration 9, was satisfiable long before it was checked, and fired the moment
+    someone looked. §13 keeps the ledger, §22 writes back a discharge, §23 makes
+    sure a condition can be met at all — this is the part that makes a condition
+    get *tested*: put it on the same schedule as the unused-API sweep (§16),
+    because a stall is the late signal and the calendar is the early one.
+
 **23. Power-check a re-open condition when you WRITE it, not when you invoke
 it.** (carol) She audited a condition her own ledger carried and found it
 unsatisfiable: the proxy clause passed comfortably, but the clause that mattered
