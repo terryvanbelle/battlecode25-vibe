@@ -2826,3 +2826,93 @@ Three instances, one shape. The unifying pre-check, which is now the thing to ac
 > **Before reading a statistic as an opportunity, ask what generated the data. If the mechanism
 > under study is upstream of the measurement, the number describes the mechanism working, not the
 > mechanism failing.**
+
+## Theme: an INERT BRANCH is a fact about the BRANCH — measure what the turns it fails to serve are actually doing
+
+Iteration 44 was built on a probe I ran correctly and read wrong. It measured that `goRefill`
+could not act on **96.2%** of a soldier's hungry turns, because it walks only to a tower it can
+see. I read that as *96.2% of hungry turns are wasted* and built a memory of tower locations so
+the branch could fire on all of them.
+
+**Net swept −58 of a possible −75.** Zero swept wins on 75 maps, −11.0 sd. The largest negative
+this lineage has measured, and the trace says exactly why: those turns were not idle. They were
+the turns the soldier spent **painting and capturing ruins**. `goRefill` returns at the top of
+`runSoldier`, so every turn the fix "rescued" was a turn the soldier stopped expanding. By round
+200 the control held **8 towers to 4** and **16 soldiers to 7**; the loss compounds through the
+economy, which is why a small-looking tempo cost lands at −58.
+
+The mechanism even **fired as designed** (late paint transfers 14 against the control's 2) and
+**still failed its own objective** — starvation deaths ran 3/2/5 against 2/1/8, i.e. unchanged.
+An arm can act, hit its target quantity, and lose badly.
+
+> A branch that "cannot act on 96.2% of turns" tells you about the **branch**. What those turns
+> produce is a **separate measurement**, and it is the one that decides the iteration.
+
+This is the same family as the entry above (a statistic conditioned on the mechanism) but one
+level up: there, the number described the mechanism working; here, the number described a
+*disabled* mechanism while the bot worked around it. The generalisation covering both:
+
+> **Whenever a candidate redirects a unit's turn, state what those turns were DOING BEFORE —
+> measured, not assumed.**
+
+Installed as **pre-check 4 in `tools/gate-read.sh`**, which prints on every verdict read, because
+a lesson written in a log is not a control (this file's own "a lesson written THREE times is not
+a lesson, it is a missing control").
+
+**It caught the very next iteration.** My first draft of iteration 45 was "steer the idle soldier
+toward the nearest empty tile in vision". The probe I ran because of this entry showed there is
+**no empty tile in vision at all on 72–92% of those turns** — inert for the identical reason, and
+inert *most* where the games are actually lost. Killed for the cost of two matches instead of 150
+games.
+
+## Theme: a BITE check proves a mechanism ACTS — it can invert the SIGN on the mechanism's own metric
+
+Pre-check 3 requires testing a candidate on a map where the mechanism is known to bite, because a
+near-inert map says nothing. Iteration 45 passed that check spectacularly and then lost.
+
+`alice_i45` vs `alice_iter39` on `BatSignal`: the arm wins **at round 919 against the control's
+1209** — a 290-round acceleration, measured on the *precise* quantity the pre-registered falsifier
+names (how fast the 70%-coverage instant win arrives). It looked like the mechanism working
+exactly as theorised.
+
+The 75-map census, same arm, same control:
+
+| | wins | median winning round | by 70% instant win | by tiebreaker |
+|---|---|---|---|---|
+| `alice_i45` | 64 | **1582** | 56.2% | 43.8% |
+| `alice_i45ctl` | 86 | **972** | 73.3% | 26.7% |
+
+**610 rounds slower on median, and more tiebreakers, not fewer.** The single map did not merely
+fail to *size* the effect — the standing lesson one entry up — it got the **sign backwards on the
+mechanism's own metric**.
+
+> A bite check answers *"does this code do anything?"*. It never answers *"does this help?"*, and
+> a bite reading that happens to point the right way is the most persuasive form the error takes.
+
+Practical consequence: run the bite check (it is cheap and it catches dead arms), record it as
+evidence of **action only**, and never let it stand in for the census — however large the number
+and however precisely it lands on the quantity you pre-registered.
+
+## Theme: three arms failed on one root — the bot had no representation of the thing they all guessed at
+
+Worth naming because it took three separate failures in one session to see it, and each looked
+like an independent mechanism at the time:
+
+| arm | what it did | outcome |
+|---|---|---|
+| iteration 44 | acted on a **branch's inertness** | −58 |
+| iteration 45 draft | steered **inside vision**, where 72–92% of the time there is nothing to see | killed by probe, 0 games |
+| iteration 45 | guessed at what lies **outside vision** with a random destination | −11, falsifier inverted |
+
+All three aimed at the same real defect — soldiers idle on **70% of turns early and 96% late** —
+and all three founder identically: **the bot has no representation of where unpainted ground is.**
+Iteration 24's census puts the board at **~90% painted by someone** by round 300, so a random
+destination is ~90% likely to be *more* saturated ground. Randomness is not an estimate.
+
+> When three mechanisms aimed at one defect all fail, stop generating mechanisms and ask what
+> **information** they were each substituting a guess for. That missing quantity is the iteration.
+
+Here it is a frontier estimate, and the capability that would supply one is the same one the
+API sweep has now flagged twice in this lineage: `sendMessage` / `broadcastMessage` /
+`readMessages` — **unused for 45 iterations**, against towers that already form a global backbone
+at r² <= 80.
