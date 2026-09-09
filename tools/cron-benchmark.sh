@@ -48,7 +48,12 @@ RUN=$(ls -1t benchmarks 2>/dev/null | head -1)
 
 # scores.csv and summary.md only. No replay was ever written -- benchmark.sh
 # omits -Dbc.server.save-file precisely so there is nothing to discard here.
-git add "benchmarks/$RUN"
+# HISTORY.md too: benchmark-collate.sh regenerates it, but it lives beside the
+# run directories rather than inside one, so committing only "benchmarks/$RUN"
+# left every history update sitting uncommitted in a shared working tree. The
+# cross-run view was the point of the file, and it would have been the one part
+# that never reached the repo.
+git add "benchmarks/$RUN" benchmarks/HISTORY.md
 git commit -m "benchmark $RUN scores" || exit 0
 
 for i in 1 2 3; do

@@ -14,6 +14,7 @@ progress is what each lineage's frozen roster reports.
 | run | alice vs TSPAARKHS | alice vs v3 | bob vs TSPAARKHS | bob vs v3 | carol vs TSPAARKHS | carol vs v3 |
 |---|---|---|---|---|---|---|
 | 20260908-0212 | 0/150 0.0% | 12/150 8.0% | 0/150 0.0% | 7/150 4.7% | 0/150 0.0% | 8/150 5.3% |
+| 20260909-0133 | 0/150 0.0% (=) | 19/150 12.7% (+4.7) | 0/150 0.0% (=) | 7/150 4.7% (=) | 0/150 0.0% (=) | 31/150 20.7% (+15.3) |
 
 ## Per-run detail
 
@@ -27,4 +28,15 @@ progress is what each lineage's frozen roster reports.
 | bob | v3 | 7 | 150 | 4.7% | 1 | 69 | `e425f46` |
 | carol | TSPAARKHS | 0 | 150 | 0.0% | 0 | 75 | `6c55fc4` |
 | carol | v3 | 8 | 150 | 5.3% | 1 | 68 | `6c55fc4` |
+
+### 20260909-0133
+
+| agent | benchmark | won | played | win% | swept | swept against | played build |
+|---|---|---|---|---|---|---|---|
+| alice | TSPAARKHS | 0 | 150 | 0.0% | 0 | 75 | `920dafd` |
+| alice | v3 | 19 | 150 | 12.7% | 4 | 60 | `920dafd` |
+| bob | TSPAARKHS | 0 | 150 | 0.0% | 0 | 75 | `e425f46` |
+| bob | v3 | 7 | 150 | 4.7% | 1 | 69 | `e425f46` |
+| carol | TSPAARKHS | 0 | 150 | 0.0% | 0 | 75 | `5be82ca` |
+| carol | v3 | 31 | 150 | 20.7% | 8 | 52 | `5be82ca` |
 

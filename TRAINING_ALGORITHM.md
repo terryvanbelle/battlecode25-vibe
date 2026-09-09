@@ -449,7 +449,41 @@ The accept/reject machinery lives or dies on these rules. Each one is paid for.
     mobility to secondary. **Revising a spec before the tool exists is nearly
     free; revising it after is a rebuild plus every conclusion drawn in between.**
 
-15. **A self-play instrument is blind to any deficit your opponent shares.**
+16. **Check your evaluation covers the REGIME where you actually lose.** The
+    next rule is about a blind spot your opponent shares; this one is about a
+    regime your opponent never produces. Different failure, and easier to miss,
+    because the instrument looks healthy — thousands of games, many opponents,
+    clean statistics, all drawn from the wrong part of the distribution.
+
+    A lineage found that across **~4,900 self-play games and 68 opponents,
+    essentially none ended before round 200** — while its losses to a sibling
+    concentrate exactly there, and that sibling ends 6% of its games in that
+    range. Even the synthetic archetype it had built to attack itself differently
+    had a median length of 949. **Four consecutive iterations were each evaluated
+    in a regime none was designed for**, which explains four nulls without any
+    hypothesis about the mechanisms themselves.
+
+    Before reading another null: plot what your gauntlet actually samples — game
+    length, map size, whatever your losses condition on — against the
+    distribution of your *tournament losses*. A gauntlet that never enters the
+    regime will report a confident, well-powered nothing.
+
+    **Take the free controls the tournament hands you**, too. When two lineages
+    play byte-identical builds across consecutive runs, that pair is a frozen
+    control nobody paid for: one such pair reproduced 150/150 including exact
+    round counts, and corrected two headline statistics that had been pooled over
+    opponents whose strength was changing underneath them.
+
+    **And tightening a gate is not free.** A lineage corrected its threshold
+    upward, audited its past accepts against the new bar, found three that failed
+    it, and predicted in writing that the stretch had destroyed value. A
+    full-corpus census then returned **+38 (+3.31 sd)** — they were three small
+    *true* effects. **Raising a threshold without adding power only trades false
+    accepts for false rejects.** If the honest gate is beyond your current
+    resolution, the answer is more games or a better instrument, not a stricter
+    number.
+
+17. **A self-play instrument is blind to any deficit your opponent shares.**
     Your gauntlet, your roster and your census all play your lineage against
     *itself* — a different build, but the same assumptions. So a weakness both
     arms carry cancels: both flail in the same situations, and the margin between
@@ -480,7 +514,7 @@ The accept/reject machinery lives or dies on these rules. Each one is paid for.
       mis-join would have looked entirely plausible. This is doctrine 15's
       reconciliation habit applied to a table rather than to a rate.
 
-15. **Replay per-robot state is recorded POST-action. Never use it to estimate
+18. **Replay per-robot state is recorded POST-action. Never use it to estimate
     whether an action was possible.** The paint and money a replay shows for a
     robot on turn N are what it had *after* spending, so "how often could this
     robot afford X" computed from replay state is conditioned on the very outcome
@@ -501,7 +535,7 @@ The accept/reject machinery lives or dies on these rules. Each one is paid for.
     the step from post-turn state to *affordability at the decision point* was
     invalid. To measure a decision, instrument the decision: record the deciding
     quantities in-bot, at the decision point, before the action resolves.
-16. **A lesson you wrote is not a control. Install the check where the mistake
+19. **A lesson you wrote is not a control. Install the check where the mistake
     happens.** The evidence for this is unusually direct: a lineage wrote a
     lesson about confusing two currencies in a constant, then made that exact
     error again **within the hour** — on the constant underpinning its strongest
