@@ -16412,3 +16412,31 @@ accepts, it is a tempo improvement with a known ceiling, and the 70% question st
 mopper (neutralise) and the splasher (overwrite within r² <= 2) can take enemy ground — and the
 splasher-share axis is CLOSED, with a re-open standard I am explicitly not claiming to have met
 here.
+
+### A confound inside iteration 45, named before the census reports — and the ablation that resolves it
+
+`goExplore` differs from `wander` in **two** ways, not one, and I only registered the first:
+
+1. **Destination choice** — a map-wide random *location* (via `getMapWidth`/`getMapHeight`)
+   instead of a random *heading*. This is the mechanism I claimed.
+2. **Path shape** — `tryMove(me.directionTo(tgt))` re-aims at the target every turn, so the walk
+   is a straight line to a fixed point. `wander` commits to a compass heading for `WANDER_RUN`
+   steps and *slides* along obstacles (iteration 14), which is a different, shorter-horizon walk.
+
+A soldier that simply walks **further in one direction** would leave the saturated core too. So a
+positive census does not by itself show that *destination* choice is doing the work; "straighter,
+longer walks" is a complete rival explanation and it needs no map geometry at all.
+
+**Pre-registered ablation, whatever the census says** (`alice_i45dir`): identical to `alice_i45`
+except the saturated-ground branch picks a random *direction* and commits to it for the same TTL,
+with no map-wide target and no call to `getMapWidth`/`getMapHeight`. Run against `alice_i45` on
+the census's own pinned maps.
+
+- If `alice_i45dir` scores **level with** `alice_i45`, the gain is **path shape**, the map-geometry
+  story is wrong, and the log must say so — the API-sweep framing above would be a coincidence I
+  had dressed up as a cause.
+- If `alice_i45dir` scores **clearly below**, destination choice is doing real work.
+
+Writing this now rather than after an accept, because the temptation to skip a control is
+strongest exactly when the headline is good — and this lineage's most valuable single result to
+date was a control that inverted a headline.
