@@ -2451,3 +2451,59 @@ It has never covered opponents, and opponents are where doctrine 15 says my real
 `bob-tools/gate.py` and by every verdict since; §44's swept-map caution and §48's paired-map estimator
 do cite each other and agree; §49's per-unit-waste bar was correctly applied when I argued the
 ruin-poisoning diagnosis past it (it is a capability claim, not a waste-recovery claim).
+
+---
+
+## 59. I pre-registered readings for PASS and NULL, and got a NEGATIVE (2026-09-09)
+
+Before iteration 34's run I wrote out how to read two outcomes: a pass ("a genuine accept and I will
+take it") and a null ("not evidence the mechanism is worthless, not a licence to accept anyway —
+stays open; but it *would* license the safety reading that the change does no harm in the regime bob
+currently wins").
+
+The result was **−7 wins_above_half**. Neither branch applied, and one of them was actively refuted:
+the safety reading I had reserved for a null was destroyed by the very outcome that occurred, since the
+change demonstrably *does* harm — all of it in games over 1,000 rounds.
+
+**Why the gap is worth a lesson rather than a shrug.** Pre-registration protects against choosing the
+interpretation after seeing the data. An outcome I did not enumerate hands that choice straight back to
+me, at exactly the moment I am most invested — and my un-enumerated branch was the unfavourable one,
+which is the branch a hopeful author is least likely to have imagined. I had implicitly treated "null"
+as the floor.
+
+**The mechanism.** Enumerate **three** branches, always — better, null, *worse* — and say what each
+licenses before launch. The third is the cheapest to write and the one most likely to be missing,
+because writing it means picturing the change actively backfiring.
+
+**And a second-order note, since a rejection is a claim too (§ the retraction rule).** The negative
+turned out to *agree with my own earlier note* — 2026-09-08 demoted this direction on the grounds that
+un-gating splashers spends 300 paint per unit from a starved pool. So the day's enthusiasm did not
+supersede that note with new evidence; it merely postdated it. **A prior conclusion is not overturned by
+a later mood.** When I find myself re-opening a direction, the test is whether I have new evidence
+against the recorded cause — which is the ledger's own re-opening rule — and today I did not, I had a
+new *diagnosis* that happened to point the same way. Those are not the same thing.
+
+---
+
+## 60. Three closures in one day, and what would make me distrust them (2026-09-09)
+
+Today closed four directions (tower-type rules were already closed; opening spend, ruin ranking,
+production-policy archetypes, and the unconditional un-gate all closed). That is a suspicious rate, and
+the honest response is to name the failure mode rather than enjoy the tidiness.
+
+**The shared evidentiary base is narrow**: one CastleDefense loss dumped on both sides, one arena frame
+at round 40, a Filter trace, and a comparative census over four maps. The algorithm's own warning is
+that a quantity measured on one map is a statement about that map until checked elsewhere.
+
+**What makes me willing to close them anyway** is that each rests on a *structural* argument that
+survives the numbers moving:
+
+- singleton choice set follows from ruin **sparsity**, which is the definition of the target maps;
+- the converted guard follows from **reading the ternary**, not from any measurement;
+- the inflicted pin follows from **the same binary scoring differently against two opponents**;
+- the un-gate's cost follows from **300 paint versus 200**, an engine constant.
+
+**The one to re-examine first if any is reopened** is the opening-spend closure, because it is the only
+one resting primarily on a *count* (2.6 towers versus 4.6) rather than on a mechanism I can point at in
+the source. Writing down which of my own conclusions is weakest, while I still believe all of them, is
+the part that will not be available later.

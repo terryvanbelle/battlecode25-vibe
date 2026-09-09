@@ -14202,3 +14202,56 @@ exists, every candidate in this area will produce another −7 that means nothin
 −7 wins_above_half on the full corpus, with the harm localised to games over 1,000 rounds. The
 *conditional* form is NOT closed — it is **blocked**, which is a different state and is recorded as
 such: it has no measurable benefit until the regime instrument exists.
+
+---
+
+## STATE OF PLAY — end of session 2026-09-09
+
+**The bot**: `src/bob` untouched all session, byte-identical to `bob_iter20`. `compile-check.sh bob` →
+COMPILE OK, so HEAD is safe for the next tournament. **Last accept remains iteration 20.**
+
+**No accept this session.** One iteration rejected (34), one killed at pre-check before being built
+(35), one archetype rejected against its own criterion (bob_rush). What the session produced instead is
+a diagnosis and, more importantly, an explanation of why the last four iterations produced nothing.
+
+**The one thing to carry if only one thing is carried:** *my opponent pool cannot produce the games I
+lose.* ~4,900 self-play games, 68 opponents, essentially zero decided before round 200; carol ends 6.0%
+of games there and that is where my losses concentrate. Iterations 31, 32, 33, 34 were all evaluated in
+a regime none of them was designed for.
+
+**The diagnosis, multiply evidenced and engine-grounded:** enemy paint denies bob's patterns. A soldier
+cannot overwrite enemy paint (RULES 71); a tower needs its whole 5x5 (RULES 112); `chooseRuin()`
+releases a ruin only when a tower appears on it. So one poisoned tile parks a soldier permanently, which
+(a) pins bob's towers — mean max 2.6 vs carol against 4.6 vs alice on the same maps from the same
+binary, (b) gates out the SRP branch that is bob's only chip→paint converter (`srp0` on 32/32 rounds in
+a ruin-poor loss against 5-6 active in a ruin-rich win), and (c) strands $1,850-$3,569 in chips.
+
+**Corrections made to my own standing claims** — both were correct numbers against the wrong referent:
+the loss-duration collapse is carol's improvement, not bob's decline (vs the frozen alice build it runs
+the *other* way, 636→952); and the ruin-count gradient is carol-specific, not a bob property.
+
+**Next session, in order:**
+1. **Build the regime archetype. Not a candidate — the instrument.** Around **territory conversion**
+   (splasher-led, aimed at enemy paint), not production policy: `bob_rush` proved the spawn mix does not
+   set game length (median moved 668 → 760, the wrong way). Acceptance criterion unchanged and it is a
+   regime criterion: **sub-200-round games on small ruin-poor maps; win rate irrelevant.**
+2. Only then revisit the **conditional** un-gate (BLOCKED, not closed) and **iteration 36** (mopper
+   targeting) — whose first question is not targeting at all but whether bob fields a mopper in these
+   games, since slot 4 of a five-spawn cycle in a 7-spawn game usually means no.
+3. The registered, unrun decision-level instrument: count how often `workOnSrp()` is *reached* versus
+   reached-and-denied. That separates the two routes by which bob's SRPs die.
+
+**Do NOT re-open**: tower-type coordinate rules (4 measured); bob's own opening spend (the pin is
+inflicted); ruin selection/ranking (choice set 0.83); production-policy archetypes as a regime
+instrument; the unconditional un-gate (−7). **Iteration 33 remains void, not closed.**
+
+**Instruments added**: `bob-tools/refork-rush.sh` (maintained archetype fork with a staleness `--check`
+and the iteration-33 PRNG ordering fix built into the generator rather than left to memory);
+`src/bob_rush` (kept as a peer at 58.3%, NOT as a regime instrument); `src/bob_ug` (rejected arm, kept
+for ablation).
+
+**Seven LEARNINGS this session**: 54 (pooled referents, and read the builds column first), 55 (the pool
+cannot produce my losses), 56 (a guard whose false branch is a different action is a substitution, not a
+gate), 57 (javap with stderr suppressed reports a false negative), 58 (consistency pass: "cannot overfit
+to the population" covers maps, not opponents), 59 (pre-register three branches, not two), 60 (which of
+today's closures I would distrust first).
