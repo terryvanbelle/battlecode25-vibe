@@ -18170,3 +18170,78 @@ these maps (unit mix, paint/splash/mop action counts). That is sanctioned observ
 opponent's play under MULTI_AGENT.md rule 3. **It is context, not a target**: my splasher-share
 standard requires "a reason the rest of my bot now supports the share, not fresh evidence that the
 siblings still have one", and an opponent census is exactly the evidence that standard excludes.
+
+## Iteration 51 — the FALSIFIER FIRES, and the size axis finally has an EXPLANATION rather than a measurement
+
+Full 2x2: `alice` vs `carol` and vs `bob`, on the 19 smallest and 19 largest maps, r300, both sides,
+152 games. **Zero games played** — all four cells come from `20260909-1300` replays on disk.
+(Tool fix along the way: `census-parse.py` hardcoded the opponent label as "carol", which would have
+printed carol's name over **bob's** column — mislabelling the control as the treatment. Now derived
+from the run label.)
+
+| cut | opp | alice win% | alice towers | alice paint acts | **alice per tower** | opp towers | opp paint acts | **opp per tower** | cov diff |
+|---|---|---|---|---|---|---|---|---|---|
+| SMALL | carol | **39.5%** | 5.1 | 384.9 | **75.0** | 4.6 | 701.4 | **152.5** | **−159.7** |
+| SMALL | bob | 68.4% | 6.7 | 419.4 | **62.6** | 4.7 | 450.8 | 95.4 | +80.1 |
+| LARGE | carol | 78.9% | 10.3 | 863.1 | **83.5** | 5.0 | 861.1 | 171.3 | +46.7 |
+| LARGE | bob | 52.6% | 12.3 | 986.8 | **80.1** | 9.5 | 957.6 | 101.1 | +62.7 |
+
+### The falsifier fires, and it retires iterations 49 and 50
+
+I registered: *"If alice's soldier economy looks the same against both opponents on small maps, then
+the deficit is not mediated by the soldier paint budget, and the framing of iterations 49 and 50 is
+the wrong lens."*
+
+**On the same 19 maps, alice's own paint output per tower is 75.0 against carol and 62.6 against
+bob.** Alice performs **better** by its own production metric in the matchup it *loses* 39.5% and
+worse in the one it *wins* 68.4%. Its soldier economy is not degraded against carol at all — the
+whole swing sits on the opponent's side of the ledger (152.5 per tower against 95.4).
+
+> **The deficit is not in alice's soldier paint budget.** Iterations 49 and 50 spent this session
+> instrumenting upkeep, adjacency, tank conversion and heading choice — all of it inside a term
+> that does not move between the matchup alice wins and the matchup it loses. The falsifier was
+> registered before the numbers and it fired.
+
+### And the decomposition is exact, which is what makes it an explanation
+
+Production ratio = (tower ratio) / (per-tower output ratio), and it reproduces every cell:
+
+| cut | opp | alice's tower advantage | opponent's per-tower advantage | production ratio |
+|---|---|---|---|---|
+| SMALL | carol | 1.12x | **2.03x** | **0.55** |
+| SMALL | bob | 1.42x | 1.52x | 0.93 |
+| LARGE | carol | **2.06x** | 2.05x | **1.00** |
+| LARGE | bob | 1.30x | 1.26x | 1.03 |
+
+**Alice's output per tower is 62–84 in every one of the four cells — near-constant, and last in all
+four.** Alice's paint production is simply its tower count times a fixed, low multiplier.
+
+> **Alice's strategy is "more towers, each less productive."** It works wherever the map offers
+> enough ruins to out-expand by the factor needed to cover the per-tower deficit — 2.06x on large
+> maps against carol, which lands the production ratio on exactly 1.00 — and it fails on small maps,
+> where alice can only reach 1.12x and the ratio collapses to 0.55.
+
+That is the first **explanation** of the size axis this project has produced. Everything before it,
+including my own |z| > 4 cut, was a measurement of *where* the deficit is. This says *why*: the
+deficit is not size acting on alice, it is alice's single compensating mechanism — out-expansion —
+running out of ruins. It also explains, without any new assumption, why alice beats bob on small
+maps (bob's per-tower edge is only 1.52x, which 1.42x nearly covers) and why the r300 tower lead
+still predicts winners inside every cell.
+
+### The objective this names, and the door I am deliberately not walking through
+
+The well-posed, alice-only objective is: **raise paint output per tower, especially where towers are
+scarce.** It is measured in alice's own games against two independent opponents, alice is last on it
+in all four cells, and it needs no reference to anyone's design.
+
+**I am NOT re-opening the splasher share on this.** My recorded standard is *"a reason the rest of my
+bot now supports the share, not fresh evidence that the siblings still have one"*, and a census
+showing an opponent gets more output per tower is **exactly** the second thing. The standard exists
+because this is the moment it is most tempting, and the temptation is not evidence. What this census
+licenses is the *objective*; what fills it has to clear that standard on its own.
+
+**Next rung, and it is a decomposition, not a mechanism.** Alice's ~75 paint actions per tower is a
+compound of unit mix (moppers paint nothing — they contribute `act_u`, 142 of them), unit mortality
+(22.2 dead by r300) and upkeep (47–74% of a soldier's budget, already measured). Sizing those three
+against the ~2x gap tells me which one can carry it, and whether any of them can — the METHODS
+section 2 pricing that closed iteration 50 for 8 games. That comes before a mechanism.

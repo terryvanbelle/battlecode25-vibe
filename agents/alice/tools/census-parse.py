@@ -71,7 +71,7 @@ def sd(xs):
     return (sum((x - m) ** 2 for x in xs) / (len(xs) - 1)) ** 0.5
 
 
-def report(label, rows):
+def report(label, rows, opp="opponent"):
     n = len(rows)
     wins = sum(1 for r in rows if r["alice_won"])
     ok = [r for r in rows if r["status"] == "OK"]
@@ -90,7 +90,7 @@ def report(label, rows):
         print("no games reached r300 -- no r300 means")
         return
     print(f"\n-- at round 300, over the {len(ok)} games that reached it --")
-    print(f"{'quantity':<22}{'alice':>9}{'carol':>9}{'diff':>9}{'sd(diff)':>10}")
+    print(f"{'quantity':<22}{'alice':>9}{opp:>9}{'diff':>9}{'sd(diff)':>10}")
     for f in ("tw", "cov", "sold", "spl", "mop", "money", "twPaint",
               "died", "starved", "xfer", "act_p", "act_u", "act_a", "act_s"):
         av = [r["a"].get(f) for r in ok]
@@ -117,4 +117,8 @@ def report(label, rows):
 if __name__ == "__main__":
     args = sys.argv[1:]
     for i in range(0, len(args), 2):
-        report(args[i], parse_rows(args[i + 1]))
+        lab = args[i]
+        # opponent name is taken from the label, never hardcoded: printing
+        # 'carol' over bob's column would mislabel a control as the treatment.
+        opp = "bob" if "BOB" in lab.upper() else ("carol" if "CAROL" in lab.upper() else "opp")
+        report(lab, parse_rows(args[i + 1]), opp)
