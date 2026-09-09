@@ -17075,3 +17075,71 @@ ruins in vision at the moment the `se` state is classified (a 1 / 2 / >=3 histog
 distance split that fixes blind spot 1. It is information a robot genuinely has at runtime, so an
 in-bot counter is the right instrument for it. Cheap, on the same pinned maps, and it decides
 which mechanism iteration 47 actually is before a line of it is written.
+
+## Probe v2: the choice set is a SINGLETON on 100% of stall turns — the ranking arm is dead before it was written
+
+`alice_i47rp2` = probe v1 plus two counters, no behaviour change. Identity holds again: same
+winner, same round count in all 6 games as the control (run `20260909-152215`; control
+`20260909-150713`). v2 reproduces every v1 total exactly (`at`=15,229, `se`=6,424), which is the
+cross-check that the added counters changed nothing.
+
+| quantity | value |
+|---|---|
+| ruin-target turns `at` | 15,229 |
+| — standing at the ruin (d²<=2) | 4,852 (31.9%) |
+| — travelling toward it | 10,377 (68.1%) |
+| mean OPEN ruins in vision, per ruin-turn | **1.00** |
+| `se` enemy-blocked stall turns | 6,424 (42.2% of `at`) |
+| — standing AT the blocked ruin | 2,939 (45.8%) |
+| — **choice set = 1 open ruin in sight** | **6,424 (100.0%)** |
+| — choice set = 2 | **0** |
+| — choice set >= 3 | **0** |
+
+### This is the algorithm's own worked example, and the pre-check caught it
+
+`TRAINING_ALGORITHM.md` §3, *"Reachability means the CHOICE SET, not just the guard"*, warns:
+*"One lineage tuned a ruin-ranking function whose candidates were the ruins in vision — and a
+soldier never sees two at once, so the choice set was a singleton and every dose was
+byte-identical."* My iteration 47 was going to be **skip the enemy-blocked ruin and target
+another**. On 6,424 stall turns there was **never another** — not once, on three maps including
+`gridworld`, the densest map in the corpus. Every dose of that arm would have been byte-identical
+to zero, and I would have read the resulting null as "the mechanism doesn't help".
+
+The pre-check cost one probe on maps already pinned. The arm would have cost a full screen and
+produced a confidently wrong entry.
+
+### A claim I talked myself into and then killed with arithmetic
+
+I drafted this entry stating the singleton as a **theorem**: ruin centres are >= 5 apart
+(`RULES.md` line 21) and vision is r²=20 < 25, so a soldier at a ruin can never see another. That
+is **wrong**, and the error is worth recording because it is seductive. The soldier is not *on*
+the ruin — it is within d²<=2 of it, i.e. up to 1.41 away. So the far ruin sits at >= 5 − 1.41 =
+3.59, i.e. **d² >= 12.9, comfortably inside vision 20**. A second ruin is perfectly visible in
+principle.
+
+So the singleton is **measured, not proven**, and its likely mechanism is mundane: `qOpen` counts
+only ruins with *no tower on them*, and by the time a pattern is contested enough to be
+enemy-blocked, the neighbouring ruins are generally already claimed by one side or the other. That
+is a fact about the mid-game board, and it could in principle differ on a map or a phase these
+three games do not cover. Stated at the strength the evidence supports, and no stronger.
+
+### What iteration 47 therefore is
+
+The soldier's options in the unresolvable state are not {this ruin, a better ruin}. They are
+**{keep standing here, leave}**. So the mechanism is a **search** mechanism, not a ranking one:
+
+> **Iteration 47 hypothesis.** A soldier that detects the unresolvable state — pattern marked,
+> action ready, every mismatched tile enemy paint — abandons that ruin for `AVOID` rounds and
+> falls through to the ballistic wander (iteration 12, `WANDER_RUN=25`), which is the mechanism
+> this lineage already accepted for *finding* unclaimed ruins. Dose is `AVOID`; the zero arm
+> (`AVOID=0`) is byte-identical to `src/alice`.
+
+**Priced as a reallocation, not against zero**, per §3. What abandoning *spends*: the stalled
+soldier is not idle — the iteration-22 opportunistic area-paint branch runs after the ruin block
+and spends its action on the nearest empty tile, so `se` turns still produce coverage, and it
+gives up standing where a mopper might yet unblock the pattern. What it *buys*: 6,424 turns of
+position and movement, 45.8% of them parked at a ruin that cannot be finished, redirected into the
+search that finds the ruins the r300 census says are still unclaimed (median 65% captured, 0/29
+games above 90%).
+
+Both numbers are on the table before the arm is built, which is what §3 asks for.
