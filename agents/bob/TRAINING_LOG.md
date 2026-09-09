@@ -16119,3 +16119,28 @@ and are untouched. Small enough not to matter here; recorded because next time i
 per splasher-round. All three lineages' splashers act at ~6% of turns, bob's included. **Bob's splashers are
 not idle relative to carol's** — carol simply fields twenty times as many of them. That closes, before it
 was started, the "wake up bob's splashers" direction I would otherwise have proposed for iteration 46.
+
+### Iteration 45 sizing UPDATE — written before the verdict, gate unchanged, and flagged as a bias risk
+
+Two facts from the addendum bear directly on iteration 45's premise, and they arrived after I had already
+registered its sizing as *"roughly 3x too small"*. Recording them **now**, before the run reports, because
+recording them after the verdict would be worthless.
+
+1. **Bob's moppers are not the problem; bob's mopper *count* is.** Per mopper-round bob unpaints **0.150**
+   against alice's **0.125** — bob's moppers are **20% more effective than alice's**, one at a time. Bob has
+   31,035 mopper-rounds to alice's 56,571. The mechanism iteration 45 buys is a unit this lineage already
+   operates well.
+2. **Alice's mopping accounts for most of bob's conversion deficit.** Bob's `conv` shortfall against alice on
+   small maps is 0.917 − 0.713 = 0.204, which over bob's 306 actions is ~**62 tiles**. Alice unpaints
+   **47** tiles a game. That is ~**76%** of the deficit, from one mechanism.
+
+Re-sized: moving bob from 7.1% to alice's 24.6% mopper alive-share is ~3.5x, taking unpaints from 15.5
+toward ~54 a game — about **38 tiles**, or **42%** of the 91-tile small-map gap. That is materially better
+than the ~3x-too-small I registered, and would make this the best-sized candidate the lineage has had.
+
+**Three things I am holding myself to.** (a) **The gate is UNCHANGED**: ≥ +10 accept-eligible, +7..+9
+replicate, ≤ +6 reject, in wins out of 50, exactly as committed in `6f6f5ad`. (b) A mid-flight sizing
+revision in the *favourable* direction is exactly the shape of motivated reasoning, so it is written down
+where the verdict cannot quietly absorb it. (c) The standing argument against the whole direction is
+unchanged and still on the record: **carol fields 0% moppers, unpaints 0.1 tiles a game, and gains the most
+small-map tiles of the three (332)**. If moppers were the lever, carol should be worst, and carol is best.
