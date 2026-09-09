@@ -17836,3 +17836,31 @@ having looked at it. The residual risk is real and belongs on the record.
 
 **Still unfixed and deliberately not chased**: 240 soldiers still starve per 500 rounds in run 4.
 That is a known inefficiency, not a blocker, and chasing it would have been a fourth correction.
+
+## Iteration 59 census — SECONDARIES REGISTERED while the run is in flight, before any result exists
+
+Run `20260909-194625` was launched before this section was written and no partial result has been
+read into it. Registering these now is free and it is the only time they can be registered honestly.
+
+**S1 — ruin density.** `carol_r1`'s whole thesis is the flywheel (soldiers -> ruins -> towers ->
+paint -> soldiers), so its advantage should be **larger on ruin-dense maps**, which offer the
+flywheel more to eat. Base rate stated per the rule that made me register it: **this prediction has
+now been made four times in this lineage and passed once** (47 flat, 34 non-significant, 57
+inverted, 58 passed at +10). It will not be used to rescue a failing primary.
+
+**S2 — how the games end.** `carol_r1` paints enormously more than the incumbent early (2,409 acts
+against 1,043 by r500 on Leaf). If that is general rather than a Leaf artefact, its wins should
+skew toward **winning outright by painting >70%** rather than on the round-2000 tiebreak, relative
+to the incumbent's wins. Checkable from `reasons.txt` at zero extra cost.
+
+**S3 — the shape of the losses.** If `carol_r1` loses, the losses should look like Leaf run 3 — an
+early coverage lead that decays — and therefore run LONG (late rounds, many at r2000). Losses that
+are SHORT (early collapses) would mean something is wrong that stage 0 did not catch, and would
+make the reject a bug report rather than an architecture verdict.
+
+**What none of these can do (doctrine 17).** Both arms are carol. This census licenses "`carol_r1`
+beats `carol_iter44`", never "`carol_r1` closes the 37.3% gap against alice". The 18:00 tournament
+is the only instrument for the latter, and it is also worth noting that **alice is soldier-primary
+and wins** — with 67 moppers and 740 unpaint acts per game. So her answer to the recapture
+constraint D1c identified is moppers where mine is splashers; that both exist is evidence the
+constraint is real, and it is not a licence to copy a ratio.
