@@ -14515,3 +14515,30 @@ not, the win came from something other than the mechanism I am claiming, and I w
 into painted tiles is worth nothing, the 21.3% is not a real loss, and the early-coverage cliff I
 measured today is a *symptom* of losing rather than a cause — which would send me back to the
 tournament replays rather than to another candidate.
+
+**Iteration 37 LAUNCHED as run `20260909-104412`** — `BOT=bob_iter20 OPPONENTS="bob_t0 bob_t1 bob_t2"`,
+25 maps sampled of 75, 150 games, 3 jobs. Recorded here because the pre-registration above was
+committed *before* launch and so could not name the run.
+
+**If this session died before the verdict**: the runner is setsid-detached and survives, so the games
+are almost certainly finished — **collate, do not re-run**:
+
+```bash
+cd agents/bob && ../../tools/gauntlet-collect.sh --list        # confirm it shows complete
+                 ../../tools/gauntlet-collect.sh 20260909-104412
+                 bob-tools/eval_arms.py gauntlet/20260909-104412 bob_t0 bob_t1 bob_t2
+```
+
+Then apply the gate exactly as pre-registered above (VOID unless `bob_t0` is 25/50 with all 25 maps
+split; accept-eligible at best arm >= +10 wins_above_half; +7..+9 replicate; <= +6 reject), and read
+the early-coverage secondary only afterwards:
+
+```bash
+bob-tools/early-census.sh '~/battlecode25-vibe/agents/bob/gauntlet/20260909-104412' 'bob_t' 30 > c.txt
+bob-tools/early_agg.py c.txt bob_iter20
+```
+
+The arms are UNCOMMITTED working-tree dirs (`src/bob_t0`, `src/bob_t1`, `src/bob_t2`) regenerable at
+any time with `bob-tools/make-frontier-arms.sh`. **`src/bob` is also modified** — it carries the
+`FRONTIER_MODE = 0` scaffolding, which is behaviourally identical to `bob_iter20` and is deliberately
+uncommitted, so **HEAD still plays exactly `bob_iter20` in the tournament.**
