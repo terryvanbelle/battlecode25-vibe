@@ -13484,3 +13484,139 @@ currently wins 75%, and the pre-registered map-level prediction is what tests it
 **Stage 1 launched**: run `20260909-102945`, `BOT=carol_iter44`, opponents `carol_i47_0` and
 `carol_i47_1400` on one shared 25-map sample, 100 games. Margins reported by the tool are the
 BASELINE's; candidate score is `50 - reported`.
+
+## Iteration 47 RESULT — REJECT on the pre-registered gate. And the gate cannot settle the question.
+
+Run `20260909-102945`, `BOT=carol_iter44`, both arms on one shared 25-map sample, 100 games.
+**Reporting convention, restated so it is not inverted: the tool reports the BASELINE's wins; each
+candidate's score is `50 - reported`.**
+
+| arm | `SPLASH_FLOOR` | baseline | **candidate** | margin | z (sd 8.59) | verdict |
+|---|---|---|---|---|---|---|
+| `carol_i47_0` | 0 | 39/50 | **11/50** | −28 | **−3.26** | resolved regression |
+| incumbent | 2000 | — | (25/50) | 0 | — | — |
+| `carol_i47_1400` | 1400 | 29/50 | **21/50** | −8 | **−0.93** | not better |
+
+Gate was ACCEPT >= 34/50. **REJECTED.** `src/carol` stays at `carol_iter44`.
+
+Note the screen landed **resolved**, not unresolved, so yesterday's "buy power and re-measure"
+pre-commitment does not fire and I am not spending a census. The rule separates the two cases
+correctly, which is the second time it has done so.
+
+### The pre-registered map-level prediction failed, and failed FLAT
+
+> *"margin on maps with >= 18 ruins exceeds margin on maps with <= 17."*
+
+| | `i47_1400` margin |
+|---|---|
+| <= 17 ruins (28 games) | **−4** |
+| >= 18 ruins (22 games) | **−4** |
+
+Identical. Not merely unsupported — there is no ruin structure in the result at all. Per-bucket the
+candidate is 56% / 25% / 50% / 30%, which is noise around a small negative.
+
+### What I got wrong at stage 0, and it is a rule I had already written down
+
+Stage 0 had `carol_i47_1400` winning `Leaf` with 25 towers to 5 and coverage 701 to 179, and I
+described that as a "complete reversal". **It was one map on ONE SIDE.** This very run reports
+D = 15 of 25 maps splitting by spawn side for that arm — **60% of maps go to whoever spawns
+right** — so a single-side result carries almost no information about the pair.
+
+I wrote the correct caveat at the time ("replay inspection is for MECHANISM, never for VERDICT")
+and still let the number set my expectation. The caveat was worth writing: it is why the screen was
+run before a census rather than after one. But a caveat that does not change the size of the claim
+is doing less work than it appears to.
+
+### The mechanism is confirmed, the gate is resolved, and the strategic question is STILL OPEN
+
+Both registered manipulation conditions passed at stage 0 — soldiers 4 -> 106, towers 5 -> 25 —
+and the weak link held. So this is a third instance of the shape iterations 45 and 46 ended in:
+**mechanism confirmed, value nil.** But this time there is a specific structural reason to doubt
+that the instrument could ever have said otherwise, and I want it on record *with* the rejection
+rather than as a later excuse.
+
+**My accept gate is a head-to-head against `carol_iter44`, and `carol_iter44` does not scale
+towers.** The claim under test is *"carol converts ruins into towers far worse than alice and bob
+do"* — established from 1,208 tournament games and re-confirmed today at 22.1% vs 60.3% / 67.6% on
+the densest maps. Doctrine 17 says a claim of the form "we are worse than OTHERS at X" can only be
+tested against others. In my pre-registration I argued doctrine 17 did not apply here because *the
+candidate* differs in the relevant dimension. **That was too quick, and it is the error worth
+extracting**: doctrine 17's blindness is a property of the OPPONENT, not of the candidate. Doctrine
+7 says the same thing from the other side — an even instrument cannot measure a capability against
+an opponent that never exercises it.
+
+Concretely: against `carol_iter44`, which floods splashers and wins on coverage, converting ruins
+is a slower strategy that loses the coverage race. Against alice, who reaches 25 towers, matching
+her conversion is the whole game. **Both can be true at once** — that is ordinary rock-paper-
+scissors, and a self-play head-to-head cannot distinguish "worse" from "loses to this particular
+opponent". Note also that `i47_1400` at −0.93 sd is not a demonstrated regression; it is
+indistinguishable from the incumbent. Only dose 0, at −3.26 sd, is genuinely worse.
+
+So the verdict stands as a verdict — the candidate does not replace `carol_iter44` — while the
+strategic question it was built to answer remains untested, and I now know the name of the
+instrument that could test it.
+
+### CLOSED-DIRECTIONS LEDGER
+
+- **`SPLASH_FLOOR` as a dose axis — CLOSED for self-play evaluation.** Bracketed on both sides:
+  0 is a resolved regression (−3.26 sd), 1400 is indistinguishable from the incumbent (−0.93 sd),
+  2000 is the incumbent. There is no interior optimum on this axis *as measured against carol's own
+  splasher build*. Re-opening requires a different opponent, not a different dose — and that is a
+  specific, recorded reason, not "feels under-explored".
+
+### THE INSTRUMENT THIS LINEAGE IS MISSING, named plainly
+
+My entire opponent pool — every frozen snapshot, the roster, every census — descends from a bot
+that does not convert ruins at scale. `progress/roster_extra.txt` holds `carol_rush`,
+`carol_turtle`, `examplefuncsplayer`, `carol_iter44`; **not one of them contests ruins.** The
+algorithm's synthetic-archetype rule exists for exactly this: *"bots we build ourselves ... to
+answer 'does our bot handle an opponent that does X' for X our own lineage never does."* Carol's
+lineage never does X, the tournament says X is what beats her, and she has no archetype for it.
+
+**And I have already built one: it is the rejected candidate.** `carol_i47_1400` reaches 25 towers
+on a dense map, plays a strategy no carol build has ever played, and — the part doctrine 12
+requires me to check before promoting a rung — scores **21/50 = 42% against `carol_iter44`**, which
+is squarely in the 30-90% peer band and nowhere near saturation. A rejected candidate makes a good
+archetype for the same reason a frozen snapshot does: it never changes again.
+
+That is the next piece of work, and it is worth more than another dose.
+
+## Iteration 47 follow-up — PRE-REGISTERED regime-matched run (diagnostic, not an accept gate)
+
+The screen above sampled 25 maps at random. Of those, 10 games sat in the `>= 24` ruin bucket where
+the mechanism has fuel; the other 40 are games where an extra tower has little to convert. **That is
+doctrine 4's failure exactly** — *"a random sample over all conditions dilutes a real effect toward
+invisibility; the games where it cannot help are not noise, they are a fixed zero averaged into the
+estimate"* — and I designed the run the way doctrine 4 says not to. The per-bucket slices cannot
+rescue it either: 10-12 games per bucket puts sd(margin) near 3.2, so nothing below about ±6 is
+readable and every bucket figure I printed sits inside that.
+
+So before the direction is closed, it gets the sample it should have had. The corpus has **17 maps
+with >= 24 claimable ruins**; playing all 17 both sides is a **census of the losing regime**, not a
+sample of it, so there is no map-sampling variance left — only perturbation, which for k=17 at a
+~0.4 sweep rate puts sd(margin) near **5.2**.
+
+`MAPS` is pinned here, which the charter forbids for *tuning* because a fixed list is an
+overfitting surface. This is a diagnostic, it is a census of a pre-defined subpopulation rather
+than a hand-picked list, and no accept can rest on it — the accept gate remains the full
+head-to-head. Stating that distinction because the rule is a real one and I am stepping around it
+deliberately rather than forgetting it.
+
+**Maps** (17): Leaf DefaultHuge DonkeyKong TheBest SMILE headphones Restart UglySweater maze
+HungerGames Rose giver memstore Oasis fix galaxy mit
+
+**PRE-REGISTERED, before the run:**
+
+- **Regime-dependence confirmed** if `carol_i47_1400`'s margin over `carol_iter44` on these 17 maps
+  is **>= +11** (2 sd) — and the contrast that makes it doctrine 4 rather than a fishing trip is
+  that the same arm scored **−4** on the `<= 17` ruin maps of the sampled run.
+- **Direction CLOSED** if the dense margin lands in **−5 .. +5**. Then the mechanism does not pay
+  even where it has maximum fuel, the ruin story is not about soldier supply, and no dose or
+  regime-gated variant of it is worth another game.
+- Between +6 and +10: unresolved, and per the standing rule that buys power rather than a verdict.
+
+**What each outcome licenses.** A confirmed regime dependence does NOT license accepting a fixed
+`SPLASH_FLOOR` — the screen already showed a fixed 1400 is not better overall. It licenses a
+**self-calibrating** threshold derived from observed ruin density, which is the design the
+algorithm recommends when a fixed constant trades one regime's gain for another's loss. That would
+be iteration 48, and it would still have to clear the ordinary gate.
