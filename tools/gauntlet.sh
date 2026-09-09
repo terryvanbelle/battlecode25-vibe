@@ -88,6 +88,13 @@ OUT="$WS_DIR/gauntlet/$RUN_ID"
 mkdir -p "$OUT/losses"
 NGAMES=$(( $(echo "$OPPONENTS" | wc -w) * $(echo "$MAPS" | wc -w) * 2 ))
 printf '%s\n' $MAPS > "$OUT/maps.txt"
+# ... and WHERE that list came from. maps.txt is written whether the maps were
+# drawn at random or pinned by the caller, so its mere existence cannot tell the
+# two apart -- and gauntlet-collect.sh was inferring "sampled" from exactly that,
+# labelling every recovered run "random this run" even when the caller had pinned
+# the maps to repeat an earlier comparison exactly. Recording one word at launch,
+# while it is still knowable, is the only place the answer exists.
+printf '%s\n' "$([ "$SAMPLED" = 1 ] && echo sampled || echo pinned)" > "$OUT/maps.src"
 # Record WHICH BUILD is playing, now, while it is still knowable: src/<agent> is
 # a moving target and reconstructing it later from snapshot dates gives an answer
 # that changes the moment the candidate is accepted. Never fatal to a run.

@@ -33,8 +33,16 @@ collate_run () {
     # than letting a short run read as a finished one.
     [ "$complete" = 1 ] || echo "!! INCOMPLETE -- no GAUNTLET-COMPLETE marker; games below are a prefix of the plan"
     echo "run $RUN_ID  ws=$WS_REL bot=$BOT  maps=$MAPTAG"
-    if [ "$SAMPLED" = 1 ]; then
-      echo "  map sample (random this run; replay with MAPS=\"\$(cat $OUT/maps.txt)\"):"
+    # SAMPLED: 1 drawn at random this run, 0 pinned by the caller, 2 map list
+    # present but provenance not recorded (runs predating maps.src), 3 no list.
+    # Only 1 may say "random this run"; claiming it for a pinned run tells the
+    # reader an exact repeat is unavailable when it is.
+    case "$SAMPLED" in
+      1) echo "  map sample (random this run; replay with MAPS=\"\$(cat $OUT/maps.txt)\"):" ;;
+      0) echo "  pinned map list (as given by the caller):" ;;
+      2) echo "  map list (provenance unrecorded -- may be a random sample or pinned):" ;;
+    esac
+    if [ "$SAMPLED" != 3 ] && [ -s "$OUT/maps.txt" ]; then
       tr '\n' ' ' < "$OUT/maps.txt" | fold -s -w 76 | sed 's/^/    /'
       echo
     fi
