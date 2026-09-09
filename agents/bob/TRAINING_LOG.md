@@ -16469,3 +16469,101 @@ That is a much smaller search space than I had this morning, and every wall of i
 than assumed.
 
 `src/bob/` untouched. **`bob_iter20` remains the bot.**
+
+---
+
+## Iteration 47 — PRE-REGISTERED (written before the run exists): refill EARLIER, to buy soldier-rounds
+
+### The engine fact I checked first, which killed the version of this mechanism I set out to build
+
+I came to this iteration intending to argue that bob's soldiers are slowed by the **low-paint cooldown
+tax** — `INCREASED_COOLDOWN_THRESHOLD = 50` — because `REFILL_BELOW = 50` on a 200 cap is 25% full, i.e.
+bob's soldiers spend the whole band from 50% down to 25% full inside the taxed region before the refill
+logic even triggers. That story is **false**, and the bytecode of the pinned 3.1.0 jar says so
+(`InternalRobot.addActionCooldownTurns`, decompiled via `tools/engine-jar.sh --remote`):
+
+```
+X = Math.round(paintAmount * 100.0 / paintCapacity)
+if (X < 50 && type.isRobotType()) num += Math.round(num * (100 - 2*X) / 100.0)
+actionCooldownTurns += num          // -10 per round; ready when < 10 (canActCooldown)
+```
+
+A soldier's base action cooldown is **10**. The taxed value is therefore `10 + round(10*(100-2X)/100)`,
+which reaches **19 at X=1** and **never 20**. One decrement always brings it below 10.
+
+> **The low-paint cooldown tax costs a soldier EXACTLY ZERO rounds, at every paint level where it can
+> still attack.** A soldier at 5 paint acts on the same schedule as a soldier at 200.
+
+It bites only at `paint < 5`, where the attack cannot be afforded anyway. And it is genuinely large for
+the other two types — MOPPER 3 → 5 turns per action (+67%), SPLASHER 5 → 9 (+80%) — but **both already run
+far below their untaxed ceilings**: 0.057 splashes per splasher-round against a hard ceiling of 0.20, and
+0.150 unpaints per mopper-round against 0.333 (iteration 44 addendum). A unit at 29% and 45% of the
+capacity it already has is not cooldown-bound.
+
+**So the entire low-paint-cooldown direction is CLOSED by arithmetic, for zero games** — see CLOSED.md
+#22. I am recording it as its own result because it is exactly the kind of confident, plausible mechanism
+this lineage has twice built before measuring, and thirty minutes of `javap` killed it for nothing.
+
+### What the iteration actually tests
+
+`tiles = acts × conv`. CLOSED.md #19/#20/#21 close `conv` from both ends and close composition in both
+directions, so **`acts` is the only live term**, and it has exactly three sources: more units, units
+acting more often, or **units living longer**. Composition is closed; acting-more-often is now closed
+too (above). **Living longer is the one route never touched**, and 89% of bob's deaths are starvation
+(iteration 44: 8.2 starved of 9.2 dead per game).
+
+**The mechanism**: `REFILL_BELOW = 50` of a 200 cap. `tryRefill()` fires only when an allied tower holding
+≥100 paint is already inside vision (r²≤20). A soldier at 150 paint is far likelier to still be near the
+tower it spawned from than one at 40, so **triggering earlier catches it while a tower is still in vision**.
+That is the causal claim, stated so it can fail.
+
+**The dose** (`bob-tools/make-refill-arms.sh`, arms `src/bob_g0/g1/g2`):
+`g0 = 50` (the shipping value — **exact zero arm**, source identical to `src/bob` apart from the package
+line and a comment), `g1 = 100`, `g2 = 150`.
+
+### Sizing, registered BEFORE the run, and it is the first one that reaches the gap
+
+Small-map deficit to alice: **91 tiles**. Bob's soldier paint rate is **≤0.372** per soldier-round (the
+bounded figure; alice's is 0.414) and small-map `conv` is 0.713, so an extra soldier-round is worth
+**≤0.265 tiles**. Closing 91 tiles therefore needs **≈343 extra soldier-rounds per game**, against bob's
+current **1,211** — i.e. **+28%**.
+
+Bob loses **8.2 soldiers per game** to starvation. So the ceiling is reached only if **every** starvation
+death is prevented **and** each saved soldier then lives **42 more rounds**. That is the first mechanism
+I have sized whose ceiling touches the gap at all — iterations 40, 43, 45 and the map-area gate all came
+in at 2–5% of it. **It is also a ceiling I do not believe**, and I am registering that now rather than
+after: I expect a fraction of it.
+
+**The main way this fails, registered in advance**: a soldier starving far from every tower cannot be
+rescued by any threshold, because `tryRefill()` needs a tower in vision. If bob's starvation deaths happen
+in open ground, the dose will engage weakly and move nothing.
+
+### PRE-REGISTERED GATE — identical thresholds to iteration 45, not re-derived
+
+`BOT=bob_iter20`, `OPPONENTS="bob_g0 bob_g1 bob_g2"`, maps unset (fresh random 25-map sample, both sides)
+⇒ 150 games. Reported wins are **bob_iter20's**, so an arm that IMPROVES bob shows as iter20 winning
+**fewer** than 25. Define **delta = 25 − (iter20's wins vs that arm)** = the arm's advantage in wins/50.
+
+- **VOID** unless `bob_g0` lands at exactly **25/50 with all 25 maps split-by-side**. The exact zero arm
+  is the instrument check; iteration 45's fired correctly and iteration 42's accounting check fired twice.
+- **delta ≥ +10** ⇒ accept-eligible. **+7..+9** ⇒ replicate on a fresh sample. **≤ +6** ⇒ REJECT.
+
+**Secondaries, in this order, registered before any number exists:**
+
+1. **Mechanism engaged**: paint-withdrawal (refill) events per game must **rise** monotonically with dose.
+   If they do not, the dose did not land and nothing else in the run means anything.
+2. **The payer, named in advance per LEARNINGS 82**: a refill turn is a **non-painting** turn, so what pays
+   is **paint actions per soldier-round**. If soldier-rounds rise and paint actions per soldier-round fall
+   in proportion, **this is iterations 43 and 45 repeating and I will say so** rather than quote the
+   soldier-round gain.
+3. **The channel**: starvation deaths per game must **fall**, and **soldier-rounds per game must rise**.
+   That is the mechanism's whole claim; secondary 3 failing while the primary passes means I got the right
+   answer for the wrong reason and must say so.
+4. **The objective**: `dTiles`.
+
+**Prediction, registered with signs**: refills rise monotonically; starvation deaths fall; soldier-rounds
+rise; and on the objective I expect a **small positive at g1 and possible harm at g2** from refill thrash
+(at 150, a soldier working a ruin beside a tower tops up every ~10 paints and skips its whole turn to do
+it). An interior peak at g1 would be the shape iteration 20 found for `SPLASHER_SLOTS`.
+
+`src/bob/` untouched. **`bob_iter20` remains the bot; HEAD's behaviour is unchanged.**
