@@ -18091,3 +18091,80 @@ to correct; that is exactly why the screen is not allowed to accept here.
 cost and may latch too late to matter; 150 is half a splasher's 300 capacity and risks the overshoot
 band, since the hysteresis unlatch is already at capacity/2. A monotone ladder either way is
 informative and I will say so rather than reading a slope as a peak.
+
+## Iteration 60 stage 0 — one clause passes emphatically, one fails, and my own overshoot check FIRED
+
+Leaf, 2 games each at the two lower registered doses. Splasher decision-turns, rounds 300–700,
+the same window as the post-58 census so the numbers are directly comparable.
+
+| | incumbent (post-58 census) | `carol_i60_50` | `carol_i60_100` |
+|---|---|---|---|
+| `noPaint` share of READY turns | **41.2%** | **0.0%** | **0.0%** |
+| fires, share of ready turns | 23.7% | 25.2% | 22.6% |
+| fires, ABSOLUTE, same window | 140 | **194** | 171 |
+| total splasher-turns (population proxy) | 1,363 | 3,530 | 3,796 |
+| **`HOME` share of all splasher turns** | — | **58.8%** | **63.8%** |
+
+**Clause 1 PASSES completely**: the `noPaint` state is *eliminated*, 41.2% -> 0.0%. No splasher is
+stranded any more.
+
+**Clause 2 FAILS on the share it was registered as**: fires per ready turn are flat (25.2% / 22.6%
+against 23.7%). Absolute fires rise +39% / +22% — which is why I registered both, per METHODS
+item 10.
+
+**The overshoot check FIRED, at 2.4x its band.** I registered 5–25% and got 58.8% and 63.8%.
+
+### The overshoot band was infeasible when I wrote it, and I could have known
+
+A splasher carries 300 paint = **6 splashes**. Its action cooldown is +50 against −10/turn, so it
+acts **once every 5 turns**: six splashes is **30 turns of working**. A round trip to a tower on a
+40x25 map is 20–40 moves at one move per turn. **So travel is inherently 40–60% of any walk-home
+duty cycle, at any dose.** A 5–25% band was unreachable by construction, and the arithmetic is one
+line I did not do.
+
+This is **exactly the C1b lesson recurring one level down**: I checked a *re-open condition* for
+feasibility a few hours ago and wrote down that a correct-but-unsatisfiable condition looks
+identical on the page to an actionable one. Then I wrote a manipulation-check band without doing
+the same arithmetic. Recording it as a repeat, not as a new discovery.
+
+### And the band cannot discriminate, which is the worse fault (doctrine 15)
+
+**64% `HOME` is predicted equally by "the logistics have uselessly replaced the behaviour" and by
+"the logistics work and the round trip is inherently long".** A statistic both hypotheses predict is
+not a measurement however carefully it is computed. The discriminating quantities were free and
+sitting in the same replay:
+
+| Leaf, at the end | incumbent | `carol_i60_50` | `carol_i60_100` |
+|---|---|---|---|
+| standing splashers | 4 | **22** | **32** |
+| towers | 7 | **17** | **22** |
+| coverage | 137–151 | **698** | **700** |
+| result | (usually r2000 tiebreak) | **paint-out win r980** | **paint-out win r892** |
+
+### So the mechanism is NOT the one I registered, and I am re-registering rather than reinterpreting
+
+I registered "each stranded splasher gets un-stranded and fires more often". The per-unit fire rate
+is **flat**. What actually happens is that **splashers stop dying, so there are 5–8x more of them**,
+and the incumbent's soldiers survive to build towers (7 -> 17–22). Population, not rate.
+
+That is a *different* mechanism, and claiming it as this iteration's success after seeing the
+outcome would be the exact move this log exists to prevent. So, **registered now, before the screen
+returns** (launched as run `20260909-...`, three arms, fresh 25-map sample, 150 games):
+
+> **Corrected mechanism claim: D3 raises unit POPULATION by preventing paint death, not the
+> per-unit action rate.** Its pre-registered signatures are standing splasher count, total splash
+> actions, and tower count — all absolute, none a per-unit share.
+>
+> **Falsifier, and I would accept it:** if the screen shows no margin despite the population effect
+> reproducing, then a larger population does not convert to wins in this architecture, and the
+> direction closes. A population that grows without paying is a real possible outcome — carol_r1
+> reached 25 towers and lost 38/150.
+
+**The screen's selection rule and the census gate are UNCHANGED from the pre-registration.** The
+overshoot clause said I would report the mechanism un-dosable rather than invent a smaller dose
+after seeing outcomes; I have invented no dose — 50 and 100 were both registered before any game —
+and I am reporting the band as **fired and defective**, with the arithmetic showing why, rather
+than quietly dropping it.
+
+**Leaf is n=1 and this lineage was burned by exactly that today**: `carol_r1` won Leaf and then lost
+the corpus 38/150. The screen decides the dose; the census decides the accept.
