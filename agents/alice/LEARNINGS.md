@@ -102,6 +102,9 @@ start, ~40k tokens of the ~77k that mandatory re-reading cost per session.
 
 ## E. Keeping myself honest
 
+- **A gate blind to an effect carries no information about it — and section 8 is a pre-check whose trigger is BEFORE BUILDING.** I built a 6-game probe on self-play to explain a gap my own log had already measured as null inside my lineage (rho +0.014, p=0.903). Every pre-registered criterion passed; the probe reproduced the effect's ordering *backwards*, because the effect is opponent-driven and self-play cannot contain it. -> log, `"the direction DEAD, and the reason is my instrument"`
+- **Say whether your claim needs the PER-TURN or the PER-LIFETIME number.** Soldier upkeep per turn is 1.7x higher on small maps; upkeep per lifetime is *lower*, because lifetime is 87.8 turns there against 220.0 on large. The two move oppositely and nearly cancel, so one framing looks like a finding and the other is flat. -> log, `"the hidden variable"`
+- **A digest is a proxy for the engine, and mine was wrong.** `RULES.md` said the clumping tax ignored adjacent towers; the engine counts them (no `isRobotType()` filter, self excluded by ID only). Now also SIZED: 3.8–17.8% of soldier upkeep — real, and a minor term. -> log, `"adjacent ally TOWERS are taxed"`
 - **A lesson written THREE times is not a lesson, it is a missing control.** Install the check where the mistake happens. -> `"a lesson written THREE times"`
 - **A retraction is a claim too**, and it shares the assumption that produced the error. -> `"a retraction is a claim too"`
 - **"Supersede in place" must ANNOTATE the old entry**, not merely append a new one. -> `"must ANNOTATE the old entry"`
