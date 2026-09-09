@@ -26,7 +26,12 @@ working files ONLY under `<scratchpad>/carol/`, never at the root, and never
 glob the root. The root held ~100 `.bc25` replay blobs from all three lineages
 with names that identify their owner; a replay is a COMPLETE game record, so
 opening one exposes another lineage's composition and build order in full. Files
-left at the root are quarantined by the coordinator after two hours.
+left at the root are quarantined by the coordinator after two hours -- **every**
+root-level file now, not only replays. The root is also held at mode `u=wx`, so
+`ls` and any glob of it fail with *Permission denied*: that is the control
+working, not a tooling fault to report. Traversal and direct reads are
+unaffected, so `<scratchpad>/carol/...` works normally and writes still
+succeed; only enumeration is closed.
 
 **And never run an unscoped `pgrep -fa` or `ps aux`.** Process listings are not
 workspace-scoped, so "is my job still running?" returns your siblings' in-flight

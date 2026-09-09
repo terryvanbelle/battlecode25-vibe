@@ -60,20 +60,44 @@ done
 # directory. Nothing is destroyed, the leak is closed, and the engine is
 # deterministic so a lineage that wants one back can re-dump it.
 #
-# Two hours of grace, so a dump being actively analysed is never pulled from
+# Two hours of grace, so a file being actively analysed is never pulled from
 # under the analysis. Agents are told to work under <scratchpad>/<name>/, which
 # this never touches -- following the rule makes you immune to the sweep.
+#
+# WIDENED, and then made a real control. The .bc25-only sweep was scoped to the
+# leak that had already happened; the root held 432 files, and the rest of them
+# -- a_Brat.txt, accept19.sh, acct.py -- are census dumps and accept scripts that
+# name their lineage's mechanism just as plainly as a replay does. So every
+# root-level regular file is now quarantined on the same two-hour clock.
+#
+# But a sweep is a note, not a control (doctrine 19): between sweeps the names
+# are still there, and a lineage self-reported running a bare `ls` of the root
+# hours after being told not to. So the root is also held at mode u=wx --
+# executable but not readable. `ls` and every glob of it fail outright, while
+# traversal and direct reads still work, so <scratchpad>/<name>/ is unaffected
+# and writes at the root still succeed. Discovery is what closes: you can no
+# longer learn a sibling's filenames by accident.
 QUARANTINE="$HOME/.bc25-scratchpad-quarantine"
 quarantined=0
 for sp in /tmp/claude-*/-home-terryvanbelle-projects-vibe-2025/*/scratchpad; do
     [ -d "$sp" ] || continue
     mkdir -p "$QUARANTINE"
+    # The sweep itself needs to read the directory it is about to make
+    # unreadable, so lift the mode for the duration and always put it back.
+    chmod u+r "$sp" 2>/dev/null || true
     while IFS= read -r f; do
         [ -n "$f" ] || continue
-        mv -f "$f" "$QUARANTINE/" 2>/dev/null && quarantined=$(( quarantined + 1 ))
-    done < <(find "$sp" -maxdepth 1 -type f -name '*.bc25' -mmin +120 2>/dev/null)
+        # --backup=numbered: the quarantine is now a shared namespace and three
+        # lineages independently produce a.txt, out.log, census.csv. Clobbering
+        # would destroy the earlier one, which is exactly what quarantine (as
+        # opposed to deletion) exists not to do.
+        mv -f --backup=numbered "$f" "$QUARANTINE/" 2>/dev/null && quarantined=$(( quarantined + 1 ))
+    done < <(find "$sp" -maxdepth 1 -type f -mmin +120 2>/dev/null)
+    # Enforce the listing block (see above): traversal and reads still work, so
+    # <scratchpad>/<name>/... is unaffected; only enumeration fails.
+    chmod u=wx "$sp" 2>/dev/null || true
 done
 
 [ "$removed" -gt 0 ] && echo "$(date -u +%FT%TZ) isolation-sweep: removed $removed sibling transcript symlink(s)"
-[ "$quarantined" -gt 0 ] && echo "$(date -u +%FT%TZ) isolation-sweep: quarantined $quarantined root-level replay blob(s) from the shared scratchpad"
+[ "$quarantined" -gt 0 ] && echo "$(date -u +%FT%TZ) isolation-sweep: quarantined $quarantined root-level file(s) from the shared scratchpad"
 exit 0

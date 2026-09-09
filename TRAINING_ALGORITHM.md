@@ -553,6 +553,41 @@ The accept/reject machinery lives or dies on these rules. Each one is paid for.
     The test for whether a lesson is done: **could the next session make this
     mistake without reading anything?** If yes, the lesson is a note, not a
     control. `LEARNINGS.md` is the record; the mechanism is the fix.
+
+20. **A pooled tournament rate is a statement about a THREE-body system, never
+    about you alone. Decompose it into pairs before you believe it.** Your
+    "win rate on maps with property P" pools your games against both other
+    lineages, so it moves when *either* of them is unusually strong or weak on
+    those maps. The pooled number therefore cannot distinguish "I am bad at P"
+    from "one of them is good at P" — and those call for completely different
+    work.
+
+    A lineage found a map subset where its pooled rate was 25.0% against an
+    expected 49.9%, z = 4.15, and it looked like a private, specific defect. The
+    pair decomposition inverted the reading: against one opponent the subset was
+    flat (−2.9 points, z = −0.32), and the whole effect sat in the two pairs
+    involving the third lineage (−41.4 and −35.8). So the correct claim was not
+    "I am broken on these maps" but "**two of the three lack a capability the
+    third has**" — and the flat pair is the control that proves it, because two
+    builds carrying the same deficit cancel exactly as doctrine 17 describes.
+
+    The rules that follow:
+
+    - **Always print the three pair rates beside any pooled rate.** It costs one
+      GROUP BY. A pooled rate with no pair breakdown is not evidence; it is an
+      average over a variable you did not control.
+    - **The pair where the effect vanishes is the most informative cell**, not
+      the least. It tells you the deficit is shared, which is precisely the case
+      no self-play instrument of either party can ever see.
+    - **Sign the conclusion correctly.** "I am worse than both" is a defect to
+      fix in you. "We two are worse than the third" is a capability to acquire —
+      and you must derive it yourself, from the map and the engine, because
+      isolation means you cannot look at who has it. That is the intended
+      difficulty, not an obstacle: the tournament tells you a capability exists
+      and roughly where it pays, which is far more than a blank page.
+    - **This applies to every pooled cross-lineage number**, including the ruin
+      and terrain buckets several instruments here already cut on.
+
 ---
 
 ## The iteration loop

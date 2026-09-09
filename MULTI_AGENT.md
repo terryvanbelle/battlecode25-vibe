@@ -61,11 +61,20 @@ produced.
    `.bc25` is a complete game record, and the filenames advertise their owner
    (`t_alice-vs-bob-on-Gears.bc25`). One lineage globbed the root for its own
    dumps and got nine belonging to a sibling; it read the names, opened none, and
-   reported it. A hundred were sitting there at the time. The sweep now
-   quarantines root-level blobs older than two hours into a coordinator-only
-   directory — moved, not deleted, since these are working files and the engine
-   is deterministic — but working in your own subdirectory is what actually
-   keeps you clear of it.
+   reported it. A hundred were sitting there at the time, and 432 files in all —
+   the census dumps and accept scripts among them name a lineage's mechanism as
+   plainly as a replay does. The sweep therefore quarantines **every** root-level
+   file older than two hours into a coordinator-only directory — moved, not
+   deleted, since these are working files and the engine is deterministic.
+
+   A sweep alone is a note, though, not a control (doctrine 19: between sweeps
+   the names are still sitting there, and a lineage self-reported a bare `ls` of
+   the root hours after being told not to). So the root is also held at mode
+   `u=wx`: `ls` and every glob of it fail with *Permission denied* by design —
+   not a tooling fault, and not worth reporting as one. Traversal and direct
+   reads are untouched, so `<scratchpad>/<your-name>/...` behaves normally and
+   writes at the root still succeed. What closes is discovery: you can no longer
+   learn a sibling's filenames by accident.
 8. **Never run an unscoped `pgrep -fa` / `ps aux`.** Process listings are not
    scoped to a workspace, so a routine "is my job still running?" check returns
    your siblings' in-flight gauntlet command lines — bot name, opponent arm

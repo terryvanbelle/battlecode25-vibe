@@ -34,19 +34,6 @@ def runs():
                   if p.is_dir() and RUN_ID.match(p.name) and (p / "results.csv").is_file())
 
 
-def played_commits(run):
-    """{bot: commit} from a run's bots.txt, or {} if absent."""
-    f = run / "bots.txt"
-    if not f.is_file():
-        return {}
-    out = {}
-    for line in f.read_text().splitlines():
-        parts = line.split()
-        if len(parts) >= 2:
-            out[parts[0]] = parts[1]
-    return out
-
-
 def duplicate_pairs(cur, prev):
     """Matchups whose BOTH commits are unchanged since `prev`.
 
@@ -115,6 +102,11 @@ def flags(run):
 
 
 def played_commits(run):
+    """{bot: (commit, subject)} from a run's bots.txt, or {} if absent.
+
+    Compared as a whole by duplicate_pairs(); the subject is derived from the
+    commit, so tuple equality is commit equality.
+    """
     f = run / "bots.txt"
     if not f.is_file():
         return {}
