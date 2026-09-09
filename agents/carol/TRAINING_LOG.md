@@ -17188,3 +17188,39 @@ screen while this check was still dumping, on the grounds that stage 0's identit
 already satisfied by a decisive win/loss flip on the same matchup. Registered at launch: *if the
 mechanism check had failed, the screen would be void regardless of its numbers.* It passed, so the
 question is moot — but the deviation is logged rather than left implicit.
+
+## Iteration 58 — CORRECTION to my own warrant, written before the screen returned
+
+I pre-registered this as *"a floor of ~1 standing soldier costs 250 chips a rebuild against a
+22,220-chip game budget — 1.1% — which does not move the limit cycle."* **That is not the mechanism
+I built.** Reading my own code back:
+
+```java
+static int lastFloorSoldier = 0;                                  // per-ROBOT static
+... rc.getRoundNum() - lastFloorSoldier >= SOLDIER_GAP;           // clock starts EXPIRED
+```
+
+`lastFloorSoldier` is a per-robot static initialised to **0**, so a newly built tower's clock is
+already expired: **every new tower grants one exempt soldier immediately**, on top of one per
+`SOLDIER_GAP` rounds thereafter. The mechanism is therefore a **compounding loop** — soldier ->
+tower -> free soldier -> tower — not a floor. That is why the stage-0 arm went from 8 towers to the
+25-tower cap and carried **18 concurrent soldiers**, where my warrant described 1–2.
+
+Three consequences, recorded now so they bind whichever way the number falls:
+
+1. **The magnitude argument I registered does not describe what ran.** I priced "one maintained
+   soldier ≈ 12 towers at 1.1% of budget". What executed was ~18 soldiers driving 8 -> 25 towers,
+   with the treasury drawn down to $410 and `starved15` against the baseline's `starved4`. The
+   registered price was an order of magnitude too small.
+2. **My claim that it "cannot flood the mix the way iteration 47 did" is weakened.** The bound is
+   real but far looser than I implied, because the rate scales with tower count and tower count is
+   what the mechanism increases. It is still nowhere near iteration 55's 245-soldier arm, but "18
+   concurrent" is not the small perturbation I sold.
+3. **If this passes the gate, the attribution is OPEN under doctrine 3b.** A good number would not
+   license the story in the pre-registration, because the executed mechanism differs from the
+   described one. The honest follow-up would be to separate the two effects — a true per-tower rate
+   limit (clock initialised to the tower's build round) against this compounding version — and find
+   out which half is doing the work. That is a one-line difference and a clean 2x2.
+
+I am recording this before the tally precisely because a correction that runs in my favour is the
+one least likely to get made afterwards.
