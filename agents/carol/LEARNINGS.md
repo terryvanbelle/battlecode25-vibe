@@ -1984,3 +1984,75 @@ something else, and it arrived as a story in which a coin-flip accept (iteration
 undone a measured optimum. That story was half true — the mix claim was right and confirmed at
 scale, the value claim hung on it was worth exactly zero. **A finding that explains a past mistake
 of yours is not thereby evidence about the present**; measure the present separately.
+
+## Doctrine 17's blindness is a property of the OPPONENT, not of the candidate (iteration 47)
+
+I pre-registered, in writing, that doctrine 17 did not apply to iteration 47 "because the candidate
+differs from the baseline in precisely that dimension". That reasoning is wrong and I want the
+wrongness recorded in the same words I used.
+
+Doctrine 17 says a self-play instrument is blind to a deficit both arms share. The deficit here is
+**losing to an opponent that converts ruins into towers at scale**. My candidate did convert; my
+*baseline* did not, and the baseline is the opponent. So the question "is converting ruins better?"
+was asked of a bot that never punishes failing to convert. Against `carol_iter44`, which floods
+splashers and wins on coverage, converting is a slower strategy that loses the coverage race.
+Against alice, who reaches 25 towers where carol reaches 8, matching her conversion is the game.
+**Both can be true**, and a self-play head-to-head cannot tell them apart.
+
+The general form: doctrine 17 is about whether the OPPONENT exercises the capability under test.
+Changing the candidate does not fix an opponent that cannot pose the question — that is doctrine 7's
+representativeness rule arriving from the other side, and the two should be read together, which
+they never were here.
+
+**The tell to reuse**: I wrote a sentence exempting myself from a doctrine rule. That sentence is
+where the audit belongs, every time. An exemption argued in a pre-registration is the one claim in
+it that nothing downstream will ever test.
+
+## The realized unit mix is set by the ORDERING of affordability gates, not by the intended shares
+
+Carol's spawn code rolls a unit from `SPLASHER_IN_20` / `MOPPER_IN_20` (intended 15 / 10 / 75) and
+*then* filters the roll through per-unit affordability gates. The gates, not the roll, decide.
+Measured realized mix: **~95% splasher, ~5% soldier, 0% mopper** — very nearly the inverse.
+
+The arithmetic, from the engine jar rather than from the comments: SOLDIER moneyCost 250, SPLASHER
+400, MOPPER 300. `SPLASH_FLOOR = 2000` exempts splashers, so a soldier needs 2250 chips and a
+splasher 1600, against a median treasury of ~1400. **The cheaper unit is gated higher than the
+expensive one.** Whichever unit is gated lower drains the shared treasury and starves the others,
+so the mix is a consequence of two constants set three iterations apart for unrelated reasons.
+Nobody chose it. Setting the floor to 0 does not fix this — it inverts it the other way, to ~98%
+soldier, which is the exact pathology iteration 30 was built to cure.
+
+**Generalisation: a roll that is filtered is not a policy.** Any time intended shares are expressed
+upstream of per-option feasibility gates, the realized distribution is set by the gates. Before
+tuning a share constant, measure the realized share; before adding a gate, check what it does to
+every share downstream of it. No accept in this lineage had ever re-measured a tuned dose after
+adding a gate above it.
+
+## A constant is only valid for the bot whose subsystem it was measured on (iteration 47, and 46)
+
+Iteration 30 suppressed soldiers, correctly, when carol's soldiers were **broken** — pre-iteration-44
+they orbited denied ruins converting nothing, so trading them for splashers was worth +19 swept
+maps. Iteration 44 then *fixed the soldier* and nobody re-opened the gate suppressing it.
+
+This is the same shape as iteration 46, one day earlier: iteration 21's mopper dose curve stopped
+describing the bot once splashers covered the mopper's job. Twice in two days, so it is a class:
+**when you repair a subsystem, the constants that were tuned to work around its being broken are
+now stale, and they will not announce themselves.** The trigger to install is not "periodically
+review constants" — that never fires — but *"on accepting a fix to subsystem X, list every constant
+whose justification mentions X"*. Iteration 44's log said soldiers were being wasted at denied
+ruins; `SPLASH_FLOOR`'s comment says splashers beat soldiers per unit of paint. Those two entries
+mention the same subsystem and nothing connected them for three iterations.
+
+## A one-map, one-side result is close to information-free — and I already knew that
+
+Stage 0 of iteration 47 showed the candidate taking 25 towers to the baseline's 5 on `Leaf` and
+winning. I called it "a complete reversal". The 100-game screen returned −0.93 sd, and **the same
+run reported 60% of its maps splitting by spawn side**. One map on one side is one draw from a
+distribution that is mostly coin-flip.
+
+LEARNINGS already carried "Replay inspection is for MECHANISM, never for VERDICT (iteration 41/42,
+the costly one)". I wrote the caveat into the log *at the time* and still let the number set my
+expectation for the run. Per doctrine 19 the note is therefore not the fix. The fix is
+`carol-tools/stage0.sh`, which plays both sides and **refuses to print or collect the winner**,
+reporting only the two things stage 0 exists to answer: do the arms differ, and did the intended
+behaviour change. The verdict is unavailable from the instrument, so it cannot be read off it.
