@@ -16936,3 +16936,68 @@ tower/mobile split in iteration 48, so this prediction has a poor recent record 
 falsifiable guess rather than an expectation.
 
 `src/bob/` untouched. **`bob_iter20` remains the bot.**
+
+## Iteration 49 — **REJECTED at +6, one game below the replicate band — and every secondary passed.**
+
+Run `20260909-192303`, 150 games, `BOT=bob_iter20` vs the three arms on one shared 25-map sample.
+`delta = 25 − (iter20's wins)`.
+
+```
+  vs bob_d0   (DECLUMP 0)   25/50   delta   0    swept 0/25,  0 against, 25 split
+  vs bob_d1   (DECLUMP 1)   25/50   delta   0    swept 2/25,  2 against, 21 split
+  vs bob_d3   (DECLUMP 3)   19/50   delta  +6    swept 2/25,  8 against, 15 split
+```
+
+**VOID condition PASSES**: `bob_d0` at exactly 25/50, all 25 maps split, zero sweeps.
+**Identity check** (LEARNINGS 16): `19 − 25 = −6 = 2 − 8`. Exact, both arms.
+
+**Verdict against the gate as registered** (≥+10 accept-eligible, +7..+9 replicate, **≤+6 reject**):
+**delta = +6 ⇒ REJECT.** It is one game below the replicate band. I am not moving the line: it was
+committed in `6e513e2` before the run existed, and a threshold that bends for a near-miss is not a
+threshold. **But a reject at the boundary with a coherent dose response is a different object from a
+reject at zero, and the rest of this entry is why.**
+
+### Every registered secondary passed, at r≤200 (per LEARNINGS 87), against the zero arm
+
+```
+            crowd/unit   soldR/g   paint/g   conv    dCov(m)   towers   starv/g
+  bob_d0       0.674       1339     535.8   0.5273    282.5     4.73      7.56
+  bob_d1       0.648       1317     518.4   0.5270    273.2     4.61      8.04
+  bob_d3       0.434       1440     560.2   0.5266    295.0     4.62      6.50
+  d3 vs d0    -35.6%      +7.5%     +4.6%   -0.1%     +4.4%    -2.3%    -14.0%
+```
+
+1. **Mechanism engaged: PASSES, and the dose response is the finding.** Crowd per mobile-unit-round
+   **0.674 → 0.648 → 0.434**. `d1` barely moved it (−3.9%) and scored **0**; `d3` moved it hard (−35.6%)
+   and scored **+6**. Within its own games `d3` sits **27% below its opponent** (0.434 vs 0.597). **The
+   dose that moved the mechanism is the dose that won the games**, which is the coherence iterations 43,
+   45 and 47 never had.
+2. **The payer I registered (position): did NOT fire.** Towers **−2.3%**, nowhere near proportional to a
+   35.6% crowd saving, and **`conv` is flat to within 0.1%** (0.5273 → 0.5266). The worry that spreading
+   units would pull them off ground that matters is not visible at this dose.
+3. **The channel: PASSES.** Paint actions **+4.6%**. The saved paint became painting, which is the
+   mechanism's entire claim and the first time this lineage has raised `acts` without paying for it.
+4. **The objective: +4.4%** `dCov` at r≤200.
+
+**And an unregistered result that matters more than the ones I did register.** Starvation deaths fell
+**14.0%** and soldier-rounds rose **7.5%** — with **no** refilling change (`xfer` 11.0 → 11.4, flat). That
+is precisely the re-open condition I wrote on `CLOSED.md` #23: *"a mechanism keeps units alive by making
+them **spend less** rather than by feeding them — that draws on no tower pool."* Iteration 47 bought
+starvation reduction by feeding and paid for it with production (spawns −15%); iteration 49 gets a
+comparable starvation reduction by spending less, and production is **up** (spawns 22.4 → 22.8). **Same
+symptom, opposite economics**, and the difference is exactly the one the closure predicted.
+
+### What I am doing about the boundary, and what I am NOT
+
+I am **not** re-reading +6 as an accept, **not** pooling `d1` and `d3`, and **not** replicating `d3` — the
+gate assigns replication to +7..+9 and this is +6.
+
+**The informative thing is that the ladder topped out too low**, and I can say that from the mechanism
+column rather than from the win column: `d1` reduced crowd by 3.9%, `d3` by 35.6%, and the score tracked
+it. There is headroom in the *knob* only up to `DECLUMP = 5` — candidate ranks run 0..4, so at W≥5 crowd
+strictly dominates directness and every larger W is the identical ordering. So the knob **saturates at 5**,
+and most of the remaining headroom is not in the weight at all but in the **candidate set**: `navTo`
+considers only 5 of 8 directions (straight, ±45°, ±90°), so a unit boxed in by allies cannot step
+backwards to escape them. That is iteration 50, pre-registered separately below.
+
+`src/bob/` untouched. **`bob_iter20` remains the bot; HEAD's behaviour is unchanged.**
