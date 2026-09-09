@@ -15752,3 +15752,107 @@ paint drain doubles (-2/turn, -4 for a mopper), and this lineage has repeatedly 
 not chips, is the binding resource. **The most likely failure is a denier that denies effectively
 and starves doing it**, landing under 30% and disqualifying itself. I am recording that before the
 run rather than after.
+
+### v1: criterion 1 FAILS, and fails INVERTED — the denier RAISES its victim's coverage
+
+Four probe games (two arms x two maps), 830-2000 rounds each. The control is `src/carol`, which is
+byte-identical to `carol_iter44` up to the package name, so it is iter44 playing itself and any
+difference is attributable to the archetype alone. **Free consistency check passed on the way in**:
+the control reproduced iteration 52's zero-arm game on DefaultMedium exactly — `carol` wins at
+round 830, same as before.
+
+`cov` in the replay dump is **per-mille of passable area** (read out of `ReplayDump.java`, not
+assumed from the format — `cov533m` is 53.3%, and the `m` is a unit suffix, not a digit). On a
+fixed map that is a monotone rescaling of the tile count criterion 1 names, so the relative
+comparison is exactly the pre-registered one.
+
+| map | arm | `carol_iter44` PEAK coverage | vs control | required |
+|---|---|---|---|---|
+| DefaultMedium | control (self-mirror) | 387 | — | — |
+| DefaultMedium | **denier v1** | **687** | **+77.5%** | **-20%** |
+| TheBest | control (self-mirror) | 691 | — | — |
+| TheBest | **denier v1** | **698** | **+1.0%** | **-20%** |
+
+**REJECTED on criterion 1, on both maps, in the opposite direction from the hypothesis.** Criteria
+2 and 3 were not run: all three were required, so the cheapest one going first ended it. That
+ordering cost 4 games instead of 54.
+
+### Why, from the counters I built for exactly this — and one of the two causes I did not predict
+
+`dn > 0` passed, and per iteration 52's lesson that certified nothing. The tags did the work.
+Splasher-turns in one mid-game window, split by whether the unit was hunting:
+
+| | fired | `cd` | `lowScore` | `noPaint` | median paint | below the 50 needed to fire |
+|---|---|---|---|---|---|---|
+| **hunting** | **4.9%** | 38.3% | **25.5%** | 30.5% | **53** | **49.4%** |
+| roaming | **10.2%** | 51.6% | 8.6% | 27.3% | 139 | 38.3% |
+
+- **Predicted**: hunting parks units on enemy paint at -2/turn and they starve. Median splasher
+  paint 139 -> 53, against a 50-paint attack cost.
+- **NOT predicted, and the larger error: NEAREST IS NOT DENSEST.** `lowScore` tripled.
+  `nearestVisibleEnemyPaint` walks to the closest enemy tile, which is typically one tile on a thin
+  frontier edge, while `SPLASH_MIN_SCORE = 8` needs roughly three convertible tiles in the r2<=2
+  core. **I optimised the distance to enemy paint and thereby de-optimised the quantity the shot is
+  actually scored on.**
+
+Net: the "denier" fired **137** splashes to the control's **229**. It did not deny and starve. It
+mostly failed to deny at all — an archetype built to add a threat *subtracted* one.
+
+### v2 repairs both faults, is verified to have repaired them, and STILL does not deny
+
+`src/carol_denier2`: densest-cluster targeting (O(E) 2x2 bucket count over one sense call — scoring
+each candidate centre with its own `senseNearbyMapInfos` would be ~69 engine calls a turn, which is
+why the obvious version is unaffordable), plus retreat-to-refill when a unit cannot afford its shot.
+
+**The repair demonstrably worked on its own terms** — this is not a failed rebuild:
+
+| | v1 | v2 | control |
+|---|---|---|---|
+| splashes fired (DefaultMedium) | 137 | **236** | 229 |
+| its own peak coverage | 290 | **440** | 697 |
+| survived to round | 831 | **1090** | 830 |
+
+v2 out-fires the control. And criterion 1 still fails:
+
+| map | iter44 PEAK vs v2 | vs control | iter44 at the last common round | vs control |
+|---|---|---|---|---|
+| DefaultMedium | 655 | **+69.3%** | 407 @r825 | **+146.7%** |
+| TheBest | 694 | **+0.4%** | 681 @r1500 | **+19.7%** |
+
+(Peak across games of different lengths flatters the longer game, which is why the fixed-round
+column is there too. Both columns are positive; the confound cannot rescue the criterion.)
+
+## VERDICT: neither denier is promoted. `roster_extra.txt` is unchanged, and the follow-on mopper gate is NOT run
+
+The pre-registration said the re-screen happens **if and only if** the denier is promoted. It was
+not, so it does not. That clause is the reason I am not about to spend 50 games measuring a mopper
+dose on an instrument I have just shown does not do the thing it was built to do.
+
+### What this actually found, which is worth more than the archetype would have been
+
+I built this to fix a blind instrument. The measurement says the blindness may not be the
+explanation. **Denial appears to be strictly dominated by expansion while virgin ground remains.**
+A splash on unclaimed ground paints up to 13 tiles for 50 paint at no risk; the same shot in enemy
+territory converts at most the r2<=2 core, is reachable only after a walk that costs -2/turn, and
+concedes the tiles the unit was not painting at home. In these games virgin ground never runs out —
+iter44's own peak is 39-70% — so the denial shot is competing against a 4x-cheaper alternative for
+the entire game. Two independent implementations, the second verified to fire *more* than the
+control, both failed to move the victim's coverage by so much as a percent in the intended
+direction.
+
+**This reframes iteration 52's null rather than excusing it.** I wrote there that my pool's 0%
+mopper share was a shared blind spot making the mopper screen uninformative. The better reading now
+is that **my lineage builds 0% moppers because paint removal is genuinely weak in this engine at
+these coverage levels, not because it never thought to try.** A null that survives an attempt to
+build the instrument that would overturn it is a stronger null than it was before, and iteration
+52's REJECT stands on firmer ground than when I logged it.
+
+**And the limit of that claim, stated plainly**: this is 6 games among bots of my own lineage. It
+is evidence that denial-BY-HUNTING is weak, not proof that no denial strategy works. The tournament
+still says alice beats me 62.7%, and my own note from iteration 52 records her splasher count
+climbing to 38 while mine falls to 10. That remains a real threat — but the evidence now points at
+it being an **expansion** threat, not a denial one, and that is a different iteration.
+
+**Kept**: both archetypes are committed with their measurements, so a later session that wonders
+whether paint denial was ever tried gets the answer and the numbers rather than a rebuild. Nothing
+ships; `src/carol` is untouched and HEAD still plays `carol_iter44`.
