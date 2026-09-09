@@ -18210,3 +18210,109 @@ expect it to pass.
 
 **Census launched**: `carol_i60_50` vs `carol_iter44`, full 75-map corpus, both sides, 150 games,
 on the unchanged standing gate — **margin >= +26 ACCEPT | +18..+25 REPLICATE | <= +17 REJECT.**
+
+# Iteration 60 — ACCEPTED as `carol_iter45`. D3 paint logistics, `REFILL_LOW = 50`.
+
+Run `20260909-202915`, `carol_i60_50` vs `carol_iter44`, **full 75-map corpus, both sides, 150
+games.** The session was killed by an account rate limit while this was in flight; the runner is
+setsid-detached, so the games completed and only the collation was lost. Recovered with
+`gauntlet-collect.sh 20260909-202915` — **not re-run**.
+
+> **`carol_i60_50` 88 / 150. Margin +26 = +2.01 sd.**
+> Gate, registered before launch: `>= +26 (88/150) ACCEPT | +18..+25 REPLICATE | <= +17 REJECT`.
+> **ACCEPT — landing exactly on the bar.**
+
+**Referent check (doctrine 5):** `BOT=carol_iter44`, so the summary's `overall: 62/150` is the
+*incumbent's* count; the candidate's is 88.
+
+**Consistency check (doctrine 14), reconciled exactly:** `wins − N = 88 − 75 = 13`, and
+`swept − swept-against = 25 − 12 = 13`. Identical, nothing residual.
+
+## The advance note is what makes this readable
+
+Before the run landed I registered that **iteration 58 produced this exact +14 screen margin and
+then rejected**, that my 50-game gate measures ~1.0 sd rather than the 2.0 I once labelled it, and
+that **a reject would not have surprised me**. It did not reject. That note is what stops this
+accept being read as a foregone conclusion — the same screen margin genuinely did go the other way
+six iterations ago, and I said so while the outcome was still unknown.
+
+## The corrected mechanism claim is the one that was confirmed
+
+I re-registered the mechanism *before the screen returned* as **population, not throughput**, with
+the flat per-unit fire rate as the evidence against my original claim. The census decomposition
+matches that corrected claim and not the original one:
+
+| | incumbent | `carol_i60_50` |
+|---|---|---|
+| wins by painting >70% outright | 48 | **70** |
+| wins on the r2000 tiebreak | 12 | 12 |
+| wins by destroying all units | 2 | 6 |
+
+**The entire gain is in outright paint-outs (+22), with tiebreak wins dead level at 12–12.** More
+splashers alive means more area converted, which is exactly what "population, not rate" predicts and
+is not what "each splasher fires more often" would predict.
+
+| bucket | candidate | margin |
+|---|---|---|
+| ruin-dense (>=18) | 49/74 = 66.2% | **+24** |
+| ruin-sparse (<18) | 39/76 = 51.3% | +2 |
+| small (<900) | 10/22 = 45.5% | −2 |
+| mid (900–1600) | 40/64 = 62.5% | +16 |
+| large (>1600) | 38/64 = 59.4% | +12 |
+
+**Essentially all of the +26 sits on ruin-dense maps (+24 of it).** That is the same signature the
+rejected rewrite produced, and it is mechanistically right: D3 keeps soldiers alive, soldiers build
+towers, and towers need ruins. Per doctrine 14 this is a decomposition of the same games — it
+corroborates the mechanism and says nothing about the size of the effect.
+
+## Doctrine 12's thin-margin clause, honoured rather than cited
+
+The margin landed **exactly on the bar**, which is the definition of a thin accept, and doctrine 12
+says to run the frozen roster **before** accepting, not after. I did, and I was willing to reverse.
+Run `20260909-231416`, 11 opponents x 8 maps x both sides = 176 games:
+
+| opponent | `carol_iter44` (2026-09-08, 50 games) | `carol_i60_50` (16 games) |
+|---|---|---|
+| carol_iter0 / iter1 / rush / turtle / examplefuncsplayer | 100.0% | 100.0% |
+| carol_iter7 | 94.0% | **100.0%** |
+| carol_iter21 | 82.0% | **100.0%** |
+| carol_iter35 | **68.0%** | **81.2%** |
+| carol_iter44 | — | 68.8% |
+| carol_racer | — | 68.8% |
+| carol_r1 | — | 87.5% |
+| **total** | | **161/176 = 91.5%** |
+
+**No opponent regressed, and the two unsaturated shared rungs both rose** (iter21 82.0 -> 100.0,
+iter35 68.0 -> 81.2). The accept stands.
+
+**Caveat flagged AND discharged (doctrine 6):** these are different map samples and different sample
+sizes, so this is not an exact comparison and I am not quoting a delta from it. What it is asked to
+do is detect a **regression**, and it finds none in any of the 8 shared opponents. I also note the
+instrument's weakness rather than hiding behind its result: **7 of 11 rungs are saturated at 100%**
+and structurally cannot show a regression at all. The informative rungs are iter35, iter44, racer
+and r1, and those are the four that moved.
+
+## Executing the accept
+
+- `src/carol_iter45` snapshotted; `src/carol` promoted to the same build. `diff` confirms the two
+  are identical apart from the package line.
+- `BUILD` tag moved `i60` -> `i45a` for lineage convention. Indicator strings are play-neutral but
+  shift the replay hash, so I **verified rather than assumed**: `carol_iter45` vs `carol_iter44` on
+  Leaf reproduces `carol_i60_50`'s result exactly — **paint-out win at round 980**, same round, same
+  win type. One game, and it removes the doubt.
+- Roster point recorded from the run itself (`track_vs_old_bots.py`), under the name that actually
+  played, `carol_i60_50`; never hand-edited.
+- Both charts regenerated: **19 accepted iterations, carol_iter0..carol_iter45.**
+
+## Where this leaves the lineage
+
+`carol_iter45` is the first accept since iteration 44, and it came out of the wreckage of a rewrite
+that was rejected at −5.71 sd. That is the shape worth remembering: **the rejected iteration paid
+for the accepted one.** The rewrite established which architecture is correct (splasher-primary, on
+the area-throughput arithmetic), and it produced, debugged, the one mechanism that transplanted into
+that architecture and moved it.
+
+**Open and untested**: the dose ladder is `0 -> 25, 50 -> 32, 100 -> 19, 150 -> 12` on the screen,
+so the interior optimum is bracketed above but **not below** — a dose between 0 and 50 has never
+been played, and the peak could sit lower than 50. That is a legitimate dose-response question
+(doctrine 2), not a fishing expedition, and it is the cheapest open lead this lineage has.

@@ -55,3 +55,14 @@ date,current_snapshot,opponent,wins,total,win_pct,source
 2026-09-08T20:48:45+00:00,carol_iter44,carol_rush,50,50,100.0,roster-run
 2026-09-08T20:48:45+00:00,carol_iter44,carol_turtle,50,50,100.0,roster-run
 2026-09-08T20:48:45+00:00,carol_iter44,examplefuncsplayer,50,50,100.0,roster-run
+2026-09-09T23:14:16+00:00,carol_i60_50,carol_iter0,16,16,100.0,roster-run
+2026-09-09T23:14:16+00:00,carol_i60_50,carol_iter1,16,16,100.0,roster-run
+2026-09-09T23:14:16+00:00,carol_i60_50,carol_iter21,16,16,100.0,roster-run
+2026-09-09T23:14:16+00:00,carol_i60_50,carol_iter35,13,16,81.2,roster-run
+2026-09-09T23:14:16+00:00,carol_i60_50,carol_iter44,11,16,68.8,roster-run
+2026-09-09T23:14:16+00:00,carol_i60_50,carol_iter7,16,16,100.0,roster-run
+2026-09-09T23:14:16+00:00,carol_i60_50,carol_r1,14,16,87.5,roster-run
+2026-09-09T23:14:16+00:00,carol_i60_50,carol_racer,11,16,68.8,roster-run
+2026-09-09T23:14:16+00:00,carol_i60_50,carol_rush,16,16,100.0,roster-run
+2026-09-09T23:14:16+00:00,carol_i60_50,carol_turtle,16,16,100.0,roster-run
+2026-09-09T23:14:16+00:00,carol_i60_50,examplefuncsplayer,16,16,100.0,roster-run
