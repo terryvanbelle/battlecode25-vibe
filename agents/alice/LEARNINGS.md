@@ -2615,3 +2615,74 @@ for rather than a single tool trusted twice.
 One thing worth keeping: I declined to ship `alice_phase` on the grounds that **a margin needs
 a mechanism**, and that decision is correct under *either* unit reading. The arithmetic sharpens
 the report; it was never what made the call.
+
+## Theme: a tournament run is not an independent sample — dedupe on the COMMIT PAIR, not the run id
+
+**2026-09-09.** To get more per-map resolution than one tournament gives, I pooled the last four
+runs: 8 games per map instead of 2. The pooled set said I was 0/8 on 23 maps against `bob` —
+which reads as overwhelming.
+
+**`alice`–`bob` was byte-identical across `20260908-1300` and `20260909-0100`: 150/150 games,
+same winner *and* same round count.** Both lineages had shipped unchanged commits, and the
+engine is deterministic. The second tournament re-ran the identical 150 games. `alice`–`carol`
+did differ (carol shipped a new commit): 19/150 identical, 127/150 same winner.
+
+> **Pooling N tournaments multiplies the apparent `n` by N, adds zero information for any pair
+> whose two commits have not moved, and shrinks every standard error by `sqrt(N)`.** "0/8 on 23
+> maps" was 0/2 against bob, printed four times.
+
+### The rule
+
+**Deduplicate on `(commit_a, commit_b, map, side)`, never on the run id.** `bots.txt` in each
+tournament directory carries the commit each lineage played, which is exactly what makes this
+checkable. After dedup my four runs held **450 unique games, 6 per map** — 2 vs bob, 4 vs carol.
+
+**And cluster at the map level.** The remaining games on one map are 2–4 games of the same
+pairing on the same terrain; they are not independent either. My finding survived both
+corrections (18.7 points, 2.39 sd) but it was 2x overstated before them.
+
+**The tell, available for free**: identical `rounds` values across runs. A round count is a
+near-continuous quantity — two genuinely independent games agreeing on it to the round is
+essentially impossible, so a single mismatch-free column is proof of replay, not of consistency.
+
+**Cross-reference.** The tournament report already warns that citing a margin *and* its sweep
+counts is citing one number twice. This is the same error along the time axis instead of the
+statistic axis, and neither warning would have caught the other.
+
+
+## Theme: one map cannot size a corpus quantity — and I made this error inside the session I read the warning
+
+**2026-09-09.** Tracing `alice-vs-bob-on-MoneyTower`, I found alice's money pinned at
+$1,200–1,400 — below `CHIP_RESERVE = 1450` — with 1,700–2,200 tower paint idle and **zero
+splashers built in 1,044 rounds**. The story was clean and mechanistic: a ruin-sparse map yields
+few money towers, so chip income never crosses the splasher gate.
+
+It even passed the SCARCITY pre-check **affirmatively** — freed resource and binding resource
+would both have been chips — which is the first time that check has ever endorsed a candidate
+of mine rather than vetoing one. That is precisely what made it persuasive.
+
+**It was false.** `BatSignal`, equally sparse at 10 ruins, has a **$13,400** median chip pile,
+spends 0% of turns below the reserve, and builds 9 splashers. Chip starvation is a property of
+`MoneyTower` — the corpus's second-sparsest map *by density*, 5.7 ruins/1k — and not of sparse
+maps at all.
+
+`tools/mapdata/README.md` makes this exact argument, in these words, about `gridworld`: it is "a
+poor choice for sizing any ruin-related quantity, and a bad default just because it is small and
+quick to trace." **I read that file earlier in the same session and then did the same thing with
+a different map.**
+
+> **Pick the sample before the trace, not the trace before the sample.** A single replay can
+> show that a mechanism *exists*; it can never show how common it is. The moment a finding is
+> phrased as a property of a *class* of maps ("on sparse maps alice ..."), it needs a sample
+> spanning that class — and, just as importantly, a check against the class's *other* extreme.
+
+**What made the difference here was cost asymmetry, and it is worth stating as the operating
+rule.** Four replay dumps off games already on disk cost no VM game time. An iteration built on
+the refuted mechanism would have cost a screen and possibly a census. **When the check is
+cheaper than the experiment by an order of magnitude, run the check even when the story is
+convincing — especially then**, because a story that survives one trace is exactly the kind that
+gets built on without a second.
+
+**A first affirmative SCARCITY reading is not a licence.** The pre-check tests whether the
+freed and binding resources coincide; it does not test whether the *measurement* of what binds
+generalises. Passing it moved my confidence far more than it should have.
