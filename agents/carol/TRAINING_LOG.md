@@ -16871,3 +16871,131 @@ time that entry has had to fire. The verdict is the screen.
 3. **Play-symmetry.** `k % MONEY_MOD` is invariant under both map symmetries for any modulus, so
    the property is preserved by construction — but I have not re-verified it empirically for the
    new values, and the mirror check is cheap.
+
+## Iteration 57 RESULT — REJECT on the pre-registered gate, and the registered prediction is FALSIFIED
+
+Run `20260909-172833`, `BOT=carol_iter44`, three arms on one shared 25-map sample, 150 games.
+Counted **directly from `results.csv`**, not from the gate tool (see the bug section below):
+
+| arm | `MONEY_MOD` | baseline | **candidate** | margin | z (sd 8.59) | verdict |
+|---|---|---|---|---|---|---|
+| `carol_i57_2` | 2 | 33/50 | **17/50** | −16 | **−1.86** | **REJECT** |
+| `carol_i57_3` | 3 | 30/50 | **20/50** | −10 | −1.16 | **REJECT** |
+| (incumbent) | 4 | — | (25/50) | 0 | — | — |
+| `carol_i57_6` | 6 | 30/50 | **20/50** | −10 | −1.16 | **REJECT** |
+
+Gate was `>= 34/50 ACCEPT, <= 30/50 REJECT`. All three arms are at or below 20. **REJECTED.**
+`src/carol` stays at `carol_iter44`.
+
+### The registered prediction is falsified, and that is the valuable part
+
+I registered `2 >= 3 > 4 > 6`, monotone in money-tower supply, and named `carol_i57_6` as the arm
+that could vindicate the incumbent. The measured ordering is:
+
+```
+        MONEY_MOD:   2      3      4        6
+        candidate:  17     20     25       20        <- 4 is the PEAK
+```
+
+**Moving the constant in EITHER direction is worse, by the same amount on each side.** That is the
+concave-with-interior-optimum shape doctrine 2 calls stronger evidence than any single point, and
+it lands on the incumbent.
+
+**This retires a standing flag.** The iteration-34 correction entry left `MONEY_MOD = 4` resting on
+a weak 28/50 with a retracted supporting statistic, and explicitly nominated it as "one of the first
+candidates for an ablation if the lineage stalls". The ablation has now run, on both sides, and the
+constant **survives as a measured peak** rather than an unexamined inheritance. A weak accept has
+been converted into a bracketed one at the cost of 150 games, and nobody needs to spend games here
+again.
+
+### My income story is refuted, and RULES.md had already said why
+
+I predicted ~56% of the coverage gap from tripling chip income. Tripling it made carol **decisively
+worse**. The mechanism is in RULES.md and I argued my way past it:
+
+> *"Any change that buys chips with paint income is charged twice: once for the income forgone, and
+> again when the chips are spent."*
+
+My counter-argument was that three of carol's eight Leaf towers sit at the 1000 paint cap, so the
+forgone paint income is already being discarded. **That was wrong, and the error is specific**: a
+robot's build cost is 200 paint drawn from the *building tower's own stash*, so paint towers are not
+merely an income source, they are the **build capacity**. Halving them halves the number of towers
+that can actually produce a unit, whatever the treasury says. The chips grew and had nothing to
+spend through. Capped paint in tower A does not fund a build at tower B.
+
+### Both of today's kills share one error shape — recording it as a lesson
+
+| candidate | the "surplus" I saw | why it was not surplus |
+|---|---|---|
+| iteration 56 (pin-escape) | treasury sits idle in a band on 77.2% of tower-turns | dwell-time, not slack: carol spends ~100% of income; the 1,200 is a buffer |
+| iteration 57 (`MONEY_MOD`) | three towers at the 1000 paint cap, overflowing | the cap is per-tower; the *capacity* those towers represent is load-bearing |
+
+**A resource that looks surplus is usually load-bearing, and "it is at its cap" is not evidence that
+it is free.** Both times the surplus was real and locally correct, and both times the quantity that
+mattered was a different one — where the resource *is*, not how much of it there is. Two
+independent instances in one session is a pattern, not a coincidence.
+
+---
+
+# TOOL BUG — `carol-tools/gateverdict.py` INVERTS the verdict. Not a mislabel.
+
+**I ran the discriminating case before naming the fault, and it changes the name.**
+
+`gateverdict.py` on iteration 47's run prints:
+
+```
+  carol_i47_0        39/50  ...  ==> GATE (39/50 vs >=34 accept / <=30 reject): ACCEPT
+```
+
+`carol_i47_0` is the arm my log records as a **−28 resolved regression at 11/50**. The tool says
+it ACCEPTS.
+
+**What the code computes** (`arm()`, line 59): `mw[r["map"]] += 1 if r["bot_result"] == "win"`.
+The `bot_result` column refers to the `BOT` argument, and my standing convention is
+`BOT=<baseline>` with the candidates passed as opponents. So the tool accumulates the **baseline's**
+wins, prints that number under the **candidate's** name, and applies the accept/reject gate to it.
+
+That is an **inversion, not a mislabelling**: for every run following my own convention, the
+verdict is computed on the wrong side of the pair. The two hypotheses are separable and I
+separated them: a mislabel would print a right number under a wrong header, and the gate would
+still be right. Here the gate is wrong.
+
+**Why it stayed hidden**: the inversion is invisible at 25/50 and my recent arms cluster near even.
+It needs a lopsided arm to show, which is exactly what the discriminating case supplies.
+
+**What it would have cost me today**: it reported `carol_i57_2` as **33/50 UNRESOLVED** — one
+disjoint-sample replication away from accepting — when the arm actually scored **17/50**, a −16
+regression. Under the superseded gate it would have printed ACCEPT outright, and it says so.
+
+**Blast radius: none, verified.** No entry in `TRAINING_LOG.md` cites `gateverdict.py`; every
+recorded verdict used the correct convention, computed by hand. Iteration 44, the only accept
+after the tool was added (12:19 vs 20:20 on 09-08), is a 150-game census recorded at 97/150 margin
+**+44** — the candidate's number, not the baseline's — and is independently corroborated by the
+external v3 yardstick moving 5.3% -> 20.7% on exactly that build. So the tool has never decided
+anything; it was caught on its first use for a live decision.
+
+**Reported to the coordinator rather than worked around**, per the standing rule, because the same
+design may have been generalised: METHODS.md credits this lineage with "a gate threshold derived
+from a measured sampling sd", and if that entry travelled with this implementation the inversion
+travelled with it. The fix is one line — count `bot_result == "loss"` when `BOT` is the baseline,
+or better, make the tool take the baseline name explicitly and refuse to guess.
+
+### Bonus falsification from the area bins (not pre-registered, reported anyway)
+
+`carol_i57_2` scores **41.2% on small maps and 18.8% on large ones.** Large maps are precisely
+where carol is chip-starved and where the income argument said the money towers would pay. The
+mechanism did most damage exactly where it was aimed. (Not pre-registered — my registered secondary
+was cut on ruin count, and my own log records area as a confound for it — so this is reported as
+shape, not as evidence carrying the verdict, which the primary already settles.)
+
+### Functional-area bookkeeping
+
+**Consecutive rejects: 3** (55 instrument-build, 56 void-on-magnitude, 57 `MONEY_MOD`). Iterations
+56 and 57 are both **tower/economy constants**, which is now a closed thread by the
+`MaxConsecutiveRejects` rule: **the next attempt must leave the economy-constant area.**
+
+Standing narrowing from iteration 56 still holds and is now sharper: a candidate must (a) grow the
+budget rather than reallocate it, and (b) not be a constant in the spawn/tower-type family, since
+every reachable value of `SPLASH_FLOOR` and `MONEY_MOD` is now bracketed and both peak where they
+already sit. The unexplored mechanic named by today's API sweep is **communication** — carol has
+never sent a message — and that is the first place to look for something that is not a constant.

@@ -30,7 +30,7 @@ ran as high as 9).
 
   gateverdict.py <run-dir> <baseline-opponent> [other-opponent ...]
 """
-import csv, os, sys, math, collections
+import csv, os, re, sys, math, collections
 
 REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 N_POP, N_DRAW = 75, 25
@@ -56,7 +56,12 @@ def arm(run, opp):
     mw, ng = collections.defaultdict(int), collections.defaultdict(int)
     for r in csv.DictReader(open(os.path.join(run, "results.csv"))):
         if r["opponent"] != opp: continue
-        mw[r["map"]] += 1 if r["bot_result"] == "win" else 0
+        # bot_result refers to the BOT argument. Under this lineage's standing
+        # convention BOT is the BASELINE and the opponents are the CANDIDATES, so the
+        # candidate wins exactly when the bot LOSES. Counting "win" here inverted every
+        # verdict -- it once printed ACCEPT for an arm measured at -28. See TRAINING_LOG,
+        # "TOOL BUG -- gateverdict.py INVERTS the verdict".
+        mw[r["map"]] += 1 if r["bot_result"] == "loss" else 0
         ng[r["map"]] += 1
     maps = [m for m in mw if ng[m] == 2]
     return maps, mw
@@ -90,7 +95,22 @@ def report(run, opp, A, primary):
             print("      NOTE: this would have ACCEPTED under the superseded >=29 gate, which was"
                   "\n            ~1.0 sd wearing a 2.0 sd label. It does not accept now.")
 
+def baseline_name(run):
+    """Read who the bot_result column refers to. Refuse to guess."""
+    try:
+        txt = open(os.path.join(run, "bot.txt")).read()
+        m = re.search(r"^bot=(\S+)", txt, re.M)
+        return m.group(1) if m else None
+    except OSError:
+        return None
+
 run = sys.argv[1]; A = areas()
+_BASE = baseline_name(run)
+if _BASE is None:
+    sys.exit("!! cannot read bot.txt: refusing to guess which side bot_result names")
+if len(sys.argv) > 2 and _BASE in sys.argv[2:]:
+    sys.exit(f"!! {_BASE} is the BASELINE of this run, not a candidate arm")
+print(f"  [roles] BOT/baseline = {_BASE};  scores below are the CANDIDATE's wins\n")
 print(f"{run}  (standing gate: >={ACC} accept, <={REJ} reject, {REJ+1}-{ACC-1} unresolved;"
       f" superseded gate was >=29/<=25)\n")
 for i, opp in enumerate(sys.argv[2:]):
