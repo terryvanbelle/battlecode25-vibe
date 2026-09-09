@@ -14085,3 +14085,34 @@ rather than as evidence against the mechanism.
 
 Recording per doctrine 15's rule that a failed secondary does not annul a passed primary and does not
 get explained away either — and per the note that attribution stays OPEN rather than being back-filled.
+
+---
+
+## Functional-area accounting, refreshed 2026-09-09
+
+The algorithm asks for this to be visible so that a run of rejects concentrated in one area is
+recognised as a closed thread rather than diffuse bad luck. `MaxConsecutiveRejects` is 3.
+
+| area | iterations | outcome |
+|---|---|---|
+| tower **type** / coordinate-keyed rules | 22, 26, 29, 32 | 4 rejects — **CLOSED permanently** (2026-09-08) |
+| bob's **own opening spend** (anti-crowding, spawn paint reserve) | 31, 33 | 1 reject, 1 void — **CLOSED 2026-09-09**, on the comparative census: the deficit is opponent-inflicted, same code reaches 4.6 towers vs alice and 2.6 vs carol |
+| **ruin selection / ranking** | 35 | killed at pre-check, never built — **CLOSED 2026-09-09**, mean choice set 0.83 |
+| production-policy **archetypes** as a regime instrument | bob_rush | rejected against its pre-registered criterion — **CLOSED 2026-09-09** |
+| **enemy-territory capability** (fielding splashers/moppers in short games) | 34 (running), 36 (designed) | **OPEN — the current thread** |
+
+**Three areas closed in one day, and the count matters.** That is well past
+`MaxConsecutiveRejects` for the opening-spend area, and the rule fired correctly: the next attempt
+(iteration 34) is in a different area, and it got there by evidence rather than by exhaustion.
+
+**A caution I want on the record, because the day looks tidier than it is.** Every one of today's
+closures rests on the same handful of traces — one CastleDefense loss dumped both sides, one arena
+frame, one Filter trace, and the comparative census over four maps. That is a narrow evidentiary base
+for four closures, and the algorithm's own warning is that a quantity measured on one map is a
+statement about that map. What makes me willing to close them anyway is that each closure rests on a
+*structural* argument rather than on the map's numbers — a singleton choice set follows from ruin
+sparsity, a converted guard follows from reading the ternary, the inflicted pin follows from the same
+binary scoring differently against two opponents — and each of those survives if the specific numbers
+move. **If a later session finds one of these reopened by better evidence, the closure to re-examine
+first is the opening-spend one**, since it is the only one resting primarily on a count (2.6 vs 4.6)
+rather than on a mechanism I can point at in the source.
