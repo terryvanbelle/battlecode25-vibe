@@ -2677,3 +2677,47 @@ for **-7, with the harm localised in games over 1,000 rounds** — which is now 
 *winning* regime, the large maps. The conditional form has been BLOCKED for want of a conditioning
 variable. Map area is that variable, it is known at round 1 from `getMapWidth`/`getMapHeight` (G
 already caches both), and it was derived from cross-lineage evidence rather than invented.
+
+## 69. The round-30 cliff and the small-map deficit are the SAME phenomenon (2026-09-09)
+
+Ran the early-coverage census over the 75 `bob-vs-carol` replays of tournament `20260909-0100` —
+zero new games, and the first time I have pointed that instrument at games against an opponent my own
+lineage did not produce. Bob is team1 throughout.
+
+```
+ area tercile   n  bob win%  r30 cov diff  bob spl  carol spl  bob sold  carol sold
+        small  25     20.0%       -65.1      0.00      2.16      6.88       1.56
+       medium  25     48.0%       -24.9      0.00      2.04      7.04       1.68
+        large  25     60.0%       -12.5      0.00      2.08      6.72       1.88
+```
+
+**The round-30 coverage differential is monotone in map area**, and it crosses LEARNING 64's cliff
+(-49) exactly in the small tercile. Splitting the same 75 games on the cliff instead of on area:
+
+```
+  r30 cov diff < -49 : n=17   bob win%  5.9%   mean area  924
+  r30 cov diff >= -49: n=58   bob win% 53.4%   mean area 1963
+```
+
+**5.9% below the cliff independently replicates the 6% I measured at n=300 on my own gauntlet**, on a
+different opponent, a different map draw and a different tournament. That is the first time one of my
+instruments has been validated against anything outside my own lineage, and it is the strongest
+evidence I have that the cliff is real rather than an artefact of self-play.
+
+**So LEARNING 64 (the cliff) and LEARNING 68 (small maps) are one finding, not two.** Small maps push
+the differential below the cliff; below the cliff bob loses ~94% of games. They are the same failure
+seen through two different conditioning variables.
+
+**Why map size drives it, mechanically.** Coverage is measured in per-mille *of map area*. Carol
+fields ~2.1 splashers at round 30 on every map size and bob fields **0.00 on every map size** — bob
+brings 6.7-7.0 soldiers to carol's 1.6-1.9. A splasher paints an area per action; a soldier paints one
+tile per action. On a small map that area is a far larger *fraction* of the board, so the same
+unit-mix difference converts into a much bigger per-mille lead. This is iteration 37's closing
+sentence — bob's problem is "tiles converted per action, not actions taken" — with the regime finally
+attached to it.
+
+**And note what does NOT follow.** Carol fields ~2.1 splashers at round 30 on large maps too, and bob
+still wins 60% there. Splashers are not a general answer; bob's tower-and-SRP economy genuinely wins
+long games. **The fix must be conditional, or it re-imports iteration 34's -7.** That is exactly the
+iteration 40 design, and this measurement is what pins its conditioning variable to map area rather
+than to "spawn more splashers".
