@@ -19210,3 +19210,56 @@ explicitly guarding against it.
 
 **The pre-gate caught it for six games.** That is the sixth pre-check this session to kill or demote
 its own direction, and the first to catch a flaw I had already identified and argued away.
+
+## The ablation attributes it — and the non-firing lever accidentally measures my pre-gate's noise floor
+
+12 games, each single lever against the same byte-identical control, at r300:
+
+| arm | paint actions (arm / ctl / diff) | transfers (diff) | towers (diff) |
+|---|---|---|---|
+| **A only — informed heading** | 474.8 / 600.5 / **−125.7** | +0.3 | −1.2 |
+| **B only — mopper transfer** | 509.7 / 579.0 / −69.3 | **+0.2** | −1.3 |
+| bundle A+B | 476.2 / 600.5 / −124.3 | −4.5 | −1.2 |
+
+### Lever A is the whole effect, and it is REJECTED
+
+Lever A alone costs **−125.7** paint actions against the bundle's −124.3. **The heading rule
+accounts for essentially all of the damage**, and it does so by the mechanism I wrote down and then
+argued away: steering a soldier toward cheap terrain steers it toward **ally paint, which it cannot
+gain coverage on**. It also costs 1.2 towers. Built, tested, **rejected**.
+
+### Lever B did NOT fire, so its −69.3 is not attributable to it — and that is the useful part
+
+Transfers moved by **+0.2 on a base of ~15**, about 1%. **A mechanism that did not act cannot have
+caused a 69-action swing.** So lever B remains **untested**, not rejected — and my `MOP_KEEP = 50`
+hypothesis is confirmed as the reason: the mopper's tank is 100 and its measured lifetime upkeep is
+62, so `spare = paint − 50` is non-positive for much of its life.
+
+> **The non-firing arm is an accidental measurement of my pre-gate's own noise floor.** A lever that
+> provably did nothing still shifted the 6-game paint-action comparison by **−69**. So the pre-gate's
+> production comparison carries a spread of roughly ±70 at n=6, which means lever A's −125.7 is
+> about **1.8 noise units** — directionally clear and repeated across all three arms, but *not* the
+> crisp result the raw number looks like.
+
+**I should have wanted that floor before running the gate, not as a by-product of an ablation.** I
+measured my *accept* gate's noise floor months ago (`sd_net_swept = 5.29`) and never measured the
+**pre-gate's**, so I registered a threshold ("paint actions must rise") in a unit whose spread I had
+not quantified — the same omission that made my iteration 50 bar unfalsifiable, in a different
+place. The pre-gate still did its job: all three arms fell, and the census stayed unspent.
+
+### Standing correction to how I run pre-gates
+
+**A pre-gate needs a null arm.** The cheapest version costs nothing extra: include an arm whose
+mechanism is known not to fire — or simply run the control against itself — and read the spread
+before reading the treatment. From here, any production pre-gate I register states its floor first.
+
+### Where iteration 54 leaves the two levers
+
+| lever | status |
+|---|---|
+| A — informed wander heading | **REJECTED.** Fires, harmful, −125.7 paint actions and −1.2 towers. The ally-paint objective walks soldiers onto ground they cannot paint. |
+| B — mopper-to-soldier transfer | **UNTESTED.** Dosed out of existence by `MOP_KEEP = 50`; fired ~1%. A re-dose is a dose change on a mechanism that has never acted, not a re-open of a rejected one. |
+
+**Next session, registered:** re-dose lever B against the mopper's measured paint *trajectory*
+rather than against the cooldown band, verify it fires with a manipulation share **before** any gate,
+and register the pre-gate's noise floor first. Lever A stays closed.
