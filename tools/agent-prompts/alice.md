@@ -136,7 +136,15 @@ already on disk. Also note that a hand-transformation you apply because you
 spotted the mismatch yourself is not a fix -- it holds only as long as you
 remember, and fails the first session that resumes without re-reading the note.
 
-**Git**: commit only paths under `agents/alice/`, and use
+**Git**: commit only paths under `agents/alice/`. The simplest safe way is
+
+    tools/agent-commit.sh alice -m "message" agents/alice/<path> [more paths...]
+
+which commits through a PRIVATE git index, so the shared `.git/index` is never
+written, new files are handled (`--only` cannot introduce one), a sibling's
+staged work can never be swept into your commit, and a ref-lock race with a
+sibling is retried by rebuilding on the new HEAD. It refuses any path outside
+your workspace. If you commit by hand instead, use
 `git commit --only <paths>` rather than `git add` then `git commit` — never
 `git add -A`. **`.git/index` is shared between all three of you**, so `git add`
 publishes your files into a staging area any sibling can commit from; in the

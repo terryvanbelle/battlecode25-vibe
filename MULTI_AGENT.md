@@ -418,6 +418,17 @@ agents. Therefore:
 
 ## Git discipline
 
+- **Prefer the tool over the rule**: `tools/agent-commit.sh <you> -m "msg"
+  <paths...>` commits through a PRIVATE git index, so the shared `.git/index` is
+  never written at all. It handles new files (which `--only` cannot introduce),
+  refuses any path outside your workspace, re-syncs the shared index afterwards
+  so your commit cannot be reverted by a sibling committing from it, and retries
+  a ref-lock race by rebuilding on the new HEAD — which carries the sibling's
+  commit forward instead of clobbering it. One lineage wrote this for itself
+  after being bitten; it was generalised for all three because the hazard is
+  identical and a rule that must be remembered is not a control
+  (TRAINING_ALGORITHM doctrine 19). The rules below still describe what the tool
+  enforces, and still apply when you commit by hand.
 - Commit **only your own paths** (`agents/<you>/...`) — never `git add -A`
   (this nearly baselined broken code twice in the BC26 project).
 - **Use `git commit --only <paths>`, not `git add` then `git commit`.** The
