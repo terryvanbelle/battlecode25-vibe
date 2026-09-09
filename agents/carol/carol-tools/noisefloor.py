@@ -5,19 +5,48 @@ A full-corpus census removes map SAMPLING error. It does not remove engine chaos
 perturbs the PRNG stream, and two arms that differ only in phase still disagree. That residue is
 what a census margin must clear, and it cannot be reduced by running more of the same maps.
 
-Two arm totals cannot estimate a standard deviation -- but a fixed corpus gives 75 PAIRED map
-records for free. Each map is played from both sides, so per map we have Sa (won as A) and Sb
-(won as B), each 0/1. For policy-identical arms those differ only by noise, so
-
-    E[(Sa - Sb)^2] = 2 * Var(S)        =>   Var(S) = mean(d^2) / 2,  d = Sa - Sb
-
-and the standard deviation of a 150-game total is sqrt(150 * Var(S)).
-
-DO NOT read the floor off the two arm totals. A near-draw between policy-identical arms is exactly
-what binomial predicts, so it cannot even weakly reject binomial; a small total difference is the
-convenient reading, not the informative one. The per-map variance is the whole point.
-
   noisefloor.py <run-dir> <opponent>
+
+WHAT THE MARGIN IS MADE OF -- the exact identity, verified on all 7 census pairs on disk
+--------------------------------------------------------------------------------------
+Every map is played from both sides. Per map the bot wins Sa+Sb of 2 games, so its margin
+contribution is 2*(Sa+Sb) - 2, which is +2 on a swept win, -2 on a swept loss, and EXACTLY ZERO
+on a map that splits by side. Summing:
+
+    margin (wins - losses)  ==  2 * (swept_wins - swept_losses)
+
+**Split maps contribute nothing to the margin.** They are not a small term, they are identically
+zero. The margin is a statistic of the SWEPT maps alone.
+
+THE BUG THIS FILE USED TO HAVE (fixed 2026-09-09), and why it was invisible
+--------------------------------------------------------------------------
+The original estimator formed d = Sa - Sb per map and set Var(S) = mean(d^2)/2. But d^2 is 1
+exactly when the map SPLITS and 0 when it is swept. So the old tool estimated the margin's noise
+floor from the maps that contribute nothing to the margin, and ignored the maps that are the
+entire margin. It had the relationship inverted, not merely mis-scaled.
+
+It went unnoticed because the calibration run happened to sit near the crossover (56% split /
+44% swept), where the wrong formula returns a number close to the right one: 12.96 vs 11.49.
+The discriminating case was already on disk. Run 20260908-204655 vs carol_i44_c32 splits 73 of 75
+maps; the old estimator calls that pair the NOISIEST ever measured, sd(margin) = 17.09, when it is
+in fact by far the QUIETEST, sd(margin) = 2.83, precisely because almost nothing is swept. Two
+hypotheses that agree on the calibration run disagree 6x on that one, in opposite directions.
+
+Lesson recorded in LEARNINGS.md: an estimator validated on a single near-symmetric case has not
+been validated at all -- find the lopsided case, which is usually already in gauntlet/.
+
+ESTIMATING THE FLOOR CORRECTLY
+------------------------------
+Per map let X = I(swept win) - I(swept loss). Then margin = 2 * sum(X). Under the null (the two
+arms are policy-identical, so sweeps happen only by chaos and are equally likely in either
+direction) E[X] = 0 and Var(X) = p + q = the SWEEP RATE. Hence
+
+    sd(margin) = 2 * sqrt(n_maps * sweep_rate)
+
+**The sweep rate must come from a POLICY-IDENTICAL pair**, not from the pair under test: a pair
+that really does differ sweeps more maps, and feeding that back in would build the null out of the
+alternative. Calibrate on a phase twin (run 20260908-173918, carol_phase vs carol_iter36, one
+character apart) and apply the resulting constant gate to every census.
 """
 import csv, os, sys, math, collections
 
@@ -29,46 +58,33 @@ def main(run, opp):
     maps = [m for m, v in per.items() if len(v) == 2]
     if not maps:
         print("no complete both-sides pairs -- check the side column name"); return
-    d2 = []
-    swept = split = 0
-    wins = 0
-    for m in maps:
-        a, b = list(per[m].values())
-        d2.append((a - b) ** 2)
-        wins += a + b
-        if a == b: swept += 1
-        else: split += 1
     n = len(maps)
-    varS = sum(d2) / n / 2.0
-    sd_total = math.sqrt(2 * n * varS)
-    binom = math.sqrt(2 * n * 0.25)
-    print(f"policy-identical calibration: {run}  vs {opp}")
-    print(f"  maps paired            {n}   games {2*n}")
-    print(f"  arm total              {wins}/{2*n}   margin (wins-losses) {wins - (2*n - wins):+d}")
-    print(f"  maps DECIDED the same both sides (survive a phase change)  {swept}/{n} = {100*swept/n:.0f}%")
-    print(f"  maps split by side (still a coin flip)                     {split}/{n} = {100*split/n:.0f}%")
-    print()
-    print(f"  Var(single-game S) from per-map pairs   {varS:.4f}   (binomial max 0.25)")
-    print(f"  ==> sd of the {2*n}-game WIN COUNT       {sd_total:.2f} games"
-          f"   = {100*sd_total/binom:.0f}% of binomial ({binom:.2f})")
+    sw = sum(1 for m in maps if sum(per[m].values()) == 2)
+    sl = sum(1 for m in maps if sum(per[m].values()) == 0)
+    split = n - sw - sl
+    wins = sum(sum(per[m].values()) for m in maps)
+    margin = wins - (2 * n - wins)
 
-    # UNITS. Fixed 2026-09-08 after this tool set a gate half as strict as it claimed.
-    # sd_total is the sd of the WIN COUNT W. The gate below is quoted on the MARGIN
-    # M = W - (N - W) = 2W - N, and Var(M) = 4*Var(W), so sd(M) = 2*sd(W). The original
-    # version multiplied sd_total by 2 and called the result "2.0 sd" -- but that factor
-    # of 2 is the win-count-to-margin conversion, so it was quoting a 1.0 sd threshold as
-    # a 2.0 sd one. Every census gate derived from it was half as strict as advertised.
-    # No verdict moved (iteration 42 was -0.77 sd and rejected; iteration 44 was +3.39 sd
-    # and accepted on either gate), but the published effect sizes were inflated 2x.
-    sd_margin = 2 * sd_total
-    print(f"  ==> sd of the {2*n}-game MARGIN (wins-losses)  {sd_margin:.2f} games")
+    print(f"census calibration: {run}  vs {opp}")
+    print(f"  maps paired            {n}   games {2*n}")
+    print(f"  arm total              {wins}/{2*n}   margin (wins-losses) {margin:+d}")
+    print(f"  swept wins {sw}   swept losses {sl}   split by side {split}")
+    print(f"  identity check: 2*(SW-SL) = {2*(sw-sl):+d}  (must equal the margin above)")
     print()
-    print(f"  suggested census gate on MARGIN (wins-losses), from this floor:")
+    sweep_rate = (sw + sl) / n
+    sd_margin = 2 * math.sqrt(n * sweep_rate)
+    print(f"  sweep rate             {sw+sl}/{n} = {sweep_rate:.3f}   <-- the ONLY driver of margin noise")
+    print(f"  ==> sd of the {2*n}-game MARGIN   {sd_margin:.2f} games")
+    print(f"      (split maps contribute exactly 0; they are not part of this)")
+    print()
+    print(f"  gate on MARGIN, valid ONLY if this run is a policy-identical calibration:")
     print(f"    ACCEPT     >= +{2*sd_margin:.0f}   (2.0 sd)")
     print(f"    REPLICATE  +{1.4*sd_margin:.0f} .. +{2*sd_margin-1:.0f}   (1.4 - 2.0 sd)")
     print(f"    REJECT     <= +{1.4*sd_margin-1:.0f}")
+    print(f"  to score a result:  z = margin / {sd_margin:.2f}")
     print()
-    print(f"  to score a result:  z = margin / {sd_margin:.2f}"
-          f"   (NOT margin / {sd_total:.2f} -- that is the win-count sd)")
+    old = 2 * math.sqrt(2 * n * (split / n / 2.0))
+    print(f"  [superseded estimator, for comparison only: {old:.2f} -- built from the SPLIT maps,")
+    print(f"   which contribute nothing to the margin. Do not use.]")
 
 main(sys.argv[1], sys.argv[2])

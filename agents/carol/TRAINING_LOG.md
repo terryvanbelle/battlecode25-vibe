@@ -12638,3 +12638,128 @@ pre-registration changes, and this is written before its evaluation has run:
   all it was for, and it cannot accept anything.
 - My pre-registered predictions for the ladder (`b` loses by more than −8, `c` worse than `b`, `a`
   within +/−8 of even) stand exactly as written.
+
+## Applying the other session's closing lesson to iteration 45, and adopting the STANDING sampled gate
+
+Its splasher kill produced a transferable check: *"an idle-turn count is not a prize until you check
+which resource the unit is actually short of. If this unit were never idle again, what would it
+spend? If the answer is paint it does not have, the idleness is a symptom of the shortage, not an
+independent waste."*
+
+**Iteration 45's target came from exactly such a decomposition, so the check is owed.** Run it:
+if a carol soldier were never idle again, it would spend paint at 5 per tile — and soldiers *are*
+paint-short (iteration 32's probe: 63% of idle soldier turns sit below half paint). By that check,
+the soldier idleness I decomposed is largely a symptom of the paint shortage.
+
+**That does not kill this iteration; it is the reason to prefer it.** Iteration 45 does not convert
+idle turns into actions — it attacks the shortage itself, by cutting the end-of-turn drain that
+consumes the very resource the idleness is a symptom of. Iterations 42 and the splasher candidate
+both tried to spend idleness; this one tries to stop paying for it. The manipulation check already
+shows the drain falling 59–69%. The open question is whether that saving survives the containment
+cost, which is what the run decides.
+
+**Standing sampled-gauntlet gate adopted** (commit `5443d59`), replacing the ad-hoc +/−8 band in my
+pre-registration: on a 50-game sampled arm, **>= 29/50 accepts, <= 25/50 rejects, 26–28 is
+UNRESOLVED and must be replicated on a disjoint sample.** My ladder predictions restated in the
+lineage's own units, still before the run:
+
+- `carol_i45_b` vs `carol_iter44`: **<= 25/50** (a resolved loss).
+- `carol_i45_c`: worse than `b`.
+- `carol_i45_a`: **26–28/50**, i.e. unresolved — no containment, but too small a trigger to pay.
+
+---
+
+# Session resume 2026-09-09 — recovering two finished runs, and a THIRD fault in the census gate
+
+The previous session died between launching work and recording it. `gauntlet-collect.sh --list`
+showed two **finished, uncollated** runs and the iteration 45 ladder **never launched at all**.
+Recovered both before building anything; relaunched the ladder first, since it is the long pole.
+
+## Recovered run `20260908-204845` — roster point for iteration 44 (my only absolute instrument)
+
+400 games, `carol_iter44` vs the frozen roster. Recorded into
+`progress/vs_old_bots_history.csv` (8 new rows) and both charts redrawn.
+
+| rung | iter30_2000 (prev roster run) | **iter44** |
+|---|---|---|
+| carol_iter0 | 96% | **100%** |
+| carol_iter1 | 98% | **100%** |
+| carol_iter7 | 96% | **94%** |
+| carol_iter21 | 94% | **82%** |
+| carol_rush | 94% | **100%** |
+| carol_turtle | 100% | **100%** |
+| examplefuncsplayer | 100% | **100%** |
+| carol_iter35 (new rung) | — | **68%** |
+
+**On the seven shared rungs: 339/350 (96.9%) -> 338/350 (96.6%). Flat.** Fourteen accepted
+iterations from 30 to 44 bought nothing this instrument can see.
+
+Before reading that as a stalled lineage, note what it actually is: **the roster has saturated.**
+Five of eight rungs are pinned at 100% and cannot move. The only rungs with headroom are the two
+newest, iter21 (82%) and iter35 (68%) — and iter21 is the one that went *down*. A frozen yardstick
+made mostly of bots I beat 100–0 measures nothing; its resolution now lives entirely in its top
+two rungs. Adding `carol_iter44` as a rung (done last session, commit `d40ad0d`) is the right
+repair and will pay off from the next accept onward. **I am not treating the flat line as evidence
+of no progress; I am treating it as an instrument at its ceiling.** The tournament is the
+independent check and it says carol moved +5.0 relative in the 20260909-0100 round.
+
+## Recovered run `20260908-204655` — the BAN_CAP = 32 arm, and the constant closes
+
+`carol_i44_a` vs `carol_i44_den` and `carol_i44_c32`, full 75-map corpus, 150 games each.
+The `den` arm (+18) was already logged and superseded. The **new** result is the upper-side arm:
+
+| pair | margin | swept W / swept L / split |
+|---|---|---|
+| `i44_a` vs `i44_c32` (8 slots vs 32) | **+4** | 2 / 0 / **73** |
+
+73 of 75 maps split by side. **BAN_CAP = 32 buys nothing over 8; the constant is closed on the
+upper side.** This holds under every version of my gate, which is the good kind of robustness.
+
+## And that arm turned out to be the discriminating case for a bug in my own noise floor
+
+`noisefloor.py` called this pair the **noisiest** ever measured — sd(margin) 17.09, against 12.96
+for the phase twin. That is backwards on its face: a pair that splits 97% of maps is a pair that
+barely differs. Chasing it found the fault.
+
+**The exact identity, verified on all 7 census pairs on disk (`margin == 2*(SW - SL)`, no
+exceptions):** each map is played both sides, so its margin contribution is +2 swept-win, −2
+swept-loss, and **exactly zero when it splits**. The margin is a statistic of the swept maps alone.
+
+**The old estimator formed `d = Sa - Sb` and set `Var(S) = mean(d^2)/2` — but `d^2` is 1 precisely
+when the map SPLITS.** So it estimated the margin's noise floor from the maps that contribute
+nothing to the margin, and ignored the maps that *are* the margin. **Inverted, not mis-scaled.**
+
+It hid because the calibration run sits near the crossover (56% split / 44% swept), where the wrong
+formula returns nearly the right number — 12.96 vs 11.49. The lopsided case that separates them was
+already on disk and I had not run it. On the c32 pair the two hypotheses disagree **6x and in
+opposite directions**: old says 17.09 (noisiest), correct says **2.83** (quietest by far).
+
+Correct floor: `sd(margin) = 2*sqrt(n_maps * sweep_rate)`, with the sweep rate taken from a
+**policy-identical** pair — never from the pair under test, since a pair that genuinely differs
+sweeps more, and using it would build the null out of the alternative. Fixed in the tool itself,
+with the derivation and the failure written into its docstring, so no future session can quote the
+old constant.
+
+### Standing census gate, third revision: sd(margin) = 11.49, ACCEPT >= +23, REPLICATE +16..+22, REJECT <= +15
+
+**This revision makes the gate more LENIENT (+26 -> +23), so I am checking explicitly whether it
+buys me anything, because two of my last three corrections ran in my own favour.** Re-scoring every
+standing verdict:
+
+| verdict | margin | old z (+26 gate) | **new z (+23 gate)** | moves? |
+|---|---|---|---|---|
+| iteration 44 ACCEPT | +44 | +3.39 sd | **+3.83 sd** | no — accept either way |
+| iteration 42 REJECT | negative | −0.77 sd | negative | no |
+| BAN_CAP 8 slots (vs `den`) | +18 | +1.39 sd, REPLICATE | **+1.57 sd, REPLICATE** | **no — still not an accept** |
+| BAN_CAP 32 slots (vs `c32`) | +4 | +0.31 sd | **+0.35 sd, REJECT** | no |
+
+**Nothing moves.** The standing position on iteration 44 is unchanged: early denial detection is the
+load-bearing half, the 8-slot ban set is its storage and is still not independently priced, and 32
+slots are now positively excluded. A gate correction that flips none of my own verdicts is the
+outcome I wanted to be able to report; I would have had to report it either way.
+
+There was a pair-specific reading of the same fix under which the 8-slot ban set scores +2.07 sd
+and becomes an accept. **I am not taking it.** It estimates the null from the sweep rate of the
+pair under test, which is contaminated by the very difference being tested. Building the null out
+of the alternative to promote my own feature, on the third revision of a gate I keep finding faults
+in, is exactly the move my LEARNINGS says goes unaudited.

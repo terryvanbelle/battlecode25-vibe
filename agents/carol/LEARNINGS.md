@@ -1879,3 +1879,35 @@ The gradient holds separately against alice (z = −5.73) and bob (z = −6.30).
 were not built together, each decisive on its own, is a far stronger claim than one pooled number
 — and it is free, because the tournament already plays both. **Split the pool before pooling it:**
 a finding that survives being cut in half by opponent is not an artefact of one rival's quirks.
+
+## An estimator validated on one near-symmetric case has not been validated (2026-09-09)
+
+`noisefloor.py` was wrong for a whole day in a way that was invisible on the run it was built
+from. It estimated the census margin's noise from the maps that **split by side** — which
+contribute *exactly zero* to that margin (`margin == 2*(SW-SL)`, an identity, verified on all 7
+census pairs on disk). The calibration run happened to sit at 56% split / 44% swept, the crossover
+where the wrong formula and the right one agree to within 12%. So it looked fine.
+
+The case that separates them was already sitting in `gauntlet/`: a pair splitting 97% of maps,
+which the old formula calls the noisiest ever measured and the correct one calls the quietest, a
+6x disagreement in opposite directions. **Before trusting a statistic, find the most lopsided
+input you already have and check the two candidate formulas disagree there.** If every input you
+have tested is near-symmetric, you have tested nothing — symmetry is where wrong formulas hide.
+
+Corollary, and the reason this one was worth catching even though no verdict moved: the fault was
+not a scale error but an **inversion** — it had signal and noise the wrong way round. A mis-scaled
+gate still ranks candidates correctly; an inverted one does not. Report what the code *computes*,
+not the size of the discrepancy.
+
+## Estimate the null under the null, especially when the alternative is yours (2026-09-09)
+
+The corrected floor admits a second reading: take the sweep rate from the pair *under test* rather
+than from a policy-identical twin. It is superficially more precise — a pair-specific null. It is
+also contaminated, because a pair that genuinely differs sweeps more maps, so the null gets built
+out of the alternative.
+
+It would have promoted a feature I ship from REPLICATE to ACCEPT. That is how I noticed it. **A
+methodological refinement that arrives already knowing which of your results it will rescue is a
+hypothesis about your incentives, not about your data.** Check which way a proposed correction
+cuts *before* deciding whether it is principled; if you cannot tell the two apart on the
+statistics alone, take the one that does not favour you.
