@@ -16291,3 +16291,60 @@ hypothesis can be gated on a self-play head-to-head alone**. Two parts, both mec
   the current code"; line 357 reads `final int SPLASH_FLOOR = 2000;`. The comment is stale and
   describes a state that was never shipped. Not fixed in this commit because it touches the file the
   tournament plays; queued as a comment-only correction.
+
+### The free diagnostic on the losses found something bigger than the iteration, and it is NOT my mechanism
+
+I dumped four of `carol_i54_b`'s 25 losses to ask whether the death spiral was still present at the
+32% dose. It mostly was not. What was there instead is worse:
+
+| map | rounds | peak | final | retention | late-game state of my bot |
+|---|---|---|---|---|---|
+| Dominoes | 2000 | 341 | 318 | 93.3% | **tw1, twPaint 1000, 0 robots, 0 actions** |
+| box | 2000 | 609 | 421 | 69.1% | **tw1, twPaint 1000, 0 robots, 0 actions** |
+| TargetPractice | 400 | 352 | 218 | 61.9% | tw?, twPaint 155, 7.5 soldiers, 48 acts |
+| Terminal | 500 | 295 | 295 | 100.0% | twPaint 744, healthy |
+
+Two of four games ended with my bot **frozen**: one tower, paint pinned at the **1000 cap**, zero
+robots, zero actions, for the last 400-1500 rounds of a 2000-round game.
+
+**The cause, read off the round lines rather than guessed.** On `box` at round 2000 my bot holds
+`$60` chips, `tw1`, `twPaint1000`. A soldier costs **250 chips**. The tower is full of paint it
+cannot spend, because the team is **chip**-starved — and with one tower, if it is a paint tower,
+chip income is **zero**. There is no escape: no chips means no robot, no robot means no ruin
+claimed, no ruin means no new tower, forever. It is an absorbing state.
+
+The opponent in that same game shows the exact mirror image: `$16,490` chips, 4 towers, 31
+soldiers, `twPaint 170`, **starved 11** — drowning in chips with no paint. RULES.md already
+documents this second pole from iteration 29 ("60,000 unspendable chips").
+
+**And the control is in the same replay, which is why I can say this is not iteration 54's doing.**
+On Dominoes **both** teams are frozen at `tw1 / twPaint1000 / 0 robots` — and one of them is
+`carol_iter44`, which does not have my change. **This is a lineage-wide pathology that my arm
+neither caused nor cured.** I did not have to run a game to establish that; the discriminating case
+was already on disk, which is the habit iteration 52 taught me.
+
+### What this reframes about the 25/50
+
+The null is real and the REJECT stands. But "the paint floor is neutral" now has a mechanism behind
+it: **in the games that matter most, paint was never the binding resource.** My bot froze holding
+1000 paint. A gate that protects a tower's paint balance cannot help a bot whose paint is at the
+cap and whose chips are at 60. Iteration 54 was aimed at one pole of a two-pole failure, and the
+sampled losses landed disproportionately on the other pole.
+
+### Iteration 55, named and grounded — the tower-type rule is state-blind
+
+Both poles are the same disease: **tower composition decides which resource binds, and this bot
+chooses tower type by a rule that cannot see its own resource state.** `src/carol` decides each
+ruin's tower type from a **coordinate modulus** — a fixed function of position, identical whether
+the team is drowning in chips or unable to afford a single soldier.
+
+The hypothesis for iteration 55 writes itself: **choose the tower type from the binding resource,
+not from the ruin's coordinates.** A team at 60 chips and 1000 paint should build a money tower; a
+team at 16,000 chips and starving robots should build a paint tower. Both states are directly
+observable to every tower (`rc.getChips()` is team-shared; tower paint is local).
+
+Worth stating what makes this promising where the last two were not: iterations 53 and 54 both
+targeted mechanisms whose value was speculative. This one targets a **measured absorbing state that
+consumed 400-1500 rounds in half of a four-game loss sample**, in a bot that provably cannot react
+to it. The prior work needed for it is already done and committed — the engine facts are in
+RULES.md (money towers have `paintPerTurn == 0`; a team with no paint tower has already lost).
