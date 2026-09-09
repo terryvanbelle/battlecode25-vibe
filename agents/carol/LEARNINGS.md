@@ -1185,6 +1185,19 @@ to construct it.** The only reason this was findable is that the tournament supp
 another lineage produced. It cost zero VM time — the data had been sitting in `tournaments/` for
 hours while I ran gauntlets that could not answer the question.
 
+**Extension (2026-09-09): the trade can hide in a stratum you CANNOT put in the gate.** This entry's
+fix was to stratify the accept gate by map area — a property of the map, known before the game, so
+it can be a gate condition. Iteration 47's dense census came out at margin **exactly 0**, and split
+by *how the game ended* it is **+8 in decided games and −8 in round-2000 grinds**: two large
+opposite effects summing to nothing, the same shape as this entry.
+
+But "decided vs tiebreak" is an **outcome**, not a map property. It is caused partly by the build
+under test, so it can be *reported* and it can *generate a hypothesis*, and it can never be a gate
+condition or an accept argument without conditioning on the thing being measured. That is the
+boundary between this entry's fix and doctrine 18's error, and the two need reading together:
+**stratify the gate by what the map is; stratify the post-mortem by what happened.** Only the first
+can gate.
+
 Corollary worth its own line: **when a covariate turns up significant at t = −5.57 and your last
 three accepts were argued at |t| < 2.2, stop and re-plan.** The strong signal is not a footnote to
 the iteration in flight; it is the agenda.
@@ -1872,6 +1885,28 @@ against the same games.
 **Look for a defect whose cost scales the way the gradient does.** "Carol is worse on big maps" is
 compatible with almost any mechanism. "Carol's loss rate is linear in the number of X" says the
 defect is paid once per X, which is a much smaller search space.
+
+**SUPERSEDED IN PART (2026-09-09), and the superseding matters more than the entry.** The paragraph
+above says the search "landed on" the single-slot ban list, i.e. it names that as the defect. The
+ban list was real and iteration 44 fixed it (blocked-at-ruin 43.2% -> 2.8%, verified) — **and the
+gradient did not flatten.** On the first tournament to play the fixed build, against byte-identical
+alice and bob, the per-run trend went **z = -5.96 -> -7.09**, steeper, against each opponent
+separately; the `>=24`-ruin bucket gained 2 games while the `<=11` bucket gained 8. So the ban list
+was *a* per-ruin cost, not *the* defect, and this entry's confident landing was premature.
+
+What the gradient actually is, measured by splitting carol's tournament games on **how they ended**:
+on dense maps carol goes **8-45 in games decided by the >70% paint condition** and **7-8 in
+round-2000 tiebreaks**. She is 50/50 in tiebreaks on every map type. The entire gradient is the
+**race to 70%** — on a ruin-dense map the opponent closes the map and carol never does, because her
+throughput is flat in ruin count while theirs compounds through towers.
+
+The reusable correction: **"a defect whose cost scales with the gradient" is a search hint, and the
+first thing it turns up is not therefore the answer.** A per-ruin cost that is real, that you can
+measure, and that you can fix can still leave the gradient untouched — because there may be several,
+or because the binding one is a *capability you lack* rather than a *cost you pay*. Fixing a cost
+and re-measuring the gradient is the only thing that distinguishes them, and it is why iteration
+44's pre-registered tournament prediction was worth writing down even though it failed. Especially
+because it failed.
 
 ### And two lineages beat one
 
