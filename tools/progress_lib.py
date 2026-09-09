@@ -141,26 +141,26 @@ def snapshot_dates(repo_root, ws_dir, agent):
 
 
 def roster_numbers(present):
-    """Fixed reference points: the origin, then the build that was current at
-    each iteration whose number ends in 1 or 6 (1, 6, 11, 16, 21, ...).
+    """Fixed reference points: every 5th ACCEPTED SNAPSHOT BY POSITION, starting
+    at the first one -- so positions 0, 5, 10, 15, ... of the accepted lineage.
 
-    Set by the user 2026-09-09, replacing "every 5th accepted snapshot by
-    position". Derived either way, never hardcoded: BC26's port hardcoded its
-    roster as a usage example and then wasn't revisited when a second reference
-    snapshot existed, so the chart tracked one opponent long after it should
-    have had three.
+    Set by the user 2026-09-09. Derived, never hardcoded: BC26's port hardcoded
+    its roster as a usage example and then wasn't revisited when a second
+    reference snapshot existed, so the chart tracked one opponent long after it
+    should have had three. Deriving it means the roster grows on its own.
 
-    A milestone iteration is usually REJECTED, and a rejected iteration never
-    becomes a snapshot -- alice has 18 accepted snapshots and exactly one whose
-    number ends in 1 or 6. So a milestone resolves to the last accepted snapshot
-    at or before it: the bot as it stood at that iteration, which is the thing
-    the chart is asking about. Milestones can collide (alice's 31 and 36 both
-    resolve to iter30); the set absorbs that.
+    Positions, not iteration numbers. Striding over numbers ({1, 6, 11, ...})
+    picks slots that were usually REJECTED, and a rejected iteration never
+    becomes a snapshot: alice has 18 accepted snapshots and exactly one whose
+    number ends in 1 or 6, while carol has four from a lineage of the same
+    length. Resolving each number to "the build current at that iteration"
+    repairs the sparsity but not the unevenness -- it can hand one lineage nine
+    rungs and another five, and it makes the roster depend on WHEN a lineage
+    accepted rather than on how much it has accepted. Positions give every
+    lineage a rung per five accepts, which is the quantity the chart compares.
 
-    This is why the roster is not simply {n : n % 5 == 1}. That reading gives
-    alice a single rung and carol four from lineages of the same length, so an
-    agent that rejects more candidates would get a permanently worse
-    absolute-strength chart -- exactly backwards.
+    Positions are stable as the lineage grows, because accepted snapshots are
+    only ever appended -- so a roster member stays a roster member.
 
     The first snapshot is always included: it is the origin, and win% against it
     is the closest thing this project has to an absolute-strength yardstick.
@@ -168,12 +168,7 @@ def roster_numbers(present):
     nums = sorted(present)
     if not nums:
         return []
-    keep = {nums[0]}
-    for m in range(1, nums[-1] + 1, 5):        # 1, 6, 11, 16, ...
-        at_or_before = [n for n in nums if n <= m]
-        if at_or_before:
-            keep.add(max(at_or_before))
-    return sorted(keep)
+    return [nums[i] for i in range(0, len(nums), 5)]
 
 
 # BC25 finals benchmark bots. These are a yardstick measured by the coordinator,
