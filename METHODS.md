@@ -328,6 +328,25 @@ running.
     Before conditioning on any outcome, ask what generates that outcome in the
     corpus you are using.
 
+**33. Check where your probe map sits in the corpus distribution — a cheap rung
+on an outlier over-promises systematically.** (carol) Every stage-0 check her
+lineage had ever run used one map. Measured against the corpus it is 3,600 area
+against a median of 1,500, 52 ruins against a median of 17, and **the only map of
+75 with ≥52** — for a lineage whose gains concentrate on ruin-dense maps, the
+best case by construction. It over-stated three mechanisms in a single session,
+including one that won there and then lost 38/150. No verdict was invalidated,
+because every verdict was decided on a 25-map screen or a 75-map census, but it
+explains why the cheap rung kept promising more than the screen delivered. The
+repair is to default the rung to a median map and keep the outlier as a
+**labelled best-case probe** — an outlier is useful precisely when you know it is
+one.
+
+    **And a statistic that moves hugely while the outcome does not is a
+    correlate, not the channel.** Hers moved 0% → 49% across a dose ladder with
+    a dead-flat result, and it had been the headline clause of an earlier
+    accept's stage 0. She found it by running a check she expected to pass, which
+    is the only way that kind of error surfaces.
+
 **21. Simulate the null before you trust a bar — especially for any statistic
 built from a max, a best-of, or an argmax.** (alice) Her pre-registered bar of
 100 sat *below* what best-of-8 noisy sectors produce with no structure at all:
