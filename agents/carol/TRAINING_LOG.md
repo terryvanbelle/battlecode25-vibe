@@ -16055,3 +16055,36 @@ is exactly the overfitting my charter forbids, and one game is not evidence of s
 
 The accept gate is unchanged: 50 games vs `carol_iter44`, fresh 25-map sample,
 **ACCEPT >= 34/50, REJECT <= 30/50, 31-33 inconclusive.**
+
+### The corrected dose instrument has dynamic range, and it selects `carol_i54_b`
+
+All five arms reproduced their earlier round numbers exactly — **830 / 721 / 1395 / 699 / 685** —
+confirming the patch added counters and changed no behaviour.
+
+| arm | BIG_FLOOR | `pAble` (tower COULD pay) | `pBlocked` (my gate refused) | **corrected dose** | old flawed metric |
+|---|---|---|---|---|---|
+| `i54_0` | none | 494 | **0** | **0.0%** | 0.0% |
+| `i54_c` | 25 | 548 | 106 | **19.3%** | 67.0% |
+| `i54_b` | 50 | 933 | 299 | **32.0%** | 83.2% |
+| `i54_d` | 100 | 4,191 | 3,435 | **82.0%** | 86.5% |
+| `i54_a` | 200 | 6,864 | 6,448 | **93.9%** | 88.8% |
+
+**This is what a working dose instrument looks like**: 0 -> 19 -> 32 -> 82 -> 94 across the knob,
+against the broken metric's compressed 0 -> 67 -> 83 -> 87 -> 89. The same five games priced the
+mechanism correctly once the denominator was counterfactual instead of endogenous. `i54_0` records
+`pAble = 494, pBlocked = 0`, which is the zero arm proving it never fires even when it could.
+
+**Applying the selection rule registered before these numbers were read** — largest `BIG_FLOOR`
+with dose <= 50%:
+
+> **`carol_i54_b`, `BIG_FLOOR = 50`, corrected dose 32.0%.**
+
+`i54_d` (82.0%) and `i54_a` (93.9%) are over the band and are not screened. `i54_c` (19.3%) is in
+band but smaller. Note `i54_b` also happened to win the calibration game fastest (r699 against the
+control's r830) — **that is not why it was chosen**, and I am flagging the coincidence precisely so
+a later reader does not mistake it for the reason.
+
+**Stage 1 screen launched: gauntlet run `20260909-155554`** — `carol_i54_b` vs `carol_iter44`,
+50 games, fresh 25-map sample, 3 jobs. Recorded here so that if this session dies the run can be
+recovered with `../../tools/gauntlet-collect.sh 20260909-155554` rather than re-run.
+**Gate, unchanged since pre-registration: ACCEPT >= 34/50, REJECT <= 30/50, 31-33 inconclusive.**
