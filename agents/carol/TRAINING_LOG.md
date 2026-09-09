@@ -14171,3 +14171,37 @@ from saturation. Adding it to `progress/roster_extra.txt` gives this lineage its
 that closes a ruin-dense map, which is the exact threat the tournament says beats me and which
 nothing in my pool currently poses. **That is the next piece of work**, and it is worth more than
 another dose or another clock.
+
+## `carol_racer` PROMOTED to `roster_extra.txt` — this lineage's first opponent that closes a dense map
+
+`src/carol_racer/` is iteration 47's rejected candidate, frozen under a descriptive name with its
+provenance in the file header and a "never edit this file" marker. Rejected as a *bot*; kept as an
+*opponent*, which is a different job.
+
+**Qualified on the criterion registered before promotion, not after** (doctrine 12: score a
+candidate rung before promoting it, or you install a dead one while feeling you made a repair):
+
+| test | result |
+|---|---|
+| closes dense maps by the >70% condition | **32 of 34** vs a fixed opponent |
+| closes them in the head-to-head | won **13** of the 18 dense games anyone finished, vs `iter44`'s 5 |
+| peer band (30-90%), i.e. not saturated | **42%** vs `carol_iter44` |
+| plays a strategy no carol build plays | 25 towers on Leaf where the lineage manages 5-8 |
+
+Verified: compiles on the VM, plays, and closed `DefaultSmall` by the paint condition at round 262.
+`track_vs_old_bots.py --roster` accepts it and now emits
+`carol_iter0 carol_iter1 carol_iter7 carol_iter21 carol_iter35 carol_rush carol_turtle
+examplefuncsplayer carol_iter44 carol_racer`.
+
+**What it fixes.** Every instrument this lineage owns descends from a build that *grinds* — carol
+wins the round-2000 tiebreak and loses the race. The tournament says the race is what beats her
+(8-45 in decided dense games), and until now no opponent in my pool posed it, so no gate could
+measure a defence against it. That is doctrine 7 and doctrine 17 in their most concrete form, and
+this is the first repair to the pool itself rather than to the bot.
+
+**What it does NOT fix**, stated so a later session does not over-trust it: it makes the pool
+*harder*, not more *independent*. It is my own code and shares every blind spot I have. It is not
+a substitute for the tournament, and no result against it can settle a claim about alice or bob.
+
+**Process note (milestone).** This is a change to *how I evaluate*, not an accept, so it belongs in
+`progress/milestones.txt` per the charter — recorded in this same commit.

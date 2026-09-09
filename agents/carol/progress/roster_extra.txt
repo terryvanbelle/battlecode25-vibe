@@ -2,3 +2,4 @@ carol_rush
 carol_turtle
 examplefuncsplayer
 carol_iter44
+carol_racer
