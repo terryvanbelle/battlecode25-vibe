@@ -14730,3 +14730,32 @@ attribute it to the mechanism I am claiming.
 **What would falsify the framing**: both cleaning arms at the null *with* SRP completions up. That
 would mean freeing the sites works mechanically and buys nothing, closing "SRP site scarcity" the way
 iteration 37 closed soldier action utilisation — by pricing it rather than by another bare null.
+
+**Iteration 38 LAUNCHED as run `20260909-120113`** — `BOT=bob_iter20 OPPONENTS="bob_mk0 bob_mk1 bob_mk2"`,
+25 maps sampled of 75, 150 games, 3 jobs. Recorded here separately because the pre-registration above
+was committed *before* launch and so could not name the run.
+
+**If this session died before the verdict**: the runner is setsid-detached and survives, so the games
+are almost certainly finished — **collate, do not re-run**:
+
+```bash
+cd agents/bob && ../../tools/gauntlet-collect.sh --list       # confirm it shows complete
+                 ../../tools/gauntlet-collect.sh 20260909-120113
+                 bob-tools/eval_arms.py gauntlet/20260909-120113 bob_mk0 bob_mk1 bob_mk2
+```
+
+Then apply the gate exactly as pre-registered above (VOID unless `bob_mk0` is 25/50 with all 25 maps
+split; accept-eligible at best arm >= +10 wins_above_half; +7..+9 replicate; <= +6 reject), and only
+afterwards read the SRP-completion secondary, which needs no new games — it is a timeline-marker
+count over the run's own replays on battlecode-dev:
+
+```bash
+D=~/battlecode25-vibe/agents/bob/gauntlet/20260909-120113
+# per replay: SRPs completed by team1,team2 and towers built by team1,team2
+# (ReplayDump prints "marker r<N> team<1|2> <label>"; bob emits "SRP" and "tower built")
+```
+
+The arms are UNCOMMITTED working-tree dirs (`src/bob_mk0`, `src/bob_mk1`, `src/bob_mk2`), regenerable
+at any time with `bob-tools/make-markclean-arms.sh`. **`src/bob` IS committed this time** and carries
+`MARKCLEAN = 0`, which is the exact zero arm — behaviourally identical to `bob_iter20` — so **HEAD
+still plays `bob_iter20`'s behaviour in the tournament.**
