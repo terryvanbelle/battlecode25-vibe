@@ -15994,3 +15994,66 @@ arms, 300 games, no positive arm). Its recorded re-open standard is *"a reason t
 now supports the share, not fresh evidence that the siblings still have one."* "The win condition
 on maps I lose is coverage" is a reason the **situation** demands it, not a reason my bot supports
 it, so it does **not** meet that standard. Noting the temptation and declining it.
+
+## Probe result: `goRefill` is inert on 96.2% of the turns it exists to serve
+
+`alice_refillvis` vs `alice_iter39` on `roads`, counters read off a surviving soldier's indicator
+string at r380–384:
+
+```
+RV h=158 vis=6 adj=2 blind=152 dry=0
+```
+
+| of 158 hungry soldier turns | count | share |
+|---|---|---|
+| surplus tower **in vision** (`goRefill` can act) | 6 | **3.8%** |
+| already **adjacent** (`tryRefill` handles it) | 2 | 1.3% |
+| **no tower in vision — soldier stranded** | **152** | **96.2%** |
+
+The earlier probe measured *adjacency* (0.0–1.0%) and concluded "the unit has to close the
+distance", which is right — but it never measured whether there was anything to close the distance
+*to*. **There is not, 96.2% of the time.** `goRefill` was built to fix the adjacency guard and
+inherited a vision guard that is two orders of magnitude tighter than the problem.
+
+`dry=0` on this soldier looked at first like a contradiction — if it never empties, is it
+starving? Reconciled against the tool rather than assumed: `starved` in `ReplayDump` counts robots
+that **died with `lastPaint <= 0`** (line 548), and the aggregates show **5–19 such deaths per
+100-round window**. So both are true and consistent — survivors hover blind between 5 and 100
+paint (able to paint a handful of tiles), and the ones that run out die. The sampled soldier is a
+survivor by construction.
+
+**Also measured, and it bounds this iteration:** alice fields **`sold0` from r800 onward** on
+`roads` — the late game is splashers only. `goRefill` is soldier-only, so this mechanism can act
+only in the early game. That is a ceiling on the effect, recorded before the gate rather than
+after a disappointing number.
+
+### Iteration 44 PRE-REGISTERED — a soldier should remember where its own towers are
+
+**Hypothesis.** Soldiers strand because `goRefill` walks only to a tower it can *see*
+(`senseNearbyRobots(-1)`, r^2 = 20) and the bot keeps no memory of towers it has already stood
+beside. Giving a soldier that memory converts blind hungry turns into refill walks, so soldiers
+keep painting instead of dying at zero paint while towers hold 300–600.
+
+**Mechanism, one change.** Record ally tower locations seen; when no surplus tower is in vision,
+walk to the nearest remembered one. Nothing else changes — same hunger test, same movement, same
+role order.
+
+**Control is byte-identical by construction.** `REMEMBER_TOWERS` is a compile-time
+`static final boolean`; both the call site (`if (REMEMBER_TOWERS) noteTowers(rc);`) and the
+fallback block are guarded, so at `false` javac eliminates every added statement and
+`alice_i44ctl` compiles to `alice`. (I first guarded only the method body, which leaves a call to
+an empty method — not byte-identical, and the log would have claimed it was.)
+
+**Gate.** Full 75-map corpus, `alice_i44` vs `alice_i44ctl`, 150 games. Advance bar **net swept
+>= +4**, this log's standing bar.
+
+**Map-level prediction that can falsify it, and it points AWAY from today's headline.** Blindness
+is worst where towers are far apart, so the gain must sit on the **LARGE half** and be ~0 on the
+**small half**. That is the opposite concentration from the small-map deficit measured this
+session, and I am registering it that way deliberately: if the gain instead shows up on small
+maps, this mechanism is not what produced it and the result does not count.
+
+**Named risks.** (1) A remembered tower may be destroyed or empty; the soldier pays the travel and
+re-senses on arrival rather than latching, but that cost is real and unmeasured. (2) Iteration 26
+lost 21 by pulling painters off the map; this diverts strictly *hungrier* soldiers than that arm
+did, but it is the same family of risk. (3) The soldier-only ceiling above.
