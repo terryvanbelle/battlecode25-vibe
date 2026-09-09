@@ -2091,3 +2091,120 @@ expectation for the run. Per doctrine 19 the note is therefore not the fix. The 
 `carol-tools/stage0.sh`, which plays both sides and **refuses to print or collect the winner**,
 reporting only the two things stage 0 exists to answer: do the arms differ, and did the intended
 behaviour change. The verdict is unavailable from the instrument, so it cannot be read off it.
+
+## Copying a rival's observable RATIO is not a strategy (iteration 48)
+
+The cross-lineage tower census (450 tournament replays, 900 team-games) gave the single most
+conspicuous difference between my policy and both rivals': money-tower share **24.9% for carol
+against 54.0% for alice and 53.2% for bob**, stable in every pair and every regime, so it is mine
+and not a three-body artefact (doctrine 20). It was the most obvious "they do X and I don't" this
+lineage has ever had in hand.
+
+**Matching them exactly made carol worse, and the dose curve says so on both sides**: MOD 3 = +2,
+MOD 2 (55.6% money, their share) = −6. Flat then declining; no dose beats the incumbent.
+
+The lesson generalises past this constant: **a ratio is an OUTPUT of a whole build, not an input
+you can transplant.** Alice's 54% money share pays because she converts 66% of ruins and has
+somewhere for the chips to go; carol converts 28%, so the same ratio just buys chips she cannot
+spend. And RULES.md settles why the direction was wrong at all — **paint IS the score** (instant
+win at >70% painted; the round-2000 tiebreak reads area painted FIRST), so trading paint income
+for chip income trades the scored quantity for an unscored one. Iteration 48's losses were
+concentrated exactly in tiebreak games (−5 of the −6 margin).
+
+Connects to **"Price a sink in the resource that actually binds"** and **"The two ceilings"**: I
+priced money towers as buying tower completions and never asked what a tower completion buys.
+
+## A DEFERRED iteration needs a written re-entry condition, or it is a silent cancellation
+
+The API sweep (run on the stall trigger — three consecutive rejects — not "periodically") found
+that **carol calls 33 of 68 `RobotController` methods never, including the entire resource-pattern
+and messaging mechanics**, and that SRP appears in **zero** accepted snapshots from iter0 to
+iter44.
+
+It was not overlooked. Iteration 7 was *selected* as the SRP iteration, then re-registered the
+same session for the `CHIP_RESERVE` dead-band fix with the words *"Registered now, **ahead of
+SRPs**, because it is smaller, safer, and converts guaranteed losses."* That was the right call on
+the day. **It was never picked back up, and the log did not mention SRP again for ~13,000 lines.**
+
+"Ahead of" is a promise with no trigger, and this document already records that an instruction
+with no trigger loses every time it competes with a live hypothesis (that is why the API sweep has
+one). **A deferral must name the condition under which the deferred thing returns**, in the same
+sentence that defers it — otherwise the queue is a bin. This is the same defect as an unwritten
+re-opening condition, which I already have an entry for: see **"Write a closed direction's
+re-opening condition as a testable predicate"**. The two are the same rule applied to a *postponed*
+idea rather than a *killed* one, and neither had cited the other until now.
+
+## A state's own EXIT PATH must not sit inside a guard that the state closes (iteration 49)
+
+A fifth kind of reachability failure, extending **"Reachability has FOUR levels"**. The first
+build of iteration 49 had:
+
+```java
+if (ruin == null) state += srpWork();          // advances/times out the pattern
+...
+if (srpCenter == null) moveExploring(ruin);    // movement suppressed while holding one
+```
+
+Two guards, **different conditions**. A soldier holding a pattern that then saw a ruin could
+neither time out (`srpWork` not called, so the patience counter never incremented) nor move. Both
+exits from the state were unreachable *from inside the state*. Permanent freeze, for the rest of
+the game.
+
+The general check, which is cheap and mechanical: **for every piece of persistent state, ask which
+line clears it, and whether that line is reachable while the state is set.** Note how it would
+have failed silently — frozen soldiers still paint the tile underfoot, so the bot would not have
+stalled visibly; it would just have been quietly worse, and I would have concluded "SRP does not
+pay" and closed a direction that had never been tested. A code read cost nothing and caught it.
+
+## Measure the choice set's HIT RATE, not merely that the choice set exists
+
+`SrpScan` said 29% of Leaf's tiles are legal SRP centres, so I built the mechanism with the tile
+underfoot as its one candidate and assumed that was plenty. Stage 0 measured **34–45 asks
+producing 1–3 marks — a 3–9% hit rate.** The one tile a soldier happens to occupy is usually not a
+legal centre.
+
+This is the level *below* "does the choice set have more than one option": **how often does the
+choice set contain a usable option at the moment the code runs.** A mechanism firing at 3% cannot
+be evaluated at all, because a null result cannot distinguish "ran and failed" from "never ran" —
+and that is the distinction the whole loop depends on. Widening to 9 spaced candidates took marks
+1 → 5 and produced the first completion.
+
+**So: instrument ask-vs-success on any new selection step, and read it BEFORE spending a gauntlet.**
+Extends **"Instrument the decision — but check the counter is as WIDE as the decision"**: here the
+counter had the right width, and the thing I had not checked was its *yield*.
+
+## A map-property census buys a free placebo AND a free dose-response
+
+The strongest causal result this lineage has produced cost no extra games. `SrpScan` established,
+before any run, that five maps have **zero legal SRP centres**. Two of them were in the pinned
+sample, so the screen contained its own control:
+
+| SRP sites | record | margin |
+|---|---|---|
+| zero | 2/4 | **0** — each map split by side, identical round counts (the mirror-match signature) |
+| < 200 | 4/20 | −12 |
+| >= 200 | 3/30 | −24 |
+
+**Zero fuel, zero effect; more fuel, more damage.** Doctrine 3's arm-to-arm identity check and
+doctrine 4's regime prediction are normally two separate obligations; a map property that gates
+the mechanism supplies both at once and closes attribution completely.
+
+**So, for any mechanism gated by a map property: compute which maps disable it entirely, and make
+sure the evaluation sample contains some.** They are worth more than the games they cost, because
+they convert "the candidate lost" into "the mechanism caused the loss".
+
+## When rejecting, separate the MECHANISM from the POLICY wrapped around it
+
+Iteration 49 lost 7/50 (−4.2 sd). What that rejects is **suspending soldier movement while laying
+a pattern** — not the SRP mechanic, which the run barely exercised: patterns were started, the full
+parking cost was paid on every attempt, and most were abandoned before delivering any income.
+
+That is a third case beside "ran and failed" and "never ran": **ran, paid its full price, and was
+interrupted before delivering.** A reject written as "SRP does not pay" would have closed a
+direction on evidence that never tested it — and would have discarded the one conversion iteration
+48 proved this bot lacks (chips into *paint income*, which is the only thing that scores).
+
+**Write the ledger entry against the code path you actually gated**, per doctrine 5b's "an
+ablation prices a CODE PATH, not a concept". Mine says: *"Park a soldier to lay an SRP — CLOSED.
+Re-opening requires a design in which laying a pattern does not suspend movement."* That is a
+testable predicate, and iteration 50 satisfies it.
