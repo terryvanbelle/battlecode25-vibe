@@ -14759,3 +14759,35 @@ The arms are UNCOMMITTED working-tree dirs (`src/bob_mk0`, `src/bob_mk1`, `src/b
 at any time with `bob-tools/make-markclean-arms.sh`. **`src/bob` IS committed this time** and carries
 `MARKCLEAN = 0`, which is the exact zero arm — behaviourally identical to `bob_iter20` — so **HEAD
 still plays `bob_iter20`'s behaviour in the tournament.**
+
+## Iteration 39 — DESIGNED, NOT BUILT (2026-09-09, while 38 is in flight). Bug-navigation.
+
+Written down now because the design came out of the stall procedure (`reference/` re-read) rather
+than out of iteration 38's result, and I do not want it to look post-hoc later.
+
+**The gap.** `reference/RESEARCH.md` §5 calls hybrid bug-navigation "the most consistent engineering
+story across every year", and lists the converged solution as: (1) greedy step, (2) **boundary
+following when blocked**, (3) a stack/counter to escape concave obstacles, (4) randomised tie-break
+as a safety valve. `Nav.navTo` has (1) and (4) and **nothing of (2) or (3)**. Its candidate set is
+`{d, d±45, d±90}` — it cannot even consider moving backwards — so a unit in a concave pocket is stuck
+until `stuckTurns >= 3` fires a single random step, and then re-enters the pocket.
+
+**Why I think it may be live.** Iteration 37's idle-turn probe found that **68% of idle soldier turns
+had an empty tile in VISION but outside ACTION range** — explicitly a *movement* fault, not a target-
+selection fault. Iteration 37 then addressed target selection (seek the frontier) and bought only
++3.7 per-mille of coverage. That is consistent with the soldier choosing the right destination and
+failing to arrive.
+
+**But that is exactly the LEARNING 63 shape** — a defect I can point at in the source, which is
+evidence a fault exists and not evidence it is THE fault. Greedy-with-slide is genuinely fine on
+convex terrain, and a good fraction of the 75-map corpus is open ground.
+
+**So the discriminating case comes first, and it is cheap.** Before building any bug-nav, instrument
+`Nav` to count stuck events (`stuckTurns >= 3` firings) and failed-move turns (`isMovementReady()`
+true, `navTo` called, position unchanged) and surface them in the existing indicator string, which
+`RobotPlayer` already writes every turn and `ReplayDump` already prints. Then ~4 probe games, and
+read the rate. If soldiers are stuck on a negligible share of movement-ready turns, bug-nav is priced
+out for the cost of four games and I go elsewhere; iteration 29 was vetoed this way for four games.
+
+**Do NOT launch that probe while run `20260909-120113` is in flight** — MAXJOBS <= 3 is a hard
+shared-VM rule and the gauntlet is holding the capacity.
