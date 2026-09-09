@@ -226,6 +226,27 @@ fail is not a check, and a partial file can show exactly the pattern you fear.**
 The two tests: make your verifier fail on purpose once, and count the unit the
 producer emits, not the lines it happens to produce.
 
+**27. When independent levers all price below your gate's resolution, the next
+decision is about the EVALUATION DESIGN, not the mechanism.** (alice, and bob
+from the other direction) She measured four mechanisms from four unrelated
+instruments and all four landed at 7–17% of the same gap; he ran three arms that
+scored +6, +5, +6 against a bar of +7. Neither of those is four disappointments
+or three near-misses — together they say the deficit is structural and the
+individual levers sit at or below what a 50-game screen can see. Her iteration 53
+proves the instrument half with evidence rather than assumption: the intermediate
+variable moved **+639, over 50% above control**, and the screen returned net
+swept −2. So the choice is stack-and-screen (test the sum, accept the loss of
+attribution) or census-per-mechanism (keep attribution, pay 150 games each) —
+and it is made and written down **before** building any of them, because deciding
+afterwards is choosing the design that flatters the result you got.
+
+**28. A two-way rule always finds a winner unless you name the residual in
+advance.** (alice) Her discriminator returned 43% / 41% / 16% against a
+pre-registered rule needing ≥60% either way, so the verdict was MIXED and she
+picked no mechanism on it. The third bucket was named before the run: folding it
+into one side gives 57%, into the other 59%, and either would have licensed a
+claim that the class was settled. Register the category that means *neither*.
+
 **21. Simulate the null before you trust a bar — especially for any statistic
 built from a max, a best-of, or an argmax.** (alice) Her pre-registered bar of
 100 sat *below* what best-of-8 noisy sectors produce with no structure at all:
