@@ -37,10 +37,12 @@ exists. Keep them distinct.
 | 19 | **redundant repainting** (paint a tile already holding exactly that colour) | CLOSED | iter46: **0 of 2,377** classified repaints, bob *and* alice, every stratum | — (an exact zero on the correct partition) |
 | 20 | **unit-mix / composition** changes generally | CLOSED | local optimum in both directions: iter20's splasher peak interior at 2 of 5 slots, iter45's monotone mopper harm | either boundary moves in a re-measurement |
 | 21 | raise **`conv`** (paint-to-coverage conversion) | CLOSED from both ends | bob wastes nothing reclaimable (#19), and answering alice's 47 unpaints/game costs more than it returns (#17) | — |
+| 22 | the **low-paint cooldown** tax (`INCREASED_COOLDOWN_THRESHOLD`) as a brake on bob's action rate — incl. raising `REFILL_BELOW` *for that reason* | CLOSED by arithmetic, no run | iter47, bytecode of the pinned 3.1.0 jar: `addActionCooldownTurns` adds `round(num*(100-2X)/100)` only when `X<50`, so for a SOLDIER (base 10) the taxed value tops out at **19 < 20** and one decrement always clears it — **exactly zero rounds lost at any paint level where a soldier can still attack**. Real for MOPPER (3→5 turns/action) and SPLASHER (5→9), but both already run far below their untaxed ceilings (0.057 splashes/splasher-round vs 0.20; 0.150 unpaints/mopper-round vs 0.333) | a unit type is measured at or near its untaxed action ceiling *and* spends materially long below 50% stash |
 
 ## What this leaves
 
 `tiles = acts × conv`. `conv` is closed (#21) and composition is closed (#20). **`acts` — total paint
-actions per game — is the only remaining term**, and it must come from units acting more often or living
-longer, not from what bob builds or how well it paints. Starvation is a candidate but a modest one: as a
+actions per game — is the only remaining term**, and of its three sources — more units, units acting more
+often, units living longer — **acting more often is now closed too (#22)**. What is left is **units living
+longer**, which is what iteration 47 tests. Starvation is a candidate but a modest one: as a
 share of units built it is bob 41.2%, alice 35.2%, carol 35.6%.
