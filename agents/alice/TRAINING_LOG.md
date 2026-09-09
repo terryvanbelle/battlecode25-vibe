@@ -16057,3 +16057,56 @@ maps, this mechanism is not what produced it and the result does not count.
 re-senses on arrival rather than latching, but that cost is real and unmeasured. (2) Iteration 26
 lost 21 by pulling painters off the map; this diverts strictly *hungrier* soldiers than that arm
 did, but it is the same family of risk. (3) The soldier-only ceiling above.
+
+### Gate correction, made BEFORE the numbers were read — iteration 44 pre-registered the SCREEN bar on a CENSUS run
+
+Resuming after a session death, I re-derived the state and found the iteration 44 gauntlet
+(`20260909-115552`, `alice_i44` vs `alice_i44ctl`, 75 maps, 150 games) still running. Before
+tallying it I re-read my own pre-registration against the standing bars, and they do not match:
+
+> **Gate.** Full 75-map corpus ... 150 games. Advance bar **net swept >= +4**, this log's
+> standing bar.
+
+**+4 is not this log's bar for that run shape.** The standing pair, written the same way at
+iterations 41, 42 and 43, is *two* bars for *two* stages:
+
+| stage | maps | games | bar | basis |
+|---|---|---|---|---|
+| **screen** | 25 | 50 | net swept **>= +4** | sd-multiple deliberately *not* held constant across sample sizes |
+| **census** | 75 | 150 | net swept **>= +12** | 2.27 sd on my measured floor `sd_net_swept = 5.29` |
+
+Iteration 44 specified a census and attached the screen bar to it. On a 75-map census +4 is
+**0.76 sd** on my own floor — a one-tail false-accept rate near 22%, where the census bar buys
+~1%. This is precisely the failure TRAINING_ALGORITHM.md names under *"state the unit of your
+gate"*: a threshold quoted in the right unit but for the wrong stage, which looks like a bar and
+is not one.
+
+It is also the failure that **rejected iteration 37a**: a real mechanism scored **+7** on a
+census and was rejected because `alice_phase` — a change with *zero policy content*, only a PRNG
+seed offset — scored **+12** on the same shape. Any census bar at +4 would have accepted a
+policy-free arm. That is not a hypothetical; it is a measurement already in this log.
+
+**The census bar for iteration 44 is therefore net swept >= +12.** I am recording this with the
+run at 115 of 150 games and **no tally read** — I have looked at `bot.txt`, `maps.txt` and the
+game *count*, never at a score. Correcting a gate after seeing the result would be worthless;
+this is the only window in which the correction is honest, which is why it goes in now rather
+than in the verdict entry below.
+
+**Replication band, carried over from the same standing pair:** +7 to +11 is replicate-on-a-
+disjoint-sample, not accept. Below +7 is a reject.
+
+**And the map-level falsifier is unchanged and still binds**: blindness is worst where towers are
+far apart, so a genuine gain must sit on the **LARGE half** of the corpus and be ~0 on the small
+half. A gain concentrated on small maps is not this mechanism, whatever the total says.
+
+**Tooling built while the run finished**, so the falsifier cut goes through a tool rather than
+through me (`abf99f7`): `tools/density-split.py` is now
+`tools/map-axis-split.py --axis size|density`. Cutting by size by hand was the obvious
+alternative and it is exactly what this log warns against — *a hand-transformation is not a fix,
+it holds only as long as I remember*. Regression-checked: every density number reproduces the old
+tool exactly. Free datum from testing it on `20260908-211909` (`alice_i39c` vs `alice_iter30`,
+75-map census): **Spearman rho vs size = +0.014, p = 0.903 — the size axis is NULL inside my own
+lineage**, while it separates the tournament at |z| > 4. That is the self-referential blind spot
+of TRAINING_ALGORITHM.md stated as a number: my gauntlet cannot see the axis that decides my
+cross-lineage results, so iteration 44's falsifier is being asked of an instrument that has never
+shown a size effect at all. Recording that as a limit on what a null in the size cut can mean.
