@@ -80,6 +80,7 @@ Companion files, and what each is for:
 - **43.** Measure the quantity that decides the regime, not a proxy opponent for it. → #64
 - **44.** A missing capability is invisible to every instrument except a **scheduled sweep** (an API sweep found 24 never-called methods). → #30, #38
 - **45.** The stall trigger works, and it works *because* it is a trigger. → #66
+- **45b. NEW.** A sampling stride is not free just because the counters are cumulative: `ReplayDump --every N` silently drops up to `N-1` rounds off each game's **end**, and the loss scales with game length — the one bias that would have faked iteration 47's result. **Use stride 1.** Test the invariant your own script claims. → #85
 
 ## D. Mechanisms: what they cost, and what pays for them
 

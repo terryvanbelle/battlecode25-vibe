@@ -3108,3 +3108,43 @@ So the `conv` term is closed from both ends, and composition is a local optimum 
 more often or living longer, not from what bob builds or how well it paints. Three iterations spent
 attacking `conv` from different angles is not wasted work: it is how the search space got small enough
 to say that sentence with evidence behind every clause.
+
+## 85. A "free" sampling stride that silently truncates every game's tail (2026-09-09)
+
+Writing iteration 47's census I reasoned that `ReplayDump --every N` is free for cumulative counters:
+the dumper resets `paints/deaths/xfers/starved` immediately after printing each team line
+(`Arrays.fill(...)` directly below `println(sb)`), so each printed line carries everything accumulated
+since the previous one, and summing the printed lines should reproduce the whole-game total at **any**
+stride. I wrote that claim into the script's header as the justification for using stride 10.
+
+**Then I tested it, on two replays of a completed run, and it is false.** Same two games, three strides:
+
+```
+stride |  xfer  starv   died   paint   dCov   spawn
+     1 |  14.5  26.00  33.50  1027.0  433.0    45.5     <- ground truth
+    10 |  14.5  25.50  32.50  1023.5  431.0    44.5
+    50 |  14.5  24.00  31.00  1017.5  430.0    43.0
+```
+
+Every counter except `xfer` decays **monotonically** with stride. The cause is the tail: rounds after
+the *final* printed line are never flushed, so each game loses up to `stride - 1` rounds off its end.
+
+**Why this mattered more than its size.** The absolute error is small (−0.9% on paints, −8% on
+starvations at stride 50) and it would have been easy to wave through. But the loss is a function of
+each game's **end-round mod stride**, so it is not a constant offset that cancels between arms — it
+varies with how long each arm's games run. Iteration 47's entire hypothesis is that its arms make games
+**longer**. A stride-dependent bias in death and action counts is precisely the error that would have
+manufactured the result I was hoping for, in the direction I was hoping for.
+
+**Three things worth keeping:**
+
+1. **I wrote the justification into the code before testing it.** The comment was confident, mechanistic,
+   and wrong — and it was wrong for a reason (flush-on-print) that is *true*, just incomplete. A correct
+   premise with a missing boundary case reads exactly like a correct argument.
+2. **The test cost two replays.** Running the same census at three strides and demanding the invariant
+   the script claims is a five-minute check, and it is now the pattern for any sampled census.
+3. **Recording the wrong version.** The script header keeps the false reasoning *and* the table that
+   kills it, because the false version is the one a future session would re-derive.
+
+Fixed by using stride 1, which prints every round and loses nothing. The stride argument survives for
+smoke tests only, and both tools now say so.
