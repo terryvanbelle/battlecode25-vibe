@@ -18672,3 +18672,89 @@ nothing" — it is *"it did precisely what it was designed to do and the thing i
 less than the thing it spent."* Re-open condition: **a regime where chip income cannot be converted
 into either a tower or an upgrade** — i.e. every ruin taken *and* every tower at L3. That is
 checkable, and it did not hold in 21 of 25 maps here.
+
+## Reachability pre-check PASSES — and it OVERTURNS iteration 9's closure. Ruins do NOT saturate
+
+`tools/ruin-supply.py` over the tournament censuses, **zero games played**. Claimable ruins come
+from `tools/mapdata/ruin_parity.txt` (which excludes the four starting-tower tiles);
+`claimed = (alice_tw − 2) + (carol_tw − 2)`.
+
+**Arithmetic cross-checked before believing any of it:** the parity file gives DefaultSmall **8**
+claimable and the replay MatchHeader reports **12** — a difference of exactly 4, which is what that
+file documents. The two numbers reconcile.
+
+| cut | round | claimable | claimed | **UNCLAIMED** | games with none left |
+|---|---|---|---|---|---|
+| SMALL 19 | **150** | 9.3 | 4.4 | **4.9 = 53%** | **0 / 36** |
+| SMALL 19 | 300 | 9.9 | 5.7 | **4.1 = 42%** | 0 / 30 |
+| LARGE 19 | 150 | 29.0 | 6.2 | **22.8 = 79%** | 0 / 38 |
+| LARGE 19 | 300 | 29.0 | 11.4 | **17.6 = 61%** | 0 / 38 |
+
+> **In 142 game-observations across 74 games, the number with zero unclaimed ruins is ZERO.**
+> Between 42% and 79% of every map's ruins are sitting unbuilt at the round the game is decided.
+
+### This meets a re-open condition I wrote down at iteration 9 and never revisited
+
+Iteration 9 discarded "remember unbuilt ruins" on reachability — *"21 of Mirage's 22 ruins already
+built; nothing left to discover"* — and its ledger row recorded the exact condition that would
+re-open it:
+
+> *"a map class exists where ruins are **not** saturated by mid-game — check the ruin count against
+> final tower totals before believing it."*
+
+**That condition is met, and not for a map class — for every map measured.** The original finding
+was one map, late, in self-play, and I have carried "ruins saturate" as settled fact for 44
+iterations, using it to kill iterations 44, 45 and the 45 draft. It is wrong. The board-**paint**
+census (0–4% unpainted) is still correct and I conflated the two: **the ground saturates with paint;
+the RUINS do not get built.** Those are different quantities and I treated one as evidence for the
+other.
+
+### And it is the first lever this session whose ceiling is not 15%
+
+Alice's production decomposes as towers × ~75 actions. On small maps:
+
+| | value |
+|---|---|
+| alice | 5.1 towers x 75 = 382 actions |
+| carol | 4.6 towers x 152 = 702 actions |
+| gap | **+319 actions** |
+| unclaimed ruins on the board | **4.1** |
+
+| if alice claimed | towers | production | % of carol |
+|---|---|---|---|
+| +1 | 6.1 | 458 | 65% |
+| +2 | 7.1 | 532 | 76% |
+| **+4.1 (all of them)** | **9.2** | **690** | **98%** |
+
+> Every mechanism I priced today — heading choice, upgrade priority, mopper throughput — came in at
+> **15–17%** of the gap. **Claiming the ruins already sitting on the board closes 96% of it**, and it
+> requires no new mechanic at all: alice's whole strategy is already "convert ruins into towers".
+
+**Three caveats, stated because the number is flattering.** (1) 75 actions/tower is an *average* over
+towers that existed for varying durations; a tower built at r250 has 50 rounds to contribute by
+r300, so the marginal tower is worth less than the average and the +307 figure is an upper bound.
+(2) **Carol leaves them unclaimed too** (4.6 towers), so there may be a shared reason they are hard
+to take — that is a fact about the board, not about alice. (3) My unclaimed count *understates*
+claimed when a tower has been destroyed, so it **overstates** supply — the bias runs in favour of
+the mechanism, which is why a null would have been safe and a positive needs this caveat.
+
+### Registered next pre-check — WHY are they unclaimed? and it decides which tool
+
+The supply exists. Whether **symmetry inference** is the right instrument depends entirely on the
+reason, and there are three, with different answers:
+
+| reason | tool |
+|---|---|
+| alice never **sees** them | discovery — symmetry inference, or ruin memory (iteration 9, now re-openable) |
+| alice sees them but cannot **afford** them | economy — but alice sits on **$2,930 idle** at r300, above the 1,000 `completeTowerPattern` gate, so this looks unlikely |
+| alice sees them but cannot **finish the pattern** | a 5x5 pattern is up to 25 tiles x 5 paint = **125 paint**, and an alice soldier delivers only ~100 paint to the ground in its entire life — **one soldier cannot complete one tower** |
+
+The third is arithmetic I can state now and have never checked, and it would explain the shape
+exactly: alice **stops** expanding at median round 258 with ruins and money both available, which is
+what a *pattern-completion* constraint looks like and is not what a discovery constraint looks like
+(discovery would keep trickling, not stop).
+
+**I am not building anything until that is measured.** The discriminator: of alice's ruin-adjacent
+soldier turns, how many end with the pattern still incomplete, and how much paint does alice spend
+per tower it actually completes. That is the pre-check, and it is the same one that has closed three
+directions today for a handful of games each.
