@@ -19039,3 +19039,82 @@ the commit after it with `;` instead of `&&`, so the commit ran anyway. That is 
 this family today, after `diff | head && echo IDENTICAL` (reads `head`'s status) and the `while` loop
 whose status is its last iteration. **Building a check that *can* fail is only half of it; the other
 half is wiring its failure to stop something.**
+
+# The stack-versus-census decision — made and written down BEFORE building anything
+
+## Correction to my own closing line first
+
+I wrote: *"the other three are alive and individually undetectable."* **That is wrong, and it
+inflates my own inventory.** Upgrade priority is **iteration 53**, which was **built, screened and
+REJECTED** at net swept −2 with a mechanism explanation (it bought tower paint with 1.85 towers).
+A tested-and-rejected lever is not a surviving one.
+
+| lever | ceiling | status |
+|---|---|---|
+| informed wander heading | 17% | **unbuilt, surviving** |
+| mopper-to-soldier transfer | 16% | **unbuilt, surviving** |
+| upgrade priority | 16% | **REJECTED — iteration 53, −2** |
+| commitment / stickiness | 7% | closed on magnitude |
+
+**Two surviving levers, not three.** Stacked, that is ~33% of the gap rather than the ~48% I would
+have been implicitly counting on — which materially changes the decision I am about to make, and is
+exactly why the inventory had to be checked before the choice rather than after.
+
+## The decision: BUILD BOTH, STACK THEM, and gate on a CENSUS — not a screen, not one at a time
+
+**Why stacked rather than one at a time.** If the levers are additive, the bundle is worth ~2x a
+single one, and a bundle test is *strictly more powerful and strictly cheaper* than sequential
+tests: 150 games once against 300. The logic runs one way cleanly — **if the bundle fails at census
+power, no individual lever could have passed either**, since a single lever is smaller than the
+bundle. The converse needs ablations, and ablations only get paid for in the world where there is
+something to attribute.
+
+**Why a census rather than my standing screen.** This is the part I have evidence for rather than a
+guess: **iteration 53 moved its intermediate variable by +639 tower paint — more than 50% above the
+control — and its screen returned net swept −2 with 21 of 25 maps split.** A screen at this effect
+size costs 50 games to learn nothing. I would rather pay 150 once than 50 to be told nothing twice.
+
+**Why the usual objection to bundling does not bite here.** The standard cost of a bundle is that a
+null is undiagnosable. It is not, in this case: **the manipulation checks are separable even though
+the gate is not.** Heading choices and mopper transfers are independently countable in the same
+replays — I have already built the tooling for both (`heading-read.py` counts re-rolls; transfers
+appear as their own action). So "did each lever fire, and by what share" is answerable from the
+census run itself without a single extra game.
+
+## Pre-registered, in order, before any code
+
+**Step 1 — a manipulation PRE-GATE on 6 games, which decides whether the census is warranted at
+all.** Build both levers, run 6 games, and require **both**:
+
+1. each lever's manipulation check shows it **fired** (a share, with a denominator the treatment
+   cannot move — METHODS 9/10); and
+2. **alice's paint actions at r300 actually RISE** against the control.
+
+> **If production does not move, the census is not run.** This is the check iteration 53 taught me
+> to want *before* spending: its mechanism engaged at 74% and moved its intermediate hard, and the
+> intermediate was the wrong one. Here the intermediate IS the thing the whole chain says matters —
+> paint actions — so if it does not move, nothing downstream can.
+
+**Step 2 — census, 75 maps, 150 games, bundle vs byte-identical control.** Bar: **net swept >= +12**,
+this log's standing census bar (2.27 sd on my measured floor of 5.29). Not +4: attaching the screen
+bar to a census is the error that needed correcting at iteration 44.
+
+**Step 3 — the reading, fixed now so it cannot be chosen later:**
+
+| census result | conclusion |
+|---|---|
+| **>= +12** | ACCEPT the bundle, then ablate to attribute (2 x 50 games) |
+| **+1 to +11** | **inconclusive** — replicate on a disjoint sample before believing it, per my own dose rule |
+| **<= 0** | **both levers close**, and the band finding stands as structural |
+
+**Falsifier, named in advance and pointing away from what I want:** the bundle must raise **paint
+actions per soldier**, not merely total paint actions. Total could rise because the arm fielded more
+soldiers for unrelated reasons; per-soldier is the quantity both levers claim to move. If the win
+arrives with per-soldier output flat, the mechanism is not what produced it and the result does not
+count.
+
+**Named risk, from my own history:** these two levers both touch the paint economy, so they may
+interact rather than add — and a bundle null could hide one helping and one harming. I am **not**
+pre-committing to close both on a null at exactly 0; the table above closes them only at **<= 0**,
+and I will run **one** ablation of the more suspect lever (mopper transfer, because it diverts a
+mopper's action where the heading rule diverts nothing) before writing the closure.
