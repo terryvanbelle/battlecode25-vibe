@@ -16639,3 +16639,87 @@ Registered secondaries (`xfer`, starvation deaths, soldier-rounds, paint per sol
 fixed in the pre-verdict addendum decides between the two failure modes.
 
 `src/bob/` untouched. **`bob_iter20` remains the bot; HEAD's behaviour is unchanged.**
+
+### Iteration 47 secondaries — the mechanism worked, starvation fell 28%, and it bought EXACTLY ZERO soldier-rounds
+
+All 150 replays censused at **stride 1** (150,139 rows), whole game and windowed to r≤200. Both are shown
+because **they disagree, and the disagreement is the point.**
+
+```
+WHOLE GAME                                                    vs bob_g0, %
+             xfer/g  starv/g  soldR/g  paint/g  p/soldR  dCov   |  xfer  starv  soldR  paint  p/sR   dCov   twPaint  spawn   conv
+  bob_g0       42.7   207.98    17363   4495.4    0.259  416.6  |     -      -      -      -     -      -         -      -      -
+  bob_g1       82.1   189.00    16815   4387.1    0.261  370.4  | +92.5   -9.1   -3.2   -2.4  +0.8  -11.1      -3.8  -10.2   -8.9
+  bob_g2      167.1   214.68    19884   4567.0    0.230  354.4  |+291.7   +3.2  +14.5   +1.6 -11.3  -14.9      -4.1   +0.2  -16.3
+
+r <= 200
+  bob_g0       10.0     7.12     1297    477.0    0.368  290.9  |     -      -      -      -     -      -         -      -      -
+  bob_g1       15.3     6.10     1262    455.1    0.361  279.9  | +52.6  -14.3   -2.7   -4.6  -2.0   -3.8      -8.4  -13.9   +0.9
+  bob_g2       23.9     5.14     1286    464.0    0.361  279.6  |+139.4  -27.8   -0.8   -2.7  -1.9   -3.9     -12.1  -15.6   -1.2
+```
+
+**The whole-game read is CONTAMINATED, and I nearly published it.** My first pass reported the whole-game
+row and its headline was "the refill mechanism destroys conversion, −16.3%". That is an **artefact of the
+outcome**: `dCov` is measured to the end of the game, the arms lose more games, and a losing bot's
+coverage collapses in its endgame. So the arms' conversion looks wrecked because they lost, not the other
+way round. Windowed to r≤200 — before most games are decided, which is exactly why iterations 44 and 45
+used that window — **`conv` is flat: +0.9% and −1.2%.** The conversion story evaporates entirely.
+
+I am recording that because the wrong version was written, plausible, and dose-monotone. A monotone dose
+response is not proof of causation when the dose also changes how often you lose.
+
+**Secondary 1 (mechanism engaged): PASSES, monotonically.** Refill events **+52.6% / +139.4%** (r≤200),
+**+92.5% / +291.7%** whole-game. The dose landed hard.
+
+**Secondary 3, first half (starvation): PASSES, and it is the largest clean effect in the run.**
+Starvation deaths **−14.3% / −27.8%**, monotone. **The defect is real and the fix works** — refilling
+earlier does prevent starvation, decisively.
+
+**Secondary 3, second half (soldier-rounds): FAILS, flat.** −2.7% / −0.8%. And this is the whole
+iteration:
+
+> **Cutting starvation deaths by 28% bought ZERO soldier-rounds.**
+
+**And the census says exactly where they went.** Unit production collapsed in step: spawns
+**−13.9% / −15.6%**, tower paint stash **−8.4% / −12.1%**, both monotone with dose.
+
+> **A soldier's stash and a tower's build budget are the same paint.** `assertCanBuildRobot` requires
+> `tower.getPaint() >= type.paintCost` (SOLDIER 200 — engine-verified, iteration 41), and money towers
+> have `paintPerTurn == 0` and never recover. So the 100 paint a soldier withdraws to save its own life is
+> **half of the next soldier**. Rescuing a unit and building a unit are the *same purchase*.
+
+**Secondary 2 (the payer, registered in advance): flat at r≤200** (−2.0% / −1.9%). The refill turns did
+not cost meaningful action rate. The payer was not turns; it was **paint**, and I had named the wrong one.
+
+**Secondary 4 (the objective): −3.8% / −3.9%**, flat across dose — consistent with the primary's −6/−6.
+
+### What this closes, and it is bigger than the mechanism
+
+LEARNINGS 82 named three sources of `acts`: more units, units acting more often, units living longer.
+
+- **more units** — closed as composition (#20); and production is now shown to be **paint-limited**.
+- **acting more often** — closed this morning at the bytecode (#22).
+- **units living longer** — **closed here**: keeping a unit alive costs the paint that builds its
+  replacement, so bob's army size is invariant to how long its units live. Starvation is not a leak in
+  bob's economy; it is bob's **unit-recycling mechanism**, and its 80% death share is a *symptom* of a
+  paint budget, not a defect to be fixed.
+
+**RE-OPEN condition, and it points somewhere real**: this closure holds only for mechanisms that keep
+units alive **by feeding them**. A mechanism that keeps them alive by making them **spend less** does not
+touch the tower pool at all.
+
+### The reframe this forces, with the arithmetic
+
+> **Bob's binding constraint is not `acts`. It is PAINT, and `acts` is downstream of it.**
+
+Whole-game, `bob_g0`: **297.3 units built × ~200 paint ≈ 59,460 paint issued**, against **4,495.4 paint
+actions × 5 = 22,477 paint actually spent painting**. So only about **38% of the paint bob issues to its
+units becomes a paint action.** The residual, ~37,000 paint over ~17,400 soldier-rounds, is ≈**2 paint per
+unit-round** — which is precisely the size of the engine's per-turn penalties: **−1 ending on neutral, −2
+on enemy territory, plus 1 per adjacent allied robot, doubled in enemy territory** (moppers pay 2×).
+
+That is an accounting estimate, not a measurement — it assumes every unit is issued a full stash and
+attributes the whole residual to penalties. **It is iteration 48's probe, not iteration 47's conclusion**,
+and I am registering it as an estimate so it cannot later be quoted as a finding.
+
+`src/bob/` untouched. **`bob_iter20` remains the bot; HEAD's behaviour is unchanged.**

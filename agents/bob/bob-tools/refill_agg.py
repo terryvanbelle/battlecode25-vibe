@@ -67,6 +67,7 @@ for line in open(path):
             a['died'] += int(d['died']); a['xfer'] += int(d['xfer'])
             a['starv'] += int(d['starv']); a['soldsum'] += int(d['sold'])
             a['spawn'] += int(d['ps']) + int(d['pm']) + int(d['pl'])
+            a['twp'] += int(d['twp']); a['tw'] += int(d['tw']); a['rows'] += 1
             cov = int(d['cov'])
             if k not in covfirst: covfirst[k] = cov
             covlast[k] = cov
@@ -77,7 +78,7 @@ names = sorted(games)
 if arms: names = [n for n in names if any(n.endswith(x) for x in arms)] or names
 
 print(f"{'bot':<14}{'n':>5}{'xfer/g':>9}{'starv/g':>9}{'died/g':>8}"
-      f"{'soldR/g':>10}{'paint/g':>9}{'paint/soldR':>13}{'dCov(m)':>9}{'spawn/g':>9}")
+      f"{'soldR/g':>10}{'paint/g':>9}{'paint/soldR':>13}{'dCov(m)':>9}{'spawn/g':>9}{'twPaint':>9}{'tw':>7}")
 rows = {}
 for n in names:
     fs = sorted(games[n])
@@ -92,10 +93,11 @@ for n in names:
     rows[n] = dict(N=N, xfer=tot['xfer']/N, starv=tot['starv']/N, died=tot['died']/N,
                    soldR=soldR/N, paint=tot['p']/N,
                    psr=(tot['p']/soldR if soldR else float('nan')),
-                   dcov=tot['dcov']/N, spawn=tot['spawn']/N)
+                   dcov=tot['dcov']/N, spawn=tot['spawn']/N,
+                   twp=tot['twp']/tot['rows'], tw=tot['tw']/tot['rows'])
     r = rows[n]
     print(f"{n:<14}{N:>5}{r['xfer']:>9.1f}{r['starv']:>9.2f}{r['died']:>8.2f}"
-          f"{r['soldR']:>10.0f}{r['paint']:>9.1f}{r['psr']:>13.3f}{r['dcov']:>9.1f}{r['spawn']:>9.1f}")
+          f"{r['soldR']:>10.0f}{r['paint']:>9.1f}{r['psr']:>13.3f}{r['dcov']:>9.1f}{r['spawn']:>9.1f}{r['twp']:>9.1f}{r['tw']:>7.2f}")
 
 # ---- secondaries, read against the pre-registration ----------------------
 base = None
@@ -104,11 +106,13 @@ for n in names:
 if base and base in rows:
     b = rows[base]
     print(f"\nagainst the exact zero arm ({base}), as % change:")
-    print(f"{'bot':<14}{'xfer':>9}{'starv':>9}{'soldR':>9}{'paint':>9}{'paint/soldR':>13}{'dCov':>9}")
+    print(f"{'bot':<14}{'xfer':>9}{'starv':>9}{'soldR':>9}{'paint':>9}{'paint/soldR':>13}{'dCov':>9}{'twPaint':>9}{'spawn':>8}{'conv':>8}")
     for n in names:
         if n == base or n not in rows: continue
         r = rows[n]
         def pc(k):
             return (r[k]-b[k])/b[k]*100 if b[k] else float('nan')
         print(f"{n:<14}{pc('xfer'):>+9.1f}{pc('starv'):>+9.1f}{pc('soldR'):>+9.1f}"
-              f"{pc('paint'):>+9.1f}{pc('psr'):>+13.1f}{pc('dcov'):>+9.1f}")
+              f"{pc('paint'):>+9.1f}{pc('psr'):>+13.1f}{pc('dcov'):>+9.1f}"
+              f"{pc('twp'):>+9.1f}{pc('spawn'):>+8.1f}"
+              f"{((r['dcov']/r['paint'])-(b['dcov']/b['paint']))/(b['dcov']/b['paint'])*100:>+8.1f}")
