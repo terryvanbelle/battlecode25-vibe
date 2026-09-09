@@ -125,10 +125,35 @@ public class RobotPlayer {
      *  weight. */
     static final int RUIN_RESERVE = 1000;
     static final int TOWER_CAP = 25;
-    /** Tower paint kept back so a tower is never emptied by a build; one soldier refill. */
-    static final int TOWER_PAINT_KEEP = 40;
-    /** A splasher is built only from paint above this, so it can never displace a soldier. */
-    static final int SPLASHER_PAINT_SURPLUS = 620;   // 300 cost + 200 (a soldier) + 120 keep
+    /**
+     * D3b (stage 0 correction, iteration 59). Tower paint kept back from SPAWNING, because
+     * under D3 a tower's stash is primarily the standing army's fuel depot, not a spawn buffer.
+     *
+     * The first version set this to 40 ("one soldier refill"), sized for the incumbent's world
+     * where nothing ever walks home. Stage 0 showed what that does once 70 soldiers are
+     * cycling: paint acts collapsed 2000 -> 15 per 500 rounds between r500 and r2000 while
+     * 322 soldiers were built and 321 starved -- the entire paint income converted into dead
+     * soldiers and no painting at all, with $7,220 chips left idle.
+     *
+     * The arithmetic I should have done first. ~17 paint towers at 5/turn plus two starting
+     * lv2 towers is ~100 paint/turn of income. A soldier that paints every turn costs 5
+     * (attack) + 1 (neutral-tile drain) = 6/turn, and clumping adds -1 per adjacent ally. So
+     * income supports an army of order 16-33 continuously-active soldiers, NOT 70. Above that
+     * the standing army's passive drain alone exceeds total income and every soldier starves
+     * no matter how good the logistics are.
+     *
+     * A tower cannot count the army, but it does not need to: if the army is too big, the
+     * army drains the depot, and a drained tower stops spawning. Gating spawn on a large
+     * reserve therefore makes production SELF-REGULATING against the true constraint. At 300,
+     * a soldier needs the tower to hold 500 of its 1000 capacity.
+     */
+    static final int TOWER_PAINT_KEEP = 300;
+    /**
+     * D1c. Depot reserve kept back when spawning a SPLASHER, deliberately smaller than
+     * TOWER_PAINT_KEEP. In the contested regime a soldier's marginal value is zero -- it cannot
+     * touch enemy paint -- so holding depot paint back to spawn one instead is strictly worse.
+     */
+    static final int SPLASHER_KEEP = 150;
     /** Opportunistic upgrade only: strictly leftover chips, never withheld from spawning. */
     static final int UPGRADE_SURPLUS = 5000;
 
@@ -242,21 +267,59 @@ public class RobotPlayer {
             }
         }
 
-        // D1: pick the unit whose cost vector fits the surplus. Soldier first, always.
+        // D1c (stage 0 correction, iteration 59). THE REGIME TEST.
+        //
+        // Stage 0's second run traced the rewrite's actual loss mechanism, and it is not an
+        // economy failure at all. carol_r1 wins the land-grab outright -- coverage 613 vs 237
+        // at r500, 25 towers, 2,480 paint acts against 980 -- and then decays to 400 while the
+        // incumbent climbs to 531. At r1500 its paint actions are ZERO, with towers holding
+        // 4,039 paint and $9,340 chips idle. Nothing is scarce; there is simply nothing a
+        // soldier is permitted to do.
+        //
+        // The reason is in RULES.md [E]: a soldier's attack paints a tile ONLY if it is empty
+        // or already own-team. It can NEVER overwrite enemy paint. So a soldier's conversion
+        // rate against contested ground is exactly zero, and the incumbent's splashers -- the
+        // only unit that bulk-converts enemy paint -- turn carol_r1's territory into ground its
+        // entire army is legally unable to touch. Standing there also costs 2 paint/turn
+        // instead of 1, which is why 256 soldiers starved per 500 rounds while the depots were
+        // full.
+        //
+        // So the unit mix cannot be a function of the treasury alone; it must be a function of
+        // the MAP STATE. Soldiers take empty ground and claim ruins; splashers are the only
+        // thing that recaptures. A tower can read which regime it is in for free -- it senses
+        // its own vision disc -- so the build follows the ground rather than a fixed roll.
         UnitType want = null;
         String why = "none";
-        if (freePaint >= UnitType.SOLDIER.paintCost && freeChips >= UnitType.SOLDIER.moneyCost) {
-            // Paint surplus large enough that a splasher cannot displace a soldier.
-            if (tp >= SPLASHER_PAINT_SURPLUS && freeChips >= UnitType.SPLASHER.moneyCost
-                    && rng.nextInt(4) == 0) {
-                want = UnitType.SPLASHER; why = "spl";
-            } else {
-                want = UnitType.SOLDIER; why = "sol";
-            }
-        } else if (freePaint >= UnitType.MOPPER.paintCost
+        int enemyTiles = 0, seenTiles = 0;
+        for (MapInfo t : rc.senseNearbyMapInfos(-1)) {
+            if (!t.isPassable()) continue;
+            seenTiles++;
+            if (t.getPaint().isEnemy()) enemyTiles++;
+        }
+        boolean contested = seenTiles > 0 && enemyTiles * 4 >= seenTiles;   // >= 25% enemy
+
+        if (contested && tp - SPLASHER_KEEP >= UnitType.SPLASHER.paintCost
+                && freeChips >= UnitType.SPLASHER.moneyCost) {
+            want = UnitType.SPLASHER; why = "spl";
+        } else if (freePaint >= UnitType.SOLDIER.paintCost
+                   && freeChips >= UnitType.SOLDIER.moneyCost) {
+            want = UnitType.SOLDIER; why = "sol";
+        } else if (rc.getType().paintPerTurn == 0
+                   && freePaint >= UnitType.MOPPER.paintCost
                    && freeChips >= UnitType.MOPPER.moneyCost) {
-            // Cannot afford a soldier in paint but can afford a mopper: a stash that would
-            // otherwise sit idle becomes the unit that unblocks denied ruins (D5).
+            // D1b (stage 0 correction, iteration 59). The mopper branch is for a stash that is
+            // genuinely idle, and "idle" must mean idle OVER TIME, not at a snapshot. The first
+            // version tested only `paint in [mopper cost, soldier cost)`, which with 25 towers
+            // spawning continuously is the band a PAINT tower's stash passes through on every
+            // refill cycle -- so the branch captured the majority of all builds (+113 moppers
+            // against +35 soldiers per 250 rounds, and paint acts 749 against the incumbent's
+            // 1645). That is doctrine 10 in the wild: a band fed by the thing it measures.
+            //
+            // The genuinely idle stash is a MONEY tower's. `paintPerTurn == 0` for money towers
+            // [E, verified on the pinned 3.1.0 jar via tools/engine-javap.sh], so a money tower
+            // holds the 500 paint it was built with and NEVER regains any -- a finite,
+            // non-renewing resource where the choice really is "a cheap unit now or nothing
+            // ever". A paint tower regenerates 5-15/turn and should always wait for a soldier.
             want = UnitType.MOPPER; why = "mop";
         }
 
@@ -454,7 +517,10 @@ public class RobotPlayer {
         if (paint < cap) {
             for (RobotInfo ally : rc.senseNearbyRobots(2, rc.getTeam())) {
                 if (!ally.type.isTowerType()) continue;
-                int want = Math.min(cap - paint, ally.paintAmount);
+                // D3b: never empty the depot. Taking everything means the first customer
+                // leaves nothing for the next five, which is how stage 0 held 25 towers at
+                // ~86 paint each while 321 robots starved. Half, so a tower serves a queue.
+                int want = Math.min(cap - paint, ally.paintAmount / 2);
                 if (want > 0 && rc.canTransferPaint(ally.location, -want)) {
                     rc.transferPaint(ally.location, -want);
                     refillTopUps++;

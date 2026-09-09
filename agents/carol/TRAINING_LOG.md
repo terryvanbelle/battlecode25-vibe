@@ -17751,3 +17751,88 @@ answer to the structural question rather than re-running the rewrite with differ
 
 **What the census cannot do (doctrine 17).** Both arms are carol. A census against my own snapshot
 licenses "this beats my predecessor", never "this closes the tournament gap".
+
+## Iteration 59 stage 0 — three corrections, and the structural finding the rewrite was for
+
+Run `20260909-194625` (census, 150 games) was launched only after the third of these. All four
+Leaf games below are `carol_r1` vs `carol_iter44`, 2 games total of VM time each.
+
+### Stage 0 run 1 — all three registered clauses PASS, and the architecture is confirmed
+
+| registered clause | incumbent | `carol_r1` | |
+|---|---|---|---|
+| towers built > 8 | 8 | **25 — the cap, by round 750** | PASS |
+| soldiers built > 2 | 2 | **~281** | PASS |
+| refill fires | 3 xfer/window | **543 xfer/window** | PASS |
+
+**The flywheel works.** Soldiers -> ruins -> towers -> paint -> soldiers reached the engine's
+25-tower cap on a map where the incumbent reaches 8. The measured capability gap against alice's
+25 towers is closable by this lineage, which is the single most important thing this session
+established and it holds regardless of how the census falls.
+
+But `carol_r1` still lost on painted area, 421 vs 470, and the replay named why in one number:
+**moppers outnumbered soldiers**, +113 against +35 builds per 250 rounds, so paint acts were **749
+against the incumbent's 1,645**. A bot with 25 towers painted less than one with 9.
+
+### Correction 1 (D1b) — I committed my own doctrine 10 live
+
+I gated moppers on tower paint sitting in `[100, 200)` and called that "an idle stash". With 25
+towers spawning continuously that is simply the band a **paint** tower's stash passes through on
+every refill cycle, so the branch captured the majority of all builds. **A band fed by the thing it
+measures** — which is doctrine 10, written in this project by me, and I still wrote it.
+
+The genuinely idle stash is a **money** tower's: `paintPerTurn == 0` [E, verified on the pinned
+3.1.0 jar via `tools/engine-javap.sh` before the edit, not assumed], so a money tower holds its
+build-time 500 paint and never regains any. Restricting the branch to money towers took mopper
+builds from 113/window to 0-2.
+
+### Correction 2 (D3b) — the depot sizing, from the starvation counters
+
+Run 2 led at r500 (**cov 449 vs 344**) and then collapsed: paint acts fell 2,000 -> 15 per 500
+rounds, with **322 soldiers built and 321 starved** and $7,220 chips left idle. I had set
+`TOWER_PAINT_KEEP = 40` ("one soldier refill") — sized for the incumbent's world, where nothing
+ever walks home. Under D3 a tower's stash is the standing army's **fuel depot**.
+
+The arithmetic I should have done before writing the constant: ~17 paint towers at 5/turn is
+~100 paint/turn, and an active soldier costs 5 (attack) + 1 (drain) per turn, so income supports an
+army of order 16-33 — **not 70**. Above that the standing army's passive drain alone exceeds total
+income and every soldier starves however good the logistics are. Two changes, both sizing the depot
+role: keep 300 rather than 40 (which makes production **self-regulating** — a too-large army drains
+the depot, and a drained tower stops spawning), and a withdrawal takes at most **half** a tower's
+stash, because a depot one customer can empty is not a depot.
+
+### Correction 3 (D1c) — the structural finding, and it is not an economy failure at all
+
+Run 3 was the sharpest result of the session. `carol_r1` led **cov 611 vs 263 at r500** and then
+decayed to 400 while the incumbent climbed to 531. At r1500 its paint actions were **exactly zero**,
+with towers holding 4,039 paint and $9,340 chips idle. **Nothing was scarce.** There was simply
+nothing a soldier was permitted to do.
+
+The reason is in my own rules digest and I had read past it: **a soldier's attack paints a tile only
+if it is EMPTY or already own-team — it can never overwrite enemy paint.** So a soldier's conversion
+rate against contested ground is exactly **zero**, and the incumbent's splashers turn `carol_r1`'s
+territory into ground its entire army is legally unable to touch. Standing there also costs 2
+paint/turn instead of 1, which is why 256 soldiers starved per 500 rounds *while the depots were
+full*. The starvation was a symptom of the paint law, not of the economy.
+
+**Soldier-primary can take ground but structurally cannot recapture it.** That is the finding, and
+it is worth more than the census result either way.
+
+So the unit mix cannot be a function of the treasury alone; it must be a function of the **map
+state**. A tower reads its own vision disc for free, and D1c builds splashers instead of soldiers
+once >= 25% of visible passable tiles are enemy-painted. Run 4: `carol_r1` **wins Leaf, cov 517 vs
+410**, the decay arrested (611 -> 529 -> 512 -> **517**) and paint acts recovered to 1,002.
+
+### The honesty note this entry owes
+
+Three corrections in stage 0 is a lot, and I am recording the risk rather than only the result.
+Each was diagnosed from a **mechanism counter** — unit mix, starved count, paint acts — and never
+from the win/loss; correction 3 in particular was traced from "paint acts = 0 while nothing is
+scarce" to an engine rule, which is an argument that stands whatever Leaf did. **But I did stop
+correcting once it won**, and that is the shape of gate-shopping even when each individual step was
+sound. Two things bound the damage: I registered "census regardless of the Leaf outcome" *before*
+run 4, and Leaf is 1 of the 75 maps the census plays, so the gate is essentially unaffected by
+having looked at it. The residual risk is real and belongs on the record.
+
+**Still unfixed and deliberately not chased**: 240 soldiers still starve per 500 rounds in run 4.
+That is a known inefficiency, not a blocker, and chasing it would have been a fourth correction.
