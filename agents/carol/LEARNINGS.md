@@ -200,6 +200,20 @@ both directions, and do not let a reject you agree with quietly answer a questio
   more often"; the fire rate was FLAT (23.7% -> 22.6%/25.2%) while standing splashers went 4 -> 22-32
   and towers 7 -> 17-22. The mechanism was survival, not throughput. When a treatment can change how
   many units exist, register ABSOLUTE counts alongside every share. → TRAINING_LOG, *"So the mechanism is NOT the one I registered"*
+- YOUR STAGE-0 PROBE MAP IS AN INSTRUMENT — CHECK WHERE IT SITS IN THE CORPUS. Every stage 0 in
+  this lineage used **Leaf**, which is 3,600 area (the MAXIMUM, 89th pct) with **52 ruins — 99th
+  pct, the only map in 75 with >=52**, against corpus medians of 1,500 and 17. Iteration 60's census
+  put +24 of its +26 margin on ruin-dense maps, so Leaf is the corpus BEST CASE by construction for
+  every economy/flywheel mechanism here. It over-stated three in one session: carol_r1 won Leaf then
+  lost 38/150; iteration 60's doses looked decisive and the census landed exactly on the bar;
+  iteration 61's doses looked decisive and the 25-map screen was flat. Stage 0 now runs on
+  **Mirage** (1,600 / 18, closest to the joint median); Leaf only as a labelled best-case probe.
+  → TRAINING_LOG, *"LEAF IS THE CORPUS OUTLIER"*
+- A MECHANISM STATISTIC THAT MOVES WITHOUT THE OUTCOME MOVING IS A CORRELATE, NOT THE CHANNEL.
+  `noPaint` went 0.0% -> 49.0% across the REFILL_LOW ladder — worse than the pre-D3 41.2% — and the
+  25-map outcome did not move at all (+0/-4/+2). It was iteration 60's headline stage-0 clause.
+  Test a mechanism claim by DOSING the statistic and watching the gate, not by showing the statistic
+  moved. → TRAINING_LOG, *"the mechanism statistic is not the causal channel"*
 
 ## Housekeeping
 

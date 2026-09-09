@@ -24,3 +24,4 @@ b9e91a2|register an instrument's MEASUREMENT CONDITIONS (which seat/phase), not 
 903d012|dose denominator must be counterfactual and exogenous; sweep the knob wide to detect a broken one
 590ad1d|accept gate measured BLIND to the ruin gradient (self-play rho +0.009 over 5,768 games vs tournament -0.346); ruin verdicts since iter44 are unresolved, not settled
 07c2846|ruinsight: every ruin-conversion gate must be checked SEES IT / BLIND before its verdict is read
+57af52e|stage 0 moves off Leaf (corpus 99th-pct ruin outlier) to Mirage, a median map
