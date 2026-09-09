@@ -80,6 +80,7 @@ Companion files, and what each is for:
 - **43.** Measure the quantity that decides the regime, not a proxy opponent for it. → #64
 - **44.** A missing capability is invisible to every instrument except a **scheduled sweep** (an API sweep found 24 never-called methods). → #30, #38
 - **45.** The stall trigger works, and it works *because* it is a trigger. → #66
+- **44b. NEW.** A secondary accumulated over a **whole game** is a post-outcome quantity whenever the treatment changes the win rate: iteration 47's "conversion −16%, dose-monotone" was **entirely** the arms losing more, and vanished (+0.9%/−1.2%) when windowed to r≤200. Large, monotone, mechanistically plausible, sign-agreeing — and an artefact. **Read secondaries in a window that closes before the games do.** → #87
 - **45b. NEW.** A sampling stride is not free just because the counters are cumulative: `ReplayDump --every N` silently drops up to `N-1` rounds off each game's **end**, and the loss scales with game length — the one bias that would have faked iteration 47's result. **Use stride 1.** Test the invariant your own script claims. → #85
 
 ## D. Mechanisms: what they cost, and what pays for them
@@ -119,6 +120,8 @@ Numbers live in `RULES.md`; these are the ones that changed a decision.
 - **70.** `tiles = acts × conv`. **`conv` is closed from both ends**: bob's redundant repainting is exactly 0 of 2,377 classified repaints, and answering alice's 47 unpaints/game with moppers costs more than it returns. → #84, #83, `CLOSED.md` #19/#21
 - **71.** **Composition is a local optimum in both directions** — iteration 20's splasher peak is interior at 2 of 5 slots, iteration 45's mopper harm is monotone. → #82, `CLOSED.md` #20
 - **72.** So **`acts` — total paint actions per game — is the only live term**, and it has exactly three sources: more units, units acting more often, or units **living longer**. Acting-more-often is now closed too (#67), so **living longer is the remaining route**. 89% of bob's deaths are starvation (8.2 of 9.2 per game). → #82, iteration 47
+- **72b. NEW — the model correction.** **`acts` was never the binding constraint; PAINT is.** All three sources of `acts` are now closed (composition #20, acting-more-often #22, living-longer #23) and each bottomed out in a fixed paint budget. Feeding a unit costs the paint that builds one: `tower.getPaint() >= 200` gates every SOLDIER. → #86, `CLOSED.md` #23/#24
+- **72c. NEW — where to look next.** Bob issues ~59,460 paint to units per game and converts only ~**38%** into paint actions; the residual is ≈2 paint per unit-round, the size of the engine's per-turn penalties (−1 neutral, −2 enemy, +1 per adjacent ally, doubled in enemy territory). Spending less draws on **no** tower pool — the one re-open condition on #23. **This 38% is an accounting estimate, not a measurement.** → #86
 - **73.** Sizing anchor, for any future mechanism: the small-map deficit is **91 tiles**; an extra soldier-round is worth **≤0.265 tiles**; so closing it needs **≈+343 soldier-rounds/game (+28%)**. Every mechanism tried before iteration 47 sized at **2–5%** of that.
 
 ## G. Process and hygiene

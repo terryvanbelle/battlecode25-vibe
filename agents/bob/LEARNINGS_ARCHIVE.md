@@ -3148,3 +3148,57 @@ manufactured the result I was hoping for, in the direction I was hoping for.
 
 Fixed by using stride 1, which prints every round and loses nothing. The stride argument survives for
 smoke tests only, and both tools now say so.
+
+## 86. A soldier's stash and a tower's build budget are the same paint (2026-09-09)
+
+Iteration 47 raised bob's soldier refill threshold (`REFILL_BELOW` 50 → 100 → 150). The mechanism engaged
+emphatically — refill events **+53% / +139%** — and it did precisely what it was bought to do:
+**starvation deaths fell 14.3% and 27.8%**, monotone with dose. 89% of bob's deaths were starvation, and
+the fix worked.
+
+**It bought zero soldier-rounds** (−2.7% / −0.8%) and lost **6 wins at both doses**.
+
+The census says why, and it is an accounting identity rather than a behavioural surprise. Unit production
+fell in lockstep with the refilling: **spawns −13.9% / −15.6%**, **tower paint stash −8.4% / −12.1%**.
+`assertCanBuildRobot` requires `tower.getPaint() >= type.paintCost` (SOLDIER 200), and money towers have
+`paintPerTurn == 0` and never recover. So:
+
+> **The 100 paint a soldier withdraws to save its own life is half of the next soldier.** Rescuing a unit
+> and building a unit are the same purchase, out of the same pool.
+
+**The consequence is larger than the mechanism.** LEARNINGS 82 named three sources of `acts`: more units,
+acting more often, living longer. All three are now closed — and every one of them bottomed out in the
+same place. **`acts` was never the binding constraint; PAINT is, and `acts` is downstream of it.**
+
+**And the re-open condition is the useful part.** This closes mechanisms that keep units alive **by
+feeding them**. A mechanism that keeps them alive by making them **spend less** — the per-turn penalties,
+−1 on neutral, −2 on enemy territory, +1 per adjacent allied robot, doubled in enemy territory — draws on
+no tower pool at all. That is a supply-side question, and this lineage has never asked one.
+
+**A methodological note on the payer.** I registered the payer in advance, as doctrine 46 requires, and I
+named it **wrongly**: I predicted refill turns would cost action rate. Action rate was flat (−2%). The
+payer was paint. Naming a payer in advance is still right — it is what made the spawn collapse legible the
+moment the census landed — but *naming one* is not the same as *naming the right one*, and the discipline
+should be to check every conserved quantity the mechanism touches, not the first one that comes to mind.
+
+## 87. A dose-monotone effect measured to end-of-game is contaminated by the outcome (2026-09-09)
+
+My first read of iteration 47's secondaries used whole-game counters and reported a clean, dose-monotone
+headline: **conversion −8.9% and −16.3%**, "the refill mechanism destroys bob's paint-to-coverage
+conversion". It was wrong.
+
+`dCov` accumulates to the end of the game. The arms **lose more games**, and a losing bot's coverage
+collapses in its endgame. So the arms' conversion looked wrecked *because they lost*. Re-windowed to
+**r≤200** — before most games are decided, which is exactly why iterations 44 and 45 chose that window —
+**conversion is flat: +0.9% and −1.2%.** The entire effect was the outcome leaking into the covariate.
+
+**What makes this worth writing down is that it passed every check I habitually apply.** It was large, it
+was monotone in the dose, it had a plausible mechanism ready to hand (soldiers pulled back from the
+frontier), and it agreed in sign with the primary. **A monotone dose response is not evidence of causation
+when the dose also changes how often you lose** — the treatment moves the outcome, and the outcome moves
+the metric.
+
+**Rule adopted**: any secondary accumulated over a whole game is a *post-outcome* quantity for an arm whose
+win rate the treatment changes. Read secondaries in a window that closes before the games do, and if a
+whole-game and a windowed read disagree, the windowed one is the measurement and the difference is the
+outcome. Iterations 44 and 45 used r≤200 for this reason; iteration 47 re-derived the reason the hard way.
