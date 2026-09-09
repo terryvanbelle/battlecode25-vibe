@@ -17058,3 +17058,69 @@ again, that is two independent samples of an effect the gate calls a reject, and
 that this mechanism is worth about 6 wins and does not clear the bar — not that a third sample might.
 
 `src/bob/` untouched. **`bob_iter20` remains the bot.**
+
+## Iteration 50 — **REJECTED**, and the registered payer fired exactly where I said to look for it.
+
+Run `20260909-195732`, 150 games. `delta = 25 − (iter20's wins)`.
+
+```
+  vs bob_e0   (W 0, narrow)  25/50   delta   0    swept 0/25, 0 against, 25 split
+  vs bob_e9   (W 9, narrow)  20/50   delta  +5    swept 4/25, 9 against, 12 split
+  vs bob_e9w  (W 9, WIDE)    19/50   delta  +6    swept 2/25, 8 against, 15 split
+```
+
+**VOID condition PASSES** (`e0` 25/50, all 25 split). **Verdict: delta +5 and +6 ⇒ REJECT** on both.
+
+### The two questions this iteration asked, both answered
+
+**1. Was the candidate set the binding limit? YES on the mechanism, NO on the objective.**
+Crowd per mobile-unit-round, within-run: **e0 0.589 → e9 0.438 (−25.6%) → e9w 0.304 (−48.4%)**. Widening
+from 5 directions to 8 cut crowd a **further 31%** beyond the saturated weight. The candidate set was
+genuinely the limit on the *mechanism*.
+
+> **And it bought nothing. Crowd fell another 31% and the score went +5 → +6.**
+
+**2. Did the knob have headroom past 3? No.** `e9` (W=9) reached crowd 0.438, statistically
+indistinguishable in effect from `d3`'s 0.434 — the weight saturates around 3–5 exactly as the rank
+arithmetic predicted.
+
+### The payer fired — secondary 2, registered before the run
+
+```
+             crowd   soldR/g   paint/g   paint/soldR   towers   starv/g   dCov(m)
+  bob_e0     0.589      1307     504.4       0.386      4.48      7.46     289.2
+  bob_e9     0.438      1565     480.0       0.307      4.23      5.76     280.9
+  bob_e9w    0.304      1612     473.9       0.294      4.19      5.22     279.5
+  e9w vs e0 -48.4%    +23.3%     -6.0%      -23.8%     -6.5%    -30.0%     -3.4%
+```
+
+**Secondary 3 (the channel) FAILS, and inverts.** Paint actions **−4.8% / −6.0%**, where iteration 49's
+`d3` had **+4.6%**. **Secondary 2 (position) FIRES**: towers **−5.6% / −6.5%** (against `d3`'s −2.3%) and
+paint per soldier-round **collapses 20.5% / 23.8%**.
+
+I registered, before building: *"units cluster because they are going to the same place, so spreading them
+may put them off the ground that matters. That is the payer to look for."* **It is exactly what happened.**
+The units are alive (soldier-rounds **+23.3%**), well fed (starvation **−30%**, with refills *falling*
+10.3 → 3.8, so they are surviving by spending less, not by feeding) — **and they are standing where there
+is nothing to paint.**
+
+### What this closes
+
+Across two independent runs and three treated arms, the de-clumping mechanism scores **+6, +5, +6** — with
+the mechanism confirmed engaged every time (crowd −26% to −48%). I registered in advance that repeated
++6s should be read as *"this mechanism is worth about 6 wins and does not clear the bar"* rather than as
+grounds for another sample, and that is the reading.
+
+**Something worth stating plainly, because it is new for this lineage**: this is the **first mechanism
+that is reproducibly positive at all**. Every earlier reject was flat or negative — iteration 43 flat, 45
+at −5/−6/−11, 47 at −6/−6. Three arms, two runs, never below +5, never negative. The direction is real; it
+is simply not worth 10 wins, and the shape of the payer says why it cannot be pushed to 10: the paint
+saved is real, but past a modest dose the units stop being where the paint is needed.
+
+**I am not accepting it.** The bar was committed before each of the three runs, `+7..+9` licenses
+replication and nothing here reaches +7, and LEARNINGS 76 records that marginal accepts are where drift
+enters this lineage. Recording the option here so a future session can weigh it deliberately rather than
+rediscover it: *if the accept bar is ever revisited, this is the strongest sub-threshold mechanism on
+file.*
+
+`src/bob/` untouched. **`bob_iter20` remains the bot; HEAD's behaviour is unchanged.**
