@@ -232,10 +232,17 @@ public class Soldier {
         // from 33% to 15%. ~10 bytecodes. Still a pure function of the ruin, which the
         // marking protocol requires (see the note above: a type that changes over time
         // deadlocks workOnRuin's "already marked?" probe).
-        // ABLATION A7: iteration 7's avalanche hash removed; back to iteration 1's
-        // team-symmetric parity rule. Under rotation (x+y) and (W-1-x + H-1-y) share
-        // parity whenever W+H is even, so mirrored ruins agree on those maps and the
-        // two halves get the same mix -- which is the property iteration 7 gave up.
+        // SHIPPING RULE (not an ablation -- the word "ABLATION" stood here for 20+
+        // iterations and has now raised two separate false alarms in later sessions,
+        // each costing a search before concluding the code was correct all along).
+        // Ablation A7 removed iteration 7's avalanche hash in favour of iteration 1's
+        // team-symmetric parity rule, and A7 WON by +16 with zero swept losses, so the
+        // parity rule is the accepted incumbent and this line is live shipping code.
+        // Why parity wins: under rotation (x+y) and (W-1-x + H-1-y) share parity
+        // whenever W+H is even, so mirrored ruins agree and the two halves get the same
+        // mix -- the team-symmetry property iteration 7's hash gave up.
+        // CLOSED, do not re-open: coordinate-keyed tower-type rules (4 measured), and
+        // any argument resting on the A7 symmetry slope (refuted by iteration 32).
         return ((ruin.x + ruin.y) & 1) == 0
             ? UnitType.LEVEL_ONE_MONEY_TOWER : UnitType.LEVEL_ONE_PAINT_TOWER;
     }
