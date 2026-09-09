@@ -18962,3 +18962,62 @@ returned −58, −11, −1 and +1.
 > five times out of five it fired.** That is not a run of bad luck about mechanisms; it is what the
 > ladder is for, and it is the reason this session closed seven directions for roughly the cost of
 > one of last session's screens.
+
+## Mopper-to-soldier transfer — engine-verified as REAL and unused, priced at 16%, and that completes a pattern
+
+**Engine probe first, zero cost.** `RobotControllerImpl.assertCanTransferPaint`, javap against the
+pinned 3.1.0 jar, carries these guards in order:
+
+```
+"There is no robot at this location!"      "Cannot transfer paint to yourself!"
+"Cannot transfer zero paint!"              "Cannot transfer resources to the enemy team!"
+"Towers cannot transfer paint!"            "Only moppers can give paint to allies!"
+"Paint can only be withdrawn from towers!"
+```
+
+> **`"Only moppers can give paint to allies!"` — the route is legal, and alice has never used it.**
+> `tryRefill` filters to `isTowerType()`, so alice only ever *withdraws* from towers. Giving is a
+> mopper-only verb, it costs the mopper's action (`assertIsActionReady`), and it needs the mopper's
+> action range, r²<=2.
+
+**Priced from data already measured**, so still zero games: a mopper's tank is 100, its mop costs
+**0 paint** (engine), and iteration 49 measured its lifetime upkeep at **62** — leaving ~38 of
+genuine surplus. At 7 mopper spawns per game that is 266 paint = **53 soldier paint actions = 16%**
+of the 319-action gap. It is also the only endurance route that diverts **no soldier turn** — the
+*mopper* moves, and iteration 52 showed mopper turns are not the bottleneck.
+
+### The band is the finding, and it is now four for four
+
+| mechanism | derived from | ceiling |
+|---|---|---|
+| informed wander heading (iteration 50) | upkeep decomposition | **17%** |
+| upgrade priority (iteration 53) | idle chips vs paint-poor towers | **16%** |
+| commitment / target stickiness | abandonment classification | **7%** |
+| mopper-to-soldier transfer | engine sweep + mopper surplus | **16%** |
+
+> **Four mechanisms, derived from four unrelated measurements, all land at 7–17% of the same gap.**
+> That is not four coincidences. Alice's production deficit is **structural**: the strategy is "many
+> towers, each less productive", it needs soldiers that can complete 28-paint patterns, and its
+> soldier carries a 200 tank against ~100 of lifetime upkeep. No single lever closes an arithmetic
+> shortfall of that shape.
+
+### And the consequence is about my INSTRUMENT, not about the mechanisms
+
+A mechanism worth ~16% of the production gap is **at or below my screen's resolution**, and I have
+direct evidence rather than an assumption: **iteration 53 moved its intermediate variable by +639
+tower paint — more than 50% above the control's level — and returned net swept −2.** A large
+intermediate move produced a screen result indistinguishable from zero.
+
+So my standing screen (25 maps, 50 games, bar +4) will return a null on any of these **whether or not
+it works**, which means:
+
+1. **Screening them one at a time is spending 50 games to learn nothing.** That is what iteration 53
+   did, and its value came from the manipulation check and the falsifier, not from the gate.
+2. The honest options are to **stack** several independent 16% levers and screen the bundle (if they
+   are additive, 3–4 of them clear the bar together), or to run a **census** per mechanism and accept
+   the 150-game cost — the choice METHODS.md section 2 frames as pricing before screening.
+3. Either way the decision is now **pre-registerable with numbers**, which it was not this morning.
+
+**Next session's first move, registered:** decide between stack-and-screen and census-per-mechanism
+*before* building any of the three surviving 16% levers, and write the choice down first. The
+commitment family stays closed at 7%; the other three are alive and individually undetectable.
