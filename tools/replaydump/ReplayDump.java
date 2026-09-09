@@ -80,6 +80,17 @@ public class ReplayDump {
     // whose package matches. The default withholds every team's, and the footer
     // says how many were withheld, because silence that looks like absence is
     // the failure this file already fixed once.
+    // The LAST round of a match, held so its counters can be flushed even when
+    // the --every stride would skip it. Without this, every game silently loses
+    // its tail: aggregates are emitted only on multiples of the stride, so the
+    // rounds after the last multiple are never printed and any consumer reading
+    // per-round counters undercounts by a margin that grows with game length --
+    // worst in exactly the analyses about games running longer. Found by a
+    // lineage whose census claimed a stride was free; testing strides 1/10/50
+    // showed every counter but one decaying.
+    static Round lastRound = null;
+    static int lastRoundId = -1;
+    static boolean lastRoundPrinted = false;
     static final Map<Integer, String> teamPkg = new HashMap<>();
     static final List<String> indAllow = new ArrayList<>();
     static int trackRobot = -1;
@@ -167,10 +178,18 @@ public class ReplayDump {
                 }
                 for (int k = 0; k < r.teamIdsLength(); k++) engineCoverage[r.teamIds(k)] = r.teamCoverageAmounts(k);
 
-                if (!quiet && (round % every == 0 || round <= 3 || inWindow)) printAggregates(r, round);
+                boolean printedThisRound = !quiet && (round % every == 0 || round <= 3 || inWindow);
+                if (printedThisRound) printAggregates(r, round);
+                lastRound = r; lastRoundId = round; lastRoundPrinted = printedThisRound;
                 if ((mapEvery > 0 && round % mapEvery == 0) || mapAt.contains(round)) renderArena(round);
             } else if (t == Event.MatchFooter) {
                 MatchFooter mf = (MatchFooter) ew.e(new MatchFooter());
+                if (!quiet && lastRound != null && !lastRoundPrinted) {
+                    System.out.println("=== final-round flush (the --every " + every
+                            + " stride would have skipped it):");
+                    printAggregates(lastRound, lastRoundId);
+                }
+                lastRound = null; lastRoundId = -1; lastRoundPrinted = false;
                 System.out.println("=== MatchFooter winner=team" + mf.winner()
                         + " winType=" + WinType.name(mf.winType()) + " rounds=" + mf.totalRounds());
                 String win = toRound < fromRound ? "none (no --from/--to given)"
