@@ -58,6 +58,14 @@ public class ReplayDump {
     static Map<Integer, int[]> posOf = new HashMap<>();      // id -> {x,y}, for the units view
     static int mapWidth = -1, mapHeight = -1;
     static int fromRound = Integer.MAX_VALUE, toRound = -1;
+    // Indicator strings are the one action type with NO aggregate channel: they
+    // print inside the --from/--to window and nowhere else, and the default
+    // window (MAX_VALUE..-1) admits nothing. So a census that greps IND lines
+    // without a window reads "0 occurrences" from a run that never looked. A
+    // lineage lost an instrument to exactly this and caught it only because a
+    // companion maximum of 0 was impossible. Counting what the window SUPPRESSED
+    // makes the silence self-reporting.
+    static long indSeen = 0, indPrinted = 0;
     static int trackRobot = -1;
     static int every = 25;
     static int mapEvery = 0;
@@ -147,6 +155,16 @@ public class ReplayDump {
                 MatchFooter mf = (MatchFooter) ew.e(new MatchFooter());
                 System.out.println("=== MatchFooter winner=team" + mf.winner()
                         + " winType=" + WinType.name(mf.winType()) + " rounds=" + mf.totalRounds());
+                String win = toRound < fromRound ? "none (no --from/--to given)"
+                                                 : fromRound + ".." + toRound;
+                System.out.println("=== action-log window " + win
+                        + ": IND seen=" + indSeen + " printed=" + indPrinted);
+                if (indSeen > 0 && indPrinted == 0)
+                    System.out.println("!! " + indSeen + " indicator string(s) occurred but NONE were printed:"
+                            + " they fall outside the action-log window. Reading this dump as"
+                            + " \"no indicators\" would be reading a window you did not open --"
+                            + " pass --from/--to covering the rounds you care about.");
+                indSeen = 0; indPrinted = 0;
                 for (int k = 0; k < mf.timelineMarkersLength(); k++) {
                     TimelineMarker tm = mf.timelineMarkers(k);
                     // TimelineMarker.team() is 0-BASED while everything else here is
@@ -570,7 +588,9 @@ public class ReplayDump {
                     // Printed verbatim. This tool never interprets a bot's private
                     // indicator encoding -- that would make a shared tool carry one
                     // lineage's internals.
+                    indSeen++;
                     if (print) {
+                        indPrinted++;
                         IndicatorStringAction s = new IndicatorStringAction(); s.__init(pos, bb);
                         System.out.println("round " + round + " " + lbl(id) + " IND \"" + s.value() + "\"");
                     }
