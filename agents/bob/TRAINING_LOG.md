@@ -16340,3 +16340,69 @@ small-area gate on a different mechanism, so the scaffolding cost is not the obj
 −5/−6/−11 wins, **with the mechanism confirmed working** (conversion +3 to +9 points, mopper share 6.5% →
 39%) and the cost located precisely in **total paint actions (−10% to −27%)**. Also CLOSED, by arithmetic
 rather than games: the **map-area-gated** variant, whose best case is **+3.7 tiles**.
+
+---
+
+## Iteration 46 — PROBE PRE-REGISTERED (written before the measurement exists): how many of bob's paints are REDUNDANT?
+
+**Why this and not the two obvious alternatives, both of which I checked and dropped.**
+
+- **Composition is closed.** Iteration 20 found the splasher peak interior at 2 of 5 slots; iteration 45
+  showed more moppers is monotone harm. Bob's spawn mix is a local optimum in both directions.
+- **Starvation is not the differentiator, and the number that made it look like one was a share, not a
+  rate.** "89% of bob's deaths are starvation" is true and nearly meaningless on its own. As a share of
+  units *built*: bob **41.2%**, alice **35.2%**, carol **35.6%**. Bob is 6 points worse than both, not
+  categorically worse. Checked before proposing, and dropped — this is the denominator trap of LEARNINGS
+  76/79/81 in its fourth costume today.
+
+**The hypothesis.** LEARNING 82 established that `tiles = acts × conv` and that every mechanism I have
+tried raises one term by spending the other. **Redundant repainting is the one defect that lives in both
+terms at once**, and is therefore the only lever identified so far that does not trade:
+
+> `soldierAttack` calls `setPaint` and emits a `PaintAction` **even when the tile already holds exactly
+> that colour** (engine 3.1.0: the guard is `getPaint == 0 || sameTeam`, not "different from what is
+> there"). So a soldier repainting its own tile in its own colour spends a full action and 5 paint,
+> emits a counted `PaintAction`, and changes **nothing**.
+
+Every such action is simultaneously **one `acts` wasted** and **one point of `conv` lost**. Eliminating
+one returns an action to productive use at **zero cost** — there is no displaced unit, no shrunken army,
+nothing for the mechanism to pay for itself out of. That is exactly what iterations 43 and 45 lacked.
+
+**Feasibility is established** (this is why the probe is cheap): `ReplayDump --from R --to R` prints
+`round 40 id13294(T2,SOLDIER) PAINT (34,2) secondary` — robot **id**, **unit type**, **exact location**,
+and the **primary/secondary** colour bit. That is everything needed to maintain a per-tile colour map and
+classify each paint, and the unit type resolves the splash-attribution problem that defeated LEARNING
+81's per-soldier rate.
+
+**Method.** Replay the action stream, maintaining each tile's last known `(team, secondary)`. Classify
+every `PAINT`:
+- **NEW** — tile previously unpainted or unknown (conservative: unknown is never counted as redundant),
+- **FLIP** — tile held the *other* colour of my own team (a deliberate pattern fix, **not** waste),
+- **REDUNDANT** — tile already held **exactly** this `(team, secondary)`. Pure waste.
+`UNPAINT` and `SPLASH` set affected tiles back to unknown (the splash footprint is not in the schema),
+which keeps the estimate a **lower bound** on redundancy.
+
+**PRE-REGISTERED, before the numbers exist:**
+
+- **VOID unless NEW + FLIP + REDUNDANT + unknown-skips equals the `PAINT` line count**, asserted in the
+  aggregator. Iteration 42's accounting check fired twice and was right both times; it is not optional.
+- **All `IND` lines for robots that are not mine are dropped at parse time**, per the isolation hazard
+  recorded in `RULES.md` today. Filtered at the source, not by my choosing not to read.
+- **Primary reading**, as a share of bob's `PAINT` actions on **small maps**:
+  **REDUNDANT ≥ 15%** ⇒ a real, free lever; build the fix (a `getPaint`-equality check before attacking,
+  which costs a sense the soldier has usually already paid for).
+  **REDUNDANT ≤ 5%** ⇒ this direction is **CLOSED for the cost of one probe**, and `acts` has to be
+  raised some other way.
+  **5–15%** ⇒ size it against the 91-tile deficit before building anything.
+- **Registered as NOT an accept test.** It measures a rate over existing games and can accept nothing.
+- **Comparative, and this is the part that makes it worth doing at all**: the same classification is run
+  for **alice** on the same games. If alice's redundancy is as high as bob's, redundancy is a property of
+  the game and not of my bot, and the direction closes regardless of bob's absolute number.
+- **Prediction, registered as a sign, with its mechanism**: bob's REDUNDANT share **exceeds** alice's,
+  and is **higher on large maps than small** — because iteration 42 measured bob's "painted own tile"
+  exit at **15.8%** of large-map soldier-turns against **1.5%** on small. That is an independent
+  instrument on a related quantity, and it is the only basis I have for a sign.
+- **Sizing is deliberately NOT asserted in advance** beyond the branch thresholds. LEARNING 80: set the
+  trigger from the decision it forces, not from the outcome expected.
+
+`src/bob/` untouched. **`bob_iter20` remains the bot.**
