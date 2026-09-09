@@ -115,6 +115,30 @@ charged on ally tiles too. What is *not* established is that my bot has ever bee
 dense enough for it to bind. Do not plan against clumping without first measuring
 adjacency on a corrected trace.
 
+> **RE-OPEN CONDITION DISCHARGED — annotated 2026-09-09, and late.** The corrected
+> trace exists and gives a number. `alice_upkeepcensus` (UnderTheSea, 76,105
+> robot-turns) measured upkeep at **0.761/robot-turn, terrain 48.2% / adjacency
+> 51.8%, 45% of all unit paint**; the iteration 49 probe then split it by map size
+> (**1.154/turn small vs 0.683 large**, mean adjacency 0.70 and 0.52) and by target
+> (**adjacent ally TOWERS are taxed too** — 3.8–17.8% of soldier upkeep; the engine
+> loop excludes only self by ID and has no `isRobotType()` filter, so the RULES.md
+> line saying towers were free was wrong).
+>
+> **Verdict: the tax is real, it is size-dependent per TURN, and it does NOT produce
+> the cross-lineage deficit** — per *lifetime* it is flat-to-inverted (101.3 small vs
+> 150.3 large) because soldier life is 87.8 turns against 220.0, and the two cancel.
+> Related closures: the slide preference fires 4x/game; "break up when crowded" is
+> dead on distribution (mean adjacency 0.362, only 1.3% of turns have 3+ allies);
+> and iteration 50 priced the informed-heading version at a **17% ceiling** against
+> the gap it was aimed at. **Clumping is closed, with numbers.**
+>
+> **This annotation is itself the lesson.** The census that discharged this condition
+> was already on disk when iteration 49 partly re-ran it, because nobody wrote the
+> result back here. A re-open condition that fires must leave a mark on the entry
+> that carried it, or the ledger decays into a record of what I once believed —
+> which is this file's own rule *"supersede in place must ANNOTATE the old entry"*
+> failing on the very entry it was written for.
+
 ## 3b. The real degeneracy: a starvation treadmill
 
 With deaths counted properly, the shape of every game is this:

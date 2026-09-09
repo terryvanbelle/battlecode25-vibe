@@ -18123,3 +18123,50 @@ Three controls stood between the first screenful and this verdict, and each move
 
 Without any one of them I would have reported "+498.6 against a bar of 100, emphatically passes"
 and built the mechanism.
+
+## Annotation debt PAID, and it was real
+
+My iteration-49 entry said *"Annotating both the archive entry and the new index now."* I annotated
+the index and **not** the archive. Checked, found missing, and written back: LEARNINGS section 3 now
+carries its **DISCHARGED** re-open condition, the numbers that discharged it, and the note that the
+census which satisfied it was already on disk when I partly re-ran it. A promise to annotate is not
+an annotation — the same shape as "a lesson you wrote is not a control".
+
+## Iteration 51 — PRE-REGISTERED, written before any number is read
+
+**The control I have never used.** The size cut of the tournament, from this log:
+
+| cut | alice v carol | alice v bob |
+|---|---|---|
+| 19 smallest by area | **41.2% (−28.7, z = −5.48)** | **+0.85 (FLAT)** |
+| 19 largest | 78.9% (+21.8) | −1.33 (flat) |
+
+> **Alice does not have a small-map problem. Alice has a CAROL-on-small-maps problem.** Against bob
+> the size axis is dead flat in both directions. Every entry I have written this session — and the
+> four mechanisms of iterations 44–47 — framed this as "small maps are hard for alice", which the
+> bob column says is false.
+
+That reframing costs nothing and it is already in my data. It also explains why iteration 49's
+self-play probe found nothing: alice-vs-alice is *another* opponent without whatever carol has, so
+of course the effect was absent. The instrument was not merely blind — it was the wrong contrast.
+
+**Question.** Is alice's small-map deficit mediated by its soldier economy at all?
+
+**Design.** Census `alice` vs **bob** at r300 on the same 19 smallest maps, both sides, from run
+`20260909-1300`. Compare **alice's own columns** across the two matchups. Zero games: the replays
+are on disk. Bob is the control — the opponent alice does *not* lose to on small maps.
+
+**Prediction.** Alice's soldier economy is materially worse against carol than against bob on the
+same maps: fewer soldiers alive, fewer paint actions, more starvation deaths.
+
+**Falsifier, named in advance and it points at my own last two iterations.** If alice's soldier
+economy looks **the same** against both opponents on small maps — same starvation, same paint
+actions, same soldier count — then the deficit is **not** mediated by the soldier paint budget, and
+the entire framing of iterations 49 and 50 is the wrong lens. I would then have to look at the
+coverage race directly rather than at what feeds it.
+
+**Secondary, and strictly descriptive.** I will also record what bob and carol *do* differently on
+these maps (unit mix, paint/splash/mop action counts). That is sanctioned observation of an
+opponent's play under MULTI_AGENT.md rule 3. **It is context, not a target**: my splasher-share
+standard requires "a reason the rest of my bot now supports the share, not fresh evidence that the
+siblings still have one", and an opponent census is exactly the evidence that standard excludes.
