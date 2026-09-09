@@ -14620,3 +14620,113 @@ is CLOSED at +1/+3 wins, with the mechanism confirmed active at +3.7 per-mille a
 +5.4 at perfection — against a cliff at -49.
 
 `src/bob/` is reverted to the incumbent. **`bob_iter20` remains the bot; HEAD is unchanged.**
+
+---
+
+## Iteration 38 — PRE-REGISTERED 2026-09-09, before the run exists. Marks are permanent, and bob has never removed one.
+
+**Found by the API sweep, run on the stall trigger.** Iterations 26-37 are an unbroken run of
+rejects and voids, which is TRAINING_ALGORITHM's "loop stalls" condition, and the algorithm says
+sweep the `RobotController` surface for unused methods *before* inventing a new mechanism. The sweep
+lists **24 methods bob has never called**; `removeMark` / `canRemoveMark` are among them, and unlike
+the others they attach to a mechanic bob uses heavily and cleans up never.
+
+### Three engine facts, all bytecode-verified against the pinned 3.1.0 jar
+
+1. `GameWorld.completeTowerPattern(team, type, loc)` is 28 bytes: append to `towerLocations`, set
+   `towersByLoc`, `spawnRobot`, return. `completeResourcePattern` writes `resourcePatternCenters`,
+   `resourcePatternCentersByLoc` and zeroes `resourcePatternLifetimes`. **Neither touches
+   `markersA` / `markersB`.** The only writer of a marker is `GameWorld.setMarker`, reached from
+   `markPattern(...)` and from `RobotControllerImpl.removeMark`. **So every mark bob has ever laid
+   down is still on the board at round 2000.**
+2. `RobotControllerImpl.removeMark` asserts only robot (not tower) type,
+   `assertCanActLocation(loc, r^2 <= 2)`, and that a marker exists — then calls
+   `setMarker(team, loc, 0)` and returns. **No `isActionReady` check, no cooldown, no paint.** It is
+   free, exactly like `upgradeTower`, and bounded only by bytecode and by the 9-tile 3x3 reach.
+3. `MatchMaker.addTimelineMarker` is uncapped (a plain `ArrayList`), but is gated on
+   `showIndicators`. Verified live: the gauntlet replays *do* carry markers, so the SRP counter below
+   is a real instrument and not a silent zero.
+
+### The geometry, and what it costs — priced at ZERO games
+
+`markTowerPattern` blankets the 5x5 around a ruin. `srpSiteSafe()` refuses a candidate SRP centre if
+**any** tile of its own 5x5 carries a mark. A tile lies in both 5x5s iff `Chebyshev(centre, ruin) <= 4`,
+and a valid centre already requires `Chebyshev >= 3` (no ruin in its own 5x5). **So marking one ruin
+permanently kills exactly the centres at Chebyshev 3 or 4 from it** — a ring bob poisons the first
+time a soldier marks that ruin and never cleans up.
+
+That is a pure function of the map file, so new `bob-tools/BobMarks.java` answers it for all 75 maps
+with **no games played**:
+
+```
+total valid SRP centres, before marks = 27342
+total valid SRP centres, after  marks = 11707      -> 57.2% killed
+maps with ZERO sites after marks      = 0 of 75
+```
+
+And from the 150 replays of run `20260909-104412`, which I already had on disk (no new games):
+
+```
+mean SRPs completed per team-game   =  3.67
+mean towers built  per team-game    = 11.62
+team-games completing ZERO SRPs     = 81 of 300 (27.0%)
+```
+
+Each SRP is **+3 paint/turn to EVERY allied paint tower** (RULES.md, engine-verified), and paint is
+this bot's binding constraint while chips are its dead resource. Going 3.67 -> 5.5 SRPs would be
++5.5 paint/turn on each paint tower, ~+26% team paint income.
+
+### The honest prior, stated before the run
+
+**I expect this to be a NULL, and I am running it anyway.** 11,707 centres survive the marks — about
+156 per map — against 3.67 SRPs actually built. If sites were the binding constraint bob would be
+building far more than 3.67 of the 156. The other four gates in the chain (`workRuin == null`; the
+soldier must be *standing on* the centre, since `srpSiteSafe(me)` only ever tests its own tile;
+`chips >= 500`; no enemy paint in the 5x5) are all still there and any of them could dominate.
+
+**The one reason it might not be null**, and the reason it is worth 150 games: soldiers do not stand
+uniformly. `tryRefill()` sends every paint-poor soldier to a tower, and towers stand on ruins — so
+soldiers spend disproportionate time inside exactly the Chebyshev<=4 rings the marks poison. The
+corpus-wide 57.2% is unweighted; the fraction killed *where soldiers actually stand* could be far
+higher. That is a real quantity my map census cannot see and this run can.
+
+### Arms (`bob-tools/make-markclean-arms.sh`, forked from the working-tree `src/bob`)
+
+```
+  bob_mk0   MARKCLEAN 0   unchanged                                   <- NULL
+  bob_mk1   MARKCLEAN 1   clear marks around ruins carrying a tower
+  bob_mk2   MARKCLEAN 2   ... and around finished SRP centres
+```
+
+**`bob_mk0` is an EXACT zero arm by construction**: `cleanStaleMarks()` returns on the constant
+before any sensing call, so control flow and RNG consumption are byte-identical to `bob_iter20`.
+
+**Safety of the mechanism**: a mark is removed only when the pattern it belongs to is already
+*finished* — a tower stands on the ruin, or the tile is within Chebyshev 2 of a resource-pattern
+centre. An in-progress build has neither, so this cannot erase marks another soldier is still
+painting against. And marks are a bot-side annotation: engine tower validity lives in `towersByLoc`,
+so removing them cannot invalidate a standing tower.
+
+### Gates, pre-registered
+
+- **VOID** if `bob_mk0` is not 25/50 with all 25 maps split. This also catches a bytecode-limit
+  regression: `cleanStaleMarks()` adds a call to every soldier turn, and if that pushed a soldier
+  over the limit mid-turn the zero arm would stop being exact.
+- **Accept-eligible** at best non-null arm **>= +10 wins_above_half** vs the null on this sample
+  (`bob-tools/eval_arms.py`, then `gate.py` units); **+7..+9 replicate**; **<= +6 reject**.
+- Then the frozen roster before accepting, quoting the **weakest** rung, never the mean.
+
+**Prediction, committing to a shape.** I expect **`bob_mk1` ~= `bob_mk2`**. Bob builds 11.62 towers
+per team-game against 3.67 SRPs, so finished towers are ~3x the mark source that finished SRPs are,
+and mk2's extra cleanup should be a small increment on mk1. If `bob_mk2` clearly beats `bob_mk1` then
+SRP-centre marks matter more than their 3:1 count disadvantage suggests, and I will say so.
+
+**Secondary, registered now and read only after the primary** — SRP completions per team-game, from
+the timeline-marker census validated today over this run's own replays. **This is the mechanism
+check.** If the win rate moves but SRP completions do not, the win came from something other than SRP
+siting — most likely `paintSomething()`'s mark filter being unblocked near towers — and I will not
+attribute it to the mechanism I am claiming.
+
+**What would falsify the framing**: both cleaning arms at the null *with* SRP completions up. That
+would mean freeing the sites works mechanically and buys nothing, closing "SRP site scarcity" the way
+iteration 37 closed soldier action utilisation — by pricing it rather than by another bare null.

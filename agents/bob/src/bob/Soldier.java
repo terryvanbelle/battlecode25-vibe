@@ -37,11 +37,54 @@ public class Soldier {
      *  threshold good and is not a general 'paint more' policy. */
     static final int RUIN_FLOOR = 0;
 
+    /** ITERATION 38 dose. Clean up PERMANENT pattern marks that can no longer be needed.
+     *  0 = unchanged (EXACT zero arm: returns on the constant before any sensing, so
+     *      control flow and RNG consumption are byte-identical to bob_iter20).
+     *  1 = clear marks around ruins that already carry a finished tower.
+     *  2 = also clear marks around finished resource-pattern centres.
+     *
+     *  ENGINE FACTS, bytecode-verified 2026-09-09 against the pinned 3.1.0 jar:
+     *    * GameWorld.completeTowerPattern() writes towerLocations / towersByLoc and
+     *      calls spawnRobot, and completeResourcePattern() writes
+     *      resourcePatternCenters / lifetimes. NEITHER touches markersA/markersB.
+     *      The only writer of a marker is GameWorld.setMarker, reached from
+     *      markPattern(...) and from RobotControllerImpl.removeMark. So every mark
+     *      bob has ever laid down is STILL THERE at round 2000.
+     *    * RobotControllerImpl.removeMark asserts only: robot (not tower) type,
+     *      assertCanActLocation(loc, r^2<=2), and that a marker exists; then
+     *      setMarker(team, loc, 0). No isActionReady check, no cooldown, no paint.
+     *      It is FREE -- bounded only by bytecode and by the 3x3 reach.
+     *    * removeMark was one of 24 RobotController methods this lineage had NEVER
+     *      called (API sweep, iteration 38, run on the stall trigger).
+     *
+     *  WHY IT SHOULD MATTER. srpSiteSafe() refuses a candidate SRP centre if ANY tile
+     *  of its 5x5 carries a mark, and markTowerPattern blankets the 5x5 around a ruin.
+     *  A tile lies in both 5x5s iff Chebyshev(centre, ruin) <= 4, and a valid centre
+     *  already needs Chebyshev >= 3, so marking one ruin permanently kills every centre
+     *  at Chebyshev 3 or 4 from it. Measured with ZERO games by bob-tools/BobMarks.java
+     *  over all 75 maps: once every ruin is marked, 57.2% of the corpus's geometrically
+     *  valid SRP centres are dead (27,342 -> 11,707). Bob builds 11.62 towers per
+     *  team-game and completes only 3.67 SRPs, with 27% of team-games completing ZERO
+     *  (census over the 150 replays of run 20260909-104412). Each SRP is +3 paint/turn
+     *  to EVERY allied paint tower, and paint is this bot's binding constraint.
+     *
+     *  SAFETY. A mark is only removed when the pattern it belongs to is already
+     *  FINISHED -- a tower stands on the ruin, or the centre is a resource-pattern
+     *  centre. An in-progress build has neither, so this can never erase the marks
+     *  another soldier is still painting against. Marks are a bot-side annotation only:
+     *  the engine's tower validity lives in towersByLoc, not in markers, so removing
+     *  them cannot invalidate a standing tower. */
+    static final int MARKCLEAN = 0;
+
     static MapLocation workRuin = null;
 
     static void run() throws GameActionException {
         RobotController rc = G.rc;
         MapLocation me = rc.getLocation();
+
+        // 0a. Stale-mark cleanup. Free (no action, no cooldown), and placed before every
+        //     early return in this method so it runs on every soldier turn.
+        cleanStaleMarks();
 
         // 0. Refill paint from a nearby allied tower when low.
         if (rc.getPaint() < REFILL_BELOW && tryRefill()) return;
@@ -266,6 +309,64 @@ public class Soldier {
             }
         }
         return true;
+    }
+
+    /**
+     * Remove marks belonging to patterns that are already FINISHED. Marks are permanent
+     * in this engine (see MARKCLEAN), and a finished pattern's marks do nothing but
+     * refuse future SRP sites via srpSiteSafe() and future idle paint via
+     * paintSomething()'s mark filter.
+     *
+     * removeMark reaches only r^2 <= 2 (the 9 tiles of the 3x3 including our own), so a
+     * 5x5 blob is cleared over several soldier-turns as units walk past it. That is
+     * affordable precisely because the call is free: it costs no action and no cooldown,
+     * so a soldier cleans while doing whatever else it was going to do this turn.
+     */
+    static void cleanStaleMarks() throws GameActionException {
+        if (MARKCLEAN == 0) return;
+        RobotController rc = G.rc;
+        MapLocation me = rc.getLocation();
+
+        MapLocation[] ruins = rc.senseNearbyRuins(-1);
+
+        // One scan for finished resource patterns, rather than one per marked tile: a
+        // marked tile in our 3x3 sits at most Chebyshev 3 from us, and its centre at
+        // most Chebyshev 2 beyond that, so r^2 <= 18 covers every centre that could
+        // make one of our reachable marks stale. Soldier vision is r^2 = 20.
+        MapLocation[] centres = null;
+        int nc = 0;
+        if (MARKCLEAN >= 2) {
+            MapInfo[] near = rc.senseNearbyMapInfos(me, 18);
+            centres = new MapLocation[near.length];
+            for (MapInfo c : near) {
+                if (c.isResourcePatternCenter()) centres[nc++] = c.getMapLocation();
+            }
+        }
+
+        for (MapInfo t : rc.senseNearbyMapInfos(me, 2)) {
+            if (t.getMark() == PaintType.EMPTY) continue;
+            MapLocation l = t.getMapLocation();
+            boolean stale = false;
+
+            // A ruin that already carries a tower can never need its pattern marks again.
+            for (MapLocation r : ruins) {
+                if (Math.max(Math.abs(l.x - r.x), Math.abs(l.y - r.y)) <= 2
+                        && rc.canSenseLocation(r) && rc.senseRobotAtLocation(r) != null) {
+                    stale = true;
+                    break;
+                }
+            }
+            if (!stale && MARKCLEAN >= 2) {
+                for (int i = 0; i < nc; i++) {
+                    MapLocation c = centres[i];
+                    if (Math.max(Math.abs(l.x - c.x), Math.abs(l.y - c.y)) <= 2) {
+                        stale = true;
+                        break;
+                    }
+                }
+            }
+            if (stale && rc.canRemoveMark(l)) rc.removeMark(l);
+        }
     }
 
     /**
