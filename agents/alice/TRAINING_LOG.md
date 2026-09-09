@@ -18441,3 +18441,111 @@ explanation — soldier upkeep — is real in size (105% of the gap) but whose c
 now been measured twice and found small (iteration 50: 17% ceiling). The honest state is that I have
 an exact *description* of the deficit and no mechanism that can pay for it, which is a better place
 than four sessions ago when I had neither.
+
+# The loop has STALLED, and I am calling it
+
+Iterations 44–52 are **nine consecutive non-accepts**; the last accept is 43. Every affordable fix
+against the per-tower deficit is now closed, and the surviving explanation (upkeep) is the right
+size but measured twice as largely uncollectable. That is the stall condition, so I am running the
+stall track rather than pricing a tenth mechanism against the same gap.
+
+## Stall track step 1 — the API sweep, re-read against TODAY's model
+
+36 of 68 `RobotController` methods still unused (the bot is unchanged since iteration 43, so the
+*count* carries no news — the exercise is re-reading the list with what I now know). Messaging is
+still the largest unused capability at 52 iterations and still has no payload. `getMapWidth`/
+`getMapHeight` are still unused. But the item that matters is not on the unused list at all:
+
+> **`upgradeTower` IS called — and its priority is decided by TURN ORDER, not by policy.**
+> The gate is `money >= nextLevel.moneyCost + CHIP_RESERVE`, applied by **every tower to itself**,
+> with no reference to tower TYPE. Money is team-wide, so whichever tower's turn comes first while
+> the treasury is above the gate takes the upgrade. That is a **degenerate decision key** — the
+> exact shape of iteration 43, this lineage's last accept.
+
+## What the ledger says about the neighbouring door, and why this is not it
+
+**Tower MIX is closed and stays closed.** Iteration 26 cut money towers to 25% and lost 21 swept,
+with a structural reason: *chips COMPOUND (they buy towers, which produce both currencies) and paint
+is purely consumptive.* I am not touching the mix.
+
+**But that closure's own logic names its exception**, and I am using the closure rather than working
+around it: *"The late-game surplus is the end state of a won compounding race. Once every ruin is
+taken there is nothing left to buy."* **When expansion is over, chips cannot compound, because there
+is no ruin left to convert them into.** At that point a money-tower upgrade buys a currency with no
+remaining sink, and a paint-tower upgrade buys the binding one.
+
+### The untested link, tested for zero games before building on it
+
+| | alice's LAST tower build (median) | expansion finished by r300 |
+|---|---|---|
+| **SMALL 19** | **round 258** | **51%** of games |
+| LARGE 19 | round 824 | 11% |
+
+**The link holds and it is sharply size-conditional.** On small maps alice's expansion is over at
+almost exactly the round the game is decided (258 vs 300), which is also when it is sitting on
+**$2,930 idle chips** with **145 paint per tower — below the 200 a soldier costs.** Chip-rich and
+paint-poor, upgrading whichever tower's turn came first.
+
+### Iteration 53 — PRE-REGISTERED, before any run
+
+**Hypothesis.** Once expansion is finished, chips have no compounding sink, so spending them on
+MONEY-tower upgrades buys the currency alice already hoards while PAINT-tower upgrades buy the one
+it is starving for. Re-keying the upgrade decision from turn order to tower type, **gated on the
+expansion signal the bot already computes**, converts idle chips into paint income.
+
+**Mechanism — one change.** In `runTower`, when `expansionFinished` is true, a **MONEY** tower does
+not upgrade itself. Paint towers are untouched, the mix is untouched, no unit turn is diverted, and
+`CHIP_RESERVE` is untouched. `expansionFinished` is iteration 39's already-accepted signal and is
+explicitly **not a latch** — if expansion resumes, money upgrades resume with it, by construction.
+
+**Control byte-identical by construction.** `UPG_PRIORITY` is a compile-time `static final boolean`
+guarding the whole condition, so at `false` javac eliminates it and `alice_i53ctl` compiles to
+`alice`.
+
+**Gate.** Screen: 25 maps, 50 games, `alice_i53` vs `alice_i53ctl`. Advance bar **net swept >= +4**,
+this log's standing SCREEN bar (not the census bar — that mistake cost iteration 44 a correction).
+
+**Manipulation check as a SHARE, with a denominator the treatment cannot move** (METHODS 9 and 10).
+The natural denominator — paint upgrades performed — is *caused* by the treatment, since suppressed
+money upgrades leave chips that fund paint upgrades. The clean one is
+**money-tower turns on which the old gate would have fired**: count those, and the share suppressed.
+
+**Falsifier, named in advance.** A genuine gain must arrive with **more tower paint** and **more
+paint-tower upgrades**. If the arm wins with tower paint flat, the mechanism is not what produced it
+and the result does not count.
+
+**Priced honestly, and it is small.** Money upgrades before r300 run 0.76/game on small maps, and the
+gate only opens after expansion ends, so the realistic dose before the decision point is a fraction
+of that. Ceiling is **~15–17% of the 395-action gap** — the same band as iteration 50's 17%. **Three
+independent pricings now land in that band, which is itself the finding:** no single available lever
+closes this gap, and I am screening this one because it is cheap, self-calibrating and fixes a
+degenerate key, not because I expect it to close anything.
+
+### Control verified EMPIRICALLY byte-identical, not asserted
+
+My first draft guarded the *condition* (`UPG_PRIORITY && rc.getType()...`), which leaves a live
+`rc.getType()` call in the control — **exactly the iteration 44 mistake**, where I guarded a method
+body but not its call and the log claimed byte-identity it did not have. Restructured to
+`if (UPG_PRIORITY) {...} else {<the original statement>}`, which javac's dead-branch elimination
+removes entirely.
+
+Then I checked it instead of trusting it: compiled all three packages against the pinned jar and
+diffed `javap -c -p` with constant-pool indices normalised (the added `static final` field renumbers
+the whole pool, which made the raw diff look large and meaningless).
+
+> **ctl vs alice: 4 differing lines, all of them the package name inside one synthetic inner-class
+> reference. arm vs alice: 309.** The control is byte-identical modulo the package rename; the arm
+> is a real change.
+
+I also caught that my first verification command was worthless: `diff a c | head -20 && echo
+BYTE-IDENTICAL` reads **`head`'s** exit status, not `diff`'s, so it prints the reassuring word
+unconditionally. A check that cannot fail is not a check.
+
+### Power caveat, registered BEFORE the run so a null is interpretable
+
+The arm only acts once `expansionFinished` is true. That is 51% of small-map games by r300 but only
+11% of large-map games by r300 — **on large maps expansion ends at median r824**, so the gate still
+opens there, just later, with ~400 rounds of a 1239-round median game left to act in. A random
+25-map screen therefore samples a mechanism whose firing time varies hugely by map. **If this comes
+back null I may not conclude the mechanism is inert** — I will owe the manipulation-check share
+before saying anything about why.
