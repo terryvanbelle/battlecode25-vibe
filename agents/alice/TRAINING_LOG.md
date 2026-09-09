@@ -17418,3 +17418,71 @@ that remembers the last pattern-blocking tile it saw and returns to it when noth
 vision. It attacks the measured 87.6% directly. Its price must be costed against `v1` — the 70.1%
 of turns now spent walking to plain enemy paint, which is real coverage work, not idling. That
 costing is the pre-check iteration 44 failed and iteration 47 passed, and it comes before any code.
+
+## The iteration 47 falsifier at n=40 — it explains the null, and it clears METHODS.md §8
+
+`tools/r300-towers.sh` on **40 of the 80** paired `a50`-v-`a0` games, drawn at random in two
+disjoint batches of 20 (seeds 47 and 91).
+
+| | value |
+|---|---|
+| mean arm-minus-control towers at r300 | **+0.90** |
+| sd / se / t | 3.55 / 0.56 / **1.60** |
+| arm wins in the sample | 23/40 = 58% (full pairing: 41/80 = **51%**) |
+
+**The pre-registered falsifier is not satisfied.** I registered that a win must come with *more
+towers at r300*. The arm did not reliably get them: t = 1.60, and the draw over-represents arm
+wins by 7 points, which biases +0.90 **upward** — the true effect is smaller than this. So the
+mechanism failed at its own stated intermediate step, and the flat win rate is exactly what that
+predicts. This is a coherent null, not an unexplained one: *the arm did not move the thing it was
+supposed to move.*
+
+**Method note on my own sampling.** My first batch of 20 came back with 70% arm wins against a
+true 51%, and I doubled the sample rather than report +1.70 off it. The second batch pulled the
+estimate down from +1.70 to +0.90 and the imbalance from 70% to 58% — which is what an unlucky
+first draw looks like when you extend it, and a reminder that an unbiased estimator still gives
+biased-looking draws at n=20.
+
+### METHODS.md §8 — "can your gate see the thing at all", answered with a number
+
+This is the check the coordinator flagged for me, and my falsifier data answers it directly. In
+the same 40 paired screen games, split by whether the arm led on towers at r300:
+
+| arm's r300 tower position | games | arm won |
+|---|---|---|
+| **ahead** | 18 | **15 (83%)** |
+| level | 8 | 5 (62%) |
+| **behind** | 14 | **3 (21%)** |
+
+**My gate can see the property. It is not a flat instrument.** An r300 tower lead is worth 83% vs
+21% — a 62-point swing — inside the very screen I accept and reject on. So the chain closes: the
+gate registers r300 tower advantage strongly, the arm did not produce r300 tower advantage, and
+therefore produced no wins. Had the gate been flat on this property, the whole iteration would have
+carried no information and I would not have known.
+
+**And this independently re-confirms my r300 headline under intervention rather than correlation.**
+The original finding (r = 0.858, the r300 leader wins 16/18) came from *observing* games. This is
+40 games where a code change perturbed the r300 tower balance, and the win followed the balance.
+That is a materially stronger form of the same claim, and it comes free from a rejected iteration.
+
+### Where METHODS.md says I fell short, audited honestly
+
+- **§9 — specify the manipulation check as a SHARE, not a count.** My bite check was "every round
+  count changed on the three bite maps". That is a *count*, and a binary one. The share version was
+  available and I did not compute it: *what fraction of the 6,424 `se` turns did the arm actually
+  eliminate?* Without it I know the branch fired; I do not know whether it fired on 5% or 95% of
+  the opportunity, and a 5% dose would explain the null just as well as a dead mechanism.
+- **§10 — check the share's denominator is not caused by the treatment.** Worse, the natural
+  denominator here is *exactly* the trap §10 describes: `at` (ruin-target turns) is moved by the
+  treatment, since abandoning a ruin changes how many turns have a ruin target at all. A share of
+  `se`/`at` would have compressed toward a constant however hard I turned `AVOID` — which may be
+  precisely why `a250` and `a50` are indistinguishable. The counterfactual denominator has to come
+  from a quantity the treatment does not move; ruins-on-the-map is one such quantity.
+- **§6, my own entry.** My dose comparison `a50` v `a250` ran on the *same* 40-map sample, not a
+  disjoint one. Since neither dose advanced, no replication was owed — but had one won, my own
+  recorded method would have required a disjoint sample before I believed it.
+
+**Adopted from METHODS.md going forward:** §4/§5 (already actioned this session — gates now stated
+in sd from each run's own decisive count, plus the FPC for sampled screens), §8 as a standing
+pre-check with a number, and §9/§10 for the manipulation check, which is the concrete thing I would
+do differently if I rebuilt iteration 47.
