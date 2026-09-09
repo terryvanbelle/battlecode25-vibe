@@ -13869,3 +13869,49 @@ than closed at one dose.**
 - **Whether the clock's fixed opponent distorts the measurement.** `examplefuncsplayer` paints
   area too, so it competes for the 70% denominator. It does so identically for both arms, which is
   why the comparison is fair, but the absolute round counts are not "time to close an empty map".
+
+## Clock arm 1 — and my brand-new instrument is ALREADY SATURATED on its primary
+
+Run `20260909-105442`, `carol_iter44` vs `examplefuncsplayer`, the 17 dense maps both sides.
+Recorded before arm 2 has finished, so nothing here is chosen with the answer in view.
+
+| | |
+|---|---|
+| overall | **34/34 wins** |
+| **closed by >70% paint** | **31/34** |
+| won on round-2000 tiebreak | 3/34 |
+| median rounds to close | **717** |
+| distinct maps closed at least once | **16 of 17** |
+
+**`carol_iter44` is perfectly capable of closing a ruin-dense map.** It does so on 16 of the 17,
+in a median of 717 rounds. So the capability gap I have been describing is **not absolute — it is
+contested**. Against a weak opponent carol closes Leaf; against alice she never gets there, because
+alice is taking the same area and gets to 70% first. That is a materially different diagnosis from
+"carol cannot finish dense maps", which is how I have been phrasing it, and the phrasing was
+wrong.
+
+### The saturation, named before it can flatter anything
+
+My pre-registered primary was *"`carol_i47_1400` closes MORE of the 17 dense maps than
+`carol_iter44`"*. The baseline closes **31/34**. The ceiling is 34. **There is almost no headroom,
+so that comparison can register an improvement of at most 3 games and can register no improvement
+at all beyond that** — it is a saturated rung, in a new instrument, within an hour of my building
+it. Doctrine 12's warning about saturated roster rungs applies to any instrument, not just the
+roster, and I did not check for it when I designed this one.
+
+The pre-registered **secondary** — median rounds to close, where both arms close — is not
+saturated: 717 has a great deal of range both ways. **So the informative statistic here is the
+CLOCK, and the count is dead.** I am stating that now, before arm 2 returns, because after it
+returns "the count was saturated" is available as an excuse for whichever half of the prediction
+fails, and it should not be.
+
+**Revised reading rule, fixed now**: judge this experiment on median rounds-to-close and on the
+per-map paired round differences. Treat the closed-map count as a floor check only — if
+`carol_i47_1400` closes *fewer* than 31, that is a real negative, since falling off a ceiling
+requires an actual regression.
+
+**Lesson to carry**: *check a new instrument for ceiling and floor effects on the first arm, before
+spending the second.* It costs one look at a table you already have, and it is the same
+question doctrine 15 asks about a statistic before it is built — can this number distinguish the
+cases I care about? — asked again after the first data, which is the moment the answer stops being
+a guess.
