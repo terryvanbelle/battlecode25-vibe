@@ -12763,3 +12763,53 @@ and becomes an accept. **I am not taking it.** It estimates the null from the sw
 pair under test, which is contaminated by the very difference being tested. Building the null out
 of the alternative to promote my own feature, on the third revision of a gate I keep finding faults
 in, is exactly the move my LEARNINGS says goes unaudited.
+
+## The same identity re-derives the SAMPLED gate — and it was ~1.0 sd wearing a 2.0 sd label
+
+Written and committed **before** the iteration 45 ladder finished, because it changes the
+threshold that ladder is judged against and would be worthless recorded afterwards.
+
+The engine is deterministic: for a fixed pair, map and side the outcome never varies. So a census
+margin is a *fixed number*, and a 50-game sampled arm randomises exactly one thing — which 25 of
+the 75 maps are in it. That makes the sampling variance computable **exactly** from a census, with
+no modelling assumption: per map the contribution is X = +2 / 0 / −2, and drawing k of N without
+replacement gives `Var = k*Var(X)*(N-k)/(N-1)`. Add the perturbation term `4*k*sweep_rate`.
+
+From the phase twin (`20260908-173918`, policy-identical):
+
+| component | sd on the 50-game margin |
+|---|---|
+| map sampling | 5.45 |
+| perturbation | 6.63 |
+| **total** | **8.59** (sd of the win count 4.29) |
+
+**Corrected sampled gate: ACCEPT >= 34/50, UNRESOLVED 31..33, REJECT <= 30.**
+
+The standing gate was **ACCEPT >= 29/50, REJECT <= 25**. 29/50 is margin +8 = **0.93 sd** — so it
+was a ~1.0 sd gate carrying a 2.0 sd label, the identical failure to the units bug, in a different
+tool. Independent corroboration that this is not an artefact of my derivation: the other session
+measured sd(margin) = **7.48** empirically on a 50-game arm of run `20260908-202103`, by a
+completely different route; that would set ACCEPT >= 33. My 8.59 and its 7.48 bracket the same
+answer, and both are nowhere near +8.
+
+New tool `carol-tools/sampledgate.py` derives it from any census, so the constant is regenerable
+rather than remembered.
+
+### Iteration 45's predictions, restated in the corrected units, still before the data
+
+My pre-registration said `carol_i45_b` would take "<= 25/50, a resolved loss". **That label was
+wrong even on its own gate**: <= 25 is merely "not better". Under the corrected symmetric gate a
+*resolved loss* is **<= 16/50**. Restating the substantive prediction rather than quietly widening
+it — the containment story predicts a large effect (tower count collapsing to 1 by r1400, soldier
+turns halved), so it should clear a resolved threshold, and I will hold it to one:
+
+- **`carol_i45_b` <= 16/50 vs `carol_iter44`** — containment confirmed.
+- 17..30 — b is worse but the probe over-read its size; consistent, unresolved.
+- **b >= 34/50** — containment story refuted outright.
+- `carol_i45_c` (ally-first, stronger containment) scores **below `b`**.
+- `carol_i45_a` (fires only when the straight direction is already blocked) lands in **17..33**,
+  i.e. unresolved in either direction — no containment, too small a trigger to pay.
+
+Note the run's reporting convention, so no future session inverts it: **`BOT=carol_iter44`, so the
+summary reports the BASELINE's wins. Each candidate's score is `50 - reported`.** All three arms
+share one map sample, so the a/b/c ordering is exact within the run.
