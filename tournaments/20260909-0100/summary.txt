@@ -1,0 +1,21 @@
+tournament 20260909-0100 (UTC)  bots=[alice bob carol]  maps=75
+
+standings (total games won):
+  alice    160/300 (53%)
+  bob      139/300 (46%)
+  carol    151/300 (50%)
+
+head-to-head (wins for row bot vs column bot):
+  alice    vs bob       75/150
+  alice    vs carol     85/150
+  bob      vs alice     75/150
+  bob      vs carol     64/150
+  carol    vs alice     65/150
+  carol    vs bob       86/150
+
+swept maps per pair (won from both sides):
+  alice-bob: alice sweeps 23, bob sweeps 23, split 29
+  alice-carol: alice sweeps 34, carol sweeps 24, split 17
+  bob-carol: bob sweeps 23, carol sweeps 34, split 18
+
+replays: battlecode-dev:~/battlecode25-vibe/arena/tournaments/20260909-0100/replays/
