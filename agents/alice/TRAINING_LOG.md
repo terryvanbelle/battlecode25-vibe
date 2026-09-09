@@ -15011,3 +15011,355 @@ left unranked because ranking them now would be the same guessing that produced 
 **Next session's first move should be the second one** — a rising paint reserve during a loss is
 an anomaly in the *binding* resource, and every mechanism that has ever moved this bot moved a
 binding resource. It is also measurable from replays already on disk, before any candidate.
+
+---
+
+# Session 2026-09-09 (resumed) — the tower-turn census
+
+State on resume: five remote runs, all complete, all collated, every verdict already in
+this log (`20260909-094518`, `-092259`, `-081021`, `20260908-211909`, `-204324`). No orphaned
+run, nothing to recover. Working tree carried only untracked diag/candidate builds from
+iterations 39 and 41. Tournament `20260909-0100` has alice first at **53.3%** — but it played
+commit `920dafd`, which is **iteration 30**; the iteration 39 accept has not yet entered a
+tournament, so that standing does not reflect it.
+
+Entry point was the last line of the previous session: *a rising tower-paint reserve during a
+loss is an anomaly in the binding resource, and every mechanism that has ever moved this bot
+moved a binding resource.*
+
+## Engine probe first — four facts, one of which killed my own leading hypothesis for free
+
+All four from `javap` on the pinned `battlecode25-java-3.1.0` via `tools/engine-jar.sh --remote`
+(`javap` lives at `~/jdk21/bin/javap` on battlecode-dev, as the previous session noted).
+
+**1. The legal build set is 12 tiles, not 8.** `assertCanBuildRobot` calls
+`assertCanActLocation(loc, 4)` — a **hardcoded literal 4**, not the tower's
+`actionRadiusSquared` (which is 9). `assertCanActLocation` is
+`distanceSquaredTo(loc) > radiusSquared -> throw`, so the legal set is every tile with
+`d^2 <= 4`: the 8 adjacent (`d^2` 1 or 2) **plus the 4 at axis distance 2** (`d^2 = 4`). My
+spawn loop iterates `directions[]` and tries **8**. Four legal tiles are never attempted.
+
+**2. A tower attack costs no action cooldown.** `attack(loc, bool)` adds cooldown only
+`if (type.isRobotType())`, and a tower is not a robot type. Towers are limited instead by the
+per-turn flags `hasTowerSingleAttacked` / `hasTowerAreaAttacked` — one single and one area
+attack per turn. **This killed my strongest hypothesis at zero game cost**: I had reasoned that
+`runTower` attacks *before* it builds, so a tower under threat would be spending its action on
+the attack and could never build — which would have explained a rising reserve during a loss
+exactly. It is false. Attack-then-build in one turn is legal and my ordering is fine.
+
+**3. Build cooldown cannot bind.** `buildRobot` adds 10; `COOLDOWN_LIMIT = 10` and
+`COOLDOWNS_PER_TURN = 10`, so a tower that builds is action-ready again the next turn.
+
+**4. Money towers have `paintPerTurn = 0`, and `INITIAL_TOWER_PAINT_AMOUNT = 500`.** A money
+tower is born with 500 paint and **never regenerates any**. It can build two soldiers (200
+each) and is then a permanently dead build slot, parked below the 200 it wants forever. Only
+paint towers (5/10/15 per turn by level) generate paint at all. Tower `paintCapacity` is 1000
+for every level, so a tower at 1000 is destroying its income every turn.
+
+Full constants, for the record:
+
+| type | paint | money | cooldown | radSq | cap | paint/turn | money/turn |
+|---|---|---|---|---|---|---|---|
+| SOLDIER | 200 | 250 | 10 | 9 | 200 | 0 | 0 |
+| SPLASHER | 300 | 400 | 50 | 4 | 300 | 0 | 0 |
+| MOPPER | 100 | 300 | 30 | 2 | 100 | 0 | 0 |
+| L1/L2/L3 PAINT TOWER | 0 | 1000/2500/5000 | 10 | 9 | 1000 | 5/10/15 | 0 |
+| L1/L2/L3 MONEY TOWER | 0 | 1000/2500/5000 | 10 | 9 | 1000 | 0 | 20/30/40 |
+| L1/L2/L3 DEFENSE TOWER | 0 | 1000/2500/5000 | 10 | 16 | 1000 | 0 | 0 |
+
+**5. Paint transfer, for a future candidate.** `assertCanTransferPaint`: the caller may not be a
+tower ("Towers cannot transfer paint!"); a **positive** amount (giving) requires the caller be a
+**mopper** ("Only moppers can give paint to allies!"); a negative amount (withdrawing) is
+refused when the target is a robot type ("Paint can only be withdrawn from towers!"). Nothing
+excludes a **mopper giving paint INTO a tower**. `PAINT_TRANSFER_RADIUS_SQUARED = 2`,
+`PAINT_TRANSFER_COOLDOWN = 10`. Recorded, not proposed — see the pricing note at the end.
+
+## The census: `src/alice_spawncensus`, and it closes exactly
+
+Doctrine 4 says close the accounting before reading anything off it, and doctrine 18 says
+instrument the DECISION rather than replay post-state. So: a copy of `src/alice` that classifies
+**every tower turn into exactly one bucket**, read in-bot at the decision point, reported through
+the tower indicator string. `canBuildRobot` is a pure query — no action, no PRNG draw — so play
+is unchanged.
+
+Buckets: `built`, `skipM` (team money < `CHIP_RESERVE`, block never entered), `nrdy` (cooldown),
+`paint` (tower paint < `want.paintCost`), `unitM` (team money < `want.moneyCost`), `RECOV` (all
+8 adjacent blocked but one of the 4 unattempted `d^2 = 4` tiles would have worked), `blk12` (all
+12 blocked). Plus `atcap` (turns spent at full paint capacity, i.e. income destroyed).
+
+**Every bucket set sums exactly to `n` on every tower on all three maps.** The decomposition
+closes, which is what licenses reading anything off it.
+
+Probe games: `alice_spawncensus` vs `alice_iter39` on `BatSignal` (10 ruins, chip-rich),
+`Portal` (22 ruins, chip-rich), `MoneyTower` (10 ruins, chip-poor).
+
+| map | n/tower | built | skipM | nrdy | paint | RECOV | blk12 | atcap |
+|---|---|---|---|---|---|---|---|---|
+| `BatSignal` | ~1414 | 73, 64, 3, 1, 1, 1, 1 | 121–136 | **0** | 1206–1275 | **0** | **0** | **0** |
+| `Portal` | ~1540 | 1 | 47 | **0** | 1484–1494 | **0** | **0** | **0** |
+| `MoneyTower` | ~1015 | 19–28 | **985–1001** | **0** | 0–20 | **0** | **0** | **125** |
+
+### The build-radius finding is real about the engine and worth EXACTLY ZERO in play
+
+`RECOV = 0` and `blk12 = 0` on **every tower of every map**. The four tiles my spawn loop never
+tries would have changed nothing, because the 8 it does try are never all blocked. The mechanism
+I found by reading the engine has no reachable situation to act in.
+
+> **This is the reachability pre-check doing its job on my own best idea.** The finding had
+> everything a good candidate has — a verified engine asymmetry, a plausible mechanism (my own
+> pattern-painting soldiers crowd the spawn ring), and a match to the observed symptom. It cost
+> three probe games to learn it is dead code. Had I skipped the census and gone to a screen it
+> would have cost 150, and the result would have been an uninterpretable null rather than a
+> known-zero. **`RECOV = 0` is a better outcome than a rejected screen: it names the reason.**
+
+Also dead, from the same table: **cooldown never binds** (`nrdy = 0` everywhere), confirming
+engine fact 3 in play, and **build slots are not scarce**, which is the third independent
+confirmation of that (iteration 39a, the previous session's note, and now this).
+
+### What the census actually found: two regimes, each with ONE blocker
+
+- **Chip-rich maps** (`BatSignal`, `Portal`): tower **paint** blocks 85–97% of tower turns.
+- **Chip-poor map** (`MoneyTower`): **`CHIP_RESERVE`** blocks **97%** of tower turns — the spawn
+  block is never even entered — while one tower spends **125 turns at full paint capacity**.
+
+**And the paint bucket is NOT by itself a defect — I checked the benign reading before believing
+the pathological one** (doctrine 15). On `BatSignal` two productive towers built 137 of the 144
+units; at 5–15 paint/turn a tower can only fund a build every 13–40 turns, so being paint-short
+~90% of turns is *exactly what the budget affords*. A high `paint` bucket is the constraint, not
+a bug, and reading it as pathology would have been the whole error.
+
+**`atcap` is different, and it is unambiguous.** A tower at 1000/1000 is destroying 5–15 paint
+per turn. On `MoneyTower` that happens for 125 turns **while `skipM` is 1000** — the tower is
+full of the binding resource, forbidden to spend it by a chip gate, and burning the income. That
+is not a budget constraint; it is a self-imposed one, and it lands on exactly the map class
+where alice is weakest (44.0% on the 25 ruin-sparsest maps against 62.7% elsewhere).
+
+### The tower-mix corollary is NOT re-opened
+
+Engine fact 4 (money towers generate no paint and die after two builds) makes "build paint
+towers instead" look compelling again. That is iteration 34, censused at **net swept −52**, the
+worst result this lineage has recorded, with 44 of the 52 lost sweeps coming from maps where the
+old parity rule already gave a balanced mix. I have no reason the recorded cause no longer
+applies. **The axis stays closed.** Logging the check because the corollary is genuinely
+persuasive on today's evidence alone — this is the third session in a row it has come up, and
+the third time the recorded census has answered it without a game.
+
+## The money histogram — and the closed-directions ledger just earned its keep
+
+The `skipM` bucket on `MoneyTower` is 97% of tower turns, so I asked the reachability question:
+*where* below the gate does the treasury actually sit? Histogram of team money at the decision
+point, on the turns the gate skipped (`MoneyTower`, one row per tower; team money is global, so
+these are **one measurement seen from several towers, not independent samples**):
+
+| tower | skipM | m<250 | 250–999 | 1000–1249 | 1250–1449 | sums to skipM |
+|---|---|---|---|---|---|---|
+| pt=1 | 994 | 7 | 49 | 219 | **719** | 994 ✓ |
+| pt=1 | 985 | 8 | 67 | 191 | **719** | 985 ✓ |
+| pt=0 | 940 | 7 | 66 | 134 | **733** | 940 ✓ |
+
+**72–78% of all skipped tower-turns have money in [1250, 1450)** and only 0.7% below 250. The
+treasury is not starved; it is parked a couple of hundred chips under my gate.
+
+That reads as an overwhelming case. `CHIP_RESERVE = 1450` exists (iteration 2) so a 1000-chip
+tower completion can always fund; a soldier costs 250; so the *derived* gate is `1000 + 250 =
+1250`, the extra 450 is a searched constant protecting nothing, and lowering it to 1250 would
+preserve iteration 2's guarantee **by construction** while unlocking three-quarters of the
+blocked turns. Self-calibrating, engine-derived, one line.
+
+**It is wrong, and the ledger says so in two rows.**
+
+> | Removing or lowering `CHIP_RESERVE` | three independent measurements: iteration 16's flat dose across 1450/1250/1000; iteration 18's dose showing chips buy towers; `alice_flood` at 37.5% with the reserve deleted outright | a change first raises chip *income* |
+> | "The treasury sitting under the gate is why my army is small" | same — the spender fields no more army | — |
+
+The second row is my hypothesis **stated by name and already closed**. And iteration 16 ran the
+dose at *exactly* 1250: 11/24, identical to baseline, with soldier count *falling*.
+
+### Two artefacts that ought to agree and don't — so one of them is misread
+
+If money sits in [1250,1450) on 72% of skipped turns, a gate at 1250 should have unlocked a
+flood of builds. Iteration 16 measured **nothing**. Doctrine 5's tell, so I reconciled it
+instead of picking the reading I preferred:
+
+> **The treasury equilibrates just below whatever the gate is.** Money accumulates until it
+> crosses the threshold, a tower spends 250, it drops back under, and it climbs again. The band
+> [1250, 1450) is **created by** the gate at 1450 — it is the sawtooth's teeth. Move the gate to
+> 1250 and the treasury parks under *that* instead, at the same firing rate.
+
+So "money is just below the gate 72% of the time" does not mean *the gate is barely missing an
+opportunity*. It means **the gate is binding and working exactly as designed**. The identical
+number supports both readings, and the histogram alone cannot separate them — only iteration
+16's direct dose can, and it did, sixteen iterations before I asked.
+
+> **I nearly re-litigated a three-times-closed direction on a statistic that does not mean what
+> it looks like.** This is the wrong-referent error (doctrine 5) wearing its most flattering
+> disguise: a correctly computed number, a closing accounting check, an engine-derived
+> replacement constant, and a mechanism story that fits. What stopped it was not being clever —
+> it was grepping my own closed-directions ledger *before* building, which cost about a minute.
+> **The re-open condition ("a change first raises chip income") is not met and the direction
+> stays closed.**
+
+And the general form, which is the transferable part and now sits in `LEARNINGS.md`:
+
+> **A resource distribution measured *under* a gate is shaped by that gate.** Any histogram of a
+> quantity the bot spends down against a threshold will pile up just below the threshold, on
+> every threshold, whatever the threshold is. Reading that pile-up as "nearly affordable" is
+> reading the control system's set-point as an opportunity. To size the gate you must **move**
+> it, never observe the distribution it produced.
+
+This also retires my own `skipM` reading from the previous entry. A tower skipping on `skipM` is
+**saving up**, and it spends on the next turn it can — the bucket has a benign reading and I had
+to apply the same check I had just applied to the `paint` bucket. Doctrine 15, twice in one
+census, second time on the number I wanted to be a defect.
+
+### What SURVIVES all of that: `atcap`
+
+`atcap` is not a gate artefact and has no benign reading. A tower at **1000/1000** paint is not
+saving up; it is overflowing, and 5–15 paint per turn is being destroyed outright. On
+`MoneyTower` two towers spent **125 and 21 turns** at capacity while `skipM` ran at 97% — full
+of the binding resource, forbidden to spend it, burning the income. `atcap = 0` on both
+chip-rich maps.
+
+Sized honestly: ~146 tower-turns at cap, 5–15 paint each, is roughly **730–2,190 paint = 3–11
+soldiers** against a team total near 130 units on that map — **3–8%**, on **one map**. My own
+lesson from yesterday is that one map cannot size a corpus quantity, so that is a lead requiring
+sizing, not a candidate ready to build. It is also *not* covered by the reserve ledger's re-open
+condition, which is about chips; `atcap` is a claim about paint.
+
+## The real find: `DEAD = 427`, and the splasher gate REPLACES the soldier economy
+
+Reading the same census on `BatSignal` (chip-rich), the two towers that do the work:
+
+| tower | n | built | skipM | paint | DEAD | pt |
+|---|---|---|---|---|---|---|
+| paint tower | 1410 | 73 | 121 | 1216 | **427** | 1 |
+| money tower | 1410 | 3 | 136 | 1271 | 0 | 0 |
+
+`DEAD` counts turns where `want == SPLASHER` **and** the tower held 200–299 paint — enough for a
+soldier, not enough for a splasher — and therefore built **nothing**. That is **427 of 1410
+turns, 30% of the productive tower's entire game**, spent idle while affording a soldier.
+
+On `MoneyTower`, `DEAD = 0`: the chip surplus never opens there, so `want` is never SPLASHER.
+**The two maps split the regime cleanly**, which is what makes the map-level prediction below
+checkable rather than decorative.
+
+### Why this is bigger than an idle tower, and it is my own comment that hid it
+
+The gate is an **unconditional** assignment:
+
+```java
+if (rc.getMoney() >= CHIP_RESERVE + 2500 || (expansionFinished && ...)) {
+    want = UnitType.SPLASHER;
+}
+```
+
+Once team money passes 3,950 it is true on essentially every tower turn forever (`BatSignal`
+median money is **$13,400**). So past that point alice builds splashers and **nothing else** —
+soldier production goes to zero, permanently.
+
+And `markTowerPattern` / `completeTowerPattern` appear **only inside `runSoldier`**. Verified by
+grep, not memory:
+
+> **Only soldiers expand.** So when the chip surplus opens, alice's tower expansion stops
+> permanently — not gradually, and not as a side effect anyone chose.
+
+That is a mechanism for the anomaly the previous session could not explain and named as its
+first open candidate: *"coverage that peaks and then DECLINES, in all four sanctioned replays,
+while the sibling's rises monotonically."* Expansion halts, standing soldiers die of paint
+exhaustion and are never replaced, and painted area decays.
+
+> **My own code comment says the opposite of what the code does.** It reads *"AUGMENT rather
+> than replace ... this can only ADD splasher production relative to the baseline, never remove
+> it."* That was true of what it described — arm C augmenting the *trigger* with a second signal
+> — and it is false of the *composition*, which the same line replaces wholesale. Doctrine 14
+> inside my own source for the second time in two sessions: **the name I gave a branch was not
+> the predicate it computes.** I found it by counting what the branch decided, not by reading
+> the comment I wrote.
+
+## Iteration 42 PRE-REGISTERED — a splasher preference must not idle a tower that can afford a soldier
+
+**Hypothesis.** On maps where the chip surplus opens, the unconditional splasher preference
+idles the towers 30% of the time and drives soldier production — hence tower expansion — to
+zero. Falling back to the unit the tower can actually afford converts idle tower-turns into
+expansion without ever cancelling a splasher build.
+
+**Mechanism, one change.** When the gate has set `want = SPLASHER` and the tower cannot afford
+300 paint but can afford a soldier's 200, build the **soldier** instead of idling. It never
+removes a splasher the tower could have built; it only fills a turn that produced nothing.
+
+**Dose.** `SOLDIER_FALLBACK` as a compile-time `static final boolean`, so at `false` javac
+eliminates every added statement and the control arm is **byte-identical by construction**,
+consuming no extra PRNG draw. This construction returned a perfect null (net swept 0, all 25
+maps split) twice in iteration 41, from two independent implementations, so the floor is
+verified rather than assumed.
+
+**Pre-registered gates, fixed BEFORE the run** — unchanged from iteration 41 so the numbers stay
+comparable: screen on 25 maps, `BOT=alice_iter39` as baseline with arms as opponents (an arm is
+good when the BOT loses), **advance at net swept >= +4**; census on 75 maps / 150 games,
+**accept at net swept >= +12** (2.27 sd on my measured floor `sd_net_swept = 5.29`).
+
+**Pre-registered mechanism falsifier (regime-matched, doctrine 4).** The mechanism is
+byte-identical to the baseline on maps where the chip gate never opens — so the gain **must**
+concentrate on chip-rich maps and be **absent** on chip-poor ones. If a headline gain shows up
+spread evenly across both halves, the effect is not the mechanism I registered and the result
+does not count, however good the total looks. The census on `MoneyTower` (`DEAD = 0`) versus
+`BatSignal` (`DEAD = 427`) establishes that the split is real and measurable in advance.
+
+**Price, written down before building** (a reallocation is priced against what it displaces, not
+against zero). A soldier built at 200 paint delays the splasher that the same paint stream would
+have funded. At a fixed paint budget the trade is roughly **108 soldiers against 73 splashers**
+per tower per game on `BatSignal` — the same paint either way, so this is a *composition* change
+and not a free lunch. What makes it worth testing is that only one of those two units expands.
+
+### Pre-checks: three discharged, two NOT — named explicitly
+
+- **Reachability — DISCHARGED.** `DEAD = 427 / 1410` (30%) on the productive tower. The branch
+  fires constantly; this is not a dormant guard.
+- **History — DISCHARGED.** Iterations 28/29/39 established the splasher preference and are not
+  reverted: no splasher build is cancelled, only idle turns are filled.
+- **Bytecode — DISCHARGED.** Tower peak in the census build is ~550 against the 20,000 tower
+  limit, `OVR`/`near` both 0. The fallback adds a comparison, not a scan.
+- **Trigger frequency across other games — NOT DONE.** Measured on `BatSignal` and `MoneyTower`
+  only. `Portal` is chip-rich and its replay is already on disk with the counter wired, so this
+  is one dump away and I have not spent it.
+- **Generality on a second losing game — NOT DONE.** The mechanism is inferred from a self-play
+  census, not from a traced loss. The four sanctioned tournament replays are where the
+  coverage-decline symptom was seen, and I have not gone back to check the splasher/soldier
+  counts in them against this account.
+
+Recording both gaps by name rather than letting the log imply the work was complete: momentum is
+exactly when a pre-check gets skipped, and both of these are cheap.
+
+### Generality pre-check DISCHARGED — and it comes back with a warning I am recording BEFORE the run
+
+The second un-discharged pre-check was generality on a losing game. Checking it against the four
+sanctioned tournament replays already analysed in this log:
+
+| game | ruins | ended | alice splashers |
+|---|---|---|---|
+| `alice`-vs-`bob`-on-`MoneyTower` | 10 | r1044 | **0** |
+| `alice`-vs-`bob`-on-`starburst` | 8 | r654 | **0** |
+| `carol`-vs-`alice`-on-`BatSignal` | 10 | r582 | **0** |
+| `alice`-vs-`carol`-on-`BunnyGame` | 12 | r400 | **0** |
+
+**Alice built zero splashers in all four.** The chip surplus never opens in a game that ends by
+round 400–1044, so `want` is never SPLASHER, so `DEAD` is 0 and **iteration 42 is byte-identical
+to the baseline in every game I am known to lose.**
+
+Note the same map cuts both ways depending on the opponent: `BatSignal` gives `DEAD = 427` in
+self-play against `alice_iter39` (game runs to r1414) and **zero splashers at all** against a
+sibling (game ends r582). The regime is set by game length, not by the map.
+
+> **So iteration 42 does NOT address the ruin-sparse deficit, and I am saying so in advance.**
+> It acts in the long-game, chip-rich regime; my tournament losses are in the short-game regime.
+> This is doctrine 16 — *check your evaluation covers the regime where you actually lose* — and
+> here it is the inverse of the usual failure: my accept instrument is a 75-map self-play census
+> where games DO run long, so it will measure this mechanism with plenty of power **in a regime
+> that is not deciding my tournament games**. A confident, well-powered something in the wrong
+> place reads exactly like progress.
+
+I am proceeding anyway, deliberately, on these grounds: 30% idle tower-turns is a large and
+uncontested defect wherever it fires; the fix cannot cancel a splasher build; and the accept gate
+measures it honestly. But **a pass here must not be reported as movement on the sparse-map
+deficit**, and the ruin-sparse split stays the open problem it was. Writing that down now removes
+the convenient reading later — the failure mode is doctrine 6, a flagged caveat used as though it
+were discharged.

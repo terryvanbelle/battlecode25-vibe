@@ -2734,3 +2734,61 @@ The explanation (no early splashers) is dead. A future session that remembers on
 are bad, siblings splash early" will rebuild iteration 41 — so the closed-axis entry names the
 re-open condition as *a reason the rest of my bot now supports the share*, not fresh evidence
 that the siblings still have one.
+
+## Theme: a distribution measured UNDER a gate is shaped BY that gate — to size a threshold you must move it
+
+Censusing tower turns on `MoneyTower` I found the spawn gate (`CHIP_RESERVE = 1450`) skipping
+**97%** of them, and asked the reachability question: where below the gate does the treasury
+actually sit? The histogram was emphatic and closed exactly against the bucket total:
+
+| money at the decision point | share of skipped turns |
+|---|---|
+| < 250 | **0.7%** |
+| 250–999 | ~6% |
+| 1000–1249 | ~20% |
+| **1250–1449** | **72–78%** |
+
+Three-quarters of blocked turns sat within 200 chips of the gate. The reserve exists so a
+1000-chip tower completion can always fund, and a soldier costs 250, so the *derived* threshold
+is `1000 + 250 = 1250`; the extra 450 was a searched constant protecting nothing. One line,
+engine-derived, self-calibrating, and it would preserve iteration 2's guarantee by construction.
+
+**Every part of that is true and the conclusion is still wrong.** Iteration 16 ran the dose at
+*exactly* 1250 and measured 11/24 — identical to baseline, with soldier count falling. Two
+artefacts that ought to agree and don't, which is doctrine 5's tell. The reconciliation:
+
+> **The treasury equilibrates just below whatever the gate is.** Money climbs until it crosses
+> the threshold, a tower spends 250, it drops under, it climbs again. The band [1250, 1450) is
+> not an opportunity the gate is narrowly missing — it is **the sawtooth the gate creates**. Move
+> the gate to 1250 and the treasury parks under *that*, at the same firing rate.
+
+So a pile-up just below a threshold means **the gate is binding and working as designed**, which
+is the opposite of what it looks like. The identical number supports both readings and the
+histogram cannot separate them; only *moving* the gate can.
+
+**The general form.** Any quantity a bot spends down against a threshold will pile up just below
+that threshold, at every threshold, whatever its value. Reading the pile-up as "nearly
+affordable" is mistaking a control system's set-point for an opportunity. **Never size a
+threshold from the distribution it produced.**
+
+This is the mirror of the entry at "measure WHICH guard binds before fixing a mechanism that
+never fires" — that one warns about a gate sitting *above* the operating band (dead code); this
+one warns about reading the operating band that a *live* gate carved out. **A reachability
+measurement can fail in both directions, and they look nothing alike.**
+
+### The control, because a lesson is not one (doctrine 19)
+
+What stopped this was not insight. It was grepping my own closed-directions ledger before
+building, which cost under a minute and returned the hypothesis **stated by name**:
+
+> | "The treasury sitting under the gate is why my army is small" | the spender fields no more army | — |
+
+So the check is now a named pre-check, to be discharged in writing in the pre-registration
+alongside reachability, trigger frequency, generality and history:
+
+> **LEDGER pre-check — grep `TRAINING_LOG.md` for the constant, branch or mechanism this change
+> touches, before building.** Not "recall whether it is closed": grep it. Three sessions running,
+> the ledger has answered a persuasive candidate for free — iteration 40 unbuilt, the tower-mix
+> corollary twice, and now this. The entries that pay are the ones carrying a falsifiable
+> **re-open condition** rather than a verdict, because then the check is one grep and a
+> comparison instead of a judgement call.
