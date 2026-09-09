@@ -14931,3 +14931,23 @@ cost 20 games and converted a bare null into a mechanism I can state exactly.
 
 `src/bob/` carries `MARKCLEAN = 0`, the exact zero arm. **`bob_iter20` remains the bot; HEAD's
 behaviour is unchanged.**
+
+**Iteration 40 LAUNCHED as run `20260909-125651`** — `BOT=bob_iter20 OPPONENTS="bob_sa0 bob_sa1 bob_sa2"`,
+25 maps sampled of 75, 150 games, 3 jobs, from clean HEAD `c7bea2a`. The design, gate, secondary and
+prediction were all committed in `d575839` **before** this run existed.
+
+**If this session died before the verdict** — collate, do not re-run:
+
+```bash
+cd agents/bob && ../../tools/gauntlet-collect.sh --list        # confirm complete
+                 ../../tools/gauntlet-collect.sh 20260909-125651
+                 bob-tools/eval_arms.py gauntlet/20260909-125651 bob_sa0 bob_sa1 bob_sa2
+```
+
+Gate exactly as registered: VOID unless `bob_sa0` is 25/50 with all 25 maps split; >= +10
+accept-eligible; +7..+9 replicate; <= +6 reject. The small-map stratum is a SECONDARY only, registered
+underpowered (~8 small maps in a 25-map draw, ~16 games per arm) and must not be used as a gate.
+
+Arms are UNCOMMITTED working-tree dirs (`src/bob_sa0..2`), regenerable with
+`bob-tools/make-smallarea-arms.sh`. `src/bob` carries `SMALL_AREA = 0` and `MARKCLEAN = 0`, both exact
+zero arms, so **HEAD still plays `bob_iter20`'s behaviour.**
