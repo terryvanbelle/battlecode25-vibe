@@ -15541,3 +15541,147 @@ my lineage did not produce, alice's head-to-head against both siblings should im
 not move, that is evidence the census gain is specific to self-play — which is doctrine 17's
 blind spot and exactly the kind of claim only the tournament can test. Either way the standings
 are zero-sum and a delta means *relative to the other two*, never absolute strength.
+
+## A tournament finding that no self-play instrument of mine can see: the four single-parity maps
+
+Prompted by a thought while the `atcap` games ran: on a map where every ruin shares one
+`(x+y)` parity, my tower rule (`((ruin.x + ruin.y) & 1) == 0 ? MONEY : PAINT`) builds **exactly
+one tower type for the whole game**. In *self-play* both arms are crippled identically, so my
+census cannot price it. The tournament can. `tools/mapdata/ruin_parity.txt` names the four:
+
+| map | ruins | even/odd | my rule builds |
+|---|---|---|---|
+| `CastleDefense` | 6 | 0 / 6 | all PAINT towers -> **no chip income** |
+| `Filter` | 5 | 5 / 0 | all MONEY towers -> **no paint income** |
+| `Snowman` | 6 | 6 / 0 | all MONEY towers -> **no paint income** |
+| `gridworld` | 21 | 21 / 0 | all MONEY towers -> **no paint income** |
+
+### First reading, which was WRONG, and the control that killed it
+
+Pooled over four tournaments, deduplicated on the commit pair: **alice 25.0% (14/56) on these
+four against 49.9% (496/994) elsewhere — a 24.9-point gap at z = 4.15.** That looks like a
+decisive alice-specific defect with a ready-made mechanism.
+
+Then the control — *do the siblings suffer too?*
+
+| bot | single-parity | other 71 | gap |
+|---|---|---|---|
+| alice | 25.0% | 49.9% | +24.9 |
+| bob | 48.2% | 67.4% | +19.2 |
+| carol | **73.4%** | 34.9% | **−38.6** |
+
+Bob is hurt too, and carol is *helped* enormously. So it is not "alice is broken here". Breaking
+it down pairwise, each pair against its own baseline so cross-era strength drift cancels in the
+**gap** (the pooled levels are contaminated — bob ran at 95% in the first tournaments and 46% in
+the last, so any pooled level mixes eras):
+
+| pair | single-parity | other 71 | gap | z |
+|---|---|---|---|---|
+| **alice v bob** | 25.0% (6/24) | 27.9% (119/426) | **−2.9** | **−0.32** |
+| alice v carol | 25.0% (8/32) | 66.4% (377/568) | **−41.4** | −5.23 |
+| bob v carol | 28.1% (9/32) | 63.9% (363/568) | **−35.8** | −4.36 |
+
+**Alice and bob are statistically identical to each other on these maps** (z = −0.32, and the
+within-run gaps bounce −7.7, −14.3, +13.2 with no consistent sign). The entire effect is carol,
+and it is consistent in **every single tournament** against **both** of the other lineages.
+
+> **Corrected finding: this is not an alice defect, it is a carol capability that alice and bob
+> both lack.** The pooled z = 4.15 was the wrong-referent error one more time — a number
+> correctly computed against a mix of opponents whose map-class profiles differ. The control cost
+> one script and inverted the conclusion.
+
+And it is the **self-referential blind spot** in its purest observable form: a deficit alice and
+bob share cancels in every instrument either of us owns, and is visible only because a third
+lineage happens not to share it. My gauntlet, my roster and my census all play alice against
+alice; none of them can ever report this.
+
+### Why iterations 34/35 did not settle it, and why that is a legitimate re-open
+
+The tower-mix key was explored: iteration 34 shifted the ratio (**−52** net swept, censused),
+iteration 35a re-keyed to a hash matching parity's ratio (**0**), 35b (**−1**). Logged
+conclusion: *"parity was already good enough, and its only real defect costs nothing."*
+
+**That conclusion is not supported by the evidence that produced it**, and the reason is
+arithmetic rather than a matter of judgement:
+
+> There are **4 degenerate maps in a 75-map corpus.** A census scores net swept over all 75, so
+> even a *total* reversal on those four — sweeping all four instead of losing all four — moves
+> the corpus figure by at most **±8**, against a measured noise floor of **sd 5.29**. A 4-map
+> effect is roughly 1.5 sd at its theoretical maximum. **The census had no power to detect it
+> even if the fix were perfect.**
+
+So "measured 0 on the corpus" never meant "worth nothing"; it meant "below the resolution of the
+instrument used". That is a specific reason the recorded cause no longer applies, which is the
+standard this log sets for re-opening, and it is not the forbidden "feels under-explored".
+
+This is doctrine 4 exactly — *a regime-dependent mechanism needs a regime-matched sample; the
+games where it cannot act are not noise, they are a fixed zero averaged into the estimate.* Here
+71 of 75 maps are that fixed zero.
+
+### Iteration 43 PRE-REGISTERED — de-degenerate the tower key, measured where it can act
+
+**Hypothesis.** On the four single-parity maps alice builds one tower type and forfeits either
+all chip income or all paint income. A tower-type rule that cannot degenerate produces a mix on
+those maps and closes part of the 36–41 point gap carol enjoys over both alice and bob.
+
+**Mechanism, one change.** Replace the parity key with one that cannot be constant across a map's
+ruins — the previously-built `alice_i35a` hash key is the obvious candidate and already exists,
+which also makes this cheap. One change, and it is a *key* change at a fixed ratio, explicitly
+NOT the iteration-34 ratio change that lost 52.
+
+**Two-part pre-registered gate**, because a single corpus number provably cannot resolve this:
+
+1. **Regime-matched arm (the mechanism test).** The 4 single-parity maps, both sides, against
+   `alice_iter39`: `MAPS="CastleDefense Filter Snowman gridworld"`. Pre-registered prediction:
+   the arm wins **at least 6 of 8**. This is a *mechanism* test on ground the mechanism acts on,
+   which doctrine 4 sanctions; it is not a standing map list and never becomes the accept gate.
+2. **Cost bound (the regression test).** Full 75-map census. Pre-registered requirement: net
+   swept **>= −2**, i.e. the change must not pay for its four maps out of the other 71. It does
+   NOT need to be positive — the corpus cannot see the gain by the arithmetic above, so demanding
+   a corpus win would be demanding the instrument report something it cannot.
+
+**Map-level prediction that makes the sample check itself** (doctrine 4): the effect must be
+concentrated on the four, and ~0 on the other 71. If gains appear spread across the corpus, the
+mechanism is not what I registered and the result does not count.
+
+**Pre-checks NOT yet done, named explicitly:** (a) I have not verified in a replay that alice
+actually builds only one tower type on `gridworld` — the parity table implies it, but implication
+is not measurement and this is exactly the "read what the code computes" trap that has caught me
+twice today; (b) I have not checked whether the four maps share some *other* property that
+explains carol's edge, and with only four maps a confound is very hard to exclude — this is the
+weakest joint in the argument and I am recording it as such rather than arguing past it.
+
+### `atcap` sized — both predictions confirmed, and the lead RESOLVES INTO iteration 43
+
+Registered predictions were `CastleDefense` LARGE and `Snowman` zero. Both hold, and the two
+typical maps decide the question:
+
+| map | class | atcap per tower | verdict |
+|---|---|---|---|
+| `CastleDefense` | degenerate (all PAINT towers, no chip income) | **507/1894 = 27%**, 60, 0 | large, as predicted |
+| `Snowman` | degenerate (all MONEY towers, no paint income) | **0** everywhere, `paint` bucket 288/293 = 98%, `built` = 1 | zero, as predicted |
+| `MoneyTower` | chip-poor | 125/1013 = 12%, 21 | moderate |
+| `starburst` | **typical sparse** | 54/1643 = **3.3%**, 16/1667 = 1.0%, 0 | negligible |
+| `DefaultSmall` | **typical sparse** | **0** on every tower | none |
+| `BatSignal`, `Portal` | chip-rich | **0** | none |
+
+My pre-registered decision rule was *"`atcap` is only a candidate if it is material on the two
+typical maps."* On `starburst` it is 1–3% and on `DefaultSmall` it is **0**. **So `atcap` is dead as a standalone candidate** — it
+is not a corpus quantity, and sizing it on `MoneyTower` alone yesterday would have produced
+exactly the one-map overreach I logged a lesson about.
+
+`Snowman` is also a clean independent confirmation of engine fact 4 from the opposite extreme:
+all money towers, zero paint income, so every tower spends its birth 500 and then sits paint-short
+for 98% of the game having built **one** unit. That is what "no paint income" looks like in play.
+
+> **But `atcap` does not vanish — it relocates.** It is concentrated on precisely the maps where
+> my parity key degenerates: 27% on `CastleDefense`, ~0 on every non-degenerate map measured. It
+> is not a separate mechanism at all, it is a **symptom of the same single-parity defect**
+> iteration 43 targets — on `CastleDefense` my rule builds only paint towers, chip income is
+> ~zero, so the towers fill to the 1000 cap and destroy their income for want of money to spend
+> it with. One fix, and the accounting for both observations closes on the same cause.
+
+That consolidation is the session's last result, and it means the four census probes bought
+two things rather than one: they killed `atcap` as an independent lead **and** supplied the
+mechanism-level evidence that the parity degeneracy is materially damaging in play, not merely
+implied by a table of ruin coordinates.
