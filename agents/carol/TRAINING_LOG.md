@@ -13915,3 +13915,43 @@ spending the second.* It costs one look at a table you already have, and it is t
 question doctrine 15 asks about a statistic before it is built — can this number distinguish the
 cases I care about? — asked again after the first data, which is the moment the answer stops being
 a guess.
+
+## MY MISTAKE: I launched clock arm 2 TWICE, and it is the failure this project has already documented
+
+`../../tools/gauntlet-collect.sh --list` shows **two** in-flight runs of the same configuration:
+
+```
+20260909-110031      22 games  INCOMPLETE     <- launched by the chained background task
+20260909-110144       6 games  INCOMPLETE     <- launched by me, by hand, 73 seconds later
+```
+
+Both are `BOT=carol_i47_1400 OPPONENTS=examplefuncsplayer` on the same 17 pinned dense maps. That is
+**68 games of shared VM time to obtain 34 games of information**, on a machine that also serves a
+live BC26 project and my two siblings.
+
+**How it happened, precisely.** I chained arm 2 behind a background waiter that polled the run log
+for the string `complete (`. The log never showed it — the detached runner had finished but the
+line had not flushed to the file I was tailing. I checked the *workspace-scoped* list instead, saw
+arm 1 complete and arm 2 "not started", concluded the chain had not fired, and launched it myself.
+The chain then fired anyway. **My evidence that the chain had not run was the same stale log the
+chain was waiting on**, so the check and the thing being checked shared a failure mode.
+
+TRAINING_ALGORITHM records the coordinator making a duplicate-launch mistake "immediately after
+documenting it, twice", as its example of why a written lesson is not a control. I have now
+supplied a third instance, and I had *read that passage this morning*.
+
+**The control, since a note demonstrably is not one.** The launch check must not read the same
+artefact the launcher writes. `gauntlet-collect.sh --list` already reports every run in the
+workspace with its state, independently of any log file — so the rule is: **before launching, list
+the workspace's runs and confirm no run of this configuration is already in flight**, and never
+infer "it did not start" from the absence of a line in a log. Concretely, my own resume-point note
+above said "check whether it actually launched" and I checked the wrong thing.
+
+**What I am NOT doing**: killing either run. The shared-VM rule is absolute and admits no
+exception for my own waste. They will both finish.
+
+**The one consolation, and it is real.** The engine is deterministic and the two runs are
+byte-identical configurations, so the duplicate is a **free determinism control** of exactly the
+kind doctrine 16 says to take when it appears: the two runs must agree game-for-game, including
+round counts. If they do not, something in the harness is nondeterministic and that is a far more
+important finding than this experiment. I will diff them rather than discard one.
