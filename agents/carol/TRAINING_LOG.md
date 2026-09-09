@@ -18373,3 +18373,40 @@ session to re-litigate. **Re-open condition for the closure**: only a candidate 
 threshold **per-unit-type** (`attackCost` per unit, rather than one shared constant) may re-open it,
 since a soldier's attack costs 5 and a mopper's 0 — for them 50 is over-conservative, and that is a
 different mechanism rather than another dose of this one.
+
+## Iteration 61 stage 0 — the ordered mechanism prediction is CONFIRMED across four doses
+
+Three Leaf games, one per arm, all against the **same opponent (`carol_iter44`) on the same map**,
+so the cross-dose comparison is controlled. The dose-50 row is `carol_i60_50` measured earlier on
+that identical pairing, so all four points are directly comparable. `noPaint` = ready to act but
+below the 50-paint splash cost; ready turns = SPLASH + noTgt + lowScore + noPaint.
+
+| dose (`REFILL_LOW`) | inert window | ready turns | `noPaint` | **share** |
+|---|---|---|---|---|
+| 10 | [10,50) — 40 wide | 871 | 427 | **49.0%** |
+| 25 | [25,50) — 25 wide | 1,027 | 433 | **42.2%** |
+| 40 | [40,50) — 10 wide | 914 | 16 | **1.8%** |
+| **50 (incumbent)** | **empty** | 769 | **0** | **0.0%** |
+
+**Monotone decreasing in dose, and zero only at 50 — exactly as pre-registered.** This is a
+four-point ordering predicted in advance from a single engine constant, which is not a shape that
+falls out by accident.
+
+**So `REFILL_LOW = 50` is `UnitType.SPLASHER.attackCost`, and the screen's optimum landing on it was
+not a coincidence.** The threshold that works is the one below which a splasher cannot splash. A
+value that looked tuned now has a mechanism under it.
+
+**The sharpest number here is dose 10's 49.0%, which is WORSE than the pre-D3 incumbent's 41.2%.**
+A badly-dosed D3 is worse than no D3 at all on the statistic D3 exists to move: latching late lets
+a splasher wander far from any tower before it turns round, so it spends longer stranded than one
+that never tried to go home. That is a real caution about the mechanism, not a point in its favour,
+and it belongs on the record next to the accept.
+
+**Correction to my own printed table, made immediately rather than left standing:** the console line
+I generated quoted 757 ready turns for the dose-50 row. 757 is `carol_i60_100`'s figure;
+`carol_i60_50`'s is **769**. The share is 0.0% either way so nothing downstream moves, but it was
+the wrong referent attached to the right conclusion, which is the error class this log has already
+paid for twice.
+
+**Screen launched**: run `20260909-233258`, `BOT=carol_iter45`, three arms, fresh 25-map sample,
+150 games, decision rule unchanged from the pre-registration.
