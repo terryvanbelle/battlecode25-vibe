@@ -2507,3 +2507,77 @@ survives the numbers moving:
 one resting primarily on a *count* (2.6 towers versus 4.6) rather than on a mechanism I can point at in
 the source. Writing down which of my own conclusions is weakest, while I still believe all of them, is
 the part that will not be available later.
+
+---
+
+## 61. Date-check the resume context's git snapshot before believing it (2026-09-09)
+
+My resume prompt carried a "Recent commits" block listing `3f89699` and `2f72258` as recent and
+showing `src/bob/Soldier.java` modified. Neither was true of HEAD: the snapshot was **three days
+stale** (2026-09-06) and the tracked tree was clean. `git log --oneline -8 -- agents/bob` disagreed
+with it, which is what made me look.
+
+I spent real time deciding whether work had been lost off the branch. The check that settled it in
+one command was `git merge-base --is-ancestor <c> HEAD` plus `git log --format='%h %ad'` — reachable
+and old, so nothing was lost and the snapshot was simply not live.
+
+**The genuinely useful part**: the stale snapshot named `src/bob_denier`, an instrument committed
+09-06 that my *own* 09-09 state-of-play failed to list. So the stale block was more current about my
+instrument inventory than my own handover note was. **Re-derive state from `git log` and the
+filesystem; treat the prompt's snapshot as a hint, and date it before using it either way.**
+
+## 62. Pooling across tournaments is invalid here, and it fails fast and loud (2026-09-09)
+
+My first analysis of `tournaments/*/results.csv` pooled all six runs and reported **81% vs alice**
+against a report saying **50.0%**. The pooling was invalid because bob went
+**287/300 → 277 → 211 → 145 → 139** across the six runs as the siblings improved: the early runs, when
+alice and carol were weak, dominate the pooled average.
+
+This is LEARNING 54 (pooled referents) reproducing itself on a **new dataset**, ten minutes into a new
+session, by an agent who had written LEARNING 54. Knowing the rule did not prevent the error; the
+**disagreement with a number I could check** caught it. So the transferable habit is not "remember not
+to pool" — it is **always compute something the existing report already states, and reconcile**. Every
+tournament report prints its head-to-head; any per-tournament analysis that cannot reproduce it is
+wrong before it is interesting.
+
+## 63. Run the discriminating case even when the source reads like a confession (2026-09-09)
+
+Reading `paintSomething()` I found `t.getMark() == PaintType.EMPTY` in the target filter — the soldier
+refuses to paint any marked tile, and bob marks its own ruin and SRP patterns. That is a *visible*
+defect that explains idle turns, and it is the fix I would have shipped.
+
+The probe says the mark filter accounts for **1 of 83 idle turns (1%)**, and 68% are "an empty tile is
+in VISION but outside action range" — a **movement** fault with an entirely different fix.
+
+Two related instances the same day. I hypothesised that `Tower.run`'s chips-only affordability guard
+permanently deadlocks the spawn cycle on the 300-paint splasher slot (the engine confirms paint is
+checked before money, and `spawned` is not incremented on failure). The round-300 census refutes the
+permanent form outright: **5-6 splashers by r300, zero in only 3-4 games of 275.** The defect is real
+and the *consequence* I inferred from it was wrong.
+
+**A defect you can point at in the source is evidence that a fault EXISTS, never evidence that it is
+THE fault.** Both times the source-reading explanation was real, specific, engine-confirmed — and not
+what was costing the games. The cheap discriminator (a counter that splits the candidates, a census at
+a later round) cost minutes and changed the candidate both times.
+
+## 64. Measure the quantity that decides the regime, not a proxy opponent for it (2026-09-09)
+
+The standing plan was to build a synthetic archetype that ends games fast, so short-game candidates
+could be evaluated in the regime they target. I did not build it, for a reason worth keeping:
+
+- game length varies **more within a map (sd 438) than across maps (sd 348)**, and the 43 short games
+  spread over **26 maps**, so "short game" is barely a map property to encode;
+- an archetype built to end games fast encodes **my guess about the opponent's mechanism** into the
+  yardstick, and my two previous archetypes both failed to produce short games at all (medians 760,
+  949);
+- and it would be one more opponent my own lineage produced.
+
+**Instead: find a quantity that is defined in EVERY game and decides the regime.** Coverage per-mille
+at round 30 is measurable in a 108-round game and a 2000-round game alike. Validated n=300: below
+−49 differential bob wins **6%** (50 games), above it 42-70%. That converts a rare binary outcome into
+a continuous measurement on every game in the corpus — the power problem and the coverage problem at
+once, with no new opponent and no guess about anyone's strategy.
+
+**The shape mattered more than the correlation.** It is a *cliff*, not a gradient (corr is only
++0.357), so it defines a **failure condition to avoid** rather than a quantity to maximise. A gradient
+would have invited tuning toward it, which is overfitting to an intermediate metric.
