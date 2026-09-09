@@ -9,8 +9,34 @@ public class Tower {
     /** Iteration 20 dose (bitmask over spawned%5). 0b00100 = exact zero arm. */
     static final int SPLASHER_SLOTS = 0b01100;
 
+    /** ITERATION 40 dose. Relax the round-60 splasher gate on maps whose area is below
+     *  this, in tiles. 0 = never relax = EXACT zero arm (mapW*mapH < 0 is always false,
+     *  and the test consumes no RNG and no sensing, so control flow is unchanged).
+     *
+     *  WHY MAP AREA, and why this is not iteration 34 again. Iteration 34 removed this
+     *  gate UNCONDITIONALLY and scored -7, with the harm localised in games over 1,000
+     *  rounds. LEARNING 68/69 identify long games as LARGE maps -- bob's *winning*
+     *  regime -- so iteration 34 measured the mechanism only where bob was already ahead
+     *  and never separated the regime where bob is being run over:
+     *
+     *    bob vs carol, tournament 20260909-0100, by map-area tercile
+     *      small   12.0% win   r30 coverage differential  -65.1   bob 0.00 splashers
+     *      medium  52.0% win                              -24.9   bob 0.00 splashers
+     *      large   64.0% win                              -12.5   bob 0.00 splashers
+     *    carol fields ~2.1 splashers at round 30 on EVERY map size.
+     *
+     *  The r30 differential is monotone in area and crosses the -49 cliff (LEARNING 64,
+     *  below which bob wins 6%) exactly in the small tercile. Coverage is per-mille OF
+     *  MAP AREA, so a splasher's area-painting converts into a far larger per-mille lead
+     *  on a small board -- which is why the same unit mix costs bob 50 points there and
+     *  nothing at all on large maps.
+     *
+     *  Corpus area distribution (bob-tools/srp-sites.csv): min 400, p33 1050,
+     *  median 1500, p67 2025, max 3600. So 1000 selects ~22 of 75 maps and 1500 ~35. */
     /** Chips kept in hand after a self-upgrade (expansion is 1000/tower). */
     static final int UPGRADE_RESERVE = 4000;
+
+    static final int SMALL_AREA = 0;
 
     static void run() throws GameActionException {
         RobotController rc = G.rc;
@@ -69,8 +95,10 @@ public class Tower {
          *  ~95% of soldier deaths are starvation, so this is paint spent re-buying
          *  units that cannot change the score. */
         int slot = spawned % 5;
+        // Iteration 40: the round-60 hold on splashers, lifted on small maps only.
+        boolean splasherOk = rc.getRoundNum() > 60 || (G.mapW * G.mapH < SMALL_AREA);
         UnitType want = (slot == 4) ? UnitType.MOPPER
-                       : (((SPLASHER_SLOTS >> slot) & 1) != 0 && rc.getRoundNum() > 60)
+                       : (((SPLASHER_SLOTS >> slot) & 1) != 0 && splasherOk)
                          ? UnitType.SPLASHER
                        : UnitType.SOLDIER;
         if (chips >= want.moneyCost + reserve) {
