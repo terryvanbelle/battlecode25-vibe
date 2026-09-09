@@ -197,12 +197,37 @@ def main():
         common = [b for b in bots if involved[b] == len(moved) and
                   all(b not in (x, y) for x, y, *_ in flat)]
         if common:
-            print(f"READ: every pair that moved involves {common[0]}, and "
-                  f"{flat[0][0]}–{flat[0][1]} is flat.")
+            c = common[0]
+            fx, fy, _, fz = flat[0]
+            # WHICH WAY the moved pairs go decides the whole conclusion, and it
+            # is not implied by the pattern of movement. An earlier version of
+            # this tool printed the "the other two lack it" reading
+            # unconditionally, selecting the branch purely from which pairs
+            # moved -- so on a subset where the common lineage LOSES it told
+            # that lineage its rivals were the deficient ones, and it read
+            # correctly on the mirror subset, which is what made it dangerous.
+            # A lineage caught it by running both subsets. Orient every moved
+            # pair's delta toward the common lineage and let the sign speak.
+            dcs = [d if x == c else -d for x, y, d, _ in moved]
+            dc = sum(dcs) / len(dcs)
+            print(f"READ: every pair that moved involves {c}, and {fx}–{fy} is flat.")
             print("      Two builds carrying the same deficit cancel (doctrine 17), so the")
-            print("      flat pair is the CONTROL: this is a capability the other two lack,")
-            print("      not a defect private to either of them. Derive it from the maps and")
-            print("      the engine -- isolation means you cannot look at who has it.")
+            print("      flat pair is the CONTROL for whatever this subset is measuring.")
+            if dc > 0:
+                print(f"      {c} GAINS on the subset ({dc:+.1f} pts averaged over both moved")
+                print(f"      pairs), so the reading is: {fx} and {fy} both lack a capability")
+                print(f"      {c} has. It is shared, so no self-play instrument of either can")
+                print("      see it.")
+            else:
+                print(f"      {c} LOSES on the subset ({dc:+.1f} pts averaged over both moved")
+                print(f"      pairs), so the reading is: {c} lacks a capability {fx} and {fy}")
+                print(f"      both have -- a defect private to {c}, and one its own gauntlet")
+                print(f"      cannot see either, since every arm in it is {c}.")
+            print("      Derive the capability from the maps and the engine: isolation means")
+            print("      you cannot look at who has it.")
+            if fz is not None and abs(fz) >= 1.5:
+                print(f"      !! the flat pair is only marginally flat (z={fz:+.2f}). Treat the")
+                print("         control as weak and say so rather than leaning on it.")
     elif moved:
         print("READ: no flat pair, so nothing here separates a shared deficit from a")
         print("      private one. Widen the pool or cut the subset differently.")
