@@ -15478,3 +15478,91 @@ to alice" and I could not have got it from my own pool, where every opponent sha
 behind, so this locates *when* my advantage evaporates, not *what* evaporates. Naming the mechanism
 is the next iteration's job, and it must start with a measurement in the r500-800 window (unit
 counts, paint, territory share against a tournament opponent), not with a guess.
+
+## Iteration 52 — my own two floors combined into an OFF SWITCH for moppers
+
+Following the r500 finding to a mechanism, in the sanctioned channel and by measurement rather
+than by proposing something. I pulled two `20260909-1300` alice–carol replays and dumped per-round
+aggregates.
+
+### What the replay shows: we do not stall, we BLEED
+
+`alice-vs-carol-on-Circuit` (I lost, r1661). Coverage — the win condition on 86% of tournament
+games — by round:
+
+| round | 300 | 500 | 700 | 900 | 1100 | 1400 | 1600 |
+|---|---|---|---|---|---|---|---|
+| carol | **391** | 476 | **520** | 454 | 450 | 380 | **348** |
+| alice | 385 | 488 | 463 | 528 | 534 | 604 | **636** |
+
+I am **ahead at r300 and r700**, and from r700 my coverage falls monotonically — 520 to 348 — while
+alice's climbs to 636. That is the r500 front-loading finding seen from the inside: the advantage is
+real, and then it is given back. **We do not merely stop gaining ground; we lose ground we hold.**
+
+### The cause, and it is mine
+
+Total units built across the two games:
+
+| | soldiers | moppers | splashers | **mopper share** |
+|---|---|---|---|---|
+| carol, Circuit | 162 | **1** | 74 | **0.4%** |
+| carol, boxofchocolates | 26 | **0** | 115 | **0.0%** |
+| alice, Circuit | 137 | 42 | 111 | 14.5% |
+
+`MOPPER_IN_20 = 2` intends **10%**. The realized share is **zero** — not thinned, zero, for whole
+games. Three gates must all pass for a mopper and each is often false:
+
+| gate | requires | added by |
+|---|---|---|
+| base afford | `chips >= CHIP_RESERVE + 300` = 1500 | — |
+| `SPLASH_FLOOR` | `chips - 300 >= 2000`, i.e. **chips >= 2300** | iteration 30 |
+| `PAINT_FLOOR` | `paint - 100 >= 200`, i.e. **paint >= 300** | iteration 36 |
+
+The measured treasury oscillates roughly [440, 4240] and tower paint sits at 160–400 for long
+stretches. Three gates in conjunction, times a 10% roll, rounds to never.
+
+**This is the exact fault iteration 30 named and iteration 35 quoted approvingly** — *"a gate above
+where the treasury actually sits is not a policy, it is an off switch"* — and I committed it myself,
+with two separately-reasonable fixes that were never priced against each other. Neither floor is
+wrong alone. Iteration 36 was right that moppers at a measured 60–75% share were crowding soldiers
+out. It corrected that by absolute veto, which moved the variable **from one extreme to the other:
+this bot has played at ~70% moppers and at 0%, and never anywhere in between.**
+
+### Why moppers specifically, mechanically
+
+A soldier **cannot** overwrite enemy paint (RULES.md, iteration 29 — the engine paints only EMPTY or
+own-team tiles), and a mopper is the only unit that **removes** it. At zero moppers every tile the
+enemy paints is permanently lost to us, so our coverage becomes a ratchet that only turns down once
+the enemy starts contesting. The Circuit curve is that ratchet.
+
+### The mechanism: a drought waiver, not a dose on the floors
+
+Both floors keep their veto. A tower counts the mopper rolls they refuse, and every
+`MOP_DROUGHT`-th refusal is waived. This restores a bounded trickle without reverting iteration 36's
+protection of the soldier. **Base affordability and the engine's `canBuildRobot` still apply**, so a
+waiver can never build something the tower cannot pay for — `floored` is set only by the two floors.
+
+- `carol_i52_0` — `MOP_DROUGHT = Integer.MAX_VALUE`, waiver off, the control.
+- `carol_i52_a` — `MOP_DROUGHT = 3`.
+
+Counters `mV` (rolls refused) and `mW` (waivers granted) go in the indicator string, so the
+manipulation check is a measurement. **And per my own doctrine: a manipulation check proves the
+mechanism FIRED, never that firing it HELPED.** `mW > 0` is necessary, not sufficient, and is not
+the accept gate.
+
+### Pre-registered, before any result
+
+- **Zero-arm control**: `carol_i52_0` vs `carol_iter44` must reproduce `carol` vs `carol_iter44` on
+  DefaultMedium — same winner, same round count. *Note the replay HASH cannot be used here*, unlike
+  previous zero arms: the indicator string gained `mV`/`mW`, and indicator strings are recorded in
+  the replay, so the bytes must differ even when the game does not. Winner + round count + shared
+  counters + peak bytecode is the check.
+- **Stage 0 manipulation check**: `carol_i52_a` shows `mW > 0` and a realized mopper share
+  materially above 0.4%.
+- **Stage 1**: 50 games vs `carol_iter44`, **fresh** 25-map sample (per the correction logged at
+  iteration 51 — accept screens do not reuse a pinned list).
+  **ACCEPT >= 34/50, REJECT <= 30/50, 31-33 inconclusive.**
+- **Prediction**: genuinely uncertain, and I want that on the record rather than a confident guess.
+  The coverage-ratchet argument is strong, but iteration 36 measured a real cost to moppers and was
+  accepted on it, so a waiver that is too generous re-creates that cost. A null here would say the
+  10% target itself was never worth hitting.
