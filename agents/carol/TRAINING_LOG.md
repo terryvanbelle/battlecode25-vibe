@@ -13746,3 +13746,79 @@ qualify — it reached ~701 tiles on Leaf, nowhere near 2,400 — so promoting i
 `roster_extra.txt`, which I was about to do an hour ago, would have installed an instrument that
 does not reproduce the threat. Scoring the rung before promoting it caught that, exactly as
 doctrine 12 says it should.
+
+## Dense-census RESULT — margin exactly 0, direction CLOSED as pre-registered. And the split is the finding.
+
+Run `20260909-104327`, `BOT=carol_iter44`, `carol_i47_1400`, **census of all 17 maps with >= 24
+claimable ruins**, both sides, 34 games.
+
+| | |
+|---|---|
+| baseline 17 / **candidate 17** | margin **+0** |
+| swept W / swept L / split | 7 / 7 / 3 |
+
+Pre-registered: `>= +11` confirms regime-dependence, **`-5 .. +5` CLOSES the direction**. Margin is
+0. **The direction is CLOSED on its own pre-registered terms**, and iteration 47 remains rejected.
+Even on a census of the exact 17 maps where carol loses worst, a fixed `SPLASH_FLOOR` dose is worth
+nothing against another carol.
+
+### The pre-registered round-limit check, which I committed to reporting whatever the margin
+
+| | share |
+|---|---|
+| this census, r >= 2000 | **47.1%** (16/34) |
+| tournament, dense maps | **22.1%** |
+
+So the census over-weights the tiebreak regime by more than 2x, as I predicted this morning it
+might. Splitting the 34 games by regime:
+
+| how the game ended | candidate won | baseline won |
+|---|---|---|
+| **decided** (someone painted >70%) | **13** | 5 |
+| **round-2000 tiebreak** | 4 | **12** |
+
+**They cancel to exactly zero.** The tower-scaling build **wins the races 13-5 and loses the grinds
+4-12**, and the aggregate margin of 0 is the sum of two large opposite effects, not the absence of
+an effect. An aggregate gate cannot see a trade — which is an entry already in my own LEARNINGS,
+recurring here.
+
+### Why this does NOT reopen the accept, and what it legitimately supports
+
+**The regime split is post-hoc and partly conditions on an outcome.** Whether a game is "decided"
+is determined by whether someone reached 70% — and the candidate is the build that reaches 70%. So
+"the candidate wins the decided games" is *partly definitional*: a build that ends games wins the
+games it ends. Conditioning on a post-treatment outcome is the same error family as doctrine 18,
+and it would be exactly the back-filled mechanism story doctrine 3b forbids. **The pre-registered
+verdict stands: margin 0, direction closed.** I am not accepting anything on this table.
+
+What survives the objection are two facts that are not definitional:
+
+1. **Of 18 games that anyone finished, the candidate finished 13 and the incumbent 5.** Either arm
+   could have been the finisher; that ratio is a real difference in the capability to close a
+   dense map.
+2. **In the 16 games nobody finished, the incumbent had painted more by round 2000, 12-4.** Raw
+   splasher throughput wins a mutual stalemate.
+
+Together: **carol's incumbent is better at the grind and worse at the race.** Against another carol
+that is a wash, because a stalemate is available to both. Against alice — who finishes 78% of dense
+games — being unable to finish is fatal at round ~900, and the incumbent's superior tiebreak
+painting is never spent.
+
+### PRE-REGISTERED: the clock, measured opponent-independently (iteration 48 groundwork)
+
+The 13-5 figure above is zero-sum by construction — in a head-to-head only one side can reach 70%.
+So it cannot be the instrument. The instrument I pre-registered this morning was a **clock**, and
+the way to make it opponent-independent is to run **both arms against the same fixed weak
+opponent** on the dense maps, so neither arm's clock interferes with the other's.
+
+**Run**: `carol_iter44` and `carol_i47_1400`, each vs `examplefuncsplayer`, on the 17 dense maps,
+both sides — 68 games. `examplefuncsplayer` is already a frozen entry in `roster_extra.txt`, so it
+adds no new instrument and cannot go stale.
+
+**Measured**: per arm, per map — did it reach the 70% condition, and in how many rounds; games
+ending by annihilation flagged separately since those stop the clock for an unrelated reason.
+
+**PRE-REGISTERED PREDICTION**: `carol_i47_1400` reaches 70% on **more** of the 17 dense maps than
+`carol_iter44`, and where both reach it, in **fewer rounds**. If the two clocks are the same, then
+the 13-5 split was an artefact of head-to-head coupling, the capability difference does not exist,
+and the whole ruin-conversion direction is closed for good rather than merely closed at this dose.
