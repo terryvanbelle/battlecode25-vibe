@@ -15877,3 +15877,120 @@ denominator by hand and never noticed.
 The reasoning was right and the arithmetic was wrong, which is the failure mode the standing note
 warns about: *a hand-transformation is not a fix; it holds only as long as you remember.* It held
 this time. Going forward the subset cut goes through the tool, not through me.
+
+## The standing "sparse maps" finding is a CONFOUND — the axis is map SIZE
+
+`tools/map-subset.py` (doctrine 20's new control) makes subset cuts cheap, so I cut the
+round-robin — the only instrument measuring opponents this lineage did not produce — by map
+structure rather than by ruin density, which is the axis this log has used since iteration 41.
+
+Quartile cuts, `--last 3`, alice vs carol, subset against its complement:
+
+| cut (19 maps) | alice v carol | delta | z | alice v bob |
+|---|---|---|---|---|
+| 19 smallest by area | 41.2% | **−28.7** | **−5.48** | +0.85 (flat) |
+| 19 largest by area | 78.9% | **+21.8** | +4.16 | −1.33 |
+| 19 sparsest by ruin density | 57.0% | −7.6 | −1.44 | +0.58 |
+| 19 densest | 57.9% | −6.4 | −1.22 | +0.31 |
+
+Size separates the corpus at |z| > 4 in **both** directions. Density barely moves. But the two
+are correlated (10 of 19 maps overlap), so a raw cut cannot assign the effect. The discriminating
+case is the two disjoint residuals:
+
+| residual cut | alice v carol | delta | z | verdict |
+|---|---|---|---|---|
+| **sparse but NOT small** (16 maps) | 64.6% | **+2.4** | **+0.44** | **NULL** |
+| **small but NOT sparse** (16 maps) | 45.8% | **−21.4** | **−3.84** | effect intact |
+
+> **Remove size and the sparseness effect vanishes entirely (z = +0.44). Remove sparseness and
+> the size effect survives at −21.4.** The axis is map SIZE. Ruin density was riding on its
+> correlation with area.
+
+This overturns a finding this log explicitly marked as surviving: *"NOT closed: the finding
+itself. Alice is at 44.0% on the 25 ruin-sparsest maps against 62.7% elsewhere... That is a
+measurement, and it stands untouched."* It does not stand. And the density cut does not merely
+weaken under control — on **dense-but-not-small** maps alice is **+13.0**, the opposite sign — so
+any mechanism reasoning aimed at "sparse maps" was aimed at the wrong axis.
+
+**Scope, stated precisely rather than overclaimed.** The 44.0% figure was measured on alice's own
+*gauntlet* against its own snapshots; the cuts above are the *tournament*. So what is established
+is that the **cross-lineage** deficit is size-driven and sparseness-null. Whether the gauntlet
+figure is separately size-confounded needs a roster run cut the same way, and I have not run one.
+I am recording the correction at the width the evidence supports and no wider.
+
+This is the same error shape a third time: **a real number attributed to a correlated referent.**
+Doctrine 20 was written for the three-body version of it; this is the map-axis version.
+
+### What decides a small map: the 70% coverage race, not a rush
+
+Round counts said carol beats alice on small maps *fast* — median **429** rounds, **21 of 26**
+wins under round 600, against median 930 elsewhere. The obvious reading is a military rush, and
+it is wrong. From `reasons.txt`, alice–carol on small maps:
+
+> **38 of 38 games end "The winning team painted enough of the map"** — the >= 70% of
+> `areaWithoutWalls` instant win. **Zero tiebreakers.** On the other 56 maps, ~17 of 112 go to a
+> round-limit tiebreaker instead.
+
+So a small map is a **race to 70% coverage**, decided in ~400 rounds. Had I named it a rush I
+would have built early-aggression code and measured nothing. The discriminating evidence was one
+column of a file already on disk.
+
+**And alice cannot win that race.** Replay `roads` (30x30, per-mille of passable area, engine's
+own figure — `cov` is per-mille, verified in `ReplayDump.coverageCheck`, not a tile count):
+
+| round | 100 | 200 | 300 | 400 | 500 | 600 | 700 |
+|---|---|---|---|---|---|---|---|
+| alice_iter39 | 340 | 449 | **468** | 449 | 418 | 374 | 429 |
+| the arm | 399 | 529 | 500 | 526 | 531 | **609** | 553 |
+
+Alice **peaks at 46.8% and decays to 37.4%** — the instant-win line is **700**. Alice is not
+losing the race narrowly; it is not in it. Its paint actions collapse 197 -> 97 -> 71 across
+r200–r400 as coverage turns over.
+
+### Why alice's soldiers stop painting — and why it is NOT the small-map cause
+
+Engine facts already in `RULES.md`, which together are decisive:
+
+- A **soldier cannot paint an enemy tile.** The attack spends the full 5 paint and changes
+  nothing (iteration 22/23, engine-verified).
+- Only the **mopper** (free, r^2<=2) neutralises enemy paint, and only the **splasher**
+  overwrites it (within r^2<=2 of centre).
+
+So alice's primary painter is structurally disabled on contested ground. On a small map contact is
+immediate and ground turns contested early; on a large map there is neutral ground for soldiers to
+work. That predicts the sign of the size finding correctly, and it is the best account I have.
+
+**Found while chasing it — a real structural defect, which I am deliberately NOT claiming as the
+small-map cause:**
+
+```java
+static boolean goRefill(RobotController rc) throws GameActionException {
+    RobotInfo[] near = rc.senseNearbyRobots(-1, rc.getTeam());   // VISION, r^2=20
+    ...
+    if (tgt == null) return false;      // no tower in sight: nothing to walk to
+```
+
+`goRefill` walks a starving soldier to a tower **only if it can see one**. Alice never remembers
+where its own towers are, so a soldier that has expanded past vision has no way home and wanders
+dry forever. That matches the standing anomaly this log named as its next move — tower paint
+climbing **297 -> 582 while soldiers starve 5–9 per window**, a rising reserve in the *binding*
+resource during a loss.
+
+**But the sign is wrong for the size finding.** Starvation-beyond-vision must hurt *more* where
+towers are far apart, i.e. on LARGE maps — and alice **wins** large maps by +21.8. So this is a
+second, independent defect, not the explanation for the first. Recording both as separate is the
+whole point; folding one into the other is how iteration 41 happened.
+
+**Probe launched before building anything** (`alice_refillvis`, `roads` and `mit`): of a soldier's
+hungry turns, what fraction has a surplus tower in vision (`goRefill` works), adjacent
+(`tryRefill` already handled it), or **none in vision** (the soldier is stranded). The prior probe
+measured *adjacency* (0.0–1.0%) and never measured *visibility*, so the size of this gap is
+currently unknown. If a tower is visible on most hungry turns the fix is inert and I will not
+build it.
+
+**Explicitly NOT re-opened: the splasher share.** The reasoning above arrives near it — splashers
+are the only unit that takes contested ground — and that axis is CLOSED (two implementations, four
+arms, 300 games, no positive arm). Its recorded re-open standard is *"a reason the rest of my bot
+now supports the share, not fresh evidence that the siblings still have one."* "The win condition
+on maps I lose is coverage" is a reason the **situation** demands it, not a reason my bot supports
+it, so it does **not** meet that standard. Noting the temptation and declining it.
