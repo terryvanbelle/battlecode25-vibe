@@ -16440,3 +16440,17 @@ the census's own pinned maps.
 Writing this now rather than after an accept, because the temptation to skip a control is
 strongest exactly when the headline is good — and this lineage's most valuable single result to
 date was a control that inverted a headline.
+
+**Ablation bite reading, one map, taken before the census reported.** All three arms against
+`alice_iter39` on `BatSignal`, same opponent, same map:
+
+| arm | wins at round |
+|---|---|
+| `alice_i45ctl` (= `src/alice`, identity-checked) | 1209 |
+| `alice_i45dir` (random *direction*, no map geometry) | **1297** |
+| `alice_i45` (map-wide random *destination*) | **919** |
+
+The path-shape rival does not merely fail to explain the effect — on this map it is **slower than
+the baseline**, while destination choice is 290 rounds faster. That is one map and cannot size a
+corpus quantity (this log's own rule), so it stands as a bite reading and the full ablation still
+runs. But it means the confound is unlikely to be carrying the result.
