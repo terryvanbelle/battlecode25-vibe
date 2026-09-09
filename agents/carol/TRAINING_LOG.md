@@ -13698,3 +13698,51 @@ round 2000.
 stalemates, a positive margin there means "wins the coverage tiebreak against another carol", which
 is *not* the claim I care about, and I will say so rather than banking it. I will report the
 round-limit share alongside the margin whatever the margin turns out to be.
+
+## The gradient lives ENTIRELY in the race to 70%, and my instrument spends its time in the other regime
+
+Carol's 300 tournament games in `20260909-0100`, split by **how the game ended**. The win condition
+is `>70%` of paintable area, an instant win; otherwise round 2000 and a tiebreak on area painted
+[E: RULES.md].
+
+| maps | ended by | carol won | opponent won | carol win% |
+|---|---|---|---|---|
+| **>= 24 ruins** | **painted >70%** | **8** | **45** | **15.1%** |
+| >= 24 ruins | round-2000 tiebreak | 7 | 8 | 46.7% |
+| <= 23 ruins | painted >70% | 127 | 87 | **59.3%** |
+| <= 23 ruins | round-2000 tiebreak | 9 | 9 | 50.0% |
+
+**Carol is 50/50 in tiebreak games on every map type.** Her entire ruin gradient is inside the
+`paint70` games: 59.3% on sparse maps, 15.1% on dense ones. And 53 of 68 dense games (78%) are
+decided that way, so the race is the regime that matters.
+
+Stated as a mechanism rather than a correlation: **on a ruin-dense map the opponent reaches 70%
+coverage and carol does not.** It is a race against the map, and carol loses it because her
+throughput is flat in ruin count while her opponents' compounds.
+
+Now put that beside the doctrine-16 measurement above: **55% of my self-play dense games run to
+round 2000**, i.e. they land in the tiebreak regime — the one regime where carol is 50/50 by
+construction and where the gradient provably does not live. My instrument spends the majority of
+its dense-map games in the one bucket that carries no signal, and the remainder in a race where
+both arms are equally incapable of finishing.
+
+### Consequence: the instrument I actually need is a CLOCK, not a head-to-head
+
+This resolves the doctrine-17 problem rather than merely restating it. The capability carol lacks
+is *reaching 70% coverage on a ruin-dense map*. That is a property of one build against the map —
+**it needs no opponent at all**, so it cannot be cancelled by an opponent who shares the deficit.
+
+**PRE-REGISTERED, before I look at the census now running:** the right measurement for this
+direction is, per arm, per dense map: the **coverage trajectory and the round at which 70% is
+reached, or the peak coverage fraction if it never is**. Carol's builds should mostly never reach
+it; the question is whether a change moves the peak and the clock, and by how much. `carol_iter44`
+on `Leaf` peaked near 179-214 painted tiles against a 70% threshold of roughly 2,400 — not close,
+which is itself the finding.
+
+This also gives the missing archetype a **falsifiable qualification criterion**, which is what
+doctrine 15 demands before an instrument is built: a candidate archetype qualifies only if it
+**wins dense maps by the 70% condition**, not by tiebreak. By that test `carol_i47_1400` does NOT
+qualify — it reached ~701 tiles on Leaf, nowhere near 2,400 — so promoting it to
+`roster_extra.txt`, which I was about to do an hour ago, would have installed an instrument that
+does not reproduce the threat. Scoring the rung before promoting it caught that, exactly as
+doctrine 12 says it should.
