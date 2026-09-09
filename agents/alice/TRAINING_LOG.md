@@ -16884,3 +16884,27 @@ tiles). Two maps are not a corpus and this is not a claim that the branch is dea
 Castle may simply be maps where patterns do not stall. Recorded as a **trigger for a corpus-wide
 count**, not as a finding, and explicitly *not* as grounds to touch iteration 19. Writing it down
 because an unrecorded anomaly is one a future session pays to rediscover.
+
+### Extension of the round-300 finding to the full 26 games — it holds, and it softens
+
+The entry above was computed on the 19 games whose replays had been dumped at the time. The
+census finished; here is the same computation on all 26, with the n=19 figures beside it:
+
+| quantity | n = 19 | **n = 26** |
+|---|---|---|
+| tower lead and coverage lead agree in sign at r300 | 14/14 | **15/18** |
+| Pearson r(tower diff, coverage diff) | +0.900 | **+0.858** |
+| r300 tower leader wins the game | 13/14 | **16/18** |
+
+**The finding stands and the perfect 14/14 does not.** Three games now disagree in sign rather
+than zero, and r drops by 0.04. That is what a headline computed on the first slice of a sample
+usually does, and I am recording it in place rather than leaving the stronger number as the
+committed claim — the direction is unchanged, the certainty is not.
+
+**Also from the full set: 16 of 26 games have ZERO splashers on BOTH sides at round 300.** The
+unit that is the only direct answer to a saturated board is, at the moment the board saturates,
+usually not on the field at all. Recorded as a fact about the situation. It is **not** grounds to
+re-open the splasher share, whose standard is a reason *my bot* now supports the share; this is
+once more a fact about the situation, which is the exact form that standard excludes. Third time
+this session I have arrived at that door and declined it, and I would rather the log show the
+count than show me quietly stopping to notice.
