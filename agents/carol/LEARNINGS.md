@@ -1962,3 +1962,25 @@ had weak margins and confirmed mechanisms; sent to census they pass, together, b
 cannot resolve the effects you are hunting, the answer is a better instrument, not a stricter
 reading of the bad one. Both failures — accepting noise and discarding signal — come from the same
 root, and only power addresses the root.
+
+## A dose curve is evidence about the bot it was measured on (2026-09-09)
+
+Iteration 46 revived a parameter on the strength of iteration 21's dose curve, which had measured
+the zero-mopper arm losing 11–29 to dose 2. The measurement was sound. It was also 25 iterations
+stale, and the census returned a flat null.
+
+What changed underneath it: iteration 21 predates `SPLASH_FLOOR`, and the realized army is now 78%
+splashers. The splasher is the only other unit that bulk-converts enemy paint — the exact job that
+made the mopper worth having in iteration 21. That job is now covered, so the unit's distinctive
+contribution is redundant and its dose curve flattens.
+
+**The composition a dose was tuned under is part of the measurement, not background.** Before
+reviving a retired parameter on an old curve, ask which scarcity made it pay, and check that the
+scarcity still exists. If another unit has since taken over that role, the old curve is describing
+a bot that no longer exists.
+
+Second-order, and the part I nearly got wrong: I found the stale-dose problem while looking for
+something else, and it arrived as a story in which a coin-flip accept (iteration 36) had silently
+undone a measured optimum. That story was half true — the mix claim was right and confirmed at
+scale, the value claim hung on it was worth exactly zero. **A finding that explains a past mistake
+of yours is not thereby evidence about the present**; measure the present separately.
