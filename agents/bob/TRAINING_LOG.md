@@ -15575,3 +15575,94 @@ the null's 25 to 13 and 14**, so the change converts ~11 coin-flip maps into dec
 directions at once**. Scattered, mixed-direction flips are the churn signature, not a causal effect.
 
 *(Secondaries below were computed after the primary was read and recorded.)*
+
+### The secondaries, read in the registered order — and BOTH halves of what I registered showed up
+
+`bob-tools/seek_eval.py` over this run's own 150 replays, stride 1 to round 200, soldier-rounds
+integrated (not headcount x rounds — LEARNING 71):
+
+```
+ stratum       arm    n   win%   soldRnd  paintAct  tiles/soldRnd    tw     cov
+   small   bob_fs0   18  50.0%    1050.2     324.2          0.309  4.89   397.6
+           bob_fs3   18  44.4%    1030.3     330.0          0.320  4.44   403.3
+           bob_fs8   18  55.6%    1005.1     330.6          0.329  4.33   398.6
+  medium   bob_fs0   14  50.0%    1391.3     543.1          0.390  7.29   388.8
+           bob_fs3   14  57.1%    1304.6     534.1          0.409  7.36   394.6
+           bob_fs8   14  64.3%    1287.4     524.1          0.407  7.29   381.5
+   large   bob_fs0   18  50.0%    1378.8     588.2          0.427  7.06   306.7
+           bob_fs3   18  61.1%    1414.6     593.2          0.419  7.06   305.8
+           bob_fs8   18  50.0%    1417.4     569.8          0.402  6.61   293.4
+```
+
+**Secondary 1 (mechanism) — PASSES where I said it would, and FAILS where I said it would not fire.**
+tiles/soldier-round rises monotonically with dose on small maps (0.309 → 0.320 → **0.329**, +6.5%) and
+on medium, and **falls** on large (0.427 → 0.419 → 0.402). My registered prediction was that gains
+would concentrate on small maps, where F is 2.7x more common. **That is the regime sign I registered,
+and it came out right** — the first pre-registered sign I have got right in three iterations.
+
+*(These rates are ~0.31-0.43 rather than iteration 42's 0.665 because this census runs to round 200,
+by which the board has filled; the comparison across arms is within-window and unaffected.)*
+
+**Secondary 2 (the price) — the cost I predicted in writing is exactly the cost that arrived.**
+Before the run I wrote: *"a wandering soldier can stumble onto a new ruin, and a seeking one is steered
+by paint instead. If ruin capture falls, that is where it will show, and tower count is a registered
+secondary for that reason."* Tower count at r200 falls **monotonically with dose**, hardest in the
+target regime: small maps **4.89 → 4.44 → 4.33** (−11% at SEEK=8), large **7.06 → 7.06 → 6.61**.
+
+So the mechanism is not "too small" in the way iterations 37/40/41 were. **It is a TRADE, and it is
+close to break-even**: +6.5% tiles per soldier-round bought with −11% towers. Coverage at r200 barely
+moves (397.6 → 398.6 on small), which is what a break-even trade looks like on the outcome variable.
+
+**Secondary 3 (small-map stratum), registered underpowered in advance**: 50.0% / 44.4% / 55.6% on
+n=18 per arm. Non-monotone and inside noise, exactly as registered. Not used.
+
+### What this iteration is really evidence about, and it is not the mechanism
+
+Iterations **37, 40, 41 and 43** have now each moved bob's early tile output by a confirmed,
+mechanistically-verified amount, and each converted to **+2/+3 wins or less**. Four independent
+mechanisms, one intermediate variable, no conversion. At some point that stops being four coincidences
+and becomes evidence about the variable — or about the instrument.
+
+**It is the instrument, and LEARNING 55 already said so.** Every one of those four evaluations was
+`bob` against `bob_iter20`: self-play. The r30 coverage cliff was established against **carol**
+(LEARNING 64/69). Doctrine 17 is exact about this — *a self-play instrument is blind to any deficit
+your opponent shares*. `bob_iter20` does not punish low early coverage, because `bob_iter20` has low
+early coverage too. A candidate that fixes "we are slower to paint than carol" is being graded by an
+opponent to whom that is worth nothing.
+
+That is not a reason to doubt the four rejects as *decisions* — each candidate genuinely failed to beat
+its baseline, which is what the gate asks. It is a reason to doubt the whole **line of attack** being
+tested this way, and to fix the instrument before spending another 150 games on it.
+
+**Closed-directions ledger, ADD**: "soldier frontier-seeking navigation" is CLOSED at +2/+3 wins, with
+the mechanism confirmed (+6.5% tiles/soldier-round on small maps, correct regime sign) and **priced**:
+it costs 11% of small-map tower count. Not too small — a roughly break-even trade of ruins for tiles.
+
+**Closed-directions ledger, ADD (about method, not mechanism)**: "evaluate an early-coverage mechanism
+on a self-play gauntlet" is CLOSED. Four attempts, four nulls, and doctrine 17 explains all four
+without any hypothesis about the mechanisms themselves. **The next candidate in this area must not be
+run until an opponent exists that applies carol's early-coverage pressure.**
+
+### The instrument that is actually needed, and today's census specifies it exactly
+
+LEARNING 55 recorded that a repair attempt already failed once: `bob_rush`, an economy-first archetype
+at the opposite production pole, moved median game length the *wrong* way (668 → 760). It was built to
+be *different from bob*, which is not the same as being *like the opponent that beats bob*.
+
+Today's census gives the target profile as numbers for the first time — what carol actually does at
+round 30 on small maps, measured over 150 tournament games:
+
+```
+              splashers@r30   soldiers@r30   coverage@r30   tiles/unit-round
+  carol            2.16           1.74            263            1.39
+  bob              0.00           6.88            188            0.59
+```
+
+So the archetype's acceptance criterion is a **regime** criterion, per LEARNING 55's lesson, and it is
+now quantitative rather than a guess: **~2 splashers by round 30 and r30 coverage ≥ ~240 per-mille.**
+Iteration 40's own arms already reached 2.12 splashers at r30 on small maps, so the mix is achievable
+from my own code by removing the round-60 gate — which iteration 34 measured as **-7 for bob as a
+BOT**, and which is exactly what makes it a good *opponent*: an arm that hurts me early and fades late
+is the pressure my pool lacks.
+
+`src/bob/` untouched. **`bob_iter20` remains the bot; HEAD's behaviour is unchanged.**
