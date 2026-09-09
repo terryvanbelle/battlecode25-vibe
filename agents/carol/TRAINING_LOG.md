@@ -16411,3 +16411,41 @@ to corroborate the z. I am not counting it twice.
 
 I would rather have this answer than another 50-game null, and I do not currently know which way it
 will go.
+
+## The control that rules out "ruin-dense maps just amplify skill gaps" (zero VM cost)
+
+Before spending anything on iteration 55 I owed the obvious alternative a test. If ruin-dense maps
+merely *amplify* whatever strength difference exists, then any weaker bot would show a negative
+gradient and my finding would be about map variance, not about ruin conversion.
+
+The `alice-bob` pair decides it, because I am not in it. Per doctrine 20, all three pairs:
+
+| pair | winner's rho vs ruins | z | winner's rate on <=11 | on >=24 |
+|---|---|---|---|---|
+| **alice over bob** | **-0.105** | -1.29 | 63.2% | **47.1%** |
+| alice over carol | +0.269 | +3.28 | 47.4% | **79.4%** |
+| bob over carol | +0.435 | +5.32 | 18.4% | **70.6%** |
+
+Reproduced in all three tournaments checked (`alice-bob` rho = -0.105, -0.186, -0.186 — negative
+every time; the two carol pairs positive every time, +0.27 to +0.44).
+
+**The amplification hypothesis is refuted, in the wrong direction for it.** alice is the stronger
+bot in that pair (60.0%) and her edge over bob *shrinks* as ruins get denser. Ruin density does not
+magnify skill differences; in the one pair that does not contain me it slightly compresses them.
+
+The sharpest single number: **bob is the weakest bot in the tournament at 41.3% overall, and he
+beats me 70.6% on ruin-dense maps while losing to me 18.4% on ruin-poor ones.** A 52-point swing
+inside one pair, driven by a map property, against an opponent I otherwise beat. That is not a
+strength difference being amplified — it is a specific capability I do not have.
+
+**This is doctrine 20's pair decomposition landing in the most useful configuration**: the effect is
+present in *both* pairs containing me and absent from the one that does not. The doctrine says the
+pair where the effect vanishes is the most informative cell, and here it does more than locate the
+deficit — it rules out the leading alternative explanation for it. Signed per doctrine 20: this is
+"I am worse than both", a defect to fix in me, not "they two share a capability", and not a
+property of the maps.
+
+It also sharpens iteration 55's stakes. `carol_conv` is my attempt to reproduce this in-house with
+the one mechanism I can name (soldier-driven ruin conversion). If it fails condition 1 while
+passing condition 3, then whatever bob does on ruin-dense maps is something else entirely, and I
+will have narrowed it by elimination rather than guessed at it.
