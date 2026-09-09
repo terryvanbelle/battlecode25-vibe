@@ -15390,3 +15390,91 @@ range but all marked, **F** no empty in range.
 Maps pinned `CastleDefense DefaultSmall Justice maze mit gardenworld` (3 small, 3 large) — the
 mechanism is plausibly regime-dependent and a random draw would mix the regimes (doctrine 4).
 24 games. `src/bob/` untouched; `bob_iter20` remains the bot.
+
+## Iteration 42 — **F confirmed, E refuted, my prediction wrong by 6.5x, and the accounting check earned its place twice.**
+
+Run `20260909-145816`, 24 games, `BOT=bob_iter20 OPPONENTS="bob_sr0 bob_sr1"`, maps pinned as registered.
+
+**Identity check PASSED**: `bob_sr0` and `bob_sr1` agreed on every (map, side) — CastleDefense r252,
+DefaultSmall r1269, Justice r462, gardenworld r1047, maze r2000, mit r2000 — and those are the same
+round counts iteration 41's arms produced on the same maps, so the soldier instrumentation is inert
+against a second, independent baseline as well.
+
+### The accounting check fired twice, and both times it was right to
+
+**First**: my registered VOID condition was `A+B+C+D+E+F == soldier-turn count`. It does not hold, and
+the reason is in the code I instrumented — `Soldier.run()` returns early on `tryRefill()` and on
+`workOnSrp()`, so `paintSomething` is never reached on those turns. **The condition was mis-stated by
+me, not violated by the data.** I am not quietly redefining the denominator to make it pass; I am
+recording that I registered the wrong closure and naming the residual (**UNREACHED**, 4.9% of turns).
+
+**Second, and this one was a real bug**: with the residual named the shares still summed past 100%.
+`G.probeTag` **persists across turns** — on an UNREACHED turn the indicator still carries the previous
+turn's letter, so counting the per-turn letter double-counts stale codes. The cumulative counters are
+immune. Re-read as **counter deltas between consecutive rounds**, every turn lands in exactly one
+bucket and the total is asserted in the aggregation:
+
+```
+ stratum  turns |   A busy  B lowP   C own  D paint  E marked  F noEmpty  UNREACH  ANOM
+   small    843 |    50.4%    0.9%    1.5%    11.9%      3.9%      25.5%     5.8%     0
+   large    720 |    26.1%    0.7%   15.8%    43.9%      0.0%       9.6%     3.9%     0
+     ALL   1563 |    39.2%    0.8%    8.1%    26.6%      2.1%      18.2%     4.9%     0
+```
+
+Had I read the letter instead of the delta I would have published small-map F as 27.6% instead of
+25.5% and A as 53.7% instead of 50.4% — not enough to change the verdict, which is exactly why an
+accounting check that only fires on large errors is worthless. It fired on a 2-point error.
+
+### The verdict against the registered gate
+
+- **`E >= 0.15` ⇒ build the mark-colour fix: FAILS.** E is **3.9%** on small maps and **0.0%** on large.
+- **`F >= 0.15` ⇒ build empty-seeking navigation: PASSES**, at **25.5%** on small maps (9.6% on large).
+- Both under 0.10 (which would have closed the direction): not the case.
+
+**My pre-registered prediction was WRONG, and not marginally.** I predicted `E > F` early and on small
+maps, reasoning that small maps carry ~3x the ruin density and therefore more marks. The measured
+ratio is `F/E = 6.5` in the *opposite* direction. Recording it as a miss, as with iteration 40's.
+
+**And it kills LEARNING 73's revival of the mark rule at the right level.** That entry established that
+69% of the empty tiles inside a soldier's action radius are mark-blocked — which is true, and is still
+the right referent for "are tiles blocked". It is the wrong referent for "does the bot decline an
+action", because the blocked case and the busy case **coincide**: when marks blanket the area, the
+soldier is standing in a tower pattern it is being paid to paint, so it exits at **A**, not at E. No
+board statistic could have separated those two; only the decision could. Doctrine 15's conjunction
+lesson, arriving from a direction I did not expect.
+
+**Superseding in place**: LEARNING 73's conclusion that the mark-refusal rule is a plausible sink is
+withdrawn. The measurement it rests on stands; the inference from it does not.
+
+### What the probe actually found, which is not what I went looking for
+
+**Bob's soldiers are not idle.** Reconciling against an independent instrument: the probe says
+`A + C + D = 63.8%` of small-map soldier-turns end in the soldier having used its action, and iteration
+41's census — different opponent, different games — put bob at **0.665 tiles per soldier-round**. Two
+instruments, two game sets, agreeing to within a couple of points on a quantity neither was built to
+confirm.
+
+The third of turns that remains splits cleanly by regime, and the split is the finding:
+
+> **On small maps a soldier spends 50.4% of its turns on ruin/SRP pattern work and 25.5% standing in
+> its own painted territory with no empty tile within r² ≤ 9. On large maps those are 26.1% and 9.6%.**
+
+`Nav.wander()` is a persistent-direction **random walk**. A soldier with no ruin never seeks unpainted
+ground — while `Splasher.run()` has navigated to the nearest empty/enemy tile since iteration 0. The
+capability exists in this codebase; the soldier just never got it.
+
+**Sizing, honestly.** Converting every F turn into a paint action would take small-map output from
+0.665 to ~0.92 tiles/soldier-round, i.e. 100 -> 138 tiles by round 30 against carol's 146. A soldier
+must *travel* before it can paint, so the realisable share is well under all of it — call this 2x too
+small rather than the ~10x of iterations 37, 40 and 41. **That is the best-sized candidate this
+lineage has produced in the last five iterations**, and it is aimed squarely at the losing regime:
+F is 2.7x larger on small maps, where bob wins 14%, than on large, where bob wins 60%.
+
+**Registered as not an accept**: this probe measured a decision rate and accepted nothing. It chose
+between two fixes and the loser (E) is now closed.
+
+**Closed-directions ledger, ADD**: "let `paintSomething` paint marked tiles in the mark's colour" is
+CLOSED at a measured decision rate of **3.9% of soldier-turns on small maps and 0.0% on large** — the
+branch it would rescue is almost never the one taken.
+
+`src/bob/` untouched. **`bob_iter20` remains the bot; HEAD's behaviour is unchanged.**
