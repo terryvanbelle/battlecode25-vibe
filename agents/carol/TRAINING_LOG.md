@@ -17224,3 +17224,59 @@ Three consequences, recorded now so they bind whichever way the number falls:
 
 I am recording this before the tally precisely because a correction that runs in my favour is the
 one least likely to get made afterwards.
+
+## Iteration 58 RESULT — UNRESOLVED at the best dose. Not an accept.
+
+Run `20260909-184140`, `BOT=carol_iter44`, three arms on one shared 25-map sample, 150 games.
+Gate committed in advance at `a067f75`, before any game was scored.
+
+| `SOLDIER_GAP` | baseline | **candidate** | margin | z (sd 8.59) | SW / SL / D | verdict |
+|---|---|---|---|---|---|---|
+| 1000 | 21/50 | **29/50** | +8 | +0.93 | 4 / 0 / 21 | **REJECT** |
+| 500 | 24/50 | **26/50** | +2 | +0.23 | 3 / 2 / 20 | **REJECT** |
+| **250** | 18/50 | **32/50** | **+14** | **+1.63** | **9 / 2 / 14** | **UNRESOLVED** |
+| (0 = incumbent) | — | 25/50 | 0 | — | — | — |
+
+**`src/carol` is unchanged.** Per the registered gate, 31–33 may not accept without a replication
+on a disjoint map sample, and my own LEARNINGS entry is explicit that *unresolved is not rejected —
+buy power instead*.
+
+### The registered dose prediction is FALSIFIED, and the ladder is unreadable
+
+I registered an **interior optimum with 500 at least as good as both neighbours**. Measured:
+1000 -> 29, 500 -> **26**, 250 -> 32. The middle dose is the *worst*, which is the opposite shape.
+
+But the honest reading is stronger than "wrong direction": with sd 4.3 on a 50-game win count, the
+three arms sit inside ~1.5 sd of one another. **The ladder cannot distinguish its own rungs.** Only
+the best arm separates from the baseline at all, and only at +1.63 sd. Reporting the ordering as if
+it meant something would be reading noise, so I am not doing it — the one thing the ladder does say
+is that no dose is *harmful*, since all three are at or above the mirror null.
+
+### The sweep profile is the one genuinely informative secondary
+
+`SOLDIER_GAP=250` is **SW 9 / SL 2 / D 14** against `1000`'s **4 / 0 / 21**. Per doctrine 14 the
+sweep counts restate the margin and are not corroboration — but **D is the exception**, and D is
+what moved: 14 split maps against 21. The strongest arm is *more decisive*, not merely ahead.
+
+### What the mis-sizing means for this number
+
+The correction I committed at `ae326da` before the tally stands and now has to be applied: this
+mechanism is **not the floor my warrant described**. `lastFloorSoldier` is a per-robot static
+initialised to 0, so every new tower's clock starts expired and grants an immediate exempt soldier —
+a compounding loop that produced **18 concurrent soldiers and 8 -> 25 towers**, where I registered
+1–2 soldiers at 1.1% of budget.
+
+So even the UNRESOLVED result cannot be attributed to the stated hypothesis. **The +14 is real
+enough to chase and its cause is open**, and the pre-registration's story is not evidence for it.
+
+### Registered next step, before the replication runs
+
+1. **Replicate `SOLDIER_GAP=250` on the full 75-map corpus** (150 games, both sides). Doctrine 1:
+   sampled runs find a shape, the corpus fixes a level — and a census is not an estimate of the
+   population, it *is* the population, which is strictly better than the disjoint 25 the gate asks
+   for. The census gate must be derived and registered BEFORE that run returns.
+2. **Then a 2x2 separating the two mechanisms**, whatever the census says, because the attribution
+   is open: (a) a *true* rate limit, `lastFloorSoldier` initialised to the tower's build round, vs
+   (b) this compounding version. One line apart. If (a) alone carries the effect the warrant was
+   right and the implementation was accidentally generous; if (b) is needed, the real mechanism is
+   "a new tower comes with a free soldier" and the write-up changes completely.
