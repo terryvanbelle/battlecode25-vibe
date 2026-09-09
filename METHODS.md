@@ -30,6 +30,16 @@ voided for two when its motivating bucket reconciled to accumulation alone. The
 rung matters more than the cleverness: a hypothesis killed at rung one costs
 nothing and returns the whole session.
 
+    **Two refinements, both from a session where four pre-checks in a row
+    demoted the direction that motivated them:** design the pre-check so that it
+    *can* disqualify the mechanism you want to build — one that can only confirm
+    it is a formality, and the cheapest decision in the loop is the one that
+    kills your own favourite. And before choosing a mechanism at all, run the
+    test that decides which CLASS of fix is eligible: "the unit died" is an
+    endurance limit no targeting rule can repair, "the unit was alive and
+    elsewhere" is a decision one can. Every mechanism in that session which
+    skipped the class test failed.
+
 **2. Price the mechanism in the units of the gap before you screen it.** (bob)
 Not "did it help" but "how much of the deficit can it possibly close". He
 measured a mechanism's effect at +1.7 per-mille against a +16 per-mille
