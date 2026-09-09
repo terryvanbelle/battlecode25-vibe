@@ -16138,3 +16138,43 @@ at r1395, `i54_b` at r699), which is exactly the overfitting the rule was writte
 
 Gate unchanged: 50 games vs `carol_iter44`, fresh 25-map sample,
 **ACCEPT >= 34/50, REJECT <= 30/50, 31-33 inconclusive.**
+
+## Iteration 54 — REJECT at 25/50. The mechanism works and buys nothing.
+
+Run `20260909-155554`, `carol_i54_b` (`BIG_FLOOR = 50`) vs `carol_iter44`, fresh 25-map sample,
+50 games. Pre-registered gate: ACCEPT >= 34, REJECT <= 30, 31-33 inconclusive.
+
+**Result: 25/50 (50.0%) — REJECT.**
+
+| | |
+|---|---|
+| swept-win | 5/25 |
+| swept-loss | 5 |
+| split-by-side | 15 |
+
+Swept 5 against 5 with 15 of 25 maps splitting by side is the churn signature from doctrine 10 in
+its purest form: mixed-direction flips, no concentration, and a margin of exactly zero. There is no
+near-miss to refine here and no regression to trace — the change is worth nothing, and the gate did
+not have to work hard to say so.
+
+**What this iteration did establish, which is not nothing:**
+
+- The spiral is real. Retention in a losing seat went 43% -> 79.3% under the treatment.
+- The mechanism engages at a dose inside the registered band (31.5% of counterfactually-affordable
+  expensive-unit rolls refused), verified with a corrected, non-endogenous denominator, against an
+  exact 0.0% zero arm.
+- And it still converts to **zero wins**.
+
+So this is a clean instance of the regularity already in my closed-directions ledger: *a
+mechanism-verified metric improvement that does not convert*. I stopped the paint spiral and the
+spiral was not what was losing the games. Recording it as such rather than refining a knob whose
+dose-response I have now bracketed on both sides -- 25 and 50 buy nothing, 100 and 200 are a build
+freeze that costs coverage outright.
+
+**CLOSED DIRECTION: tower paint floors for expensive units.** Killed by dose-response, both ends.
+`PAINT_FLOOR=200` for cheap units (iteration 36) is untouched and stays. Re-opening requires a
+reason the bracket no longer applies, not a new constant inside it.
+
+**Consecutive rejects: 4** (51 SRP, 52 moppers, 53 denier archetype, 54 paint floor). The areas are
+distinct, so `MaxConsecutiveRejects` does not force a move by the letter of the rule. I am moving
+anyway, and the next entry says why the streak itself is the evidence.
