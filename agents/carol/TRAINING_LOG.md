@@ -17864,3 +17864,56 @@ is the only instrument for the latter, and it is also worth noting that **alice 
 and wins** — with 67 moppers and 740 unpaint acts per game. So her answer to the recapture
 constraint D1c identified is moppers where mine is splashers; that both exist is evidence the
 constraint is real, and it is not a licence to copy a ratio.
+
+## The defect stage 0 left unfixed, now traced and priced — registered as iteration 60
+
+Done from the Leaf run-4 replay already on disk, while the census was in flight. No VM games.
+
+**Soldier decision census, `carol_r1`, rounds 1200-1215 (`--ind carol_r1`, 1,801 soldier-turns):**
+
+| state | turns | share |
+|---|---|---|
+| **`idle`** — no paintable tile in r²=9 *and* none visible anywhere in r²=20 | **1,328** | **73.7%** |
+| `ruin` — working a tower pattern | 251 | 13.9% |
+| `REFILL` — walking home | 142 | 7.9% |
+| not action-ready / below attack cost | 80 | 4.4% |
+| `slf` / `pnt` / `front` — actually painting | **0** | **0.0%** |
+
+**Three quarters of soldier turns are the legally-disqualified state**, and in this window not one
+soldier painted anything. D1c added splashers so the *team* can recapture, but it left the soldier
+supply untouched, and a soldier built into a contested map has a conversion rate of exactly zero.
+
+### The magnitude, in the units of the gap (METHODS item 2, and it is decisive)
+
+At r2000 `carol_r1` builds **246 soldiers per 500 rounds** and **240 starve**. At 200 paint each
+that is 49,200 paint per 500 rounds = **98 paint/turn**, against a total paint income of ~100/turn
+(~17 paint towers at 5/turn plus the two starting lv2s).
+
+> **Essentially 100% of paint income is being spent building soldiers that starve without
+> painting.** This is not an inefficiency at the margin; it is the whole budget.
+
+### Iteration 60, registered
+
+`D1c` only *prefers* a splasher in the contested regime — when one is unaffordable it **falls
+through and builds a soldier anyway**, which is the branch feeding the number above. The candidate:
+**in the contested regime the fallback below a splasher is a MOPPER, never a soldier.**
+
+Why a mopper is the right fallback rather than "build nothing":
+- a mopper's `attack` REMOVES enemy paint, so its conversion rate against contested ground is
+  non-zero where a soldier's is exactly zero — the same paint-law argument that produced D1c,
+  applied to the branch D1c did not reach;
+- it costs **100 paint against a soldier's 200**, so the same starved budget buys twice the units;
+- it is independently corroborated across the isolation line by the only cross-lineage instrument
+  I have: alice is soldier-primary, wins the tournament at 61.3%, and fields **67 moppers and 740
+  unpaint acts per game** where carol fields 0. Her answer to the recapture constraint is moppers;
+  mine so far is splashers. That both exist is evidence the constraint is real. **It is not a
+  licence to copy her ratio** — that error is already in my LEARNINGS by name.
+
+**Pre-registered mechanism check**: the `idle` share of soldier-turns must fall well below 73.7%,
+**and** unpaint acts must rise above `carol_r1`'s current ~0-24 per 500 rounds. Both halves
+required, for the same reason iteration 58 required both: a mix change that moves the mix without
+moving the capability is the failure mode this lineage dies on most often.
+
+**Not started this session** — iteration 59's census is the standing question and iteration 60 must
+be evaluated against whichever of `carol_r1` / `carol_iter44` that census leaves as the incumbent.
+Starting it now would build on a baseline I do not yet have.
