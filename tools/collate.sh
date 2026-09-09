@@ -45,6 +45,26 @@ collate_run () {
     if [ "$SAMPLED" != 3 ] && [ -s "$OUT/maps.txt" ]; then
       tr '\n' ' ' < "$OUT/maps.txt" | fold -s -w 76 | sed 's/^/    /'
       echo
+      # Does this workspace keep re-using one map list? A repeat is correct for a
+      # probe or an ablation -- identical maps are what make those comparable --
+      # but an ACCEPT screen repeated on a standing list measures the list. One
+      # lineage ran three consecutive iterations on the same pinned 25 maps with
+      # an accept gate pre-registered on them, and could not see it until it
+      # hashed the lists by hand; nothing in the run output said so. Comparing
+      # sorted contents, so a reordered list still counts as the same list.
+      mine="$(sort "$OUT/maps.txt" | md5sum | cut -d' ' -f1)"
+      same=""
+      for d in "$(dirname "$OUT")"/*/; do
+        [ "${d%/}" = "$OUT" ] && continue
+        [ -s "$d/maps.txt" ] || continue
+        [ "$(sort "$d/maps.txt" | md5sum | cut -d' ' -f1)" = "$mine" ] && same="$same $(basename "${d%/}")"
+      done
+      if [ -n "$same" ]; then
+        echo "  !! same map list as$same"
+        echo "     Correct for a probe or an ablation -- that is what makes them"
+        echo "     comparable. An ACCEPT screen repeated on a standing list measures"
+        echo "     the list, not the change: draw a fresh sample for those."
+      fi
     fi
     awk -v w="$wins" -v t="$total" 'BEGIN{printf "overall: %d/%d wins (%.1f%%)\n", w, t, (t>0)?100*w/t:0}'
     echo
