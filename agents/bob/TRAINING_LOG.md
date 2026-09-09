@@ -16047,3 +16047,28 @@ small-map tiles (332) is a standing argument that moppers may not be the lever a
 
 **Run**: `BOT=bob_iter20 OPPONENTS="bob_m0 bob_mS bob_mL bob_mX"`, **fresh random 25-map sample**,
 200 games. All four arms COMPILE OK on the VM before launch. `src/bob/` untouched.
+
+**Iteration 45 LAUNCHED as run `20260909-162244`** — `BOT=bob_iter20 OPPONENTS="bob_m0 bob_mS bob_mL
+bob_mX"`, 25 maps **sampled** of 75, 200 games, 3 jobs, from clean HEAD `6f6f5ad`. The design, gate,
+secondaries and prediction were committed in `6f6f5ad` **before** this run existed.
+
+**If this session died before the verdict — COLLATE, DO NOT RE-RUN:**
+
+```bash
+cd agents/bob && ../../tools/gauntlet-collect.sh --list          # confirm complete
+                 ../../tools/gauntlet-collect.sh 20260909-162244
+                 bob-tools/eval_arms.py gauntlet/20260909-162244 bob_m0 bob_mS bob_mL bob_mX
+# secondaries, from the run's OWN replays (note: replays sit in the run dir, NOT a replays/ subdir,
+# and the path must be ABSOLUTE -- the census script cds into its own temp dir first):
+bob-tools/early-paint-census.sh "\$HOME/battlecode25-vibe/agents/bob/gauntlet/20260909-162244" bob 200 1 > /tmp/i45.tsv
+bob-tools/conv_agg.py /tmp/i45.tsv bob-tools/srp-sites.csv --window 200 --names bob_m0,bob_mS,bob_mL,bob_mX
+```
+
+Gate exactly as registered: **VOID** unless `bob_m0` is 25/50 with all 25 maps split and 0
+diff-from-null; `vs null` in **wins out of 50**; ≥ +10 accept-eligible, +7..+9 replicate, ≤ +6 reject.
+Secondaries in order: mopper alive-share and unpaints (must rise), **total paint actions** (the
+iteration 43 failure mode), **dTiles** (the objective), tower count at r200.
+
+Arms are UNCOMMITTED working-tree dirs (`src/bob_m0`, `src/bob_mS`, `src/bob_mL`, `src/bob_mX`),
+regenerable with `bob-tools/make-mopper-arms.sh`. `src/bob` is unchanged, so **HEAD still plays
+`bob_iter20`'s behaviour.**
