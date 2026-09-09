@@ -7,8 +7,21 @@ rerun on the same maps reproduces exactly -- but an accept asks about the map PO
 50-game arm has sd ~2.4 wins (with the finite-population correction; ~3.0 without, which is what
 tools/map-resample.py's jackknife reports).
 
-    >= 29/50  ACCEPT        <= 25/50  REJECT        26-28  UNRESOLVED
+SUPERSEDED IN PLACE, 2026-09-09. The thresholds below were the STANDING gate until the
+sampled-gate correction (commit 2b2ced6). They are kept here so that log entries decided
+under them remain readable, and they are NOT what this tool applies any more:
+
+    OLD (superseded):  >= 29/50 ACCEPT   <= 25/50 REJECT   26-28 UNRESOLVED
+
+29/50 is a margin of +8. Measured sd of a 50-game sampled MARGIN is 8.59 -- map sampling
+5.45 and perturbation 6.63, and the old figure above (sd ~2.4 wins = 4.8 margin) captured
+only the first. So +8 is 0.93 sd: a ~1.0 sd gate wearing a 2.0 sd label. Corroborated
+independently at sd 7.48 by a different route, which would set ACCEPT >= 33.
+
+    CURRENT: >= 34/50 ACCEPT   <= 30/50 REJECT   31-33 UNRESOLVED
     (unresolved may not accept without a replication on a DISJOINT map sample)
+
+Regenerate rather than remember: carol-tools/sampledgate.py derives these from any census.
 
 D (split maps) and the swept counts are REPORTED, never gated: wins - N == SW - SL is an exact
 identity, so a swept-count condition is the margin written twice. The one thing sweeps add is D,
@@ -21,6 +34,9 @@ import csv, os, sys, math, collections
 
 REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 N_POP, N_DRAW = 75, 25
+# Corrected sampled gate (commit 2b2ced6): sd(margin) = 8.59 on a 50-game arm, so 2.0 sd
+# is a margin of +17.2, i.e. wins >= 33.6. Regenerable via carol-tools/sampledgate.py.
+ACC, REJ = 34, 30
 BINS = [(0, 1999, "small"), (2000, 10**9, "large")]
 
 def areas():
@@ -67,11 +83,15 @@ def report(run, opp, A, primary):
         sw2 = sum(mw[m] for m in sel)
         print(f"  {'':<18} {lbl:<6} {sw2}/{2*len(sel)} = {100*sw2/(2*len(sel)):.1f}%  ({len(sel)} maps)")
     if primary:
-        v = ("ACCEPT" if wins >= 29 else "REJECT" if wins <= 25 else
+        v = ("ACCEPT" if wins >= ACC else "REJECT" if wins <= REJ else
              "UNRESOLVED -- needs a disjoint-sample replication before it can accept")
-        print(f"\n  ==> GATE ({wins}/50 vs >=29 accept / <=25 reject): {v}")
+        print(f"\n  ==> GATE ({wins}/50 vs >={ACC} accept / <={REJ} reject): {v}")
+        if 29 <= wins < ACC:
+            print("      NOTE: this would have ACCEPTED under the superseded >=29 gate, which was"
+                  "\n            ~1.0 sd wearing a 2.0 sd label. It does not accept now.")
 
 run = sys.argv[1]; A = areas()
-print(f"{run}  (standing gate: >=29 accept, <=25 reject, 26-28 unresolved)\n")
+print(f"{run}  (standing gate: >={ACC} accept, <={REJ} reject, {REJ+1}-{ACC-1} unresolved;"
+      f" superseded gate was >=29/<=25)\n")
 for i, opp in enumerate(sys.argv[2:]):
     report(run, opp, A, primary=(i == 0)); print()
