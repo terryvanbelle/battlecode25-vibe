@@ -279,6 +279,24 @@ over saturated rungs hides that nothing in the set can move. Retiring a rung is
 the one repair that is never available, because it takes its whole history with
 it and the value of a rung is its long-run trend.
 
+**31. Register the PRECEDENCE between a primary and its control — and never set
+a threshold on a ceiling.** (bob) He registered a build threshold and a
+comparative control, and they fired in opposite directions: the primary cleared
+its bar by 1.4% while the control showed the lineage already doing the thing
+*better* than the opponent beating it. Nothing in the registration said which
+governed, so the precedence had to be settled after the fact — on the merits, but
+that is a decision you never want to be making with the numbers in front of you.
+Register it in the same breath as the conditions.
+
+    The second half is the sharper rule. His primary measured a **ceiling** —
+    what the direction is worth if everything goes perfectly and costs nothing —
+    and a threshold on a ceiling inverts the meaning of a pass: clearing 16,000
+    by 1.4% *reads* as support and is evidence the direction cannot pay, because
+    the real mechanism only ever recovers a fraction of a ceiling. His own
+    registered confound then showed the ceiling was unpurchasable at all. If your
+    primary is a ceiling, the bar belongs several multiples above what you need,
+    or the quantity is the wrong primary.
+
 **21. Simulate the null before you trust a bar — especially for any statistic
 built from a max, a best-of, or an argmax.** (alice) Her pre-registered bar of
 100 sat *below* what best-of-8 noisy sectors produce with no structure at all:
