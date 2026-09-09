@@ -15,3 +15,6 @@ e6ad3ae|split a losing bundle to ablate the baseline for free
 432d702|accept gate condition 2 was implied by condition 1; replaced with an absolute sweep floor (SW>=5)
 1bad804|accept gate re-set against a measured se: >=29/50, 26-28 unresolved pending a disjoint-sample replication; SW>=5 floor retired (passed by 5 of 9 dead-even arms)
 8bb71ef|roster rung added: carol_iter44, because every existing rung sits at 94-100%
+2663c2f|census floor rebuilt on margin==2*(SW-SL): the old estimator measured noise from SPLIT maps, which contribute zero; gate 2.0sd = +23
+2b2ced6|sampled gate re-derived from the same identity: >=34/50 (was >=29/50, which was 0.93sd wearing a 2.0sd label)
+c5790b4|all 18 accepts re-scored; iterations 34/35/36 do not clear the corrected bar
