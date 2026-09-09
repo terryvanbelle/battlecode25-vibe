@@ -14107,3 +14107,67 @@ precisely when you are diagnosing your own weakness.
 delta is printed two tables above. Branch on it: negative → "this is a capability the other two
 have and you lack"; positive → the current wording. The rest of the tool's reasoning is sound and
 the repeat-exclusion is a genuinely valuable control that caught a real duplicate in my own pool.
+
+## SPARSE clock RESULT — an outcome my pre-registration did not name, so I am naming it rather than picking a branch
+
+Arm 1 `20260909-111613` (`carol_iter44`), arm 2 `20260909-112249` (`carol_i47_1400`), each vs
+`examplefuncsplayer` on the **17 sparsest** maps, both sides.
+
+| subset | baseline median | candidate median | paired faster/slower | median abs | median REL | sign test |
+|---|---|---|---|---|---|---|
+| **dense** (>=24 ruins) | 717 | 612 | **22 / 9** | **−89** | **−11.8%** | p = 0.029 |
+| **sparse** (fewest ruins) | 230 | 206 | 21 / 12 | −9.5 | −4.2% | p = 0.163 |
+
+Both arms closed **34/34** sparse games, so the count is saturated at both ends of the corpus —
+the count arm of this instrument is dead everywhere, not just on dense maps.
+
+**The two branches I pre-registered were "absent or reversed on sparse" (density-conditional) and
+"same size on sparse" (density is not the variable). The answer is neither.** The speed-up is in
+the *same direction* on sparse maps, about **2.8x smaller in relative terms** and 9.4x smaller in
+absolute rounds — and a Mann-Whitney on the per-cell relative speed-ups gives **z = −1.34,
+p = 0.180**. The regime difference points the way my hypothesis predicted and **is not resolved at
+this sample size.**
+
+So the honest verdict is **unresolved**, and by the standing rule that means neither accepting the
+density story nor rejecting it — buy power or improve the instrument. What I will not do is read
+"2.8x larger on dense" as confirmation: the comparison it rests on has p = 0.18, and my
+pre-registration is on record precisely so that a convenient reading is unavailable now.
+
+Two things this does settle:
+
+- **The candidate is not faster *only* on dense maps.** It is a general throughput gain that grows
+  with map size / ruin count. That is consistent with the mechanism (more towers → more paint
+  income → more painting, and towers scale with available ruins), and it means a threshold
+  conditioned on *ruin density* is not obviously the right shape — the gain may simply scale with
+  how much economy there is to build.
+- **A density-conditional `SPLASH_FLOOR` is therefore NOT licensed** by this evidence at the
+  strength I wanted before building it. That was the design I pre-registered this morning as the
+  only one the regime story would license, and the regime story did not come in strongly enough.
+
+### What I would run next, and why it is not another dose
+
+The unresolved comparison is between two paired samples of 31 and 34 cells. More maps do not exist
+— those are censuses of both tails. **The way to resolve it is a better-powered contrast, not a
+bigger one**: measure the clock on the *middle* of the ruin distribution as well, giving three
+points on a dose-response in ruin count rather than two, since a monotone trend across three
+regimes is much stronger evidence than a two-sample difference at p = 0.18 (doctrine 2: a curve is
+stronger evidence than any single point). That is one run per arm on the 17 mid-ruin maps.
+
+The alternative, and I think the better one, is to stop measuring throughput against a punchbag
+altogether and build the archetype properly — see the correction below.
+
+### CORRECTION: my disqualification of `carol_i47_1400` as an archetype used the wrong referent
+
+Earlier today I wrote that it "does NOT qualify — it reached ~701 tiles on Leaf against a threshold
+near 2,400". **That number came from one map, one side, in a contested head-to-head**, which is the
+same error I had just finished writing a control against. Measured properly, against a fixed
+opponent across the dense census: `carol_i47_1400` **closes 32 of 34 dense games**, and in the
+head-to-head it won **13 of the 18 dense games that anyone finished** against `carol_iter44`'s 5.
+
+By the criterion I actually registered — *"wins dense maps by the 70% condition"* — **it qualifies,
+and my disqualification was wrong.** It plays a strategy no carol build has played, it races where
+my whole lineage grinds, and it sits at 42% against `carol_iter44`, inside the peer band and far
+from saturation. Adding it to `progress/roster_extra.txt` gives this lineage its first opponent
+that closes a ruin-dense map, which is the exact threat the tournament says beats me and which
+nothing in my pool currently poses. **That is the next piece of work**, and it is worth more than
+another dose or another clock.
