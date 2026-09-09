@@ -16215,3 +16215,75 @@ actually rests on.
 3.3** across runs, so my `+10` gate has been anywhere from **3.0 to 7.0 sd** depending on the run. That
 widens, rather than narrows, the case that the gate is strict — and it is the third time today that
 running the discriminating case killed a headline I had already computed.
+
+## Iteration 45 — **REJECTED, and decisively in the WRONG DIRECTION: more moppers make bob monotonically worse.**
+
+Run `20260909-162244`, 200 games, `BOT=bob_iter20 OPPONENTS="bob_m0 bob_mS bob_mL bob_mX"`, fresh
+random 25-map sample. Design, gate, secondaries and prediction committed in `6f6f5ad` **before** the run
+existed; the favourable mid-flight sizing revision was committed in `cea1533`, also before the verdict.
+
+**VOID check PASSED**: `bob_m0` returned exactly **25/50, all 25 maps split, 0 swept / 0 swept-against,
+0 diff-from-null**.
+
+**STAGE 0 first** (`bob-tools/stage0.py`, which cannot print a verdict): the arms differ from the null on
+**17/50, 20/50, 19/50** games across 13-17 of 25 maps. The dose fired; this is not a null result caused by
+an inert mechanism. Non-monotonicity there is expected by design, since `mS` and `mL` vary *what is
+displaced* at a fixed dose.
+
+### Primary gate
+
+```
+arm          score  vs null  swept  sweptAg  split  diff-from-null    z (paired)
+bob_m0       25/50       +0      0        0     25           0/50     -   <- NULL
+bob_mS       20/50       -5      2        7     16          17/50   -2.11
+bob_mL       19/50       -6      3        9     13          20/50   -2.20
+bob_mX       14/50      -11      2       13     10          19/50   -4.11
+```
+
+Registered gate: **≥ +10 accept-eligible, +7..+9 replicate, ≤ +6 reject**, in wins out of 50. Every arm is
+**negative**. **REJECT.**
+
+Quoting the **paired** sd for this run as the calibration now requires (pooled **2.60** wins, so this
+run's `+10` gate is 3.85 sd — not the binomial approximation I used before today):
+
+- **The harm is dose-monotone.** Mopper slots 1/5 → 2/5 → 3/5 gives **0, −5/−6, −11**. `mX` at
+  **z = −4.11** is not noise by any reading.
+- **It does not matter what the mopper displaces.** `mS` (−5, paid for by a **soldier**) and `mL` (−6,
+  paid for by a **splasher**) are indistinguishable. That is precisely the question the two arms were
+  built to separate, and the answer is that **the mopper itself is the cost**, not the thing it replaces.
+  Had I run a plain dose ladder I would have learned only "worse", and would probably have blamed the
+  displaced soldier.
+
+### My prediction, and the standing counter-argument that was right
+
+I registered that `dTiles` would rise for at least one of `mS`/`mL`. **Wrong**, on the primary at least,
+and wrong in the direction that matters.
+
+More importantly: I explicitly kept the argument *against* the whole direction on the record — **carol
+fields 0% moppers, unpaints 0.1 tiles a game, and gains the most small-map tiles of the three (332)**. I
+wrote that if moppers were the lever, carol should be worst and carol is best. **That argument was
+correct and I ran the 200 games anyway.** I do not think running it was wrong — the mopper case was
+independently well-evidenced and a 200-game answer beats an argument — but the ledger should record that
+the cheap objection called the result and I discounted it.
+
+**And the mid-flight sizing revision was a warning I gave myself and then walked past.** I raised the
+estimate from "~3x too small" to "42% of the gap" hours before the run reported, flagged it in writing as
+the shape of motivated reasoning, and it was not merely optimistic — it had the **sign wrong**. The
+flagging worked exactly as intended: because it is in the log with the gate frozen beside it, the verdict
+could not absorb it.
+
+### What this closes
+
+**Closed-directions ledger, ADD**: "raise bob's mopper spawn share" is CLOSED at **−5, −6 and −11 wins
+out of 50**, dose-monotone harm, with the displaced unit shown irrelevant. Not closed for want of an
+effect — closed because the effect is **negative and large**.
+
+**And it closes the unit-mix family entirely, together with a result already in my ledger.** Iteration 20
+tested `SPLASHER_SLOTS` at 1, 2 and 3 of 5 slots and accepted **2** — the peak was interior, so 3 was
+already worse. Iteration 45 now shows more moppers is worse. **Bob's spawn mix is a local optimum in both
+directions**, so the 91-tile small-map deficit to alice is **not a composition problem**. I checked
+iteration 20's result in my own log *before* proposing "be more like carol" for iteration 46, which is
+LEARNING 74's lesson working for once instead of catching me afterwards.
+
+`src/bob/` untouched. **`bob_iter20` remains the bot; HEAD's behaviour is unchanged.** Registered
+secondaries (mopper share, unpaints, total paint actions, dTiles, towers) follow when the census lands.
