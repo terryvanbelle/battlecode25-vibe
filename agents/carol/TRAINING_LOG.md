@@ -17610,3 +17610,59 @@ and divide by the sd of that comparison.** If it is under ~2 sd, the condition i
 
 This is the same shape as the power-kill that saved 300 games on the attribution arm, applied one
 level up — to the *rule* rather than to the experiment. Recorded in LEARNINGS.
+
+## Structural pre-check — FOUR capability gaps traced, all four fixes already measured and closed
+
+Per TRAINING_ALGORITHM's stalled-loop instruction I read the tournament replays for what the other
+lineages do that I never attempt. Leaf, carol vs alice, measured:
+
+| capability | carol | alice | the fix | status |
+|---|---|---|---|---|
+| towers built | 8 | **25 (cap)** | soldier supply | **closed** (58: census +14, +1.08 sd) |
+| soldiers built | 2 | **177** | `SPLASH_FLOOR` | **closed** (47: dense census margin 0) |
+| unpaint (mopping) | **0** | **740** | mopper spawn gate | **closed** (same gate as 58) |
+| tower upgrades | **2** | **29** | withhold chips / opportunistic | **closed** (12/12b) |
+
+The upgrade row is the fourth history-pre-check save of this session, and the most emphatic:
+*"Fund paint-tower upgrades by withholding spawning"* was measured at **12/40 = 30.0%** — the cost of
+forgone spawning exceeds the value of the upgrades, decisively — and *"opportunistic upgrades"* fires
+**3 times in 144,823 tower-turns**. Its re-open condition ("chips idle after the money mix *and*
+SRPs are in") can never be met, because SRPs are themselves closed. **That closure is permanent
+too.** I was about to build an upgrade-priority candidate; it would have re-run a 30% reject.
+
+## The synthesis, and why every null this session has the same cause
+
+Carol is **splasher-primary**: 2 soldiers / 41 splashers on Leaf. Alice is **soldier-primary**:
+177 / 41, plus 67 moppers. These are different architectures, not different parameter settings, and
+**carol's entire constant-set is co-adapted to the splasher-primary design** — `SPLASH_FLOOR` 2000,
+`MONEY_MOD` 4, `CHIP_RESERVE` 1200, `PAINT_FLOOR` 200, `SPLASH_MIN_SCORE` 8. Every one is now
+measured to sit at or near its local optimum.
+
+**That is why the lineage cannot move.** Iteration 47 set `SPLASH_FLOOR = 0` — a soldier-primary
+build — and scored **11/50**, far worse than either endpoint of the ladder. The path from
+splasher-primary to soldier-primary runs downhill in every single-constant step, because each
+intermediate state has one architecture's constants driving the other's unit mix. **This is
+doctrine 5b's destructive-pair logic operating across an entire design, and it is exactly the
+condition TRAINING_ALGORITHM names for a from-scratch rewrite** ("the 2020 champion's advice when a
+strategy has stopped moving, and cheaper than it looks").
+
+The closures are also mutually load-bearing, which is the tell that this is one structure rather
+than eight independent facts: soldiers need chips, chips need towers, towers need soldiers;
+upgrades need idle chips, which needed SRPs, which are closed. Every cycle closes on itself.
+
+## Registered as the next iteration: a from-scratch, soldier-primary rewrite
+
+Not comms and not symmetry inference — I checked both against my own standing questions and
+**neither has a traced deficit or a magnitude estimate**, so building either would violate the rule
+that killed three candidates this session. The rewrite does have both: the capability table above is
+the deficit, and alice's own numbers are the magnitude.
+
+**Scope, so it is a real proposal and not a gesture**: a new `src/carol_r1` on the same
+infrastructure, soldier-primary, with its economy constants derived together rather than inherited
+one at a time. It is evaluated exactly like any other candidate — stage 0, then a full-corpus census
+against `carol_iter44` on the standing gate. A rejected rewrite is a normal outcome and would itself
+be strong evidence that the splasher-primary local maximum is the better one.
+
+**I am not starting it in this session.** It is a large build that deserves a clean context, and I
+have spent this session accumulating a survey it should be built *from*, not alongside. The handover
+state is: closure map complete, four capability gaps quantified, and the rewrite scoped.
