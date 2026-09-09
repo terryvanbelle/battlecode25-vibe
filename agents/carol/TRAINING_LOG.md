@@ -16348,3 +16348,66 @@ targeted mechanisms whose value was speculative. This one targets a **measured a
 consumed 400-1500 rounds in half of a four-game loss sample**, in a bot that provably cannot react
 to it. The prior work needed for it is already done and committed — the engine facts are in
 RULES.md (money towers have `paintPerTurn == 0`; a team with no paint tower has already lost).
+
+---
+
+# Iteration 55 — build the missing instrument: `carol_conv`, "the converter"
+
+## PRE-REGISTERED. Written and committed before a single game is played.
+
+**This iteration proposes no change to `src/carol`.** It builds an opponent. The finding above says
+my gate cannot see the deficit I have been attacking for ten iterations; the cheapest way to keep
+being wrong is to attack it again through the same gate.
+
+## The archetype
+
+`src/carol_conv/`, forked from `src/carol` at `carol_iter44`. **Sole behavioural difference:
+`SPLASH_FLOOR` 2000 -> 0.** Verified by diff: package line, a frozen-archetype banner, and that one
+constant. Nothing else.
+
+That constant is the off-switch iteration 47 identified: with it at 2000 a soldier needs 2,250 chips
+against a median treasury of ~1,400, so carol builds **2-3 soldiers per game** and, since soldiers
+are the only unit that calls `workOnRuin`, converts about **8 of 52 ruins** on a ruin-dense map
+while her opponents take 25. Setting it to 0 buys exactly one thing: an opponent that does the thing
+this lineage never does. That is the definition of a synthetic archetype in TRAINING_ALGORITHM.md,
+and it is aimed squarely at the self-referential blind spot.
+
+Note this is deliberately **not** a bot proposal. As a candidate this build already lost: iteration
+47 scored it 21/50 and iteration 49 pushed further and scored 7/50. Its value is as an *instrument*,
+and a 42%-scoring opponent is a peer, which is precisely what a usable rung looks like.
+
+## Pre-registered conditions — 150 games, full 75-map corpus, both sides
+
+Full corpus rather than a 25-map sample because the quantity being measured **is** the ruin-count
+gradient, so I need the corpus's whole range of ruin counts, not a draw from it.
+
+1. **SENSITIVITY (primary).** rho(carol win, ruin count) against `carol_conv` must be **negative
+   with |z| >= 3**.
+   Baseline it must beat: vs `carol_iter44`, **rho = -0.0123, z = -0.28 over 500 games**; pooled
+   self-play **rho = +0.0093, 95% CI [-0.017, +0.035]** over 5,768.
+2. **RUNG VIABILITY (doctrine 12).** carol's overall win rate vs `carol_conv` must land in
+   **[30%, 90%]**. Outside that band it is a ceiling or a floor and **must not be promoted**,
+   however well condition 1 does. Doctrine 12 is explicit that hand-built archetypes fail exactly
+   here, in both directions, and that the rung must be scored before promotion.
+3. **MECHANISM (doctrine 5 stage 0).** `carol_conv` must actually convert more: its soldier builds
+   and tower count must exceed carol's in the same games. If they do not, the fork did not do what
+   the diff says and neither other condition is interpretable.
+
+**On what is NOT independent evidence (doctrine 14).** I will show a ruin-bucket table, but the
+bucket spread and rho are computed from the same games and are two displays of one quantity. The
+table is there to show the *shape* — whether the effect is monotone or driven by one bucket — not
+to corroborate the z. I am not counting it twice.
+
+## Both outcomes are worth the run, and I am naming them now
+
+- **Conditions 1+2 pass** -> I have an in-house instrument with sight. `carol_conv` goes into
+  `progress/roster_extra.txt`, and by the control registered above, every future ruin-conversion
+  gate must include it. Ten iterations' worth of unresolved questions become answerable.
+- **1 fails while 3 passes** -> the archetype genuinely converts ruins and the gradient *still* does
+  not appear. Then soldier-driven ruin conversion is **not** what produces the cross-lineage
+  gradient, and the causal story behind iterations 45-54 dies as a class. That is a bigger result
+  than an accept and it would redirect the whole thread, because it would mean alice and bob are
+  winning ruin-dense maps by something I have not identified.
+
+I would rather have this answer than another 50-game null, and I do not currently know which way it
+will go.
