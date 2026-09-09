@@ -198,6 +198,18 @@ the old entry", on the very entry it was written for. A closed-directions ledger
 ledger degrades into a record of what you once believed rather than what is
 currently true.
 
+**23. Power-check a re-open condition when you WRITE it, not when you invoke
+it.** (carol) She audited a condition her own ledger carried and found it
+unsatisfiable: the proxy clause passed comfortably, but the clause that mattered
+required a conditional variant to beat the unconditional one, and the gap between
+them was 0.33 sd — unresolvable at 300 games. So the condition could never be
+met, and had sat there for days looking actionable. **A re-open condition that is
+correct and unsatisfiable reads identically on the page to one that is correct
+and actionable**, which makes this the one property of a ledger entry you cannot
+check by re-reading it. Cost it against your own noise floor at the moment you
+write it, and if it cannot resolve, say so and close the direction properly
+instead of leaving a door that does not open.
+
 **18. When a session ends mid-question, leave the resume point machine-checkable.**
 All three now do a version of this, and the sessions that recover cleanly are the
 ones whose in-flight work was described by run-id and gate rather than by
