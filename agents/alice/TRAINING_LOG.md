@@ -15685,3 +15685,44 @@ That consolidation is the session's last result, and it means the four census pr
 two things rather than one: they killed `atcap` as an independent lead **and** supplied the
 mechanism-level evidence that the parity degeneracy is materially damaging in play, not merely
 implied by a table of ruin coordinates.
+
+## Iteration 43 — the regime-matched mechanism test PASSES, 7/8, run `20260909-110457`
+
+`BOT=alice_i43`, opponent `alice_iter39`, `MAPS="CastleDefense Filter Snowman gridworld"`, both
+sides. Pre-registered bar: **at least 6 of 8**.
+
+| map | my rule's degeneracy | side A | side B | outcome |
+|---|---|---|---|---|
+| `CastleDefense` | all PAINT towers | win r1844 | win r2000 | **SWEPT** |
+| `Filter` | all MONEY towers | win r1089 | LOSS r306 | split |
+| `Snowman` | all MONEY towers | win r1059 | win r750 | **SWEPT** |
+| `gridworld` | all MONEY towers | win r989 | win r2000 | **SWEPT** |
+
+**7/8 (87.5%), swept 3 of 4, swept-against 0, net swept +3.** `gate-read` confirms the identity
+column (`wins − N = 3`, `SW − SL = 3`), so the two figures are the same number and I am not citing
+it twice. **The bar is cleared.**
+
+The three maps my rule turns into all-money-tower maps are exactly the three swept; `Filter` — the
+smallest at 5 ruins, where a re-key changes the fewest towers — is the one split. That is the
+map-level shape the hypothesis predicts, and it was not chosen after the fact.
+
+**What this is and is not.** It is a *mechanism* test on regime-matched ground, and 8 games is a
+small sample: 7/8 is p ≈ 0.035 one-tailed under a fair coin, which is suggestive rather than
+decisive on its own. Its evidential weight comes from being **pre-registered with a stated bar,
+on maps selected by a structural property from `tools/mapdata/ruin_parity.txt` before any game was
+played** — not from the count. It is explicitly **not** an accept.
+
+**Part 2 launched: the pre-registered cost bound**, `BOT=alice_i43` vs `alice_iter39`, full 75-map
+corpus, 150 games. Requirement: **net swept >= −2**. The change must not pay for its four maps out
+of the other 71. It does not need to be positive — by the arithmetic above the corpus cannot
+resolve a 4-map gain, and demanding a corpus win would be demanding the instrument report
+something it provably cannot. Expected outcome if the hypothesis is right: roughly 0, since
+iteration 35a's re-key measured exactly that on an earlier baseline and the ratio here (49.1%
+money) is within 4 points of parity's 53.3%.
+
+**Still standing, and not to be overwritten by a good number:** the tournament evidence says this
+is a deficit alice and bob *share*, so the honest claim is "closing part of a gap carol has over
+both of us", and the only instrument that can confirm transfer to opponents my lineage did not
+produce is the round-robin. The two pre-checks I recorded as not done — a replay confirmation that
+alice really fields one tower type on `gridworld`, and the possibility that the four maps share
+some other property — are **still not done**, and the second is the weakest joint in the argument.
