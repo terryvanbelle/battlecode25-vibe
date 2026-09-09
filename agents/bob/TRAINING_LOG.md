@@ -17187,3 +17187,83 @@ relative to what you are hoping to show**, and say so.
   with a poor record attached.
 
 `src/bob/` untouched. **`bob_iter20` remains the bot.**
+
+## Iteration 51 — **CLOSED for the cost of one probe**, by two independent arguments. Zero gauntlet games.
+
+50 `bob_e0` games of run `20260909-195732` (496 frames, 17,587 mobile-unit observations) plus the
+registered comparative on the 75 `alice-vs-bob` replays of tournament `20260909-1300` (746 frames).
+**Isolation control**: `grep -c ' IND '` returns **0** on the tournament census.
+
+**The bias control, established before the numbers were read, held completely.**
+
+```
+coverage gap (recon - engine, per-mille)   gauntlet: min +1 median +6 max +16, 0/992 negative
+                                         tournament: min +0 median +6 max +22, 0/1492 negative
+```
+
+**Not one frame in 2,484 team-observations has the reconstruction under-counting painted tiles.** The
+error is one-sided in the direction that *understates* NEUTRAL, and NEUTRAL is what the penalty is charged
+on — so every figure below is a lower bound, and the bias cannot be the reason anything cleared or failed
+a threshold.
+
+```
+             unitObs    own%   neutral%   enemy%   terrPaint/unit-rnd   (neutral / enemy)
+  bob_e0       17587    89.9%      2.5%     7.6%         0.210            0.035 / 0.174
+  bob (tour)   30179    91.1%      1.5%     7.3%         0.192            0.024 / 0.168
+  alice        19753    82.0%      2.6%    15.4%         0.360            0.044 / 0.316
+```
+
+**Bob's territory bill is ~7,386 paint per game** (0.210 × ~35,170 mobile-unit-rounds) — under a third of
+crowding's ~24,900, and ~11% of the 65,022 issued. That lands in the registered middle band
+(4,000–12,000), whose instruction was: **"size the avoidable part before building anything."**
+
+### Argument 1 — sizing, against this lineage's own measured exchange rate
+
+**83% of the bill is ENEMY territory** (0.174 of 0.210), and my pre-registration disqualified that half in
+advance: avoiding enemy paint means **not attacking**, which is the retreat payer that capped iterations
+49 and 50. The genuinely free part is **NEUTRAL: 0.035 paint per unit-round**.
+
+Iteration 49 gives the exchange rate empirically rather than theoretically — `d3` cut crowd by **0.240**
+paint per unit-round and was worth **+6 wins out of 50**. So:
+
+> **0.035 / 0.240 × 6 ≈ +0.9 wins out of 50.** The entire avoidable territory penalty is worth about one
+> game.
+
+### Argument 2 — the comparative, which closes it independently and inverts it
+
+**Alice pays 0.360 per unit-round to bob's 0.192 — 88% MORE** — because alice spends **15.4%** of its
+unit-rounds on enemy paint against bob's 7.3%. Alice is the lineage that wins the tournament (61.3%) and
+beats bob 60–40.
+
+> **The territory penalty is not a bob defect. It is the price of invading, and the bot that pays twice as
+> much of it is the bot that is beating me.**
+
+I am not claiming alice wins *because* of this — that is one variable among many. The closure does not
+need it: iteration 46's pattern is enough, namely that a quantity on which bob is already far better than
+the bot beating it is not the quantity to optimise.
+
+### What this establishes beyond the closure — a reusable sizing rule, and a family-level result
+
+The exchange rate is worth keeping, because it converts any future paint-saving idea into wins **before**
+it is built:
+
+> **Best observed rate: 1.0 paint/unit-round saved ≈ 25 wins out of 50** (iteration 49: 0.240 → +6).
+> So a mechanism must save **≥0.40 paint/unit-round** to reach the +10 bar.
+
+**And the rate saturates**, which is the stronger result. Iteration 50's `e9w` saved **0.285** and also
+scored **+6** — a 19% larger saving for zero extra wins. So the linear rate holds only in the first
+tranche, and:
+
+> **No paint-saving movement mechanism can reach +10.** The largest saving available anywhere in the
+> budget is crowding's avoidable 0.600 per unit-round, and taking half of it already saturates at +6.
+> Territory's free part is 0.035 — an order of magnitude below what has already been shown insufficient.
+
+### My prediction, scored honestly
+
+I predicted bob's units would be "mostly on their own paint" (**right**, 89.9%), territory "below
+crowding" (**right**, 7,386 vs 24,900), a range of 8,000–13,000 (**slightly high**, actual 7,386), and
+"NEUTRAL dominating ENEMY" (**wrong**, enemy is 83% of the cost). That is the fifth consecutive
+prediction whose *structural* call was wrong while the magnitude call was roughly right — a pattern worth
+naming: I size these quantities better than I understand them.
+
+`src/bob/` untouched. **`bob_iter20` remains the bot.**
