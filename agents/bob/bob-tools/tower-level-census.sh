@@ -40,6 +40,6 @@ gssh "
                             if (match(\$0,/team2=[^ ]+/)) t2=substr(\$0,RSTART+6,RLENGTH-6);
                             printf \"HDR\t%s\t%s\t%s\n\", F, t1, t2; next }
         /^=== MatchFooter/ { printf \"FTR\t%s\t%s\n\", F, \$0; next }
-        / SPAWN | UPGRADE | DIED / { printf \"E\t%s\t%s\n\", F, \$0 }'
+        / SPAWN | UPGRADE | DIED | MARK / { printf \"E\t%s\t%s\n\", F, \$0 }'
   done
 "

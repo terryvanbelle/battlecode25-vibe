@@ -17694,3 +17694,66 @@ tournament `20260909-1300`, IND dropped at source.
   missing.
 
 `src/bob/` untouched. **`bob_iter20` remains the bot.**
+
+## Iteration 55 — **CLOSED.** Bob converts a ruin into a tower FASTER than alice. Zero games.
+
+75 `alice-vs-bob` replays of tournament `20260909-1300`. **Isolation control**: `grep -c ' IND '` = **0**.
+
+```
+bot      towers/g  marks/g  marks attributed  UNATTRIBUTED%   n(lat)  median lat   p75   p90
+alice       12.52      300               252          16.0%      558          37    91   168
+bob          7.85      392               189          51.8%      329          31    78   176
+```
+
+**Primary: median mark→completion latency, bob 31 rounds vs alice 37 — bob is 0.84x, i.e. FASTER.** The
+registered bands were *≥1.5x ⇒ build*, *≤1.1x ⇒ close*. **0.84x ⇒ CLOSED.** Bob is also faster at p75
+(78 vs 91) and only marginally slower in the p90 tail (176 vs 168).
+
+> **Bob is not slow at building towers. It builds fewer of them, and each one no slower than alice's.**
+
+This is the **fourth consecutive closure carried by the comparative showing bob ahead** of the lineage
+beating it 60–40 — after territory discipline (#51), upgrade rate (#52) and chip liquidity (#53).
+
+### The precedence clause did the work it was registered to do
+
+I registered, before the numbers: *"if the comparative shows bob FASTER than alice, the direction closes
+**regardless of what abandonment says**."* Bob is faster, and the secondary came in spectacular — **51.8%
+of bob's marks are attributable to no completed tower, against alice's 16.0%**. Without that clause I
+would now be reading a closed direction's secondary as a rescue. **The direction is closed**, and the
+abandonment number is a **nomination for a separate iteration with its own gate**, exactly as the same
+pre-registration said ("the fix is a patience/release rule, which is a different build").
+
+This is LEARNINGS 92's first half working on its first outing after I got it wrong in iteration 52.
+
+### The nomination, with its confound named — and it is a big one
+
+**Do not build on the 51.8% yet.** Bob's unattributed marks are not necessarily abandoned *tower*
+patterns: `markResourcePattern` also emits marks, bob completes ~3.67 SRPs a game and attempts far more,
+and an SRP's 5x5 is by construction **nowhere near a ruin** (`isValidPatternCenter` requires all 25 tiles
+paintable, and ruins are not). So most of bob's 203 unattributed marks per game may be legitimate SRP
+work rather than the stuck-soldier sink iteration 33 hypothesised.
+
+**The discriminating measurement is specified now, so the next session does not have to invent it**: ruin
+locations are readable from a single `--map-at 1` arena frame (`o` glyphs), and **a mark within Chebyshev
+≤2 of a ruin is a tower mark; a mark near no ruin is an SRP mark.** Split the 51.8% on that, and only the
+ruin-adjacent half bears on iteration 33's sink.
+
+Also worth noting the size before anyone gets excited: 392 marks a game at 1 paint each is **392 paint**
+against a 65,022 budget. Whatever abandonment costs bob, **it is not paint** — it would have to cost
+*soldier-turns*, via the `chooseRuin()` release rule that holds a soldier on an uncompletable ruin forever.
+
+### Prediction, scored — and the tally split the coordinator asked for
+
+I predicted *"bob's latency is close to alice's (≤1.2x) and abandonment is where bob is bad."* **Both
+halves right** — 0.84x and 51.8% vs 16.0%. That is the first clean structural hit in nine.
+
+Updated tally, split as suggested:
+- **Nominally right / substantively wrong** (right area, wrong quantity): iterations 48, 54.
+- **Plainly wrong**: iterations 46, 47, 49, 51, 52, 53.
+- **Right**: iteration 55.
+
+The split earns its keep immediately: it says my instincts locate the right *area* reliably and the right
+*quantity* rarely — so the cheap fix is to probe several quantities inside a nominated area rather than to
+nominate better areas. That is what iteration 54's sweep did, and it is why this one landed.
+
+`src/bob/` untouched. **`bob_iter20` remains the bot.**
