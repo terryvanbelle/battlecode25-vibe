@@ -14841,3 +14841,93 @@ open question is not "how much splasher" but "over what fraction of the corpus".
   SMALL_AREA 1500 relaxes the gate on 47% of the corpus including maps whose games run long, so the
   wider threshold should re-import iteration 34's loss. If `bob_sa2 >= bob_sa1` then game length,
   not map area, is the real conditioning variable and area was a proxy — which I would want to know.
+
+---
+
+## Iteration 38 — **REJECTED**, and my safety argument was wrong in a way the probe pins exactly.
+
+Run `20260909-120113`, 150 games, `BOT=bob_iter20 OPPONENTS="bob_mk0 bob_mk1 bob_mk2"`.
+
+```
+arm      MARKCLEAN   score   vs null   swept  sweptAg  split   diff-from-null
+bob_mk0      0       25/50     +0        0        0      25       0/50   <- NULL
+bob_mk1      1       22/50     -3        2        5      18      15/50
+bob_mk2      2       19/50     -6        2        8      15      12/50
+```
+
+**The zero arm is EXACT: 25/50, all 25 maps split, 0 swept, 0 diff-from-null.** The run is valid and
+not void, and that also clears the bytecode worry I registered — had `cleanStaleMarks()`'s extra call
+pushed a soldier over the limit, the null could not have come back exact.
+
+Gate was **+10 accept / +7..+9 replicate / <= +6 reject**. Both arms are **negative** (-3 and -6), so
+this is a reject and not a marginal one. `diff-from-null` of 15/50 and 12/50 says the dose bites: a
+live mechanism, not an inert arm.
+
+### The secondary inverted, which is the whole value of the iteration
+
+`bob-tools/srp-census.sh` over the run's own 150 replays, attributing teams by side (the arm is T2 in
+`botA` games and T1 in `botB` games — getting this backwards would have flipped the finding):
+
+```
+arm        arm SRP   bot SRP   SRP diff   rounds
+bob_mk0      2.62      2.62      +0.00      1057    <- byte-identical null
+bob_mk1      2.04      2.88      -0.84       982
+bob_mk2      2.36      2.80      -0.44       972
+```
+
+**The null reads exactly +0.00** — an independent confirmation of the zero arm from a different
+measurement channel than the win count, and it pins this instrument's noise floor at zero on
+byte-identical builds, as iteration 37's secondary did.
+
+**And the mechanism fired BACKWARDS.** Cleaning marks was supposed to free SRP sites and raise the
+SRP count. It *lowered* it, by 0.84 patterns per game.
+
+### The discriminating probe, because "fewer completions" had two explanations
+
+A bare drop in completions is equally consistent with "the arm simply lost more games". What
+separates the hypotheses is **starts**. Probe arms `bob_mkp0` / `bob_mkp1` (MARKCLEAN 0 and 1) with a
+timeline marker on `markResourcePattern` (start) and on patience expiry (drop), 5 pinned maps, 20
+games, run `20260909-124214`. Arm-side totals over 10 games each:
+
+```
+             SRP starts   abandoned on patience   completed
+  bob_mkp0        52          13  (25% of starts)     29
+  bob_mkp1       109          72  (66% of starts)     19
+```
+
+**Starts double, abandonments go up 5.5x, completions fall by a third.** That is the predicted
+signature and nothing else produces it.
+
+### What was actually wrong — and it was my safety argument, verbatim
+
+I wrote, in the pre-registration: *"a mark is only removed when the pattern it belongs to is already
+FINISHED ... this can never erase the marks another soldier is still painting against."*
+
+**`cleanStaleMarks` never tests what pattern a mark belongs to.** It tests whether the TILE lies within
+Chebyshev 2 of a ruin carrying a tower. A tile can satisfy that *and* be part of an in-progress SRP —
+and it does so systematically, because opening the rings around towers for SRP siting is precisely
+what the cleaning accomplishes. So the change creates SRP sites in exactly the region where a second
+soldier's janitor pass will erase the first soldier's marks. The builder then can never satisfy
+`canCompleteResourcePattern`, and burns its 25 paint and 120 turns of patience. **The mechanism
+manufactures its own victims.**
+
+**Closed-directions ledger, ADD**: "remove stale pattern marks to free SRP sites" is CLOSED at
+-3/-6 wins, with the mechanism confirmed active and *inverted* — starts +110%, completions -34%.
+
+**A repair exists and I am not taking it now.** A soldier could recompute, from `getTowerPattern(type)`
+and the ruin location, which mark a *tower* pattern would have written at a tile, and clean only
+those — distinguishing a leftover tower mark from a live SRP mark. That is real bytecode for a prize
+bounded by the ~2.6 SRPs a game currently reaches, and iteration 37 already showed a confirmed
+mechanism can be worth zero wins. It goes in the ledger as repairable, not as next.
+
+### The learning I actually want carried forward
+
+**A safety argument stated in terms of intent is not a safety argument about the code.** Mine was
+about which pattern a mark "belongs to"; the code's predicate was a distance test that has no notion
+of belonging. Both sentences sound the same in English and they are not the same predicate. This is
+LEARNING 63 with the polarity reversed: there, source-reading found a real defect that was not the
+fault; here, source-reading produced a real *guarantee* that the code did not implement. The probe
+cost 20 games and converted a bare null into a mechanism I can state exactly.
+
+`src/bob/` carries `MARKCLEAN = 0`, the exact zero arm. **`bob_iter20` remains the bot; HEAD's
+behaviour is unchanged.**
