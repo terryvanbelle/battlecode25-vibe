@@ -140,25 +140,27 @@ def snapshot_dates(repo_root, ws_dir, agent):
     return rows
 
 
-def roster_numbers(present, stride=5):
-    """Fixed reference points: the first accepted snapshot, then every
-    `stride`-th ACCEPTED SNAPSHOT BY POSITION.
+def roster_numbers(present):
+    """Fixed reference points: the origin, then the build that was current at
+    each iteration whose number ends in 1 or 6 (1, 6, 11, 16, 21, ...).
 
-    Derived, never hardcoded. BC26's port hardcoded its roster as a usage
-    example, then wasn't revisited when a second reference snapshot existed, so
-    the chart tracked a single opponent long after it should have had three.
-    Deriving it means the roster grows on its own as the project does.
+    Set by the user 2026-09-09, replacing "every 5th accepted snapshot by
+    position". Derived either way, never hardcoded: BC26's port hardcoded its
+    roster as a usage example and then wasn't revisited when a second reference
+    snapshot existed, so the chart tracked one opponent long after it should
+    have had three.
 
-    Strides over POSITION, not over the iteration number. Striding over numbers
-    ({0,1,6,11,...}) silently drops every slot whose iteration was rejected --
-    those snapshots never come into existence, so the rung is gone for good.
-    Alice, with accepted snapshots [0,1,2,4,5,7,12,14], got a roster of just
-    [iter0, iter1] because 6 and 11 were rejected: an agent that rejects more
-    candidates got a permanently worse absolute-strength chart, which is exactly
-    backwards. By position she gets [iter0, iter7], a rung that resolves.
+    A milestone iteration is usually REJECTED, and a rejected iteration never
+    becomes a snapshot -- alice has 18 accepted snapshots and exactly one whose
+    number ends in 1 or 6. So a milestone resolves to the last accepted snapshot
+    at or before it: the bot as it stood at that iteration, which is the thing
+    the chart is asking about. Milestones can collide (alice's 31 and 36 both
+    resolve to iter30); the set absorbs that.
 
-    Positions are stable as the lineage grows, because accepted snapshots are
-    only ever appended -- so a roster member stays a roster member.
+    This is why the roster is not simply {n : n % 5 == 1}. That reading gives
+    alice a single rung and carol four from lineages of the same length, so an
+    agent that rejects more candidates would get a permanently worse
+    absolute-strength chart -- exactly backwards.
 
     The first snapshot is always included: it is the origin, and win% against it
     is the closest thing this project has to an absolute-strength yardstick.
@@ -166,7 +168,12 @@ def roster_numbers(present, stride=5):
     nums = sorted(present)
     if not nums:
         return []
-    return [nums[i] for i in range(0, len(nums), stride)]
+    keep = {nums[0]}
+    for m in range(1, nums[-1] + 1, 5):        # 1, 6, 11, 16, ...
+        at_or_before = [n for n in nums if n <= m]
+        if at_or_before:
+            keep.add(max(at_or_before))
+    return sorted(keep)
 
 
 # BC25 finals benchmark bots. These are a yardstick measured by the coordinator,
@@ -193,7 +200,7 @@ def _history_opponents(ws_dir):
         return set()
 
 
-def roster_opponents(ws_dir, agent, stride=5, exclude_current=True):
+def roster_opponents(ws_dir, agent, exclude_current=True, extra_numbers=()):
     """Roster opponent names: the snapshot roster, plus any fixed extras.
 
     progress/roster_extra.txt (one name per line, '#' comments) lets an agent
@@ -204,12 +211,13 @@ def roster_opponents(ws_dir, agent, stride=5, exclude_current=True):
     """
     present = set(snapshot_numbers(ws_dir, agent))
     newest = max(present) if present else None
-    keep = set(roster_numbers(present, stride))
+    keep = set(roster_numbers(present)) | {n for n in extra_numbers if n in present}
     # Never drop a rung that already has history. "Never remove an entry -- the
     # value of each line is its long-run trend" is a promise about the chart, so
-    # a snapshot that has ever been measured stays measured even if a later
-    # stride would not pick it. Without this, fixing the stride would have
-    # orphaned bob's iter1 line mid-project.
+    # a snapshot that has ever been measured stays measured even if the current
+    # rule would not pick it. This is what makes changing the rule safe: the
+    # 2026-09-09 switch from positions to numbers selects fewer snapshots for
+    # some lineages, and not one existing line was dropped by it.
     keep |= {n for n in present
              if snapshot_name(agent, n) in _history_opponents(ws_dir)}
     names = [snapshot_name(agent, n) for n in sorted(keep)]

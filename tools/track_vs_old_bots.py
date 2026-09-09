@@ -6,8 +6,11 @@ WHY THIS EXISTS, separately from the gauntlet's own summary: the gauntlet pool
 moves. Opponents get retired, new snapshots replace old ones, and the map sample
 is redrawn every run, so "83% this run" is measured against a different
 instrument each time. This file keeps a deliberately frozen set of reference
-points -- iteration 0, then every 5th accepted snapshot -- so a rising line is
-absolute progress rather than a moving-target artifact.
+points -- iteration 0, then every accepted snapshot whose iteration number ends
+in 1 or 6 -- so a rising line is absolute progress rather than a moving-target
+artifact. A lineage may pin further fixed yardsticks of its own in
+progress/roster_extra.txt; synthetic archetypes qualify for the same reason old
+snapshots do, because they never change.
 
 Ported from battlecode26-vibe/battlecode22-vibe. Two changes here:
  - the roster is derived (progress_lib.roster_opponents), never hardcoded;
@@ -184,13 +187,16 @@ def main():
                     help="backfill from every gauntlet run in this workspace")
     ap.add_argument("--roster", action="store_true",
                     help="print the roster opponent list and exit")
-    ap.add_argument("--stride", type=int, default=5,
-                    help="roster spacing: iter0, then every Nth (default 5)")
+    ap.add_argument("--include", default="",
+                    help="also treat these iteration numbers as roster rungs "
+                         "(comma-separated), for recording a run that played a "
+                         "snapshot the standing rule does not select")
     ap.add_argument("--workspace", help="agent workspace (default: detect from cwd)")
     args = ap.parse_args()
 
     repo_root, ws_dir, agent = pl.find_workspace(args.workspace)
-    roster = pl.roster_opponents(ws_dir, agent, stride=args.stride)
+    extra = [int(n) for n in args.include.replace(",", " ").split()]
+    roster = pl.roster_opponents(ws_dir, agent, extra_numbers=extra)
 
     if args.roster:
         print(" ".join(roster))
@@ -240,19 +246,25 @@ def main():
                       f" -- a prefix, not a sample; not recorded")
                 tally.pop(o, None)
 
-        # A run can contain an old snapshot that the CURRENT stride does not
-        # select, and silently dropping it is a trap: bootstrapping a new rung
-        # means playing it deliberately, and the rung only becomes permanent
-        # once it is in this CSV. So say so, with the command that records it,
-        # instead of skipping without comment.
+        # A run can contain an old snapshot the standing rule does not select,
+        # and silently dropping it is a trap: bootstrapping a new rung means
+        # playing it deliberately, and the rung only becomes permanent once it is
+        # in this CSV. So say so, with the command that records it, instead of
+        # skipping without comment.
         skipped = sorted(_snapshot_opponents(results_csv, agent) - set(roster))
         if skipped:
+            found = set()
+            for o in skipped:
+                m = re.search(rf"^{agent}_iter(\d+)$", o)
+                if m:
+                    found.add(int(m.group(1)))
+            nums = ",".join(str(n) for n in sorted(found))
             print(f"  !! {rundir.name} also played {', '.join(skipped)}, which the")
-            print(f"  !! current --stride {args.stride} roster does not select, so they are NOT")
-            print("  !! recorded. To keep them as permanent rungs, re-run this with a")
-            print("  !! stride that selects them, e.g.:")
-            print(f"  !!   track_vs_old_bots.py --stride 3 {rundir}")
-            print("  !! Once recorded they stay in the roster at any stride.")
+            print("  !! roster rule (iteration ends in 1 or 6, plus the origin) does not")
+            print("  !! select, so they are NOT recorded. To keep them as permanent rungs:")
+            if nums:
+                print(f"  !!   track_vs_old_bots.py --include {nums} {rundir}")
+            print("  !! Once recorded they stay in the roster whatever the rule says.")
 
         if not tally:
             print(f"  skip {rundir.name} (no roster opponents in it)")
