@@ -16601,3 +16601,41 @@ null, so that the explanation cannot be chosen after seeing which one flatters t
 BunnyGame replays, stride 1, whole game): bob spawns **44.5** units and loses **33.5** per game, of which
 **26.0 are starvation** — 78%, independently reproducing iteration 44's 89% figure on a different corpus
 with a different instrument. Whatever iteration 47 says about the *fix*, the *defect* is confirmed twice.
+
+## Iteration 47 — **REJECTED.** Refilling earlier makes bob worse, at both doses, by the same amount.
+
+Run `20260909-181512`, 150 games, `BOT=bob_iter20` against the three arms on one shared 25-map sample
+(both sides). Reported wins are **bob_iter20's**, so `delta = 25 − (iter20's wins)` is the arm's advantage.
+
+```
+  vs bob_g0   (REFILL_BELOW  50)   25/50   delta   0    swept 0/25,  0 against, 25 split
+  vs bob_g1   (REFILL_BELOW 100)   31/50   delta  -6    swept 10/25, 4 against, 11 split
+  vs bob_g2   (REFILL_BELOW 150)   31/50   delta  -6    swept 9/25,  3 against, 13 split
+```
+
+**VOID condition PASSES.** `bob_g0` landed at exactly **25/50 with all 25 maps split by side and zero
+sweeps in either direction** — the mirror is exact, as it was for iteration 45's `m0`. The instrument is
+clean, so the two negative numbers are the arms and not the harness.
+
+**Verdict against the gate as registered** (≥ +10 accept-eligible, +7..+9 replicate, ≤ +6 reject):
+**delta = −6 at both doses ⇒ REJECT.** It is not a marginal null; it is negative, and the swept counts
+agree independently (iter20 swept 10 and 9 maps against the arms, which swept 4 and 3).
+
+### My registered prediction was wrong, and wrong in an informative shape
+
+I predicted "**a small positive at g1 and possible harm at g2** from refill thrash", explicitly hoping for
+the interior peak iteration 20 found for `SPLASHER_SLOTS`. What happened instead is **harm at g1 and
+exactly the same harm at g2**. There is no dose response at all between 100 and 150 — doubling the
+distance the threshold moves adds nothing to the damage.
+
+**That flat shape is the finding, and it does not fit "thrash".** Thrash is a cost that scales with how
+often the refill branch preempts a turn, so it should be visibly worse at 150 than at 100. It is not. A
+cost that appears as soon as the threshold moves at all, and then stops growing, is the signature of a
+**mode change rather than a rate change** — the soldiers start taking a different branch and the loss is
+paid once, not per event.
+
+Registered secondaries (`xfer`, starvation deaths, soldier-rounds, paint per soldier-round, `twPaint`,
+`dTiles`) follow when the stride-1 census over all 150 replays lands. The three-way reading of `xfer`
+fixed in the pre-verdict addendum decides between the two failure modes.
+
+`src/bob/` untouched. **`bob_iter20` remains the bot; HEAD's behaviour is unchanged.**
