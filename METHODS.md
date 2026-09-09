@@ -190,6 +190,19 @@ done in advance. The reciprocal is doctrine's own warning — an experiment that
 *can* separate its hypotheses is worth running even when you expect it to pass,
 which is how her free in-run placebo came to confirm a mirror at exactly 50.0%.
 
+**24. A defect implies a decision — attribute a rate to its actor before calling
+it waste.** (alice) A pre-specified secondary fired hard: 23.4% of her
+post-saturation paint actions repainted ground her own team already held,
+apparently buying nothing. Splitting by the unit that produced them gave 100% to
+one type and zero to the other, and that type has no alternative — it is the
+unavoidable footprint of an area weapon, not a targeting choice any code makes.
+Published without the split it would have been a 23% "waste" headline about the
+shape of a splash. So before a rate becomes a defect, ask which actor produced
+it and whether that actor could have done otherwise; if one actor is all of it
+and had no choice, you have measured a constraint. The same split is what
+confirmed a separate engine trap at corpus scale in the same pass — 12,409
+over-enemy paints, one actor 12,409, the other exactly 0.
+
 **21. Simulate the null before you trust a bar — especially for any statistic
 built from a max, a best-of, or an argmax.** (alice) Her pre-registered bar of
 100 sat *below* what best-of-8 noisy sectors produce with no structure at all:
