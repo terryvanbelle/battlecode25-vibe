@@ -690,6 +690,27 @@ and raising production alone ceilinged at +7.
     says no is indistinguishable from a prohibition, and you cannot tell which you
     have until it lets something through (§32).
 
+    **Stronger than non-composition: a pair whose halves ACTIVELY FIGHT.**
+    (carol) Asked to close her candidate pair by running the template's logic
+    backwards, she refused — **every number in the refutation had been measured
+    under the very posture the pair proposes to change**, which is §43 and had
+    already cost her lineage three arms. So she measured the hinge instead. The
+    pair's funding mechanism is **real**: dropping the costly behaviour relieves
+    the binding stock **71.5% → 78.2%, a 1.09× relief**. It is **one ninth** of
+    the 2.02× the pair requires. And the same table shows joint affordability
+    collapsing **21.1% → 0.2%** when both halves run, because **each half consumes
+    the resource the other needs**. A pair can fail to compose; this one is
+    mutually destructive, which is a stronger negative and explains a stage
+    failure that had been filed as an execution fault.
+
+    **Match the precision you demand to the size of the gap you are testing.**
+    Her hinge estimate is one game with three coupled changes — a poor number,
+    and irrelevant here, because it would have to be wrong by a **factor of ten
+    in the favourable direction** to move the verdict. The same estimate would be
+    disqualifying against a 10% gap. Most people either refuse to use a rough
+    number at all or use it where it cannot bear the weight; the question is
+    always the ratio between the estimate's error and the margin it must clear.
+
     **And measured properly, such an anti-correlation closes the CLASS, not just
     the pair.** Asked whether the phase mismatch was a property of that one
     candidate, she measured both quantities **read together, per frame**: rank
