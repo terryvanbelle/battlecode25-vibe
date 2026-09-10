@@ -1,4 +1,4 @@
-package darla;
+package darla2;
 
 import battlecode.common.*;
 
@@ -60,7 +60,7 @@ public class RobotPlayer {
      * measurement-neutral -- it shifts the replay hash, so a dose pair must share one tag if
      * doctrine #3's byte-identity check is to work on raw hashes.
      */
-    static final String BUILD = "darla1";
+    static final String BUILD = "darla2";
 
     // ---- Iteration 34: fewer MONEY towers, because paint binds and chips do not -------------
     // towerTypeFor makes a ruin a money tower when k % MONEY_MOD == 0, so MONEY_MOD sets the
@@ -118,7 +118,7 @@ public class RobotPlayer {
     // are still worth having (the zero arm loses badly: they are the cheap unit at 100 paint
     // against a soldier's 200, and mopping is carol's only way to reclaim enemy paint since
     // soldiers cannot overwrite it) -- there are simply too many of them at 5.
-    static final int MOPPER_IN_20 = 2;
+    static final int MOPPER_IN_20 = 0;   // darla2: alice measured moppers at 0.0000 tiles per build-paint over 105 spawns, and SUPERSEDED -- a splasher overwrites enemy paint directly within r2<=2 of a centre it can place r2<=4 away, one step across up to 13 tiles where a mopper takes one tile in two. No conversion rate rescues a superseded unit, so the 10% of production they consume goes to splashers at 2.14x the efficiency.
 
     /** Minimum splash score worth spending 50 paint on. Named so it can be a dose. */
     static final int SPLASH_MIN_SCORE = 8;
