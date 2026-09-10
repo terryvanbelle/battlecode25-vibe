@@ -818,6 +818,27 @@ fifteen iterations with no measurable absolute gain.**
     so the most expensive thing available was not re-running a settled question.
     A ledger's highest-value use is on the one build nobody screens first.
 
+    **A rewrite's answer condition must separate EXECUTION failure from PREMISE
+    failure at every stage, or a rejection teaches nothing.** (carol) Before
+    writing a line she registered a staged discrimination: stage A failing means
+    the *production* half was built wrong and the pair is **untested**; A passing
+    and B failing means the *posture* half was built wrong and the pair is still
+    **untested**; A and B passing while C fails means **the pair itself is
+    wrong** and the design closes; A, B and C passing while the outcome fails
+    means **the pair is right and something downstream is** — each a separate,
+    cheaper iteration. Most rewrites are rejected in a way that cannot tell *the
+    idea was bad* from *I built it badly*, which is why most rewrites teach
+    nothing; this one cannot land in that ambiguity.
+
+    She also **named the failure she most expected in advance** — every link
+    moving while the terminal outcome stays flat (§80), which her own recent
+    chain had done — so a recurrence would be diagnosed in a line rather than
+    rediscovered over a session. And she handled the endogeneity of her own
+    feasibility bound by §49: naming each term's direction, **quantifying the one
+    she feared** (a drain penalty that cost only 10%, because spending dominates
+    drain), then carrying the penalty *and* granting no gain and still clearing
+    2.6×.
+
     **She then declined to let a strong convergence argument substitute for the
     series either.** Four consecutive directions at one term had all terminated
     at the same constraint — one raising it directly and rejected at −8, one
@@ -1552,6 +1573,32 @@ and the bars untouched, and said in the log that she had done so. The two wrong
 moves are the quiet swap, which makes the registration meaningless, and
 abandoning the registration, which loses the pre-commitment; the honest middle is
 a declared substitution with the bars intact.
+
+    **And sometimes no site-observable restatement exists — that is a closure,
+    and you can prove it.** (alice) Re-deriving a direction, she proposed a
+    "principled" gate and measured its firing rate **before building**: the
+    condition was a negative over a rare object (*"none visible to this
+    actor"*), the actor's field of view holds **0.145** of that object, so the
+    gate fires on **87%** of turns — reproducing almost exactly the ungated arm
+    that had already lost. **The gate she had called the untested middle was the
+    harmful extreme in disguise.**
+
+    The safe version of the gate is team-level and no single actor can observe
+    it. The one global observable available correlates **+0.01** with the
+    quantity it would proxy — inverted on a named pair of maps — so **no
+    threshold on it works at any value.** That is a distinct closure kind:
+    not *it does not pay*, not *it cannot fire*, but **the gate that would make
+    it safe is not computable from the actor's observables.** No dose reopens it,
+    and it explained a much older null better than that null's own re-open
+    condition did. The re-open it deserves names a *new observable* — something
+    correlating with the target at |r| ≥ 0.6 — rather than a threshold.
+
+    Two costs from the same engine read are worth the shape they share: laying
+    the structure on ground already yours costs **65 units of the binding
+    resource for zero gain**, and that cost is **maximal exactly on the safe
+    interior ground the documentation recommends**. Cheap ground is the frontier;
+    safe ground is expensive. Structural opposition again (§35), this time
+    between a mechanism's cost and its own safety advice.
 
     **And the direction a fix moves a result is evidence about the fix.** Her
     manipulation control — a signal that *cannot* work, scored on units with
