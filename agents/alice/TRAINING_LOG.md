@@ -24449,3 +24449,35 @@ binding resource**, which is the only quantity that can rank a spawn choice.
 > them from unevidenced into either supported or dead**, and it is one probe.
 
 **Cost so far under the new objective: zero games beyond the running census.**
+
+# WHICH NUMERATOR — registered before measuring, because "value" spans two rankings
+
+**I am measuring OUTPUT PER PAINT — production efficiency — and I am declaring it as that.**
+
+> **tiles painted by units of type T ÷ (spawns of T × T's paint cost)**
+> Measured in ONE PASS from a single full action log: `PAINT` lines carry the actor's type, and
+> `SPAWN` lines carry the built type, so numerator and denominator come from the same events in the
+> same games. **No chain of separately-measured ratios** — the failure mode that was wrong by 5x, 10x
+> and 6x today.
+
+**Why spawn-paint is the right denominator:** attack costs and upkeep are drawn from the *same*
+200/300/100 tank the unit was born with, so "ground bought per paint spent creating the unit" is
+complete rather than partial. It is the exchange rate a spawn decision actually faces.
+
+## What I am NOT measuring, and what would invert the ranking
+
+**Outcome contribution per paint** — how much that output converts into games won. **My own log is the
+reason to keep these apart: K3 moved per-unit output +16% and failed its census; K7 moved its
+intermediate 1.39x and closed on magnitude. Output moved and outcome did not, twice.** A type that
+produces more ground per paint is therefore **not thereby worth more**, and a ranking built on
+production alone would reproduce exactly the error that closed both.
+
+> **Registered inversion condition, stated now so it cannot be assumed away:** the production ranking
+> **inverts** if a lower-production type contributes disproportionately to the *outcome* — concretely,
+> if the ground it takes is **enemy-held** rather than empty. Empty ground is +1 to me; enemy ground
+> is +1 to me **and −1 to them**, worth twice as much on a coverage difference. **A type that paints
+> fewer tiles but takes them off the opponent can outrank one that paints more empty ones**, and
+> nothing in the production number sees that.
+>
+> **So the claim I will make is a ranking of PRODUCTION EFFICIENCY, with conversion left as an open
+> term** — not assumed to follow, and with the specific quantity that would overturn it named above.
