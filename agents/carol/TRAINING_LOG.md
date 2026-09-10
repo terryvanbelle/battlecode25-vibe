@@ -22704,3 +22704,75 @@ passing stack tells me the set works and not which member does. They did not pas
 **There is no candidate I can honestly price at or above the accept bar, and no evaluation design
 that reaches one from the material I hold.** That is a statement about the position, with the
 arithmetic attached, and it is on the desk rather than a reason to manufacture a twenty-first axis.
+
+## Threshold re-derivation — the area gate, priced from the games' own boundary (0 games)
+
+Directive: my objection to the area gate was against the *threshold value* (1,600, invented for a
+report table), not against the *regime effect*, which I have measured twice. Repair = re-derive the
+boundary from the data. Find where the sign actually flips. Say plainly which way it goes.
+
+DATA (all already on disk, no new games):
+  - paired corpus: `20260910-051954` (BOT=carol_iter45 vs bobf) and `20260910-101308`
+    (BOT=carol_i69_2 vs bobf) — same 75 maps, 150 games each, so every map yields a paired delta.
+  - head-to-head screens: `20260910-100324` (i69 doses 2/4/8) and `20260910-123040` (i76 doses
+    2/3/4), BOT=carol_iter45 in both, so candidate margin = -(bot margin). Referents checked from
+    each run's own `bot.txt` and opponent column before any pairing.
+  - map area from `tools/mapdata/ruin_parity.txt`.
+
+METHOD: sweep every candidate area boundary, take the max |split separation|, and permutation-test
+it by shuffling the area labels across maps — because a boundary chosen to maximise separation on
+the same data will always find one.
+
+### 1. The boundary is real, and it is where I guessed
+  mechanism   own data-chosen boundary   small side      large side     perm p (boundary fitted)
+  i76 (pooled)      area <= 1500        -26 / 11 maps   +12 / 14 maps       0.060
+  i69 (pooled)      area <= 1600        +24 / 14 maps    +2 / 11 maps       0.646
+  i76_3             area <= 1500        -14             +4                  0.188
+  i76_4             area <= 1320        -12             +8                  0.125
+  paired bobf, i69_2 minus iter45:  best at 1500, separation +11, perm p = 0.032
+
+Every boundary the games choose lands in 1320-1600. **My invented 1,600 was right.** The threshold
+was never the defect. The gate is buildable. The discontinuity is suggestive (p .06-.19 with the
+cut fitted), not established.
+
+### 2. The two mechanisms want OPPOSITE gates
+i69 is small-positive / large-neutral. i76 is small-NEGATIVE / large-positive. Held out: the 1500
+boundary fitted on the i69/bobf pair, applied unchanged to the i76 screen, gives small-minus-large
+of -4 / -18 / -16 across the three doses — same direction all three times, opposite to i69.
+There is no single "regime gate". There are two anti-aligned ones. This is the -0.48 correlation
+from the evaluation-design decision, now with a mechanism attached: they do not merely compete for
+a shared coverage ceiling, their regime dependence points opposite ways.
+
+### 3. The pricing that kills it — a gate is worth minus the side you switch OFF
+  arm        small   large  ungated  gain of the gate vs ungated   census-equivalent gated value
+  i76_2        -2      +2      +0            +2                        +5.3
+  i76_3       -14      +4     -10           +14                       +10.6
+  i76_4       -10      +6      -4           +10                       +15.9
+  i69_2       +12      +0     +12             0                       (see note)
+  i69_4        +8      +2     +10            -2
+  i69_8        +2      +2      +4            -2
+(census-equivalent = the kept side's per-game rate scaled to the 74 of 150 census games that are
+large; census margin sd over 74 games = 9.1; ACCEPT bar = +26.)
+
+**i69's gate is worth ~zero** (0 / -2 / -2 vs ungated). Its bad side is not bad — it is neutral, and
+you cannot gain by disabling something that is not costing you. My +7 oracle for i69 counted the
+*good* side. The good side is what I already have ungated. That was a null-action error of exactly
+the kind flagged earlier in the loop, committed in a place I had not looked for it. On the bobf pair
+i69_2's large side is -4 wins rather than 0, so the true value of the i69 gate is somewhere in
+0..+8 margin. Either way: far below the bar.
+
+**i76's gate is worth +10 to +14 vs ungated**, and against the NULL ACTION (run carol_iter45
+everywhere) it delivers a census-equivalent +5 / +11 / +16 across doses. So the +12 oracle is
+confirmed: it stops being hypothetical and becomes a measured, gated value of about +11.
+And +11 is 42% of the +26 accept bar, at 1.2 sd on a census.
+
+### VERDICT — plainly, which way it goes
+The gate is NOT unbuildable, and the threshold was NOT the error. The boundary is real, the games
+choose 1320-1600, and the +12 oracle survives contact with the data as a measured ~+11.
+The oracles die anyway, of a different cause than I expected: **measured and small.** +11 against a
+bar of +26, with a fitted-cut p of .06 and a 1.2 sd census margin. The bar does not move, and a
++11 mechanism needs ~1,800 games to separate from zero at 2 sd — the same power wall that closed
+the escalation's measured half.
+
+The escalation is complete. Twenty axes closed; the twenty-first is not manufactured. `src/carol`
+stays at carol_iter45. Zero games spent on this answer.

@@ -374,3 +374,20 @@ both directions, and do not let a reject you agree with quietly answer a questio
 - The frozen roster un-saturates itself. → *"The frozen roster un-saturates itself"*
 - Reading a running gauntlet is free information. → *"Reading a running gauntlet"*
 - A cache keyed on a MUTABLE path serves stale answers silently. → *"A cache keyed on a MUTABLE path"*
+
+- **A regime gate is worth minus the side you switch OFF, never the side you keep.** I priced the
+  i69 area gate at +7 by counting its good (small-map) side. But the ungated bot already has that
+  side; the gate's only product is the loss it avoids on the other side — and i69's other side was
+  neutral, so the gate was worth zero. Price a gate as (null action) - (what the disabled regime
+  was costing you). Same null-action error as pricing against zero instead of against no-op, in a
+  new hiding place.
+- **A boundary chosen to maximise separation will always find one — permutation-test the choice,
+  not just the split.** Shuffle the covariate labels across units and re-run the whole max-over-
+  thresholds search; the p-value must be for the search, not for the winning cut.
+- **Two mechanisms can share a ceiling *and* be anti-aligned in regime.** i69 helps on small maps
+  and is neutral on large; i76 hurts on small and helps on large. A single "regime gate" for both
+  is incoherent. When a correlation between candidates is negative, look for the covariate that
+  signs it before concluding they merely compete for one resource.
+- **An oracle can survive the data and still die.** The i76 +12 was not a fantasy — re-derived at a
+  data-chosen boundary it measures ~+11. It closes because +11 is 42% of the bar, not because it
+  was unbuildable. "Confirmed" and "sufficient" are different verdicts; report both.
