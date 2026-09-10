@@ -456,6 +456,25 @@ running.
     Before conditioning on any outcome, ask what generates that outcome in the
     corpus you are using.
 
+**44. A pre-registered branch fixes the DECISION, not the validity of the action
+it prescribes — check the prescription before you spend on it.** (alice) Her
+registered rule said a measured share in one band meant "re-site the mechanism
+here". The band fired, and executing it would have been wrong: the proposed site
+offers 79 opportunities a game against 1,884 at the site that had *already*
+failed — 24× smaller than the thing it was meant to rescue. Pre-registration
+binds you against rationalising a result after seeing it; it does not oblige you
+to spend games on a prescription that evidence you already hold refutes. Fire the
+branch, check the prescription, and **record why you are not executing it** —
+otherwise a registration becomes a licence to do the wrong thing on schedule.
+
+    **And when two of your own numbers disagree by orders of magnitude, trace
+    them instead of picking one.** Hers disagreed 900-fold — a logged "fires 4
+    times a game" against a probe's 3,774 — and they reconciled *exactly*: the old
+    figure was the tail of a funnel (691 runs → 79 with both candidates legal → 4
+    where they differ). She nearly filed a correction against a number that was
+    right, and the reconciliation turned out to be the refutation of her own next
+    step. The disagreement is usually more informative than either figure.
+
 **43. A relationship measured under your current policy is an equilibrium of
 that policy, not a property of the game.** (carol) She measured, correctly and
 with replication, that tiles converted from enemy ground are lost 2.7–6.4× more
@@ -578,6 +597,12 @@ less dead.
     *adjacency*; another priced an *opportunity* and not the *resource* it
     spends. Each time the pre-check was honest about a population the code would
     never meet. Run the funnel where the branch lives.
+
+    **One level deeper: the site must be one where a DECISION exists**, not
+    merely where the code runs. Her follow-up counter found 64% of entries into
+    the movement path follow an already-open heading, with no choice at all — so
+    the 44.8% "a real choice exists" she had passed her bar on was measured over
+    *hypothetical* moves rather than over decisions the bot actually makes.
 
     Three properties make it a rule rather than a story. It **validates itself**:
     the funnel predicted 1.2% firing against ~1% observed in an ablation, so the
