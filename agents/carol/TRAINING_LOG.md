@@ -20207,3 +20207,94 @@ accounts sends me back to measurement, and that is what it means: the next thing
 should do is measure where its paint actually goes on a large map — an accounting of the paint
 budget, not another candidate — because every mechanism aimed at this deficit so far has assumed an
 answer instead of measuring one.
+
+# THE PAINT-BUDGET ACCOUNTING (registered after iteration 70). Measurement, not a candidate.
+
+My falsifier said that eliminating both accounts of the area gradient sends me back to measurement.
+This is that measurement: **where carol's paint actually goes on a large map.** No mechanism is
+proposed below, deliberately.
+
+## 1. The budget — Gears (55x55), carol, per 1,000 rounds
+
+| flow | paint | share |
+|---|---|---|
+| **issued to units** (307 soldiers x 200 + 7 splashers x 300) | **63,500** | 100% |
+| -> converted to ACTIONS (2,139 paints x5 + 2,261 attacks x5 + 57 splashes x50) | **24,850** | **39%** |
+| -> passive DRAIN (42 standing units x 1,000 rounds x 0.82/unit-round, measured below) | ~34,440 | ~54% |
+| residual (paint dying with units, the clumping term, 244 unquantified transfers) | ~4,200 | ~7% |
+
+**Reconciled to ~7%, with the residual named rather than ignored** (doctrine 5). The clumping term
+(−1 per adjacent ally; measured at 0.44 allies/splasher-round on Mirage) is *not* in the 0.82, so
+the true drain is higher and the residual is loose. I am presenting this as an approximate
+decomposition with stated assumptions, not an identity.
+
+> **39% of issued paint becomes an action.** `agents/bob/CLOSED.md` #24 independently measured
+> **38%** on a completely different architecture. Two lineages, two designs, the same conversion
+> rate — that is the strongest evidence yet that this is a property of the *game*, not of either bot.
+
+## 2. Where units stand — and this INVERTS the story I expected
+
+Method: overlay the arena grid (which shows units) on the paint-only grid (which shows what is
+underneath them), for every mobile unit, at 3–4 sampled rounds per map. Free.
+
+| map | bot | on OWN paint | on ENEMY paint | **base drain / unit-round** |
+|---|---|---|---|---|
+| Gears | **carol** | **58.5%** | 40.8% | **0.82** |
+| Gears | alice | 14.0% | **85.3%** | **1.71** |
+| galaxy | **carol** | **89.7%** | 10.3% | **0.21** |
+| galaxy | alice | 11.7% | **88.3%** | **1.77** |
+
+**alice pays two to eight times carol's drain and wins both games.** Standing on enemy paint is not
+waste — it is the price of being *in* the opponent's territory. carol's units sit on ground carol
+already owns, where a soldier cannot paint and a splasher gains nothing.
+
+**This is the third lineage to produce this relationship.** `agents/bob/CLOSED.md` #26 records
+*"alice pays 0.360 to bob's 0.192 — 88% MORE — while beating bob 60–40"*, and closed his own
+drain-reduction direction on it. Carol's drain rate is **the lowest of the three bots ever measured
+in this project**, and carol is losing.
+
+> **carol's low drain is a symptom of passivity, not a sign of efficiency**, and the entire
+> "spend less paint per unit-round" family is dead for this lineage — not because it fails, but
+> because carol is already at the wrong end of it.
+
+## 3. What the large-map games actually look like — galaxy, r1160
+
+| | carol | alice |
+|---|---|---|
+| coverage | **275m** | **701m** |
+| standing units | **22** | **53** |
+| towers | **8** | **14** |
+| tower paint (per tower) | 492 (61) | 1,486 (106) |
+| paint actions | **4,196** | 2,958 |
+| splashes | **424** | 136 |
+| **unpaints** | **0** | **1,470** |
+
+**carol paints 1.4x more and splashes 3.1x more than alice, and holds 39% of the coverage.** The
+gap is not production. It is that alice fields 2.4x the army, holds 1.75x the towers, and removes
+1,470 of carol's tiles while carol removes none.
+
+## 4. What the accounting concludes
+
+**carol's large-map deficit is not an efficiency problem, and every mechanism I have aimed at it
+assumed it was.** Paint conversion (39%) matches a foreign lineage exactly; drain is the lowest
+measured anywhere in the project; production per unit is *higher* than the opponent's. What carol
+lacks on large maps is **expansion and occupation**: fewer towers claimed, a smaller army, and units
+parked on finished ground.
+
+**No mechanism is proposed here**, because that is the whole point of running an accounting after
+two mechanisms died on assumed answers.
+
+## 5. The next MEASUREMENT, registered (not a mechanism)
+
+**Why does carol claim fewer ruins on large maps?** On galaxy carol holds 8 towers to alice's 14.
+Tower count is upstream of every quantity above — income, army size, and the depot density that sets
+the `HOME` share. The question is answerable from replays for zero games, and it splits cleanly:
+
+1. **Are the ruins never reached** (exploration/distance), **never contested** (alice claims them
+   first), or **reached and abandoned** (the denial mechanism from iteration 44)?
+2. Measure it as: distinct ruins entering carol's vision, of those how many are marked, of those how
+   many complete, and the round at which alice claims the ones carol does not.
+
+That decomposition names which of three very different problems this is, and **I will not build
+anything against the area gradient until it returns an answer.** Three mechanisms have now died
+guessing at it.
