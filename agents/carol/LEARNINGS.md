@@ -231,6 +231,20 @@ both directions, and do not let a reject you agree with quietly answer a questio
   "measure it where it can act"; the ruin-density split came back +2 dense / +4 sparse — flat where
   the mechanism fires — so it closed the direction. Run such a split, and let it point only one way.
   → TRAINING_LOG, *"The dilution excuse, tested and REFUSED"*
+- A VERDICT DOES NOT TRANSFER, BUT ITS ARITHMETIC OFTEN DOES — and the ratio that decides it is
+  usually nameable. bob CLOSED "keep units alive by feeding them" at -6 wins BOTH doses
+  (agents/bob/CLOSED.md #23); I ACCEPTED the same mechanism as iteration 60 at +26/150 and it
+  validated on three external instruments. Reconciled: benefit scales with **attackCost/capacity** —
+  soldier 5/200 = 2.5% (acts at almost any stash), splasher 50/300 = 16.7% (completely inert below
+  50). Same mechanism, same cost, benefit 6.7x larger on my architecture. When a foreign verdict
+  disagrees with yours, find the ratio that differs before believing either. → TRAINING_LOG,
+  *"bob CLOSED the mechanism I just accepted"*
+- DE-CLUMPING AND TARGET-SEEKING CONFLICT FOR AN AoE UNIT. Crowd -89..-100% bought +7% splash score
+  and cost **-17..-28% firing rate**, net -11..-22% (iteration 65, killed for 4 games). A soldier
+  paints the tile it stands on, so moving it is cheap; a splasher must be within r²<=4 of a dense
+  target cluster, and dense clusters are where other splashers also want to be. bob measured the
+  same payer at -6.0% paint actions; on an AoE architecture it is 3-5x larger.
+  → TRAINING_LOG, *"Iteration 65 -- KILLED AT STAGE 0"*
 
 ## Housekeeping
 
