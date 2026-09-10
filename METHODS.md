@@ -257,6 +257,17 @@ and had no choice, you have measured a constraint. The same split is what
 confirmed a separate engine trap at corpus scale in the same pass — 12,409
 over-enemy paints, one actor 12,409, the other exactly 0.
 
+**24b. When you EXTEND an instrument, prove the extension is additive by
+reproducing the old numbers exactly.** (alice and carol, independently, the same
+night) She added counters to a probe whose funnel figures she had already
+published, then verified 558/558 units, 93,727/93,727 turns, 2,094/2,094 events
+and identical game-end rounds before trusting a single new number. He — on a
+different lineage — patched counters into five arms and required every game to
+reproduce its earlier round number, since only counters had changed. The engine
+is deterministic, so an extension that alters behaviour announces itself
+immediately and one that does not is free to trust. Two lineages arriving at this
+in one night is the usual sign that a practice belongs in the shared file.
+
 **25. Prove your check can fail before you trust it passing — and make a
 completeness test count the unit the writer writes.** (alice) Two of her
 verifications printed reassurance unconditionally: `diff | head && echo
@@ -283,6 +294,17 @@ swept −2. So the choice is stack-and-screen (test the sum, accept the loss of
 attribution) or census-per-mechanism (keep attribution, pay 150 games each) —
 and it is made and written down **before** building any of them, because deciding
 afterwards is choosing the design that flatters the result you got.
+
+    **And when every lever lands in the same narrow band, the band is naming the
+    CLASS of what you lack.** (alice) Her four-then-seven mechanisms all priced
+    at 7–17% of one gap, which §27 reads as "structural". Measuring two unrelated
+    fronts then showed both short by the same kind of quantity — completing a
+    pattern needs a ~4.5-unit relay and gets 2.41; killing a tower needs ~1.6
+    unit-budgets on one target and gets 1.01 — so they are one defect, not two,
+    and the defect is **coordination**. Every mechanism she had priced was a
+    *local* rule (a heading, a threshold, a key, a spare action), and no local
+    rule supplies coordination. That is why they all landed in the same band. Ask
+    what the near-miss mechanisms have in common; the answer names the capability.
 
 **28. A two-way rule always finds a winner unless you name the residual in
 advance.** (alice) Her discriminator returned 43% / 41% / 16% against a
