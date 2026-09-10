@@ -21945,3 +21945,73 @@ hold-vs-acquire axis, not to build in it.**
 **Reporting to the coordinator:** the enumeration is **not** empty. There is a large, reachable,
 never-examined regime with a failure mode opposite to everything tried so far, so the architectural
 escalation is **not** warranted yet.
+
+# PRICING the hold-vs-acquire axis — what is lost, to what, and why carol cannot contest it
+
+## 1. What is lost, and to WHAT — the actor/attribution split
+
+Carol's own tiles at r1400, followed to r1900, on two mid maps (paint-only grids):
+
+| map | carol held at r1400 | kept | **OVERPAINTED by alice** | unpainted to neutral |
+|---|---|---|---|---|
+| Terminal | 644 | 389 (60%) | **255 (40%)** | **0 (0%)** |
+| Bunny | 663 | 371 (56%) | **271 (41%)** | 21 (3%) |
+
+> **carol loses ~40% of its held territory in the final third, and 92–100% of that loss is alice
+> SPLASHERS OVERPAINTING it — not mopping.**
+
+**This retro-explains iteration 71's −3.83 sd.** I built moppers to answer a denial deficit measured
+on *large* maps. On the regime that is actually reachable, **mopping is 0–3% of the loss channel.**
+The mechanism was aimed at a channel that barely operates here.
+
+**And only one carol unit can answer it**: a soldier cannot overwrite enemy paint at all [E], and a
+mopper only clears to neutral. **Overpainted ground can be reclaimed only by carol's own splashers.**
+
+## 2. Why carol cannot contest — it is TIMING, not totals
+
+| leavemealone | by r1000 | after r1000 | total |
+|---|---|---|---|
+| carol splashers built | **87** | **36** | 123 |
+| alice splashers built | 35 | **106** | 141 |
+
+**Nearly identical totals; opposite distributions.** carol front-loads and alice back-loads, and the
+game is decided in the last third. Standing counts invert accordingly: Terminal carol **16 -> 4**
+while alice goes **7 -> 15**.
+
+**Winner-side check (§17/§55) — and for the first time this session I am on the WRONG side of the
+metric**, which is what makes this different from drain, attacks and soldier count:
+
+| late-game splashers built | carol **36** | alice **106** |
+|---|---|---|
+
+## 3. Proximate cause, as a hypothesis with its number attached
+
+carol's treasury in the collapse window sits at **$1,270–$1,790** against a **$1,600 splasher gate**
+(`CHIP_RESERVE` 1200 + 400), while alice ends leavemealone on **$50,310 idle**. carol's tower paint
+at the same moment is healthy (1,282). **So carol is chip-gated on splasher production exactly when
+the game is decided, and alice is not gated at all.**
+
+## 4. The prize
+
+3 of 3 traced mid-map losses have carol **leading at r1400** — Terminal 621–359, Bunny 537–417,
+leavemealone 622–328. If holding converted even half of the **29 mid-map losses**, that is
+**+29 margin**; all of them is **+58**. Against a **+26** bar, and on a regime where carol is *ahead*
+with 600 rounds to play, this is the most reachable prize measured in this project.
+
+## 5. The re-open, written the way it is legitimate rather than the way I first framed it
+
+I called a possible `MONEY_MOD` re-open "suspect". That was the wrong frame. The correct one:
+
+> **`MONEY_MOD`'s closure was measured corpus-pooled, and a corpus-pooled null does not settle a
+> regime-specific question.** A pooled result can conceal a regime where the effect is real and
+> opposite — this lineage has published exactly that shape before (a −6/+20 split under a flat
+> total). Re-opening because *the closure's basis does not cover the question now being asked* is a
+> different act from re-opening because I like the hypothesis.
+
+That framing applies equally to `CHIP_RESERVE` and `SPLASHER_IN_20`, which are the other two knobs on
+the same gate. **Which of the three to move is the next question, and it is a pricing question, not
+a preference** — I will price them before choosing.
+
+**Standing authorisation noted** (from-scratch rewrite, no escalation needed). **Not spending it.**
+The evidence says there is a large reachable regime with an uncharacterised-until-today failure mode;
+that is the opposite of the condition a rewrite answers.
