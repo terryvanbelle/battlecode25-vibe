@@ -21380,3 +21380,54 @@ an acquisition one, and the direction closes with acquisition exonerated.
 
 Map-coupled mechanism, so **self-play** per the rule I adopted: 25-map screen (>= 31/50) then the
 standing full-corpus census (**margin >= +26**). `bobf` reported as corroboration, not as a gate.
+
+## Iteration 75 stage 0 — the registered LINK-1 gate FAILS at 37–41%. No screen spent.
+
+Mirage (true symmetry per the map header: **2 = VERTICAL**), aggregated over **all** robots in
+r600–700, not one robot per arm.
+
+| arm | robots | **turns with symmetry PINNED** | inferred targets used | mean ruins remembered |
+|---|---|---|---|---|
+| `INFER_IN_20 = 5` | 45 | **1,605/4,347 = 37%** | 9 | **4.7** |
+| `INFER_IN_20 = 20` | 48 | **2,449/5,936 = 41%** | 50 | **5.6** |
+
+> **Registered gate: pin on >= 50% of robot turns. Observed 37% and 41%. FAILS — and by iteration
+> 43's own rule, *"never spend a gauntlet until link 1 fires"*, there is no screen.** The 25-map
+> screen and the census are not spent.
+
+**Correctness is confirmed, which matters for the record.** Surviving candidate sets across 93
+robots: `RHV`, `--V`, `-HV`, `R-V` — **V is never eliminated on a map whose true symmetry is V.**
+No false kill of the truth, replicating iteration 43's finding on a different implementation.
+
+**And the prerequisite genuinely works.** Iteration 43 measured pinning at **13% and 3%**; the ruin
+memory takes it to **37–41%** — a 3–13x improvement, from the cheapest possible terrain memory. The
+mechanism also fires: 50 inferred targets used at dose 20.
+
+## Why it still falls short, measured rather than guessed
+
+**Mean ruins remembered per robot: 4.7–5.6, against a `RUIN_MEM` of 32.** The array is nowhere near
+full. Refutation needs a *remembered* ruin whose mirror enters vision, so few witnesses means few
+refutations — and carol's robots are short-lived (216 deaths in a single measured game), so each new
+unit starts from an empty memory and dies before filling it.
+
+> **The memory is per-robot, and carol's robots do not live long enough to accumulate witnesses.**
+> That is a second link in the chain, and it is now named: iteration 43 needed *a* terrain memory;
+> this shows it needs one that **outlives a robot**.
+
+## Ledger
+
+| item | status |
+|---|---|
+| symmetry inference | **BLOCKED (not closed), second prerequisite now named** — refutation is correct and 3–13x faster with a ruin memory, but pins on only 37–41% of turns because a robot accumulates just 4.7–5.6 witnesses before dying |
+
+**Re-open condition:** memory that survives a robot's death. The two candidates are **towers**
+(which live far longer than robots, but are static and see a fixed disc) and **communication**
+(`broadcastMessage`, r²=80, no paint path required — and carol has never sent a message). Either is
+its own iteration with its own gate, and **neither should be built for symmetry inference alone**:
+the sizing above (+11 targets, ~+55% paint income) is what makes the chain worth completing, and
+that sizing is a god-view ceiling until link 1 clears.
+
+**What this cost and what it bought:** three arms, three games, no screen, no census. It converted
+"symmetry inference is a promising untried direction" into a two-link chain with both links measured
+and the second one named precisely — and it did so before spending a 150-game screen on a mechanism
+that fires on 41% of turns.
