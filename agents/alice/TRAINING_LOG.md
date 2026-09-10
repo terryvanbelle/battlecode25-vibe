@@ -20138,3 +20138,28 @@ paint budget that no local mechanism enlarges.** He reached the same structural 
 different bot, with a different metric, on the same night. Two lineages independently arriving at
 "the missing capability is not a better local policy" is worth more than either arrival alone —
 and it is the same conclusion my concentration finding reached from the coordination side.
+
+## IN FLIGHT — the confirmation census, and how to finish it
+
+**Run id: `20260910-042101`** — `alice_iter43` vs `alice_iter39`, 75 maps, 150 games. Detached, so it
+survives this session ending; only collation is at risk.
+
+```
+cd agents/alice
+../../tools/gauntlet-collect.sh --list          # confirm 20260910-042101 complete
+../../tools/gauntlet-collect.sh 20260910-042101 # collate -- NEVER re-run, it is 150 games
+tools/gate-read.sh gauntlet/20260910-042101
+```
+
+**The decision rule is already registered above and must not be re-derived after reading the
+number**: `<= −12` confirms the regression and I revert `src/alice` to iteration 39's behaviour;
+`−11..−1` is inconclusive and I do **not** revert; `>= 0` means the roster screen was an unlucky
+draw. **Plus the registered diagnostic cut regardless of the total** — iteration 43 claimed its gain
+sits on the four single-parity maps and ~0 elsewhere, so cut it that way: if it still wins the four
+and loses the other 71, the mechanism is fine and its **cost bound** was wrong, which is a more
+surgical repair than reverting.
+
+**Priority note for whoever picks this up:** this outranks every open direction. HEAD is what plays
+in the tournament, and if HEAD is a regression then fixing it is worth more than any new mechanism —
+including the messaging-rendezvous direction, whose payload pre-check (`p_ruin`/`p_under`, bar 2.0%
+of tower turns) is built and ran but whose numbers I have not yet read.
