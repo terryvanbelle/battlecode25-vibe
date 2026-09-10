@@ -19732,3 +19732,64 @@ one iteration ago.
 - **Falsifier, named now**: a genuine gain must show **alice's tower count flat or rising past
   r700**. That is the curve this whole direction exists to fix, and a win with that curve unchanged
   is not this mechanism working.
+
+## Funnel result — SURVIVES at 2.23% against a 2.00% bar, and pricing it caught an error in my own design
+
+`alice_i56probe`, additive counters. **558 soldiers, 93,727 soldier-turns, 3 games.**
+
+| step | count | share of previous | of all turns |
+|---|---|---|---|
+| soldier turns | 93,727 | — | 100% |
+| action **still ready** at end of turn | 82,027 | **87.5%** | 87.5% |
+| **... AND an enemy tower within r²<=9** | **2,114** | **2.6%** | 2.26% |
+| ... AND `canAttack` it — **would fire** | 2,094 | 99.1% | **2.23%** |
+
+**Pre-registered kill: below 2.00% closes the direction. Measured 2.23% — it SURVIVES, and barely.**
+I am recording the margin rather than the verdict alone: this passed by 0.23 points against a bar I
+set before the number existed, and a result that close is not a mandate.
+
+**The collapsing step is adjacency again** — 2.6% — exactly as it was for lever B. The soldier's
+87.5% idle rate is enormous and confirms the iteration 45 finding; what is scarce is being **next to
+an enemy tower**, not having a spare turn.
+
+### And then the pricing caught an error in my own design, before the build
+
+I registered this mechanism as **"non-diverting by construction"**, because it fires only on turns
+where the soldier's action went unused. **That is wrong, and it is the two-quantities error again —
+mine, today, one iteration after I logged the last instance.**
+
+> **The TURN is free. The PAINT is not.** A soldier attack costs **5 paint**, and paint — not turns —
+> is the binding resource this entire session established. A soldier that spends its tank attacking
+> towers has nothing left to paint with, whether or not the turn it spent was idle.
+
+Priced:
+
+| | value |
+|---|---|
+| would-fire opportunities | **698 per game** |
+| paint cost if every one is taken | **3,490** |
+| alice's entire soldier spawn paint to r300 | 4,980 |
+| **share of alice's whole soldier paint budget** | **70%** |
+
+**A naive "attack whenever free and in range" would consume 70% of alice's soldier paint.** That is
+not a mechanism, it is a rewrite of the bot's economy — and it is precisely the failure family
+(spend the binding resource to buy something else) that lost iterations 20, 26, 39a and 44.
+
+**So the direction does NOT proceed as designed.** It needs a dose, and the dose must be set against
+the **distribution it will meet** — the `MOP_KEEP` lesson from two iterations ago, where I chose an
+engine-derived threshold that felt principled and dosed the lever out of existence.
+
+**The obvious dose, and it is measurable rather than guessed:** attack only a tower that can actually
+be finished. Mean HP in range is **1,636 = 33 soldier hits**, so a soldier arriving alone cannot kill
+one — it has ~20 usable attacks in its whole life. **Concentrating on nearly-dead towers is the only
+version that converts paint into a kill rather than into spread damage**, and whether such towers
+exist in range is a *further* reachability question I have not measured.
+
+**Registered next, in order, and deliberately not tonight:** (1) measure the HP *distribution* of
+towers in range, not just the mean — if nearly-dead towers are never in range, the affordable version
+cannot fire and the direction closes on the same reachability grounds as lever B; (2) only then set a
+dose; (3) then the gate, with the manipulation share and the null arm already registered.
+
+**This is the ninth pre-check today to stop a direction before it cost a build**, and the first to do
+it by pricing the *resource* rather than the *opportunity* — which is the distinction I got wrong in
+my own pre-registration one screen earlier.
