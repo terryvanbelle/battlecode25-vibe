@@ -217,8 +217,8 @@ small, and recorded the decision as a change rather than dropping it silently.
     resource, the ferry returned **0.0020** and simply **building one more
     consumer** returned **0.0020** — identical — **and the ferry pays double the
     ongoing drain.** **A mechanism that ties the thing you already do is
-    dominated once its overheads are counted**, which is a far stronger kill than "it does
-    not pay enough". The baseline is easy to skip precisely because it is not the
+    dominated once its overheads are counted**, which is a far stronger kill than
+    "it does not pay enough". The baseline is easy to skip because it is not the
     experiment: you are comparing against zero when you should be comparing
     against the best existing use of the same budget.
 
