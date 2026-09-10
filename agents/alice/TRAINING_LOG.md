@@ -22843,3 +22843,54 @@ question is which use converts better, and both numbers are measured:
 >
 > **This chain is weaker than K3 appeared to have**, and it is stated before the result so an accept
 > cannot retire the weakness unnoticed.
+
+# K7 PRE-CHECK — the gate opened 8.61x and the PAINT DID NOT FOLLOW. Closed on magnitude, screen not spent
+
+Arms built, **control identity-verified at 534 / 1869 / 1096**, arm diverges (597 / 2000 / 793).
+Then the two registered within-game instruments ran, and they disagree in the informative direction.
+
+| registered instrument | result |
+|---|---|
+| **1. gate opened** — same-game counterfactual, PASS ≥3x | **577 vs 67 = 8.61x. PASS.** Cross-tab predicted 10.6x — its *opportunity* pricing is validated. |
+| **2. paint moved** — exact, within game | **13,900 vs K3's 10,034 = 1.39x.** Mean per refill **24.1**, against K3's **103.4**. |
+
+> **The rate rose 8.61x and the volume per draw fell 4.3x, so the paint actually moved rose 1.39x.**
+
+**This is the rate/volume trade I flagged in K5 and it bit almost exactly as warned** — *"opening the
+half-tank gate raises the refill rate while shrinking `cap − p`, so a rate-only funnel flatters it."*
+Both ends of the trade got worse at once: a nearly-full unit can only accept `cap − p`, and a reserve
+of 25 leaves a drained tower little to give.
+
+## The prize, bounded exactly
+
+Paint moved ÷ 5 is an exact ceiling on added output. K3: 2,007 actions. K7: 2,780. **The increment
+K7 buys over K3 is at most 773 actions — 7.7% of alice's 10,024 paint actions on these maps.**
+K3's own increment was **≈9.5%** and delivered **+5/150, unestablished at 0.95 sd.**
+
+**And the composition is worse than the count suggests.** K7's extra draws are *by construction* the
+marginal ones: units that are nearly full, drawing from towers that are nearly empty. **The mean
+transfer fell from 103 paint to 24.** It is buying the least valuable refills available.
+
+## Decision: closed on magnitude. The registered screen is NOT spent
+
+**A deviation from my registered plan, stated as one.** I registered a 25-map/50-game screen at +4.
+I am not running it, because the pre-check has bounded the increment **below the resolution of the
+instrument I would spend on it**: a ceiling of +7.7% output, against a predecessor whose larger
+ceiling produced an effect of +1.7 per 50 games. **A +4/50 bar cannot resolve that, so the screen
+would return noise in either direction — and K3's own screen shows this exact effect size can produce
+a +4 by a favourable draw.** Spending 50 games to generate a coin flip I would then have to census is
+the failure mode my pre-check doctrine exists to prevent.
+
+> **CLOSED: the refill-gate family, on magnitude, at a ≤7.7% output ceiling.**
+> **Re-open condition, as a testable sentence:** re-open only if a mechanism raises **paint moved
+> per refill** back toward 100 while keeping the higher rate — i.e. more draws that are *large*.
+> That requires hungry units beside rich towers, which is a **positioning** change, not a gate
+> change. **Every gate in this conjunction is now priced and none is the lever.**
+
+## What I claim, against what I registered before the run
+
+I registered: on a pass I claim the gate opened, the paint moved, and the screen won, with the middle
+link unmeasured. **There is no pass. What I claim is the first two only** — the gate opened 8.61x
+(exact) and the paint moved 1.39x (exact) — **and those two numbers together closed the direction
+without the third.** The pre-check did the work the screen was going to be asked to do, for zero
+games, which is the outcome the ordering was designed to produce.
