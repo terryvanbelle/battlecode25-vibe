@@ -23212,3 +23212,75 @@ standard that today's evidence is the wrong kind to meet.**
 > reaching for the closed branch. **The next legitimate move is not another mechanism: it is to satisfy
 > the splasher standard on its own terms — build something that makes the share *supportable*, and let
 > the share follow — or to find an axis of per-unit output this enumeration missed.**
+
+# PRICING THE SPLASHER ROUTE FOUND AN OPEN AXIS — my "no open axis" was premature, one entry old
+
+The user has granted **standing, unconditional authorisation to rewrite from scratch**. I am **not
+spending it today**, and the reason is that pricing the cheaper route — as advised — refuted my own
+conclusion from the previous entry.
+
+## The gate, and what it can reach
+
+```java
+if (rc.getMoney() >= CHIP_RESERVE + 2500 || (expansionFinished && ...)) want = UnitType.SPLASHER;
+```
+`CHIP_RESERVE = 1450`, so a splasher needs **3,950 chips**.
+
+| round band | mean chips | ≥1000 | ≥1450+400 | **≥3950 (the gate NOW)** |
+|---|---|---|---|---|
+| **DECISIVE 1–300** | 1,594 | 93.5% | **58.9%** | **2.8%** |
+| 300–600 | 2,430 | 94.5% | 61.8% | 23.6% |
+| 600–1200 | 8,292 | 96.9% | 78.5% | 41.5% |
+
+> **In the window that predicts 79–81% of winners, the splasher gate can fire on 2.8% of frames.
+> A splasher-affordable gate would reach 58.9% — a 21x change in reachability, in the decisive
+> window.** This is E2's prosperity-gating exactly: a lever that only opens once the surplus that
+> gates it has accumulated, which is after the game is decided.
+
+## Does this meet the closure's standard? I believe so, and I am stating the argument for scrutiny
+
+The standard: *"a reason the rest of my bot now supports the share, **not** fresh evidence that the
+siblings still have one."* I have declined this four times on situational evidence and would have
+again. **This argument is a different kind, and the difference is the whole of it:**
+
+**The `+2500` is redundant with `CHIP_RESERVE` for the purpose it was introduced to serve.** The
+gate's own comment gives that purpose: *"a splasher costs 400 CHIPS and `completeTowerPattern` gates
+on `getMoney() >= 1000`, so this is only safe while the threshold still sits past the end of
+expansion"* — it protects tower construction from chip starvation. **But `CHIP_RESERVE = 1450` already
+guarantees that 1,000**, and E1 measured that alice's tower construction is **ruin-limited, not
+chip-limited**: 97.4% of tower-frames hold ≥1,000 chips while alice sees only **1.6 bare ruins**, and
+chips run to a mean of 42,712.
+
+**That is a defect in my own gate, found by measuring my own bot — not evidence that splashers are
+good.** I could not have made this argument before E1, because the fact it rests on is E1's.
+
+**The risk, named:** this is the conclusion I wanted, and wanting it is exactly why the standard
+exists. **What would refute me:** if `CHIP_RESERVE` did *not* already cover the 1,000, or if tower
+construction were chip-limited. Both are measured, both are checkable, and both go the other way.
+
+## Registered before building
+
+**Which term does it move?** Unit mix → **per-unit output (0.52x), the binding term.** And unlike the
+mopper dose, **there is no substitution problem**: `want = SPLASHER` displaces a soldier or mopper and
+costs *more* paint (300 vs 200/100), so it makes **fewer, better-converting units** — the correct
+direction given alice runs **1.35x carol's spawns at 0.52x the per-unit output.**
+
+> **Mechanism — one constant:** the splasher chip gate, `CHIP_RESERVE + 2500` → `CHIP_RESERVE +
+> SPLASHER.moneyCost`. Self-calibrating, in the same form as iterations 5/25/28: *"build a splasher
+> only if one was affordable on top of the reserve."*
+> **Screen:** 25 maps / 50 games / net ≥ +4, null arm in the same batch, VOID first, in code.
+> **Manipulation check — WITHIN game, exact:** splasher spawns in r1–300 must rise. **PASS ≥ 5x**
+> (reachability says 21x; anything under 5x means the gate was not the binding constraint).
+> **Falsifier:** r300 tower count falls — chips diverted from `completeTowerPattern`, which is the
+> harm the `+2500` was there to prevent, and P2 says losing towers loses.
+
+## And what would tell me the ceiling is the GAME rather than the design
+
+Registered now, so the rewrite question has an answer condition rather than a mood:
+
+> **If this arm and one more direction aimed at per-unit output both clear their screens and both
+> fail a +12 census — i.e. the term moves but never by enough — then the deficit is not reachable by
+> mechanism at this architecture, and the ceiling is the design.** Conversely **if per-unit output
+> refuses to move at all** across mechanisms that demonstrably fire, the ceiling is the game.
+> **K3 is the first data point in that series: it moved the term (+16% per-unit) and failed its
+> census.** One more of the same shape and the rewrite is the indicated experiment, not a gamble.
