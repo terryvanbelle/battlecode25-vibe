@@ -20380,3 +20380,63 @@ iteration-69 machinery, which is written and shown to force a unit into the mix 
 affordability thresholds), aimed at a deficit that is traced, replicated on two maps, and priced —
 **with bob's closure as the standing prior to beat, and its re-open condition as the thing my stage-0
 check must test directly**: total paint actions must not fall.
+
+# Iteration 71 — the capability carol has never had. PRE-REGISTERED BEFORE ANY GAME.
+
+## Doctrine 7 discharged FIRST: does the evaluating opponent pose the threat?
+
+This is a *defensive* mechanism, and doctrine 7 says a defence cannot be priced by opponents who
+never perform the behaviour. Checked before building, one game:
+
+| `carol_iter45` vs `bobf`, Gears | carol | bobf |
+|---|---|---|
+| unpaint actions | **0** | **828** |
+| standing moppers | **0** | 11 |
+| coverage | 285m | **703m** |
+
+**`bobf` mops.** The gate is valid, and the deficit replicates against a second, non-alice opponent
+— carol's unpaint count is **0 in every game ever measured in this lineage**, across two opponents
+and every map.
+
+## Why carol builds no moppers — it is not a policy, it is two inherited floors
+
+The roll asks for a mopper 10% of the time. Then `SPLASH_FLOOR` demands chips >= 1,200+300+2,000 =
+**3,500**, and `PAINT_FLOOR` blocks any unit cheaper than a soldier unless the tower keeps **200**
+paint — and carol's towers hold **~60**. The mopper is gated twice and essentially never
+affordable, which is why the count is exactly zero rather than merely low.
+
+The scheduler forces a mopper after `MOPPER_EVERY` other builds and applies **only the base legal
+requirement**, because the inherited floors are precisely what produced the zero.
+
+## Arms
+
+`MOPPER_EVERY` = **4 / 8 / 16**, zero arm `carol_iter45` (`0` disables, byte-identical), shared
+`BUILD = "i71"`. For scale: alice fields ~43 moppers per 1,000 rounds; on carol's ~300 builds per
+1,000 rounds, K=8 is alice-like (~37) and K=4/K=16 bracket it.
+
+## Registered stage-0 check — ALL THREE required, and the third is bob's clause
+
+1. **Moppers actually built** (> 0, from a base of 0).
+2. **Unpaint actions > 0** — the capability itself. A mix change that moves the mix without
+   delivering the capability is this lineage's most repeated failure, so both halves are required.
+3. **TOTAL PAINT ACTIONS MUST NOT FALL.** This is `agents/bob/CLOSED.md` #17's re-open condition
+   verbatim — *"a mechanism exists that raises mopper share without reducing total paint actions"* —
+   and it is the clause that would distinguish my architecture from his. **Testing the exact clause
+   that separates my case from a foreign closure is the point**: his verdict is neither binding nor
+   irrelevant, it is a hypothesis with evidence attached.
+
+## Registered falsifier
+
+**If moppers are built, unpaint rises, and total paint actions fall, then bob's closure TRANSFERS**
+— the displacement cost is architecture-independent — and the direction closes with his re-open
+condition confirmed rather than merely cited. I would record that as a cross-architecture
+confirmation, which is worth more than a fourth null of my own.
+
+## Gate
+
+Self-play 25-map screen selects the dose; then **`bobf` >= 105/150** (2.15 sd on the measured floor
+of 4.18, baseline 96) **and** the standing self-play census (**margin >= +26**). Both required.
+
+**Registered secondary:** the gain should appear on **large maps** (`bobf` baseline 33/64), where the
+mopping asymmetry was traced. Iteration 69 taught me to check the target bucket rather than bank an
+overall number — its overall +3 concealed a −4 exactly where it was aimed.
