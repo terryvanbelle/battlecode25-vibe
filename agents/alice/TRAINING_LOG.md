@@ -24113,3 +24113,72 @@ could have worked, and none does.**
 > the question being framed before the code is written. **The next session opens with the design
 > premises and the trade already stated, the prize already counted, and the mechanism space closed
 > behind it** — which is a far better starting position than the one this session opened with.
+
+# ============ THE REWRITE SURVEY — committed before any line of code ============
+
+Not a build. The question, written first, so the build is cheap when it starts.
+Everything about carol below is from **replays of games alice played**; no source of theirs was read.
+
+## 1. What a rewrite MUST PRESERVE — measured, and a rewrite that loses one is worse than none
+
+| | property | evidence |
+|---|---|---|
+| **D1** | **expansion-first is the right objective** | r300 tower leader wins **81%** (13/16); alice wins that race **12–4** |
+| P3 | the engine traps are correctly guarded | 0 of 12,409 over-enemy soldier paints |
+| P4 | ballistic movement beats diffusive | iterations 12/14 |
+| P5 | no play-symmetry bias | randomised tie-breaks at every site |
+| P6 | bytecode is not a constraint | peak 9% of budget — the budget is *design*, not compute |
+
+**P1 is amended, not preserved as written.** *"The soldier is correctly idle"* is true and was
+mis-stated as sufficiency: it is an **information ceiling**, not a finished job — 93.6% of paintable
+tiles are invisible to the whole team at once. **A rewrite must keep the local decision quality and
+must not treat the 81% idle rate as headroom.**
+
+## 2. The premises, each checked against the free upper bound FIRST
+
+| | premise | refuted by the rival's observable behaviour? | keep / discard |
+|---|---|---|---|
+| **A** | run **fewer** units | **no** — carol runs 14.09 alive / 2,630 spawned against 18.21 / 3,540 | **available** |
+| **B** | field **no moppers** | **no** — carol spawns **1 mopper in 21 games** and wins | **available** |
+| **C** | field **~30% splashers** | **no** — carol 30.6% against alice 11.3% | **available, but see the constraint** |
+| **D** | make **resupply** a first-class constraint | **no** — carol resupplies **2.044/unit** against 0.383 | **available** |
+| E | abandon expansion-first | **YES — refuted by my own data**, 81% and a 12–4 race | **discard** |
+| F | coordinate via messaging | **YES — closed on structure**, and an absence payload inverts under a lossy channel | **discard** |
+| G | disperse less as a *policy* | **YES — dispersal is a consequence of D1**, not a policy (unassigned units sit at 3.5 v 7.0) | **discard** |
+
+**Three of seven discarded for zero games.** And the four survivors are **one premise**: carol runs a
+smaller, splasher-heavy, well-fed force. **They are not independently choosable** — C is gated on
+tower paint (≥300 available 29% early, **0% after r1200**), and D is gated on adjacency (2.61%). **A
+rewrite that adopts C or D alone reproduces K8 and K3, which are already closed.**
+
+## 3. The trade, both sides observed
+
+> **Expansion-first sends units to distant ruins: it wins the race and it starves them.**
+> alice **12 leads, converts 75%**. carol **4 leads, converts 100%, takes all 3 ties.**
+> **Prize if alice converts its existing leads at carol's rate: +3 games in 19 → +23.7 net swept.
+> Two-thirds capture (+15.8) still clears a +12 census. No additional races required.**
+
+## 4. Answer condition, STAGED so a rejection says which thing was wrong
+
+> **Stage 1 — EXECUTION.** Did the rewrite reach the intended state? Targets, all measured on the
+> same 3 identity maps: **units alive < 15**, **mopper share < 5%**, **splasher share > 25%**,
+> **per-unit paint actions > 14**. **If these do not move, the BUILD failed and the premise is
+> untested** — that is an abort, not a rejection of the design.
+> **Stage 2 — PREMISE.** State reached, so: does **coverage peak** rise in the frozen stalled
+> subpopulation (currently 213–454 there)? **PASS ≥ +30%. If the state is reached and coverage does
+> not move, the PREMISE is refuted** — and that is the finding worth having.
+> **Stage 3 — OUTCOME.** Only then a screen: 25 maps / 50 games / net ≥ +4, null arm, VOID first.
+
+## 5. Abort budget and salvage
+
+> **Budget: 6 probe games (3 identity + 3 arm) to clear Stage 1, then 50 for the screen. Nothing
+> beyond that without a fresh registration.** If Stage 1 fails twice, abort.
+> **Salvage, named in advance:** the **state instrumentation** (units/mix/per-unit/adjacency counters)
+> is reusable whatever happens, and **premise B — no moppers — is a one-constant change that is
+> independently testable**. Its corpus dose was blocked by substitution (freed paint → soldiers); a
+> rewrite that also spawns fewer soldiers removes exactly that block, **so B's re-open condition is
+> already satisfied inside a rewrite and nowhere else.**
+
+**This is the state to open the next session with.** Nothing above required a build, and the build it
+describes is bounded, staged and falsifiable in a direction that distinguishes my execution from my
+design.
