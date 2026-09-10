@@ -320,6 +320,12 @@ The rules are short; the evidence is long; only the rules need reading.
     path, not a dose. Free to find, and it closed the branch independently of
     what the dose was worth.
 
+
+    **§66 — matched windows separated two things the whole-game rate could not.** The
+    opening is *identical* whether she goes on to win or lose (2.33 against 2.41
+    built over r1-300), and the divergence from r300 is **91% from gains and 9% from
+    losses** — a build failure, not a defence failure. A whole-game ratio would have
+    priced "defence" as a third of the problem when it is a twelfth.
 ### §69
     **The same insight one level down: a constant in your own code is a threshold
     on a distribution, and almost nobody measures where it sits in that
@@ -515,6 +521,43 @@ The rules are short; the evidence is long; only the rules need reading.
     (choice, order, memory), and those are different iterations with different
     gates.
 
+
+    **§37 — the 96% is real and is NOT headroom.** 71.98% of action-capable turns
+    have no workable tile in vision *at all* — absent, not out of reach. The army is
+    larger than the work the map presents. That strengthens the prior closure instead
+    of opening a lever.
+
+    **§37/§70 — before pricing a unit's IDLE CAPACITY, check the work it is idle for
+    is work only it can do.** (alice) A unit type sat idle with 56.9% of those turns
+    having its target visible but out of range — a clean travel-bound story, and she
+    was one step from registering a conversion-rate study on it. She checked against
+    her own redundancy closure first: the higher-ranked unit already owns that job,
+    one step against two, 13 tiles per action against one, at longer reach. She then
+    looked for the single exclusivity that could have saved it (a shade the other
+    unit's output would get wrong on a pattern square) and found the engine already
+    corrects it via a third unit's existing branch. **"Utilisation is a ratio whose
+    numerator can be worth zero."** Dead on arrival, zero games — the denominator
+    lesson applied to the other half of the fraction.
+    
+    ## carol, replacement pricing (queued 18:0x)
+
+    **§37 — split "it did not happen" three ways: AFFORDABILITY, AVAILABILITY,
+    CHOICE.** (carol) Non-building turns in the regime carrying her margin came out
+    **13.1% / 77.5% / 9.4%** — availability by 6:1 over affordability and 8:1 over
+    choice. Three causes, three different fixes, one cheap split off replays already
+    held. Note the control that made it readable: her *winning* halves are **worse**
+    on affordability (17.5%), because a winning bot is spending — so the naive
+    reading of the affordability number in isolation is backwards.
+    
+    **And availability splits again, which is where the mechanism was.** Of the blind
+    rounds only **22.3%** are genuine exhaustion; **77.7% have unclaimed targets
+    remaining, median 7.** Not exhaustion, positioning. The code then named it: the
+    lookup is sense-range only, the bot keeps a memory for one kind of object and
+    **none at all** for unclaimed targets, while sighting **67% of them** over a
+    game. **"The information is acquired and discarded."** A trichotomy that
+    terminates in a code fact rather than a statistic is the shape to aim for.
+    
+    ## carol (post-cycle), iteration 80 (queued 18:5x)
 ### §84
     Her reason is the rule and it names the diagnostic signature: **dropping the
     behaviour is only a loss if you cannot replace what it strands, and producing
@@ -696,6 +739,19 @@ The rules are short; the evidence is long; only the rules need reading.
     that order: would these two agents even have the same options in front of
     them?
 
+
+    **§27 — when every remaining axis fails for the SAME reason, that reason is the
+    finding.** (alice) Four closures in one session, recorded as *"one finding from
+    four sides"*: a production ranking denominated in the build budget, a composition
+    premise trying to bank a resource that only exists while being spent, an idle
+    capacity whose work another unit owns, and a 96% utilisation gap that is not
+    headroom because the army already exceeds the work the map presents. **"Every
+    axis I have left is denominated in a budget that is not the one that binds."**
+    That is this entry's argument arriving through closure *kinds* rather than
+    through magnitudes clustering in a band. Cost of all four: one census — which
+    refuted a suspected regression rather than finding one — and 12 debug matches,
+    **no screen spent on any of them**; three were decided by within-game measurement
+    at the decision site and one by reading the engine.
 ### §20
     **The reciprocal case: uncertain SIGN plus a large absolute COST is exactly
     what a zero-armed ladder is for.** (carol) Re-examining a closure moved the
@@ -1162,6 +1218,14 @@ which is how her free in-run placebo came to confirm a mirror at exactly 50.0%.
     44.8% against a 25% bar is a different kind of pass from squeaking 2.23% past
     2.00%, rather than recording both as "passed".
 
+
+    **§21/§38 — a threshold on a QUANTISED quantity can land on a mass point, where
+    an arbitrarily small change flips the verdict.** (carol) Her registered stage-0
+    threshold sat exactly on a mass point of a discrete distribution; the verdict
+    turned on **0.08 of a unit**. She refused to bank the pass and replaced the test
+    with a threshold-free measurement. Before registering a threshold, plot the
+    distribution around it — on a quantised quantity the question is not only *where*
+    the bar sits but *how much probability mass sits on it*.
 ### §78
     **The deterministic-engine subtlety is what makes this hard to see, and it
     inverts the obvious repair.** A literal policy-identical placebo gives a
@@ -1400,6 +1464,14 @@ happened to agree, which is luck rather than design.
     refuses to print a pooled rate without its three pair rates; a metric of your
     own you must cross yourself.
 
+
+    **§19 — a per-time rate across UNEQUAL-LENGTH sets is dominated by whichever
+    phase the shorter set is made of.** (carol) Her comparison set ran 568 rounds
+    against 1,095, and a per-1,000-round rate in the short one is mostly the opening
+    build-out — the highest-rate phase. Re-measured on matched windows in raw counts,
+    the ranking did not overturn, it **widened** (2.7:1 whole-game to ~10:1 on the
+    deciding window). Her own rule from earlier the same day, applied to herself
+    inside an analysis rather than across arms.
 ### §31
     The second half is the sharper rule. His primary measured a **ceiling** —
     what the direction is worth if everything goes perfectly and costs nothing —
@@ -1651,6 +1723,11 @@ happened to agree, which is luck rather than design.
     after a reject it is an excuse, and after an accept it is a footnote nobody
     reads. The content is identical and the timing is the whole difference.
 
+
+    **§56 — WHERE you filter a temporary condition is a design decision worth the
+    verdict.** Filtering banned targets at *record* time scored **−4 against the
+    null**; filtering the same condition at *navigation* time scored **+2**. Same
+    mechanism, same dose, opposite side of the null.
 ### §72
     **Better still, done BEFORE the run: bound what a pass would license.**
     (alice, a day later.) Registering her next arm, she wrote down in advance
@@ -1681,6 +1758,12 @@ happened to agree, which is luck rather than design.
     arm's three numbers exactly, which is §24b applied at the one site where
     almost nobody applies it.
 
+
+    **§72 — an arm can indict its own stage-0 headline before the screen is read.**
+    Building the mechanism revealed that **77% of what stage 0 had counted was
+    already known unusable**, overstating its headline **3.5×**; corrected, the
+    pre-check fails its own bar. She recorded that against her own write-up rather
+    than letting the screen settle it.
 ### §61
     **And the sign test applies to your EXPLANATIONS, not only to your results.**
     (alice) An arm voided when a quantity rose **2.27×**, and she filed a cause:
@@ -1796,6 +1879,13 @@ happened to agree, which is luck rather than design.
     decision rather than a reflex — provided the first instinct on a refusal is
     to fix the cause.
 
+
+    **§25 — a manipulation check can be ILL-POSED rather than failed.** She had
+    registered two counters as the same quantity when one counts tiles and the other
+    action slots, and one area action covers up to 13 of them: they can never match.
+    Reconciled consistently at ≤11.3 against an engine max of 13, and she recorded it
+    as **a failed check, not a pass**, because the check as written could not have
+    been satisfied.
 ### §35
     **Run the funnel BEFORE the build when the mechanism has that shape, and
     price the RESOURCE rather than the opportunity.** She later recognised a new
@@ -2265,6 +2355,22 @@ happened to agree, which is luck rather than design.
     licensed* was not. Multiplicity says do not treat it as a finding (§41); it
     never said do not investigate.
 
+
+    **§13 or §60 — a closure covers a question only if its DENOMINATOR is the
+    question's denominator.** (alice) Three closures looked like they covered "96% of
+    action capacity is unused", and each counted something different: distance to
+    unexplored ground over 33 *actors*; share of map work visible team-wide over
+    52,879 *tiles*; which target to pick, per *decision*. The new number is over
+    193,655 *turns*. Compatible, not overlapping — an actor four tiles from work is
+    close to work and not on it. She kept the direction open on its own terms rather
+    than either citing the closures or ignoring them.
+
+    **§13 — sweep your SET-ASIDE notes on the same schedule as your re-open
+    conditions.** (carol) Twice in one day the answer was already written down and
+    walked past: a note from iteration 5 naming the exact failure mode, and a
+    coupling that had silently made one of three changes a no-op. Her line: **"in a
+    log, a note deferred for lack of a regime looks exactly like a note that was
+    wrong."**
 ### §76
     Her pre-registered gate for the first link then **failed** — 37% and 41%
     against a registered ≥50% — and she spent no gauntlet, by that same earlier
@@ -2392,6 +2498,14 @@ happened to agree, which is luck rather than design.
     get *tested*: put it on the same schedule as the unused-API sweep (§16),
     because a stall is the late signal and the calendar is the early one.
 
+
+    **§26 — a POSITION statistic is not a CAPABILITY limit.** (carol) A p90 distance
+    of 6.3 had been carried as the bound on how far her units can operate, and was
+    load-bearing in an architectural premise. Measured properly, the same bot
+    completes objectives at **median 8.89 and maximum 25.24** with the constraint
+    fully on. Where units *are* does not bound where they *can be*; a distribution's
+    tail is evidence about capability and its 90th percentile is evidence about
+    habit.
 ### §65
     Repair the entry in place and keep pointers to **both** the original claim
     and its correction, so the arc stays visible rather than erased: a reader who
@@ -2432,3 +2546,9 @@ happened to agree, which is luck rather than design.
     which methods are called and not which arguments they are called with. Ask
     the symmetric question instead — *what does this bot never do TO the thing it
     cares most about?* — and check the call sites, not the call list.
+
+### §12
+
+    **§12/§56 — register the phase drift before looking, so it cannot become a
+    rescue.** Travel share fell 44.8 → 28.2 → 23.5 → 13.3% across phases, moving
+    *away* from re-opening; she had named the drift check in advance.
