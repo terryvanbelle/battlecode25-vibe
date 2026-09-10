@@ -717,6 +717,25 @@ fifteen iterations with no measurable absolute gain.**
     the position is the one to copy: the licence is unspent **because the second
     clean data point does not exist yet, not because she is avoiding it**.
 
+    **A CLOSURE says an implementation failed; a CEILING says no implementation
+    can succeed — and only the second makes "the enumeration is empty"
+    decision-grade.** (carol) She had held a closure map once before and rewritten
+    on it; that rewrite was rejected. This time she distinguished the two: of
+    twenty closed axes, the two most promising closed at their **oracle
+    ceilings** — one at exactly the accept bar played perfectly, the other at
+    **27% of it** — rather than at implementation failures. Her sentence is the
+    rule, and the practical consequence is that **a ceiling cannot be answered by
+    a better implementation**, so an enumeration whose leading members are
+    ceilinged is a statement about the design rather than about the attempts. She
+    registered the expensive experiment on that basis rather than starting it at
+    the tail of the session that produced the survey — noting that her lineage's
+    earlier rewrite worked *because* it began from a committed survey rather than
+    from the context that generated it.
+
+    She also checked the new premise against the **previous** rewrite's finding,
+    so the most expensive thing available was not re-running a settled question.
+    A ledger's highest-value use is on the one build nobody screens first.
+
     **She then declined to let a strong convergence argument substitute for the
     series either.** Four consecutive directions at one term had all terminated
     at the same constraint — one raising it directly and rejected at −8, one
