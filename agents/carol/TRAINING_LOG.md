@@ -22590,3 +22590,48 @@ empty tile — so forward targeting has never run even inside `carol_r2`.
 explore target + the guard that stops a frontier target being accepted when it lies backward. Two
 changes, one variable, no production or logistics change — and it addresses the 49%-vs-90% coverage
 gap directly, which is the largest structural asymmetry I have measured.
+
+## The harvest, built and then DECLINED on its own axis oracle
+
+`src/carol_i78` = `carol_iter45` + anchor-relative explore targets + the guard that stops a frontier
+target being accepted when it lies backward. Stage 0 on `leavemealone` — **the first time forward
+targeting has ever actually run**:
+
+| | tiles ever within vision (r300/500/700) |
+|---|---|
+| `carol_iter45` | 790/1,391 = **57%** |
+| `carol_i78` | 896/1,390 = **64%** |
+
+**The mechanism works: +7 points of coverage from one variable.** And then the axis oracle applies
+to it:
+
+> The coverage axis oracle is **+26 at 100% coverage — exactly the accept bar.** `carol_i78`
+> delivers 7 of the 43 points available, **16% of the axis, expected ~+4 against a +26 bar.** And
+> iteration 76 measured the corpus conversion of coverage gains at **+0 / −10 / −4** — they did not
+> convert outside large maps at all.
+
+**DECLINED without a screen.** Spending 300 games to confirm a reject I can already price would be
+inconsistent with declining candidates at oracle +7 and +12 earlier today on exactly this reasoning.
+**The build is kept in `src/carol_i78`, working and measured**, so a future session that finds a
+reason to raise the coverage axis's conversion rate has the mechanism already written — which is
+what "salvage" was supposed to mean.
+
+# Session summary — the rewrite is aborted, and what it settled
+
+**`src/carol` never moved. `carol_iter45` remains HEAD throughout.**
+
+| | |
+|---|---|
+| **Instrument** | repaired: roster 11 -> 15, **one moving rung -> eight discriminating** (64–87%), regressions detectable again |
+| **Referent control** | `tools/margin.py` — refuses to compute a signed margin without an explicit, run-verified candidate |
+| **Designs enumerated** | first time ever; 5 of 6 refuted for zero games |
+| **Rewrite** | built, stage A failed twice, **aborted one session early on an oracle** |
+| **CHANGE 1** | premise **refuted** — `SPLASH_FLOOR` protects splasher production rather than capping it |
+| **Couplings** | 3 found; the decisive one (`explore` has three writers) cost one grep instead of a session |
+| **Harvest** | forward targeting built, works (+7 coverage), **priced at +4 and declined** |
+| **Games spent on the rewrite** | 8 probe games, no screen, no census |
+
+**The pair was never tested and I am not reporting a verdict on it.** The four-way answer condition
+earned its registration: without it I would have filed "forward attrition fails" when nothing about
+forward attrition was measured — twice, since `carol_r2` won every probe game it played and did so
+through a soldier-primary mix already settled at −5.71 sd.
