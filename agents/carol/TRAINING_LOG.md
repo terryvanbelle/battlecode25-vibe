@@ -18981,3 +18981,114 @@ right one. Neither result reads correctly in isolation.
 v3 at **24.7%** and TSPAARKHS at **0.0%** are how far this lineage is from a tournament-winning bot,
 and 0/150 against TSPAARKHS has not moved for anyone. I record the scores and nothing else: no
 finals bot is or will be an opponent of mine, in the gauntlet, the roster or anywhere.
+
+# Reading bob's retired workspace — what I took, and from where
+
+Per MULTI_AGENT rule 0 (2026-09-10): `agents/bob/` is open ground, alice remains fully isolated,
+and **a verdict does not transfer**. Everything below names its source file and entry.
+
+## The startling one: bob CLOSED the mechanism I just accepted
+
+**`agents/bob/CLOSED.md` #23** — *"keep units alive by feeding them — raise `REFILL_BELOW`"*:
+**CLOSED, −6 wins at BOTH doses, no dose response.** Mechanism engaged hard (refills +53%/+139%,
+starvation deaths −14.3%/−27.8%) and yet soldier-rounds moved −2.7%/−0.8%, because production fell
+in step (spawns −13.9%/−15.6%, tower paint −8.4%/−12.1%). His stated reason: *"a soldier's stash and
+a tower's build budget are the same paint."*
+
+**That is my iteration 60, and I accepted it at +26/150 and validated it on three external
+instruments.** The cost he names is real for me too — iterations 62 and 63 traced exactly it, towers
+held at 42 paint while refill traffic ran. So why do the verdicts differ?
+
+**Because the benefit term scales with attack cost over capacity, and our primary units differ 6.7x:**
+
+| | attack cost | capacity | ratio | consequence |
+|---|---|---|---|---|
+| soldier (bob's primary) | 5 | 200 | **2.5%** | can act at almost any stash; topping up buys little |
+| splasher (mine) | 50 | 300 | **16.7%** | **completely inert below 50** — my measured `noPaint` state |
+
+A soldier at 30 paint still paints six tiles. A splasher at 30 paint cannot act at all. **Same
+mechanism, same cost, benefit 6.7x larger on my architecture** — which is why his ledger says CLOSED
+and my census says +26. This is rule 0's "a verdict does not transfer", with the reason quantified
+rather than asserted, and it is the strongest evidence I have that reading his tree is worth doing
+carefully rather than eagerly.
+
+## A free kill: his #22 transfers as-is and saves me a direction
+
+**`CLOSED.md` #22** — the low-paint cooldown tax, closed by bytecode arithmetic on the pinned 3.1.0
+jar: `addActionCooldownTurns` adds `round(num*(100-2X)/100)` only when `X<50`. Real for a SPLASHER
+(5 -> 9 turns per action). My `REFILL_LOW = 50` parks splashers at 17% of capacity, so I assumed I
+was paying this heavily. **His re-open condition settles it without a game:** it only bites if a unit
+runs *at or near its untaxed ceiling*. His splashers run 0.057 splashes/splasher-round against a
+0.20 ceiling; **mine run 194/3,530 = 0.055 against the same 0.20.** Nearly identical, and both far
+below. The tax cannot bind. **Direction killed for zero games, on his arithmetic plus one division
+of my own.**
+
+## The lead: his #25/#27, de-clumping, which he closed AT THE BAR rather than refuting
+
+**`CLOSED.md` #25 and #27** — de-clumping movement, three arms over two runs: **+6, +5, +6 out of
+50, never negative, mechanism confirmed every time** (crowd/unit-round −26% to −48%). Closed *at the
+bar*, explicitly "not refuted". His units are `wins_above_half`, so **in my units those are 31/50** —
+exactly my screen's qualifying threshold. His payer: *"units alive, fed and standing where there is
+nothing to paint"* (paint/soldier-round −24%, towers −6.5%, paint actions −6.0% at deep dose).
+
+# Iteration 65 — splasher de-clumping. PRE-REGISTERED BEFORE ANY GAME.
+
+## Why this is not simply re-running bob's closed direction
+
+His benefit is **paint saved** (crowding costs −1/adjacent ally, doubled on enemy ground). Mine has
+a second term his architecture cannot have: **a splasher's attack is an r²<=4 AoE, so two splashers
+standing together overlap and the overlap is pure waste. A soldier paints one tile and cannot
+overlap another soldier.** Different payer, same movement primitive.
+
+## The traced deficit, measured free from a replay already on disk
+
+Both teams in the **same game, same 400-round window, same map** (Mirage) — as controlled as this
+project gets:
+
+| | standing splashers | splashes fired | **mean splash score** | median |
+|---|---|---|---|---|
+| `carol_iter44` | 4 | 63 | **20.5** | 21 |
+| `carol_iter45` | 17–22 | 129 | **16.5** | 15 |
+
+**Tripling the splasher population cost 19.5% of per-splash value.** My own accept created this: D3
+is what put 17 splashers on the map where there were 4.
+
+**The discriminating case, run before naming the fault.** The rival explanation is map saturation —
+more coverage leaves less unpainted ground, so scores fall for everyone. **Refuted by sign**:
+`carol_iter44` painted *more* of that map (673 vs 296) and scored *higher* (20.5 vs 16.5).
+Saturation predicts the opposite ordering. What remains is competition among my own splashers for a
+limited set of high-value targets.
+
+**Stated honestly**: score is the bot's own target-value proxy, not tiles converted, and I have
+**not** separated "clustered together" from "anchored near home by D3's refill trips". Both are
+positional and both are addressed by the same movement primitive, but I cannot claim which dominates.
+
+## Magnitude, in the units of the gap
+
+`carol_iter45` fires 2.05x the splashes at 0.80x the value = **1.64x total splash value**. Restoring
+20.5 would make it 2.05x — a **25% increase in splash value**, on the only unit that bulk-paints.
+
+## Mechanism, arms, and the registered checks
+
+Movement scores each candidate direction by `distanceToTarget + CROWD_W * alliesAdjacentToDest`.
+**`CROWD_W` = 2 / 4 / 8**; zero arm is `carol_iter45` (`CROWD_W = 0` short-circuits, byte-identical).
+Bob's ledger says the weight saturates around 3–5 and that widening the candidate set past that
+bought one game, so I expect **an interior optimum at 4** and register that now.
+
+**Registered mechanism check (stage 0), both required:**
+1. **Mean splash score must rise above 16.5, toward `carol_iter44`'s 20.5.**
+2. **Splashes fired must not fall materially below 129** — bob's closure is precisely that
+   de-clumping moves units off productive ground, so buying score by firing less is the failure
+   mode, not a success. Reported as absolute counts, not shares.
+
+**Registered falsifier:** if crowd falls and splash score does **not** rise, then the score drop is
+not caused by unit proximity and my reading of the 20.5 -> 16.5 gap is wrong — as it was wrong twice
+this week about splasher production.
+
+**And the trigger-liveness check bob's #31/#32 style analysis and my own iteration-64 closure both
+demand**, run before dosing: de-clumping is only a dose if splashers are actually adjacent to allies
+often. **If crowd/splasher-round is near zero at baseline, the direction dies for zero games.**
+
+**Gate**: fresh 25-map screen at `BOT=carol_iter45`, highest margin reaching **>= 31/50**, ties to
+smaller `CROWD_W`; then full 75-map census at **margin >= +26 ACCEPT | +18..+25 REPLICATE | <= +17
+REJECT**.
