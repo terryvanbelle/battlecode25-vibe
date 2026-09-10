@@ -2,8 +2,8 @@
 
 **State at time of writing:** `src/carol` = `BUILD "i45a"`, unchanged since the iteration-60 accept
 (commit `3610230`). Snapshot copy: `src/carol_iter45`. Every axis and design premise below is
-closed or blocked, **except §7.9** — iteration 80's ruin memory, the first margin-carrying mechanism
-with nothing shut against it, whose stage 0 has passed and whose screen is in flight.
+closed or blocked. §7.9 — iteration 80's ruin memory, the last margin-carrying mechanism with nothing
+shut against it — was built and **rejected at the screen**, with its gated form oracle-ceilinged.
 **This document, not the 23,000-line training log, is where a successor starts.**
 
 Iteration 59's rewrite cost a full session; iteration 77's cost **8 probe games** — the difference
@@ -444,7 +444,7 @@ attack's cost by an order of magnitude.
 > **The transferable lesson, now standing practice: validate the instrument before spending the games.**
 > It cost zero here and it caught a knife-edge in iteration 80 the same day.
 
-### 7.9 OPEN — iteration 80, the RUIN MEMORY. Stage 0 PASSED; screen in flight.
+### 7.9 CLOSED — iteration 80, the RUIN MEMORY. Rejected at the screen; the gated form is oracle-ceilinged.
 
 The first margin-carrying mechanism with **nothing closed against it** (ledger-checked against five
 near neighbours, all of which rest on "against alice carol loses zero towers", which is false in the
@@ -465,9 +465,29 @@ regime carrying the margin).
   **84.6%** within her p75. **The falsifier does not fire.**
 - **Known before the build, from stage 0:** a naive memory **goes stale** — ≥3.7% of remembered
   "unclaimed" ruins already carry a tower. The built arms forget on sense and on ban.
-- **In flight:** dose screen, `BOT=carol_iter45` vs `carol_i80_10 / _20 / _inf` (MEM_REACH d²=100,
-  400, unlimited), one shared 25-map sample, 150 games. **Gate ≥ 31/50 for the candidate.** Then the
-  15-rung frozen roster, then the self-play census at **+26**.
+- **RESULT — 200 games over two independent 25-map samples, gate ≥ 31/50, mirror null 25/50:**
+
+| arm | design | candidate | vs null |
+|---|---|---|---|
+| `carol_i80_10 / _20 / _inf` | forget a banned ruin at RECORD time | **21/50 each** | **−4** |
+| `carol_i80_lazy` | filter bans at NAVIGATION time (the fix) | **27/50** | **+2** |
+
+  The doses genuinely diverge (25 of 50 cells differ in end round), so this is a real measurement.
+  **A PERFECT, buildable area gate prices at 26.0/50 — one game above the null against a ≥31 gate**,
+  and the regime effect it would key on **reverses sign between the two samples** (small maps 30.8%
+  then 61.5%), so it is noise and the gate is dead twice over.
+- **Kind: measured-and-small** for the corrected design; **oracle-ceilinged at ~+1 game** for the
+  gated form. **Re-open only on a mechanism that raises the PER-FIRING VALUE of a memory redirect,
+  never its volume** — volume is measured and is not the binder, and the two designs land on opposite
+  sides of the null. **An area/ruin gate must not be re-proposed** without a regime effect that
+  replicates across two independent map samples.
+- **Most likely account, named as a hypothesis and NOT established:** the redirect displaces
+  frontier-seeking (iteration 14, accepted), so it spends a decision that was already producing
+  value rather than a resource. The ablation that would establish it was not run.
+- **Stage 0's M1 was overstated 3.5×** and I caught it from the built arm, not from the probe:
+  **77% of the remembered ruins were BANNED** — ruins carol had already proved uncompletable because
+  an enemy-painted pattern tile can never be overwritten [E]. Corrected, M1 fails its own ≥50% bar.
+  The stage-0 **demonstrated-envelope** result is unaffected; it never touched `ruinMem`.
 
 ### 7.8 (original registration, kept for the record) — the tower-attack gate
 

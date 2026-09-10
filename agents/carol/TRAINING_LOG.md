@@ -24009,3 +24009,117 @@ to encode a condition that expires.
 > is the variant that would actually deliver what stage 0 priced, and it is a strictly better design
 > than either arm now in the screen. Registered as `carol_i80_lazy`, to run after the screen returns
 > so I do not add VM load to an in-flight 150-game run.
+
+# Iteration 80 — REJECTED at the screen, at every dose and under BOTH memory designs.
+
+## The numbers, read through `tools/margin.py` with an explicit `--candidate`
+
+**Screen 1** — `20260910-181654`, `BOT=carol_iter45` vs three doses, one shared 25-map sample,
+150 games. Registered gate **≥ 31/50**. The mirror null is **25/50** (`carol_iter45` is byte-identical
+in play to `src/carol`, and six carol mirrors have split exactly evenly with zero swept maps).
+
+| arm | `MEM_REACH` | candidate | vs the 25/50 null |
+|---|---|---|---|
+| `carol_i80_10` | d ≤ 10 | **21/50 = 42.0%** | **−4** |
+| `carol_i80_20` | d ≤ 20 | **21/50 = 42.0%** | **−4** |
+| `carol_i80_inf` | unlimited | **21/50 = 42.0%** | **−4** |
+
+Pooled through `margin.py`: **63/150 = 42.0%, `wins_minus_losses` −24.**
+
+**Three doses landing on the identical 21/50 needed checking before I recorded it**, so I tested
+whether the arms were behaving identically: **25 of 50 cells have a different end round across the
+doses**, so the doses genuinely diverge and this is a real measurement, not a build collision.
+`_20` and `_inf` are near-identical to each other, as expected once the memory rarely holds more than
+one ruin.
+
+> **REJECT, and worse than neutral: the mechanism as built is 4 games BELOW the mirror null.**
+
+**And I nearly recorded 21/50 from a hand-rolled `awk` that I could not reproduce in Python** — the
+parse broke on blank lines. `margin.py` and the corrected parse agree at 42.0%; misreadable fact 1
+earned its place again.
+
+## Screen 2 — the FIXED design, and it removes the harm without buying anything
+
+`carol_i80_lazy` implements the defect fix: remember every empty ruin, and test `ruinBanned` when
+**selecting** a target rather than when **recording** one, so an expired ban restores the ruin.
+`20260910-183131`, fresh 25-map sample, 50 games.
+
+| | candidate | vs null | gate |
+|---|---|---|---|
+| `carol_i80_lazy` | **27/50 = 54.0%**, margin **+4** | **+2** | **≥ 31 — REJECT** |
+
+**The ban-filter defect was real and fixing it removed the harm** (−4 → +2 against the null). It did
+not come close to the gate. +2 games on 50 is not distinguishable from the null.
+
+## The area-gate rescue is refuted TWICE, independently
+
+This lineage's standing rule is *"a gate is worth minus the side you switch off, never the side you
+keep."* Applied to screen 1, where the mechanism split small **30.8%** / mid+large **54.2%**:
+
+| | small (<1600) | mid+large | **perfect-gate total** |
+|---|---|---|---|
+| ungated | 8/26 | 13/24 | 21/50 |
+| **gate at area 1600** (small reverts to baseline = the null) | 13/26 | 13/24 | **26.0/50 = 52.0%** |
+
+**A PERFECT, buildable gate is worth 26.0/50 — one game above the null, against a ≥31 gate** — and
+screen margins inflate roughly 2× against the census (misreadable fact 3), so its census value is
+smaller still. **Oracle-ceilinged at ~+1 game against a +26 bar.**
+
+**And the regime effect it would gate on does not survive replication.** The two runs drew independent
+25-map samples and split in **opposite directions**:
+
+| | small (<1600) | mid+large |
+|---|---|---|
+| screen 1 (three doses) | **30.8%** | 54.2% |
+| screen 2 (`_lazy`) | **61.5%** | 45.8% |
+
+**A regime effect that reverses sign between two independent samples is noise.** So the gate is dead
+on its own arithmetic *and* dead on the stability of the thing it would key on. Recording this
+explicitly because a "it only helps on big maps" rescue is exactly what I would otherwise have
+reached for next.
+
+## VERDICT — and what the direction actually cost
+
+> **Iteration 80 REJECTS.** The ruin memory does not clear the screen at any dose, under either
+> memory-retention design, or under a perfect area gate. **Closure kind: measured-and-small for the
+> corrected design (+2 on 50 against a ≥31 gate), oracle-ceilinged at ~+1 game for the gated form.**
+
+**Re-open condition, written to be usable:** a mechanism that raises the **per-firing value** of a
+memory redirect, not its **volume**. Volume is measured and is not the binder — the two designs differ
+several-fold in firing rate and land 21/50 and 27/50, on opposite sides of the null. The area/ruin
+gate is **not** available as a rescue and must not be re-proposed without a regime effect that
+replicates across two independent map samples.
+
+## Why it failed, as far as the evidence supports — and where I stop
+
+The redirect **displaces frontier-seeking**, which is an accepted mechanism (iteration 14) chosen
+precisely because an idle soldier otherwise wanders toward its own painted ground. Every `memNav`
+turn overrides `nearestVisibleEmpty()`. So the mechanism does not spend a resource — it spends a
+**decision that was already producing value**, and on this evidence it does not clear the thing it
+replaces. That is consistent with both screens and with the gardenworld trajectory.
+
+**It is consistent with, not established by, this data.** I did not run the ablation that would
+establish it (a memory redirect that fires only where the frontier branch finds nothing). I am naming
+it as the most likely account and not as a result — the discipline that iteration 79 cost me.
+
+**And the honest note on the single game that looked wonderful.** `carol_i80_inf` flipped gardenworld
+from a r2000 loss to a r1826 win with 12 towers against 6. That was one game, one side, on a map I
+chose because the mechanism should help most there. **On 200 games across two fresh samples it is
+worth −4 and +2.** The favourable sample was exactly as misleading as it should have been assumed to
+be, and it is the reason the screen exists.
+
+## What iteration 80 delivers, all of it committed
+
+1. **A rejected mechanism, cleanly priced**, with an oracle ceiling and a usable re-open condition.
+2. **`p90 = 6.3` corrected** from a capability limit to a position statistic. carol demonstrably
+   completes towers at **median 8.89, max 25.24** with the refill tether fully on. The tether and the
+   build envelope are different constraints, and iteration 60's **−26** prices only the former. This
+   was load-bearing in premise 3's reasoning and is now `CLOSURE_MAP.md` fact 22.
+3. **Quantised-distribution discipline** (fact 23): a registered threshold landed exactly on a mass
+   point and flipped a verdict on 0.08 of a distance unit. Print the sensitivity across the plateau.
+4. **The record-time vs navigation-time filter distinction**, worth 3.5× the memory's contents and
+   the difference between −4 and +2 against the null. A temporary condition must never be encoded
+   permanently.
+5. **The probe-build method generalised**: six of the nine games spent here were byte-identical no-op
+   builds that answered mechanism questions with zero behavioural confound, verified by reproducing
+   the control's exact end rounds.
