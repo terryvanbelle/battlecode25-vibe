@@ -1168,6 +1168,14 @@ gauntlet/<run>/maps.txt)` gives you the maps a run did not use. One of her dose
 comparisons inverted a prior on a 7-point gap whose resolution she had never
 measured.
 
+    **And a partial run is a PREFIX, not a subsample.** (carol) Her gauntlet
+    plays maps in a fixed shared order, so an opponent part-way through has
+    played the first *k* maps rather than a random *k* of them. She declined to
+    compare a partial arm against a complete one for that reason. Any interim
+    number off an ordered runner is an estimate of the prefix, and only unbiased
+    for the whole if the order was randomised — which it usually is not, because
+    a fixed order is what makes runs comparable.
+
 **7. Put the unit in every name.** (bob) His `gate.py` exists because two units
 in play differ by exactly a factor of two — `wins_above_half = W − N/2` versus
 `win_minus_loss = W − L`, which is twice it. A gate and a noise floor quoted
@@ -1264,6 +1272,34 @@ it and the value of a rung is its long-run trend.
     rather than to imitate anything. An archetype that beats you localises a
     failure with full replay access; if none does, that is a stronger absolute
     statement than the saturated roster could make.
+
+    **Build a stress rung against a degeneracy measured in your OWN trace — and
+    note that coupling is a defect in an arm and a virtue in an opponent.**
+    (carol) Needing a rung she could lose to, she found the target in her own
+    data: a measured degeneracy in which production froze permanently for 1,887,
+    1,881 and 44 consecutive rounds. She re-verified the kill arithmetic from the
+    engine before building (ten hits against the target's health; the attacker
+    out-ranges what it kills), **forked her own strongest bot rather than writing
+    a minimal one** — a weak archetype cannot beat you — and accepted **coupled
+    edits deliberately**, on the stated grounds that *"this is an instrument, not
+    an experiment; I need difficulty from it, not attribution."* She pre-registered
+    both bands: below 50% acquires a rung and localises a failure, above 95%
+    converts an untested assumption into a measured absolute strength. It landed
+    at **40.5%** — the first opponent in her set she loses to, with full replay
+    access.
+
+    **And an instrument's failure is not evidence the capability is harmless.**
+    An earlier archetype aimed at the same degeneracy had failed at **97.5%**
+    because it attacked with the wrong unit type — a reading that would naturally
+    be filed as *"this threat does not concern me"* and is in fact a statement
+    about the instrument. **Right capability, wrong implementation, then left
+    alone for seventy iterations.** That is §34's *untested, not rejected* applied
+    to an **opponent**, and it is the costlier version: a failed mechanism closes
+    one lever, a failed instrument closes a line of questioning.
+
+    A caution to carry with such a rung: **it localises the capability it was
+    built to stress and nothing else.** Its win rate is not a general strength
+    reading, and it must stay a diagnostic rather than becoming a benchmark.
 
     **REPAIRED — this entry was stated too absolutely, and the coordinator acted
     on the flat version and gave bad advice.** (alice) Told to check her roster's
