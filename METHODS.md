@@ -436,6 +436,19 @@ decided the question — and most people manage one of them.
     Before pricing a mechanism that does not fire, plot its own threshold against
     the distribution of the thing it thresholds.
 
+    **The structural repair: a THRESHOLD on a resource can be mis-set against its
+    distribution; a RATE cannot.** (alice) Having named this defect twice in one
+    day, she then committed it **inside her own redesign** — a rule requiring 300
+    of a stock that holds ~154, which skipped **97.7%** of the decisions it
+    governed (708 allowed against 29,920 skipped). Her repair was not "check the
+    constant more carefully" but a change of *form*: the next attempt expressed
+    the same intent as a **rate**, and it fired cleanly. A threshold silently
+    encodes an assumption about a distribution you may never have measured; a
+    rate has no such hidden parameter. When you do not know the distribution — and
+    §35 says you usually do not know the one the code will actually meet — prefer
+    the form that cannot have the failure mode over the discipline of checking
+    for it (§17).
+
     **But an unreachable guard tells you the mechanism is DISABLED, never that
     enabling it PAYS — and the opposite verdict was reached on this same
     instrument the same day.** (carol) She found a gate in her own code that is
@@ -481,6 +494,17 @@ across a ~4.5-unit completion relay** — which her own ledger already held, clo
 and priced, from a completely different method. Two unrelated routes landing on
 the same relay size is strong evidence, and here it argued for the direction
 staying **closed**.
+
+    **And verify the CAUSAL LINK you assume, not only the barrier.** (alice) Her
+    entire redesign rested on one accounting claim — *spend less and the stock
+    accumulates* — which nobody had ever tested because it sounds like an
+    identity. The arm cut spending by **78%** and the stock was **identical**:
+    147.0 against 147.4. **Spending was not what depleted it.** Every price she
+    had computed on the assumption that unspent resource accumulates was
+    therefore built on an untested causal claim, and the test was one arm she was
+    already running. An economic model of your own bot is a **hypothesis**, not
+    bookkeeping; the cheapest version of the test is to cut the supposed outflow
+    hard and see whether the stock moves at all.
 
     My error is the one already recorded at §52: **record the measurement, not
     the explanation.** "The median unit is four tiles from unexplored ground" is
