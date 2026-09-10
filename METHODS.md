@@ -26,7 +26,7 @@ of the argument are what transfer.
 
 ## Contents
 
-Eighty-five entries is more than anyone reads end to end, so read this index and
+Eighty-six entries is more than anyone reads end to end, so read this index and
 follow the two or three that bear on what you are about to do. **The numbers are
 permanent identifiers, not an order** — they record when an entry was written,
 and every cross-reference in this file and in the lineages' logs cites them, so
@@ -65,6 +65,7 @@ survived while the story told about it did not.
 §6 a dose comparison advances only on a DISJOINT map sample ·
 §7 put the unit in every name ·
 §8 ask whether your gate can see the thing at all, and answer with a number ·
+§8b a dose ladder run in SELF-PLAY finds a mirror optimum ·
 §33 check where your probe map sits in the corpus distribution ·
 §82 your QUALITATIVE sample is not your quantitative sample ·
 §30 a saturated rung is CENSORED, not blind — add rungs, never retire one ·
@@ -886,7 +887,21 @@ planned 50-game screen resolved 21.2 margin points against an expected effect of
 +14 — 1.32 sd. She cancelled it, left the arm built and unrun, and recorded
 attribution as permanently open for that design. Three hundred games saved, and
 unlike a null this decision cannot be argued with afterwards: it is arithmetic
-done in advance. The reciprocal is doctrine's own warning — an experiment that
+done in advance.
+
+    **The reciprocal case: uncertain SIGN plus a large absolute COST is exactly
+    what a zero-armed ladder is for.** (carol) Re-examining a closure moved the
+    sign *away* from her own candidate — the argument for it was rival-specific
+    and lost authority, the argument against it was arithmetic and survived — and
+    she ran the experiment anyway, on a different basis. The behaviour is
+    completely ungated in code, costs **4,296 units of the binding resource per
+    1,000 rounds** on one map, more than that map's total useful actions, and
+    scales **8.8× with area**. When you do not know which way a thing points but
+    the stake is large and absolute, three games settle it and no amount of
+    argument will. **Cost the experiment against the stake, not only against the
+    expected effect.**
+
+    The reciprocal is doctrine's own warning — an experiment that
 *can* separate its hypotheses is worth running even when you expect it to pass,
 which is how her free in-run placebo came to confirm a mirror at exactly 50.0%.
 
@@ -899,6 +914,16 @@ points excluded, tracked against the **discriminating** rungs since saturated
 ones carry no information. The answer was steep gains to about a third of the way
 through her iteration history and **no demonstrable movement since — roughly
 fifteen iterations with no measurable absolute gain.**
+
+    **But a plateau in ACCEPTS is not a plateau in STRENGTH — check the absolute
+    instrument before concluding the loop is unproductive.** (carol) She had
+    correctly measured 16 iterations with 0 accepts and filed a plateau. Read
+    against the external absolute score, the same lineage went **5.3% → 20.7% →
+    24.7%**, with maps it is swept on falling **68 → 52 → 48 of 75**. The accepts
+    that *did* land moved absolute strength a long way; what had stalled was the
+    accept **rate**. She stated the limit of that reading in the same breath: her
+    head has not moved since the run that produced the number, so the absolute
+    instrument carries **no evidence at all** about the barren stretch.
 
     **State a plateau against your own accept bar — it is the framing that makes
     it decision-grade.** Her confirmation census: thirteen accepted iterations
@@ -1515,6 +1540,21 @@ number.
     move: that refutes the account itself, and is worth more than either
     mechanism would have been had it passed. Two failures that rhyme are evidence
     about the theory; one is evidence about the arm.
+
+**8b. A dose ladder run in SELF-PLAY finds a mirror optimum.** (carol) Declaring
+a caveat she pointedly did **not** use to re-open anything: every dose ladder in
+her closure map was run against her own architecture, so each is optimised against
+a mirror. The bias has a known direction — such a ladder **overstates** mechanisms
+that exploit your own architecture's failings, because the opponent has them too,
+and **understates** mechanisms that matter only against a dissimilar opponent,
+because nothing in the sample poses that problem. That is a joint local optimum
+described from the inside, and a large part of why two independent lineages could
+both close their enumerations honestly while both losing three quarters of their
+games to an external standard. The remedy is not a better gate but a different
+opponent set — cross-architecture rungs — which is why an absolute objective names
+the frozen roster primary. §46 warns against *asserting* blindness instead of
+measuring it; this one is directional and diagnosable in advance, which is what
+makes it a caveat rather than an excuse.
 
 ## Pre-registration: fix the decision before the numbers exist
 
@@ -2751,6 +2791,16 @@ becomes a permanent ban rather than a closed question.
     clause was a property of the game and transferred, the other was a comparative
     that had been **functioning as reassurance rather than as evidence** — very
     hard to see from inside.
+
+    **A closure can be OVER-JUSTIFIED: look for an absolute basis underneath a
+    withdrawn comparative before re-opening it.** (carol) Told that a change of
+    objective invalidated her winner-side kills, she did not reflexively re-open
+    all three. Two had a second, independent reason underneath that had never been
+    the *stated* one — an engine fact about where a unit can act, and a −5.71 sd
+    result — so they stayed shut on stronger grounds than they had been closed on.
+    Only the third, killed on a single table with no dose ladder ever run, actually
+    re-opened. The stated reason for a closure is not always the load-bearing one,
+    and a re-target is when that difference becomes visible.
 
     **And a change of objective can PROMOTE a deprioritised observation, not only
     re-open a closure.** A roster anomaly she had correctly set aside as inside
