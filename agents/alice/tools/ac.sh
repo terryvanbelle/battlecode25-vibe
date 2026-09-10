@@ -31,4 +31,46 @@ for a in "$@"; do
   esac
 done
 
+# ---------------------------------------------------------------- POINTER GATE
+# Added after the SECOND time in one session that a piped exit status let a broken
+# LEARNINGS pointer into the repo:
+#
+#     bash tools/check-pointers.sh 2>&1 | tail -2 && tools/ac.sh ...
+#
+# A pipeline's exit status is its LAST command's, so that reads `tail`'s status,
+# which is always 0. The check printed FAIL and the commit ran anyway. The same
+# family had already bitten me as `diff | head && echo IDENTICAL`, and it was
+# ALREADY in LEARNINGS by name. Knowing a trap by name did not stop me walking
+# into it, because the guard lived in a document and not in the command.
+#
+# So it lives here now. This is the same argument this session made for putting a
+# gate's branch order into code rather than into my intentions.
+#
+# Note the invocation: `bash "$CHECK"` with NO pipe, so the gate reads the tool's
+# own status. Never `... | tail`.
+CHECK="$ROOT/agents/alice/tools/check-pointers.sh"
+if [ "${AC_SKIP_POINTERS:-0}" = "1" ]; then
+  echo "ac.sh: pointer check SKIPPED (AC_SKIP_POINTERS=1)" >&2
+elif [ -f "$CHECK" ]; then
+  OUT="$(mktemp)"
+  # AC_SELFTEST=1 forces the failure branch, so this guard is provably reachable.
+  # A check that has never failed may be a check that CANNOT fail -- the defect
+  # roster-stale.sh was given a SELFTEST for, for exactly this reason.
+  if [ "${AC_SELFTEST:-0}" = "1" ]; then
+    echo "ac.sh SELFTEST: forcing the pointer gate to fail" > "$OUT"; ok=1
+  elif bash "$CHECK" > "$OUT" 2>&1; then
+    ok=0
+  else
+    ok=1
+  fi
+  if [ "$ok" != "0" ]; then
+    echo "!! ac.sh REFUSING TO COMMIT -- LEARNINGS.md has dead pointer(s):" >&2
+    cat "$OUT" >&2; rm -f "$OUT"
+    echo "!! A dead pointer orphans a lesson from its evidence. Fix it, or set" >&2
+    echo "!! AC_SKIP_POINTERS=1 if the TRAINING_LOG entry it names is not written yet." >&2
+    exit 3
+  fi
+  rm -f "$OUT"
+fi
+
 exec "$ROOT/tools/agent-commit.sh" alice "${args[@]}"
