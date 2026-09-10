@@ -21805,3 +21805,85 @@ Metrics where carol is genuinely **worse** than the opponent, with status:
 **The deficit is 100% large-map (small +10, mid 0, large −30), and all three routes into it are
 closed, priced at the bar, or already refuted.** That is a genuinely tight box, and I would rather
 state it than manufacture a fourth candidate from the same material.
+
+# LOOP-PRODUCTIVITY MEASUREMENT — is this loop still producing? Decision-grade, from committed data.
+
+## 1. Absolute-strength instrument: CURRENT, but losing resolution
+
+Last **deliberate** roster run (backfilled points excluded): `carol_i60_50` = the build in play.
+**Zero accepts stale.** But of 11 rungs:
+
+| rung | first -> last | status |
+|---|---|---|
+| iter0, iter1, iter7, iter21, rush, turtle, examplefuncsplayer | -> **100.0%** | **SATURATED — carries no information, including about regressions** |
+| iter44, r1, racer | single point (added at the last run) | no trajectory yet |
+| **iter35** | **68.0% -> 81.2%** | **the ONLY informative trajectory** |
+
+**6 of 11 rungs are saturated and 3 have one point each. The instrument has exactly one moving
+number**, and that move corresponds to the iteration-60 accept. This is the saturation I predicted
+when I built `bobf` and wrote the plan for it; it has arrived on the frozen roster first.
+
+## 2. Accept rate: collapsed
+
+| day | accepts |
+|---|---|
+| 09-06 | **6** |
+| 09-07 | **6** |
+| 09-08 | **6** |
+| 09-09 | 1 |
+| 09-10 (to 14:20) | **0** |
+
+**Last accept: iteration 60 -> `carol_iter45`, 09-09 23:26. Since then 16 iterations attempted, 0
+accepted.**
+
+## 3. Net movement against my OWN accept bar over that span: ZERO
+
+The census bar is **margin >= +26**. Across all 16 post-accept iterations **not one candidate reached
+a census.** The best result in the span was iteration 69's **+12/50** self-play screen, which then
+measured **+3/150 = 0.72 sd** on the external instrument and closed. The whole 16-iteration span
+carries **less evidence than one accept demands**, by construction — nothing was accepted.
+
+## 4. Two-halves check: the total is NOT hiding two moving halves
+
+carol byte-identical across both 09-10 tournaments, alice changed:
+
+| bucket | 0100 | 1300 | delta |
+|---|---|---|---|
+| small | +10 | +8 | −2 |
+| mid | +0 | +6 | +6 |
+| **large** | **−30** | **−20** | +10 |
+| TOTAL | −20 | −6 | +14 |
+
+The +14 is alice's accept costing her on large and mid maps. **The structure is unchanged: the
+deficit is still 100% large-map (−20), with small and mid both positive.** No compensating halves.
+
+## 5. What the loop DID produce in those 16 iterations
+
+Zero accepts, and: **8 explanations for the area gradient eliminated**; **one whole axis closed on an
+oracle price**; **3 candidates killed for zero games** by the winner-side check; **2 errors of my own
+corrected** (a position-keyed count that inverted a conclusion, and a gross-for-net price); and a
+**new external instrument built, validated to the game, and calibrated** (`bobf`, sd 4.18/150).
+
+## 6. The finding, stated for a budget decision rather than as an impression
+
+> **This loop has plateaued in accepts, and the plateau is not obviously local.**
+>
+> - The deficit is **100% large-map** and unchanged under a new opponent build.
+> - **Every route into it** is closed (coverage, on an oracle price), routed through that closure
+>   (income -> claims -> coverage), or already refuted (denial, −3.83 sd).
+> - The one axis addressing that regime prices at **exactly the accept bar (+26) when played
+>   perfectly**, and every realisable member of it harmed the majority regime.
+> - I am **ahead of the bot beating me on every cost metric I have measured** (drain, attacks,
+>   soldiers) — three candidates died on that.
+> - The absolute instrument has **one moving rung of eleven.**
+
+**What would change the answer**, and neither is mine to decide alone:
+1. **Harder rungs.** The frozen roster is 6/11 saturated. `agents/bob/src/` holds a full
+   cross-architecture snapshot ladder that would restore resolution — I have the plan written and
+   have not spent games on it.
+2. **A different bar, or a different deficit.** If a +26 census bar is right, the known headroom is
+   not reachable. If the loop should now pursue effects below that bar, that is a gate change and it
+   is a coordinator decision, not mine.
+
+**I am not proposing a mechanism**, and I am not going to manufacture a seventeenth candidate from
+material I have already priced at the bar. This is on the desk with the numbers attached.
