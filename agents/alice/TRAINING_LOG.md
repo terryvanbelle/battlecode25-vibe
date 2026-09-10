@@ -24260,6 +24260,13 @@ surviving premises to **one site**: the tower's spawn decision and the refill be
 The four premises are not independently choosable — that was the survey's finding — and here is the
 mechanism by which they compose:
 
+> **[REFUTED, same session — the amendment is in place so the premise does not quietly vanish.**
+> Cutting spawns 78% left tower paint IDENTICAL (147.0 arm v 147.4 control), because income is
+> per-tower and spawning is what builds towers: the arm simply held **half the towers** (3.25 v
+> 6.89) with total paint in the same 2:1 ratio. **The spending IS the investment.** A does not pay
+> for C or D, and 'accumulate by spending less' was never available to anyone — a fact about the
+> game's economy, not about this design. The original claim, as written, was:]**
+>
 > **Spawning fewer units means towers stop draining themselves, so tower paint stays high — which is
 > exactly the constraint that capped splashers at 29% early and 0% after r1200, and the constraint
 > that made refills unreachable at 2.61% adjacency.** A→C and A→D. **Adopting A alone shrinks the
@@ -24321,3 +24328,39 @@ because the population could not have shown a pass.
 whose corpus dose was blocked by substitution and which is testable only inside this context.
 
 **Budget: one stage-1 attempt remains. It will be spent on a population that can register a pass.**
+
+# ATTEMPT 1 DIAGNOSED — I committed the K8 error inside my own rewrite
+
+From the counters I built into the arm:
+
+> **spawns allowed 708; spawns SKIPPED 29,920 — 97.7% of decisions. Splasher branch taken 6 times,
+> 0.8%.**
+
+**The rule required `paint ≥ cost + 100`, so a soldier needed 300 and a splasher 400. Tower paint
+averages 154.** Both thresholds sit **above** the distribution of the resource they test — **which is
+exactly the defect I named this morning in K8 ("a constant set above the level the resource normally
+holds") and again in the mopper guard.** I wrote the rule from the intent, not from the distribution,
+and did not check it against a number I already had on screen.
+
+## The general form, which is the part worth keeping
+
+> **A THRESHOLD on a resource can be mis-set relative to its distribution. A RATE cannot.**
+> `paint ≥ 300` is a claim about a distribution I must verify; `skip 40% of spawns` is not — it
+> delivers its intended effect whatever the resource is doing. **Where a design wants "less of X",
+> prefer a rate over a threshold unless the threshold's distribution has been checked.**
+
+**And it explains the inverted state cleanly:** the reserve blocked nearly all spawning, so towers
+hoarded paint and the few units that existed were refilled and lived longer — **more units alive
+(34.74) from fewer spawns**, at a fifth the per-unit output because the army never grew into the work.
+
+## Attempt 2, redesigned on that lesson
+
+- **"Fewer units" becomes a RATE**: skip a fixed fraction of spawn opportunities. It cannot be
+  mis-set against a distribution, and the paint it leaves behind funds refills — serving premises A
+  and D with one constant.
+- **Splashers gate on affordability only** (`paint ≥ 300`, no margin) at a 30% rate — no chip
+  threshold, since that class is closed.
+- **The mopper removal is unchanged** — it fired correctly at 0.0% and is the banked salvage.
+
+**Measured under the amended design: identity on the original three; stage 1 on the frozen stalled
+subpopulation with CONTROL-RELATIVE targets.**
