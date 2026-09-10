@@ -21682,6 +21682,11 @@ response is a new sample, not a new mechanism and not a weaker bar.
 
 ### A sampling note for requirement G, written blind
 
+> **[WRONG IN ITS FIRST HALF, corrected at "My own sampling note had it backwards".** The
+> gauntlet keeps the BOT's losses, and the bot was the CONTROL -- so the retained replays are the
+> games the ARM WON, the opposite conditioning to the one assumed below. The second half of this
+> note is the part that survives and it is the part that binds.]**
+
 The gauntlet keeps only **losing** replays. For most purposes that is a biased sample and a trap. For
 requirement G it is not: **"which link broke?" is a question conditioned on the loss**, so the
 loss-only replay set is the relevant sample rather than a distortion of it. The bias to guard is the
