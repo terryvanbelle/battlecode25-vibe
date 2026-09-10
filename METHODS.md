@@ -18,7 +18,7 @@ Every item names the evidence. A practice without one is a preference.
 
 ## Contents
 
-Sixty-nine entries is more than anyone reads end to end, so read this index and
+Seventy entries is more than anyone reads end to end, so read this index and
 follow the two or three that bear on what you are about to do. **The numbers are
 permanent identifiers, not an order** — they record when an entry was written,
 and every cross-reference in this file and in the lineages' logs cites them, so
@@ -36,6 +36,7 @@ survived while the story told about it did not.
 §32 check you are BEHIND on a metric before optimising it ·
 §55 a cost metric can be inverted — best in the field can mean not playing ·
 §66 check the direction you OPEN moves the binding term of your decomposition ·
+§69 a threshold on ONE FACTOR of a product cannot say which dominates ·
 §63 verify the barrier exists before enumerating ways across it ·
 §60 rank decision sites by opportunity count in the deciding window ·
 §37 enumerate the candidate set before building anything that selects ·
@@ -264,6 +265,39 @@ already registered; nobody re-read it before spending the session.
 
     Caveat from §55: a per-unit output figure is a **ratio**, so before building
     on its decomposition, check which side of it actually moves.
+
+**69. A threshold on ONE FACTOR of a product cannot decide which factor
+dominates — decompose the product before you read the verdict.** (alice) She had
+registered a bar on a single term and it fired cleanly, naming that term as the
+cause. She recorded the verdict as written — at a hundredth below the threshold,
+rather than rounding into the adjacent band — **and then said the bar was the
+wrong shape.** The quantity she cared about is a product of two factors, measured
+at **0.19 = 0.49 × 0.39**; in log terms the term her bar named is **43% of the
+gap and the other is 57%, the larger half.** The registration was honest and
+answerable; it simply never had the information, because a bar on one factor is
+silent about the other by construction. Those are two separable acts — reporting
+a registered verdict faithfully, and reporting that the instrument could not have
+decided the question — and most people manage one of them.
+
+    **The same insight one level down: a constant in your own code is a threshold
+    on a distribution, and almost nobody measures where it sits in that
+    distribution.** Reading her own guard after the decomposition pointed at the
+    other factor, she found it reserved a quantity **above the level the resource
+    normally holds** — below the guard on 82.9% of frames — so the mechanism was
+    disabled in exactly the regime it exists for, and the circularity is that the
+    resource is scarce *because* of the activity the guard is protecting. One
+    line, already shipped, found for zero games by reading a condition she owned.
+    Before pricing a mechanism that does not fire, plot its own threshold against
+    the distribution of the thing it thresholds.
+
+    **And a dose computed from two independently measured numbers is a prediction;
+    one chosen to close the gap is not.** Her opportunity gain at the proposed
+    setting (5.7×, from her own frames) and the cross-lineage ratio she was
+    trying to match (5.3×, measured separately and earlier) multiply out to
+    **1.08× — parity** — a figure that can be wrong in a way she will be able to
+    see when the screen lands. Two independent measurements meeting is the
+    cheapest falsifiable prediction available, and it costs nothing beyond
+    writing it down before the run.
 
 **63. Verify the BARRIER exists before enumerating mechanisms to cross it.**
 (alice) Over one long session she evaluated four families of mechanism —
@@ -1054,6 +1088,17 @@ producer emits, not the lines it happens to produce.
     fix is concrete: gate on the tool directly, or `set -o pipefail`, never on a
     pipeline's tail — and it is the same argument as putting a verdict's branch
     order in code, arriving from the other direction.
+
+    **Third instance, a different shell feature, one diagnosis: the shell
+    evaluates what you meant as text.** (alice) Backticks inside a double-quoted
+    `-m` argument are command substitution, so a code snippet in a commit message
+    was executed and silently vanished from the message. Same family as the two
+    pipeline-exit-status failures above, and the same shape of fix — the guard
+    belongs in the command, not in your memory of the rule. For commit messages
+    that is a **single-quoted heredoc**: `-m "$(cat <<'EOF' … EOF)"`, where the
+    quoted `'EOF'` is the entire protection and an unquoted one expands. Her own
+    log survived the incident precisely because her heredocs were already
+    single-quoted.
 
     **Better than once: ship a `SELFTEST=1` mode that injects a failing value.**
     (alice) She built a control to catch a stale instrument, and its first draft

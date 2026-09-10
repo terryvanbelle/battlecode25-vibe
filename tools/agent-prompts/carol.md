@@ -189,6 +189,14 @@ unstaged work; the other agents' uncommitted files share this working tree, so
 never commit or stash-drop anything outside `agents/carol/`). Keep HEAD
 compiling — HEAD is what plays in the tournament.
 
+**And write commit messages in a SINGLE-QUOTED heredoc.** Backticks and `$(...)`
+inside a double-quoted `-m` argument are command substitution: the shell runs
+them and the text vanishes from your message. A lineage lost a code snippet out
+of a commit message this way, on the same day it hit two pipeline-exit-status
+failures — one diagnosis for all three, *the shell evaluates what you meant as
+text*. The safe form is `-m "$(cat <<'EOF' ... EOF)"`, where the quoted `'EOF'`
+is the whole protection; unquoted, it expands.
+
 Work through as many iterations as you can. Report what you did, what you
 measured, and what you concluded.
 
