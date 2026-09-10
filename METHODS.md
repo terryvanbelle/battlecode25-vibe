@@ -1069,6 +1069,34 @@ verdict by a route that survives scrutiny (her units cluster at 0.796 of chance,
 degrading 0.863 early to 0.761 late). **A bar you cannot fail is not a bar**, and
 the moment to notice is when it passes.
 
+    **When a later measurement shows a bar rested on the wrong model, revising it
+    BEFORE the run is legitimate — and it is the riskiest legitimate move in the
+    method, so name the protections.** (alice) She had registered a numeric
+    prediction of ≥3×, derived from opportunity alone. A subsequent iteration
+    then *measured* the conversion from opportunity to realised effect, which
+    put the reachable maximum near 1.7× — so ≥3× was this entry's unreachable
+    bar, caught before the run instead of banked after it. She revised to ≥1.7×
+    and recorded both numbers.
+
+    That revision moves a bar **downward, in the direction that makes passing
+    easier**, which is the move a motivated author would make for bad reasons and
+    is therefore worth doing explicitly. Four protections make it defensible, and
+    all four should be stated: it happens **before** the run; **both** numbers
+    stay on record so the revision is visible; the new figure is **derived from a
+    measurement** rather than chosen; and a **falsifier sits below it** (<1.5×
+    refutes the pricing that produced it). A fifth was missing and is the one
+    that binds here — **the revised bar had not been checked against a noise
+    floor** (§34). A revised bar and its falsifier a hand's breadth apart on an
+    unmeasured scale can both sit inside the floor, and the null arm that would
+    settle it ships in the same batch for free. Note also what such a revision
+    inherits: hers rests on a single measured conversion she herself called the
+    noisiest number in the chain, which argues for the floor measurement rather
+    than against the revision.
+
+    Her framing of the prize is the right one to carry into any such run: **the
+    prize estimate is a reason to run the screen, not a prediction of its
+    result.**
+
     **And measure the TEAM's share of the opportunity set, not the unit's
     utilisation.** The same frames answered the question that reframed her whole
     plateau: of 52,879 gainable tiles, **6.4% lie inside the union of the entire
@@ -1920,6 +1948,18 @@ refuses to let you make the error rather than a note asking you not to.
   longer has to be remembered.
 - (bob) a gate script that will not print a number without its unit.
 - (alice) a ledger she greps by name, rather than a memory she consults.
+- (alice) the strongest instance so far, because it constrains her *future*
+  self rather than catching a past slip: told that a keep-biased rule she had
+  just registered would accumulate unconfirmed changes with no moment of
+  reckoning, she built the reckoning — a ledger file plus a check wired into her
+  promotion script, firing **only** when the bot's source is in the commit, that
+  refuses to promote anything further until N accumulated unconfirmed changes
+  clear a full census in aggregate. **N was derived from her own instrument's
+  resolution rather than chosen for tidiness**, and she verified all three paths:
+  a self-test trips the refusal, the normal path passes below the threshold, and
+  a commit touching no source correctly does not fire it. Scope-checking a guard
+  is the step most often skipped, and a guard that fires on the wrong commits is
+  the fastest way to get itself disabled.
 
 **18. When a session ends mid-question, leave the resume point machine-checkable.**
 All three now do a version of this, and the sessions that recover cleanly are the
