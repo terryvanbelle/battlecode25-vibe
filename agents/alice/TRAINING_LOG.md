@@ -22734,3 +22734,60 @@ prediction is what stops a pass being read as vindication of the pricing.
 not a measurement, and K3's own realised figure (1.15x, n=3 maps, arm and control in different games)
 is the noisiest number in the chain. **The prize estimate is a reason to run the screen, not a
 prediction of its result.**
+
+# THE FLOOR I FAILED TO MEASURE — and it retracts K3's manipulation check and my revised bar
+
+I revised a registered prediction downward before the run with three of four protections in place and
+**never checked the revised bar against a noise floor.** Measured now, on 21 alice-vs-carol games from
+a run that predates K3 — **one fixed policy across 21 draws**, which is exactly the right instrument.
+
+> **Refills per unit: mean 0.3175, sd across games 0.3980 — 125.3% of the mean.
+> Range 0.05 to 1.76: a 35x spread with the policy held constant.**
+
+A literal placebo cannot give this floor: the engine is deterministic, so a policy-identical null on
+the same map and opponent reproduces the game *exactly* — floor zero, uninformative. The noise in my
+1.15x came from arm and control playing **different** games, so the floor is the map-to-map dispersion
+under a fixed policy, ÷√n.
+
+| | 1 sd on the ratio | K3's realised 1.15x | my revised bar 1.70x | my falsifier 1.50x |
+|---|---|---|---|---|
+| **n = 3** (what I used) | **1.023** | **0.15 sd** | 0.68 sd | 0.49 sd |
+| n = 25 (a screen) | 0.355 | 0.42 sd | 1.97 sd | 1.41 sd |
+
+**At n=3 a true ratio of 1.0 has a 95% band of −1.01 to 3.01.** Everything I computed sits inside it.
+
+## Two retractions, and they matter
+
+**1. K3's manipulation check is RETRACTED as uninformative.** I registered *"refills per unit must
+rise"*, measured 0.231 → 0.265, and reported the requirement met and the win attributable. **That is
+0.15 sd on an unmeasured scale — it carries no information.** The claim was not supported and I am
+withdrawing it.
+
+**What survives, and it is not nothing:** K4's site counter measured the same-game counterfactual
+**97 permitted draws at reserve 50 against 51 at reserve 200 — in the identical games, on the
+identical turns.** That is exact and noiseless, and **it is what actually establishes that the
+mechanism fires.** The attribution stands; the evidence I cited for it does not.
+
+**2. My revised ≥1.7x bar is RETRACTED.** It was derived from a log-conversion factor computed from
+K3's 1.15x — **a bar derived from noise.** Revising downward before the run was legitimate; deriving
+the new number from the weakest estimate I held was not, and I said in the same entry that 1.15x was
+"the noisiest number in the chain" without following that thought to its conclusion.
+
+## The repair: measure the manipulation WITHIN game, never across games
+
+The defect is the *quantity*, not the sample size. A cross-game ratio of a low-rate, high-variance
+per-unit counter is uninformative at any n I can afford — at n=25 the falsifier is still inside the
+floor at 1.41 sd. **A same-game counterfactual counter has no game-to-game term at all**, which is
+why K4's 1.9x is trustworthy and the realised 1.15x is not.
+
+> **K7's manipulation check, re-registered:** an additive probe counts, **in the same games and on the
+> same turns**, draws permitted by the new gates against draws the old gates would have permitted.
+> **PASS ≥ 3x; the cross-tab predicts 10.6x, so < 3x falsifies its pricing.** No cross-game refill
+> ratio is used for attribution, at any n.
+> **The screen's own gate is unchanged:** 25 maps / 50 games / net ≥ +4, null arm in the same batch,
+> VOID first, in code.
+
+**The general lesson, and it is the sharpest one today:** *before trusting a manipulation check, ask
+whether the quantity is measured WITHIN or ACROSS the unit of randomisation. Across-game per-unit
+rates of rare events have floors so wide that the check cannot fail — and a check that cannot fail is
+one I have now shipped twice.*
