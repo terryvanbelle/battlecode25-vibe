@@ -18164,3 +18164,56 @@ I predicted the primary would come in **below 20%** and close without a build. I
 not, which is an argument for always sizing with a measurement rather than an estimate.
 
 `src/bob/` untouched. **`bob_iter20` remains the bot.**
+
+---
+
+## Iteration 60 — PROBE PRE-REGISTERED: does bob's army actually GO anywhere?
+
+**Why this, and why it is the last untested story in the area.** Iteration 57's defect is real and
+unexplained: bob marks **81.6%** of its own-side ruins to alice's **91.6%**, and alice claims contested
+ruins a **median 361 rounds** earlier. Two mechanisms are now closed — ruin *memory* (#31, inert by
+construction) and *symmetry inference* (#32, works but ~2 wins). What remains is the thing that puts a
+soldier within sensing range of a ruin in the first place: **where the army goes.**
+
+**And there is a story that would unify four measurements I already hold**, which is why it is worth a
+probe rather than a guess:
+
+- bob crowds **31% more** than alice (iteration 48: 0.624 vs 0.475 per unit-round);
+- bob's army is the **same size** as alice's through r400 (iteration 54);
+- bob marks **fewer own-side ruins** (iteration 57);
+- bob claims contested ruins **361 rounds later** (iteration 57).
+
+> **A bunched army covers less ground.** All four are what you would see if bob's soldiers stay clustered
+> near home while alice's fan out. `Nav.wander()` is a persistent-direction random walk, which disperses
+> like a diffusion — slowly, and it re-covers ground.
+
+**Enumerating before building, per LEARNINGS 95** — this probe *is* the enumeration. The "candidate set"
+for a dispersal mechanism is unvisited own-side ground, and the question is whether bob is failing to
+reach it at all or reaching it as well as alice does.
+
+**Method: zero games, zero VM work.** Re-analysis of `crowd_tour.tsv` (arena frames every 100 rounds for
+the 75 `alice-vs-bob` tournament replays, unit positions with team by letter case) joined to `ru_tour.tsv`
+for each team's round-1 spawn anchor.
+
+**PRE-REGISTERED:**
+
+- **PRIMARY: mean distance of mobile units from their OWN start anchor, bob vs alice, at r100 / r200 /
+  r400.**
+  - **bob ≥15% lower than alice** ⇒ bob's army is bunched at home ⇒ dispersal is the defect ⇒ worth a gate.
+  - **bob within 5% of alice, or higher** ⇒ **CLOSED**; bob goes as far as alice does and the ruin gap is
+    something else.
+  - between ⇒ size against the 0.92-ruin/game own-side gap.
+- **ACHIEVABLE, not a ceiling** (LEARNINGS 92): it is where bob's units actually are.
+- **PRECEDENCE, registered**: if bob's mean distance is **at or above** alice's, the direction closes
+  **regardless** of the spread/reach secondary. Six of seven recent closures turned on the comparative.
+- **Secondary, diagnostic only**: distinct map cells occupied by each team across a game's frames — reach
+  as opposed to distance, since an army can be far away and still bunched.
+- **Corpus: tournament only** (LEARNINGS 93).
+- **Registered as NOT an accept test.**
+- **Prediction, and I am sizing it with a measurement rather than an estimate** (the lesson of nine
+  magnitude misses): bob's crowding is 31% higher, and crowding is a *local* density measure while this is
+  a *global* spread measure — so they can disagree. I predict bob's mean distance is **within 5% of
+  alice's and this closes**, because iteration 54 showed bob's *towers* keep pace to r100 and only lag
+  later. Tally: right 2, nominally right 3, plainly wrong 7.
+
+`src/bob/` untouched. **`bob_iter20` remains the bot.**
