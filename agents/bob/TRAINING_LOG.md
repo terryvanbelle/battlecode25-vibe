@@ -18217,3 +18217,68 @@ for each team's round-1 spawn anchor.
   later. Tally: right 2, nominally right 3, plainly wrong 7.
 
 `src/bob/` untouched. **`bob_iter20` remains the bot.**
+
+## Iteration 60 — **CLOSED.** Bob's army *is* closer to home, and it is not why bob misses ruins. Zero games.
+
+```
+mean distance of mobile units from own start anchor      r100    r200    r400    r900
+  bob                                                   13.86   14.97   18.39   20.79
+  alice                                                 16.33   17.53   20.48   23.67
+  bob / alice                                            0.85x   0.85x   0.90x   0.88x
+                                                       (-15.1%) (-14.6%) (-10.2%)
+
+distinct map cells occupied per game (reach)   bob 263.9   alice 193.0   (bob +37%)
+```
+
+**The two metrics point opposite ways**: bob's units sit consistently **closer to home** yet cover **37%
+more distinct ground**. Bob explores **densely and locally**; alice explores **sparsely and far**. (The
+cells figure is confounded by army size — bob has ~2x alice's units after r400 — so I lean on it only for
+the direction, not the magnitude.)
+
+**Band specification, and this is the third time**: I wrote the primary as "at r100 / r200 / r400" without
+saying whether *all* or *any* must meet ≥15%. Measured: **15.1% / 14.6% / 10.2%** — one of three. That is
+LEARNINGS 80 for the third time and it is now a habit rather than an accident: **my bands keep omitting a
+quantifier.** Recording it as a standing defect in how I write gates.
+
+### The discriminating case, and it kills the story I pre-registered
+
+If a shorter patrol radius is why bob misses ruins, the ruins bob misses must be **farther away** than the
+ones it marks, and more so than for alice. Directly:
+
+```
+                MARKED n  median dist   MISSED n  median dist   missed/marked
+  bob                562         15.3        127         19.7          1.29x
+  alice              623         16.0         57         20.6          1.29x
+```
+
+> **The ratios are IDENTICAL — 1.29x for both bots — and alice's misses sit marginally FARTHER out
+> (20.6 vs 19.7).** Both bots fail on ruins about 29% beyond their marked ones. Bob does not have a
+> shorter ruin reach. It fails on **2.2x as many ruins at the same distances.**
+
+So the 15% radius gap is real and is **not the mechanism**. **CLOSED.** The precedence clause did not
+close it (bob is below alice on the primary); the discriminating case did, which is the better outcome —
+a comparative told me bob was behind and a mechanism test told me it does not matter.
+
+### What this leaves, and it is a genuinely new lead
+
+Every mechanism for the own-side ruin gap is now closed: **ranking** (#6), **abandonment** (#30),
+**memory** (#31, inert), **symmetry inference** (#32, too small), **dispersal** (here). Bob misses 2.2x
+alice's own-side ruins **at the same distances, with the same army size, from the same start**. So the
+soldiers are *there* and not doing it — which means they are doing **something else**.
+
+**And I already have the something else on file, unexamined.** Iteration 56 measured mark provenance:
+
+> **34.4% of bob's marks are SRP marks (135/game). Alice's are 1.4% (4/game).**
+
+Bob pours soldier effort into Special Resource Patterns that the lineage beating it essentially does not
+build at all. Iteration 12 **accepted** SRPs, long ago and against a different opponent. **An ablation of
+an accepted mechanism is the obvious next iteration**, it is a clean one-constant dose (`SRP_MIN_CHIPS`),
+and `CLOSED.md` has no entry closing it.
+
+### Prediction, scored
+
+I predicted bob's mean distance would be **within 5% of alice's** and close on that. It is 15.1% lower at
+r100 — **magnitude wrong for the tenth time** — but the direction still closes, via the discriminating
+case rather than the band. Tally: **right 2, nominally right 3, plainly wrong 8.**
+
+`src/bob/` untouched. **`bob_iter20` remains the bot.**
