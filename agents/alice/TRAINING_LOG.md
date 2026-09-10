@@ -22894,3 +22894,63 @@ link unmeasured. **There is no pass. What I claim is the first two only** — th
 (exact) and the paint moved 1.39x (exact) — **and those two numbers together closed the direction
 without the third.** The pre-check did the work the screen was going to be asked to do, for zero
 games, which is the outcome the ordering was designed to produce.
+
+# THE ENUMERATION — the axes of per-unit output, ranked. It is UNIT MIX, and lifetime is not an axis at all
+
+Asked for before picking a direction. `paint_in = 200 (spawn) + refills`;
+`paint_out = upkeep + 5 × actions + unspent at death`. Every axis, with its measured status:
+
+| axis | measured | status |
+|---|---|---|
+| paint in — **refill** | ≤7.7% output ceiling | **CLOSED today (K7)** |
+| **upkeep rate** | 7–17% of the gap | closed on magnitude (iters 49–50) |
+| **lifetime / duration** | **alice 95.8 turns, carol 99.8 — 0.96x** | **NOT AN AXIS: already equal to carol** |
+| unspent at death | alice starves **more** (55.5% vs 45.1%) | not a leak for alice |
+| wasted actions | 0 of 12,409 over-enemy paints | closed (P3's guards work) |
+| **actions per turn alive** | **alice 0.100, carol 0.190 — 0.52x** | **the entire remaining deficit** |
+
+**Lifetime being equal is the surprise, and it retires a lever I had recorded and never built.**
+LEARNINGS carried *"attack the duration, not the rate — cutting duration to 40 turns is worth 50% of
+the gap."* That was alice measured against a *hypothetical*. Against **carol** the durations are
+within 4%, so there is nothing to win there. **A lever priced against an internal counterfactual can
+be worth nothing against the actual opponent** — and I would have built it.
+
+## Decomposing the one surviving axis: it is UNIT MIX
+
+| | mean soldiers | mean splashers | mean moppers | splasher share |
+|---|---|---|---|---|
+| alice | 12.26 | 2.06 | **3.89** | 11.3% |
+| carol | 9.78 | 4.31 | **0.00** | **30.6%** |
+
+> **Alice spawns 815 moppers across 21 games; carol spawns 1.** Moppers emit `UnpaintAction`, never
+> `PaintAction` — **they contribute exactly zero to paint output** — and alice keeps **21% of its
+> army** in them.
+
+**And the engine explains carol's choice** (`RULES.md`, verified): a **splasher overwrites enemy paint
+within r²≤2 — 9 tiles — and paints the whole r²≤4 footprint (13 tiles) in one action.** A **mopper
+clears 1 tile and paints none.** So a splasher does the mopper's job nine tiles at a time *and* paints
+them in the same action. Carol needs no moppers because splashers subsume them.
+
+## RANKING, and the ledger checked on both candidates
+
+1. **Mopper share** — a pure subtraction (zero paint output), the larger term, and **never closed with
+   a bar**: my log flags it as an anomaly and notes iteration 5 found the mopper mix to be an
+   absorbing state, but no magnitude was ever registered against it.
+2. **Splasher share** — **CLOSED with an explicit standard I have declined four times**: *"a reason the
+   rest of my bot now supports the share."* Today's decomposition is arguably that reason, but I am
+   not asserting it while candidate 1 is both larger and unclosed.
+
+## STOP — a 5.5x discrepancy against my own log, and I will not build on either number
+
+My log prices the mopper route at **"7 mopper spawns per game."** I measure **38.8** (815 ÷ 21;
+independently confirmed by Little's law: 3.89 alive ÷ 96 turns × 887 rounds ≈ 36). **These differ by
+5.5x, and the mopper share's entire pricing is linear in this number** — at 7/game it is 700 paint,
+at 38.8 it is 3,880, which is **48% of the 8,040 paint alice puts on the ground per game.**
+
+> **One of those two numbers is wrong, or they measure different populations, and I do not yet know
+> which.** Registering the reconciliation as the next step, before any mechanism: **count mopper
+> spawns per game directly from `SPAWN` lines in replays** — exact, within-game, and it settles it
+> without a model. **No dose, no arm, and no citation of either figure until they reconcile.**
+
+**This is the enumeration doing its job twice over**: it killed a lever I had queued (duration) and it
+caught a load-bearing number in my own log that cannot be right alongside today's measurement.
