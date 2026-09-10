@@ -407,6 +407,26 @@ less dead.
     retraction is what exposed the real gap: she had priced the mechanism's
     supply and never measured its delivery.
 
+**36. When you establish that X at round R predicts the outcome, PLOT X PAST R
+before you build anything.** (alice) She established early that the tower leader
+at round 300 wins, and then for dozens of iterations measured towers only *at*
+round 300 — while the curve that actually decides those games happens afterwards.
+Asking a question she had never asked (*when I lose, was I ever ahead?*) showed
+**48% of her losses are games she led at r300**, and tracing them showed her tower
+count peaking and declining in six of six while the opponent's rose monotonically.
+The "coverage collapse" her log had carried as unexplained for twenty iterations
+is downstream of tower loss, not a paint problem — so every mechanism she had
+ever aimed at it was aimed at the wrong variable, because the collapse was only
+ever visible to her as a paint curve.
+
+    The trap is subtle because the predictor is *correct*: the leader at R really
+    does win. What the snapshot cannot show is what happens to the leader
+    afterwards, and "we were ahead and lost" is a completely different failure
+    from "we were never ahead". Plot the master variable across the whole game,
+    and register the fork — a decline in the quantity itself versus a decline in
+    what it produces — before you trace, because they are different defects with
+    different fixes.
+
 **21. Simulate the null before you trust a bar — especially for any statistic
 built from a max, a best-of, or an argmax.** (alice) Her pre-registered bar of
 100 sat *below* what best-of-8 noisy sectors produce with no structure at all:
