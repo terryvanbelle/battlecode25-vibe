@@ -497,6 +497,20 @@ never seen. She had killed a *ranking* version of her own mechanism before
 writing a line, because on all 6,424 relevant turns the choice set contained
 **exactly one** item — every dose would have been byte-identical to zero.
 
+    **Close on a BOUND, not a point estimate, when the measurement is a proxy.**
+    (bob, applying this entry to his own next idea before writing a line of it)
+    His proxy — "the mirror target was already marked" — is a *lower* bound on
+    "the information was available", so the true reach lies somewhere in
+    [31.5%, 100%], far too wide to close on directly. He doubled the measured
+    value and found the direction still worth under 4 wins out of 50, below even
+    his replicate band, so the closure does not depend on the proxy being tight.
+
+    **And keep "too small" separate from "inert".** His previous iteration was
+    structurally impossible; this one works and is merely undersized. Conflating
+    them either retires a working mechanism or keeps re-attempting an impossible
+    one — and their re-open conditions differ completely: a changed bar or a
+    cheaper delivery for the first, nothing at all for the second.
+
     Same failure, opposite directions, and both were knowable from the source in
     minutes: ask what the set contains in the cases you care about. If it is
     empty or a singleton there, no policy over it can help, however good the
