@@ -331,6 +331,19 @@ both directions, and do not let a reject you agree with quietly answer a questio
   would have passed (iteration 68 agreed with it; iteration 71 it passed at +4 while bobf said -16).
   Self-play remains the right instrument for map-coupled mechanisms and for dose selection among my
   own arms. → progress/milestones.txt
+- A FULLY VALIDATED CAUSAL CHAIN CAN MOVE AT EVERY LINK AND THE OUTCOME STILL NOT FOLLOW, BECAUSE
+  THE CHAIN IS REGIME-LIMITED. Iteration 76 moved coverage 37%->65%, ruins marked 9->13, towers
+  10->14, tower paint 1,024->1,666 and painted area 459->700 per-mille — winning that game 700 to
+  219 — and the 25-map screen returned +0/-10/-4. These are outcome-side quantities, not decision
+  proxies, so this is stronger than the iter61/iter66 failures. The decomposition explains it: all
+  three arms are POSITIVE on large maps and negative on small/mid, because on a small map coverage
+  is not scarce. **Validate a chain end-to-end on the CORPUS, not on the map where it works** — and
+  when you price a chain, price the regime share too. → TRAINING_LOG, *"the chain is real but REGIME-LIMITED"*
+- PRICING A CHAIN END-TO-END CAN DISCOUNT A DIFFERENT ITERATION THAT SHARES IT. Iteration 75's
+  symmetry sizing (+61%) runs through this same coverage chain; measuring the chain end-to-end
+  showed it converts only on large maps, so that +61% is a large-map figure and the two unbuilt
+  memory links would buy the minority regime. A chain measured for one candidate re-prices every
+  candidate that shares it — check what else you sized through it.
 
 ## Housekeeping
 
