@@ -21431,3 +21431,74 @@ that sizing is a god-view ceiling until link 1 clears.
 "symmetry inference is a promising untried direction" into a two-link chain with both links measured
 and the second one named precisely — and it did so before spending a 150-game screen on a mechanism
 that fires on 41% of turns.
+
+# Re-pricing the symmetry chain NET of affordability — my two figures could not both stand
+
+I registered the affordability failure honestly ("8 claims cost 8,000 chips against a treasury
+pinned at 400–1,800") and then went on quoting **+55% income** as the prize that would justify
+completing the chain. **Those are inconsistent**: if the claims are unaffordable at the rate the
+sizing assumes, the realised prize is whatever the budget permits, not the gross income figure.
+Pressing my own flag.
+
+## 1. Is the chip constraint actually binding? No — and the stall itself proves it
+
+| | |
+|---|---|
+| cost of a claim | **1,000 chips** |
+| `CHIP_RESERVE = 1200` | exists **specifically** to guarantee a ruin can always be completed |
+| treasury during the 621-round stall (sampled) | 1400, 1600, 1800, 800, 400, 1000, 1600, 1040 |
+
+**Chips reached >= 1,000 at five of eight samples and >= 1,400 at four — and carol claimed nothing
+in that window.** Affordability was not what blocked those claims; the treasury repeatedly held
+enough. That is the same evidence that supports the acquisition explanation, read against the
+affordability objection.
+
+## 2. The trade runs from the abundant resource to the binding one, in BOTH directions
+
+Claims cost **chips** and produce **paint**, and paint is what pins this bot. Diverting 8,000 chips
+from splashers to claims does two separate good things:
+
+- **saves** 20 x 300 = **6,000 tower paint** that would have been spent *building* those splashers;
+- **adds** ~6 paint towers = **+30 paint/turn**.
+
+## 3. Spare capacity — the load-bearing link, and it is measured
+
+Extra paint only converts to tiles if the existing units can spend it. **carol's splashers fire on
+4.7% of turns against an untaxed ceiling of 20%** (one action per five turns) — **24% of capacity,
+4.3x headroom.** This is the same measurement that showed splashers are *paint-limited, not
+target-limited*, and it is exactly the condition under which more paint income becomes more
+splashing.
+
+## 4. The net figure, over the 600-round stall, 8,000 chips spent two ways
+
+| | paint pool | splashes | **tiles** |
+|---|---|---|---|
+| **A** — buy 20 splashers (baseline) | 27,000 | 540 | **7,020** |
+| **B** — buy 8 claims | 43,350 | 867 | **11,271** |
+| | | | **+61%** |
+
+Capacity check: 16 splashers over 600 rounds afford 1,920 potential splashes against the 867 that
+scenario B needs — **it fits**, which is why the headroom above matters.
+
+## Verdict on the re-pricing
+
+**The prize does not collapse — it survives at ~+61% in tiles painted, and for a better reason than
+I first gave.** My original "+55% income" was the gross income rate quoted as if income were the
+deliverable. The deliverable is tiles, the chain is chips -> paint -> splashes -> tiles, and the
+load-bearing link is the 4.3x splasher action headroom, which is measured rather than assumed.
+
+**What the re-pricing changes:** the figure is now net, the mechanism of the trade is named, and the
+one assumption that could still break it is explicit — **if splasher action headroom were absent,
+extra paint income would not convert and the chain would be worthless.** It is present at 4.3x.
+
+**The chain stays OPEN with both links named and the sizing now net:**
+
+| link | status |
+|---|---|
+| 1. symmetry pins to one candidate | **measured 37–41%, gate was >= 50%** — fails, no gauntlet spent |
+| 2. memory that outlives a robot | **not built** — towers (long-lived, static) or `broadcastMessage` (r²=80, never used) |
+| prize, net of affordability | **~+61% tiles**, load-bearing assumption (4.3x action headroom) verified |
+
+**Neither memory implementation should be built for symmetry inference alone**, but the sizing that
+would justify it is now a number someone could act on rather than a gross rate with a contradiction
+attached.
