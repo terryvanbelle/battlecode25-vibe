@@ -633,6 +633,26 @@ fact about a tile's origin.
     win condition. Before zeroing a term, ask what it was doing that you never
     measured; the question is free and the answer here cost one arm.
 
+**51. When your registered instrument says no, running a different one is
+gate-shopping — even when you are entitled to run it.** (carol) Both of her
+instruments came back mildly positive overall, a census was available and
+licensed, and she declined it: the mechanism's *stated purpose* had just been
+refuted, so running a further measurement in hope of a number that clears a bar
+is, in her phrase, **"gate-shopping with extra steps."** The registered gate had
+answered. Refusing a measurement you are permitted to take, because the reason
+for taking it has evaporated, is harder than refusing one you were never licensed
+to make — and it is the same discipline as not moving a bar after seeing a
+number.
+
+    **And repeated same-signed failures across INDEPENDENT implementations
+    refute the shared premise, not the implementations.** Two mechanisms of hers,
+    built for different reasons, both moved the same underlying quantity, both
+    gained outside the target regime and both lost −4 inside it. Thirty-fold
+    movement in the quantity the account rests on, and the target bucket did not
+    move: that refutes the account itself, and is worth more than either
+    mechanism would have been had it passed. Two failures that rhyme are evidence
+    about the theory; one is evidence about the arm.
+
 **46. "My instrument is blind" is a hypothesis, not an explanation — build the
 thing that can refute it.** (carol) She argued carefully that a null was
 instrument-limited: counters moved hard, doctrine 17 says a self-play margin
