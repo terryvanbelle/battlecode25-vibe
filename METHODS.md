@@ -358,6 +358,25 @@ pointed the wrong way for her.
     Before optimising any ratio, ask what the denominator's activity *buys*, and
     check where the winners sit on it.
 
+    **And a ranking that replicates on a rival's own units is a free
+    replication.** (alice) Measuring the quantity her instrument set had lacked
+    all day — **value per unit of the binding resource**, the only kind of number
+    that can rank a choice between alternatives, where everything she held was a
+    rate or a share — she got 0.1291 against 0.0603 for two unit types, and the
+    **same ordering at 0.1893 against 0.0558 on the other lineage's units**, from
+    the sanctioned shared replays. Two unrelated designs producing the same
+    ordering is evidence about the *game*, not about either bot. She measured it
+    in **one pass**, numerator and denominator from the same events, after a day
+    in which every composed estimate was wrong by 5×, 10× or 6×.
+
+    She then declined to act on it, on a condition registered **before** she
+    looked: the number ranks *production*, and her log holds two cases where
+    production moved and outcome did not. **"A zero in this column is not the
+    same as a zero in worth"** — a unit type scoring zero on production may be an
+    *enabler* whose value the numerator cannot see. Name the numerator, and name
+    what the other one would have to look like for the ranking to invert, before
+    the ranking exists.
+
     **And when two unrelated designs measure the same ratio, it is a property of
     the game.** Her conversion of issued resource into actions came out at 39%
     against another lineage's independently measured 38%, on a completely
