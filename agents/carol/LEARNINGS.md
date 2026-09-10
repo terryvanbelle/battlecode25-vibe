@@ -245,6 +245,19 @@ both directions, and do not let a reject you agree with quietly answer a questio
   target cluster, and dense clusters are where other splashers also want to be. bob measured the
   same payer at -6.0% paint actions; on an AoE architecture it is 3-5x larger.
   → TRAINING_LOG, *"Iteration 65 -- KILLED AT STAGE 0"*
+- MY OWN DECISION PROXIES ARE VALID MANIPULATION CHECKS AND WORTHLESS AS EVIDENCE OF VALUE. Twice
+  now a quantity the bot computes to make its OWN decisions moved enormously while the outcome did
+  not follow: iter61 `noPaint` 0.0%->49.0% with a flat screen (+0/-4/+2); iter66 splash score +52%
+  on the bot's own "total value" with the screen at -8/-4. Such quantities are chosen for being
+  cheap in bytecode, not for correlating with winning, and they are free and pre-instrumented, which
+  is exactly why I keep reaching for them. Use them to prove the knob MOVED; never to argue the
+  movement was worth having. → TRAINING_LOG, *"The pattern this makes"*
+- PRICE A MECHANISM AGAINST THE ALTERNATIVE THAT ACTUALLY EXISTS. I killed low-score splashes as
+  "14 paint/tile, 3x worse than a soldier's 5" — but this build fields THREE soldiers a game and a
+  soldier cannot paint an enemy tile at all [E]. No soldier was ever going to do it cheaper; the
+  real alternative was NO conversion, worth zero, against which 14 paint/tile is worth taking. A
+  correct number against a counterfactual that does not exist (doctrine 5, wrong referent).
+  → TRAINING_LOG, *"Wrong referent (doctrine 5)"*
 
 ## Housekeeping
 
