@@ -22041,3 +22041,77 @@ Placement run `20260910-143006`, `carol_iter45` vs the new cross-architecture ru
 
 That gates everything after this: an accept measured from here carries evidence the last several
 could not have.
+
+# THE GATE READS ITS OWN FUEL — pricing the three knobs at EQUILIBRIUM, not from static frames
+
+**The warning applies to me exactly.** My proximate hypothesis was "treasury $1,270–$1,790 against a
+$1,600 splasher gate". A splasher **costs 400 chips**, so an arm that buys more **spends the very
+resource the gate tests**: the pass rate collapses toward a fixed point, and every reachability
+figure computed from current frames is an overstatement by construction. Diagnostic — *does the
+mechanism consume the resource its own gate tests?* **Mine does.** So I priced the fixed point.
+
+## The equilibrium
+
+A splasher needs **400 chips AND 300 tower paint**, so the sustainable rate is
+`min(chip_income/400, paint_income/300)` — **independent of the gate**, which only sets the floor of
+the oscillation. Measured on leavemealone at r1900:
+
+| | money towers | chip income | paint towers | paint income | **splasher ceiling** | binding |
+|---|---|---|---|---|---|---|
+| **carol** | 2 | **50/turn** | 6 | **45/turn** | **0.125/turn = 125 per 1,000r** | **chips** (barely) |
+| alice | **4** | **160/turn** | 5 | 70/turn | 0.233/turn | **paint** |
+
+> **carol's equilibrium ceiling is 125 splashers per 1,000 rounds. It achieves 36 — 29% of its own
+> ceiling.** So the gate is binding *below* the income fixed point, and income is **not** the
+> constraint. My static reading had the story backwards.
+
+## Knob 1 — `MONEY_MOD`: KILLED at equilibrium, zero games
+
+Sweeping the mix over carol's 8 towers at the measured per-tower rates (25 chips, 7.5 paint):
+
+| money / paint | chips | paint | **ceiling** |
+|---|---|---|---|
+| 1 / 7 | 0.062 | 0.175 | 62 |
+| **2 / 6 (carol, `MONEY_MOD`=4)** | 0.125 | 0.150 | **125** |
+| **3 / 5 (`MONEY_MOD`=3)** | 0.188 | 0.125 | **125** |
+| 4 / 4 | 0.250 | 0.100 | 100 |
+
+**carol is AT the integer optimum.** Shifting toward money raises the chip ceiling and lowers the
+paint ceiling by more — **it swaps which resource binds without raising the minimum.** `MONEY_MOD=3`
+scores identically to 4, and everything beyond is worse.
+
+**So the corpus-pooled closure I was preparing to re-open on regime-specific grounds turns out to be
+right regime-specifically too — but for a reason the original closure never gave.** The re-open is
+withdrawn before it was registered, on arithmetic, for zero games. This is the second time today the
+equilibrium framing has removed a candidate I was moving toward.
+
+## Knob 2 — `CHIP_RESERVE` / the gate: NOT the primary lever
+
+The equilibrium fixed point (125/1,000r) sits **3.5x above** carol's realised 36, so the gate is not
+where the rate settles — the fixed point is far above current behaviour. Relaxing it cannot buy more
+than the ceiling, and the ceiling is not what carol is against.
+
+## Knob 3 — ALLOCATION: the only survivor, and it is already built
+
+The 36-vs-125 gap is neither chips nor paint at the aggregate; it is **which unit each tower's paint
+is spent on**. A paint tower accumulating toward a splasher's 300 is raided at 200 by a soldier roll
+(75% of rolls) long before it arrives — the race identified in iteration 69.
+
+**Iteration 69 is exactly that mechanism, already built and measured**, and its regime split is the
+inverse of everything else I have tried:
+
+| iteration 69, `SPLASHER_EVERY=2` | small+mid | large |
+|---|---|---|
+| self-play screen | **+14** (28 games) | −2 |
+| `bobf` corpus run | **+7** (86 games) | **−4** (64 games) |
+
+**I closed it on a corpus-pooled `bobf` gate of +3** — and small+mid is 86 of 150 games, the regime
+that carries the reachable prize. **That is the legitimate re-open**: the closure's basis
+(corpus-pooled) does not cover the question now being asked (regime-specific).
+
+**But the cost side, checked as instructed before building:** it is **−4 on large**, and I have been
+burned all session by exactly this trade with the regimes swapped. A mid-map gain bought with a
+large-map loss is the same mistake in a mirror. **The next step is to price that trade at
+equilibrium — not to build it** — and specifically to establish whether the −4 on large is real
+(0.85 sd on 64 games) or noise, because at +7/−4 the whole candidate rests on the sign of a
+sub-1-sd number.
