@@ -19092,3 +19092,80 @@ often. **If crowd/splasher-round is near zero at baseline, the direction dies fo
 **Gate**: fresh 25-map screen at `BOT=carol_iter45`, highest margin reaching **>= 31/50**, ties to
 smaller `CROWD_W`; then full 75-map census at **margin >= +26 ACCEPT | +18..+25 REPLICATE | <= +17
 REJECT**.
+
+## Iteration 65 — KILLED AT STAGE 0 for 4 games. Registered clause 2 fails; the payer transfers from bob.
+
+Mirage, rounds 300–700, one game per arm vs `carol_iter44`.
+
+**Control first**: the instrumented zero arm (`CROWD_W = 0`, plus a crowd counter) is
+**byte-identical to `carol_iter45`** — 0 differing lines over the whole game at stride 50. The
+instrumentation is play-neutral, so every comparison below is against a true control.
+
+| `CROWD_W` | crowd/splasher-round | splashes fired | mean splash score | **total splash value** |
+|---|---|---|---|---|
+| **0 (control)** | **0.44** | **129** | **16.5** | **2,128** |
+| 2 | 0.05 (**−89%**) | 93 | 17.9 | 1,665 (**−22%**) |
+| 4 | 0.03 (**−93%**) | 107 | 17.7 | 1,894 (**−11%**) |
+| 8 | 0.00 (**−100%**) | 107 | 17.5 | 1,872 (**−12%**) |
+
+**Trigger-liveness check (registered, run first): PASSED.** Baseline crowd is 0.44 allies per
+splasher-round, not near zero, so this was a real dose and not iteration 64's dormant trigger.
+
+**Manipulation check: overwhelming, and saturated immediately.** Crowd −89% at the *lowest* dose and
+−100% at the highest — a far stronger manipulation than bob's −26…−48%. There is no gentler rung
+available: ranks run 0..7, so `CROWD_W = 2` with one adjacent ally already outranks two positions.
+
+- **Registered clause 1 (score must rise above 16.5): passes, but only a third of the way.**
+  16.5 -> 17.7, recovering **1.2 of the 4.0-point gap to `carol_iter44`'s 20.5**.
+- **Registered clause 2 (splashes must not fall materially below 129): FAILS.** 129 -> 93/107/107,
+  a **17–28% drop in firing rate.** I registered this clause precisely because bob's closure says
+  de-clumping moves units off productive ground, and that buying score by firing less is the failure
+  mode rather than a success.
+
+**Net: every dose is worse than the control on total splash value (−11% to −22%).**
+
+**Killed for 4 games; the 150-game screen and the 150-game census are not spent.**
+
+### My registered falsifier fired, and it corrects my own reading
+
+> *"If crowd falls and splash score does not rise, the score drop is not caused by unit proximity."*
+
+Crowd fell by 89–100% and score recovered **only 33% of the gap.** So **two thirds of the
+20.5 -> 16.5 loss is not caused by adjacency at all** — my reading of that gap was mostly wrong. The
+residue is competition for high-value targets *at range* (17–22 splashers consume a map's good
+targets regardless of who stands next to whom), possibly plus the D3 refill-anchoring I flagged as
+unseparated when I registered this. My magnitude estimate was **3.4x too optimistic**: I predicted
+restoring 20.5 (+24% value) and the mechanism delivered +7% score against a −22% rate.
+
+### What transferred from bob, and what did not
+
+**The payer transferred exactly.** `agents/bob/CLOSED.md` #25/#27 names it — *"units alive, fed and
+standing where there is nothing to paint"*, paint actions −6.0% at deep dose. On my architecture the
+same payer is **three to five times larger**: splashes −17…−28%. That makes sense and I should have
+seen it before building: a soldier paints the tile it stands on, so moving it costs little, while a
+splasher must be *within r²<=4 of a dense target cluster* — and dense target clusters are exactly
+where other splashers also want to be. **De-clumping and target-seeking are in direct conflict for
+an AoE unit in a way they are not for a single-tile unit.**
+
+**My extra benefit term was real but small.** The AoE-overlap argument — the one thing bob's
+architecture cannot have — is worth **+7%**, not the +24% I priced it at. Real, and an order of
+magnitude short of the payer.
+
+**Bob's re-open condition on #25/#27 is unchanged by my run** — *"a mechanism spends saved paint
+without moving units off productive ground"* — and my result is independent confirmation of it from
+a second architecture rather than a re-open. I am recording it in my own ledger on my own evidence.
+
+## Ledger
+
+| axis | status |
+|---|---|
+| de-clumping / crowd-penalised movement for splashers | **CLOSED** — stage 0, 4 games: manipulation −89…−100%, score +7%, firing rate −17…−28%, net −11…−22% on every dose |
+
+**RE-OPEN condition**: a mechanism that reduces splash **overlap** without moving a splasher away
+from its target — for example choosing the splash *centre* to avoid tiles an ally just splashed,
+which is a targeting change and costs no movement. That is a different mechanism and it does not
+pay the rate penalty this one died of. **Feasibility checked at the moment of writing** (the lesson
+this log has now paid for three times): a splasher can see allies within r²=20 but **cannot see
+which tiles they splashed last turn**, and carol has no comms — so the only reachable proxy is
+recent ally positions. Whether that predicts overlap well enough is itself a free replay
+measurement, and it must be run before the mechanism is built.
