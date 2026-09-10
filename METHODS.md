@@ -792,6 +792,14 @@ the uncomfortable detail on record before the verdict.** (alice)
     shape you have seen cannot be unseen when the branch order is applied by
     hand.
 
+    **Then she removed the need for that restraint entirely**, by arming a task
+    that blocks on the run's completion marker and executes the gate tool in one
+    shot. She never sees a partial net, so the branch order and the blindness are
+    two separate protections rather than two aspects of her own discipline. **A
+    control that does not depend on you continuing to be disciplined is worth
+    more than the discipline**, because the discipline is what fails on the
+    ninetieth game of a long night.
+
     **And she recorded the mechanism's worst caveat before the result existed**:
     on the single map with the worst deficit, the bot never holds enough
     structures for the changed decision to arise at all, so the mechanism cannot
