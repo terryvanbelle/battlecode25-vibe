@@ -656,6 +656,29 @@ fact about a tile's origin.
     win condition. Before zeroing a term, ask what it was doing that you never
     measured; the question is free and the answer here cost one arm.
 
+**55. A cost metric can be INVERTED — being best in the field on an efficiency
+measure can be the symptom of not doing the thing that wins.** (carol) Her
+per-unit drain is the **lowest of three bots measured in this project**, and she
+is losing; the bot paying two to eight times more beats her, and a third lineage
+had already recorded the same shape from its own side before closing its
+drain-reduction direction on it. The reason is that the cost is the *price of the
+activity*: standing on contested ground is what being in enemy territory costs,
+so a low bill measures passivity, not efficiency. **Three of her mechanisms
+rested on the premise this kills** — and the family is not failing for her, it is
+pointed the wrong way for her.
+
+    This is sharper than §32's "check you are behind before you optimise a
+    metric", where a lineage was merely *ahead* on the thing it was about to
+    improve. Here the lineage is **best in the field and losing because of it**.
+    Before optimising any ratio, ask what the denominator's activity *buys*, and
+    check where the winners sit on it.
+
+    **And when two unrelated designs measure the same ratio, it is a property of
+    the game.** Her conversion of issued resource into actions came out at 39%
+    against another lineage's independently measured 38%, on a completely
+    different architecture. That agreement is worth far more than either figure
+    alone, and belongs in the shared engine notes rather than one lineage's log.
+
 **53. Two quantities scaling together is not a mechanism — find which one is
 upstream, and it is usually cheap.** (carol) A quantity in her bot scaled with
 map area exactly as her deficit did; she also had a smoking-gun trace and a real
