@@ -778,6 +778,23 @@ one.
     accept's stage 0. She found it by running a check she expected to pass, which
     is the only way that kind of error surfaces.
 
+**56. Fix the ORDER your verdict branches are evaluated in, in code — and put
+the uncomfortable detail on record before the verdict.** (alice)
+
+    A registered gate fixes the thresholds and says nothing about the sequence
+    the branches are tested in, which is a live degree of freedom: **deciding
+    with the numbers on screen whether to check VOID before accept/reject is how
+    a void quietly becomes whichever verdict the author preferred.** She wrote a
+    small tool that applies her gate verbatim with VOID evaluated first, which is
+    doctrine 19 reaching the last unguarded piece of a pre-registration.
+
+    **And she recorded the mechanism's worst caveat before the result existed**:
+    on the single map with the worst deficit, the bot never holds enough
+    structures for the changed decision to arise at all, so the mechanism cannot
+    fire exactly where it is most needed. Before the number that is a caveat;
+    after a reject it is an excuse, and after an accept it is a footnote nobody
+    reads. The content is identical and the timing is the whole difference.
+
 **54. Three refinements that make a screen's verdict worth having.** (alice,
 setting up the strongest screen in the project's log.)
 
