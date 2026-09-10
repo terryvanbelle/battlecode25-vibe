@@ -21614,3 +21614,68 @@ turns a draw the instrument could not resolve into whichever verdict I preferred
 baked into `tools/e2-gate.py` rather than left to me — **the VOID branch is tested first, in code,
 committed before the result existed.** The last unguarded piece of a pre-registration is usually its
 control flow.
+
+# The PROSPERITY-GATED LEVER — a general shape, written while blind to E2's verdict
+
+mit is the map with the worst vision famine: 8–20 unclaimed tower sites sitting for 700 rounds with
+the whole team seeing zero of them. It is also the map where E2's mechanism **cannot fire at all** —
+alice never holds more than four towers there, so the money/paint cut point never changes a decision.
+Arm and control show an identical 3 paint / 1 money in every frame.
+
+**That is not a fact about this arm. It is a shape:**
+
+> **A lever keyed to a choice the bot only faces when it is already doing well is structurally absent
+> exactly where the deficit lives.** Tower *mix* is a choice you only get to make once you are
+> building towers. On the maps where alice builds plenty, the lever has purchase and the deficit is
+> mild; on the maps where the deficit is severe, alice builds so few that the lever has no surface to
+> act on. **The lever's reach is anti-correlated with the need for it.**
+
+This is a distinct failure mode from the ones already in the ledger. It is not "the mechanism is
+inert" (E2's fires, +10.3 points), and not "no site with a decision" (there is a site, on most maps).
+It is a mechanism whose *denominator* — the number of times the choice arises — is itself a function
+of the thing being fixed. **Every future lever should be checked against the worst-deficit maps
+specifically, not the corpus mean**, because a corpus mean averages over exactly the maps where the
+lever is absent and reports it as merely weak.
+
+## The next pre-check, specified BEFORE the verdict is known
+
+Specifying it blind is strictly better than specifying it after, so both branches are written now.
+
+### If E2 ACCEPTS — requirement F: do the extra units buy the thing actually lacked?
+
+The mechanism confirmed *more producers → more resource → more units*. An accept does **not** confirm
+that the units converted into vision, or vision into ruins. Measured **jointly at the soldier**, never
+as a product of chain marginals:
+
+> Terminal quantity: **NEW empty tiles brought into team vision per extra soldier per game** — tiles
+> seen by this soldier that no ally saw that turn. E1 predicted **5.9**.
+> **PASS if realised ≥ 4.0. KILL if < 2.0.** Between: the win is real but not via this route, and the
+> stated causal story is wrong even though the outcome is right.
+> Second stage, the chain's end: **ruins discovered per game must rise by ≥ +1.**
+
+This exists because an accept is exactly when a lineage stops checking, and "the chain fired" is not
+"the chain is why".
+
+### If E2 REJECTS — requirement G: which link broke?
+
+The mechanism fired, so the design is what failed, and the chain has six links. Measure each link's
+realised delta on the screen's own replays:
+
+| link | quantity | already known |
+|---|---|---|
+| L1 | paint-tower share | **+10.3 pts** ✓ |
+| L2 | tower paint-starvation rate (from 82.9%) | — |
+| L3 | mobile unit count | +17% on the manipulation sample |
+| L4 | empty tiles inside team vision | — |
+| L5 | **tower count at r300** | — (this is the registered falsifier) |
+| L6 | win rate | the screen |
+
+> **Decision rule: the break is the FIRST link whose realised delta is ≤ 0 with every downstream link
+> also ≤ 0.** If L5 is negative while L1–L4 are positive, the falsifier fired as written — the arm
+> bought paint by giving up towers, and P2 says that loses. If every link is positive and only L6 is
+> flat, the chain is real and too small, which is a dose question, not a design question.
+
+### If E2 VOIDS
+
+Re-run on a fresh 25-map draw with the bar unchanged. A void is information about the sample, so the
+response is a new sample, not a new mechanism and not a weaker bar.
