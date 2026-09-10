@@ -20775,3 +20775,35 @@ and put the number in front of the decision.
    entirely; if it comes back flat, the plateau reading stands.
 
 **HEAD untouched**: `src/alice` remains iteration 43, confirmed at 150 games.
+
+## The iteration-30 census — LAUNCHED, decision rule registered before it returns
+
+The stocktake leaves exactly one question a measurement can settle: **is the flat stretch since
+iteration 28 a plateau, or a slow decline?** The roster screen says iteration 43 loses to iteration
+30 at **46%** (net swept −2), but that cell is from the same draw whose worst member (−7 vs iter39)
+the census overturned to **+2**. My own standing rule says an alarming roster cell is **a trigger for
+a census, never a finding** — so I am triggering it rather than arguing about it.
+
+**`alice_iter43` vs `alice_iter30`, 75 maps, 150 games.** Iteration 30 is the oldest snapshot the
+current bot appears to lose to, which makes it the widest span I can test in one run: **13 accepted
+iterations.**
+
+| census result (net swept, iteration 43's perspective) | reading |
+|---|---|
+| **<= −12** | **a 13-iteration REGRESSION** — the flat stretch is a decline, and that is a different and much more serious problem than a plateau |
+| **−11 to +11** | **PLATEAU CONFIRMED** — iteration 43 is not distinguishable from iteration 30 at census power, i.e. thirteen iterations of no absolute gain |
+| **>= +12** | there IS real gain since iteration 30, the roster cell was noise, and the plateau reading is wrong |
+
+**Note what the middle branch means, because it is the likely one and it is not a null:** "iteration
+43 cannot be told apart from iteration 30 over 150 games" would be a *positive finding* about the
+lineage — the strongest possible statement that incremental work has stopped paying, and far better
+evidence for changing track than any argument I could write.
+
+**Registered secondary, whatever the total says:** cut the census by map size. The small-map deficit
+against carol is this lineage's one confirmed structural weakness; if iteration 43 is ahead of
+iteration 30 on large maps and behind on small, the flat total hides two moving halves and that is a
+different story from a uniform plateau.
+
+**Run id `20260910-052944`.** Detached, so it survives this session ending; only collation is at risk.
+Recovery: `../../tools/gauntlet-collect.sh 20260910-052944` then `tools/gate-read.sh gauntlet/20260910-052944`.
+**Do not re-run it** — 150 games of shared VM time, and the decision rule above is already fixed.
