@@ -18064,3 +18064,49 @@ I predicted `k1` would clear +7 and `k2` would be worse than `k1`. **k1 was iner
 plainly wrong on both halves. Tally: **right 2, nominally right 2, plainly wrong 7**.
 
 `src/bob/` untouched. **`bob_iter20` remains the bot; HEAD's behaviour is unchanged.**
+
+---
+
+## Iteration 59 — PROBE PRE-REGISTERED: enumerate the candidate set BEFORE building the symmetry mechanism
+
+**Applying the rule my own iteration-58 failure produced, to my own next idea.** Iteration 58's arm was
+inert *by construction*: recall's candidate set is a subset of ruins already walked past. The rule that
+falls out — **enumerate the candidate set before building a mechanism that selects, ranks or remembers
+within it** — is now a shared entry, and the first thing it should be pointed at is my own nomination.
+
+**The nomination**: infer unseen ruins from map symmetry, to fill the 18.4% of own-side ruins bob never
+marks (iteration 57: bob 81.6% vs alice 91.6%).
+
+**And there is an objection I can see before measuring, which is exactly the point of this probe.**
+Symmetry maps a ruin to its mirror **on the other half of the map**. Bob is missing ruins on its **own**
+half — whose mirrors sit on the **enemy** half, which bob has seen *less* of, not more. So symmetry
+inference may be systematically worst at exactly the gap it is being proposed to fill. That is a
+structural argument of the same shape as the one that killed iteration 58, and it must be tested rather
+than reasoned about.
+
+**Method, zero games, no VM work** — pure re-analysis of `ru_tour.tsv` (75 tournament maps: ruin positions
+from each round-1 paint-only grid, every MARK with team and round). For each map, **infer the symmetry
+from the ruin set itself** by finding which transform maps the ruin set onto itself: 180° rotation,
+horizontal reflection, vertical reflection. Then for every own-side ruin bob never marked, ask whether bob
+**did** mark its mirror — a lower bound on "bob had the information to infer this ruin."
+
+**PRE-REGISTERED:**
+
+- **PRIMARY: of bob's own-side unmarked ruins, the share whose MIRROR bob did mark.**
+  - **≥50%** ⇒ symmetry inference reaches the defect ⇒ build it.
+  - **≤20%** ⇒ **CLOSED before a line of the mechanism is written** — the candidate set does not contain
+    what the mechanism needs.
+  - between ⇒ size against the 0.92-ruin/game gap.
+- **This is an ACHIEVABLE quantity, not a ceiling** (LEARNINGS 92): it counts ruins bob demonstrably had
+  the observation to infer, not what bob could infer with perfect knowledge.
+- **Secondary, and it is a live hazard from my own ledger**: **which symmetry each map actually has.**
+  LEARNINGS 28 measured that only **27 of 75** maps are symmetric the way you would guess, and LEARNINGS 3
+  records symmetry-with-fixed-order as this lineage's recurring bug class. If the transform is ambiguous
+  (more than one candidate maps the ruin set onto itself) on a large share of maps, an in-game inference
+  would be unreliable and must degrade safely — I will report the ambiguity rate.
+- **Registered as NOT an accept test.**
+- **Prediction**: the primary comes in **below 20% and this closes without a build**, because the mirrors
+  of bob's own-side blind spots lie in alice's half. I am predicting my own nomination dies — which, given
+  a tally of right 2 / nominally right 2 / plainly wrong 7, is worth exactly what it is worth.
+
+`src/bob/` untouched. **`bob_iter20` remains the bot.**
