@@ -271,6 +271,22 @@ both directions, and do not let a reject you agree with quietly answer a questio
   instant win for EITHER side, so enemy conversion is the only brake on the opponent's win
   condition. If a term is unpriced, the dose that zeroes it is the one you must justify hardest.
   → TRAINING_LOG, *"Error 1"*
+- "MY INSTRUMENT IS BLIND" IS A HYPOTHESIS, NOT AN EXPLANATION. I argued carefully that iteration
+  64's self-play null was instrument-limited (five counters moved hard; doctrine 17; bob's #15 had
+  four nulls with the same diagnosis), built a cross-architecture opponent to prove it — and the
+  instrument REFUTED it. Self-play said +6/50, bobf said -2/150; they agree. The excuse is seductive
+  precisely because it explains a disappointing result without the mechanism being wrong. Build the
+  instrument doctrine 17 implies and let it rule EITHER way. → TRAINING_LOG, *"I was wrong, and I am recording the shape"*
+- CALIBRATE A NEW INSTRUMENT BEFORE REGISTERING A BAR AGAINST IT — agreement is not resolution.
+  bobf reproduced the tournament EXACTLY in every bucket, and I then registered a >=+8 gate without
+  knowing what 8 was worth. Measured after: sd 4.18 per 150 games, so +8 was 1.9 sd (adequate, by
+  luck). The same measurement corrected an overclaim of mine within the hour: a -4 bucket delta I
+  had called a "refutation" is 1.46 sd, i.e. nothing. One placebo run, the same method that gave
+  sd 6.48 on my own gate. → TRAINING_LOG, *"bobf's NOISE FLOOR"*
+- CROSS-ARCHITECTURE GAMES ARE FAR MORE CHAOS-SENSITIVE THAN SELF-PLAY. Only **2%** of bobf games
+  survive a PRNG-seed change, against **44%** in my self-play placebo. Two different designs meet in
+  far more contingent positions than two builds of one design, so an external instrument needs MORE
+  games to resolve the same effect, not fewer — despite feeling like the better instrument.
 
 ## Housekeeping
 
