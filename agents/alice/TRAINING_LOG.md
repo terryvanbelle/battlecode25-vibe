@@ -23452,3 +23452,52 @@ and I was about to let it carry an architecture decision.
 **Magnitude closures now count** — clause (a) — because a mechanism that cannot reach its dose because
 a shared resource caps it is *more* architectural evidence than one that fires and underperforms, not
 less. That is the substantive amendment, and it makes the condition reachable without making it easy.
+
+# I UNDER-COUNTED MY OWN EVIDENCE — the constraint has been attacked TWICE, and the second attempt fired
+
+I was pricing "upgrade paint towers earlier / before money towers" as the second, better-specified
+attempt on tower paint supply. **The ledger says it is iteration 53, and it was built, screened and
+REJECTED at −2** — *"it bought tower paint with 1.85 towers."* Its measured intermediate variable:
+
+> **Iteration 53 moved tower paint by +639 — more than 50% above the control — and returned net
+> swept −2, with 21 of 25 maps split.**
+
+**So an hour ago I wrote that the constraint "has been attacked exactly once." That was wrong.** It
+has been attacked twice, by independent implementations, and **the second one demonstrably moved the
+constraint by more than half and still lost.**
+
+| attempt | route to more tower paint | intermediate variable | outcome |
+|---|---|---|---|
+| iteration 53 | upgrade priority — raise the **rate** | **+639 tower paint (+50%)** | **−2** |
+| E2 | tower mix — raise the **count** | +10.3 pts paint-tower share | **−8** |
+
+**Clause (b) of my amended condition is therefore SATISFIED, 2 of 2** — the clause I called "the one
+that matters" — and I satisfied it by reading my own log rather than by running anything. **Clause (a)
+stands at 2 of 3** (K7, K8). The condition as a whole is **not met**, and I am not revisiting N=3
+having just discovered evidence that helps me; **amending a bar an hour after setting it, in the
+direction of the conclusion I am drawn to, is precisely what I amended it to avoid.**
+
+## But the correction changes the DIAGNOSIS, and that matters more than the count
+
+I have been saying four directions terminate at *"tower paint supply is scarce."* **Both attempts to
+raise that supply failed, and one raised it by 50% and still lost.** So scarcity is not the
+constraint. **Look at what both attempts paid with:**
+
+> Iteration 53 *"bought tower paint with 1.85 towers."* E2 bought it by converting money towers to
+> paint towers. **Both purchased the binding resource with TOWERS — and P2 measured the r300 tower
+> lead predicting the winner 79–81% of the time.**
+
+> **The architecture's economy, in one sentence: paint supply can only be bought with towers, and
+> towers are worth more than the paint they buy.** That is why every mechanism terminates here and why
+> both direct attacks lost — they were not badly built, they were paying in the one currency that
+> decides the game.
+
+**This is a structural statement about the resource economy, not about any mechanism** — and it is the
+first thing this session that would actually be *different* under a different architecture, because it
+is a fact about how alice's currencies convert, not about how well any single lever is tuned.
+
+> **Registered, so the third magnitude closure is a real test and not a formality:** the remaining
+> clause-(a) slot must be filled by a mechanism aimed at per-unit output that closes on magnitude at
+> tower paint supply **without** my having chosen it because it would close. **If instead a mechanism
+> raises paint supply WITHOUT spending towers, that refutes the sentence above and the whole
+> convergence with it** — and that, not another dose, is the experiment worth looking for.
