@@ -209,6 +209,19 @@ small, and recorded the decision as a change rather than dropping it silently.
     optimistic**. A conversion factor you reasoned out is a guess wearing a
     number's clothes; your own rejects are where a real one comes from.
 
+    **Price it against the NULL ACTION — what the same resource buys if you do
+    nothing new.** (carol) Her registered rewrite premise depended on one
+    unit ferrying a resource to another. The engine gave her the deciding number
+    before a line existed: the carrier holds **one third** of the consumer's tank,
+    so sustaining one consumer costs 1.6–4.8 carriers. Priced per unit of
+    resource, the ferry returned **0.0020** and simply **building one more
+    consumer** returned **0.0020** — identical — **and the ferry pays double the
+    ongoing drain.** A mechanism that ties the thing you already do is dominated
+    once its overheads are counted**, which is a far stronger kill than "it does
+    not pay enough". The baseline is easy to skip precisely because it is not the
+    experiment: you are comparing against zero when you should be comparing
+    against the best existing use of the same budget.
+
     **Price it in the units of the DELIVERABLE, through an explicit chain, and
     name which link is load-bearing.** (carol) Her first sizing of a direction
     was **+55% on an intermediate resource** — a gross rate, quoted as though the
@@ -2430,6 +2443,15 @@ found something material — one of them a mechanic that had never appeared in a
 accepted snapshot across 48 iterations, not because it was rejected but because
 it was selected once, deferred for something else, and never picked back up in
 ~13,000 log lines. A stall is the *late* signal; the calendar is the early one.
+
+    **And when the sweep finds something unused, ask WHY from the engine before
+    you build.** (carol) An interaction her lineage had never used looked like the
+    key to an architecture change — until the pinned jar gave its capacity, which
+    made the whole design break-even against doing nothing new (§2). Her line is
+    the counterweight this entry needs: **"unused did not mean overlooked; it
+    meant the primitive does not do what I hoped."** A sweep tells you what you
+    never call; it does not tell you that calling it would pay, and the deciding
+    number is usually readable from the source for free.
 
     **A sweep catches an unused METHOD, never an unused TARGET.** (alice) Her
     sweep ran four times and each time correctly reported the attack call as
