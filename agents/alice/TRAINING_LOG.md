@@ -24406,3 +24406,46 @@ At n=150 one sd on the win rate is 0.041, so a true 36% sits **3.4 sd** below ev
 > **A rung-specific finding — "iter39 is a hard matchup, not a regression" — requires BOTH to lose
 > and the roster's other rungs to be unmoved**, and that is a third outcome I am naming now so it
 > cannot be invented afterwards.
+
+# THE THREE RE-OPENED DIRECTIONS, RE-FRAMED ABSOLUTELY — and the question each now asks
+
+Re-opened by the change of objective. **The old question was "does carol do this?" The new one is
+"what does this cost and buy me?" — a different question, and in two cases the old answer does not
+even address it.**
+
+## 1. Mopper share — the substitution stands, the valuation does not
+
+**Unchanged:** refusing a mopper yields a SOLDIER by construction. That is code, not comparison.
+**Gone:** *"soldiers are the term alice already leads carol 1.35x on"* — which was doing all the work.
+
+> **The new question is a straight exchange rate on my own bot: per spawn decision, is 1 mopper worth
+> more or less than the 1 soldier that replaces it?** Both sides are already measured — a mopper
+> costs **100 paint** and delivers **16.8 mops** of which **58.1%** are claimed; a soldier costs
+> **200 paint** and delivers **~14.9 paint actions.**
+
+**I am deliberately NOT doing that arithmetic now.** It is a chain of four measured ratios, and
+chains of measured ratios have been wrong by 5x, 10x and 6x today — every time because the terms were
+measured separately. **The exchange rate must be measured jointly at the spawn site, in one pass, or
+not claimed.** Registered as the form the answer must take, not as an answer.
+
+## 2 & 3. D2 spawn-and-forget and D3 mix by dice — these were never *evidence*
+
+Both closed on *"carol does X."* **Removing that leaves nothing behind** — not a refutation, not a
+support, **an empty cell.** They return to the state they were in before I ever measured carol, which
+is *unexamined*, and the honest record is that I never tested either on its own merits.
+
+> **What would settle them absolutely, and neither needs a rival:** D2 asks *does a unit's marginal
+> paint convert to more ground than the spawn it displaces* — the same exchange-rate form as #1, at
+> the same site. D3 asks *what is each unit type worth per paint spent* — which **subsumes both**.
+
+**So all three collapse to one measurement**, and it is one I have never made: **the per-paint value
+of each unit type, measured jointly at the spawn decision on my own bot.** Everything I measured today
+was a *rate* (actions per unit, mops per mopper) or a *share*; **none of it was a value per unit of the
+binding resource**, which is the only quantity that can rank a spawn choice.
+
+> **Registered as the next direction after the census, ahead of the unevidenced premises** — because
+> those premises (fewer units, ~30% splashers, resupply) are *answers* to exactly this question, and
+> I priced and built on them without having asked it. **Measuring the exchange rate is what turns
+> them from unevidenced into either supported or dead**, and it is one probe.
+
+**Cost so far under the new objective: zero games beyond the running census.**
