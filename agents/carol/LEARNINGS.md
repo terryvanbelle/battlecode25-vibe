@@ -214,6 +214,23 @@ both directions, and do not let a reject you agree with quietly answer a questio
   25-map outcome did not move at all (+0/-4/+2). It was iteration 60's headline stage-0 clause.
   Test a mechanism claim by DOSING the statistic and watching the gate, not by showing the statistic
   moved. → TRAINING_LOG, *"the mechanism statistic is not the causal channel"*
+- A MEDIAN PROBE MAP IS UNBIASED, NOT PRECISE — one game is n=1 whichever map it is. Iteration 61
+  moved stage 0 off outlier Leaf to median Mirage; iteration 64 then passed ALL THREE registered
+  clauses on Mirage (coverage 296->705, splashers built 26->54 breaking a two-iteration invariant,
+  standing splashers 0->17, starved 309->20) and the 25-map screen measured NOTHING (28/50, closed).
+  The failure was never Leaf specifically, it was treating one game as predictive of a population.
+  **Stage 0 answers "does the mechanism FIRE", never "does firing PAY".** → TRAINING_LOG,
+  *"it sharpens iteration 61 rather than repeating it"*
+- BEFORE DOSING A TRIGGER, CHECK IT FIRES ON A MAJORITY OF THE CORPUS — free, from replays. The
+  iteration-64 phase switch keyed on `getNumberTowers()`, which carol rarely reaches: arms
+  TOWER_TARGET 6 and 8 played games identical in winner AND round count on **72% of 50**, so the
+  upper ladder was one measurement wearing three labels. A dormant trigger makes a dose ladder
+  unable to resolve anything, and doctrine 3's identity count is what exposes it.
+  → TRAINING_LOG, *"Doctrine 3's identity count, on the screen"*
+- AN UNREGISTERED SUBGROUP MAY KILL A HYPOTHESIS, NEVER RESCUE ONE. Dormancy invited the rescue
+  "measure it where it can act"; the ruin-density split came back +2 dense / +4 sparse — flat where
+  the mechanism fires — so it closed the direction. Run such a split, and let it point only one way.
+  → TRAINING_LOG, *"The dilution excuse, tested and REFUSED"*
 
 ## Housekeeping
 
