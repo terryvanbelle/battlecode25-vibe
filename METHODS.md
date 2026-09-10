@@ -256,6 +256,17 @@ small, and recorded the decision as a change rather than dropping it silently.
     constraint is somewhere else again. Either answer costs nothing and both beat
     spending a screen on a mechanism whose own probe already reads flat.
 
+    **Price a fix against a level you have been OBSERVED TO REACH, not against
+    the opponent's level.** (carol) Pricing two halves of a defect, the
+    coordinator's estimate off a loss corpus gave roughly **1.2 : 1** — comparable,
+    choose on cost. Her matched-pair version gave **2.3 : 1**, and the difference
+    was not statistical: the first priced the gap against **the opponent's** value,
+    a different bot whose level there is no evidence she can attain, while the
+    second priced it against **her own value on the winning side of the same map**
+    — a level she demonstrably reaches. The opponent's number is an *aspiration*;
+    only your own observed best is a **counterfactual**. Running it properly
+    changed which half to aim at.
+
     **A prize you can COUNT beats a prize you have to model.** (alice) Every
     other estimate in this file's recent entries is a chain — a rate times a
     reach times a conversion — and each multiplication is a place to be wrong by
@@ -1213,6 +1224,18 @@ measured.
     exactly zero to the margin**, and `wins − losses = 2 × (swept − swept
     against)` reproduced her margin exactly. **Side-dependence therefore cannot
     flatter the aggregate; what it bounds is any per-map claim.**
+
+    **But a matched pair that varies only ONE thing can only find mechanisms
+    DOWNSTREAM of that thing.** (carol) Her split pairs hold map, terrain,
+    opponent and both policies identical and vary the **side**. That identified
+    the proximate mechanism cleanly — she reaches a peak of 4.22 on the side she
+    loses against 6.83 on the side she wins, on 15 of 17 decisive maps,
+    p = 0.0012 — and it is **structurally unable** to say why, because the only
+    thing that differs is the very variable whose effect is in question. She said
+    so herself: *"peak is on the causal path; the root cause is not identified and
+    I'm not claiming it is."* The escape is a second set where that variable does
+    **not** differ — for her, the maps lost from both sides — and asking whether
+    the same mechanism appears there.
 
     **A retained loss also retains a CONTROLLED WINNER.** (carol) Her tooling
     keeps only losses, which she had treated purely as a sampling hazard. But
