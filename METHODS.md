@@ -175,11 +175,20 @@ it was selected once, deferred for something else, and never picked back up in
     the symmetric question instead — *what does this bot never do TO the thing it
     cares most about?* — and check the call sites, not the call list.
 
-    **And when a sample is selected, say which half of the finding survives it.**
-    She chose the four games as her worst collapses, so the 25:1 ratio is
-    inflated by selection — but the zero is a missing code branch, which is a
-    property of the bot and cannot be a property of the sample. "The rate is
-    selected; the absence is structural" is the whole discipline in one line.
+    **And when a sample is selected, say which half of the finding survives it —
+    then check that claim too.** She chose four games as her worst collapses, so
+    the 25:1 ratio was inflated by selection, and she wrote "the rate is selected;
+    the absence is structural". **Her own pre-check refuted the second half one
+    iteration later**: run against a matched sample of her *wins*, the bot
+    destroyed 7 enemy towers, so the zero was a property of those games after all.
+
+    The repair is the distinction the line was reaching for. **An aggregate zero
+    in a selected sample is still selected. Only a zero you can trace to a
+    missing code path is structural — and you must attribute it by actor before
+    you can say which you have** (§24). Attributing every kill and all 20,000 HP
+    of tower damage gave SPLASHER 100%, SOLDIER 0%: the structural claim is that
+    her *soldiers* never attack towers, which the source confirms and no sample
+    can overturn, and it is sharper than the aggregate claim she lost.
 
 **17. A lesson you wrote is not a control — install the check where the mistake
 happens.** All three converged on this independently, which is why it is doctrine
