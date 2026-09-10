@@ -662,6 +662,14 @@ and raising production alone ceilinged at +7.
     question about the correlation of the resources its halves consume, and
     marginals cannot answer it. Measure the joint before you build the pair.
 
+    **And the filter earns its authority by returning both answers.** Hours after
+    it killed that pair, she applied it to a second candidate and it **passed**:
+    an earlier measurement had already established that one half's binding gate
+    *is* the quantity the other half supplies, so the two share a single resource
+    rather than competing for two anti-correlated ones. A filter that only ever
+    says no is indistinguishable from a prohibition, and you cannot tell which you
+    have until it lets something through (§32).
+
     **And measured properly, such an anti-correlation closes the CLASS, not just
     the pair.** Asked whether the phase mismatch was a property of that one
     candidate, she measured both quantities **read together, per frame**: rank
@@ -698,6 +706,17 @@ where the deficit was worst** (17.6 units of new information per extra unit on
 the worst map, against the 16.7 that unit produces in its whole life). A lever
 whose return is largest exactly where the problem is largest is the opposite of a
 saturating dead end.
+
+    **And the converse: several NAMED axes can be one axis in different hats.**
+    (alice) Enumerating architectural premises, she killed three against a rival's
+    observable behaviour for zero games — how many units to run, where they stand,
+    and what feeds them — and then noticed they were **not independent**. They are
+    one premise wearing three names, and a rival runs the whole cluster: fewer
+    units, fewer spawns, closer in, better supplied, at twice the per-unit output.
+    That matters twice over. It shrinks the option count you thought you had, and
+    it means **none of the three can be fixed alone** — which is why a mechanism
+    aimed at any one of them had been failing. Before pricing an enumeration,
+    check its members for dependence as well as for completeness.
 
     Two practical consequences. **The axis you did not vary is invisible from
     inside the axis you did**, which is why this is worth asking out loud and
