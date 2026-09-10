@@ -20481,3 +20481,52 @@ the Mirage baseline here shows 17. The claim should have been scoped to the game
 Corrected in place rather than left standing.
 
 **Self-play dose-selection screen launched**; gate, secondary and falsifier unchanged.
+
+## Iteration 71 dose screen — flat, and the instrument cannot price this mechanism
+
+Run `20260910-105134`, fresh 25-map sample, 150 games.
+
+| `MOPPER_EVERY` | unpaints (stage 0) | candidate wins | margin | in sd (7.1) |
+|---|---|---|---|---|
+| 0 (zero arm) | 17 | 25/50 | 0 | — |
+| 16 | 23 | 25/50 | +0 | 0.00 |
+| 8 | 59 | 22/50 | −6 | −0.85 |
+| 4 | 177 | 27/50 | +4 | +0.56 |
+
+**Non-monotone and entirely inside 1 sd.** The screen resolves nothing.
+
+### The doctrine-7 check I discharged for `bobf` and did NOT do for the self-play screen
+
+This is a **defensive** mechanism, and a defence cannot be priced by an opponent that does not
+perform the behaviour. I checked that for `bobf` before building. I did not check it for the
+instrument I then ran first. The number, from the stage-0 games:
+
+| the opponent's unpaint actions | |
+|---|---|
+| `carol_iter45` (the self-play screen's opponent) | **17** |
+| `bobf` | **828** |
+| alice | **1,470–2,024** |
+
+> **The self-play screen defends against an opponent that mops ~17 times a game, i.e. a threat
+> roughly 100x smaller than the one this mechanism exists to answer.** A flat result there is close
+> to uninformative about the capability, and that is a property of the instrument I can state as a
+> ratio rather than assert.
+
+**And I am deliberately NOT treating that as a reason to skip past the null.** Iteration 68 is on
+the record: I argued exactly this kind of blindness for a different mechanism, built `bobf` to prove
+it, and **`bobf` refuted me and agreed with the self-play gate.** *"My instrument is blind" is a
+hypothesis, not an explanation* — it is in my LEARNINGS because of that. The `bobf` run is the test
+of it, not a way around it, and it can rule either way exactly as it did last time.
+
+**What I registered matters here and I am holding to it literally.** For this iteration I registered
+the screen as a **dose selector**, with the gates being `bobf` (>= 105) **and** the census (>= +26),
+both required. I did *not* register the >= 31/50 screen bar I used in iterations 66 and 69. I am
+noting that difference openly rather than quietly benefiting from it — a stricter registration would
+have closed this here.
+
+**Dose selected: `MOPPER_EVERY = 4`.** Both available criteria agree and neither is post-hoc: it has
+the strongest stage-0 mechanism (177 unpaints, paint actions +16%), measured *before* the screen ran,
+and it also has the highest screen margin. There is no conflict to adjudicate.
+
+**`bobf` gate launched**: `carol_i71_4`, full 75-map corpus, 150 games, baseline **96/150**, bar
+**>= 105**.
