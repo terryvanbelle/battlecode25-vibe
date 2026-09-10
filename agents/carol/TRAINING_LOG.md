@@ -22776,3 +22776,94 @@ the escalation's measured half.
 
 The escalation is complete. Twenty axes closed; the twenty-first is not manufactured. `src/carol`
 stays at carol_iter45. Zero games spent on this answer.
+
+## The production tension — resolved from replays already on disk (0 games)
+
+Three of my own numbers could not all be true: production **ceiling 125** splashers per 1,000 rounds,
+**realised 36**, gap attributed to **allocation** — yet every allocation mechanism prices at +3..+7.
+Resolutions offered: (1) the headroom is not real; (2) allocation is not the limiter; (3) a 3.5x
+production increase is worth almost nothing, which refutes premise 3's production half **on value**.
+
+### What I had to fix first
+The iteration-69 stage-0 build table is **whole-game totals from one game per arm**, so it is not
+comparable across arms until normalised. I recovered each game's length from the replays
+(`matches/carol_i69_*-vs-carol_iter44-on-Mirage.bc25`, tower indicator `T r=`): **823 / 657 / 991**
+rounds for K=2/4/8. Normalising changes the reading materially, and the un-normalised table had been
+sitting in the log for two sessions.
+
+| arm | splashers built | rounds | **per 1,000r** | screen margin (50g) |
+|---|---|---|---|---|
+| K=8 | 35 | 991 | **35.3** | +4 |
+| K=4 | 28 | 657 | **42.6** | +10 |
+| K=2 | 51 | 823 | **62.0** | +12 |
+
+**A claim I nearly made and withdrew.** Un-normalised, K=4 showed 28 splashers against the baseline's
+26 while scoring +10 of the +12 — which reads as "the value came from cutting soldiers, not from
+adding splashers". Normalised, splasher rate and soldier rate are **collinear across the ladder by
+construction** (one knob moves both, monotonically and in opposite directions), so this design cannot
+separate them. Withdrawn. I also declined to normalise against the independently measured **36**,
+because that figure comes from leavemealone against a different opponent — mixing referents is the
+error I have logged three times.
+
+### 1. Chips are NOT the binding input — the ceiling misnames its own binder
+Per-round treasury from the same three replays, against the $1,600 splasher gate:
+
+| arm | median treasury | rounds with chips >= 1600 | rounds with a tower holding >= 300 paint | **BOTH at once** |
+|---|---|---|---|---|
+| K=2 | 1,700 | 58.2% | 54.2% | **19.6%** |
+| K=4 | 2,010 | 65.1% | 37.3% | **12.3%** |
+| K=8 | 2,650 | 75.5% | 26.7% | **8.6%** |
+
+The ceiling table recorded **binding: chips (barely)**. The bot can afford a splasher in **58-75% of
+all rounds and does not buy one.** Chips are not binding. What is scarce is **300 paint in a single
+tower's own stock** — and my ceiling computed `paint_income/300` from **pooled** income across six
+paint towers, when the engine requires one tower to pay from its own reserve. A pooling error, the
+same wrong-referent class as before. So resolution **(1) holds in part**: the headroom is real as
+arithmetic but its stated binder is wrong, and it was computed from income measured under the
+current design (the endogeneity I had already declared).
+
+### 2. Allocation is not the limiter — resolution (2) holds
+`SPLASHER_EVERY` swings the realised mix from **12.7:1 to 0.4:1**, a 32x move and the largest dose
+this project has ever applied to anything. It carries splasher production to **62 per 1,000r** —
+**50% of the 125 ceiling.** Half the headroom is not reachable by allocation at any dose, and the
+knob is bracketed nowhere near the ceiling.
+
+### 3. And the production delivered is worth almost nothing — resolution (3), the decisive one
+Returns are **sharply diminishing inside the measured range**:
+
+| step | production gained | margin gained | margin per unit |
+|---|---|---|---|
+| K=8 -> K=4 | +7 /1,000r | +6 | **0.82** |
+| K=4 -> K=2 | **+19 /1,000r** | **+2** | **0.10** |
+
+The last and largest production increase in the ladder — **+19 splashers per 1,000 rounds, a 45%
+lift** — bought **+2 margin**, which is **0.28 sd** and which I recorded at the time as an arbitrary
+difference. Extrapolating the remaining 63 units of headroom (62 -> 125):
+
+| extrapolation | screen margin | **census-equivalent** (screen inflates ~2x: this arm scored +12 screen / +6 census) |
+|---|---|---|
+| at the **marginal** rate (0.10/unit) | +6.5 | **+3** |
+| at the **average** rate (0.30/unit) | +18.9 | **+9** |
+
+Against a **+26** census bar. The marginal rate is the right one to extrapolate from, because the
+extrapolation starts at the top of the measured range — and it lands at **12% of the bar.** The
+generous average-rate reading lands at **35%.** And the top dose's own directly measured census
+value is **+6 at 0.7 sd**, indistinguishable from zero.
+
+### VERDICT — which of the three
+**All three contribute, and (3) is the answer.** The headroom's binder is misnamed and endogenous;
+allocation reaches only half of it at maximum dose; and the half it does reach pays at a marginal
+rate that extrapolates the rest to **+3 to +9 census margin against a +26 bar**, with returns
+already flattening hard at the top of the ladder.
+
+> **The production half of design premise 3 is REFUTED ON VALUE, not merely unreachable.** Producing
+> at the ceiling is not worth the bar even if the ceiling were free and reachable, and it is neither.
+
+That closes the premise rather than leaving it untested. It also retro-explains iteration 77's stage
+A: splasher-first spawn produced **12 against the control's 43** and I read it as an execution
+failure. Production is not chip-allocation-limited, so a spawn-order change could not have raised it
+— stage A was measuring a lever that does not exist.
+
+**What stays open:** the *posture* half of premise 3 (p90 unit distance 6.3 vs the rival's 17.0)
+is untouched by this and remains unrefuted. I am not opening it today and I am not manufacturing an
+axis; I am recording that the pair has been separated and only one half is closed.

@@ -391,3 +391,24 @@ both directions, and do not let a reject you agree with quietly answer a questio
 - **An oracle can survive the data and still die.** The i76 +12 was not a fantasy — re-derived at a
   data-chosen boundary it measures ~+11. It closes because +11 is 42% of the bar, not because it
   was unbuildable. "Confirmed" and "sufficient" are different verdicts; report both.
+
+- **Normalise whole-game totals by game length BEFORE reading a dose ladder.** My iteration-69 build
+  table sat in the log for two sessions as raw per-game counts; the arms' games ran 657-991 rounds,
+  and normalising inverted which arm looked most productive. Recover the round count from the replay
+  (`T r=`) rather than trusting a total.
+- **A one-knob ladder cannot attribute value between two quantities the knob moves together.**
+  `SPLASHER_EVERY` raises splasher rate and cuts soldier rate monotonically and in lockstep; no
+  contrast in that design separates "more splashers" from "fewer soldiers". I drafted the attribution
+  and withdrew it. To separate collinear arms you need a knob that moves one and not the other.
+- **Extrapolate a headroom at the MARGINAL rate, not the average.** Returns inside my production
+  ladder fell 8x from the first step to the last (0.82 -> 0.10 margin per unit). Averaging over the
+  whole ladder inflated the remaining headroom's value 3x. When you extrapolate from the top of a
+  measured range, the last step is the estimator.
+- **A pooled budget is not a per-agent budget.** My splasher ceiling divided *pooled* paint income by
+  300, but the engine requires one tower to pay 300 from its own stock. Pooled income says the rate
+  is affordable; the replays say a single tower holds 300 paint in only 27-54% of rounds. Check
+  whether the resource your ceiling divides is actually fungible across the payers.
+- **"Unreachable" and "not worth reaching" are different closures, and the second is stronger.**
+  Premise 3's production half is refuted on value: even granting the full 3.5x, it extrapolates to
+  12-35% of the accept bar. Prefer to close a premise on value when the data allows it, because an
+  unreachability closure invites a better implementation and a value closure does not.
