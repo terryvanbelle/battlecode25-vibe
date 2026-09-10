@@ -20440,3 +20440,44 @@ of 4.18, baseline 96) **and** the standing self-play census (**margin >= +26**).
 **Registered secondary:** the gain should appear on **large maps** (`bobf` baseline 33/64), where the
 mopping asymmetry was traced. Iteration 69 taught me to check the target bucket rather than bank an
 overall number — its overall +3 concealed a −4 exactly where it was aimed.
+
+## Iteration 71 stage 0 — all three clauses PASS, and bob's re-open condition is MET
+
+Mirage, one game per arm vs `carol_iter44`. Whole-game totals.
+
+| arm | moppers built | **unpaint actions** | **total paint actions** | splashes | towers |
+|---|---|---|---|---|---|
+| `carol_iter45` (zero) | 1 | 17 | 2,634 | 187 | 9 |
+| `MOPPER_EVERY = 16` | 2 | 23 | 2,491 (−5%) | 185 | 12 |
+| `MOPPER_EVERY = 8` | 7 | 59 | 2,936 (**+11%**) | 214 | 13 |
+| `MOPPER_EVERY = 4` | **31** | **177 (10x)** | **3,065 (+16%)** | 229 | 11 |
+
+1. **Moppers built: PASSES**, monotone in dose (1 -> 2 -> 7 -> 31).
+2. **Unpaint actions: PASSES**, 17 -> 177, a 10x rise in the capability carol lacks.
+3. **Total paint actions must not fall — PASSES at K=8 and K=4, where they RISE (+11%, +16%).**
+
+> **`agents/bob/CLOSED.md` #17's re-open condition — *"a mechanism exists that raises mopper share
+> without reducing total paint actions"* — is MET on my architecture, at two of three doses.**
+
+### A mechanism for why, offered as a hypothesis and not a claim
+
+A soldier's conversion rate against enemy paint is **exactly zero** — it may only paint EMPTY or
+own-team tiles [E, RULES.md], which iteration 59 established at some cost. **Mopping converts enemy
+tiles to EMPTY, which is precisely the state a soldier can act on.** So on this architecture a
+mopper does not merely deny the opponent; it *manufactures targets* for the rest of the army. That
+would explain paint actions rising rather than falling, and it is a property of what carol's units
+are blocked by, not of moppers in general.
+
+Why it may differ for bob: his moppers displaced soldiers 1:1 in a fixed slot rotation, while my
+scheduler forces moppers into a slot where the tower frequently held between 100 and 200 paint and
+would otherwise have built **nothing at all** — the `PAINT_FLOOR` gate. Different displacement, and
+displacement is what his ledger identifies as the payer.
+
+### A correction I owe to my own registration
+
+I wrote that carol's unpaint count is *"0 in every game ever measured in this lineage"*. That is
+**true of the large-map games against alice and `bobf`** (0 in all three) and **false in general** —
+the Mirage baseline here shows 17. The claim should have been scoped to the games I had measured.
+Corrected in place rather than left standing.
+
+**Self-play dose-selection screen launched**; gate, secondary and falsifier unchanged.
