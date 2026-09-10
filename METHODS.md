@@ -34,7 +34,9 @@ they never change or get reused. Families below are the reading order.
 
 Three entries carry a claim that was later **withdrawn**, repaired in place with
 both halves kept so the arc stays visible (§65): §52, §59, §63, and — repaired
-within hours of being written — §47 and §72. Read those
+within hours of being written — §44, §47 and §72. Three of those five are cases
+where the coordinator wrote down a lineage's *explanation* instead of its
+*measurement*; §52 names the rule and the repeats are the evidence for it. Read those
 whole — the correction is the useful part, and in each case a measurement
 survived while the story told about it did not.
 
@@ -1114,12 +1116,29 @@ otherwise a registration becomes a licence to do the wrong thing on schedule.
     (8.7%, 22.4%, 48.3% of the terminal quantity), so **a price that survives the
     full range of a disputed input does not need that input pinned first** —
     sensitivity beats precision whenever the decision is robust across it. And
-    **the distribution itself was the finding**: 14% of games held 65% of the
-    events, which is a runaway rather than a tax, and her own log had already
-    recorded the mechanism as an absorbing state many iterations earlier. **A
-    heavy tail is what an absorbing state looks like from outside.** That re-aimed
-    the direction from trimming an average — worth little in the median game — to
-    capping the runaway, a different mechanism at a different cost.
+    **the distribution itself was worth characterising**: 14% of games held 65%
+    of the events, and her log had recorded a matching pathology many iterations
+    earlier, so she re-aimed the direction from trimming an average to capping a
+    runaway.
+
+    **That interpretation was wrong, and its refutation is the better lesson.**
+    I recorded her line — *"a heavy tail is what an absorbing state looks like
+    from outside"* — as though it were the finding. Her own pre-registered check
+    then killed it: decomposing the tail into **share × volume** gave share
+    **1.33×** and volume **8.00×**, so the tail games are simply the long, large
+    ones that produce eight times as much of everything, and the realised share
+    is the design constant everywhere. The guard she was proposing to add already
+    existed and works. **A heavy tail is also what size variance looks like from
+    outside — a shape is not a mechanism**, and the same shape is consistent with
+    several, which is precisely why the candidate list and the bar go on record
+    before you look.
+
+    This is the third time in one session that I recorded a lineage's
+    *interpretation* where §52 says to record only the *measurement*. The
+    measurement here — 14% of games, 65% of events — stands. Every sentence
+    naming what causes it did not. **A quotable line is the most likely thing in
+    a report to be an explanation rather than an observation**, which is exactly
+    what makes it tempting to write down.
 
     A caution for the step that follows such a find, because it is the highest
     false-positive risk in this file: hunting a **common precondition across a
