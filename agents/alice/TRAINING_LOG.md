@@ -20879,3 +20879,59 @@ tower-originated (no two ruins are mutually visible, min d² = 25 vs vision 20, 
 that has already been cut from three lineages to two, and my job was the number and its
 decomposition. Both are now on record. **HEAD untouched**: `src/alice` remains iteration 43,
 confirmed against iteration 39 at +2 and against iteration 30 at +10, both over 150 games.
+
+# R2 PRICES OUT — all four routes dead, and it collapses into R1
+
+The coordinator's read was that R2 is mechanism-shaped rather than architecture-shaped, and the only
+lever priced outside the 7–17% band (+10.5 actions/soldier against a ~13.7 gap). **Pricing it means
+asking whether the ceiling has a mechanism behind it.** Enumerated first, then tested:
+
+| route to "spend the tank faster" | killed by |
+|---|---|
+| **(a) act more often** | **this probe — 1.8%** (below) |
+| (b) spawn fewer soldiers so each has more targets | tower paint's **only** sink is spawning, so unspent paint idles (`atcap` measured 1–3%). Arithmetic is worse: 2 soldiers at 50% conversion put 200 on the ground from 400 paint; 1 at 80% puts 160 from 200 with 200 idle |
+| (c) cull idle units to stop their upkeep | **`disintegrate()` throws `RobotDeathException` and recovers nothing** — javap, pinned jar, this session. The paint is already spent |
+| (d) cut the per-turn upkeep rate | the rate family: priced at 7–17%, closed |
+
+## The decisive measurement — route (a) is blocked by availability
+
+`alice_i61probe`, additive, **identity verified** (926 / 1693 / 792). 170 soldiers, 18,569 turns.
+
+| | value |
+|---|---|
+| action **still ready** at end of turn | 15,035 = **81.0%** |
+| ... AND an **EMPTY** tile in action range r²<=9 | **265 = 1.8%** of those |
+| mean empty tiles in range on a free turn | **0.122** |
+
+A soldier gains coverage **only** on an EMPTY tile — it cannot paint enemy paint (engine-verified, and
+0 of 12,409 at corpus scale) and repainting its own gains nothing. **On 98.2% of its idle turns there
+is no legal tile within reach that would gain anything.**
+
+### And the reconciliation makes this stronger, not weaker
+
+| | actions per soldier |
+|---|---|
+| implied by this probe (19.0% of 87.8 turns) | **16.7** |
+| r300 tournament census, independently | 20.3 |
+| iteration 49 paint-budget ledger, independently | 19.7 |
+
+**Three unrelated instruments agree.** And they agree on something better than "the soldier wastes
+turns":
+
+> **The soldier is CORRECTLY IDLE.** It acts on essentially every turn where work exists and is idle
+> when none does. **This bot is already playing its local information near-optimally — the local
+> information is the limit.** That is not a policy defect anywhere; it is R1 restated from the inside.
+
+## What this settles
+
+> **R2 is not a lever. Its +10.5 is a ceiling on a counterfactual, and every route to it is closed:
+> three by measurement and one by engine arithmetic. "Spend the tank faster" requires targets;
+> targets require finding work elsewhere on the board; finding work elsewhere is exactly R1.**
+> **R2 collapses into R1.**
+
+So the one large lever that did **not** require an architecture change has now been eliminated on its
+own terms, which is the thing the coordinator said would matter. **The remaining requirement is R1
+alone**, and R1 is the one I was told not to touch pending the user's decision — which I am not
+touching.
+
+**HEAD untouched**: `src/alice` remains iteration 43.
