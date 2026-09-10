@@ -21817,3 +21817,57 @@ the same measured reason, and neither needs building.**
 sample allows, and its answer refuted the hypothesis I would have preferred. **The plateau's loop is
 still a loop with a free entry point — but this entry point has a time constant longer than the
 game's decision window, and that is now measured rather than argued.**
+
+# THE DECISIVE-WINDOW BOTTLENECK, located — discovery is flat at 1.6 ruins while 8–24 exist
+
+Count is closed as I framed it, so the question returns to what limits tower count **inside** the
+window that decides 79–81% of games. Answered from frames already on disk. **Zero games, no VM.**
+Every team starts with exactly 2 towers, so `built = towers − 2`.
+
+| round | mean built | **mean bare ruins VISIBLE to the team** | mean bare ruins ON MAP | share seen |
+|---|---|---|---|---|
+| r100 | 2.75 | **1.62** | 15.75 | **10.3%** |
+| r200 | 5.06 | **1.56** | 11.12 | 14.0% |
+| r300 | 6.88 | **1.56** | 7.50 | 20.8% |
+
+> **The visible count is FLAT at ~1.6 across the entire decisive window** while the on-map stock falls
+> from 15.75 to 7.50 and towers built rises from 2.75 to 6.88. Alice holds a steady working set of
+> about one and a half ruins: it finds one, builds it, finds another. **Discovery is the rate limiter,
+> and its rate does not depend on how many ruins exist.**
+
+That last clause is the whole finding. A supply-limited process would show *visible* rising with
+*on-map*. It does not — 15.75 available or 7.50 available, alice sees 1.6 either way.
+
+## Two regimes, and only one of them has any lever in it
+
+- **Exhausted** — Justice, Racetrack, Gears: **0 bare ruins remain** by r200–300. Alice has built
+  everything there is. No discovery mechanism can help; these maps are already at their ceiling.
+- **Starved** — maze, mit: **22–24 ruins on the map, 0–3 visible, 2–6 built by r300.**
+- **Rich** — DonkeyKong: 8 visible at r300 and 19 built, approaching the 25-tower cap.
+
+**Any future lever must be scored on the starved regime specifically.** Pooling it with the exhausted
+maps averages a lever's effect against maps where the ceiling is already reached and reports it as
+weak — the same corpus-mean error that hid the prosperity-gating, in its third costume.
+
+## What this does and does not license
+
+**Does:** it locates the defect precisely, in the phase that matters, in the units that matter. Every
+mechanism this session tested acts somewhere else — memory on tiles never seen, spacing bounded at
++4pp of *tiles*, local gradient at 0.95x random, tower mix on a 4.2-tower base too late to matter.
+**None of them raise early ruin discovery, which is the quantity that is flat.**
+
+**Does not:** license a mechanism. Census before mechanism is this lineage's stated failure mode
+(iterations 44–47: four mechanisms proposed without a located defect, four rejects). The defect is now
+located; the mechanism is a separate question and it needs its own pre-check with bars first.
+
+> **Registered for whoever runs it next — requirement I, and the bar is set here, before anything is
+> built:** terminal quantity **mean bare ruins VISIBLE to the team, averaged over r1–300, on the
+> STARVED maps only**. Incumbent measures **1.56**. **PASS ≥ 2.4 (+50%). KILL < 1.9.** A null arm on
+> the identical map subset is required because the starved subset is small and its own noise floor is
+> unmeasured. And the reachability question to answer *first*, before any arm: **is there any
+> mechanism whose denominator is non-trivial in r1–300?** — the window holds ~4 towers and ~9 mobile
+> units, and both the prosperity-gating and the time-constant failures of E2 were failures of exactly
+> that denominator.
+
+**Session tally: five directions closed, one re-opened and re-closed, one arm built and rejected on
+its bar — all with `src/alice` unchanged since iteration 43, and the defect finally located.**
