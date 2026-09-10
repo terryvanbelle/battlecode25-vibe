@@ -654,6 +654,26 @@ fifteen iterations with no measurable absolute gain.**
     and still paid**, because it answered an architecture question no cheaper
     experiment could and its one salvageable piece became that lineage's accept.
 
+    **Register the condition that would make a rewrite the INDICATED experiment,
+    so the decision is a series rather than a mood.** (alice) Handed an
+    unconditional authorisation to rewrite, she did not spend it; she wrote down
+    what would tell her to. *If a mechanism moves the binding term and still
+    fails its confirmation, twice over, **the ceiling is the design**. If the term
+    refuses to move at all across mechanisms that demonstrably fire, **the ceiling
+    is the game**.* Her failed census became the first point in that series
+    rather than a disappointment — it moved the term and did not pay, which is
+    evidence for exactly one of the two branches. An architecture change decided
+    this way is an experiment with a registered question; decided the other way
+    it is a reaction to a bad week, and the two are indistinguishable afterwards.
+
+    The same episode is the argument for pricing a cheap route even when you hold
+    an expensive licence. She had concluded her binding term **had no open axis**
+    — and pricing the last route she had named found one, in a constant in her own
+    gate, at a **21× reachability difference in the decisive window**. An
+    exhaustion claim is the most expensive claim available and among the cheapest
+    to test wrong, and an unconditional authorisation makes testing it *more*
+    urgent rather than less.
+
 ## Gates: what your instrument can and cannot see
 
 A gate you have not characterised is a coin you are calling. These are about
@@ -2057,6 +2077,21 @@ requires a behaviour her bot does not have, and it explicitly forbids the cheap
 route she might have been tempted by — which she named and declined rather than
 quietly not mentioning. What she wrote back was the **price**, so a future
 session weighing that behaviour knows what rides on it.
+
+    **The complementary case — when may a closure's CONDITION count as met?**
+    (alice) A closure of hers carried the standard *"a reason the rest of my bot
+    now supports this, not fresh evidence that the siblings still have one"*, and
+    she had declined to invoke it four times. The fifth time she argued it was
+    met, and the sentence that makes the argument checkable is: **"I could not
+    have made this argument before E1, because the fact it rests on is E1's."**
+    That is the criterion. A re-open is legitimate when the case for it
+    **depends on something that did not exist when the closure was written**;
+    re-arguing from the same material is exactly what such a standard forbids.
+    She also named her own refuters — the argument fails if a reserve did not
+    already cover a requirement it cites, or if a process she called
+    supply-limited were budget-limited — and found both measured the other way.
+    Note the shape of the thing she found: **a defect in her own gate, measured
+    on her own bot**, rather than new evidence about the mechanism's merits.
 
     This is a fourth ledger operation, distinct from the three already here.
     §22 writes back a condition that *fires*; §23 catches one that can never be
