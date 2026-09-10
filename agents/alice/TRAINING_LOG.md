@@ -24238,3 +24238,86 @@ invisible in the saturation table because saturation is not what is wrong with i
 > It has one historical run, so no trajectory. **Flagged as a rung to watch across runs, not as a
 > finding** — if it persists over several roster runs it becomes real, and that is exactly what a
 > rung's long-run trend is for.
+
+# STARTING — and my own survey argues for a NARROWER form than the authorisation permits
+
+**The reason I gave for holding was haste in framing. The framing is committed, so that reason is
+spent, and holding now would be avoidance dressed as discipline.** Starting.
+
+**But the survey I just wrote argues against a from-scratch rewrite, and I would rather say so than
+spend an authorisation on its broadest reading.** Section 1 lists **five measured properties a rewrite
+must preserve** — the engine-trap guards (0 of 12,409), ballistic movement, symmetric tie-breaks, the
+bytecode headroom, and expansion-first at 81%. **A from-scratch bot discards all five and has to
+re-derive them at full price to fix a defect none of them causes.** And section 2 localises the four
+surviving premises to **one site**: the tower's spawn decision and the refill beside it.
+
+> **So the form is a coordinated change to the unit economy adopting all four premises at once — not
+> a new bot.** The authorisation is for a rewrite; I am taking the narrower reading **because my own
+> survey says the broader one destroys measured value**, and recording that as the reason.
+
+## The composition, and why it is the whole point
+
+The four premises are not independently choosable — that was the survey's finding — and here is the
+mechanism by which they compose:
+
+> **Spawning fewer units means towers stop draining themselves, so tower paint stays high — which is
+> exactly the constraint that capped splashers at 29% early and 0% after r1200, and the constraint
+> that made refills unreachable at 2.61% adjacency.** A→C and A→D. **Adopting A alone shrinks the
+> army; adopting C or D alone reproduces K8 and K3, both closed. Together, A pays for C and D.**
+
+**One site, three constants, self-calibrating in the form of iterations 5/25/28:**
+- **no moppers** — `want` starts at SOLDIER, never MOPPER;
+- **~30% splashers**, chosen on the tower's own paint rather than on a chip threshold (the chip gate
+  is a member of the class I closed this morning — it opens exactly when the paint is gone);
+- **a retained reserve** — a tower does not spawn unless it keeps `RESERVE_MARGIN` paint after the
+  purchase, which is what both slows spawning and funds refills.
+
+**Stage 1 is 6 probe games and a stage-1 failure is an ABORT, not a rejection**, exactly as registered.
+
+# THE 3.8x DISCREPANCY RESOLVES — different populations, both figures right, and the ERROR IS MINE
+
+**Not the spawned-vs-alive confusion.** Both figures are `+spl / (+sold + +mop + +spl)` — the same
+quantity. The same bot, three opponents:
+
+| population | alice's spawned splasher share |
+|---|---|
+| **vs carol** (21 maps) | **12.8%** |
+| vs bob (21 maps) | **35.0%** |
+| **vs iter43** (the 3 probe maps) | **42.6%** |
+
+> **The splasher gate is on CHIPS, and chip accumulation depends on how the game goes — so the share
+> is strongly opponent-dependent.** Both numbers are correct for their population. **No instrument is
+> broken.**
+
+## The error, which is worse than an instrument fault because it invalidates a test rather than a number
+
+> **I derived stage-1 targets from the alice-vs-carol corpus and then measured them on the
+> alice-vs-iter43 probe maps.** The control on those maps already runs **42.6% splashers and 27.39
+> paint actions per unit** — it *already exceeds* the ">25% splashers" and ">14 acts/unit" targets I
+> set for the arm. **The targets were satisfied by the thing they were meant to discriminate against.**
+
+**The premises are NOT invalidated.** They are derived against carol, which is the matchup that
+defines the deficit, and there alice really does run 12.8% against carol's 32.3%. **What is
+invalidated is the measurement population for stage 1**, and with it the meaning of the numbers I
+reported an hour ago.
+
+**The abort still stands** — on *relative* targets the arm is worse than its control on three of four
+(units 34.74 v 12.82, splasher 0.85% v 42.6%, acts/unit 5.64 v 27.39). **A build that moves every
+axis the wrong way fails against any baseline.** But it failed for reasons I cannot yet attribute,
+because the population could not have shown a pass.
+
+## Amended before the second attempt, with no outcome in view
+
+> **1. Stage-1 targets become RELATIVE to the control on the SAME maps, never absolute values
+> imported from another population.** *arm units alive < control; arm mopper share < 5%; arm splasher
+> share > control; arm acts/unit > control.*
+> **2. Stage 1 moves off the identity maps.** DefaultSmall / Gears / mit were chosen to verify
+> identity, not to contain the deficit — and on them the control already outperforms carol. **Stage 1
+> will be measured on maps from the frozen stalled subpopulation** (Barcode, Brat, Bunny, Castle,
+> DefaultHuge, DefaultLarge, Dominoes), against `alice_iter43` for reproducibility.
+> **3. Identity verification stays on the original three**, because that is what those maps are for.
+
+**The salvage banks regardless:** premise B fired at **0.0% mopper share**, and that is the premise
+whose corpus dose was blocked by substitution and which is testable only inside this context.
+
+**Budget: one stage-1 attempt remains. It will be spent on a population that can register a pass.**
