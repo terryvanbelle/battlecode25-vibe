@@ -21279,3 +21279,88 @@ as C's successor with the bar set first:
 > shared map is stale on arrival.
 
 **Cost of this iteration: zero games. Two directions closed on measurement, one re-opened on it.**
+
+# THE MESSAGING SUCCESSOR — RUN, and KILLED. The channel cannot carry the payload it was re-opened for
+
+Registered last entry, bars first; run here. **Zero games.** Tool: `tools/d1-delivery.py`.
+Every condition evaluated **jointly** — same soldier, same instant, blind/sighted AND within r²≤20
+of an ally tower AND connected to it by a 4-adjacent ally-paint path. Never P(range) × P(payload):
+that is the rule this lineage's own 2.3x overestimate established.
+
+**The engine clause that decides it** (`RULES.md`, verified): robot↔tower only, never robot↔robot;
+**r²≤20 AND connected by a 4-adjacent ALLY PAINT path** (`GameWorld.connectedByPaint`). Declared
+generous bias: robot-occupied tiles are counted **as** ally paint (occlusion hides the paint under
+them), so every figure below is an **upper bound** on what the engine would allow.
+
+## Stage 1 — delivery. Registered PASS ≥50% / KILL <25%
+
+| population | r²≤20 | **AND paint-connected (joint)** |
+|---|---|---|
+| **BLIND soldiers — receive side** (n=1,475) | 51.8% | **49.9%** |
+| SIGHTED soldiers — report side (n=383) | 36.8% | 34.7% |
+| soldiers seeing a bare ruin (n=260) | 38.1% | 35.4% |
+
+> **49.9% against a 50% bar. Registered verdict: BETWEEN — "dose it, never rebuild for it."**
+
+I am not rounding 49.9 up to the bar I wrote. It misses by 0.1pp, and it is an **upper bound**, so
+the true figure is below it. The receive side is genuinely the easy half — a blind soldier sits in
+36.48/69 tiles of its own paint, which is exactly why it is connected and exactly why it is blind.
+
+## Stage 2 — aggregation. Registered ≥3 distinct reporters per tower per 100 rounds
+
+Measured **13.4 reporter-turns per tower per 100 rounds** — a PASS, but against the wrong quantity.
+Reporter-*turns* was chosen as the proxy because it cannot understate; the registered quantity was
+**distinct** reporters, and a soldier crossing the r≤4.47 message disc ballistically occupies it for
+7–9 turns:
+
+| dwell | distinct reporters / tower / 100 rounds | vs bar ≥3 |
+|---|---|---|
+| 5 turns | 2.7 | **fails** |
+| 7 turns | 1.9 | **fails** |
+| 9 turns | 1.5 | **fails** |
+
+> **Stage 2 FAILS at every plausible dwell.** And **90.6% of tower-frames have ZERO connected
+> reporter** — at any given instant, nine towers in ten have nobody in range with anything to say.
+
+Correcting the proxy **deflates a pass**. By the rule established two entries ago — *a genuine fix
+moves a result toward the null, and a fix that moves it toward what you wanted deserves suspicion* —
+that is the direction that makes this correction credible, and I am applying it against myself.
+
+## The structural finding — why this was never a tuning problem
+
+The paint-path clause means **every report must originate inside painted territory**. Painted
+territory is, by definition, the explored part. So the channel selects its reporters *against* the
+information it exists to carry:
+
+| | mean EMPTY tiles seen | mean bare ruins seen |
+|---|---|---|
+| sighted soldiers that **CAN** report (n=133) | **8.79** | 0.376 |
+| sighted soldiers that **CANNOT** (n=250) | **11.70** (1.33x) | 0.460 |
+| ruin-seers that **CAN** report (n=92) | **3.85** | 1.000 |
+| ruin-seers that **CANNOT** (n=168) | **9.54 (2.48x)** | 1.054 |
+
+> **The soldiers who can reach a tower are the ones with the least to say.** A soldier that has found
+> real unexplored map is 2.48x richer in empty tiles *and* cut off, because getting there meant
+> leaving the paint component that the channel runs on.
+
+**This is a fact about BC25, not about alice.** Tower→tower broadcast is r²≤80 with *no* paint
+requirement — the backbone is free — but a tower cannot see anything worth broadcasting (engine: min
+pairwise ruin d²=25 > vision 20, so a tower cannot even see another ruin). Free backbone, no
+collection.
+
+## Verdict and the new re-open condition, written as a testable sentence
+
+**KILLED.** Stage 2 fails outright and stage 1 is BETWEEN on an upper bound. The re-open I made was
+legitimate — the payload had a measured referent — and it closes again on a *different and sharper*
+reason than the first closure. Recorded, per my own rule, so the next re-open costs a grep:
+
+> **Re-open messaging if EITHER: (a) a mechanism keeps a frontier soldier inside the ally-paint
+> component while it explores — a deliberate paint trail is the obvious candidate, and it is
+> dosable — such that connected sighted soldiers exceed 60% (from 34.7%); OR (b) tower-frames with
+> zero connected reporter fall below 50% (from 90.6%).** Either would have to be built and measured
+> first; **neither is a change to messaging, both are changes to something else that would make
+> messaging work** — which is the same shape as the last closure and worth noticing as a pattern.
+
+**Running tally, all for zero games:** A dead where the deficit is worst, B passed its gate and is
+ceiling-bounded at +4pp, C-local at 0.95x random, and now the communication route killed on
+structure. **Four routes, four measured closures, no bot code changed and no budget spent.**
