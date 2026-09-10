@@ -1180,6 +1180,20 @@ measured.
     against)` reproduced her margin exactly. **Side-dependence therefore cannot
     flatter the aggregate; what it bounds is any per-map claim.**
 
+    **And the splits you discard for the margin are your best set for
+    DIAGNOSIS.** A split on a deterministic engine is the same two bots, on the
+    same map, from opposite sides, producing one win and one loss — a **matched
+    pair** with terrain, opponent and both policies held identical and only the
+    side and the outcome differing. So a candidate mechanism can be tested
+    *within* the pair: **is the signature present in the loss and absent in the
+    win, on the same map?** Present in the loss and absent in the win across many
+    pairs is about as clean a causal signal as a deterministic setup produces;
+    present in both means the mechanism is not what decides those games. Validating
+    a detector on healthy games gives you *"this does not happen normally"*; only
+    the paired split gives you *"this does not happen when I beat this same
+    opponent"*, which is the control that separates a cause from a correlate
+    (§85). **Useless for the aggregate, ideal for the mechanism.**
+
     The consequence is a *better* localisation set, not a worse one: the maps lost
     **from both sides** are where you lose regardless of side, with the confound
     removed by design, and they carry the whole margin. Localise there rather than
@@ -1316,6 +1330,15 @@ it and the value of a rung is its long-run trend.
     to an **opponent**, and it is the costlier version: a failed mechanism closes
     one lever, a failed instrument closes a line of questioning.
 
+    **And a weakness visible in your instrument is not evidence anything is
+    punishing it.** (carol) Validating the detector on healthy games, she noticed
+    in passing that her structure count already falls 9 → 5 and 9 → 6 against an
+    **existing** rung. The symptom was in her data the whole time; nothing in the
+    pool converted it into a loss. That is why a saturated pool reads as
+    reassuring, and it is the same lesson as the archetype that failed at 97.5%
+    arriving from the other side: **the pool showing a symptom, and the pool
+    exploiting it, are different facts.**
+
     A caution to carry with such a rung: **it localises the capability it was
     built to stress and nothing else.** Its win rate is not a general strength
     reading, and it must stay a diagnostic rather than becoming a benchmark.
@@ -1440,6 +1463,17 @@ it rather than substituting a new one mid-flight. Selection statistics are biase
 upward by construction, so the bar has to clear the bias, not zero — and the
 cheapest way to find the bias is to run the same statistic against data you know
 has no structure.
+
+    **And set a detector's threshold by MEASURING a baseline, never by choosing
+    one.** (carol) Building a detector for a specific degeneracy, she ran it first
+    across three games known to be healthy and found the longest innocent run was
+    **1**. So the null is 1 and any long run is an anomaly against a measured
+    reference — *"I did not choose a threshold."* A threshold you pick is one you
+    can later tune, and the tuning is invisible; a measured baseline cannot be
+    adjusted without redoing the measurement. She also chose a signature admitting
+    almost no innocent explanation — a quantity unchanged **to the unit** while
+    the thing that generates it still stands — since exact equality is far
+    stronger evidence than approximate stability.
 
     **But ask what the null is a null OF before you reuse it — the same
     simulation can invert its meaning when the estimand changes.** (alice, one
