@@ -23111,3 +23111,77 @@ benchmark bot, which is forbidden and is the whole reason the yardstick stays cl
 
 No mechanism is proposed here, and no axis is manufactured. This is an accounting, and it is the
 first one under the new objective.
+
+# BUILDING A RUNG I CAN LOSE TO — `carol_siege`. PRE-REGISTERED before the run returns.
+
+The instrumentation gap named in the decomposition rebuild: **carol beats every roster rung in every
+bucket (lowest cell 51.6%), so the roster measures improvement and can never locate a failure.** The
+sanctioned fix is synthetic archetypes built from first principles against **capabilities the roster
+cannot test** — not a reconstruction of any external bot, which stays forbidden.
+
+## The capability, found in my own trace rather than guessed
+
+`carol_decap`'s header records a **measured** degeneracy: when carol's last MONEY tower dies, team
+chip income goes to zero, the treasury freezes and unit production stops **permanently** — 1,887,
+1,881 and 44 consecutive frozen rounds across three games. And my own iteration-10 note records why
+nothing exploits it:
+
+> *"Soldiers cannot kill towers: a lv1 tower needs 20 uninterrupted soldier hits while every tower
+> returns 20+10 damage for free. A splasher needs 10 hits and can stand outside the tower's range.
+> Carol's own defensive strength — the tower mass nothing in the pool can break — has a counter she
+> has never built."*
+
+`carol_decap` was built for this and **failed as an instrument at 39/40 = 97.5%**, because it hunted
+towers with *soldiers* and never massed them. The capability was correctly identified and wrongly
+implemented, and then left alone for seventy iterations.
+
+**Re-verified from the engine before building on it** (the rule I wrote three hours ago after a
+recorded number turned out to have no method attached):
+
+| | value | source |
+|---|---|---|
+| `SPLASHER.aoeAttackStrength` | **100** | `engine-javap` |
+| `LEVEL_ONE_MONEY_TOWER.health` | **1,000** | so **10 splasher hits kill one** |
+| `SPLASHER.actionRadiusSquared` | **4** | centre placeable at distance 2, AoE reaches 2 beyond -> strike from **distance 4** |
+| `LEVEL_ONE_MONEY_TOWER.actionRadiusSquared` | **9** | the tower answers only to **distance 3** |
+| `SPLASHER.attackCost` / `paintCapacity` | 50 / 300 | 6 splashes per tank; ~2 tanks per tower |
+
+> **The splasher out-ranges the thing it kills.** That is an engine fact, it is carol's own
+> published counter, and **nothing in my roster does it.**
+
+## `carol_siege` — one capability added to my strongest bot
+
+Forked from `src/carol` (= `carol_iter45`, HEAD), package renamed, `BUILD = "siege"`. Two coupled
+edits, both inside `runSplasher`, because this is an **instrument and not an experiment** — no
+attribution is needed from it, only difficulty:
+
+1. **Scoring**: an enemy tower inside the AoE scores **+100 (money) / +60 (other)**, outweighing any
+   paint term. Money towers first, because that is the degeneracy with the measured absorbing state.
+2. **Movement**: hold the firing ring. `d > 16` approach; `d <= 9` back off (inside tower reach);
+   `10..16` hold and fire. Tagged `approach` / `backoff` / `ring` in the indicator so the mechanism
+   is visible in every replay.
+
+Forking HEAD rather than writing a minimal bot is deliberate: a weak archetype cannot beat me, and
+`carol_decap` already failed exactly that way. HEAD is frozen and every axis is closed, so the
+staleness objection that normally argues against forking does not apply.
+
+## REGISTERED, before the run returns — run `20260910-165739`, 25 maps, 150 games
+
+`BOT=carol_iter45` against `carol_siege`, `carol_denier` and `carol_conv` — the last two are
+archetypes already in `src/` that were **never placed on the roster**, measured here for free in the
+same run rather than in two more.
+
+| carol's win rate vs the rung | verdict | what it means |
+|---|---|---|
+| **< 50%** | **RUNG ACQUIRED — a failure is localised** | I lose to it, with full replay access, for the first time |
+| 50–85% | **DISCRIMINATING** — add to the roster | it can register a regression |
+| 85–95% | weak rung; add but do not rely on it | |
+| **> 95%** | **FAILED instrument** | `carol_decap` sits here at 97.5% |
+
+**Falsifier, registered:** if `carol_siege` lands **> 95%**, then the tower-siege capability does not
+threaten carol even when handed to my strongest bot, and *"carol's tower mass is unbreakable"* stops
+being an untested assumption and becomes a **measured absolute strength** — which is a stronger
+statement than the roster can make today, and the coordinator's brief says so explicitly.
+
+**I am not claiming a result before the run returns.** Both outcomes are recorded as informative
+above, which is the condition under which this is an instrument rather than a hope.
