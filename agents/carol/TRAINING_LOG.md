@@ -22192,3 +22192,67 @@ must physically touch (`transferPaint` is r²<=2 for every unit type [E]).
 **Registered, not started.** Iteration 59's rewrite worked because it began from a committed survey
 rather than from the context that produced it; this session is that survey. The next session starts
 from here.
+
+# Three pre-rewrite tasks — and task 2 KILLED THE PREMISE for zero games
+
+## 1. The referent control is BUILT (`tools/margin.py`) — third-instance rule applied
+
+Two inverted referents caught, both because the magnitude was absurd (−11.24 sd once), **neither
+because I re-read the code**. The third would land in a plausible range and become a verdict. So the
+guard now lives in the tool rather than in my attention:
+
+- **the candidate must be named explicitly — there is no default**;
+- it is resolved against the run's own `bot.txt` and its opponent set;
+- if the name is neither the run's `BOT` nor an opponent, it **refuses rather than guessing**.
+
+Verified against the exact run I inverted: `--candidate carol_i69_2` returns 99/150, and
+`--candidate carol_iter45` **refuses** ("neither the run BOT nor an opponent") instead of silently
+computing the complement.
+
+It also **names its units** — `wins_minus_losses` and `wins_above_half` printed separately, with a
+note that a cross-run delta is neither — because "margin" spans two quantities differing by a factor
+of two and this project has published a 6.8 sd that was 3.39.
+
+## 2. The enabling primitive, probed — and the rewrite premise DIES here
+
+The premise was *"a bot whose units can operate at range from their towers"*, reachable only through
+**mopper robot-to-robot paint transfer**, the one unit interaction this lineage has never used.
+Confirmed on the pinned jar: `transferPaint(MapLocation, int)` exists, r²<=2 for every unit type,
++10 cooldown, mopper capacity **100**, splasher capacity **300**.
+
+> **A mopper carries ONE THIRD of a splasher's tank.** That ratio is structural and it decides the
+> question before any code is written.
+
+| ferry distance D | delivers | moppers needed to sustain ONE splasher |
+|---|---|---|
+| 8 | 6.25 paint/turn | 1.6 |
+| 12 | 4.17 | 2.4 |
+| 24 (my measured trips run 15–48 turns) | 2.08 | **4.8** |
+
+**Priced against the obvious alternative — just building another splasher:**
+
+| option | cost | gain | per paint |
+|---|---|---|---|
+| **A** ferry: 2 moppers | 200 paint | lift one splasher 60% -> 100% = **+0.40** splasher-units | **0.0020** |
+| **B** one more splasher | 300 paint | operates at 60% = **+0.60** splasher-units | **0.0020** |
+
+**Identical per paint — and the ferry pays DOUBLE the per-turn drain to achieve it.** The premise is
+not merely unattractive; it is dominated by the null action of building one more of the unit I
+already build.
+
+> **REWRITE PREMISE KILLED AT RUNG ONE, ZERO GAMES.** Unused did not mean overlooked; it meant the
+> primitive does not do what I hoped, and the deciding number (100 vs 300 capacity) was readable
+> from the engine before a line of code existed.
+
+## 3. The answer condition — NOT registered, because there is no longer a premise to register
+
+I will not write an answer condition for an experiment whose premise died an hour before it. **A
+rewrite needs a question, and mine has just been refuted.** Registering one anyway would be the
+"licence is not evidence" error I was corrected on this morning, in its most expensive form: the
+authorisation removes an obstacle, it does not supply a premise.
+
+**Where that leaves the board, stated plainly:** the reachable-gain enumeration is empty, twenty axes
+are closed (two at oracle ceilings at or below the bar), and **the one architectural premise the
+measurements pointed at is dominated by the null action.** I have a standing authorisation I am not
+spending, an instrument freshly repaired that can register a regression, and no candidate I can
+honestly price above the bar.
