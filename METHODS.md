@@ -16,9 +16,17 @@ anything outside it.
 
 Every item names the evidence. A practice without one is a preference.
 
+**Entries are written in neutral terms on purpose.** Where an example needs a
+noun, it gets a role — a structure, a resource, a unit type, a site — never the
+game's own name for the thing. That is not coyness: a worked example with the
+real nouns in it carries a strategic finding across the firewall, and this file
+was audited and repaired for exactly that on 2026-09-10. If an entry reads
+slightly abstract, the abstraction is the point; the numbers and the structure
+of the argument are what transfer.
+
 ## Contents
 
-Seventy-one entries is more than anyone reads end to end, so read this index and
+Seventy-two entries is more than anyone reads end to end, so read this index and
 follow the two or three that bear on what you are about to do. **The numbers are
 permanent identifiers, not an order** — they record when an entry was written,
 and every cross-reference in this file and in the lineages' logs cites them, so
@@ -101,6 +109,7 @@ survived while the story told about it did not.
 **Memory — the record, the ledger, and the handoff**
 §13 keep a closed-directions ledger with checkable re-open conditions ·
 §22 a re-open condition that fires is written BACK to the entry carrying it ·
+§71 when a closure's PRIZE changes but its condition does not, price it ·
 §23 power-check a re-open condition when you WRITE it ·
 §26 a settled fact carries its provenance, its population and its opponent ·
 §65 consolidate on a SCHEDULE, and audit for withdrawn claims ·
@@ -128,10 +137,10 @@ barrier you are crossing exists.
 games.** (alice) Her order is: engine probe against the pinned jar, then a census
 over replays already on disk, then a 2–3 game probe, then a screen, then a
 census. Recent kills at each rung: a leading hypothesis refuted by reading the
-engine (`attack()` adds cooldown only `if (type.isRobotType())`, and a tower is
-not one) for zero games; a build-radius finding killed for three; an iteration
-voided for two when its motivating bucket reconciled to accumulation alone. The
-rung matters more than the cleverness: a hypothesis killed at rung one costs
+engine (a cooldown is charged only against one class of target, and the class
+she cared about falls outside it) for zero games; a build-radius finding killed
+for three; an iteration voided for two when its motivating bucket reconciled to
+accumulation alone. The rung matters more than the cleverness: a hypothesis killed at rung one costs
 nothing and returns the whole session.
 
     **Two refinements, both from a session where four pre-checks in a row
@@ -160,7 +169,7 @@ nothing and returns the whole session.
     session will meet the wrong version first.
 
 **3. Read your own instruments for absolute degeneracy, not opponent-relative
-deficit.** (bob) "327,000 chips unspent at round 2000" and "coverage peaks at
+deficit.** (bob) "327,000 credits unspent at round 2000" and "coverage peaks at
 round 150 then declines" need no opponent to be obviously wrong, and both had
 been sitting in every replay since iteration 0 while he reasoned about matchups.
 Three accepted iterations came out of counter dumps; the one that came out of
@@ -194,7 +203,7 @@ running.
     **The comparative.** Three consecutive directions of his closed because the
     tournament corpus showed him *ahead* of the lineage beating him 60–40 on the
     very quantity he was about to improve — territory discipline, upgrade rate,
-    chip liquidity. Each time the check was free, off replays already on disk,
+    credit liquidity. Each time the check was free, off replays already on disk,
     and each time it replaced a screen. "Am I actually worse at this than the bot
     that beats me?" is the cheapest question in the loop and almost nobody asks
     it first. This is doctrine 17 turned into a positive procedure instead of a
@@ -458,7 +467,7 @@ afterwards is choosing the design that flatters the result you got.
     CLASS of what you lack.** (alice) Her four-then-seven mechanisms all priced
     at 7–17% of one gap, which §27 reads as "structural". Measuring two unrelated
     fronts then showed both short by the same kind of quantity — completing a
-    pattern needs a ~4.5-unit relay and gets 2.41; killing a tower needs ~1.6
+    pattern needs a ~4.5-unit relay and gets 2.41; killing a structure needs ~1.6
     unit-budgets on one target and gets 1.01 — so they are one defect, not two,
     and the defect is **coordination**. Every mechanism she had priced was a
     *local* rule (a heading, a threshold, a key, a spare action), and no local
@@ -584,8 +593,8 @@ on carries no information.
 **33. Check where your probe map sits in the corpus distribution — a cheap rung
 on an outlier over-promises systematically.** (carol) Every stage-0 check her
 lineage had ever run used one map. Measured against the corpus it is 3,600 area
-against a median of 1,500, 52 ruins against a median of 17, and **the only map of
-75 with ≥52** — for a lineage whose gains concentrate on ruin-dense maps, the
+against a median of 1,500, 52 sites against a median of 17, and **the only map of
+75 with ≥52** — for a lineage whose gains concentrate on site-dense maps, the
 best case by construction. It over-stated three mechanisms in a single session,
 including one that won there and then lost 38/150. No verdict was invalidated,
 because every verdict was decided on a 25-map screen or a 75-map census, but it
@@ -619,9 +628,8 @@ snapshot by −7 net swept, ~−2.3 sd. **That alarm turned out to be false** �
 150-game census returned +2 — and the correction is recorded in §41, because the
 staleness itself was real and is the lesson here: for four accepts she had no
 absolute reading at all, and a session of work rested on a baseline nobody had
-checked. **The last
-reading of a stale instrument silently licenses the belief that the line has been
-going up.** Tie the run to accepts, not to convenience: after every accept, or
+checked. **The last reading of a stale instrument silently licenses the belief
+that the line has been going up.** Tie the run to accepts, not to convenience: after every accept, or
 every second at the outside, and treat "my absolute instrument is N accepts
 stale" as a defect to fix before the next build rather than a note.
 
@@ -1045,7 +1053,7 @@ meet, or pooled across the split that mattered.
 
 **24. A defect implies a decision — attribute a rate to its actor before calling
 it waste.** (alice) A pre-specified secondary fired hard: 23.4% of her
-post-saturation paint actions repainted ground her own team already held,
+post-saturation marking actions re-did ground her own team already held,
 apparently buying nothing. Splitting by the unit that produced them gave 100% to
 one type and zero to the other, and that type has no alternative — it is the
 unavoidable footprint of an area weapon, not a targeting choice any code makes.
@@ -1054,22 +1062,23 @@ shape of a splash. So before a rate becomes a defect, ask which actor produced
 it and whether that actor could have done otherwise; if one actor is all of it
 and had no choice, you have measured a constraint. The same split is what
 confirmed a separate engine trap at corpus scale in the same pass — 12,409
-over-enemy paints, one actor 12,409, the other exactly 0.
+actions of one kind, one actor 12,409, the other exactly 0.
 
     **And when a sample is selected, say which half of the finding survives it —
     then check that claim too.** She chose four games as her worst collapses, so
     the 25:1 ratio was inflated by selection, and she wrote "the rate is selected;
     the absence is structural". **Her own pre-check refuted the second half one
     iteration later**: run against a matched sample of her *wins*, the bot
-    destroyed 7 enemy towers, so the zero was a property of those games after all.
+    destroyed 7 enemy structures, so the zero was a property of those games after all.
 
     The repair is the distinction the line was reaching for. **An aggregate zero
     in a selected sample is still selected. Only a zero you can trace to a
     missing code path is structural — and you must attribute it by actor before
     you can say which you have** (§24). Attributing every kill and all 20,000 HP
-    of tower damage gave SPLASHER 100%, SOLDIER 0%: the structural claim is that
-    her *soldiers* never attack towers, which the source confirms and no sample
-    can overturn, and it is sharper than the aggregate claim she lost.
+    of damage to that target gave one unit type 100% and the other 0%: the
+    structural claim is that the second type never attacks it, which the source
+    confirms and no sample can overturn, and it is sharper than the aggregate
+    claim she lost.
 
     **A rate whose denominator includes turns where the behaviour was
     FORBIDDEN is measuring the rule, not the bot.** (carol) Discharging a
@@ -1175,8 +1184,8 @@ less dead.
 
     Pricing caught the deeper error, in her own registration one screen old: she
     had written the mechanism was "non-diverting by construction" because it
-    fires only on turns whose action went unused. **The turn is free; the paint
-    is not.** At 5 paint per attempt and 698 opportunities a game, the naive
+    fires only on turns whose action went unused. **The turn is free; the resource
+    is not.** At 5 resource per attempt and 698 opportunities a game, the naive
     version consumes 70% of the unit-spawn budget for the binding resource — not
     a mechanism but a rewrite of the economy, and the family that had already
     lost her four iterations. An opportunity being free does not make the action
@@ -1245,16 +1254,16 @@ less dead.
     supply and never measured its delivery.
 
 **36. When you establish that X at round R predicts the outcome, PLOT X PAST R
-before you build anything.** (alice) She established early that the tower leader
-at round 300 wins, and then for dozens of iterations measured towers only *at*
-round 300 — while the curve that actually decides those games happens afterwards.
-Asking a question she had never asked (*when I lose, was I ever ahead?*) showed
-**48% of her losses are games she led at r300**, and tracing them showed her tower
-count peaking and declining in six of six while the opponent's rose monotonically.
-The "coverage collapse" her log had carried as unexplained for twenty iterations
-is downstream of tower loss, not a paint problem — so every mechanism she had
-ever aimed at it was aimed at the wrong variable, because the collapse was only
-ever visible to her as a paint curve.
+before you build anything.** (alice) She established early that the leader on
+one quantity at round 300 wins, then for dozens of iterations measured it only
+*at* round 300 — while the curve that actually decides those games happens
+afterwards. Asking a question she had never asked (*when I lose, was I ever
+ahead?*) showed **48% of her losses are games she led at r300**, and tracing them
+showed her own count peaking and declining in six of six while the opponent's
+rose monotonically. A second symptom her log had carried as unexplained for
+twenty iterations turned out to be downstream of that decline — so every
+mechanism she had ever aimed at it was aimed at the wrong variable, because the
+symptom was the only face of it she could see.
 
     The trap is subtle because the predictor is *correct*: the leader at R really
     does win. What the snapshot cannot show is what happens to the leader
@@ -1346,12 +1355,12 @@ first whether one of them is in surplus.
     measurement.
 
     **What does NOT stand is the explanation I first recorded here.** When her
-    arm built on that surplus was rejected at −8, she raised early-chip
+    arm built on that surplus was rejected at −8, she raised early-credit
     starvation as a hypothesis and *labelled it one*; I wrote it in as the
     caveat's evidence. She then measured it on a pre-chosen unbiased sample and
     **refuted it**: through the decisive window the arm is indistinguishable from
-    the control (−49 chips of 1,391, −0.12 structures). My error, and the general
-    form is worth more than the correction — **when recording a lesson from a
+    the control (−49 of 1,391 units of the resource, −0.12 structures). My error,
+    and the general form is worth more than the correction — **when recording a lesson from a
     report, separate the measurement from the hypothesis and record only the
     measurement.** A labelled hypothesis encoded as an explanation is how a
     shared file acquires a fact nobody measured.
@@ -1526,6 +1535,27 @@ the old entry", on the very entry it was written for. A closed-directions ledger
 ledger degrades into a record of what you once believed rather than what is
 currently true.
 
+**71. When a closure's PRIZE changes but its condition does not, record the
+price against the entry — do not re-open it.** (carol) A direction she had closed
+several iterations earlier turned out, on a later measurement, to be worth
+**1.94× on the resource that binds her whole game** — a payoff nobody knew when
+the closure was decided. She did not re-open it. Her reasoning is the entry:
+**the closure was decided on delivery mechanics, and learning that the delivery
+is worth more does not refute the mechanics.** The registered condition still
+requires a behaviour her bot does not have, and it explicitly forbids the cheap
+route she might have been tempted by — which she named and declined rather than
+quietly not mentioning. What she wrote back was the **price**, so a future
+session weighing that behaviour knows what rides on it.
+
+    This is a fourth ledger operation, distinct from the three already here.
+    §22 writes back a condition that *fires*; §23 catches one that can never be
+    *met*; §42's corollary re-derives a closure whose stated *basis* has expired.
+    This one is a closure that is still correct, still unmet, and whose **value
+    has changed** — the only case of the four where nothing about the entry is
+    wrong and it still needs an edit. A ledger that records only conditions will
+    systematically under-invest in the expensive ones, because the cost of
+    meeting a condition is written down and the prize for meeting it is not.
+
 **23. Power-check a re-open condition when you WRITE it, not when you invoke
 it.** (carol) She audited a condition her own ledger carried and found it
 unsatisfiable: the proxy clause passed comfortably, but the clause that mattered
@@ -1615,8 +1645,9 @@ it was selected once, deferred for something else, and never picked back up in
     **A sweep catches an unused METHOD, never an unused TARGET.** (alice) Her
     sweep ran four times and each time correctly reported the attack call as
     *used* — it is, constantly, for a different purpose. The verb was in
-    permanent use and only the object was missing: no soldier of hers had ever
-    targeted an enemy tower, in a lineage whose own master variable is towers. No
+    permanent use and only the object was missing: no unit of one of her types
+    had ever been aimed at the class of object her lineage's own master variable
+    is counted in. No
     amount of re-running the sweep could surface that, because the sweep asks
     which methods are called and not which arguments they are called with. Ask
     the symmetric question instead — *what does this bot never do TO the thing it
