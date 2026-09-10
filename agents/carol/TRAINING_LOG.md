@@ -19369,3 +19369,92 @@ candidate must first show, from replays and for zero games, that **converted til
 materially different rates depending on whether they were empty or enemy when converted.** If
 retention does not differ, the scoring weights are not the lever and this whole area is closed for
 good, not merely bracketed.
+
+# The free measurement iteration 66's re-open condition demanded — RUN, and it re-opens the area
+
+I registered: *"Any such candidate must first show, from replays and for zero games, that converted
+tiles are retained at materially different rates depending on whether they were empty or enemy when
+converted. If retention does not differ, the scoring weights are not the lever and this whole area
+is closed for good."*
+
+**Method**: paint-only grids from replays already on disk, at three rounds. Classify each tile carol
+converted between t0 and t1 by what it was at t0 (empty vs enemy), then ask whether it is still
+carol's at t2. Zero games.
+
+**First attempt returned 100% / 100% — and I checked my instrument before believing it.** Over a
+200-round window nothing at all flips back, so the statistic could not separate the hypotheses
+(doctrine 15). Adding a churn check — *our tiles lost per window: 156 / 283 / 126* — showed the
+instrument works and the window was simply too short.
+
+**Result, on the proper horizon, replicated on a disjoint map:**
+
+| map | horizon | empty-converted LOST | enemy-converted LOST | ratio |
+|---|---|---|---|---|
+| Mirage | r400 -> r1900 | 28.3% (n=173) | **75.0%** (n=72) | **2.7x** |
+| Leaf | r300 -> r950 | 2.1% (n=525) | **13.5%** (n=163) | **6.4x** |
+
+**Direction is robust across both maps; magnitude is map-dependent** (Leaf is a game carol won
+crushingly, so little was lost by anyone). Quoting the direction, not a pooled number.
+
+**This causally explains iteration 66's null.** The incumbent's splash score weights **enemy paint
+at 3 and empty ground at 2**, so raising `SPLASH_MIN_SCORE` steered splashers toward enemy-dense
+targets — precisely the tiles that do not stick. The proxy was not merely uncorrelated with the
+outcome; on this axis it points the wrong way.
+
+# Iteration 67 — weight splash scoring by RETENTION. Pre-registered before any game.
+
+## Derivation
+
+The win condition is **my** painted area — ">70% of paintable squares" outright, and the first
+tiebreak is "area painted" [E, RULES.md]. It is **not** a differential. So a converted tile is worth
+**+1 to me regardless of origin**, and its expected value is that times its retention:
+
+| origin | retention (Mirage / Leaf) | expected value |
+|---|---|---|
+| empty | 0.717 / 0.979 | **0.72 – 0.98** |
+| enemy | 0.250 / 0.865 | **0.25 – 0.87** |
+
+So empty is worth **1.1x to 2.9x** enemy. The incumbent weights **enemy 1.5x empty** — wrong by a
+factor of **1.7x to 4.3x**, and wrong in *direction*. (Enemy conversion carries unpriced defensive
+value, since it denies the opponent's own 70% win; that is why the doses bracket rather than jump to
+the extreme.)
+
+## Arms — bracketing the empty:enemy ratio across the derived range
+
+| arm | `W_EMPTY` : `W_ENEMY` | ratio |
+|---|---|---|
+| `carol_iter45` (zero arm) | 2 : 3 | **0.67** |
+| `carol_i67_33` | 3 : 3 | 1.00 |
+| `carol_i67_32` | 3 : 2 | 1.50 |
+| `carol_i67_31` | 3 : 1 | 3.00 |
+
+## Mechanism check — and why it CANNOT be the splash score
+
+**The score is redefined in every arm, so comparing scores across arms is meaningless.** Stating
+that explicitly because I have now twice mistaken one of my own decision proxies for evidence
+(iterations 61 and 66), and here the proxy is not merely a weak predictor — it is not even the same
+quantity between arms.
+
+**Registered manipulation check, measured from paint grids for free:** the **share of carol's newly
+converted tiles that came from EMPTY ground** must rise above the zero arm's. That is an outcome-side
+quantity the bot does not compute, and it is what the re-weighting is *for*.
+
+## Registered falsifier
+
+**If the empty-share of conversions rises and no dose beats the control on the screen, then retention
+differences do not convert into wins** — the whole targeting area closes for good rather than being
+re-dosed, and my expected-value accounting above is wrong somewhere that I will have to name.
+
+## A confound, discharged rather than flagged (doctrine 6)
+
+`SPLASH_MIN_SCORE` stays at 8 while the score scale changes, so the floor sits *relatively lower* in
+arms with a larger `W_EMPTY`. **Iteration 66 measured that axis and found it flat below the
+incumbent** (dose 4 scored exactly 25/50, +0), so a relatively-lower floor lands on a measured
+plateau rather than in unknown territory. The confound exists, its size is measured, and it is
+approximately zero.
+
+## Gate
+
+Fresh 25-map screen at `BOT=carol_iter45`; highest margin reaching **>= 31/50**, ties to the ratio
+nearer the incumbent; then the full 75-map census at **margin >= +26 ACCEPT | +18..+25 REPLICATE |
+<= +17 REJECT**.
