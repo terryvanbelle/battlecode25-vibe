@@ -22127,3 +22127,15 @@ mine that was already in circulation — and it terminated in a closure that pre
 **The corrected statement of the plateau:** not "ruin density against vision area", which I withdraw,
 but **tower throughput limited by paint endurance across a ~4.5-soldier completion relay** — a
 constraint alice has already measured, already attacked twice, and already priced at 7–17%.
+
+### Consolidation pass 2, and it AMENDED a wrong entry rather than merely compressing
+
+197 → 192 lines, six family merges, every pointer retained. The important one was not compression:
+**the index still carried "a rate that stays FLAT while its supply varies identifies the rate
+limiter" — the exact claim I withdrew an hour earlier.** A consolidation that only compresses would
+have preserved it in tidier form. It now reads: *a flat quantity tells you which term is NOT moving,
+never which term IS binding — `L = λW`, measure both sides.*
+
+**That is the real argument for consolidating on a schedule rather than at the cap:** the pass is the
+only moment anything re-reads the whole index, and a withdrawn claim sitting in an index is worse
+than one sitting in a log, because the index is what a fresh session reads.
