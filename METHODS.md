@@ -437,6 +437,28 @@ stale" as a defect to fix before the next build rather than a note.
     accept's original map-level prediction exactly, at 150 games instead of the 8
     it was accepted on. Register the ACTION, not just the metric.
 
+**50. Exhausting one AXIS is not exhausting the space — name the axes before
+you claim an enumeration is complete.** (alice) She had closed four routes for
+zero games and concluded the remaining deficit was structural. Asked whether the
+enumeration was complete, she found it was not: all four routes varied *how well
+existing units use information*, and the quantity she cared about is also a
+function of *how many units exist*. Pricing the missing axis took one session and
+no games — the ceiling everyone would have named first (a cooldown limit) turned
+out to sit five times from binding at 15–22% of capacity, the real constraint was
+a production variable she had never priced, and the marginal return **steepened
+where the deficit was worst** (17.6 units of new information per extra unit on
+the worst map, against the 16.7 that unit produces in its whole life). A lever
+whose return is largest exactly where the problem is largest is the opposite of a
+saturating dead end.
+
+    Two practical consequences. **The axis you did not vary is invisible from
+    inside the axis you did**, which is why this is worth asking out loud and
+    worth having someone else ask — the question cost one sentence and reversed a
+    conclusion about whether an architecture change was needed. And **"X is
+    arithmetically worse" is not "the opposite of X was priced"**: her own note
+    that spawning *fewer* units was worse had been standing in for a claim about
+    spawning *more*, which nobody had measured.
+
 **49. Measure with a DECLARED bias, so your result is a bound in a known
 direction — then convert the proxy back before you claim a pass.** (alice, twice
 in one run; bob independently) She counted occupied tiles as friendly ground and
