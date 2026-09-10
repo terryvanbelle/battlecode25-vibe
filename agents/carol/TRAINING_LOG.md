@@ -22444,3 +22444,42 @@ incidental differences and I would not be able to tell A-fails from something-el
    unit that passes a tower still fills; what is removed is the *dedicated trip*.
 3. **Forward posture**: exploration targets drawn from the half of the map farther from the unit's
    own spawn anchor, instead of uniform-random over the whole map.
+
+## `carol_r2` — STAGE A FAILS, and the answer condition says EXECUTION, not the pair
+
+Probe on `leavemealone` (a mid map, the reachable regime) vs `carol_iter44`. **Measured over a
+common window (r1–700)**, because `carol_r2` won by paint-out at **r709** where the control took
+r1393 — per-1,000-round rates over unequal games are not comparable (doctrine 11 one level up: the
+denominator itself moved).
+
+| at r700 | splashers built | **soldiers built** | **ratio** | splashes | paint acts | coverage |
+|---|---|---|---|---|---|---|
+| `carol_iter45` (control) | **43** | 18 | **0.4 : 1** | **265** | 2,902 | 553m |
+| `carol_r2` | **12** | **63** | **5.2 : 1** | 66 | 1,215 | **691m** |
+
+> **Stage A FAILS.** 12 splashers against the control's 43 — the threshold was >= 90 per 1,000
+> rounds. And the mix is **inverted by 13x**: I built a "splasher-first" spawn that produces
+> **5.2 soldiers per splasher** where the incumbent produces 0.4.
+
+**The cause, and it is my own edit.** Removing `SPLASH_FLOOR` did not only free splashers — it
+**un-gated soldiers**, which it had been holding at 2,250 chips. The soldier fallback fires at 200
+tower paint, towers sit at 200–490, so the fallback consumes the stash *before it can ever reach a
+splasher's 300*. **I re-created, by deletion, the exact race iteration 69 was built to fix.**
+
+**Per the registered answer condition: `A fails -> allocation execution is wrong. The pair is
+untested; salvage is a better scheduler.`** That is the branch, taken as written. The pair has not
+been tested and nothing here speaks to whether it is right.
+
+**And I am NOT reading the probe's win as encouragement.** `carol_r2` reached 70% coverage in half
+the control's time — but it did so as a **soldier-primary** build, which is the architecture
+iteration 59 settled at **−5.71 sd** on the full corpus. One fast win on one map against a weak
+opponent, produced by a mix I did not intend and have already measured as losing, is not evidence
+for the premise. It is evidence that the spawn edit is wrong.
+
+**Budget: session 1 of the registered 2 to reach stage A.** The fix is known and already written —
+iteration 69's hold-for-splasher scheduler, which forces a tower to accumulate to 300 rather than
+spending at 200. That is a bounded change to CHANGE 1 only; CHANGES 2 and 3 stay as built.
+
+**Recorded for the next session so it starts from the diagnosis, not from the code**: stage A's
+threshold is >= 90 splashers/1,000r measured on a common window; the control is 43 per 700 rounds on
+leavemealone; and the failure to fix is a fallback that spends at 200 what must accumulate to 300.
