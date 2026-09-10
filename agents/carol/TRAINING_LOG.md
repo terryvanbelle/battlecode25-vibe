@@ -19570,3 +19570,94 @@ empty-selectivity *without* reducing pressure on enemy paint — and since the s
 ranking over one candidate set, those are the same knob. If a future session wants this area it must
 first show that retention differences survive under a policy that acts on them, which is the
 measurement this iteration proved cannot be taken from control-policy replays.
+
+# THE STALL BREAKS: an externally-measured deficit my self-play instruments cannot see
+
+Six consecutive closures is a stall, so per TRAINING_ALGORITHM I ran the **unused-API sweep** first
+(an unused method is a cheaper source of ideas than an invented one) and then re-examined the
+tournament replays.
+
+## The API sweep — honest output: nothing new with a traced deficit, but one correction I owed
+
+33 of 68 `RobotController` methods are never called by `carol_iter45`. Triaged against my ledger:
+SRP methods (closed, 48–51), `disintegrate` (closed on magnitude), debug/indicator methods (no
+gameplay effect), sensing helpers (not mechanics). Comms (`sendMessage`/`readMessages`/
+`broadcastMessage`) remains unused and still has **no traced deficit or magnitude estimate**, which
+is the bar that killed it before.
+
+**But it caught a factual error I put on the record two iterations ago.** Iteration 65's re-open
+condition asserted *"a splasher cannot see which tiles allies splashed, and carol has no comms — so
+the only reachable proxy is recent ally positions."* That is **false**: `mark`/`removeMark` are
+per-tile ally-visible annotations at 1 paint, no cooldown, r²<=2 — a channel that needs no comms at
+all. The re-open condition stands, but its stated impossibility does not, and a future session
+reading it would have been misled by me. Corrected here rather than left standing.
+
+## The finding: carol degrades monotonically with MAP AREA, against every external opponent
+
+Both tournaments ran **alice at the identical commit `55c8037`**, so this is controlled.
+
+| carol vs | small (<900) | mid (900–1600) | large (>1600) |
+|---|---|---|---|
+| **alice**, `carol_iter45` | **72.7%** (16/22) | 50.0% (32/64) | **26.6%** (17/64) |
+| **bob**, `carol_iter45` | **77.3%** (17/22) | 71.9% (46/64) | **51.6%** (33/64) |
+| alice, `carol_iter44` | 50.0% | 46.9% | **23.4%** |
+
+**Monotone decreasing in area against both opponents, and the gradient PREDATES D3** — iteration 60
+lifted every bucket (+5/+2/+2) without touching the shape. This is a long-standing property of the
+lineage, and it is 64 of the 150 games against each opponent.
+
+**And my self-play census scored large maps at +12 (59.4%).** Both arms are carol, both share the
+weakness, so the margin between them says nothing about it. **This is doctrine 17 in its purest
+form**, and it means my map-level census decompositions have been pointing me at the wrong regime:
+the census said the gain sits on ruin-dense maps, while externally **ruin-dense is where carol is
+weakest** (29.7% vs alice against 56.6% on sparse).
+
+## The mechanism, traced on Gears (55x55 = 3,025 area, r2000 tiebreak loss to alice)
+
+| at r2000 | carol | alice |
+|---|---|---|
+| coverage | **365m** (peaked 480 at r1000, then FELL) | **628m** |
+| towers | **10** | 8 |
+| chips idle | **$27,930** | $600 |
+| tower paint (total / per tower) | 586 / **59** | 2,473 / **309** |
+| soldiers built (last 1,000 rounds) | **307**, of which **264 starved** | 113 |
+| splashers standing | **0** | 0 |
+| unpaint actions | **0** | **2,024** |
+
+**carol has more towers and 46x the chips and still loses the coverage race**, because it converts
+its entire paint income into soldiers that starve — the identical pathology I traced on Mirage. And
+travel scales with area: splasher `HOME` share is **35.5% on Mirage (1,600) and 58.8% on Leaf
+(3,600)**, same build.
+
+## What this does to three of my own closures — and the instrument problem behind them
+
+Iterations 62, 63 and 64 all attacked exactly this pathology, and all three were closed on a
+**self-play** screen. Iteration 64's phase switch fixed it *spectacularly* on Mirage — coverage
+296 -> 705, splashers 0 -> 17, soldiers 331 -> 3, starvation 309 -> ~20 — and then measured
+**28/50, nothing**, on the 25-map self-play screen.
+
+**Doctrine 17 says a self-play instrument is blind to a deficit both arms share, and bob's retired
+ledger has this as a standing BLOCKED entry** (`agents/bob/CLOSED.md` #15: *"evaluate an
+early-coverage mechanism on a self-play gauntlet — BLOCKED — four attempts, four nulls; doctrine 17
+explains all four. RE-OPEN when: an opponent exists that applies the pressure."*). Four of his nulls
+and at least one of mine have the same cause.
+
+**I am not re-opening anything yet.** METHODS item 8 is mine and it binds: *before building against
+a deficit found in the tournament, check that your gauntlet can register it.* So the next step is
+not a candidate — it is an instrument.
+
+## Building the instrument: `bobf`, a frozen external opponent I can run on demand
+
+Per MULTI_AGENT rule 0, bob is retired, his HEAD no longer moves, and he *"becomes a frozen third
+opponent that neither live lineage produced, which is exactly what the frozen-roster and benchmark
+instruments are made of."* His bot (7 files, 783 lines) is copied to `src/bobf/` with the package
+renamed `bob` -> `bobf`, unmodified otherwise. **Source: `agents/bob/src/bob/`, recorded per rule 0.**
+He is **not** a BC25 finals bot — those remain a yardstick I may only read a committed score for.
+
+This is the first opponent in this lineage's history that carol did not produce, runnable on demand
+rather than twice a day.
+
+**Validation launched before any use** (run `20260910-051954`): `carol_iter45` vs `bobf`, full
+75-map corpus, 150 games. It must reproduce the tournament's **96/150 = 64.0%** and its area
+gradient (small 77.3% / mid 71.9% / large 51.6%). **If it does not reproduce, the instrument is not
+faithful and I will not gate anything on it.**
