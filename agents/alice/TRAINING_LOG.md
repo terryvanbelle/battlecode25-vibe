@@ -23051,3 +23051,55 @@ shared by all three tail games *and* most of the other eighteen explains nothing
 > applied to a longer, richer game, and there is nothing to cap.
 > **A weak hit reads as KILL**, not as encouragement: with three games the power to separate a shared
 > trigger from coincidence is genuinely low, so only a large, clean separation counts.
+
+# TAIL PRECONDITION CHECK — KILL, on the registered bar, exactly as predicted
+
+Candidates were committed in `e9b6614` **before** the data was opened. Scored as prevalence-in-tail
+against prevalence-in-rest, 21 games, tail = the three highest mopper counts.
+
+| candidate | tail | rest | ratio |
+|---|---|---|---|
+| **C1 mopper SHARE of spawns** | **0.260** | **0.195** | **1.33x** |
+| C2 total spawns | 674.3 | 84.3 | **8.00x** |
+| C3 frames with tower paint 100–200 | 0.529 | 0.333 | 1.59x |
+| C4 game length | 1,670.7 | 756.6 | 2.21x |
+| C5 mean towers | 14.09 | 4.66 | 3.02x |
+
+> **Registered PASS was C1 > 40%. Measured 26.0% — which IS the intended 25% roll.**
+> **VERDICT: KILL. The tail is VOLUME, not a mopper pathology.**
+> Mopper count = share × volume; **share is 1.33x in the tail while volume is 8.00x.**
+
+**The three tail games are DefaultHuge, DonkeyKong and Circuit — the long, big, many-tower games.**
+They spawn 8x as many of *everything*. The mopper share there (23.4–27.8%) is indistinguishable from
+the design constant.
+
+## What this settles, and it retires my own framing from two entries ago
+
+**Iteration 5's absorbing state is CLOSED BY ITS OWN GUARD, and this is the confirmation.** The
+guard — *"only build a mopper if a soldier was affordable too"* — holds across every game in the
+corpus: realized share 19.5–26% against an intended 25%, with no game showing the ~90% signature
+iteration 5 recorded before the fix. **I proposed capping a runaway that no longer runs away.**
+
+**And the heavy tail I made so much of is just game size.** Two entries ago I wrote that "the
+distribution is what an absorbing state looks like from outside." **It is also what game-size
+variance looks like from outside, and I had no way to tell them apart until I measured the share.**
+A shape is not a mechanism.
+
+## What survives — and it is a DESIGN question, not a bug
+
+The mopper spend is real and unchanged: **~23% of spawns, 100 paint each, zero paint actions ever.**
+But it is the constant `rnd(4) == 0` doing exactly what it says, not a pathology. So the live
+question is whether **25% is the right number** — which is a dose on a design constant, and a
+different direction from the one I killed.
+
+> **Registered before any dose — the pre-check the mopper share has never had:** moppers exist to
+> clear enemy paint, and iteration 23 already removed the defect they were compensating for (soldiers
+> stalling on enemy-painted pattern tiles). So: **measure what a mopper accomplishes.** Unpaint
+> actions per mopper-lifetime, and — the load-bearing half — **the fraction of mopped tiles that a
+> soldier subsequently paints.** A mopped tile is EMPTY, not ours; mopping is an *enabler*, and if
+> the tile is never claimed the paint that bought the mopper bought nothing.
+> **PASS to dose if < 40% of mopped tiles are subsequently claimed. KILL if > 70%** — then moppers
+> are doing real work and the 25% is earned.
+
+**Zero games spent. Two directions closed today on measurement — K7 on magnitude and the mopper
+runaway on its registered bar — and the survivor is now a sharply posed question rather than a hunch.**
