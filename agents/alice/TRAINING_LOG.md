@@ -22340,3 +22340,19 @@ the commit message. The log entry above is intact because heredocs here are quot
 is the only reason the evidence survived. **Commit messages must avoid backticks and `$`, or use a
 quoted heredoc like the log entries do.** Third quoting failure today after two pipeline-exit-status
 ones — and the pattern is the same: *the shell evaluates what I meant as text.*
+
+### K3 identity and manipulation checks — both PASSED, and mit is no longer inert
+
+**Identity, against the same pre-stated values as E2:** `alice_k3ctl` vs `alice_iter43` had to return
+**926 / 1693 / 792**. It returned **926 / 1693 / 792 exactly.** The control is the incumbent.
+
+**Manipulation:** `alice_k3` returns **534 / 1869 / 1096** against those. All three diverge, and
+DefaultSmall is won **392 rounds faster**. Notably **mit moved (792 → 1096)** — E2 could not fire on
+mit at all, because its lever needed towers alice never builds there. This lever needs only a unit
+standing beside a tower, which happens everywhere. **The prosperity-gating that killed E2 does not
+apply to this mechanism**, and that was checkable before the screen rather than after.
+
+Screen launched: `gauntlet/20260910-114230/`, arm and null in one batch on a shared 25-map sample.
+`tools/e2-gate.py` now takes the arm/null package names as arguments, so the same gate — thresholds
+and **branch order** — serves later iterations without being re-typed. Regression-checked against
+E2's finished run: still REJECT −8.

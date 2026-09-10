@@ -28,6 +28,11 @@ import sys, collections
 
 def main():
     path = sys.argv[1] if len(sys.argv) > 1 else "results.txt"
+    # arm/null package names are arguments so the same gate serves later
+    # iterations unchanged -- the thresholds and the branch ORDER are the
+    # part that must not be re-typed per experiment.
+    ARM  = sys.argv[2] if len(sys.argv) > 2 else "alice_e2"
+    NULL = sys.argv[3] if len(sys.argv) > 3 else "alice_e2null"
     games = []
     complete = False
     for ln in open(path):
@@ -62,7 +67,7 @@ def main():
         print("\nPARTIAL RUN -- no verdict. The gate is applied only to a finished screen.")
         return 0
 
-    arm = nets.get("alice_e2"); null = nets.get("alice_e2null")
+    arm = nets.get(ARM); null = nets.get(NULL)
     if arm is None or null is None:
         print("\n!! missing an arm -- cannot apply the gate"); return 1
 
@@ -85,7 +90,7 @@ def main():
     print("\n=== per-map table (arm vs control) -- read it even on a reject ===")
     print(f"  {'map':<20}{'arm wins':>10}{'of':>4}")
     per = collections.defaultdict(lambda: [0, 0])
-    for g in by["alice_e2"]:
+    for g in by[ARM]:
         per[g['map']][1] += 1
         if not g['ctl_won']: per[g['map']][0] += 1
     for mp in sorted(per, key=lambda m: (-per[m][0], m)):
