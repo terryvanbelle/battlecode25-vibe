@@ -22533,3 +22533,60 @@ never been correctly implemented — first it inverted the mix by deletion, now 
 direction has never been tested**, and it is the direction that suppresses the soldier fallback
 further. If stage A does not pass on that, the budget is spent and I abort and report per the
 registered condition.
+
+# SATURATION CHECK — and it kills session 2's plan before it is spent
+
+**The knob is NOT saturated**, which is itself worth knowing: I had inferred from the galaxy trace
+(max 1,800 against a 2,250 gate) that soldiers could not be built at all, yet carol builds 6 per 500
+rounds. Measured properly on `leavemealone`, 59 frames:
+
+| chips >= | frames | |
+|---|---|---|
+| 1,600 (splasher gate) | **49.2%** | |
+| 2,000 | 23.7% | |
+| **2,250 (soldier gate today)** | **6.8%** | this is how soldiers get built |
+| 2,400 | 1.7% | `SPLASH_FLOOR` = 2150 |
+| 2,600 | **0.0%** | `SPLASH_FLOOR` = 2350 — soldiers banned |
+
+**So there is a real dose response, and I could have picked a value rather than guessed one.**
+
+**But the oracle kills it anyway.** Take the strongest possible dose — ban soldiers entirely:
+
+> It frees **6 soldiers per 500 rounds = 1,200 paint and 1,500 chips**, which at 300 paint / 400
+> chips per splasher buys **at most 3 extra splashers**. That is **33 per 500 rounds against stage
+> A's threshold of 45.** **The knob cannot reach stage A even played perfectly.**
+
+**Session 2's plan is refuted for zero games, before it was spent.** The check cost one dump and
+saved the last session of the budget.
+
+# ABORT — declared on evidence, one session early
+
+My registered condition: *two sessions to reach stage A; if it is not passing at the end of the
+second, stop and report.* **I am aborting at the end of session 1**, because the only remaining plan
+for stage A has just been priced below its own threshold under an oracle. Spending the session
+anyway would be running an experiment I have already refuted — the same error as running a census
+whose purpose has evaporated.
+
+**What the rewrite established, which is not nothing:**
+
+1. **CHANGE 1's premise is refuted** — `SPLASH_FLOOR` protects splasher production rather than
+   capping it. A constraint that appears to cap a quantity can be the only thing sustaining it.
+2. **Stage A is unreachable through the spawn gates** — the oracle above bounds it at 33 vs 45.
+3. **The pair was never tested**, and I am recording that plainly rather than reporting a verdict on
+   it. The four-way answer condition says A-fails means execution/premise, not pair — and it was
+   right to insist on the distinction, because I would otherwise have filed "forward attrition
+   fails" as a result when nothing about it was measured.
+4. **`carol_r2` won every probe game it played, fast** — and I refused that reading twice, because
+   the coverage came from a soldier-primary mix already settled at −5.71 sd.
+
+# HARVEST — the registered salvage, and it has never actually been tested
+
+The salvage I named in advance was **forward targeting**, on the grounds that it was the only piece
+neither half's prior test covered. That is now doubly true: the coupling enumeration showed
+**CHANGE 3 was silently defeated** by `runSoldier` overwriting `explore` with the nearest visible
+empty tile — so forward targeting has never run even inside `carol_r2`.
+
+**Harvesting it as a standalone mechanism on the incumbent**: `carol_iter45` + the anchor-relative
+explore target + the guard that stops a frontier target being accepted when it lies backward. Two
+changes, one variable, no production or logistics change — and it addresses the 49%-vs-90% coverage
+gap directly, which is the largest structural asymmetry I have measured.
