@@ -405,6 +405,24 @@ the collapse at adjacency, not at the dose she was about to change. The re-dose
 would have spent a build and six games moving a mechanism from dead to slightly
 less dead.
 
+    **Run the funnel BEFORE the build when the mechanism has that shape, and
+    price the RESOURCE rather than the opportunity.** She later recognised a new
+    direction as the same animal — a unit with a capability that must be *next
+    to* something on a turn it has nothing else to do — and reordered her own
+    registered plan to put the funnel first, which is the order that would have
+    saved the earlier lever. The funnel then passed narrowly (2.23% against a
+    2.00% bar set beforehand) and she recorded the margin, not just the verdict.
+
+    Pricing caught the deeper error, in her own registration one screen old: she
+    had written the mechanism was "non-diverting by construction" because it
+    fires only on turns whose action went unused. **The turn is free; the paint
+    is not.** At 5 paint per attempt and 698 opportunities a game, the naive
+    version consumes 70% of the unit-spawn budget for the binding resource — not
+    a mechanism but a rewrite of the economy, and the family that had already
+    lost her four iterations. An opportunity being free does not make the action
+    free: price every resource it consumes against the binding budget, not only
+    the one it obviously spends.
+
     Three properties make it a rule rather than a story. It **validates itself**:
     the funnel predicted 1.2% firing against ~1% observed in an ablation, so the
     instrument is checkable against something already measured. The
