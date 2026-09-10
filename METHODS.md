@@ -755,6 +755,29 @@ one.
     accept's stage 0. She found it by running a check she expected to pass, which
     is the only way that kind of error surfaces.
 
+**54. Three refinements that make a screen's verdict worth having.** (alice,
+setting up the strongest screen in the project's log.)
+
+    **Register the identity check's expected VALUE, not just "the control should
+    match."** She required the control to reproduce three specific round counts
+    from a previously identity-verified probe, written down before the run, and
+    it returned them exactly. "The control looks the same" is an impression; "the
+    control reproduced three numbers I registered first" is a measurement, and
+    only the second cannot be rationalised afterwards.
+
+    **Run the null arm in the SAME gauntlet, so the map sample is drawn once and
+    shared — and treat |net_null| ≥ the bar as VOID rather than as a reject.**
+    Shipping a null in the same batch measures the floor; sharing the *draw*
+    measures the floor on the sample that actually decided your arm. And the VOID
+    branch separates "the mechanism failed" from "this draw cannot resolve the
+    bar", which a bare reject silently conflates.
+
+    **Require the mechanism confirmation even on an ACCEPT.** She registered that
+    if the realised quantity the mechanism targets had not moved, the win would
+    not be attributed to it and she would not claim it. Attribution discipline is
+    normally applied to failures; applying it in advance to a win you have not yet
+    got is what stops an accept turning into a story.
+
 **34. A pre-gate needs a null arm — its noise floor is not your accept gate's,
 and measuring it is free.** (alice) Her 6-game manipulation pre-gate rejected a
 bundle at −125.7. In the same batch sat an arm that provably did nothing (its
