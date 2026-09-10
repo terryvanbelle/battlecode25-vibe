@@ -18728,3 +18728,80 @@ building anything**, and must price the ceiling before coding it.
 **Not started here**: a soldier ceiling needs an in-bot observable for standing soldier count, and
 carol has no comms — a tower senses only r²=20. That is a real feasibility question and it must be
 answered *before* the mechanism is written, per the C1b lesson this log has now paid for twice.
+
+# Iteration 64 — GROW, THEN HARVEST. Pre-registered before any game.
+
+## Rung one first: the feasibility question I registered, answered before writing code
+
+I registered that a soldier **ceiling** needs an in-bot observable for standing soldier count, and
+that this must be settled *before* the mechanism is written. Probed with `tools/engine-javap.sh`
+against the pinned 3.1.0 jar:
+
+- **There is no robot-count API on `RobotController`.** A tower senses r²=20 and has no global
+  headcount, and carol has no comms. **A soldier ceiling is infeasible in-bot** — the direction is
+  closed on feasibility, for zero games, exactly as the C1b lesson prescribes.
+- **`getNumberTowers()` exists** and is an exact team-global count, free and comms-less. That is the
+  observable that *does* exist, and it is a different mechanism.
+
+**History pre-check, also before building**: `src/carol_phase` looked alarming — but it is the
+PRNG-seed placebo (`+13` -> `+14`) that calibrated my sd 6.48 noise floor, not a phase-switch bot.
+No closed direction covers gating the unit mix on tower count. Nothing to re-open.
+
+## The derivation, which is 62 and 63's invariant read quantitatively
+
+Both killed candidates left one number: **splashers built = 26**, whether competing with 331
+soldiers or with none.
+
+| | towers | paint income | to soldiers | to splashers | splashers |
+|---|---|---|---|---|---|
+| `carol_iter45` | 9 | ~37/turn | 331 x 200 = **66,200 (89%)** | 26 x 300 = 7,800 | **26** |
+| `carol_i63` | 2 | ~7/turn | 0 | 7,800 | **26** |
+
+**Throttling soldiers frees paint and destroys the tower income that makes paint, at almost exactly
+the same rate.** That is why no paint gate could separate them — both effects run through the same
+variable, in opposite directions. It is a chicken-and-egg, not a contention problem, and I spent
+four games learning it the hard way from both ends.
+
+**So separate them in TIME.** Soldiers exist to build towers; once enough towers stand a soldier's
+marginal value collapses, and the accumulated income should buy the unit that actually paints. One
+line: a soldier roll becomes a splasher roll once `getNumberTowers() >= TOWER_TARGET`.
+
+## Magnitude, in the units of the gap
+
+Switching at 6 towers keeps ~25 paint/turn of income and redirects the soldier spend. Over ~1,500
+post-switch rounds that is ~37,500 paint, or **~125 splashers against the current 26** — a 4–5x
+change in the production of the only unit that bulk-paints. The reference point is `carol_iter44`,
+which wins Mirage with **20 splashers and one tower**.
+
+## Arms
+
+`TOWER_TARGET` = **4 / 6 / 8**, verified to differ only in that constant, shared `BUILD = "i64"`.
+**Zero arm is `carol_iter45`** — equivalent to `TOWER_TARGET = 25`, the engine's tower cap, so the
+branch can never fire.
+
+## Registered mechanism check (Mirage, all three required)
+
+1. **Splashers built must rise well above 26.** This is *the* clause: it is the exact invariant that
+   killed both previous candidates, and neither moved it by a single unit.
+2. **Standing splashers must become non-zero** (0 at baseline and at every dose of 62 and 63).
+3. **Coverage must rise above the zero arm's 296** — because 62 proved a healthy-looking economy
+   that does not convert is worth nothing.
+
+## Registered falsifier
+
+**If splasher builds still pin near 26 despite the switch, then splasher production is limited by
+something that is neither soldier competition nor total tower income**, and I must identify that
+quantity before proposing any further mix mechanism. Three candidates would have died on the same
+number by then, and a fourth guess would be the wrong response.
+
+## Registered risk (the way I expect this to fail if it fails)
+
+Too early a switch (4) leaves too few towers to fund anything; too late (8) may not fire before the
+game is decided. **I expect an interior optimum at 6.** A monotone ladder either way is informative
+and I will report it as a slope rather than reading it as a peak.
+
+## Gate
+
+Fresh 25-map screen at `BOT=carol_iter45`; take the highest margin reaching **>= 31/50**, ties to the
+smaller `TOWER_TARGET`; then the full 75-map census at **margin >= +26 ACCEPT | +18..+25 REPLICATE |
+<= +17 REJECT**. Mirage is the stage-0 probe and is **not** a gate.
