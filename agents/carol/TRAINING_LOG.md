@@ -18861,3 +18861,83 @@ doses 4 and 6 are within 4 tiles of each other on Mirage, so there is nothing to
 **The gate, the selection rule and the census threshold are unchanged.** Screen launched at
 `MAXJOBS=2` rather than 3, deliberately, because the 01:00 UTC tournament starts within the hour and
 it is the higher-value instrument.
+
+# Iteration 64 — NULL. The direction closes; no census spent.
+
+Run `20260910-000813`, `BOT=carol_iter45`, four arms, fresh 25-map sample, **200 games**.
+
+| `TOWER_TARGET` | candidate wins | margin | in sd (7.1 on a 50-game margin) |
+|---|---|---|---|
+| 25 (zero arm, mirror — branch can never fire) | 25/50 | 0 | by construction |
+| **2** | **15/50** | **−20** | **−2.8** |
+| 4 | 28/50 | +6 | +0.85 |
+| 6 | 24/50 | −2 | −0.28 |
+| 8 | 25/50 | +0 | 0.00 |
+
+> **Registered selection rule: highest margin, must reach >= 31/50. The highest is 28. Nothing
+> qualifies, so the direction CLOSES and the 150-game census is not spent.**
+
+**The registered risk was right, and bracketing it in the same run is what made the shape readable.**
+Dose 2 switches at the *starting* tower count, so almost no soldier is ever built, no towers are
+added, and the bot collapses at **−2.8 sd** — the only arm in the ladder that moves at all. The
+curve is therefore **steeply harmful at the low end and flat (+6 / −2 / +0) everywhere useful.**
+
+I added dose 2 specifically because iteration 61 cost a whole extra iteration by bracketing above
+and never below. That decision paid: the axis is bracketed on both sides in one run, and I am not
+left wondering whether the optimum hides at 3.
+
+## Doctrine 3's identity count, on the screen and not just on Mirage
+
+| pair | games identical in winner AND round count |
+|---|---|
+| `TOWER_TARGET` 6 vs 8 | **36 of 50 = 72%** |
+| `TOWER_TARGET` 4 vs 6 | 24 of 50 = 48% |
+
+So the upper ladder is substantially **one measurement wearing three labels** — carol rarely reaches
+6+ towers on most maps, so the branch is dormant and the arms play the same games. Reporting 4, 6
+and 8 as three agreeing doses would have been citing one number three times.
+
+## The dilution excuse, tested and REFUSED
+
+Dormancy is exactly the setup for a rescue: "the mechanism is diluted, so measure it where it can
+act". I ran that decomposition **and it does not save the candidate.**
+
+| `TOWER_TARGET=4`, by ruin count | candidate | margin |
+|---|---|---|
+| ruin-dense (>=18) | 12/22 = 55% | **+2** |
+| ruin-sparse (<18) | 16/28 = 57% | **+4** |
+
+**Flat everywhere, with no concentration where the switch fires.** This decomposition was **not
+pre-registered**, so it could never have licensed an accept — an unregistered subgroup may kill a
+hypothesis, never rescue one. Here it kills it, which is the only direction it is allowed to point.
+
+## The lesson, and it sharpens iteration 61 rather than repeating it
+
+Stage 0 on Mirage passed **all three** registered clauses emphatically: coverage **296 -> 705**
+(beating `carol_iter44`'s 673), splashers built **26 -> 54** breaking the invariant that had killed
+two previous candidates, standing splashers **0 -> 17**, soldiers **331 -> 3**, starvation
+**309 -> ~20**, idle chips **$80,850 -> $770**. Every counter I had pre-registered moved hard and in
+the predicted direction. **The 25-map screen then measured nothing at all.**
+
+Iteration 61 taught me my probe map was an outlier and I moved to the corpus median. This says the
+repair was **necessary but not sufficient**: Mirage is a fair map and still over-promised
+completely, because *any* single map is n=1. **The failure was never Leaf specifically — it was
+treating one game as predictive of a population.** A median map buys an unbiased probe, not a
+precise one.
+
+What stage 0 is *for* remains intact and this run demonstrates it: it killed iterations 62 and 63 for
+four games via falsifiers, and here it correctly verified the mechanism *fires*. It just cannot say
+whether firing pays. Those are different questions and I conflated them.
+
+## Ledger
+
+| axis | status |
+|---|---|
+| unit-mix phase switch on `getNumberTowers()` | **CLOSED** — bracketed both sides: −20 at target 2, flat (+6/−2/+0) at 4/6/8; and flat in both ruin-density halves |
+| soldier ceiling (standing-count cap) | **CLOSED ON FEASIBILITY** — no robot-count API exists on `RobotController` and carol has no comms; zero games spent |
+
+**Re-open condition for the phase switch**: only a candidate whose switch is keyed on a quantity
+that is *not* dormant on most maps. Tower count is reached on too few maps to matter — the branch
+played identical games on 72% of one arm pair. Any successor must first show, from replays and
+before playing a game, that its trigger **fires on a majority of the corpus**. That is a check I can
+run for free and did not run for this one.
