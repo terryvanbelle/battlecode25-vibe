@@ -18002,3 +18002,65 @@ replicate; **≤+6** REJECT.
 
 **Prediction**: `k1` clears +7 and `k2` is worse than `k1` (over-committing to remembered ruins costs
 exploration). Tally: right 2, nominally right 2, plainly wrong 6.
+
+## Iteration 58 — **REJECTED, and the registered secondary says WHY: the mechanism never engaged.**
+
+Run `20260910-000046`, 150 games. `delta = 25 − (iter20's wins)`.
+
+```
+  vs bob_k0  (RUINMEM 0)  25/50   delta   0   swept 0/25, 0 against, 25 split
+  vs bob_k1  (RUINMEM 1)  25/50   delta   0   swept 0/25, 0 against, 25 split
+  vs bob_k2  (RUINMEM 2)  24/50   delta  +1   swept 0/25, 1 against, 24 split
+```
+
+**VOID passes** (`k0` exactly 25/50, all 25 split). **Verdict: delta 0 and +1 ⇒ REJECT.**
+
+**`k1`'s signature is the exact zero arm's signature** — 25/50 with all 25 maps split and zero sweeps in
+either direction. That is not what a mechanism that engaged and failed looks like; it is what an inert
+mechanism looks like. **Secondary 1, registered as "towers at r200 must rise", settles it** (r≤200):
+
+```
+  bot          soldR/g   paint/g   paint/soldR   dCov(m)   spawn/g   towers
+  bob_k0          1425     552.0        0.387      307.7      22.3     4.92
+  bob_k1          1424     551.6        0.387      307.7      22.4     4.92
+  bob_k2          1431     559.5        0.391      309.5      22.6     4.95
+```
+
+**`k1` is identical to the zero arm to three decimals on every counter.** The dose did not land. `k2`
+moved slightly (paint +1.4%, towers +0.6%) and scored +1, i.e. it engaged a little and bought nothing.
+
+### Why it is inert — and the diagnosis is worth more than the arm
+
+`recallRuin()` can only return a ruin the soldier has **already sensed** (r²≤20). But `chooseRuin()`
+already targets any *visible* unoccupied ruin, and a soldier leaves a ruin only when that ruin becomes
+occupied — which marks it `seenTaken` and disqualifies it from recall. **So the memory almost never holds
+an unoccupied ruin that is not already visible.**
+
+> **The 18.4% of own-side ruins bob never marks are ruins no bob soldier ever came within r²≤20 of.
+> Memory cannot help you reach a ruin you have never seen.**
+
+**I built the wrong half of the fix.** Iteration 57 found bob leaves its own ruins unmarked and that its
+soldiers wander randomly; I read that as a *recall* problem and it is an **exploration** problem. The
+distinction was available before the build — `recallRuin`'s candidate set is by construction a subset of
+what the soldier has already walked past — and I did not draw it. The registered secondary caught it for
+the cost of one gauntlet, which is what that secondary is for, but a clearer design pass would have caught
+it for nothing.
+
+### What this nominates, with the ledger grep done
+
+**Exploration, not memory**: a way to put ruins a soldier has *never seen* into its candidate set. The
+engine supplies one — **every BC25 map is symmetric** (RULES.md), so a ruin observed at `(x,y)` implies a
+mirrored ruin exists. That populates the set with **unseen** ruins, which is exactly what recall cannot do.
+
+**The known hazard, from my own ledger**: LEARNINGS 28 measured that only **27 of 75** maps are symmetric
+the way you would guess, and LEARNINGS 3 records symmetry-and-fixed-order as this lineage's recurring bug
+class. So any such mechanism must **infer** the symmetry rather than assume it, and must degrade safely
+when the inference is wrong. `CLOSED.md` has no entry closing ruin inference by symmetry; #6 closed
+*ranking* among visible candidates, which this again is not.
+
+### Prediction, scored
+
+I predicted `k1` would clear +7 and `k2` would be worse than `k1`. **k1 was inert (0) and k2 was +1** —
+plainly wrong on both halves. Tally: **right 2, nominally right 2, plainly wrong 7**.
+
+`src/bob/` untouched. **`bob_iter20` remains the bot; HEAD's behaviour is unchanged.**
