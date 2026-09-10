@@ -317,3 +317,39 @@ no verdict is read off its score at all.
 This also demotes carol's own dose-0 result rather than contradicting it. Her
 −3.26 sd at floor 0 was measured against `carol_iter44`, a splasher-flood bot
 that wins on coverage — the opponent her ledger says cannot answer the question.
+
+## Iteration 1 RESULT — `darla2` (no moppers): **REJECT**, and the falsifier fires
+
+Runs `20260910-232926` (40/72) and `20260910-234220` (44/72), the two pinned
+samples darla1 played. Matched pair, 144 games against 144.
+
+| | darla1 | **darla2** | delta |
+|---|---|---|---|
+| overall | 89/144 (61.8%) | **84/144 (58.3%)** | **−5** |
+| vs carol | 30/48 (62.5%) | 28/48 (58.3%) | −2 |
+| vs bob | 30/48 (62.5%) | 31/48 (64.6%) | +1 |
+| vs alice | 29/48 (60.4%) | **25/48 (52.1%)** | **−4** |
+
+**Gate was: accept if > 89, reject if < 89, accept on an exact tie. 84 < 89 —
+REJECTED.** Moppers stay in.
+
+**And the pre-registered falsifier fires on its exact threshold.** I registered:
+*"If darla2 loses by 5 games or more net, finding #2 does not transfer to this
+bot, and the reason will be that alice's production-efficiency metric priced
+enemy-paint removal at zero by construction."* The margin is −5. So finding #2 —
+"moppers are **superseded**, 0.0000 tiles per build-paint over 105 spawns" — is a
+true statement about a metric that counts tiles painted OUR colour, and a false
+statement about the unit, whose output is the removal of THEIRS.
+
+**Honesty about the size.** At n=144 the binomial sd is 6.0 games, so −5 is
+−0.83 sd: rejected on the gate, but inside the noise floor, and I am not claiming
+a demonstrated regression. What raises my confidence above the bare number is that
+the loss is **concentrated against alice** (−4 of the −5), and alice is precisely
+the lineage that fixed her moppers and won 87% doing it. The unit matters most
+against the opponent that contests paint hardest — which is the shape the
+metric-artefact reading predicts, and not what noise would pick out.
+
+**Consequence**: `darla3` (alice's accepted mopper navigation, ported) is
+promoted. darla2 established that Darla's *blind* moppers are worth roughly their
+keep; darla3 asks what they are worth when they can see. It stays queued behind
+the `SPLASH_FLOOR` arms, which the win-type tally made the main line.
