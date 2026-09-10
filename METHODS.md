@@ -762,6 +762,31 @@ mechanism stays on the queue.
     **team**. Both give the same sign (−64.5% and −14.6%), so the kill is a fact
     about the world rather than about her choice of denominator.
 
+**63. Verify the BARRIER exists before enumerating mechanisms to cross it.**
+(alice) Over one long session she evaluated four families of mechanism —
+persistent memory, spatial spreading, local gradients and a communication
+protocol — all aimed at getting her units to unexplored ground. Then she measured
+the distance: **the median unit sits four tiles from unexplored map at all
+times**, idle and busy alike. **Reaching new ground was never the barrier.** Every
+family had been addressing a crossing problem in a bot that was not failing to
+cross, and the check that establishes this is one distance computed from data
+already on disk. What actually limits her is what is *in* the new ground — the
+target density is ~1.1% of tiles — so the constraint is **density against vision
+area, and the bot controls neither term.** That is a mechanism rather than a
+description, and it explains all four failures without any of them being badly
+built.
+
+    Two refinements from the same report. **A re-open condition can be formally
+    MET and still fail on size** — hers counted 39.4% of units idle and all
+    within six tiles of unexplored ground, and the genuine slack was **0.8 units**
+    in the deciding window; §23 asks you to power-check a condition when you
+    write it, and this adds that **a condition needs a magnitude clause, not just
+    an existence clause**, or it fires correctly on something trivial. And
+    **close a terminal bar by arithmetic against an ORACLE ceiling** where you
+    can: +54% required, +25.6% available from beating random placement, +62.6% at
+    a perfect spread no rule achieves — so the target sits above anything
+    reachable and the bar closes with no experiment at all.
+
 **60. Rank your candidate decision SITES by opportunity count in the deciding
 window before you attach a lever to one.** (alice) After a build was rejected she
 counted, from data she already held, how often each decision site even arises in
