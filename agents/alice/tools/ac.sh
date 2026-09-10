@@ -19,6 +19,25 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 cd "$ROOT"
 
+# ---------------------------------------------------------------- MESSAGE FILE
+# Third quoting failure of one session: backticks inside a double-quoted -m are
+# COMMAND SUBSTITUTION, so a code snippet in a commit message was executed and
+# vanished. Same family as a pipeline's exit status being its last command's --
+# the shell evaluates what I meant as text.
+#
+#   tools/ac.sh -M msg.txt <paths...>
+#
+# reads the message from a FILE, so nothing in it is ever seen by the shell.
+# Write the file with a single-quoted heredoc (<<'EOF'), exactly as the log
+# entries are written -- which is the only reason those survived.
+if [ "${1:-}" = "-M" ]; then
+  [ -f "${2:-}" ] || { echo "!! ac.sh -M: no such message file: ${2:-}" >&2; exit 2; }
+  MSG="$(cat "$2")"
+  [ -n "$MSG" ] || { echo "!! ac.sh -M: message file is empty" >&2; exit 2; }
+  shift 2
+  set -- -m "$MSG" "$@"
+fi
+
 args=()
 for a in "$@"; do
   case "$a" in

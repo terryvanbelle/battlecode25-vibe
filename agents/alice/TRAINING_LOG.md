@@ -22356,3 +22356,44 @@ Screen launched: `gauntlet/20260910-114230/`, arm and null in one batch on a sha
 `tools/e2-gate.py` now takes the arm/null package names as arguments, so the same gate — thresholds
 and **branch order** — serves later iterations without being re-typed. Regression-checked against
 E2's finished run: still REJECT −8.
+
+# K3 MANIPULATION CHECK — measured BEFORE the verdict, and it refutes my own dose arithmetic
+
+3 maps chosen before any screen result existed, arm and control each against the same opponent.
+`xfer` is alice's only `transferPaint` call site, so it *is* the refill count.
+
+| | refills/unit | paint acts/unit | units spawned |
+|---|---|---|---|
+| `alice_k3ctl` | 0.231 | 23.53 | 398 |
+| `alice_k3` | **0.265** | **27.39** | 366 |
+| ratio | **1.15x** | **1.16x** | 0.92x |
+
+**The mechanism fires and moves the binding term in the right direction: +16% paint actions per unit,
+bought with 8% fewer units — the registered trade, taken and won on this sample.**
+
+## But I predicted 5.7x and got 1.15x, and the error is the one I named an hour ago
+
+I sized the dose from the reserve's opportunity gain: firing on 17.1% of tower-frames → 98.2%, so
+5.7x, and therefore parity with carol at 1.08x. **That is wrong, and wrong in exactly the way I had
+just finished writing up.** The refill passes **four** gates, not one:
+
+```
+below half tank  AND  action ready  AND  adjacent to a tower (7.88%)  AND  tower paint > reserve
+```
+
+The reserve is **one factor of a product**, and I computed the gain as though it were the whole
+thing — the identical mistake to using a threshold on one factor to decide which factor dominates.
+The other three gates were already binding, so relaxing the fourth bought 1.15x, not 5.7x.
+
+> **Realised refills/unit is 0.265 against carol's 2.044 — still 7.7x short. The parity prediction is
+> refuted, by my own arm, before the screen returned.** Whatever the gate says, **I cannot claim this
+> mechanism closed the refill gap**, because it measurably did not.
+
+**Why this is stated now:** an uncomfortable number before the verdict is a caveat; after an accept it
+is a footnote nobody reads, and after a reject an excuse. If K3 passes, it passes on +16% per-unit
+output, **not** on the refill-parity story I built it from — and the story was wrong.
+
+**The lesson, sharper than the one it corrects:** *when a mechanism sits behind a conjunction of
+gates, relaxing one gate multiplies the rate by that gate's slack ONLY IF the others are not binding
+— so measure the JOINT pass rate before sizing a dose, never the single gate's opportunity curve.*
+I had the joint measurement available (adjacency 7.88%) and used the marginal one anyway.
