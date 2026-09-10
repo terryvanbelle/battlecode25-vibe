@@ -21528,3 +21528,56 @@ decided by the bar as written.
 **Tally: five routes examined for zero games. Four closed, one re-opened and re-closed, and the
 fifth — count — now has a passed reachability gate and a disarmed trap.** `src/alice` still
 unchanged since iteration 43.
+
+# ITERATION E2 — BUILT AND PRE-REGISTERED. First bot code change since iteration 43
+
+**Hypothesis.** Alice's towers are paint-starved on 82.9% of tower-frames and at-cap on 0.0%, so they
+are broke rather than declining to spawn; spawning therefore runs at 15–22% of the engine's CD-10
+ceiling. Meanwhile chips sit at a mean 42,712 on large maps — 42.7 towers' worth — while a tower
+cannot afford one 200-paint soldier. **Converting some of that surplus into paint income should raise
+sustainable soldier count, and the marginal soldier brings 5.9 empty tiles into team vision (17.6 on
+the worst-famine map).**
+
+**Mechanism — ONE constant.** `MONEY_CUT` 52 → 35 of `TOWER_KEY_MOD` 105: the money share of new
+towers falls **49.5% → 33.3%**. The iteration-43 de-degeneration is deliberately untouched — same
+hash, same mod 105, only the cut point — so no map reverts to building a single tower type.
+
+**P1–P6 check, since this is the first code change since iteration 43.** It touches no movement rule
+(P4), no tie-break (P5), no attack guard (P3), and adds no bytecode to any hot path (P6). It does
+**not** try to "fix" the 81% idle rate — the P1 trap — because it changes how many units exist, not
+what an idle unit does. It is aimed squarely at P2's variable, tower count and its composition.
+
+**Arms.** `src/alice_e2` (arm), `src/alice_e2ctl` (control), `src/alice_e2null` (null, source-identical
+to the control modulo package name). Sources differ from the incumbent by exactly the flag block and
+one ternary; verified by diff.
+
+**IDENTITY CHECK — PASSED, and against a pre-stated expectation.** `alice_e2ctl` vs `alice_iter43` had
+to reproduce the round counts the identity-verified `i61probe` produced against the same opponent —
+**926 / 1693 / 792**. It returned **926 / 1693 / 792 exactly.** The control is behaviourally the
+incumbent.
+
+**MANIPULATION CHECK — PASSED.** `alice_e2` vs `alice_iter43` returns **824 / 2000 / 792** against the
+control's 926 / 1693 / 792. The mechanism fires and changes games. (mit is unchanged at 792 — noted,
+and a reason to read the per-map table rather than only the total.)
+
+## The gate, registered before the screen runs
+
+> **Screen:** 25 maps, both sides, 50 games, `alice_e2` vs `alice_e2ctl`.
+> **net = arm wins − 25.**
+> **ACCEPT if net ≥ +4. REJECT otherwise.** No other outcome is an accept, and a
+> per-map subset that looks good is not an accept.
+>
+> **NULL ARM, same batch and the identical map sample:** `alice_e2null` vs `alice_e2ctl`. Both are
+> the control, so its true net is 0. **If |net_null| ≥ 4 the screen cannot resolve a +4 effect and
+> the result is VOID**, not a reject — the bar would be inside the instrument's own noise.
+>
+> **Falsifier (P2 damage):** the arm may buy paint by giving up towers. If the arm's r300 tower count
+> falls materially while net is flat or negative, that is the mechanism working as designed and the
+> design being wrong — more soldiers, fewer towers, which P2 says loses.
+>
+> **Post-hoc confirmation required even on an accept:** the arm's realised paint-tower fraction must
+> actually rise from ~48.7%. If net ≥ +4 with no shift in the tower mix, the win is not this
+> mechanism and I do not get to claim it.
+
+Both runs are launched in one gauntlet so the map sample is drawn once and shared, making the
+arm-vs-null comparison exact.
