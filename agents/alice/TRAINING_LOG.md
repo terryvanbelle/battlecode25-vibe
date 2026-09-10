@@ -22510,3 +22510,55 @@ Joint = 0.4329 × 0.6986 × 0.0261 × 0.2354. The available slack, largest first
 **Registered:** whatever the census says, the next measurement is the **distribution of paint held by
 towers adjacent to a hungry, ready unit** — it prices gates 4 and 1 together and costs one probe run.
 **No mechanism until that number exists.**
+
+# K5 — the distribution the last probe should have recorded. And my defect recurs one level deeper
+
+`src/alice_k5probe`, additive, **identity-verified at 534 / 1869 / 1096** even with adjacency
+evaluated on every call (extra bytecode against a 9% peak; the identity check is what proves
+behaviour unchanged, not the reasoning). 2,192 adjacency events.
+
+## Paint in the richest tower a unit can actually reach
+
+| paint | share | cumulative |
+|---|---|---|
+| ≤ 0 | 7.0% | 7.0% |
+| 1–25 | 20.4% | 27.5% |
+| **26–50** | **30.3%** | 57.8% |
+| 51–100 | 9.4% | 67.2% |
+| 101–200 | 20.8% | 87.9% |
+| > 200 | 12.1% | 100% |
+
+> **The single largest bucket, 30.3%, sits at 26–50 — immediately below the reserve I shipped.**
+> A reserve of 200 permits 12.1%; **50 permits 42.2%; 25 would permit 72.5%; 0 would permit 93.0%.**
+> So 50 → 25 is a **1.72x** gain at that gate, priced rather than guessed.
+
+## Which gate blocks, given the unit is beside a tower
+
+| | share of adjacency events |
+|---|---|
+| hungry AND ready — gate 3 passes | 18.8% |
+| **ready but NOT hungry — gate 1 blocks** | **46.8%** |
+| hungry but NOT ready — gate 2 blocks | 12.2% |
+
+**Gate 1 is the largest blocker at the moment a unit is actually standing beside a tower.** And the
+action arithmetic looks strongly favourable: a transfer costs **one action** and a not-hungry unit can
+still accept up to `cap − p` ≤ 100 paint = **20 paint actions**. Spending one action to buy up to
+twenty is a good trade on its face.
+
+## But I am not sizing that dose, because my defect recurred
+
+K4 measured gate 4 at **23.54%** *conditioned on gate 3 passing*. K5 measures the same threshold at
+**42.2%** over *all* adjacency events. **Those differ by 1.8x — the subpopulations are materially
+different**, and towers beside hungry-and-ready units are poorer than towers beside any unit. So the
+K5 distribution is *again* a marginal where I need a joint: I do not have the tower-paint distribution
+**cross-tabulated by gate combination**, which is exactly what pricing a gate-1 relaxation requires.
+
+> **This is the third time in one iteration that I have measured marginals of a quantity I needed
+> jointly** — first sizing from one gate of a conjunction, then measuring that gate's curve on the
+> wrong population, now measuring the distribution unconditioned. **The pattern is not carelessness
+> about a formula; it is that a funnel's natural instrumentation is per-stage, and per-stage counters
+> are marginals by construction. The fix is structural: record the CROSS-TABULATION, not the stages.**
+
+**Registered, and no mechanism until it exists:** paint in the richest reachable tower,
+**cross-tabulated by (hungry, ready)** — three cells, one probe run. That is the number that prices a
+gate-1 relaxation and a further reserve cut *together*, which is how they will actually interact.
