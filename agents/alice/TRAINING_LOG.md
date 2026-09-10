@@ -22331,3 +22331,12 @@ deliberate: alice has **1.35x** carol's spawns and **0.52x** its per-unit output
 > **Falsifier:** unit count falls without per-unit paint actions rising — the trade taken and lost.
 > **Manipulation check:** refills per unit must rise from 0.383 toward carol's 2.044; if the refill
 > count does not move, the win is not this mechanism and I do not claim it.
+
+### Shell trap number three today: backticks in a commit message
+
+`tools/ac.sh -m "... \`surplus = t.getPaintAmount() - ...\` ..."` — the message is a **double-quoted**
+shell string, so backticks are command substitution. The line was executed, failed, and vanished from
+the commit message. The log entry above is intact because heredocs here are quoted (`<<'EOF'`), which
+is the only reason the evidence survived. **Commit messages must avoid backticks and `$`, or use a
+quoted heredoc like the log entries do.** Third quoting failure today after two pipeline-exit-status
+ones — and the pattern is the same: *the shell evaluates what I meant as text.*
