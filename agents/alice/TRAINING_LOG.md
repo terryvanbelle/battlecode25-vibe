@@ -21679,3 +21679,12 @@ realised delta on the screen's own replays:
 
 Re-run on a fresh 25-map draw with the bar unchanged. A void is information about the sample, so the
 response is a new sample, not a new mechanism and not a weaker bar.
+
+### A sampling note for requirement G, written blind
+
+The gauntlet keeps only **losing** replays. For most purposes that is a biased sample and a trap. For
+requirement G it is not: **"which link broke?" is a question conditioned on the loss**, so the
+loss-only replay set is the relevant sample rather than a distortion of it. The bias to guard is the
+opposite one — I must not read a chain-link delta measured on losses as the arm's *average* behaviour,
+only as its behaviour *when it lost*. If G is ever used to make a positive claim about the arm
+overall, the screen must be re-run with all replays retained.
