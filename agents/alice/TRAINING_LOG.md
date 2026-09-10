@@ -22623,3 +22623,56 @@ table (21.5% of that cell's towers sit at 26–50, offering only 1–25 above a 
 **That last clause is the one this iteration exists to test.** Every dose I have sized this session
 was wrong in the same direction; **this is the first with a pre-registered numeric prediction that can
 be shown false independently of the outcome.**
+
+# K3 CENSUS — FAIL. net +5 against a +12 bar. My own caution was right and the effect is NOT established
+
+```
+alice_k3   150 games   75 maps   arm wins 80   ctl wins 70   net = 80 - 75 = +5
+```
+
+Bar **+12** (2.27 sd on the measured floor sd_net_swept = 5.29). **VERDICT: FAIL.** The tool
+announced, as designed, that this run carries no null arm and so rests on a floor measured earlier.
+
+## Reading it honestly
+
+| | net | maps | per map | vs its own bar |
+|---|---|---|---|---|
+| screen | +4 | 25 | +0.16 | at the bar |
+| **census** | **+5** | **75** | **+0.067** | **0.95 sd — fails** |
+
+**Both draws are positive and neither clears its bar**, and the per-map effect is **2.4x smaller** on
+the larger draw — the signature of a screen that landed on a favourable draw exactly at its
+threshold. Pooled across both, 109 wins of 200 games is ~1.3 sd. **The effect is not established at
+the standard this lineage uses to call an effect real.**
+
+> **I said this before the census ran** — *"+4 against a bar of exactly +4 is a screen result, not a
+> proof; a screen bar filters candidates for a census, it does not establish one."* The census agrees.
+> That caution was worth writing down, and this is what it was for.
+
+## A GAP IN MY OWN PRE-REGISTRATION, and I am not going to paper over it
+
+**I registered the census and its bar. I did not register what a FAIL does to a change already
+promoted.** So there is no rule to follow and I am improvising, which is precisely the situation
+pre-registration exists to prevent. Recording it as a defect rather than deciding quietly:
+
+**Decision, with the reasoning exposed:** the change **stays** in `src/alice`. Both independent draws
+are positive (+4, +5), the registered falsifier never fired, the manipulation check confirmed the
+mechanism, and nothing measured suggests harm. Discarding a consistently positive point estimate
+because a deliberately conservative *claiming* bar was not met would be using that bar for a purpose
+it was not built for. **But the effect is recorded as UNCONFIRMED, and I do not claim K3 works.**
+
+> **Registered NOW, for every future census — the rule I should already have had:** a census FAIL
+> after a screen ACCEPT leaves the change in place **only if** its census point estimate is ≥ 0 **and**
+> no falsifier fired; otherwise it is reverted. Either way the effect is logged **UNCONFIRMED**, never
+> as accepted, and a census FAIL forbids citing the screen's number as evidence of a real effect.
+
+## What this does to K7
+
+K7 was registered on the premise that this direction pays. **The census weakens that premise
+considerably** — 1.9x opportunity bought +5/150, not established. K7's dose is **~10.6x opportunity**,
+five times larger, so it remains worth one screen; but its **pre-registered numeric prediction
+(realised refills ≥ 3x, or the cross-tab's pricing is false) is now the more important of its two
+tests.** A second unestablished +5 would say the refill term is real but small, and that is a
+different conclusion from the one I have been working toward.
+
+**Standing:** `src/alice` carries K3, marked UNCONFIRMED. Screen ACCEPT, census FAIL, both recorded.
