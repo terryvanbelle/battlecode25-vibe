@@ -26,7 +26,7 @@ of the argument are what transfer.
 
 ## Contents
 
-Eighty-two entries is more than anyone reads end to end, so read this index and
+Eighty-three entries is more than anyone reads end to end, so read this index and
 follow the two or three that bear on what you are about to do. **The numbers are
 permanent identifiers, not an order** — they record when an entry was written,
 and every cross-reference in this file and in the lineages' logs cites them, so
@@ -65,6 +65,7 @@ survived while the story told about it did not.
 §7 put the unit in every name ·
 §8 ask whether your gate can see the thing at all, and answer with a number ·
 §33 check where your probe map sits in the corpus distribution ·
+§82 your QUALITATIVE sample is not your quantitative sample ·
 §30 a rung at 100% cannot register a regression — add rungs, never retire one ·
 §40 run the absolute-strength instrument on a schedule tied to ACCEPTS ·
 §41 multiplicity — sibling cells from one run are not corroboration ·
@@ -326,6 +327,18 @@ already registered; nobody re-read it before spending the session.
 
     Caveat from §55: a per-unit output figure is a **ratio**, so before building
     on its decomposition, check which side of it actually moves.
+
+    **One level deeper: trace where the freed resource LANDS, because that is
+    decided by code you were not thinking about.** (alice) Enumerating the axes
+    of her binding term, she reached a dose that reduces a unit type which
+    produces none of the output she needs — apparently a clean win on the right
+    term. One line of her own bot closed it: refusing that type **substitutes the
+    other type by construction**, and she already fields 1.35× the opponent's
+    count of it at 0.52× the per-unit output. **The released resource can only
+    flow into the term she already leads.** A direction can address the binding
+    term and still be unable to reach it, and the difference is a substitution
+    path, not a dose. Free to find, and it closed the branch independently of
+    what the dose was worth.
 
 **69. A threshold on ONE FACTOR of a product cannot decide which factor
 dominates — decompose the product before you read the verdict.** (alice) She had
@@ -704,6 +717,30 @@ one.
     a dead-flat result, and it had been the headline clause of an earlier
     accept's stage 0. She found it by running a check she expected to pass, which
     is the only way that kind of error surfaces.
+
+**82. Your QUALITATIVE sample is not your quantitative sample — check which
+games you have actually read.** (carol) Her screens and censuses drew from the
+full map corpus for sixty iterations and were never wrong about it. But **every
+trace she had ever run in the project was on two maps, both from the same
+regime** — and that regime turned out to carry 100% of her deficit and none of
+her reachable gains. So every intuition she held about *how* she loses came from
+one sixth of the corpus, and **sixteen consecutive iterations all attacked the
+same failure mode** — the one visible in the only games anyone had ever opened.
+The band she had never looked at was **64 of 150 games**.
+
+    What she found on first inspection was the **inverse** failure: leading by
+    200+ per mille at three-quarters distance in three of three traced losses,
+    then collapsing, with the unit counts inverting. Not *cannot acquire* but
+    *cannot hold* — which also explains why her arms kept costing −2, −14 and −8
+    there: they were adding acquisition to the regime that already had enough.
+
+    The reason this survives a careful process is that nothing flags it. A
+    correctly-drawn 75-map census and a hand-read replay feel like the same
+    instrument pointed at the same corpus, and only one of them is sampled. **Ask
+    which games you have opened, not which games you have scored** — and keep the
+    answer as a list, because "I have looked at plenty" is exactly the impression
+    that turned out to mean two maps. §33's outlier warning is this entry's
+    quantitative half; this is the qualitative one, and it is less visible.
 
 **30. A frozen rung at 100% cannot register a regression — read the roster
 weakest-first, and repair saturation by ADDING a harder rung, never by retiring
@@ -1470,6 +1507,16 @@ producer emits, not the lines it happens to produce.
     three exit paths are verified on demand. A check whose failure path has never
     executed is a check you are guessing about, and a self-test mode retires the
     guess permanently instead of at the moment you happened to look.
+
+    **A physically impossible value is a free correctness check that announces
+    itself.** (alice) She computed a utilisation of **184% of a ceiling**, which
+    cannot be true, and that is what made her re-read the engine's semantics —
+    a cooldown decrements per turn rather than gating a whole turn, so her
+    divisor was ten times wrong. The lesson is not that she caught it; it is
+    which errors *do not* announce themselves. **Bound every derived quantity you
+    can — a share against 100%, a count against its population, a rate against
+    its ceiling — because the instrument errors that cost you are the ones that
+    land in a plausible range.**
 
     **But a self-test proves the branch is REACHABLE; only a real defect proves
     the DETECTOR works.** Converting the twice-repeated pipeline failure into an
