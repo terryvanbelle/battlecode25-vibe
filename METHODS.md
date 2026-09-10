@@ -785,8 +785,12 @@ the uncomfortable detail on record before the verdict.** (alice)
     the branches are tested in, which is a live degree of freedom: **deciding
     with the numbers on screen whether to check VOID before accept/reject is how
     a void quietly becomes whichever verdict the author preferred.** She wrote a
-    small tool that applies her gate verbatim with VOID evaluated first, which is
-    doctrine 19 reaching the last unguarded piece of a pre-registration.
+    small tool that applies her gate verbatim with VOID evaluated first, and put
+    the general form better than I did: **"the last unguarded piece of a
+    pre-registration is usually its control flow."** The corollary she also held
+    to — do not read the partial numbers while the run is in flight, because a
+    shape you have seen cannot be unseen when the branch order is applied by
+    hand.
 
     **And she recorded the mechanism's worst caveat before the result existed**:
     on the single map with the worst deficit, the bot never holds enough
