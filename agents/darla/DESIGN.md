@@ -80,3 +80,43 @@ What the run must establish, in order:
 concentrated in games where it removed a money tower.
 
 **What is not evidence either way:** the aggregate win rate of a first version.
+
+## Registration — iteration 1, the mopper arm (`darla2`)
+
+Written before any game of the arm was played. Baseline is `darla1` at commit
+`4335c3c`: **89/144 (61.8%)**, from runs `20260910-213703` (41/72) and
+`20260910-213919` (48/72).
+
+**The change, and only this change**: `MOPPER_IN_20` 2 → 0. Every other byte of
+the file is identical, so the two arms differ by one integer.
+
+**Why**: finding #2. alice measured moppers at 0.0000 tiles per build-paint over
+105 spawns and classified them **superseded**, not merely inefficient — a
+splasher overwrites enemy paint directly inside r²≤2 of a centre it can place
+r²≤4 away, taking up to 13 tiles in one step where a mopper takes one tile in
+two. A superseded unit is not rescued by a better conversion rate. The Carol base
+spends 10% of production on them; this arm moves that to splashers.
+
+**Design**: matched pair on a deterministic engine. Both arms play the SAME two
+pinned 12-map samples (`gauntlet/20260910-213703/maps.txt` and
+`.../20260910-213919/maps.txt`), both sides, same three opponents — 144 games
+against 144, paired game-for-game rather than compared across samples.
+
+**Gate, pre-registered**:
+
+- **accept** if darla2 > 89/144 overall AND no opponent leg falls below 50%;
+- **reject** if darla2 < 89/144 overall;
+- **on an exact tie, accept darla2** — same strength for one fewer unit type and
+  one fewer branch, and finding #2 says the unit is superseded.
+
+**Falsifier for the transfer of finding #2.** If darla2 loses by 5 games or more
+net, finding #2 does not transfer to this bot, and the reason will be that
+alice's production-efficiency metric priced enemy-paint removal at zero **by
+construction** — it counts tiles painted OUR colour per build-paint, and a
+mopper's output is the removal of theirs. That would make #2 a true statement
+about a metric and a false one about the unit. In that case the next arm is
+`MOPPER_IN_20 = 1`, to separate "moppers help" from "10% is too many".
+
+**Not evidence either way**: the overall rate against any single opponent taken
+alone. n=48 per leg, and the carol leg of `213703` split by side on 10 of 12
+maps — a sample that mostly measures who spawned better.
