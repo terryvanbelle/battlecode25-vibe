@@ -23284,3 +23284,20 @@ Registered now, so the rewrite question has an answer condition rather than a mo
 > refuses to move at all** across mechanisms that demonstrably fire, the ceiling is the game.
 > **K3 is the first data point in that series: it moved the term (+16% per-unit) and failed its
 > census.** One more of the same shape and the rewrite is the indicated experiment, not a gamble.
+
+### Registration amended: WITHIN vs ACROSS stated explicitly for both instruments
+
+**Manipulation check — SAME-GAME COUNTERFACTUAL, exact at any n.** On every spawn decision the arm
+evaluates **both** gates on the identical turn and counts each: `k8new` (money ≥ reserve + 400) and
+`k8old` (money ≥ reserve + 2500), with r≤300 variants. The ratio is measured inside one game on one
+turn sequence, so it carries **no game-to-game term** — the defect that made me retract K3's
+manipulation check this morning. **PASS ≥ 5x in r1–300.**
+
+**Falsifier — inherently CROSS-GAME, so I measured its floor rather than annotating it as weak.**
+There is no counterfactual for "towers I would have had", so arm-vs-control is the only form. At
+fixed policy across 19 games, r300 tower count is **mean 7.05, sd 3.67 — 52% of the mean.**
+
+> At n=25 maps, **1 sd on the arm−control difference is 1.04 towers.** So a fall smaller than
+> **2.04** is inside the floor and *"the falsifier did not fire"* would carry no information.
+> **Registered: the falsifier fires on a fall ≥ 2.04 towers at r300.** Below that it is silent, not
+> reassuring — stated now rather than after the verdict.
