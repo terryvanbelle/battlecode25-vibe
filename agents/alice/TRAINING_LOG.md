@@ -21364,3 +21364,88 @@ reason than the first closure. Recorded, per my own rule, so the next re-open co
 **Running tally, all for zero games:** A dead where the deficit is worst, B passed its gate and is
 ceiling-bounded at +4pp, C-local at 0.95x random, and now the communication route killed on
 structure. **Four routes, four measured closures, no bot code changed and no budget spent.**
+
+# E1 — PRICING THE COUNT LEG. It does NOT close, and my enumeration was incomplete
+
+Challenged on it: the union is a function of **placement AND count**, I had bounded placement and
+closed three other routes, and "spawning fewer is arithmetically worse" is not the same claim as
+"spawning more would not help". It is not. **Zero games.** Tool: `tools/e1-count.py`.
+
+Three caps checked, because whichever binds first is the answer.
+
+## CAP 1 — spawn cooldown. NOT binding, and not close to binding
+
+Engine: spawn CD is **10**, so one tower emits at most one robot per 10 rounds; steady-state
+population ≤ towers/10 × lifetime, and lifetime is measured at 87.8 turns small / 220.0 large.
+
+| | mean towers | mobile/tower | engine ceiling | **utilisation** |
+|---|---|---|---|---|
+| small maps | 6.19 | 1.92 | 8.78 | **21.9%** |
+| large maps | 11.33 | 3.37 | 22.00 | **14.7%** |
+
+> **Alice runs its army at 15–22% of what the engine's spawn cooldown would permit.** The structural
+> cap on count is nowhere near reached. Whatever limits alice's soldier count, it is not the rule I
+> assumed limited it.
+
+## CAP 2 — paint income. THIS is what binds
+
+A soldier costs **200 paint**. A paint tower makes 5/10/15 per turn by level. **A money tower makes
+ZERO paint** and spawns only from the 500 it is born with.
+
+| | mean PAINT towers | sustainable mobile @L1 | @L2 | observed |
+|---|---|---|---|---|
+| small | 4.14 of 6.19 total | 9.1 | 18.2 | **11.9** |
+| large | **5.52 of 11.33 total** | 30.3 | 60.7 | **38.1** |
+
+Alice sits **above** the all-L1 sustainable rate and below the all-L2 rate — i.e. bracketed, running
+its partly-upgraded paint towers at close to full output. Combined with the already-measured
+`atcap` of **1–3%** (towers almost never hold paint), the conclusion is firm: **count is
+paint-income-limited.** And paint's only sink is spawning, so **paint not spent on soldiers is simply
+wasted** — which makes "spawn more" free at the margin *if the income exists*.
+
+**On large maps fewer than half of alice's towers make any paint at all (5.52 of 11.33).** The
+control variable on count is the **tower mix**, and I have never priced it.
+
+## CAP 3 — marginal return, fitted per map and differentiated at the operating point
+
+Fitting `union = A(1-(1-d_eff/A)^n)` per map and differentiating at alice's actual n, then converting
+to empties using the empty density *outside* the current union (where new tiles come from):
+
+> **Mean 5.9 marginal EMPTY tiles brought into team vision per extra soldier** — and it tracks the
+> deficit exactly: Justice 0.2, DefaultSmall 1.1, Racetrack 1.0 … maze 7.4, **mit 17.6**.
+
+**mit is the map with the worst vision famine, and there an extra soldier brings 17.6 empty tiles
+into view — comparable to the 16.7 tiles the soldier paints in its whole life.** The marginal return
+is largest exactly where the deficit is largest, which is the opposite of a saturating dead end.
+
+## Verdict: the enumeration was NOT complete
+
+My four closures all varied **how well existing units use information**. Count varies **how much
+information exists at all**, and it is the first thing in this sweep that is neither closed nor
+ceiling-bounded. I am not claiming it wins — I am withdrawing the claim that the space was exhausted.
+
+**The one caution I must hold against myself:** `RULES.md` records that pricing paint towers against
+money towers with a per-turn rate is a **category error that cost iteration 34 a full census** —
+chips compound (they buy towers), paint is consumed. So "build more paint towers" is *not* a
+conclusion I am entitled to from the above. What I am entitled to is: **the binding constraint on
+count is paint income, and the mix is its control variable.** Whether moving the mix is net-positive
+requires pricing the chips forgone, and that is the pre-check, not the answer.
+
+## Registered before it runs — the successor, at the site the change would live at
+
+> **Stage 1, at the TOWER's spawn site — the decisive reachability question:** of the moments a tower
+> is **off cooldown**, what fraction is it **too poor to spawn**? That is where a mix change would
+> convert into units, and it is site-observable by the tower itself.
+> **PASS ≥ 40% paint-starved. KILL < 15%.**
+>
+> **Stage 2, pricing the chips forgone — the iteration-34 trap, disarmed by measurement not by
+> argument:** a money tower makes 20 chips/turn and a tower costs 1,000 chips, so converting one
+> money tower to paint delays the next tower by **50 turns**. The mix change must therefore show
+> **≥ +1 net tower at r300** — the same currency as everything else, since the r300 tower lead
+> predicts the winner 79–81% of the time. Below that it is a wash paid for with compounding income.
+>
+> **Null arm:** the identical counters on the unmodified bot. **Falsifier:** stage 1 passes and
+> stage 2 goes negative — more soldiers, fewer towers, which P2 says loses.
+
+**Tally: four routes closed for zero games, one re-opened and re-closed, and the fifth — the one I
+had not enumerated — is live.** No bot code has changed and no budget has been spent.
