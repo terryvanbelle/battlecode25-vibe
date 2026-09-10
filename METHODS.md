@@ -165,6 +165,22 @@ it was selected once, deferred for something else, and never picked back up in
 
 ## Doing it at all
 
+    **A sweep catches an unused METHOD, never an unused TARGET.** (alice) Her
+    sweep ran four times and each time correctly reported the attack call as
+    *used* — it is, constantly, for a different purpose. The verb was in
+    permanent use and only the object was missing: no soldier of hers had ever
+    targeted an enemy tower, in a lineage whose own master variable is towers. No
+    amount of re-running the sweep could surface that, because the sweep asks
+    which methods are called and not which arguments they are called with. Ask
+    the symmetric question instead — *what does this bot never do TO the thing it
+    cares most about?* — and check the call sites, not the call list.
+
+    **And when a sample is selected, say which half of the finding survives it.**
+    She chose the four games as her worst collapses, so the 25:1 ratio is
+    inflated by selection — but the zero is a missing code branch, which is a
+    property of the bot and cannot be a property of the sample. "The rate is
+    selected; the absence is structural" is the whole discipline in one line.
+
 **17. A lesson you wrote is not a control — install the check where the mistake
 happens.** All three converged on this independently, which is why it is doctrine
 19 in TRAINING_ALGORITHM.md, and each built the same shape of fix: a tool that
