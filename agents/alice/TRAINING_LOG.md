@@ -19666,3 +19666,69 @@ a **null arm** for the pre-gate's noise floor — both lessons this session paid
 falsifier, named now: **a genuine gain must show alice's tower count staying flat or rising past
 r700**, since that is the curve the whole direction exists to fix, and a win with that curve
 unchanged is not this mechanism working.
+
+# Iteration 56 — PRE-REGISTERED, and the funnel comes BEFORE the build this time
+
+The coordinator has written my "rate is selected, absence is structural" line back into METHODS.md
+with my own refutation attached. The repaired distinction is the one worth carrying: **an aggregate
+zero in a selected sample is still selected; only a zero you can trace to a missing code path is
+structural — and that requires attributing by ACTOR first.** SPLASHER 100% / SOLDIER 0% is what
+turned my claim about a sample into a claim about the bot.
+
+## Why this direction earns a test when eight others did not
+
+Every direction I closed today died on **magnitude** — a ceiling of 7–17% of its gap. This one does
+not: a destroyed enemy tower denies ~75 paint actions of production plus its spawning, and a soldier
+kills a 1,000 HP tower for **100 paint**, five times more efficiently than the splasher that
+currently does 100% of alice's tower damage. The target is 48% of alice's losses. **The pricing is
+ambiguous rather than small**, and a pre-registered test is the correct instrument for an ambiguous
+pricing.
+
+## The change I am making to my own registered order, and why
+
+I registered "pre-register the mechanism, then gate it". **That is the order that killed lever B.**
+Lever B was priced on *supply* — 38 spare paint per mopper — and never on *delivery*; it fired on
+**1.2%** of turns because a mopper is almost never beside a hungry soldier, and the funnel that would
+have shown it cost three games and came **after** the build.
+
+So the reachability funnel comes first here, because this mechanism has **the identical shape**:
+
+> a unit with a capability, that must be **next to** something, on a turn it has **nothing else to
+> do**.
+
+## The design, fixed now — non-diverting by construction
+
+A soldier's attack is its action, and its action is normally a **paint**. Attacking a tower with a
+soldier that could have painted is a **diversion of the binding resource**, which is the iteration 44
+family and what every losing mechanism today did. So the mechanism only fires when **the soldier's
+action is still unused at the end of its turn** — i.e. it found nothing to paint. My iteration 45
+probe measured soldiers idle on **70–96%** of turns and the board census says the ground is saturated,
+so those turns are already producing nothing. This is the one property that let lever B clear
+iteration 44's standard, and it is the same construction.
+
+## The FUNNEL, and the pre-registered kill condition
+
+Per soldier turn, in order, each as a share of the previous:
+
+1. soldier turns
+2. ... action **still ready** at end of turn (nothing to paint)
+3. ... AND an **enemy tower within r²<=9** (the soldier's action radius, engine-verified)
+4. ... AND `canAttack` that tower  = **would fire**
+
+> **KILL CONDITION, registered now: if the would-fire rate is below 2% of soldier turns, the
+> mechanism cannot deliver and the direction closes for zero further games** — the same bar lever B
+> failed at 1.2%, chosen before the number exists and set at the level that already proved decisive.
+
+**And I will report the step that collapses**, not the first plausible cause — the funnel lesson from
+one iteration ago.
+
+## If and only if the funnel survives, the gate is registered as
+
+- **Manipulation check**: attacks-on-towers as a **share of would-fire opportunities**, denominator
+  from the null arm so the treatment cannot move it.
+- **A NULL ARM in the same batch** — the control against itself — to measure the pre-gate's own
+  noise floor **before** reading the treatment. That floor was ±70 paint actions at n=6 and I only
+  learned it by accident.
+- **Falsifier, named now**: a genuine gain must show **alice's tower count flat or rising past
+  r700**. That is the curve this whole direction exists to fix, and a win with that curve unchanged
+  is not this mechanism working.
