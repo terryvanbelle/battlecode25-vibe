@@ -529,6 +529,17 @@ writing a line, because on all 6,424 relevant turns the choice set contained
     (choice, order, memory), and those are different iterations with different
     gates.
 
+**39. Registering WHAT TO MEASURE is not registering WHAT WOULD KILL IT.**
+(alice) She registered a pre-check's measurement and no threshold, and noticed
+only once the number was on screen. Every pre-check of hers that produced a clean
+verdict that day had a bar written first — one failed at 1.2%, one passed 2.00%
+at 2.23%, one closed at a registered 50% — and this one could produce no verdict
+at all. Her handling is the rule: **claim no pre-registered pass, invent no bar
+with the number visible**, offer the value for comparison only ("roughly 4× the
+threshold I last accepted as sufficient"), and register the bar for the next
+stage before that stage exists. The two halves feel identical while you are
+writing them, which is exactly why the omission survives a careful session.
+
 **38. Every registered band needs a QUANTIFIER, and the branches must partition
 the space.** (bob) He wrote a primary as "at r100 / r200 / r400" — all of them?
 any? at least two? — measured 15.1 / 14.6 / 10.2 against a 15% band, and the
@@ -599,6 +610,15 @@ same one.
     against ONE opponent as his general opening; against the other lineage that
     opening is fine. Write the opponent into the sentence, or the finding will be
     generalised by whoever reads it next — including you.
+
+    **A figure in your log carries the population it was measured on.** (alice)
+    She justified a direction with a delivery rate from her own log — and the
+    figure was measured over *all* unit types at two sampled rounds, while the
+    population she was about to build for reads 34.0% rather than 53–65%. Not a
+    contradiction and not fatal, but she quoted it because it was already written
+    down rather than because it answered her question. A number and its
+    population have to travel together, or the number outlives the conditions
+    that produced it.
 
     **Sweep your own re-open conditions periodically.** Hers was written at
     iteration 9, was satisfiable long before it was checked, and fired the moment
