@@ -14,6 +14,9 @@ is the first task, not a preamble.
 3. `MULTI_AGENT.md` — isolation, tournament, shared-VM and git rules. Binding.
 4. Your own `TRAINING_LOG.md` (the tail is where you were), `LEARNINGS.md`,
    `RULES.md`.
+4b. `OBJECTIVE.md` — the objective, restated 2026-09-10. **Binding, and it
+   supersedes the head-to-head framing your log was built on.** Read it before
+   re-opening anything: it changes which of your own closures still hold.
 5. `METHODS.md` — practices that demonstrably worked for one of the three
    lineages, written down so the others can adopt them. Methodology only: how to
    measure, decide, record and stay honest. It carries no mechanism, no unit mix
