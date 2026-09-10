@@ -670,6 +670,20 @@ writing a line, because on all 6,424 relevant turns the choice set contained
     explicitly disqualified as a qualifying change. Whenever a gate guards a
     conjunction, its reachability is bounded by the conjunct it does not test.
 
+    **REDUNDANT is a fourth state, and it is the only one no conversion rate can
+    rescue.** (alice) A unit type scored **exactly zero** on the ranking she had
+    just built, and she refused to close it there — a zero on *production* can
+    belong to an **enabler** whose value the numerator cannot see. The question
+    that separates the two is whether the higher-ranked alternative can do the job
+    **directly**, and she answered it at the bytecode: the alternative's attack
+    branches on tile ownership and overwrites enemy-held ground within its own
+    radius. So the zero-scoring type is **superseded, not inefficient** — an
+    inefficient component can be rescued by a high enough conversion rate, a
+    superseded one cannot be rescued at any rate. She then bounded it both ways
+    anyway: marginal value **0 and strictly dominated** under the plain reading,
+    and at most **0.0976** against a **0.1291** lower bound under the reading most
+    generous to it.
+
     **And keep "too small" separate from "inert".** His previous iteration was
     structurally impossible; this one works and is merely undersized. Conflating
     them either retires a working mechanism or keeps re-attempting an impossible
@@ -2011,6 +2025,15 @@ realised quantity landed **7.7× short** of the parity she was aiming at, becaus
 the action sits behind a **conjunction of four gates and she had sized the dose
 from one of them** — predicting 5.7× and realising 1.15×. The gain is real and
 comes from somewhere else in the same mechanism.
+
+    **Better still, done BEFORE the run: bound what a pass would license.**
+    (alice, a day later.) Registering her next arm, she wrote down in advance
+    that a pass licenses *"the mix was inverted on production efficiency and
+    correcting it won"* and **not** that production is the route to strength
+    generally — a claim two of her own censuses had already refuted. Every other
+    instance of this discipline in this file happens *after* a result, where it is
+    a correction; written beforehand it is a **constraint**, and there is nothing
+    left to negotiate when the number arrives.
 
     She recorded that **before the screen returned**, precisely so an accept
     could not bury it, and that timing is the whole entry. §56 makes the same
