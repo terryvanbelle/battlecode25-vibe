@@ -21502,3 +21502,69 @@ extra paint income would not convert and the chain would be worthless.** It is p
 **Neither memory implementation should be built for symmetry inference alone**, but the sizing that
 would justify it is now a number someone could act on rather than a gross rate with a contradiction
 attached.
+
+# The coverage axis, ENUMERATED and ranked by cost — I had reached for the most expensive member
+
+Fair challenge: I narrowed to one term (coverage) and then went from a prior-year reference straight
+to **symmetry inference**, which is the most expensive candidate in its class and sits behind two
+unbuilt links. The axis is one function, `newExploreTarget` and its refresh triggers, and it has
+several independent knobs.
+
+| rank by cost | mechanism | memory required | addresses |
+|---|---|---|---|
+| **1** | **explore-target sampling rank** (farthest-of-4 -> k-th farthest) | **none** | own-half gaps |
+| 2 | refresh period (`exploreAge > 120`) | none (existing field) | trips abandoned mid-way |
+| 3 | momentum — continue the current heading | one per-robot field | jitter |
+| 4 | repulsion from visible explorers | current vision only | clustering |
+| 5 | distance-aware refill (do not recall a far unit) | none | the D3 tether |
+| **6** | **symmetry inference** | **memory outliving a robot** | 65% of missed ruins, both halves |
+
+**Symmetry inference ranks LAST on cost and it is the one I found first.**
+
+## The measurement that makes rank 1 actionable
+
+galaxy, carol vs alice, 11 sampled rounds over 1,870 passable tiles:
+
+| | tiles ever within vision |
+|---|---|
+| **carol** | **918 = 49%** |
+| **alice** | **1,674 = 90%** |
+
+| carol coverage by quadrant | |
+|---|---|
+| own half (bottom-left / bottom-right) | **77% / 76%** |
+| opponent half (top-left / top-right) | **18% / 23%** |
+
+**This unifies two findings I had been treating separately**: the coverage ceiling (46% of ruins,
+49% of tiles) and the occupation asymmetry (carol on its own paint 58–90%, alice on carol's 85–88%)
+are the *same phenomenon* — **carol never leaves its own half.**
+
+**And critically, 6 of the 15 genuinely never-marked ruins are in carol's OWN half** (8 of 17 less
+its two starting-tower sites). **40% of the coverage gap needs no incursion into contested ground,
+no symmetry inference, and no memory at all.**
+
+## Iteration 76 — the sampling rank. PRE-REGISTERED.
+
+The incumbent draws 4 uniform points and keeps the **farthest**, dispatching every unit clean across
+the map. With D3's refill tether taking 35–59% of splasher turns, those trips are not completed, so
+paths become **radial spokes from towers** and the gaps between spokes are never covered.
+
+`EXPLORE_RANK` selects the k-th farthest of the same four samples. **1 = farthest = the incumbent
+exactly** (zero arm); arms are **2 / 3 / 4**, a clean monotone ladder over target distance, one
+constant, zero memory.
+
+**Net price, by the chain I validated an hour ago:** 6 own-half ruins x 0.73 marked->claimed = ~+4
+claims -> ~+3 paint towers -> +15 paint/turn on a base of 55, and with the measured 4.3x splasher
+action headroom that converts at roughly **+25–30% in tiles**. Smaller than the symmetry chain's
++61%, but it costs one constant instead of two unbuilt links.
+
+**Registered stage-0 mechanism check (galaxy, self-play — map-coupled, so self-play is correct):**
+1. **Mean explore-target distance must fall monotonically with `EXPLORE_RANK`** — the manipulation.
+2. **Tiles ever sensed must rise above the zero arm's**, and/or ruins ever marked must rise. Both are
+   measured the same way as above.
+
+**Registered falsifier:** if target distance falls and coverage does *not* rise, then dispatch
+distance is not what limits coverage — the tether or the refresh is — and rank 1 closes with ranks
+2 and 5 named as the survivors.
+
+**Gate:** 25-map self-play screen (>= 31/50), then the standing full-corpus census (margin >= +26).
