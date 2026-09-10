@@ -34,9 +34,16 @@ newest-first until it does. That is the point at which a hidden plateau surfaces
 ## Pending
 
 - [ ] K3 — refill reserve 200 -> 50 (`src/alice/RobotPlayer.java`, tryRefill).
-      Screen ACCEPT net +4/50. Census FAIL net +5/150 against +12. Manipulation
-      check passed (refills/unit 0.231 -> 0.265); falsifier did not fire (units
-      0.92x, per-unit paint actions 1.16x).
+      Screen ACCEPT net +4/50. Census FAIL net +5/150 against +12.
+      **Manipulation check RETRACTED as uninformative:** I recorded refills/unit
+      0.231 -> 0.265 as passing, but the noise floor of that cross-game quantity
+      was later measured at sd = 125% of its mean, making 1.15x just **0.15 sd**.
+      It carries no information. What DOES establish that the mechanism fires is
+      K4's same-game site counter -- 97 permitted draws at reserve 50 against 51
+      at reserve 200, identical games, identical turns, exact. The attribution
+      stands on that; the evidence originally cited for it does not.
+      Falsifier did not fire (units 0.92x, per-unit paint actions 1.16x) -- but
+      note both of those are cross-game figures too and inherit the same floor.
       **CAVEAT, recorded because the keep rests on "no evidence of harm":** the
       census carried **no null arm**, so its ability to detect harm at this effect
       size was never measured on that draw. The screen's null read +0, which
