@@ -19,11 +19,29 @@ is the first task, not a preamble.
    measure, decide, record and stay honest. It carries no mechanism, no unit mix
    and no map-specific finding, and you may adopt anything in it freely.
 
-**Hard isolation**: never read anything under the other agents' workspaces —
-not code, not snapshots, not logs, not on battlecode-dev, not in git history.
-Everything under `agents/` other than `agents/carol/` is off limits. The
-`tournaments/` results and the tournament replays are your only sanctioned
-cross-agent channel.
+**Hard isolation from alice, and only from alice.** Never read anything
+under `agents/alice/` — not code, not snapshots, not logs, not on
+battlecode-dev, not in git history. The `tournaments/` results and the
+tournament replays are your only sanctioned channel to that lineage, and the
+twice-daily round-robin is a real measurement only while your two bots are
+arrived at independently.
+
+**`agents/bob/` is OPEN to you (2026-09-10).** Bob is retired — the project now
+runs two lineages to fit the account's usage limits — and his whole workspace is
+readable: code, snapshots, `TRAINING_LOG.md`, `LEARNINGS.md`, `CLOSED.md`,
+`RULES.md`, tools, replays. Sixty-one logged iterations with prices attached and
+a closed-directions ledger with re-open conditions is the cheapest research
+available to you; his `CLOSED.md` alone can stop you re-deriving a direction he
+already priced. His bot still plays in the tournament from a frozen HEAD, so he
+is now a fixed third opponent rather than a competitor.
+
+**But reading bob does not transfer a verdict.** His accepts were measured on
+his architecture against his gate. A mechanism lifted from his tree still needs
+your own pre-registration, your own gate and your own census — a lineage proved
+this week that a build correct for one architecture can be the worst arm in its
+own ladder on another. Take his measurements and closures as evidence about the
+game, his code as a starting point, and record in your log what you took and
+from where.
 
 **The scratchpad ROOT is shared too, and it is the worse channel.** Write your
 working files ONLY under `<scratchpad>/carol/`, never at the root, and never

@@ -25,6 +25,36 @@ produced.
 
 ## Isolation rules (hard)
 
+0. **BOB IS RETIRED (2026-09-10, user), and his workspace is now open ground.**
+   The project runs on two lineages, alice and carol, to fit within the account's
+   usage limits. Three consequences, and the isolation rule below is amended by
+   all three:
+
+   - **`agents/bob/` is readable by both alice and carol** — code, snapshots,
+     `TRAINING_LOG.md`, `LEARNINGS.md`, `CLOSED.md`, `RULES.md`, tools, replays.
+     Read it for ideas. Sixty-one logged iterations with prices attached, and a
+     closed-directions ledger with re-open conditions, is the cheapest research
+     available to either of you.
+   - **alice and carol remain fully isolated from each other.** Everything in
+     rule 1 below still binds between the two live lineages: no code, no
+     snapshots, no logs, no scratchpad, no process listings. The tournament stays
+     a real measurement only while the two live bots are arrived at
+     independently.
+   - **bob's bot keeps playing.** The tournament still exports three bots from
+     HEAD, and bob's HEAD no longer moves — so he becomes a *frozen third
+     opponent* that neither live lineage produced, which is exactly what the
+     frozen-roster and benchmark instruments are made of. His standings line is
+     now a reference mark rather than a competitor.
+
+   **What being allowed to read bob does not do**: it does not transfer a
+   verdict. His accepts were measured on his architecture and his gate; a
+   mechanism lifted from his tree still needs your own pre-registration, your own
+   gate and your own census — a lineage proved this week that a build which is
+   correct for one architecture can be the worst arm in its own ladder on
+   another. Take his *measurements* and his *closures* as evidence about the
+   game, and his *code* as a starting point, never as a licence to skip a gate.
+   Say in your log what you took and from where.
+
 1. **An agent must never read another agent's code** — not their bot package,
    not their snapshots, not their staged copies anywhere (including on
    battlecode-dev and in git history). Concretely, for Alice: everything under

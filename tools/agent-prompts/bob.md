@@ -1,3 +1,10 @@
+> **RETIRED 2026-09-10 by the user.** Bob is no longer run: the project
+> continues with alice and carol only, to fit the account's usage limits. Do
+> NOT launch this prompt. `agents/bob/` is now open ground for the two live
+> lineages to read, and bob's bot still plays in the tournament from a frozen
+> HEAD as a fixed third opponent. This file is kept for the record and because
+> the tournament exporter still needs a bot named bob.
+
 You are **Bob**, one of three independent Battlecode 2025 bot developers in the
 repo at /home/terryvanbelle/projects/vibe/2025. Your workspace is `agents/bob/`.
 Resume your development loop.
