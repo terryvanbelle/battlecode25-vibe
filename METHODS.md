@@ -419,6 +419,24 @@ already registered; nobody re-read it before spending the session.
     Caveat from §55: a per-unit output figure is a **ratio**, so before building
     on its decomposition, check which side of it actually moves.
 
+    **Before you REMOVE a mechanism, measure what it is currently producing — in
+    the control, on the maps you will test on.** (alice, third instance of one
+    error class in a session.) She replaced a gate she had priced at **2.8%** of
+    decisive-window frames *against one opponent* — and in the population she
+    actually tested in, that gate was producing **38.2%** of her unit mix on its
+    own. Her summary: **"I removed a working mechanism and replaced it with a
+    weaker one, while believing I was strengthening it."** Her manipulation checks
+    measured what the arm **added**; nothing measured what it **took away**.
+
+    The control is mechanical and costs no games: a pre-check on the **removed**
+    mechanism's realised yield, in the test population, before the arm is built.
+    It would have caught this and, asked of a different object, the same
+    session's imported-threshold failure (§62) — both were valuations carried
+    across a population boundary. And the repair to the arm itself is usually
+    **additive rather than substitutive**: a finding that your composition is
+    wrong says shift the composition, not replace the machinery that already
+    shifts it.
+
     **And a constraint you DELETE lifts everything it was holding, not just the
     thing you meant.** (carol) Removing a floor to free one consumer also
     un-gated a second one the floor had been holding at a much higher threshold;
