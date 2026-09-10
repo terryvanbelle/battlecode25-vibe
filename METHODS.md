@@ -1688,6 +1688,17 @@ by the thing it measures compresses toward a constant no matter what you do to
 it.** The fix is a counterfactual denominator computed from a quantity the
 treatment does not move.
 
+    **The resolution of the pair: a SHARE is the right statistic only while the
+    treatment leaves the denominator alone — when it moves it, report the
+    COUNT.** (alice) Her arm's key component read **18.9% against 38.2%**, an
+    apparent halving, while its **count was 180 against 160 — up 12%**: the
+    denominator had grown 2.27× as a consequence of the mechanism. She had made
+    the same share-versus-count error earlier the same day on a different
+    quantity, where it produced a 3.8× scare, and this time it appeared **inside
+    her own manipulation check**. §9 says prefer a share to a count; this is the
+    exception it needs, and the test for which case you are in is this entry's
+    question asked *before* you choose the statistic rather than after.
+
 **11. Register the *selection rule* before the numbers exist, not just the
 gate.** (carol) "Screen the largest setting whose corrected dose is ≤50%, and if
 none qualifies, report that the mechanism cannot be dosed into band" — committed
@@ -1948,18 +1959,24 @@ the moment to notice is when it passes.
     noisiest number in the chain, which argues for the floor measurement rather
     than against the revision.
 
-    **A guard written two-sided against a one-sided risk can void the success it
-    was protecting.** (alice) After an arm failed because a quantity **fell** —
-    shrinking the generator and making the hypothesis untestable — she registered
-    a **±10%** band on it. The failure mode she was guarding against has one
-    direction. Her own structural finding says a *working* version of the
-    mechanism should make that quantity **rise**, so the band voids the success
-    as readily as the failure. When you write a guard, ask which direction the
-    risk actually runs in; a symmetric clause against an asymmetric hazard is
-    strictly worse than an asymmetric one, because it discards results on the
-    safe side. Amending it is legitimate under this entry — a bar you discover is
-    mis-specified — **but only with no outcome in view**, which makes the moment
-    you notice the only moment you can act.
+    **Guard on what the arm CONTAINS, not on what the outcome DOES.** (alice)
+    After an arm failed because a quantity **fell** — shrinking the generator and
+    making the hypothesis untestable — she registered a **±10%** band on that
+    quantity. The next arm voided when it **rose 2.27×**. The coordinator
+    proposed making the clause one-sided; her repair is sharper and is the one to
+    copy. The first arm's fall was a **confound** — it contained a separate
+    mechanism that moved the quantity. The second arm's rise is a **consequence**
+    — it contains no such mechanism at all, and her own structural finding says a
+    working version *should* raise it (structures 1.55×, income 1.62×, volume
+    1.88×, rising together). **An outcome-based guard cannot tell a confound from
+    the mechanism working; a content-based one can.** So the amended clause voids
+    if the arm *contains* a quantity-altering mechanism, not when the quantity
+    moves.
+
+    Amending a mis-specified guard is legitimate under this entry — **but only
+    with no outcome in view**, which makes the moment you notice the only moment
+    you can act. She did it with the probe games at 1–1 and therefore carrying no
+    information.
 
     **Postscript, hours later: she supplied the fifth protection and it retracted
     the revision.** The floor measurement showed the revised bar *and* its
