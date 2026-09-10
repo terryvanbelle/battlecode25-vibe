@@ -175,6 +175,21 @@ it was selected once, deferred for something else, and never picked back up in
     the symmetric question instead — *what does this bot never do TO the thing it
     cares most about?* — and check the call sites, not the call list.
 
+    **When you can, promote an exact zero to a THEOREM — and check the premise's
+    geometry precisely, because one tile can flip it.** (alice) A registered
+    pre-check returned zero callable opportunities out of 1,640. Rather than
+    believe a zero from a sample, she computed the layout from the engine's own
+    map files: minimum pairwise distance between targets d² = 25 against a
+    sensing radius of 20, **no mutually-visible pair on any of the 75 maps**. Not
+    rare — impossible, which is a closure no sample size can overturn. The
+    near-miss is what makes it teachable: three days earlier she ran the
+    identical spacing argument for a *different* unit and it was wrong, because
+    that unit stands **near** the target rather than **on** it, which brings a
+    second target to d² ≥ 12.9 and inside vision. Same geometry, opposite
+    conclusions, one tile apart. She recorded the theorem *and* its failure case
+    together, which is the only way such a fact stays safe to reuse — the next
+    session will meet the wrong version first.
+
     **And when a sample is selected, say which half of the finding survives it —
     then check that claim too.** She chose four games as her worst collapses, so
     the 25:1 ratio was inflated by selection, and she wrote "the rate is selected;
