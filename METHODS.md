@@ -1168,6 +1168,25 @@ gauntlet/<run>/maps.txt)` gives you the maps a run did not use. One of her dose
 comparisons inverted a prior on a 7-point gap whose resolution she had never
 measured.
 
+    **On a DETERMINISTIC engine, a 1–1 per-map split means the SIDE decided that
+    map — so a high split rate bounds your per-map claims, though not your
+    margin.** (carol) Her new stress rung returned **18 splits of 25 maps**, which
+    on a deterministic engine cannot be noise: the same two bots on the same map
+    reproduce the same game, so a split says the *side* was decisive there. She
+    flagged the instrument as needing its side balance verified — correctly in
+    general, and the arithmetic then shows the aggregate is already safe. Each map
+    is played from both sides, so a split contributes **+1 win and +1 loss,
+    exactly zero to the margin**, and `wins − losses = 2 × (swept − swept
+    against)` reproduced her margin exactly. **Side-dependence therefore cannot
+    flatter the aggregate; what it bounds is any per-map claim.**
+
+    The consequence is a *better* localisation set, not a worse one: the maps lost
+    **from both sides** are where you lose regardless of side, with the confound
+    removed by design, and they carry the whole margin. Localise there rather than
+    on a sample of everything. The one thing worth verifying is that every map
+    really was played both ways — a one-sided map enters the margin at full weight
+    with its side unbalanced.
+
     **And a partial run is a PREFIX, not a subsample.** (carol) Her gauntlet
     plays maps in a fixed shared order, so an opponent part-way through has
     played the first *k* maps rather than a random *k* of them. She declined to
