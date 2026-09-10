@@ -22937,3 +22937,83 @@ the backwards argument had to assume, and it pointed the same way as the argumen
 At a conventional 2 sd the bar would be ~+18.5 rather than +26, and nothing priced today clears
 either — best measured candidate +11 at 1.2 sd, production extrapolation +3..+9. The impasse is not
 an artefact of a conservative gate.
+
+# Iteration 79 — the re-opened tower-attack gate. CLOSED BEFORE STAGE 0, and the reason is my own bad number.
+
+Registered at §7.8 of `CLOSURE_MAP.md`. Stage 0 was to be 3 probe games. **It cost zero**, because
+validating the measurement instrument *before* spending the games refuted the premise's magnitude.
+
+## The instrument check that was supposed to be routine
+
+The manipulation check needs attacks per 1,000 rounds from a replay. The soldier appends `hitT` to
+its indicator string when it attacks a tower, so I validated the counter against the three maps whose
+numbers I had already recorded — and they disagreed:
+
+| map | area | **recorded** attacks/1,000r | **measured from the replay** | overstatement |
+|---|---|---|---|---|
+| Mirage | 1,600 | 98 | **5** | **21x** |
+| galaxy | 2,025 | 208 | **10** | **21x** |
+| Gears | 3,025 | 859 | **379** | **2.3x** |
+
+Paint spent attacking, correspondingly: recorded **490 / 1,040 / 4,296**, actual **23 / 50 / 1,895**.
+
+**Two checks before naming my record as the fault, not the replay:**
+1. **Is indicator coverage complete?** Every round 1..1,599 of the Gears replay carries tower
+   indicators, 2-9 per round, no gaps. The replay stores every robot's indicator every turn.
+2. **Does `hitT` survive to the end of the turn?** `state` is declared once per turn (line 491) and
+   only ever appended to — there is **no reassignment** anywhere after the attack block. So an attack
+   is always visible in the indicator.
+
+**The count is complete and the recorded table is wrong.** I cannot reproduce its provenance: no tool
+in `tools/` or `carol-tools/` produces it, and the indicator string carries no attack counter. The
+"paint ACTIONS" column (4,297 / 3,844 / 3,392) is equally unreproducible. **A number I built a
+registered iteration on had no method attached to it.**
+
+## Re-pricing on the corrected figures — and an engine fact that finishes it
+
+**A soldier's paint IS `rc.attack`.** Painting a tile and attacking a tower are the same primitive at
+the same cost (`attackCost = 5` [E]), and a soldier gets one action per cooldown. **So a tower attack
+displaces exactly one paint action — no more, and only if there was one to displace.**
+
+| map | attacks | **% of soldier-turns** | soldier-turns with **nothing paintable** (`IDLE-ENEMY`) |
+|---|---|---|---|
+| Gears | 606 | **2.43%** | **58.5%** |
+| galaxy | 20 | 0.24% | 39.1% |
+| Mirage | 3 | 0.29% | 5.2% |
+
+Not "20% of action-paint" — **2.4% of soldier-turns on the worst map, 0.24-0.29% elsewhere.**
+
+**One test I designed and must report as inconclusive:** I tried to read the counterfactual directly
+by checking whether attacking turns *also* carry `IDLE-ENEMY`. All 606 came back "neither" — but that
+is structural, not evidence: the attack block `break`s before the idle determination is appended, so
+the two can never co-occur. **The test cannot answer the question as written.** What the base rate
+does support is a bound: on Gears **58.5%** of soldier-turns have nothing paintable at all, and a
+soldier **cannot paint an enemy tile** [E] — which is exactly the ground near an enemy tower. So at
+most **41.5%** of those 606 attacks displaced a real paint action.
+
+## The oracle — a perfect gate, priced
+
+Upper bound on what a *perfect* gate recovers, granting it everything:
+**606 attacks x 41.5% = 252 painted tiles over a 1,599-round game**, on a 3,025-tile map — **8.3% of
+the map, once, before any overpaint churn.** For scale, the coverage oracle needed **63 coverage
+points (~1,900 tiles on Gears)** to price at exactly the +26 bar. So 252 tiles is
+**~13% of the bar, ~+3 census margin** — and that is *before* subtracting the tower denial, which the
+surviving half of the original two-way price puts at **1.56:1 in carol's favour**.
+
+> **CLOSED on an oracle, zero games.** The re-open that the objective change legitimately licensed
+> does not survive its own corrected measurement. The candidate was justified on "a large absolute
+> cost"; the cost is 2.4% of soldier-turns on one map and a fifth of what I recorded, and the sign
+> of the remainder still points at leaving the attack ungated.
+
+**Registered gate honoured, not shopped.** Check 0 was a manipulation check; I never reached it,
+because the *premise's magnitude* — not the implementation — was refuted. That is the same shape as
+premise 3's production half: refuted on value, before the build.
+
+## The error, recorded as its own class
+
+This is a **fourth** error class for this project, distinct from the three already logged (inverted
+referent, wrong referent, un-normalised total): **a recorded number with no method attached.** The
+other three were all reasoning errors over real measurements. This one was a figure that entered the
+log, survived into a closure map, and was used to justify a registered iteration, without any
+reproducible derivation. It was caught only because I validated the instrument before spending games
+on it.

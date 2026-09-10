@@ -446,3 +446,20 @@ both directions, and do not let a reject you agree with quietly answer a questio
   gate cost the "for gating" argument its authority (it was rival-specific) while the "against
   gating" arithmetic survived. A re-examination is not a licence to revive; report it when it points
   the other way.
+
+- **Validate the measurement instrument BEFORE spending the games it is meant to read.** My
+  registered stage 0 cost zero because checking that the attack counter reproduced my recorded
+  numbers showed the recorded numbers were wrong by 2.3-21x. The instrument check is not overhead
+  before an experiment; it is sometimes the experiment.
+- **A recorded number with no method attached is its own error class.** Inverted referent, wrong
+  referent and un-normalised total are all reasoning errors over real measurements. This was a figure
+  that entered the log, survived into a closure map, and justified a registered iteration, with no
+  reproducible derivation anywhere. When quoting a number from your own record to justify a build,
+  check that something can still produce it.
+- **When two of your own numbers disagree, run the checks that could indict the INSTRUMENT before
+  concluding the record is wrong** — and say which you checked. Complete round coverage in the replay
+  and no reassignment of the state string were what licensed "my record is the fault, not the tool".
+- **A test can be structurally incapable of answering its question.** I checked whether attacking
+  turns also showed 'nothing paintable' and got a clean 0 of 606 — which proved nothing, because the
+  attack path breaks before that flag is appended. A 100%-clean result from a test that cannot
+  produce the other answer is not evidence; report it as inconclusive.
