@@ -354,6 +354,26 @@ unreliable will spend its probes differently from one that does not.
     is to probe several quantities inside a nominated area rather than hunt for
     better areas. A tally is only worth keeping if it changes what you do next.
 
+**40. Run the absolute-strength instrument on a schedule tied to ACCEPTS — a
+stale roster is worse than none.** (alice) Hers was four accepts behind when it
+finally ran, and it showed her *live bot losing to its own earlier snapshot* by
+−7 net swept on the same 25 maps, both sides, ~−2.3 sd, corroborated by 10–12
+point drops against the two frozen opponents still capable of discriminating.
+She had spent an entire session — fourteen iterations of probes, closures and
+pricing — optimising from a baseline that had already regressed, against an
+instrument that would have caught it at any point and was not run. **The last
+reading of a stale instrument silently licenses the belief that the line has been
+going up.** Tie the run to accepts, not to convenience: after every accept, or
+every second at the outside, and treat "my absolute instrument is N accepts
+stale" as a defect to fix before the next build rather than a note.
+
+    The corollary from the same run: a regression discovered late costs
+    everything built on top of it, and the repair is not automatic. She
+    registered the rule *before* the confirmation census returned — revert at one
+    threshold, do nothing in a middle band, treat a third case as an unlucky
+    draw — plus a diagnostic cut, because "the mechanism is fine and the cost
+    bound was wrong" is a more surgical repair than reverting the accept.
+
 **30. A frozen rung at 100% cannot register a regression — read the roster
 weakest-first, and repair saturation by ADDING a harder rung, never by retiring
 one.** (bob, then carol independently) He found his roster reading 92%, 88% and
