@@ -23792,3 +23792,57 @@ time the estimate was built from quantities measured separately.**
 
 `src/alice` unchanged since K3. **Zero screens spent on K7, K8, SRP, or this pair** — four directions
 closed on pre-checks, each with a stated reason rather than a null.
+
+# THE ANTI-CORRELATION CLOSES A CLASS — measured in one pass, and it finishes the mechanism enumeration
+
+Measured **together**, per frame, never assembled from a chip curve and a paint curve — the
+composition error that produced 8.9% where the truth was 1.4%.
+
+> **rank correlation(team chips, paint per tower) = −0.496** (Pearson −0.212, dominated by the chip
+> tail; the rank figure is the honest one).
+
+| chip threshold | frames ≥ C | **of those, paint ≥ 300** | joint |
+|---|---|---|---|
+| 1,450 (`CHIP_RESERVE`) | 59.0% | 14.6% | 8.6% |
+| 1,850 (reserve + a splasher) | 44.7% | 19.3% | 8.6% |
+| **3,950 (the shipped splasher gate)** | 16.4% | **0.0%** | **0.0%** |
+| 10,000 | 6.1% | **0.0%** | 0.0% |
+| 30,000 | 3.7% | **0.0%** | 0.0% |
+
+**Above ~3,950 chips, tower paint ≥300 never co-occurs. Not rarely — zero, in 244 frames.** And the
+phase table shows the mechanism: chips run **1,594 → 11,700** while paint per tower runs
+**210.3 → 111.9**, with paint ≥300 going **29.0% → 0.0%**.
+
+## The class, stated precisely
+
+> **Any mechanism gated on an ACCUMULATED team-chip threshold whose output costs substantial TOWER
+> paint is phase-mismatched by construction, and is closed.** Chips are a team stock that
+> accumulates monotonically to a 42,712 surplus; tower paint is a per-structure stock that depletes.
+> **The currency only becomes abundant once the thing it must buy has run out.**
+
+**Scope, because the class is not "all spawning":** at the base `CHIP_RESERVE` of 1,450, 14.6% of
+frames still clear 300 paint, and for a 200-paint soldier the figure was 47.7%. **Ordinary spawning is
+not blocked.** It is the combination — a *high* chip gate and a *high* paint cost — that is
+unreachable. Splashers behind a 3,950 gate are the exemplar, and K8, the pair, and iteration 28's
+original chip-surplus trigger are all members.
+
+**One caveat that strengthens it:** this table uses **mean paint per tower**, itself an aggregate. The
+site-level probe measured the same joint at **1.4%** where this frame-level view says 8.6%. **The
+true joint is lower than shown**, because a team whose *mean* tower holds 300 is not a team where
+*this* tower does.
+
+## What it finishes
+
+**Every remaining member of that family closes here, for zero games.** Combined with the enumeration
+from the pinned jar — three routes by which paint can enter, all accounted for — **my enumeration of
+MECHANISMS on the binding term is finished.**
+
+> That is the state, said plainly: **the mechanism space on per-unit output is exhausted, and the
+> design-level enumeration is the only thing left.** Not "I ran out of ideas" — the routes are
+> enumerated from the engine, the currencies are measured against each other, and the remaining
+> family is closed by a phase relationship rather than by a null.
+
+**And the free upper bound still stands, unchanged and unexplained by any of it:** another lineage
+extracts **2x** alice's per-unit output from these same three engine-fixed routes. **Both of those
+cannot be true of a fixed design** — which is precisely what makes the next question a design
+question.
