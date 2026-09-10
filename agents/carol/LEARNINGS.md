@@ -478,3 +478,18 @@ both directions, and do not let a reject you agree with quietly answer a questio
   standing at similar magnitude on n=26-30 cells. The area boundary I re-derived would select nearly
   the same maps as a ruin boundary. Record which variable a gate would have to READ, separately from
   the magnitude it would deliver.
+
+- **A failed instrument means UNTESTED, not REJECTED — and it is more expensive than a failed arm.**
+  `carol_decap` read 97.5% and would naturally have been filed as "tower siege does not threaten
+  carol". It was a statement about the instrument: decap attacked towers with soldiers, which the
+  engine makes nearly impossible. A failed opponent closes a whole line of questioning rather than
+  one lever. Re-read every saturated rung as a question about the rung.
+- **Coupling is a defect in an arm and a virtue in an opponent.** An experimental arm needs one
+  change so the result can be attributed; a stress opponent needs difficulty and no attribution at
+  all. Fork your strongest bot and couple freely when building a rung -- a weak hand-built archetype
+  cannot beat you, which is exactly how the previous one failed.
+- **Build a stress opponent against a degeneracy measured in your own trace**, never against a guess
+  at what some other bot does. The target here was carol's own recorded absorbing state -- production
+  frozen for 1,887 / 1,881 / 44 consecutive rounds once the last money tower dies.
+- **A rung that beats you localises the capability it was built to stress and nothing else.** Its win
+  rate is not a general strength reading. Keep it a diagnostic; do not let it become a benchmark.

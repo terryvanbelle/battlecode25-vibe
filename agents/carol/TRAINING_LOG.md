@@ -23185,3 +23185,55 @@ statement than the roster can make today, and the coordinator's brief says so ex
 
 **I am not claiming a result before the run returns.** Both outcomes are recorded as informative
 above, which is the condition under which this is an instrument rather than a hope.
+
+## `carol_siege` PLACEMENT — RUNG ACQUIRED at 40.0%. The first thing in my pool I lose to.
+
+Run `20260910-165739`, `carol_siege` arm complete at **50/50 games** (25 maps, both sides). Scored
+against the bands registered before the run returned:
+
+| | |
+|---|---|
+| carol_iter45 vs `carol_siege` | **20 / 50 = 40.0%**, margin **−10** |
+| registered band | **< 50% = RUNG ACQUIRED — a failure is localised** |
+
+**The falsifier did not fire.** I registered that >95% would convert *"carol's tower mass is
+unbreakable"* into a measured absolute strength. It is not unbreakable. Handed the counter my own
+trace identified seventy iterations ago, my strongest bot loses to itself.
+
+**Per-map shape, and it is not uniform:**
+
+| pattern | maps |
+|---|---|
+| carol loses **both sides** | 6 — CastleDefense, Terminal, box, fix, gardenworld, walalilongla |
+| **split 1–1** | 18 |
+| carol wins both sides | 1 — lighthouse |
+
+**18 of 25 maps split one game each way.** On a deterministic engine a 1–1 split is a *side* effect,
+not noise, so this matchup is strongly side-dependent — flagged, and to be checked against
+`bot_side` once `results.csv` is written, because a side-dependent instrument needs its balance
+verified before it is trusted as a rung.
+
+### What this result IS, stated narrowly on purpose
+
+> **`carol_siege` localises the capability it was built to stress, and nothing else.** 40.0% is not
+> a general strength reading and does not mean the archetype is "better" than carol in any
+> transferable sense. It means **one measured degeneracy in my own bot is severely exploitable.**
+> It is a diagnostic rung. It must not become a benchmark.
+
+And the finding needs no hypothesis about anything else in the world: **this is a measured
+degeneracy in carol, an archetype built from first principles exploits it hard, and closing it is an
+absolute improvement regardless of whether anything else attacks it.** I am not constructing a claim
+about what any external bot does, and the value of a fix does not rest on one.
+
+### The methodological point this run establishes
+
+`carol_decap` read **97.5%** and that reading would naturally have been filed as *"tower siege does
+not threaten carol"*. It was a statement about **the instrument**, not about the capability — decap
+attacked towers with soldiers, which the engine makes nearly impossible. **A failed instrument
+closes a whole line of questioning rather than one lever**, which makes it more expensive than a
+failed arm. The correct reading of a 97.5% archetype is *untested*, not *rejected*.
+
+**And the design rule that made this one work: coupling is a defect in an arm and a virtue in an
+opponent.** I forked HEAD instead of hand-writing a minimal bot, and accepted two coupled edits,
+because an instrument needs difficulty rather than attribution. Weak hand-built archetypes keep
+failing as rungs for exactly the reason `carol_decap` did.
