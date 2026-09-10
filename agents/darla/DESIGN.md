@@ -161,3 +161,68 @@ it see. If both beat darla1, the base's moppers were simply wasted and the next
 question is seeing-moppers against no-moppers directly. If darla3 wins and darla2
 loses, finding #2 is a fact about alice's production metric — which prices enemy-
 paint removal at zero by construction — and not about the unit.
+
+## Registration — iteration 3, the `SPLASH_FLOOR` dose ladder (`darla4`, `darla5`)
+
+Written before any game of either arm, and before `darla2`/`darla3` were read.
+Baseline `darla1` = **89/144** on the two pinned samples.
+
+**This is a re-open, and carol wrote the re-open condition herself.** Her
+iteration 47 bracketed `SPLASH_FLOOR` against her own descendants — dose 0 at
+−3.26 sd, dose 1400 at −0.93 sd, incumbent 2000 — and closed the axis with an
+unusually precise ledger entry: *"CLOSED **for self-play evaluation** … Re-opening
+requires a different opponent, not a different dose."* Her reason was doctrine 17:
+her whole opponent pool descends from a bot that does not convert ruins, and an
+even instrument cannot measure a capability against an opponent that never
+exercises it.
+
+**Darla is that different opponent, and is the first build in the project to have
+one.** Her pool is alice, bob and carol — three independent lineages. alice
+reaches 14–16 towers in the games below; carol's pool never did.
+
+**What the constant does**, from carol's own comment in the inherited code: with
+`reserve = 1200`, a SPLASHER needs `chips >= 1600` while a SOLDIER needs
+`1200 + 250 + 2000 = 2250` and a MOPPER `2300`. **The cheaper unit is gated
+higher.** Against a treasury whose median is ~1,400 the soldier gate is simply
+never reached — and this is the exact error class DESIGN.md was written to avoid:
+*a constant set above the level its resource normally holds*.
+
+**The diagnosis that motivated it, from four of darla1's own loss replays**
+(mechanism only — replay inspection never sets a verdict, carol's iteration 47
+stage 0 is the cautionary case):
+
+| map | opponent | darla end state | opponent | win type |
+|---|---|---|---|---|
+| SaltyPepper | alice | **sold 0**, spl 15, tw 8, cov 281, tower paint **3,508 unspent** | sold 27, tw 13, cov 700 | MAJORITY_PAINTED |
+| Oasis | alice | sold 4, spl 8, tw **5** (flat r100→r400) | sold 24, tw 14 | MAJORITY_PAINTED |
+| yearofthesnake | bob | sold 16, tw **3** | tw 15, cov 702 | MAJORITY_PAINTED |
+| DefaultHuge | carol | sold 39, spl 2, tw 15, cov 224 | tw 16, cov 700 | MAJORITY_PAINTED |
+
+**All four losses are MAJORITY_PAINTED.** Darla does not lose the tower race and
+then lose; she loses the *coverage* race, holding thousands of unspent tower paint
+and a flat treasury, because only soldiers paint ground and claim ruins and the
+gate above stops her building them. On SaltyPepper the treasury sits at $1,350 for
+1,200 consecutive rounds — permanently below the 2,250 soldier gate — and the
+soldier population reaches **zero**.
+
+**Arms**: `darla4` = 1400, `darla5` = 0. One constant, nothing else changed. Both
+on the two pinned samples against all three lineages.
+
+**The pre-registered prediction, and it is a prediction about the SPLIT, not the
+total.** If carol's doctrine-17 reading is right, the sign of this dose is a
+property of the *opponent*:
+
+- **vs carol** — a splasher-flood coverage bot — lowering the floor should be
+  neutral-to-negative, reproducing her own −0.93 sd (1400) and −3.26 sd (0);
+- **vs alice and bob** — which convert ruins and reach 14–16 towers — it should be
+  **positive**, because matching conversion is the whole game against them.
+
+**What refutes the re-open**: the dose is negative against all three legs, or flat
+against all three. Either kills it, and kills it for a stated reason — if the
+effect is uniform across three independent lineages then the axis is simply flat
+and carol's closure generalises beyond self-play, which would make "different
+opponent" the wrong re-open condition rather than an unmet one.
+
+**What is not evidence**: any single leg's total, and any single map. n=48 per
+leg; carol's iteration 47 recorded 60% of maps splitting by spawn side on this
+very axis, so **swept maps are the column to read**, not the raw rate.
