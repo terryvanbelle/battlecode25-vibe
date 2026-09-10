@@ -18,7 +18,7 @@ Every item names the evidence. A practice without one is a preference.
 
 ## Contents
 
-Seventy entries is more than anyone reads end to end, so read this index and
+Seventy-one entries is more than anyone reads end to end, so read this index and
 follow the two or three that bear on what you are about to do. **The numbers are
 permanent identifiers, not an order** — they record when an entry was written,
 and every cross-reference in this file and in the lineages' logs cites them, so
@@ -38,6 +38,7 @@ survived while the story told about it did not.
 §66 check the direction you OPEN moves the binding term of your decomposition ·
 §69 a threshold on ONE FACTOR of a product cannot say which dominates ·
 §63 verify the barrier exists before enumerating ways across it ·
+§70 prove the headroom, then CLOSE THE BUDGET ·
 §60 rank decision sites by opportunity count in the deciding window ·
 §37 enumerate the candidate set before building anything that selects ·
 §50 exhausting one axis is not exhausting the space ·
@@ -332,6 +333,37 @@ staying **closed**.
     can: +54% required, +25.6% available from beating random placement, +62.6% at
     a perfect spread no rule achieves — so the target sits above anything
     reachable and the bar closes with no experiment at all.
+
+**70. Prove the headroom, then CLOSE THE BUDGET — an opportunity surplus and a
+resource deficit are indistinguishable in an activity statistic.** (carol) Her
+primary unit spends **42.6%** of its turns registering no work to do, and she had
+read that as waste across several iterations. The probe she built to price a
+fix confirmed the headroom was real: the unit **sees 5.1× more workable ground
+than it can reach** (3,120 against 615 tile-observations per unit-life). She
+killed the mechanism anyway, on a budget she closed in four lines — over one
+unit's life it consumes ~1,153 of the binding resource against ~1,050 received.
+**It spends almost exactly what it collects, so its firing rate is set by supply
+and no quantity of additional targets can raise it.** The idle turns are not a
+unit failing to find work; they are a unit **rationing**.
+
+    The headroom was real *and* irrelevant, which is the trap: §63 asks you to
+    verify the barrier exists, and here that check **passed** — the barrier was
+    genuine and the mechanism still dead. So an activity statistic cannot
+    distinguish "cannot find work" from "cannot afford work", and only the budget
+    can. Close it before you build, in the units of the binding resource, over
+    the lifetime of the actor that spends it.
+
+    **And when every eliminated explanation bottoms out at the same quantity,
+    that convergence is the finding.** Eight of hers did — five by measurement,
+    three by failed candidates — all terminating at one throughput term. This is
+    §27's argument arriving from the elimination side rather than the pricing
+    side: when every route ends in the same place, the place is naming what you
+    lack. Her response was the one §50 prescribes — she had been exhaustive about
+    how the resource is *spent* and had never once measured how it is *earned* —
+    and the two independent confirmations that she is not wasting it (a
+    conversion rate matching a foreign lineage's to one point, the lowest drain
+    of three bots measured) are what §55 says should push you upstream rather
+    than reassure you.
 
 **60. Rank your candidate decision SITES by opportunity count in the deciding
 window before you attach a lever to one.** (alice) After a build was rejected she
