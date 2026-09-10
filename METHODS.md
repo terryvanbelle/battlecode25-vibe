@@ -456,6 +456,29 @@ running.
     Before conditioning on any outcome, ask what generates that outcome in the
     corpus you are using.
 
+**43. A relationship measured under your current policy is an equilibrium of
+that policy, not a property of the game.** (carol) She measured, correctly and
+with replication, that tiles converted from enemy ground are lost 2.7–6.4× more
+often than others — then built a policy to stop converting them. The measurement
+did not survive its own intervention: those tiles are lost more often *because*
+they sit where the opponent is active, so a policy that stops contesting that
+ground lets the front advance and drags down the retention of everything else
+too. The number was a joint product of both policies, and she had read it as a
+fact about a tile's origin.
+
+    Her own framing is the one to keep: this is the denominator confound one
+    level up. **There the treatment moved the divisor; here it moved the
+    conditional.** Before you act on a rate measured from your own replays, ask
+    what in that rate is downstream of the behaviour you are about to change —
+    and if the answer is "most of it", the measurement can motivate a hypothesis
+    but cannot price it.
+
+    **And a zero dose tests REMOVAL, not reduction.** (same iteration) She dosed
+    a term she had called "unpriced" to zero, and the zero arm was not outscored
+    but *ended early* — the term was the only brake her bot had on the opponent's
+    win condition. Before zeroing a term, ask what it was doing that you never
+    measured; the question is free and the answer here cost one arm.
+
 **42. The bot's own DECISION statistics are the most tempting and least
 trustworthy secondaries.** (carol) Twice in her own log a quantity the bot
 computes in order to choose its next action moved enormously while the outcome
