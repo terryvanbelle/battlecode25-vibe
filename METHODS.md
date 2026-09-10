@@ -18,7 +18,7 @@ Every item names the evidence. A practice without one is a preference.
 
 ## Contents
 
-Sixty-eight entries is more than anyone reads end to end, so read this index and
+Sixty-nine entries is more than anyone reads end to end, so read this index and
 follow the two or three that bear on what you are about to do. **The numbers are
 permanent identifiers, not an order** — they record when an entry was written,
 and every cross-reference in this file and in the lineages' logs cites them, so
@@ -72,6 +72,7 @@ survived while the story told about it did not.
 §19 an aggregate gate cannot see a trade; cut by time and cross with opponent ·
 §31 register PRECEDENCE between primary and control; never bar a ceiling ·
 §44 a fired branch fixes the DECISION, not the validity of its prescription ·
+§68 re-read hardest the registered branch that PERMITS you to ship ·
 §47 report a bar you discover is unreachable ·
 §48 restate an unobservable clause in site terms and DECLARE the substitution ·
 §56 fix branch ORDER in code; record the uncomfortable detail before the verdict ·
@@ -859,6 +860,32 @@ otherwise a registration becomes a licence to do the wrong thing on schedule.
     right, and the reconciliation turned out to be the refutation of her own next
     step. The disagreement is usually more informative than either figure.
 
+**68. A registered branch that PERMITS you to ship is the one to re-read hardest
+— check whether its premise is a measurement or your own label for your own
+diff.** (carol) She had registered, before the run, that "a bug fix that measures
+as a null is still worth having in HEAD if it does no harm". The branch fired
+exactly as written: a genuine defect in a shipped path, the stage-0 clause moving
+in the intended direction for the first time in that area, and a screen at
+**+8, 1.13 sd against a registered bar** — and she refused it. Her reason is the
+entry: **"bug fix" is her own characterisation of a change the instrument scores
+at what a policy-identical placebo produces.** The registration was honest and
+written in advance; what it rested on was a word she had chosen for her own code,
+not a quantity anything measured.
+
+    This is §44's mirror image and the harder direction. There a fired branch
+    prescribed an action that evidence already refuted; here it prescribed an
+    action she *wanted*, which is why a permissive clause needs re-reading in a
+    way a restrictive one does not — nobody rationalises their way into a bar
+    they have to clear. **Pre-registration protects you from the numbers; it does
+    not protect you from a premise you wrote in your own vocabulary.**
+
+    Her disposal is the part to copy: the fix is written and verified in a
+    labelled snapshot, logged with its measured cost and a **bundling
+    condition** — any later iteration that touches that path for another reason
+    should carry it, since its sign is known and it then costs nothing extra. A
+    change below its gate is not thereby worthless; it is worth exactly its
+    marginal cost, and that is zero to whoever is already editing the file.
+
 **47. Report a bar you discover is unreachable — especially when the break
 favours the outcome you were authorised to take.** (alice) Her registered kill
 bar required a union of 5,727 distinct tiles on a 3,600-tile board: **unreachable
@@ -977,6 +1004,21 @@ over-enemy paints, one actor 12,409, the other exactly 0.
     of tower damage gave SPLASHER 100%, SOLDIER 0%: the structural claim is that
     her *soldiers* never attack towers, which the source confirms and no sample
     can overturn, and it is sharper than the aggregate claim she lost.
+
+    **A rate whose denominator includes turns where the behaviour was
+    FORBIDDEN is measuring the rule, not the bot.** (carol) Discharging a
+    navigation re-open condition, she measured how often units stand still — and
+    removed the confound first: the engine forbids movement below a resource
+    threshold, so those turns are stationary *by rule* and no policy can move
+    them. Split out, genuine obstruction fell to **9.2–23.5% of turns with the
+    resource available**. She then discriminated between the two candidate
+    blockers at exactly those positions rather than arguing about them: a mean of
+    **1.2–1.6 adjacent walls out of 8**, with **27–50% of stuck turns having no
+    adjacent wall at all** — with ~6.5 free directions and the unit stationary,
+    the blockers are other robots, and the terrain family closes by its own
+    re-open condition answered in the negative. This is §24 in a denominator
+    costume: before a rate is a defect, remove the cases where the actor could
+    not have done otherwise.
 
 **24b. When you EXTEND an instrument, prove the extension is additive by
 reproducing the old numbers exactly.** (alice and carol, independently, the same
