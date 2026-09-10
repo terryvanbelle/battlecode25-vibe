@@ -65,6 +65,13 @@ produced.
    inert below the threshold on his. A ratio that predicts the sign is worth more
    than either verdict alone, and it leaves both standing.
 
+   **His REALISED discount factors are the most transferable thing he owns.**
+   Pricing a mechanism, the first lineage used his measured persistence — 26–48%
+   realised across three arms he actually built — instead of assuming her own,
+   which turned an implausible 69% headroom into an honest expectation just under
+   her screen bar. A discount measured by someone who built the thing crosses
+   cleanly; his verdict does not.
+
    **And carry his COST across, not just his benefit.** In the same session she
    lifted a direction he had closed *at the bar* rather than refuted, argued it
    should pay more on her architecture, and it died at stage 0 for four games —

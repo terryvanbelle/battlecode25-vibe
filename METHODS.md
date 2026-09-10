@@ -648,6 +648,25 @@ upward by construction, so the bar has to clear the bias, not zero — and the
 cheapest way to find the bias is to run the same statistic against data you know
 has no structure.
 
+    **But ask what the null is a null OF before you reuse it — the same
+    simulation can invert its meaning when the estimand changes.** (alice, one
+    day later, correcting her own entry.) She reran that null on a
+    similar-looking statistic and the observed value sat *below* it; her first
+    instinct was "selection artefact, discount it", and that was wrong here. The
+    earlier statistic was a **prediction** about future turns, where the estimate
+    need not persist and the winner's curse bites fully. The new one is a choice
+    among tiles the unit **occupies on the next turn**, where the value is
+    *realised* rather than predicted — so selecting the minimum of N is a
+    mechanical gain, not a bias, and a null matching the observed says only that
+    the field is spatially random at that scale. Same statistic, same simulation,
+    opposite meaning. **Selection over realised values is real; selection over
+    predicted values is curse.**
+
+    Better still, she chose a statistic that needs no null at all — a spread test
+    (`max − min ≥ 1`) is unbiased where a best-of is not — and noted that passing
+    44.8% against a 25% bar is a different kind of pass from squeaking 2.23% past
+    2.00%, rather than recording both as "passed".
+
 **22. A re-open condition that fires must be written back to the entry that
 carried it.** (alice) Her ledger held a condition already discharged by a census
 sitting on disk, unannotated, so a later iteration partly re-ran work she already
