@@ -20747,3 +20747,81 @@ this lineage had never used, and it produced a testable, falsifiable candidate i
 different family from the four economy mechanisms that preceded it — for three games. Its short-list
 entry 5 (*"price the mechanism before building on it"*) is also what made me register, in advance,
 that I did **not** expect this to close the area gradient.
+
+# The re-open condition from iteration 72, DISCHARGED — and it answers "robots, not terrain"
+
+I wrote: *"a navigation change validated against a measurement of REAL unit movement rather than a
+terrain simulation. If units are genuinely stuck on terrain, this re-opens; if they are blocked by
+allies, the answer is a movement-priority or spacing mechanism and not a pathfinder."*
+
+**Method**: per-round robot TRACKs from the replay (position, paint, cooldowns), three splashers on
+Mirage. Zero games.
+
+| splasher | life | stationary, **paint > 0** | stationary at paint = 0 | died at |
+|---|---|---|---|---|
+| id13357 | 368 turns | **23.5%** | 100% (5 turns) | **paint 0** |
+| id11476 | 373 | **13.7%** | 100% (7) | **paint 0** |
+| id11648 | 313 | **9.2%** | 100% (7) | **paint 0** |
+
+**The 0-paint turns are a confound I had to remove**: the engine forbids movement at 0 paint, so
+those turns are stationary by rule, not by obstruction. Split out, genuine obstruction is
+**9.2–23.5% of turns**. (All three splashers ended at paint 0 — starvation is the death mode.)
+
+**The discrimination, from the static wall map at exactly those stuck positions:**
+
+| | adjacent WALLS (of 8) | stuck turns with **ZERO** adjacent wall |
+|---|---|---|
+| id13357 | mean 1.65 | **27.1%** |
+| id11476 | mean 1.24 | **50.0%** |
+| id11648 | mean 1.61 | **46.4%** |
+
+**Units are blocked by ROBOTS, not by terrain.** A mean of ~1.5 adjacent walls leaves 6.5 free
+directions, and in 27–50% of stuck turns there is no wall adjacent at all. **The navigation family
+is closed by my own re-open condition, answered in the negative**, and iteration 72's null is now
+explained rather than merely recorded.
+
+# Iteration 73 — the refill-path defect, logged as a bug and fixed minimally.
+
+## The defect, independent of any mechanism that surfaced it
+
+`walkHomeIfDry()` has shipped since **iteration 60 — my own accepted iteration** — as:
+
+    if (rc.isMovementReady()) stepToward(home);
+
+`stepToward` tries **5 of 8 directions** (direct, ±1, ±2). `moveExploring` follows a failure with
+4 random attempts; **this path follows it with nothing.** A latched splasher blocked in its five
+preferred directions stands still with free tiles available, stays below the unlatch threshold, and
+— as all three tracked splashers did — starves. That is a defect on its own terms, whatever it is
+worth in games.
+
+## Process note I owe
+
+**I built and ran stage 0 before writing this registration.** The clauses I applied were carried
+over verbatim from iteration 72 (`HOME` share must fall; `noPaint` must not rise), which is
+defensible, but they were not written fresh for this iteration and I am saying so rather than
+presenting them as if they had been. The **gate below is registered before the screen is spent.**
+
+## Stage 0 (Mirage, self-play — map-coupled mechanism, so self-play is correct per the adopted rule)
+
+| arm | splasher turns | `HOME` share | `noPaint` |
+|---|---|---|---|
+| `carol_iter45` | 2,771 | 35.5% | 0.0% |
+| `carol_i73` | 2,627 | **33.5%** | 0.0% |
+
+**The first mechanism in this area to move `HOME` in the intended direction** — iterations 70 and 72
+both raised it. The move is small (−2.0 points, −5.6% relative), which is exactly what I priced.
+
+## No dose ladder, and why
+
+The change is **binary** — a fallback is present or absent. There is no quantity to sweep, so
+doctrine 2's dose requirement is satisfied by the zero arm alone (`carol_iter45`).
+
+## Gate, registered now
+
+Self-play 25-map screen, `BOT=carol_iter45`, single arm. **>= 31/50 to proceed to the standing
+full-corpus census at margin >= +26.** Both as usual.
+
+**Registered expectation:** I priced this at ~5% of splasher turns and the stage-0 move is −5.6%
+relative, so **I expect a small effect and quite possibly a null.** A bug fix that measures as a null
+is still worth having in HEAD if it does no harm, but it will not clear a +26 census bar on its own,
+and I am recording that before the screen rather than after.
