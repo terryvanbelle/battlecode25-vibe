@@ -74,7 +74,7 @@ public class RobotPlayer {
     static int turn = 0;
 
     /** Stamped into the indicator string so a replay of Darla vs a Darla snapshot splits by team. */
-    static final String BUILD = "d1";
+    static final String BUILD = "d10";
 
     // ---- per-robot memory -------------------------------------------------
     // Deliberately small. carol built a full remembered-ruin store and it was
@@ -90,6 +90,15 @@ public class RobotPlayer {
     public static void run(RobotController rc_) throws GameActionException {
         rc = rc_;
         roam = Direction.allDirections()[rc.getID() % 8];
+        // Remember the tower that built us. v4's units never refilled once (xfer0
+        // in every window against the opponent's 4-6) and starved five at a time,
+        // because `home` was only ever set from a tower that happened to be in
+        // sense range while roaming. A unit that has wandered out of range of every
+        // tower has nowhere to go and dies holding an empty tank.
+        try {
+            for (RobotInfo r : rc.senseNearbyRobots(2, rc.getTeam()))
+                if (r.getType().isTowerType()) { home = r.getLocation(); break; }
+        } catch (GameActionException e) { }
         while (true) {
             turn++;
             try {
@@ -138,13 +147,7 @@ public class RobotPlayer {
         // Finding #7 in force: the ONLY gate here is the building tower's own
         // paint, which is the resource that actually binds. There is deliberately
         // no chip threshold — a chip gate opens when the paint is gone.
-        UnitType want = chooseSpawn();
-        if (want != null) {
-            for (Direction d : Direction.allDirections()) {
-                MapLocation spot = me.add(d);
-                if (rc.canBuildRobot(want, spot)) { rc.buildRobot(want, spot); break; }
-            }
-        }
+        buildBest(me);
 
         rc.setIndicatorString(BUILD + " T p=" + rc.getPaint() + " $" + rc.getChips());
     }
@@ -158,20 +161,69 @@ public class RobotPlayer {
      * than they had work for; alice measured 96% of her army's action capacity
      * unused, with 71.98% of turns having no workable ground in vision at all.
      */
-    static UnitType chooseSpawn() throws GameActionException {
-        int paint = rc.getPaint();
-        // A splasher costs more paint than a soldier; ask for it first, and fall
-        // back rather than stall. Neither branch consults chips (finding #7).
-        if (paint >= UnitType.SPLASHER.paintCost + 50) {
-            // Keep a thin soldier tail for pattern completion only: roughly one
-            // soldier per three splashers, decided by tower ID so towers do not
-            // all make the same choice on the same turn.
-            if ((rc.getID() + turn) % 4 == 0 && paint >= UnitType.SOLDIER.paintCost + 50)
-                return UnitType.SOLDIER;
-            return UnitType.SPLASHER;
+    static void buildBest(MapLocation me) throws GameActionException {
+        // v1 SHIPPED THE DEFECT THIS DESIGN WAS WRITTEN TO AVOID, and lost 0/90.
+        // The gate was `paint >= paintCost + 50` — 350 for a splasher, 250 for a
+        // soldier — against towers that alice measured holding a mean of 154.8,
+        // below 200 on 82.9% of frames. A constant set above the level its
+        // resource normally holds disables the mechanism it guards; I wrote that
+        // rule into DESIGN.md and then shipped it in the one path that matters.
+        //
+        // The repair is not a better constant, it is no constant: `canBuildRobot`
+        // already knows whether this tower can pay. Asking it is the only gate
+        // that cannot be mis-set, and it keeps finding #7 (never consult chips)
+        // automatically, since the engine checks what the engine requires.
+        //
+        // Preference order still encodes finding #1 — splasher first, soldier as
+        // the fallback — which self-balances over a game: early towers are poor
+        // and make soldiers, which build more towers, and the richer towers that
+        // result make splashers. That is finding #6 running forwards rather than
+        // a share imposed on top of it.
+        // ...BUT NOT IN THE OPENING, and v3 proved it the hard way. With two
+        // starting towers holding ~410 paint, "splasher first" spent the entire
+        // opening stash on two splashers and left 20 paint and no soldiers. Only
+        // a SOLDIER can complete a tower pattern, so Darla built no tower for the
+        // whole game: it finished 469 rounds with the two towers it started with
+        // while the opponent grew to six, and its coverage peaked at round 100
+        // and fell away as its units died faster than two towers could replace
+        // them. A flat economy, from one preference applied at the wrong time.
+        //
+        // Finding #9 says winning the tower race is not winning — but that
+        // presumes being IN the race, and alice was winning it 12–4 when she said
+        // it. Finding #6 is the one that governs here: spending IS the
+        // investment, so the opening should buy the generator and the middle game
+        // should buy the units the generator exists to make.
+        boolean opening = rc.getNumberTowers() < 5;
+        UnitType first  = opening ? UnitType.SOLDIER  : UnitType.SPLASHER;
+        UnitType second = opening ? UnitType.SPLASHER : UnitType.SOLDIER;
+
+        // A TOWER MUST KEEP ENOUGH TO SUSTAIN WHAT IT BUILDS. Through v8 Darla
+        // spent 100% of tower paint on spawning: one paint tower at 10/turn, a
+        // 200-paint soldier every twenty rounds, tower paint pinned at exactly 200
+        // all game, and therefore NOTHING left when a unit came back dry -- xfer0
+        // and starved5 in every window, units dying before they could finish a
+        // pattern, and two towers at round 240 against the opponent's fifteen.
+        //
+        // This is not the "withhold to accumulate" that finding #6 forbids. That
+        // was about banking a resource whose income is per-tower; this is
+        // ALLOCATION between two uses of the same resource, and starving the units
+        // you already built to buy one more is strictly worse than both.
+        //
+        // 150 sits below the 200-600 a tower reaches, so unlike v1's spawn gate it
+        // is a threshold the resource actually crosses.
+        int reserve = 150;
+        for (Direction d : Direction.allDirections()) {
+            MapLocation spot = me.add(d);
+            if (rc.getPaint() >= first.paintCost + reserve && rc.canBuildRobot(first, spot)) {
+                rc.buildRobot(first, spot); return;
+            }
         }
-        if (paint >= UnitType.SOLDIER.paintCost + 50) return UnitType.SOLDIER;
-        return null;
+        for (Direction d : Direction.allDirections()) {
+            MapLocation spot = me.add(d);
+            if (rc.getPaint() >= second.paintCost + reserve && rc.canBuildRobot(second, spot)) {
+                rc.buildRobot(second, spot); return;
+            }
+        }
     }
 
     // =======================================================================
@@ -266,31 +318,79 @@ public class RobotPlayer {
 
         // Complete or mark a tower pattern on any ruin in reach. Finding #8:
         // paint towers, because a money tower is a dry build site after two robots.
-        for (MapLocation ruin : rc.senseNearbyRuins(-1)) {
+        // A DRY SOLDIER MUST BE ALLOWED TO LEAVE. Every version through v9 returned
+        // unconditionally from the ruin branch, so a soldier that could see any
+        // unbuilt ruin never reached the supply path at all: the replay shows one
+        // sitting at its ruin with p=0, permanently, and that single `return` is
+        // the whole of the xfer0 that has been in every window since v1. Fixing
+        // the supply threshold three times could never have found it, because the
+        // supply code was unreachable.
+        boolean canWork = rc.getPaint() * 3 >= rc.getType().paintCapacity;
+
+        for (MapLocation ruin : canWork ? rc.senseNearbyRuins(-1) : new MapLocation[0]) {
             if (rc.canSenseRobotAtLocation(ruin)) continue;      // already built
+
+            // ALWAYS A PAINT TOWER. Finding #8: a money tower has paintPerTurn == 0
+            // and is a dry build site after about two robots. v7 made one ruin in
+            // four a money tower and spent the game on 10 paint per turn from a
+            // single paint tower, unable to afford a 200-paint soldier, while
+            // $5,700 in chips sat idle. Chips are not the binding resource here and
+            // completeTowerPattern's 1000 is affordable many times over (finding #7).
             UnitType want = UnitType.LEVEL_ONE_PAINT_TOWER;
-            // One money tower in four keeps chips flowing for upgrades and
-            // completions without starving paint (finding #8).
-            if (((ruin.x * 31 + ruin.y) & 3) == 0) want = UnitType.LEVEL_ONE_MONEY_TOWER;
 
-            if (rc.canCompleteTowerPattern(want, ruin)) { rc.completeTowerPattern(want, ruin); return; }
-            if (rc.canMarkTowerPattern(want, ruin))     { rc.markTowerPattern(want, ruin);     return; }
+            // Mark, then paint, then complete -- IN THE SAME TURN. Marking does not
+            // consume the action, so v7's `if (canMark) { mark; return; }` threw away
+            // a paint action on every ruin it opened.
+            if (rc.canMarkTowerPattern(want, ruin)) rc.markTowerPattern(want, ruin);
 
-            // Fill in the pattern squares we can reach.
             if (rc.isActionReady()) {
                 for (MapInfo t : rc.senseNearbyMapInfos(ruin, 8)) {
-                    if (t.getMark() != PaintType.EMPTY && t.getPaint() != t.getMark()) {
-                        MapLocation c = t.getMapLocation();
-                        if (rc.canAttack(c)) { rc.attack(c); return; }
-                    }
+                    PaintType mark = t.getMark();
+                    if (mark == PaintType.EMPTY || mark == t.getPaint()) continue;
+
+                    // A SOLDIER CANNOT OVERWRITE ENEMY PAINT, and `canAttack` does
+                    // not check it -- so the attack is legal, costs the full 5, and
+                    // does nothing. carol's iteration 29 measured this at 71-85% of
+                    // ALL soldier attacks, burning 42-55% of the soldier paint
+                    // budget, and it is why Darla's soldiers starved five at a time
+                    // with xfer0. Skipping the tile also lets the loop reach one
+                    // that IS paintable instead of stalling on an impossible one.
+                    if (t.getPaint().isEnemy()) continue;
+
+                    MapLocation c = t.getMapLocation();
+                    if (rc.canAttack(c)) { rc.attack(c, mark == PaintType.ALLY_SECONDARY); break; }
                 }
             }
-            if (rc.isMovementReady() && me.distanceSquaredTo(ruin) > 4) { stepToward(ruin); return; }
+
+            if (rc.canCompleteTowerPattern(want, ruin)) { rc.completeTowerPattern(want, ruin); return; }
+            if (rc.isMovementReady() && me.distanceSquaredTo(ruin) > 4) { stepToward(ruin); }
+            rc.setIndicatorString(BUILD + " RUIN " + ruin + " p=" + rc.getPaint());
+            return;
         }
 
-        // No ruin work: paint the ground under us rather than idle. alice measured
-        // 96% of army action capacity unused; an unspent action is spent anyway.
-        if (rc.isActionReady() && rc.canAttack(me)) {
+        // No ruin in reach: HEAD FOR ONE. v4 finished on three towers against
+        // seven because soldiers roamed at random and only ever worked a ruin they
+        // happened to stumble into. Expansion is the generator (finding #6), so a
+        // soldier with nothing to do walks toward the nearest unclaimed ruin it
+        // can see rather than in whatever direction it was already going.
+        MapLocation freeRuin = null; int bestD = Integer.MAX_VALUE;
+        for (MapLocation ruin : rc.senseNearbyRuins(-1)) {
+            if (rc.canSenseRobotAtLocation(ruin)) continue;
+            int d = me.distanceSquaredTo(ruin);
+            if (d < bestD) { bestD = d; freeRuin = ruin; }
+        }
+        if (freeRuin != null && rc.isMovementReady() && rc.getPaint() >= rc.getType().attackCost) {
+            stepToward(freeRuin);
+            rc.setIndicatorString(BUILD + " ->RUIN " + freeRuin);
+            return;
+        }
+
+        // Otherwise paint the ground under us rather than idle. alice measured 96%
+        // of army action capacity unused; an unspent action is spent anyway.
+        // ...but not out of the tank a pattern needs. A soldier self-painting every
+        // turn spends its whole capacity on ~20 tiles of coverage and then has
+        // nothing left to complete a ruin, which is the job only it can do.
+        if (rc.isActionReady() && rc.getPaint() * 2 > rc.getType().paintCapacity && rc.canAttack(me)) {
             MapInfo here = rc.senseMapInfo(me);
             if (here.getPaint() == PaintType.EMPTY) { rc.attack(me); return; }
         }
@@ -328,23 +428,39 @@ public class RobotPlayer {
      * the tower has anything to give.
      */
     static void refillOrRoam() throws GameActionException {
-        MapLocation me = rc.getLocation();
         int cap = rc.getType().paintCapacity;
 
-        if (rc.getPaint() * 2 < cap) {
+        // ONE threshold governs both halves of supply, because v6 decoupled them
+        // and got the worst of each: it refilled at a quarter tank but only walked
+        // home below a single action's cost, so a unit that went low far from a
+        // tower kept working until it was inert and then starved on the way back.
+        // xfer0 and starved5 in every window, and not one tower built all game.
+        //
+        // v5 had the opposite failure -- refill whenever below CAPACITY glued
+        // units to the tower, 171 transfers across four units in 60 rounds for two
+        // paint actions. So: one line, one number. Below a third of tank, go and
+        // get paint; take everything the tower will give; otherwise work.
+        boolean low = rc.getPaint() * 3 < cap;
+
+        if (low) {
             for (RobotInfo r : rc.senseNearbyRobots(2, rc.getTeam())) {
                 if (!r.getType().isTowerType()) continue;
-                int want = cap - rc.getPaint();
-                int have = r.getPaintAmount();
-                int take = Math.min(want, have);
+                int take = Math.min(cap - rc.getPaint(), r.getPaintAmount());
                 if (take > 0 && rc.canTransferPaint(r.getLocation(), -take)) {
                     rc.transferPaint(r.getLocation(), -take);
                     return;
                 }
             }
-            // Walk to a remembered tower rather than wander while dry.
-            if (home != null && rc.isMovementReady()) { stepToward(home); return; }
+            if (home != null && rc.isMovementReady()) {
+                stepToward(home);
+                rc.setIndicatorString(BUILD + " ->HOME " + home + " p=" + rc.getPaint());
+                return;
+            }
         }
+
+        // Keep `home` fresh from anything we can see. A unit that has just been
+        // built knows its builder (set on turn 1); one that has wandered adopts
+        // whatever tower it passes, which is what makes the walk above terminate.
         for (RobotInfo r : rc.senseNearbyRobots(-1, rc.getTeam()))
             if (r.getType().isTowerType()) { home = r.getLocation(); break; }
 
