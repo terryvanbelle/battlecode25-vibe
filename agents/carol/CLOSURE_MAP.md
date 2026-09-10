@@ -253,6 +253,15 @@ Every one of these has already cost me, or was caught only by an implausible mag
     registered verdict on 0.08 of a distance unit. **Always print the sensitivity across the
     plateau before quoting a share.**
 
+24. **A registered gate is only as good as its PARTITION.** Premise 3's re-derivation registered
+    P1 as *"p90 rises ≥ 25% on a majority"* and P2 as *"p90 flat or falling on a majority"*. The
+    observed result — a uniform **+14% to +42%** rise on 3 of 3 maps — satisfies **neither**, and the
+    registered letter would have read it as P2, the re-open, which is the wrong answer. Two gates in
+    one day landed badly (iteration 80's threshold sat on a mass point of a quantised distribution).
+    **Write gates that are exhaustive over the outcome space, not merely quotable**, and when the
+    letter and the substance disagree, rule on the substance, say so, and record which direction the
+    correction ran.
+
 21. **The bar is not the binding constraint.** Checked independently: at a conventional 2 sd the bar
     would be ~**+18.5** rather than +26, and **nothing priced clears either** — best measured
     candidate +11 at 1.2 sd, production extrapolation +3 to +9. The impasse is not an artefact of a
@@ -262,11 +271,17 @@ Every one of these has already cost me, or was caught only by an implausible mag
 
 ## 5. What is NOT closed
 
-- **The posture half of premise 3 as a standalone question.** Its *pair* rescue is closed. p90 unit
-  distance from own nearest tower is **6.3** against a rival's **17.0** under the identical engine
-  constraint, so the capability gap is real and demonstrated reachable by an existence proof. What is
-  closed is *funding it via production*. Nothing here says a different funding mechanism is refuted —
-  it says none has been named, and premises 5 and 6 were the two candidates, both closed.
+- ~~**The posture half of premise 3 as a standalone question.**~~ **CLOSED 2026-09-10 by
+  re-derivation (6 games).** It is listed here for the record because it was the last open item.
+  **The "6.3 vs 17.0 capability gap" that motivated it must not be quoted again** — it is the most
+  extreme of **two** maps paired against the *other* map's rival figure. The table reads galaxy
+  carol 4.0/**6.3** vs alice 5.0/**17.0**, and **Gears carol 5.1/13.0 vs alice 7.2/16.2 — a 1.25×
+  gap.** Re-derived: `REFILL_LOW=0` (the exact change the **−26** priced) **does** push units outward
+  — **+20.2% / +41.6% / +14.0%** p90 on a matched denominator, 3 of 3 maps — so **the −26 prices
+  posture, not merely starvation, and the closure STANDS.** It also costs **30–44% of all mobile
+  unit-turns**: the tether buys reach and is paid for in army size, which **vindicates premise 3's
+  pair structure** (forward posture must be funded by replacing the units it burns) and leaves the
+  pair dying on its production half, refuted on value. **Nothing in premise 3 remains open.**
 - **Symmetry inference** is **blocked, not closed**, on a named prerequisite (witness accumulation).
 - **The mid-map collapse**, traced but never converted: carol leads at r1400 in 3/3 traced losses,
   then loses **40% of held tiles, 92–100% to overpaint rather than mopping**. The deficit decomposes

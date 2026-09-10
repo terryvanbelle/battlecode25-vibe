@@ -24204,3 +24204,81 @@ re-scoped to "removing the refill branch", which it genuinely does measure. Any 
 mechanism would still owe the screen, the roster and the +26 census bar from scratch.
 
 **And the null result is the cheap one:** P1 passing costs 6 games and closes a debt permanently.
+
+## Premise 3 posture half — VERDICT: the closure STANDS. And my registered gate had a dead zone.
+
+6 games, two arms differing in one constant, `ov=0` on both (**P0 passes**).
+
+### P1/P2 — the knob DOES move the radius
+
+p90 of distance from each mobile unit to its nearest remembered own tower, and — because the
+tether-ON arm contains thousands of low-distance **walk-home** turns the OFF arm cannot have by
+construction (`homeTurns` 0, `refillTrips` 0, `S HOME` turns 0 in every OFF game) — the same figure
+on a **matched denominator** with those logistics turns excluded:
+
+| map | ON, raw p90 | **ON, walk-home excluded** | **OFF** | matched change |
+|---|---|---|---|---|
+| galaxy | 9.90 | **10.05** | **12.08** | **+20.2%** |
+| Gears | 20.62 | **21.00** | **29.73** | **+41.6%** |
+| fix | 19.00 | **20.00** | **22.80** | **+14.0%** |
+
+**The confound was real but small** — excluding walk-home turns moves the ON arm's p90 by under one
+tile — so the rise is not a denominator artefact. Medians move much harder (galaxy 4.2→4.5,
+Gears 6.7→10.4, fix 5.1→10.0).
+
+> **The answer to the registered question is unambiguous: `REFILL_LOW=0` pushes units outward, on
+> 3 of 3 maps, by +14% to +42% on a matched denominator.** The −26 **did** move the variable premise
+> 3's posture half is about. **It prices posture, not merely starvation. The closure STANDS.**
+
+### The registration had a DEAD ZONE, and I am recording that against myself
+
+- **P1** required **≥ +25% on a majority** of maps. Observed: **1 of 3**. Not met.
+- **P2** required **flat or falling on a majority**. Observed: **0 of 3** falling. Not met either.
+
+**Neither branch's condition is satisfied.** I wrote a gate whose two arms did not partition the
+outcome space, and the result landed in the unassigned gap between them on two maps. A uniform
++14…+42% rise is obviously "the knob moves the radius", but **my registered letter would have read it
+as P2 — a re-open — which is the more interesting outcome and the wrong one.**
+
+**So I am ruling on the substance and reporting the letter, and the correction runs against my own
+interest**: the registered wording pointed at a re-open, the data points at the closure standing, and
+I am recording the closure. That is the opposite direction from iteration 80's stage 0, where the
+correction ran against my own threshold. The lesson is the same one and it is now twice-earned:
+**a registered threshold is only as good as its partition — write gates that are exhaustive, not just
+quotable.** (`CLOSURE_MAP.md` fact 24.)
+
+### P3 — what `REFILL_LOW=0` actually buys and what it costs
+
+| map | mobile unit-turns, ON | OFF | change |
+|---|---|---|---|
+| galaxy | 33,494 | 18,777 | **−44%** |
+| Gears | 23,631 | 15,310 | **−35%** |
+| fix | 2,367 | 1,657 | **−30%** |
+
+**Dropping the tether buys ~20–40% more reach and costs 30–44% of all unit-turns.** Units go further
+and die far faster. That is a coherent economic account of the −26, and it **vindicates premise 3's
+pair structure**: the reason the premise coupled posture to production is exactly that forward
+posture must be *funded* by replacing the units it burns. alice was described as *"she does not solve
+the tether — she PAYS it and replaces the units."* **`carol_t0` pays it and does not replace them**,
+because production is unchanged — which is precisely the pair, and the pair dies on its production
+half, refuted on value at a **32× dose reaching half the headroom**.
+
+> **Premise 3 stays closed, and the re-derivation strengthens rather than weakens the closure.**
+
+### The motivating "capability gap" is now refuted THREE times over
+
+The premise was motivated by *"carol's units essentially never leave a 6-tile radius."*
+
+1. **It was one map of two.** galaxy 6.3; **Gears 13.0** against alice's 16.2 (1.25×, not 2.7×).
+2. **The build envelope is median 8.89, max 25.24** with the tether on (iteration 80).
+3. **Measured directly here, tether ON: p90 10.05 on galaxy and 21.00 on Gears.**
+
+**Caveat, declared and binding on point 3:** my `D` is distance to the nearest *remembered* tower,
+which is an **over-estimate** of distance to the nearest actual tower (a robot's `towerMem` is a
+subset of allied towers). So point 3 is **not** comparable to the 6.3/13.0/16.2 table, which used a
+different method, and I am **not** claiming carol out-ranges alice on Gears. What point 3 does
+support, on its own arm-vs-arm terms, is that carol's tether-ON operating radius is **not a 6-tile
+ball**, which is all the premise needed it to be.
+
+**Net: the posture half stays closed on a stronger basis than before, and the statistic that
+motivated it stops being quotable as "6.3 vs 17.0".**
