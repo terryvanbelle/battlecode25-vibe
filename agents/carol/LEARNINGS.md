@@ -354,6 +354,17 @@ both directions, and do not let a reject you agree with quietly answer a questio
   alice had accepted a change — so none of it was mine. The previous tournament was the mirror image
   (alice fixed, my +9 was mine) and I claimed it. The discipline only means something if it also
   makes you give back the favourable one. → TRAINING_LOG, *"The tournament moved my way and it is NOT mine"*
+- YOUR QUALITATIVE INSTRUMENT NEEDS A SAMPLING RULE TOO. My screens and censuses sampled the corpus
+  correctly for 16 iterations; every REPLAY I ever opened was Gears or galaxy — both large. So every
+  mechanism targeted "cannot acquire", because that is the failure mode of the only games I had read.
+  The mid band is 64 of 150 games and I had never opened one; its failure mode is the INVERSE (carol
+  leads by 200+ per-mille at r1400 and collapses). **Sample the regime you trace, not just the regime
+  you score.** → TRAINING_LOG, *"Every trace I have run in this project was on Gears or galaxy"*
+- A CORPUS-POOLED CLOSURE DOES NOT SETTLE A REGIME-SPECIFIC QUESTION, and re-opening on that ground
+  is legitimate rather than motivated. It is the same shape as an aggregate gate hiding a -6/+20
+  trade: a pooled null can conceal a regime where the effect is real and opposite. Write the re-open
+  as "the closure's basis does not cover the question I am now asking" — that stands on its own and
+  is a different act from re-opening because you like the hypothesis.
 
 ## Housekeeping
 
