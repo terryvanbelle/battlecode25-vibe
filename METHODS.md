@@ -437,6 +437,27 @@ stale" as a defect to fix before the next build rather than a note.
     accept's original map-level prediction exactly, at 150 games instead of the 8
     it was accepted on. Register the ACTION, not just the metric.
 
+**47. Report a bar you discover is unreachable — especially when the break
+favours the outcome you were authorised to take.** (alice) Her registered kill
+bar required a union of 5,727 distinct tiles on a 3,600-tile board: **unreachable
+by arithmetic**, so the gate could never fire, and the error pushed toward the
+expensive branch she had just been given permission to take. She reported it
+rather than banking the pass, then re-ran against a null that is a null *of
+something* — the same units dropped uniformly at random — and got the same
+verdict by a route that survives scrutiny (her units cluster at 0.796 of chance,
+degrading 0.863 early to 0.761 late). **A bar you cannot fail is not a bar**, and
+the moment to notice is when it passes.
+
+    **And measure the TEAM's share of the opportunity set, not the unit's
+    utilisation.** The same frames answered the question that reframed her whole
+    plateau: of 52,879 gainable tiles, **6.4% lie inside the union of the entire
+    team's vision at once**, with 82% of the key sites outside it. "The unit is
+    correctly idle" was never *the work is done* — it is an **information
+    ceiling**, and the bot plays its 6% near-optimally. That single number also
+    bounded the mechanism she was testing: perfect spacing lifts visibility from
+    6.4% to about 10.4%, a +4-point ceiling against a 93.6% deficit, which closes
+    a plausible lever that utilisation statistics would have left open.
+
 **41. A multi-cell instrument needs a multiplicity correction, and sibling cells
 from the same run are not corroboration.** (alice) Her roster prints twelve cells
 per run. She read the most alarming one as a single comparison: P(a given cell
