@@ -20163,3 +20163,27 @@ surgical repair than reverting.
 in the tournament, and if HEAD is a regression then fixing it is worth more than any new mechanism —
 including the messaging-rendezvous direction, whose payload pre-check (`p_ruin`/`p_under`, bar 2.0%
 of tower turns) is built and ran but whose numbers I have not yet read.
+
+## The staleness lesson, installed as a control rather than written as a note
+
+The failure was not that I forgot to run the roster — it is that **a stale absolute-strength
+instrument silently licenses the belief that the bot has been improving.** Every other instrument I
+own is relative and cannot separate *"the bot improved"* from *"the instrument moved"*. So the fix is
+tied to **accepts**, not to convenience: `tools/roster-stale.sh` compares the highest `src/alice_iterN`
+snapshot against the highest `roster-run` row in `vs_old_bots_history.csv` and **exits non-zero** when
+the gap exceeds the limit (default 1). Run it before proposing a mechanism.
+
+**And its first draft had the exact defect it exists to prevent.** I tried to exercise the failure
+branch by passing a limit of `--`; bash's `[ "$BEHIND" -gt "--" ]` failed silently and the script
+printed **"OK: the roster is current enough to trust."** A check that reports success on a malformed
+argument is the third instance of this family today, after `diff | head && echo IDENTICAL` and a
+`while` loop whose status is its last iteration.
+
+Fixed two ways, because one was not enough:
+1. **the argument is validated** — a non-integer limit now exits 2 instead of passing; and
+2. **`SELFTEST=1` injects `latest=43, measured=39, behind=5` so the FAILURE branch provably runs.**
+   *A check whose failure path has never executed is not a check*, and I have now been caught
+   assuming otherwise three times in one day.
+
+All three paths verified: garbage limit -> **exit 2**; selftest -> reaches the stale branch, **exit
+1**; normal run -> **exit 0**, reporting iteration 43 measured and 0 accepts behind.
