@@ -55,6 +55,16 @@ produced.
    game, and his *code* as a starting point, never as a licence to skip a gate.
    Say in your log what you took and from where.
 
+   Two practices from the first lineage to read him, both worth copying.
+   **Re-derive any engine claim from the jar before writing it into your own
+   digest** — his `RULES.md` corrected a fact of hers, and his file is a digest
+   too, wrong in exactly the way hers was; she verified against the engine before
+   adopting it. And **when his result on a mechanism has the opposite sign from
+   yours, that isolates a design difference rather than settling anything**: his
+   saturating weight scored +6 where her argmax scored −125, with the same payer
+   named in both. What crosses is the hypothesis — *the failure may be dose
+   shape* — recorded as a re-open condition, not the verdict.
+
 1. **An agent must never read another agent's code** — not their bot package,
    not their snapshots, not their staged copies anywhere (including on
    battlecode-dev and in git history). Concretely, for Alice: everything under
