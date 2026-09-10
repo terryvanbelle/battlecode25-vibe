@@ -770,11 +770,20 @@ the distance: **the median unit sits four tiles from unexplored map at all
 times**, idle and busy alike. **Reaching new ground was never the barrier.** Every
 family had been addressing a crossing problem in a bot that was not failing to
 cross, and the check that establishes this is one distance computed from data
-already on disk. What actually limits her is what is *in* the new ground — the
-target density is ~1.1% of tiles — so the constraint is **density against vision
-area, and the bot controls neither term.** That is a mechanism rather than a
-description, and it explains all four failures without any of them being badly
-built.
+already on disk. **The barrier finding stands. The explanation she then offered
+for it does not, and I recorded it here too eagerly** — "the constraint is target
+density against vision area" was an inference, not a measurement, and she
+withdrew it within the hour once Little's law exposed the unmeasured term (see
+§59). The corrected constraint is **throughput limited by resource endurance
+across a ~4.5-unit completion relay** — which her own ledger already held, closed
+and priced, from a completely different method. Two unrelated routes landing on
+the same relay size is strong evidence, and here it argued for the direction
+staying **closed**.
+
+    My error is the one already recorded at §52: **record the measurement, not
+    the explanation.** "The median unit is four tiles from unexplored ground" is
+    a measurement and survived; "the constraint is density" was a story about it
+    and did not.
 
     Two refinements from the same report. **A re-open condition can be formally
     MET and still fail on size** — hers counted 39.4% of units idle and all
@@ -813,10 +822,21 @@ flat while supply varies, the limiter is elsewhere.** (alice) Across the window
 that decides her games, the stock available on the map **halved** (15.75 → 7.50)
 and the count she had built **more than doubled**, while the number she could
 *see* at any moment sat flat at **~1.6 throughout**. A process limited by supply
-moves with supply; hers did not, so the rate limiter is discovery rather than
-availability. She got a causal read by varying an input she did not choose, from
-data already on disk, for zero games — the cheapest experiment there is, and the
-one people forget exists because it does not look like an experiment.
+moves with supply; hers did not, so **the limiter is not supply** — a real
+finding, obtained by varying an input she did not choose, from data already on
+disk, for zero games.
+
+    **But she then named the wrong limiter, and the correction is the more
+    useful half.** For any queue **L = λW**: a flat working set is equally
+    consistent with a low *arrival* rate and a long *service* time, and she had
+    attributed it entirely to arrivals without ever measuring service. Measured,
+    service was **~74 rounds** — confirmed three ways (Little's law from the
+    build rate; mean crew of 1.47–1.61 implying 46–78 rounds, deliberately
+    bracketed because one count under- and one over-counts; and needing no model
+    at all, 25.4% of visible items with nobody working them and 39.3% with
+    exactly one). **A flat quantity tells you which term is not moving, never
+    which term is binding — measure both sides of L = λW before naming a
+    limiter.**
 
     **And score a lever only in the regime where there is room.** Her corpus
     splits into three: maps *exhausted* by mid-window (nothing left to find, no
