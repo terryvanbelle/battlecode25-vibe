@@ -19169,3 +19169,87 @@ this log has now paid for three times): a splasher can see allies within r²=20 
 which tiles they splashed last turn**, and carol has no comms — so the only reachable proxy is
 recent ally positions. Whether that predicts overlap well enough is itself a free replay
 measurement, and it must be run before the mechanism is built.
+
+# Iteration 66 — RE-OPENING `SPLASH_MIN_SCORE`, a constant I declared DEAD. Pre-registered.
+
+## The closure I am overturning, quoted exactly, and why it is now false
+
+My own post-58 survey killed this for zero games:
+
+> *"`SPLASH_MIN_SCORE` — confirmed dead, on fresh data, by the history pre-check. Fires have mean
+> score 19.2, median 20, min 8 against a floor of 8, with only 22% within 2 of the floor. **A floor
+> the incumbent is nowhere near is not a policy.** Killed for zero games by reading my own log
+> first."*
+
+**The stated basis of that closure is no longer true, and my own accepted iteration 60 is what
+falsified it.** Controlled comparison — *both teams, same game, same 400-round window, same map*
+(Mirage), so map and opponent are held fixed:
+
+| | standing splashers | fires | median fire score | **blocked : fired by the floor** |
+|---|---|---|---|---|
+| `carol_iter44` | 4 | 63 | **21** | **1.2 : 1** |
+| `carol_iter45` | 17–22 | 129 | **15** | **6.7 : 1** |
+
+The floor now blocks **5.6x more turns per fire** than when I called it dead, and the median fire is
+a quarter less valuable. D3 tripled the splasher population; more splashers competing for the same
+good ground means most turns now offer only poor targets. **This is the fourth time in this log that
+"a constant co-adapted to an architecture must be re-derived when the architecture moves" has
+fired** — after `MONEY_MOD` (iter 59), the chip gates (iter 62), and now a constant I had closed.
+
+**A closure's basis can be falsified by your own accept.** I did not re-check this one after
+iteration 60; I found it only because iteration 65's replay happened to hold the distribution.
+
+## Which direction, and the arithmetic that motivates raising it
+
+Score counts 3 per enemy tile within r²<=2 and 2 per empty passable tile, so score ≈ 2–3 x tiles
+converted, against a fixed **50 paint** per splash:
+
+| fire score | tiles (approx) | **paint per tile** |
+|---|---|---|
+| 9 (the 27.1% of fires at 8–9) | ~3.5 | **~14** |
+| 25 (the top quartile) | ~10 | **~5** |
+| *(a soldier, for reference)* | 1 per 5 paint | **5** |
+
+**A splash at score 9 converts ground at ~14 paint per tile — nearly 3x worse than a soldier — and
+paint is this lineage's binding resource.** Raising the floor should also compound: paint retained
+means fewer refill trips (D3's HOME state ran at 58.8% of splasher turns) and less tower drain.
+
+**The counter-argument, stated because it may well win:** the alternative to a bad splash is not a
+good one, it is *nothing*. A blocked splasher idles, and paint held in a stash earns nothing. That
+is exactly what the dose ladder is for.
+
+## Arms — bracketed in BOTH directions in one run
+
+`SPLASH_MIN_SCORE` = **4 / 14 / 20**, zero arm `carol_iter45` (= 8), shared `BUILD = "i66"`.
+
+- **4** tests the opposite hypothesis outright (the waste is *not firing*, so fire more).
+- **14** drops the bottom 43.4% of current fires; **20** drops the bottom 68.2%.
+
+Bracketing both sides in one run is the iteration-61 lesson, which cost me a whole extra iteration
+by bracketing above and never below.
+
+## Stage 0 — MANIPULATION AND OVERSHOOT ONLY. Deliberately not an outcome check.
+
+This is my own iteration-64 lesson applied: **stage 0 answers "does the mechanism FIRE", never "does
+firing PAY".** One game on one map has now over-promised three times in this log (Leaf twice,
+Mirage once), so I am registering in advance that **I will not read Mirage coverage as evidence for
+or against this iteration**, whichever way it falls.
+
+1. **Manipulation**: median fire score must rise monotonically with the floor, and fall at dose 4.
+   A failure here means the parameter is not a dose (doctrine 2) and the run is void.
+2. **Overshoot guard**: fires must stay above ~30% of the control's 129 at every dose kept. Below
+   that the unit is effectively disabled rather than gated, and I will report it as un-dosable at
+   that setting rather than quietly preferring a smaller number.
+
+## Registered falsifier (for the screen)
+
+**If the manipulation works — median score rises — and no dose beats the control, then low-score
+splashes are not waste**: the tiles they convert are worth more than the paint they cost, the
+"14 paint per tile" accounting above is wrong somewhere, and the direction closes for good with the
+arithmetic error identified rather than re-dosed.
+
+## Gate
+
+Fresh 25-map screen at `BOT=carol_iter45`, highest margin reaching **>= 31/50**, ties to the dose
+nearer the incumbent; then the full 75-map census at **margin >= +26 ACCEPT | +18..+25 REPLICATE |
+<= +17 REJECT**.
