@@ -23,6 +23,34 @@ produced.
 | `tools/` | shared, strategy-neutral infrastructure (maintained by the coordinator, not by agents) |
 | `scaffold/` | pristine vendored copy of the official scaffold |
 
+## Agent context cycling (2026-09-10, user decision)
+
+Agents are **cycled on a context budget, not on failure**. When a lineage's
+reported `subagent_tokens` passes **~250k**, the coordinator stops it and
+cold-starts a replacement from `tools/agent-prompts/<name>.md`.
+
+**Why.** Cost per tool call scales with context, and on 2026-09-10 both lineages
+ran most of the day above 700k, reaching ~965k before the harness compacted them.
+Both produced their sharpest work of the day *after* compaction, at a third of
+the context — because state lives in committed artefacts, not in context. Agents
+were 83% of the day's token spend; this is the only lever that touches it without
+reducing work done.
+
+**What makes it safe.** The handoff is `CLOSURE_MAP.md`: every closed axis with
+its kind, number and re-open condition, plus the facts a context-free reader will
+misread. A cold start reads that, not `TRAINING_LOG.md` — which is ~320k tokens
+and is grep-only. `METHODS.md` was split for the same reason: rules stay
+read-first, worked evidence moved to `METHODS_EVIDENCE.md`, also grep-only.
+
+**Obligations this creates.**
+- An agent must keep `CLOSURE_MAP.md` current as it works — a closure that is
+  only in context dies at the cycle.
+- Anything in flight must be described by run-id and gate in the log, per
+  doctrine 18, because a cycled agent is a session death that happens to be
+  deliberate.
+- The coordinator never cycles mid-turn; it waits for the completion
+  notification, then stops and replaces.
+
 ## Isolation rules (hard)
 
 0. **BOB IS RETIRED (2026-09-10, user), and his workspace is now open ground.**

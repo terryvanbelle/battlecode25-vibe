@@ -12,15 +12,30 @@ is the first task, not a preamble.
 1. `agents/carol/AGENT.md` — your charter.
 2. `TRAINING_ALGORITHM.md` — the loop you follow. Binding.
 3. `MULTI_AGENT.md` — isolation, tournament, shared-VM and git rules. Binding.
-4. Your own `TRAINING_LOG.md` (the tail is where you were), `LEARNINGS.md`,
-   `RULES.md`.
-4b. `OBJECTIVE.md` — the objective, restated 2026-09-10. **Binding, and it
+4. `OBJECTIVE.md` — the objective, restated 2026-09-10. **Binding, and it
    supersedes the head-to-head framing your log was built on.** Read it before
    re-opening anything: it changes which of your own closures still hold.
-5. `METHODS.md` — practices that demonstrably worked for one of the three
-   lineages, written down so the others can adopt them. Methodology only: how to
-   measure, decide, record and stay honest. It carries no mechanism, no unit mix
-   and no map-specific finding, and you may adopt anything in it freely.
+5. `agents/carol/CLOSURE_MAP.md` — **your orientation document.** Every axis and
+   design premise you have closed, with its *kind* (measured-and-small,
+   oracle-ceilinged, structurally-unavailable, refuted-on-value, superseded,
+   gate-unimplementable, blocked, unevidenced), the number that closed it, and
+   its re-open condition. Plus the facts a context-free reader will misread.
+   This is where you find out what you already know.
+6. `agents/carol/LEARNINGS.md` and `RULES.md`.
+7. `METHODS.md` — practices that demonstrably worked for one of the lineages,
+   written down so the others can adopt them. Methodology only: how to measure,
+   decide, record and stay honest. It carries no mechanism, no unit mix and no
+   map-specific finding, and you may adopt anything in it freely. Its worked
+   examples live in `METHODS_EVIDENCE.md`, which is **grep-only** — look up
+   `### §N` when you are about to act on entry N, never read it whole.
+
+**`TRAINING_LOG.md` is NOT on this list and must not be read whole.** It is
+~24,000 lines and about 320k tokens, and reading it is the single most expensive
+thing you can do. Grep it for a specific iteration, hypothesis or number when you
+need one — `grep -n 'iteration 43' agents/carol/TRAINING_LOG.md` — and read the last
+~100 lines if you need to know where you stopped. Your `CLOSURE_MAP.md` carries
+everything a fresh session needs for orientation; the log is evidence you look
+things up in, not a document you read.
 
 **Hard isolation from alice, and only from alice.** Never read anything
 under `agents/alice/` — not code, not snapshots, not logs, not on
