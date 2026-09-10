@@ -23017,3 +23017,97 @@ other three were all reasoning errors over real measurements. This one was a fig
 log, survived into a closure map, and was used to justify a registered iteration, without any
 reproducible derivation. It was caught only because I validated the instrument before spending games
 on it.
+
+# THE DECOMPOSITION REBUILT ON THE ROSTER — and it corrects my own re-framing from this morning
+
+`OBJECTIVE.md` makes the frozen roster the primary outcome instrument, and it gives **identities as
+well as counts**, which `benchmarks/HISTORY.md` cannot. In §7.5 of `CLOSURE_MAP.md` I wrote that
+*"the deficit is 100% large-map"* is a fact about the carol–alice matchup and "no longer identifies
+where I am weak". **That was too strong, and the rebuild says so.**
+
+Data: `carol_iter45` (HEAD) vs the four frozen cross-architecture rungs — runs `20260910-051954`
+(bobf, 150 games, full 75-map corpus) and `20260910-143006` (bobf12/18/20, 150 games). 300 games,
+no new ones.
+
+## 1. The regime effect REPRODUCES off the alice matchup
+
+| bucket | won | played | win% | margin |
+|---|---|---|---|---|
+| small (<900) | 45 | 58 | **77.6%** | +32 |
+| mid (900–1600) | 91 | 118 | **77.1%** | +64 |
+| **large (>1600)** | 71 | 124 | **57.3%** | +18 |
+
+| rung | small | mid | large |
+|---|---|---|---|
+| `bobf` | 77.3% | 71.9% | **51.6%** |
+| `bobf12` | 75.0% | 94.4% | **65.0%** |
+| `bobf18` | 91.7% | 88.9% | **65.0%** |
+| `bobf20` | 66.7% | 66.7% | **60.0%** |
+
+**All four rungs agree that large is the weakest bucket.** So the large-map weakness is **a property
+of carol**, not an artefact of one co-evolved opponent. **My §7.5 re-framing is corrected: the
+decomposition does still identify where I am weak.**
+
+**But its character changes completely.** Against alice, large maps were a **net loss (−30)**.
+Against the frozen roster they are a **net win (+18, 57.3%)**. It is a gradient in *dominance*, not a
+deficit. Nothing I have targeted "at the large-map deficit" was aimed at a regime I actually lose.
+
+## 2. The variable is NOT cleanly "area" — and I cannot separate it
+
+| predictor | point-biserial r with winning |
+|---|---|
+| ruin **count** | **−0.395** |
+| map **area** | −0.306 |
+| game length | −0.256 (endogenous — carol wins fast; discard) |
+| **ruin density** (ruins per 1,000 tiles) | **+0.015 — nothing** |
+
+Binned by ruin count the gradient is **cleanly monotone** (86.7 / 78.3 / 76.7 / 60.0 / **43.3%**);
+binned by area it is **not** (78.3 / 88.3 / 66.7 / 68.3 / 43.3%). That favours ruins. But a 2×2
+control says both survive:
+
+| | ruins LOW | ruins HIGH |
+|---|---|---|
+| **area LOW** | 82.8% (n=134) | 65.4% (n=26) |
+| **area HIGH** | 66.7% (n=30) | **53.6% (n=110)** |
+
+Ruins holding area fixed: **−17.5 / −13.0** points. Area holding ruins fixed: **−16.2 / −11.7**
+points. **Similar magnitude, largely additive, and neither dominates.**
+
+> **Stated honestly: the off-diagonal cells are n=26 and n=30** — sd ≈ 9.8 points on a win rate that
+> size, so those controls are **1.5–1.8 sd, suggestive and not established.** Area and ruin count are
+> strongly correlated in this corpus (only 56 of 300 games are off-diagonal), and **this data cannot
+> separate them.** What it does settle is that **ruin *density* is not the variable at all.**
+
+**Consequence for work already done:** every "area-gated" price I computed — including the
+1320–1600 boundary I re-derived this morning — **may be gating on ruin count instead.** The boundary
+sits at the median area (1,500) *and* near the median ruin count (16), so the two gates would select
+nearly the same maps. That does not change any of those closures' magnitudes; it changes what the
+gate would have to read, and it is recorded so a successor does not assume the axis.
+
+## 3. The instrument's ceiling, which is the most actionable finding here
+
+**carol beats every rung in every bucket.** The lowest cell in the whole table is `bobf` on large maps
+at **51.6%**; nothing anywhere is below 50%.
+
+> **So the roster can tell me where I am *least dominant*. It cannot tell me where I *lose*.**
+
+And the instrument that does know where carol loses — `benchmarks/HISTORY.md`, which reports carol
+**swept on 48 of 75 maps against `v3` and on 75 of 75 against `TSPAARKHS`** — reports **counts and
+never identities**. That asymmetry is exactly why the roster is primary and the benchmark is
+validation, and it bites precisely here: **I can locate a gradient but not a failure.**
+
+**Named as an instrumentation gap, not patched:** the roster has no rung carol does not beat. The
+hardest available frozen material is another lineage's committed snapshots, and carol beats all four.
+I cannot build a stronger rung, because every mechanism axis is closed — and I will not add a
+benchmark bot, which is forbidden and is the whole reason the yardstick stays clean.
+
+## 4. What this leaves standing
+
+- The regime effect is **real, reproduced, and carol's own** — not an alice artefact.
+- It is a **dominance gradient, not a deficit**, on every instrument except the alice matchup.
+- Its variable is **under-determined between area and ruin count**, with density excluded.
+- The **absolute** failure — 0/450 vs `TSPAARKHS`, swept on 48/75 vs `v3` — is **not localisable
+  with any instrument I am permitted to run.**
+
+No mechanism is proposed here, and no axis is manufactured. This is an accounting, and it is the
+first one under the new objective.

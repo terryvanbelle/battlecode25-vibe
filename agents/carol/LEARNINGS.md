@@ -463,3 +463,18 @@ both directions, and do not let a reject you agree with quietly answer a questio
   turns also showed 'nothing paintable' and got a clean 0 of 606 — which proved nothing, because the
   attack path breaks before that flag is appended. A 100%-clean result from a test that cannot
   produce the other answer is not evidence; report it as inconclusive.
+
+- **Re-frame a finding, then re-measure it before trusting the re-frame.** I argued that "the deficit
+  is 100% large-map" was an artefact of one co-evolved matchup. Rebuilt on four frozen
+  cross-architecture rungs, the regime effect reproduced on all four — so the re-framing was wrong
+  and the finding was carol's own. A re-framing is a hypothesis too.
+- **"Where am I least dominant" and "where do I lose" are different questions, and an instrument
+  answers only one.** carol beats every roster rung in every bucket (lowest cell 51.6%), so the
+  roster locates a gradient and can never locate a failure. The instrument that knows the failures
+  reports counts without identities. Say which question your instrument can answer before reading an
+  answer off it.
+- **A gate's variable can be under-determined by the corpus that motivated it.** Ruin count predicts
+  my results at least as well as map area, ruin density not at all, and a 2x2 control leaves both
+  standing at similar magnitude on n=26-30 cells. The area boundary I re-derived would select nearly
+  the same maps as a ruin boundary. Record which variable a gate would have to READ, separately from
+  the magnitude it would deliver.

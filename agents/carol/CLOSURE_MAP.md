@@ -348,8 +348,15 @@ killed before a build.** It re-opens by the change of objective, not by preferen
 
 ### 7.5 RE-FRAMED, not re-opened
 
-- **"The deficit is 100% large-map (small +10 / mid 0 / large −30)"** is a fact about the
-  **carol–alice matchup**, not about absolute weakness. It has organised the targeting of several
+- **"The deficit is 100% large-map (small +10 / mid 0 / large −30)"** — **CORRECTED the same day,
+  see the decomposition rebuild in `TRAINING_LOG.md`.** I claimed this was an artefact of the
+  carol–alice matchup. Rebuilt on the four frozen cross-architecture rungs (300 games), the regime
+  effect **reproduces on all four**: small 77.6% / mid 77.1% / **large 57.3%**. It is carol's own
+  property, not an artefact. What *does* change is its character — against alice large maps are a net
+  **loss** (−30); against the roster they are a net **win** (+18). It is a dominance gradient, not a
+  deficit. The variable is under-determined between area and **ruin count** (r −0.306 vs −0.395,
+  density flat at +0.015), so an "area gate" may really be a ruin gate.
+  **Original claim, now superseded:** that it said nothing about absolute weakness. It has organised the targeting of several
   iterations. Under the new objective it no longer identifies where I am weak, and I have no
   regime decomposition of the absolute instrument: `HISTORY.md` gives me *how many* maps I am swept
   on (48 of 75 vs `v3`), never *which*. **That decomposition must be rebuilt on the roster.**
