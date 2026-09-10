@@ -951,6 +951,20 @@ fifteen iterations with no measurable absolute gain.**
     idea was bad* from *I built it badly*, which is why most rewrites teach
     nothing; this one cannot land in that ambiguity.
 
+    **Report the registered outcome BEFORE diagnosing it.** (alice) Her first
+    attempt at a redesign hit its stage-1 gate at 1 of 4 targets and she filed the
+    abort with **no diagnosis attached**, saying why: *"a stage-1 abort's
+    registered meaning is that the premise is untested and the build is what
+    failed — I'd rather report that cleanly than reach for an explanation that
+    would sound like a rescue."* The first explanation anyone reaches for is the
+    one that preserves the premise, and offered in the same breath as the verdict
+    it reads as a rescue and frequently becomes one. Separate the two acts: the
+    registered outcome is a fact, the diagnosis is the next piece of work. She did
+    record **two facts rather than conclusions**, which is the right middle — the
+    pre-named salvage fired exactly as designed, and two of her own instruments
+    disagree **3.8×** on a quantity her whole survey's premises are derived from,
+    flagged as the thing to resolve *before* any diagnosis of the premise (§44).
+
     She also **named the failure she most expected in advance** — every link
     moving while the terminal outcome stays flat (§80), which her own recent
     chain had done — so a recurrence would be diagnosed in a line rather than
