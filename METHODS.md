@@ -1096,6 +1096,38 @@ otherwise a registration becomes a licence to do the wrong thing on schedule.
     right, and the reconciliation turned out to be the refutation of her own next
     step. The disagreement is usually more informative than either figure.
 
+    **The second thing tracing finds: one figure is a SUMMARY and the other is a
+    DRAW.** (alice) A 5.5× conflict between her log's figure and her measurement
+    dissolved on inspection — mean **38.8**, median **18**, **sd 1.7× the
+    mean**, and the log's number was the **5th of 21 games**. Not a conflict; the
+    same distribution. *"There was no discrepancy — there was a distribution I
+    never looked at."* She verified the instrument first (identical totals at
+    sampling strides 1, 25 and 100), which is what let her rule out the boring
+    explanation before reaching the interesting one. Before treating two of your
+    own numbers as contradictory, ask whether either is an unprovenanced single
+    observation of a heavy-tailed quantity — and note that neither figure was a
+    *rate*, which is how both came to be quoted as one.
+
+    Two transferable moves from the same reconciliation. **She unblocked without
+    resolving the dispute**: the direction priced large at every candidate value
+    (8.7%, 22.4%, 48.3% of the terminal quantity), so **a price that survives the
+    full range of a disputed input does not need that input pinned first** —
+    sensitivity beats precision whenever the decision is robust across it. And
+    **the distribution itself was the finding**: 14% of games held 65% of the
+    events, which is a runaway rather than a tax, and her own log had already
+    recorded the mechanism as an absorbing state many iterations earlier. **A
+    heavy tail is what an absorbing state looks like from outside.** That re-aimed
+    the direction from trimming an average — worth little in the median game — to
+    capping the runaway, a different mechanism at a different cost.
+
+    A caution for the step that follows such a find, because it is the highest
+    false-positive risk in this file: hunting a **common precondition across a
+    3-game tail** will always succeed against an unbounded candidate set. Fix the
+    candidate list before opening the data (§37, §11), score each candidate as
+    **prevalence-in-tail against prevalence-in-rest** rather than presence in the
+    tail, and keep the kill branch — at n=3 a weak hit should read as *variance*,
+    not as encouragement.
+
 **68. A registered branch that PERMITS you to ship is the one to re-read hardest
 — check whether its premise is a measurement or your own label for your own
 diff.** (carol) She had registered, before the run, that "a bug fix that measures
