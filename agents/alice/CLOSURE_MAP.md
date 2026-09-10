@@ -205,3 +205,60 @@ capacity is idle for work another unit owns.**
 
 > *Before pricing a unit's idle capacity, check whether the work it is idle for is work only it can
 > do.* Utilisation is a ratio whose numerator can be worth zero.
+
+---
+
+## 19. Accumulate-by-spending-less — `refuted-on-mechanism` (2026-09-10)
+
+**The axis:** the composition premise under R1 — spawn fewer units so towers stop draining
+themselves, keeping tower paint high, which was to fund splashers (capped at 29% early, 0% after
+r1200) and refills (unreachable at 2.61% adjacency). Premise A funding premises C and D.
+
+**Closing number:** cutting spawns **78%** left tower paint **identical — 147.0 arm v 147.4 control**.
+The arm simply held **half the towers (3.25 v 6.89)**, with total paint in the same **2:1** ratio.
+
+**Why it closes:** paint income is **per-tower**, and spawning is what builds towers. **The spending
+IS the investment.** A does not pay for C or D; the banked resource never exists. This is a fact
+about the game's economy, not about that design — *"accumulate by spending less" was never available
+to anyone*, which is why it takes the whole composition down rather than one arm of it.
+
+**Re-open condition:** a paint income route that is **not** proportional to tower count. Closed by
+enumeration, not by sampling — paint enters via exactly three engine routes and all three are
+accounted for. **No re-open is expected.**
+
+---
+
+# 6. TODAY'S FOUR CLOSURES (2026-09-10) — all four found without a screen
+
+| # | axis | kind | the number | re-open condition |
+|---|---|---|---|---|
+| **17** | production efficiency per **spawn paint** | `refuted-on-value` | splashers **1.69x**, output/round **1.01x**; r1–300 actions **0.71x** with paint-starvation **3.95x** | action paint binds after r300 — i.e. paint-idle > target-idle. Now **10.3% v 83.7%** |
+| **18** | **army utilisation** (the 96%) | `oracle-ceilinged` | acts on **4.40%** of action-capable turns (1.1% after r1000); **71.98%** see no workable tile at all; travel share **17.2%** v a ≤30% bar | no-target turns with work in vision rise above **60%**. Drift is **44.8 → 13.3%**, moving away |
+| **18a** | mopper travel-bound sub-thread | `superseded` | **56.88%** of mopper idle turns see out-of-range enemy paint | a job the splasher cannot do. Pattern-shade, the only candidate, **fails** |
+| **19** | accumulate-by-spending-less | `refuted-on-mechanism` | spawns **−78%** → tower paint **147.0 v 147.4**, towers **3.25 v 6.89** | a paint route not proportional to tower count. **None exists** |
+
+**Cost of the four: one 300-game census (which refuted a suspected regression) and 12 debug matches.
+No screen was spent on any of them.** Three were decided by within-game measurement at the decision
+site and one by reading the engine.
+
+## What these four say together
+
+They are one finding seen from four sides: **every axis I have left is denominated in a budget that
+is not the one that binds.** M2 optimised the build budget; the composition premise tried to bank a
+resource that only exists while being spent; the mopper thread priced idle capacity whose work
+another unit owns; and the 96% is not headroom because **the army already exceeds the work the map
+presents to it.**
+
+> **The two keepers, and they are halves of one rule:**
+> **A closure covers a question only if its denominator is the question's denominator.**
+> **Utilisation is a ratio whose numerator can be worth zero.**
+
+## Standing position
+
+**The counted prize is untouched and no mechanism reaches it:** alice wins the r300 race **12–4** and
+converts leads at **75%** against carol's 100%; capturing those is **+3 games in 19 = +23.7 net
+swept** against a **+12** bar. It survives every closure above because it is **counted, not
+modelled** — and today's work removed four candidate routes to it without touching the prize itself.
+
+**This is a finished position, not a gap.** The space is closed on far stronger evidence than it was
+this morning, and the honest report is the closure map rather than a manufactured direction.
