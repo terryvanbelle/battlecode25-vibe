@@ -390,6 +390,16 @@ less dead.
     be stated as "the dose cannot make it act, and what would make it act removes
     the reason it was safe".
 
+    **An EXACT invariant across a manipulation that should have moved it is a
+    stronger result than any change.** (carol) She drove the supposed competitor
+    from 331 to **0** and the contested quantity did not move at all — 26 before,
+    26 after, unchanged to the unit. That is not a weak effect; it says the
+    competition was never the constraint, and it pointed at the real ceiling,
+    which two very different configurations were hitting by different routes.
+    When a manipulation removes something entirely and the target is unchanged to
+    the last digit, stop looking for a dose and start looking for what else is
+    binding.
+
     The same run carries the harder half of §22: she had *published* a cause for
     the non-firing, then did the arithmetic on her own explanation — a starting
     stock of 100, ~0.96 spent per turn, a ~64-turn life, therefore above the
