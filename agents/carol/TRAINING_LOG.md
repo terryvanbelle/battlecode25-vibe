@@ -24282,3 +24282,81 @@ ball**, which is all the premise needed it to be.
 
 **Net: the posture half stays closed on a stronger basis than before, and the statistic that
 motivated it stops being quotable as "6.3 vs 17.0".**
+
+# ITERATION 80 — ADOPTING the archetype's mechanism. Ledger check, evaporation test, ablation REGISTERED.
+
+I built a bot that beats me 20/50 and used it only as a ruler. `carol_siege` is the strongest
+empirical result I hold: **a design that beats mine, whose source I own, whose replays I have from
+both sides, and whose mechanism I can read.**
+
+## 1. Ledger check — does an existing closure cover splasher tower-siege?
+
+| near neighbour | why it does not cover this |
+|---|---|
+| **soldier tower-attack gating** (iteration 79, oracle ~13% of bar) | **different unit, different damage, different range relation, opposite direction.** That was *gating* a SOLDIER's 5-paint attack to remove a cost. This *adds* a SPLASHER's **100 AoE damage**, struck from **distance 4 while a paint/money tower answers only to 3** |
+| **splash scoring weights**, **splash targeting family** | both operationalised **which PAINT to splash**. My own iteration-10 note: *"The scoring function has **no tower term at all**"* |
+| mopper paint denial (−3.83 sd) | removes enemy **paint**, not structures |
+
+**Not covered. And worse than uncovered — it was registered and abandoned.** From iteration 10:
+
+> *"Splashers are the only unit that can safely kill towers… **Carol's own defensive strength — the
+> tower mass nothing in the pool can break — has a counter she has never built.** … Tower-targeting
+> is registered as the iteration after, because it is a different hypothesis (offence vs coverage)."*
+
+**It was never run.** Seventy iterations later a two-edit fork of my own bot implemented it and beats
+me 60/40. **That is the THIRD set-aside note walked past today**, and the strongest possible argument
+for the standing sweep I added an hour ago.
+
+## 2. The evaporation test — answered from the diff, not from argument
+
+> *Does the advantage depend on facing a bot that does not defend — which carol would be, so it
+> would evaporate on adoption?*
+
+**The entire diff between `carol_siege` and HEAD is inside `runSplasher`.** 38 changed lines, all of
+them scoring or splasher movement. **`carol_siege` contains no defensive code whatsoever.**
+
+> **So the asymmetry is a CAPABILITY asymmetry, not a defence asymmetry.** siege loses 12 structures
+> to carol's 40 not because it defends better — it does not defend at all — but because **carol
+> cannot kill towers** (a soldier needs 20 uninterrupted hits against a tower returning 20+10 free).
+> On adoption carol gains the ability to destroy enemy structures, which is worth having against any
+> opponent that has structures. **It does not evaporate.** What *would* collapse toward 50/50 is the
+> mirror head-to-head — which is the frame the objective retired.
+
+## 3. But I have NOT established WHICH change wins — ablation registered before the screen
+
+`carol_siege` has **two coupled edits**, and coupling was a virtue when it was an instrument and is a
+defect now that it is a candidate:
+
+1. **scoring** — a tower inside the AoE scores +100/+60;
+2. **movement** — approach beyond r²=16, hold the 10–16 ring, back off inside r²=9.
+
+**The alternative hypothesis is live and I would rather name it than be caught by it:** the movement
+change makes splashers *advance on enemy towers*, which is a de-facto "go toward the enemy" rule —
+and carol's defining defect is that her units never leave her own half (**p90 distance 6.3 against a
+rival's 17.0**). **So the movement half may be a targeted UN-TETHERING in disguise, and the tower
+scoring may be doing nothing.**
+
+That would be a significant result either way, because **dropping the tether unconditionally is
+refuted at −26** (iteration 60's zero arm) while this version un-tethers **only when an enemy tower is
+visible** — a gated form the refutation does not cover.
+
+| arm | scoring | movement |
+|---|---|---|
+| `carol_iter45` (zero) | — | — |
+| **`carol_sg_score`** | ON | OFF |
+| **`carol_sg_move`** | OFF | ON |
+| `carol_siege` | ON | ON |
+
+**Registered before the screen:**
+- **Both arms below the zero arm** → the pair is required and neither half stands alone.
+- **`sg_move` carries it** → the mechanism is gated un-tethering, not tower-killing, and the tower
+  scoring is decoration. **I say so, and the direction changes name.**
+- **`sg_score` carries it** → tower-killing is the mechanism, as designed.
+- Standing gate unchanged: **screen ≥ 31/50 to proceed; census ≥ +26 ACCEPT / +18..25 REPLICATE.**
+
+Both arms compile (`vm-compile.sh` → COMPILE-OK). `src/carol` untouched.
+
+**Infrastructure note, not a bug:** `tools/driver-prune.sh` reclaimed 39 replay blobs (43M) at
+19:13Z while I was mid-analysis. Results are preserved by design and the tool documents itself.
+**Determinism is what made this recoverable** — having verified all 36 games reproduce exactly on
+winner, round count and result, any replay I need can be regenerated by re-running its map.
