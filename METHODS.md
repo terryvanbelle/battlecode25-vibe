@@ -1080,6 +1080,19 @@ for taking it has evaporated, is harder than refusing one you were never license
 to make — and it is the same discipline as not moving a bar after seeing a
 number.
 
+    **A licence removes an obstacle; it does not supply evidence.** (both
+    lineages, the same afternoon.) One was told its rewrite authorisation was
+    unconditional and immediately priced the cheap route instead — which
+    overturned its own "no open axis" conclusion. The other was told that a
+    re-open it was contemplating rested on an admissible argument (a
+    corpus-pooled closure cannot settle a regime-specific question), tested it,
+    found the closure held regime-specifically too for a reason the original
+    never gave, and **withdrew the re-open before registering it**. In both cases
+    what had been granted was permission for a *form* of argument, and neither
+    lineage mistook it for a finding. Being allowed to do a thing is the removal
+    of a constraint on your search, never a data point inside it — which is this
+    entry pointed at authority rather than at instruments.
+
     **And repeated same-signed failures across INDEPENDENT implementations
     refute the shared premise, not the implementations.** Two mechanisms of hers,
     built for different reasons, both moved the same underlying quantity, both
@@ -1672,6 +1685,25 @@ less dead.
     This is §43 arriving inside a pre-check: a distribution measured under your
     current policy is a property of that policy, and here the policy you are
     about to change is the one producing it.
+
+    **The other lineage met the same signature hours later and the equilibrium
+    INVERTED its story rather than shrinking it.** (carol) Her gate tests a
+    currency the mechanism spends, so the diagnostic returned yes. The fixed
+    point is **income-determined and independent of the gate**:
+    `min(income_A / cost_A, income_B / cost_B)`. Measured, it allowed **125 per
+    thousand rounds against a realised 36 — 29% of her own ceiling** — so the
+    gate binds *far below* the income limit and **income was never the
+    constraint**, which is the opposite of what her static reading said. Two
+    lineages, one framing, one day: it converted an apparent under-dose into a
+    ceiling for the first and an apparent supply problem into an allocation
+    problem for the second.
+
+    **And a `min()` ceiling has a closure of its own: a knob that TRADES the two
+    terms cannot raise the minimum once you sit at the crossing point.** She swept
+    the integer allocations — two settings tie at the ceiling, everything past the
+    crossing falls — and killed a queued direction on arithmetic, for zero games,
+    with no experiment able to overturn it. Raising a `min()` requires raising the
+    **binding** term; rebalancing only changes which one binds.
 
     **Measure the funnel JOINTLY. Multiplying marginals is not conservative —
     it can flip the verdict.** (alice) Her three-step funnel measured at the
