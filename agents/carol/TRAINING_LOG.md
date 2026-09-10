@@ -23685,3 +23685,59 @@ rebuilds 0 and 2 — carol's structures die and stay dead"*, and the `explore` t
 CHANGE 3 a no-op. **Adding a standing sweep of my own set-aside notes on the same schedule as my
 re-open conditions** — a note deferred for lack of a regime is indistinguishable, in the log, from a
 note that was wrong.
+
+## THE ROOT — splitting the non-building turns three ways. It is AVAILABILITY, and specifically MEMORY.
+
+*"Fails to keep building after r300"* is proximate. Three causes, three fixes: **affordability** (the
+resource isn't there), **availability** (nothing in reach to build on), **choice** (both hold and the
+policy does something else). Split from the replays, window r300–800, on Set A — the margin.
+
+| non-building rounds | SET A (the margin) | carol's WIN halves |
+|---|---|---|
+| **affordability** (chips < 1,000 = a tower's cost [E]) | **13.1%** | 17.5% |
+| **availability** (no empty ruin in sense range) | **77.5%** | 65.5% |
+| **choice** (affordable AND a ruin seen, builds anyway not) | **9.4%** | 17.0% |
+
+> **It is availability, by 6:1 over affordability and 8:1 over choice.** carol is not chip-blocked and
+> is not choosing wrong — **she has nothing in reach to build on.** Note also that Set A is *better*
+> on affordability than the win halves (13.1% vs 17.5%), because a winning carol is spending.
+
+### Availability splits again, and this is the finding
+
+| of the rounds where no soldier sees an empty ruin | share |
+|---|---|
+| genuinely exhausted — 0 unclaimed ruins left on the map | **22.3%** |
+| **unclaimed ruins REMAIN but carol cannot see one** | **77.7%** — median **7** still free |
+
+Per map, median unclaimed while blind: `fix` **13 of 24**, `walalilongla` **9 of 18**,
+`gardenworld` **8 of 22**, `Terminal` 3 of 12, `box` and `CastleDefense` 0. **It is not exhaustion.
+It is positioning.**
+
+### And the code fact that names the mechanism
+
+```java
+static MapLocation nearestEmptyRuin() {
+    for (MapLocation r : rc.senseNearbyRuins(-1)) { ... }   // SENSE RANGE ONLY
+```
+
+**carol has `towerMem` — a 12-slot memory of allied towers, for refills — and NO memory of unclaimed
+ruins whatsoever.** A ruin leaves sense range and is forgotten completely.
+
+**And she does see them.** Distinct empty-ruin locations her soldiers reported over a game:
+**120 of 180 = 67%** of all ruins on those maps — first sightings spread from r0 to r2000 — while
+she finishes with a mean of **2.75 structures**. **The information is acquired and discarded.**
+
+### Ledger check on the candidate — a RUIN MEMORY — before designing
+
+| near neighbour | why it does not cover this |
+|---|---|
+| **coverage axis** (oracle **+26** = exactly the bar) | coverage is about **acquiring** information; a memory improves the outcome at **constant coverage**. The oracle priced *"what if you saw 100% of the map"* — this uses what is already seen. Different quantity |
+| **iteration 75** — built a ruin memory, **BLOCKED** at stage 0 | its blocker was *"a robot accumulates just 4.7–5.6 witnesses before dying"* — a limit on **disambiguating a symmetry**, which needs *many* witnesses. **Navigation needs ONE remembered location.** Different requirement from the same data structure |
+| `EXPLORE_RANK` | changed which empty **tile** to explore toward, not whether a known ruin is remembered |
+
+**Not covered. Registering the risk that would refute it**, because it is real and specific:
+
+> **Seeing a ruin is not being able to claim it.** carol's units are tethered (p90 distance from
+> their own tower **6.3**), and **dropping the tether alone is REFUTED at −26** (iteration 60's zero
+> arm). If a remembered ruin is only reachable by breaking the tether, this mechanism inherits that
+> refutation. **That is the falsifier to test at stage 0, before a screen.**
