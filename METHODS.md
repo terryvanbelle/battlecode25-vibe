@@ -26,14 +26,15 @@ of the argument are what transfer.
 
 ## Contents
 
-Seventy-eight entries is more than anyone reads end to end, so read this index and
+Seventy-nine entries is more than anyone reads end to end, so read this index and
 follow the two or three that bear on what you are about to do. **The numbers are
 permanent identifiers, not an order** — they record when an entry was written,
 and every cross-reference in this file and in the lineages' logs cites them, so
 they never change or get reused. Families below are the reading order.
 
 Three entries carry a claim that was later **withdrawn**, repaired in place with
-both halves kept so the arc stays visible (§65): §52, §59, §63. Read those
+both halves kept so the arc stays visible (§65): §52, §59, §63, and — repaired
+within hours of being written — §47 and §72. Read those
 whole — the correction is the useful part, and in each case a measurement
 survived while the story told about it did not.
 
@@ -67,6 +68,7 @@ survived while the story told about it did not.
 §41 multiplicity — sibling cells from one run are not corroboration ·
 §73 a protection that silently stops applying must announce the lapse ·
 §21 simulate the null, and ask what it is a null OF ·
+§78 is the check measured WITHIN or ACROSS the unit of randomisation? ·
 §34 a pre-gate needs its own null arm ·
 §54 registered identity VALUE, shared draw with a VOID branch, confirm on accept ·
 §46 "my instrument is blind" is a hypothesis — build the thing that refutes it ·
@@ -786,6 +788,48 @@ has no structure.
     44.8% against a 25% bar is a different kind of pass from squeaking 2.23% past
     2.00%, rather than recording both as "passed".
 
+**78. Ask whether a check is measured WITHIN or ACROSS the unit of
+randomisation — an across-unit rate of a rare per-actor event has a floor so
+wide the check cannot fail.** (alice) Asked to noise-floor a bar she had just
+revised, she measured the dispersion of her key per-actor rate across 21 games
+of **one fixed policy**: mean 0.3175, sd **0.3980 — 125.3% of the mean**, range
+0.05 to 1.76. A **35× spread with the policy held constant.** Her arm's realised
+effect of 1.15× on that quantity is **0.15 sd**. The check could not have failed,
+and she had reported it as confirming her mechanism.
+
+    **The deterministic-engine subtlety is what makes this hard to see, and it
+    inverts the obvious repair.** A literal policy-identical placebo gives a
+    floor of **zero** here — the engine reproduces the game exactly, so a null on
+    the same map and opponent is byte-identical and uninformative. The obvious
+    null is therefore not merely weak, it actively licenses the broken check. The
+    noise lives entirely in **arm and control playing different games**, so the
+    correct floor is map-to-map dispersion at fixed policy ÷ √n. This is §21's
+    "ask what the null is a null **of**" in its hardest form.
+
+    **And the repair is the quantity, not the sample size.** At n=25 her
+    falsifier still sat inside the floor at 1.41 sd. So she re-registered the
+    check as a **same-game counterfactual counter** — events permitted by the new
+    rule against events the old rule would have permitted, on the same turns of
+    the same games — which is exact rather than noisy, at any n. Within the unit
+    of randomisation the comparison is a difference of two counts on identical
+    input; across it, you are estimating a mean from a distribution whose sd
+    exceeds it.
+
+    **Two claims were retracted, and one of them left her better off.** The
+    manipulation check went first. But the *attribution* survived, on evidence
+    she had already collected and had not been leaning on: a same-game counter
+    showing **97 permitted draws against 51**, identical games, identical turns.
+    **The claim stood; the evidence for it changed** — different events, and
+    conflating them makes a retraction read as a collapse. She also noticed that
+    her falsifier's figures were cross-game too and inherit the same floor, so
+    *"the falsifier did not fire"* is weaker than it reads; and she corrected the
+    standing ledger **in place**, because that file is what a future revert
+    decision is read against.
+
+    Her own summary of the pattern: **"that is the second check I have shipped
+    that could not fail, and both were shipped believing otherwise"** — §25 with
+    a statistical cause rather than a shell one.
+
 **34. A pre-gate needs a null arm — its noise floor is not your accept gate's,
 and measuring it is free.** (alice) Her 6-game manipulation pre-gate rejected a
 bundle at −125.7. In the same batch sat an arm that provably did nothing (its
@@ -1093,6 +1137,15 @@ the moment to notice is when it passes.
     noisiest number in the chain, which argues for the floor measurement rather
     than against the revision.
 
+    **Postscript, hours later: she supplied the fifth protection and it retracted
+    the revision.** The floor measurement showed the revised bar *and* its
+    falsifier both sitting inside the noise (§78), and the conversion factor the
+    revision was derived from was itself uninformative — so ≥1.7× was withdrawn
+    along with the number it came from. The four protections made the revision
+    *visible and auditable*; only the fifth could make it *right*. Read the two
+    halves together: a revision with four protections is defensible, and a
+    revision with four protections is still capable of being wrong.
+
     Her framing of the prize is the right one to carry into any such run: **the
     prize estimate is a reason to run the screen, not a prediction of its
     result.**
@@ -1193,8 +1246,12 @@ the uncomfortable detail on record before the verdict.** (alice)
 **72. An accept attributes the win to the MECHANISM, never to the reason you
 built it — and the moment to say so is before the verdict.** (alice) Her arm
 passed its registered bar with the null arm on the same draw at **+0 exactly**,
-the manipulation check confirming the mechanism moved, and the falsifier not
-firing. What it did **not** buy was the account she designed it from: the
+a manipulation check that appeared to confirm the mechanism moved, and the
+falsifier not firing. (**Repaired the same day:** that manipulation check was
+later retracted as uninformative — see §78 — and the attribution now rests on an
+exact same-game counter she already held. The entry's point is unaffected and
+its illustration is stronger for it: the *claim* survived while the *evidence
+cited for it* did not.) What it did **not** buy was the account she designed it from: the
 realised quantity landed **7.7× short** of the parity she was aiming at, because
 the action sits behind a **conjunction of four gates and she had sized the dose
 from one of them** — predicting 5.7× and realising 1.15×. The gain is real and
