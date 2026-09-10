@@ -22635,3 +22635,72 @@ what "salvage" was supposed to mean.
 earned its registration: without it I would have filed "forward attrition fails" when nothing about
 forward attrition was measured — twice, since `carol_r2` won every probe game it played and did so
 through a soldier-primary mix already settled at −5.71 sd.
+
+# THE EVALUATION-DESIGN DECISION — stack-and-screen, filtered first. The SET closes.
+
+Three candidates declined today at oracle **+12, +7, ~+4**, each correctly, each below a **+26** bar.
+That is the situation where the next decision is about the **evaluation design**, not the mechanism:
+stack-and-screen, or census-per-mechanism. **+12 + 7 + 4 = +23 against +26** — close enough to
+measure, not close enough to assume. So I applied the filters before spending anything.
+
+## Filter 2 — are they one axis in three hats? YES, two of them are
+
+| candidate | **function it edits** | oracle |
+|---|---|---|
+| i76 area-gated (sampling rank) | **`newExploreTarget()`** | +12 |
+| i78 forward targeting | **`newExploreTarget()`** | +4 |
+| i69 regime-gated (scheduler) | `runTower()` spawn | +7 |
+
+**i76 and i78 edit the same function and write the same variable.** They are one axis wearing two
+hats, and their oracles are **shares of a single ceiling** (the coverage axis prices at +26 for 100%
+coverage) — **not addends.** The +12 and the +4 cannot be summed.
+
+## Filter 1 — do the two genuinely different axes compose or compete? They COMPETE
+
+Correlation across the 8 maps shared by the two screens (candidate wins of 2 per map, zero arm = 1):
+
+| map | i69_2 | i76_4 |
+|---|---|---|
+| Dominoes | **2** | **0** |
+| Flower | **0** | **2** |
+| Snowglobe | **2** | **0** |
+| defensetower / lighthouse | 2 / 2 | 1 / 1 |
+
+> **correlation −0.48.** The scheduler gains where the sampling rank loses and vice versa. **n = 8
+> maps, so this is suggestive rather than established** — but it points the same way as the
+> structure, and the structure is not in doubt.
+
+## And the arithmetic underneath: two of the three oracles are HYPOTHETICAL GATES
+
+**i76's +12 and i69's +7 are both regime-gated oracles** — they assume a perfect area gate that costs
+nothing outside its regime. **I have twice declined to build that gate**, on the ground that 1,600
+tiles is a boundary I invented for a report table. Their **measured, ungated** values are i76 **−4 to
+0** and i69 **+3 externally**.
+
+> **So the +23 is a sum of two hypotheticals and one unmeasured mechanism, over an axis pair that is
+> really one axis, between members that are negatively correlated.** The honest expected value of the
+> stack is **dominated by its best single member** — i69, measured at +3 on the external instrument
+> and already closed.
+
+## Verdict: the SET closes, not three members
+
+**Stacking is refused on its own filters, for zero games.** No screen, no census. And per §27 this is
+a decision about the evaluation design rather than about any mechanism: **census-per-mechanism is
+also refused**, because three censuses at 150 games each would spend 450 games to resolve effects I
+have priced at +12/+7/+4 against a bar of +26.
+
+**Attribution loss, registered and now moot**: had the filters passed I would have accepted that a
+passing stack tells me the set works and not which member does. They did not pass.
+
+# THE ENUMERATION IS EMPTY — escalating
+
+- Every mechanism axis closed (twenty), two of them at **oracle ceilings at or below the bar**.
+- Every **design** premise enumerated and refuted, five for zero games; the sixth built, aborted on
+  evidence, and its salvage priced at +4 and declined.
+- The **set** of sub-bar levers now closed on composition rather than one by one.
+- Instrument freshly repaired (8 discriminating rungs, regressions detectable), referent control
+  built, `carol_iter45` standing as HEAD and externally validated.
+
+**There is no candidate I can honestly price at or above the accept bar, and no evaluation design
+that reaches one from the material I hold.** That is a statement about the position, with the
+arithmetic attached, and it is on the desk rather than a reason to manufacture a twenty-first axis.
