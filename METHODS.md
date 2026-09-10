@@ -368,6 +368,18 @@ already registered; nobody re-read it before spending the session.
     Caveat from §55: a per-unit output figure is a **ratio**, so before building
     on its decomposition, check which side of it actually moves.
 
+    **And a constraint you DELETE lifts everything it was holding, not just the
+    thing you meant.** (carol) Removing a floor to free one consumer also
+    un-gated a second one the floor had been holding at a much higher threshold;
+    the second then consumed the shared stock before the first could reach its
+    own requirement, **re-creating an old race by deletion** and inverting the
+    mix **13×**. She had justified changing exactly three policies on the grounds
+    that this **isolated** the pair she wanted to test — and the first result was
+    a fourth policy neither half's prior test covered. Before removing a shared
+    constant, enumerate every policy that reads it, **from the source rather than
+    from your model of the code**; a gate is usually doing more than one job and
+    only one of them is written down.
+
     **One level deeper: trace where the freed resource LANDS, because that is
     decided by code you were not thinking about.** (alice) Enumerating the axes
     of her binding term, she reached a dose that reduces a unit type which
@@ -1163,6 +1175,17 @@ setting up the strongest screen in the project's log.)
     branch separates "the mechanism failed" from "this draw cannot resolve the
     bar", which a bare reject silently conflates.
 
+    **And a favourable result delivered by a mechanism you did not register is
+    evidence your EDIT is wrong, not that your premise is right.** (carol) Her
+    stage-0 probe won a map in half the usual time — while running a unit mix she
+    had not intended and had already measured, in an earlier experiment, at
+    **−5.71 sd**. She read the fast win as confirmation that the edit had
+    mis-fired rather than as support for the design, which is this entry's
+    discipline applied to a probe instead of to an accept. A win you cannot
+    attribute to the registered mechanism is not a small win; it is an
+    unattributed one, and the temptation is largest exactly when the number is
+    good.
+
     **Require the mechanism confirmation even on an ACCEPT.** She registered that
     if the realised quantity the mechanism targets had not moved, the win would
     not be attributed to it and she would not claim it. Attribution discipline is
@@ -1347,6 +1370,13 @@ found; this one could have failed and had.
     different kind of conclusion from anything a whole-game number can yield —
     and his army arriving at 1.94× five hundred rounds too late is invisible to
     every aggregate he had.
+
+    **And when arms end at different times, a per-TIME rate is not a
+    comparison.** (carol) Her arm won at round 709 where its control ran to 1393,
+    so a rate quoted per thousand rounds scored the two on different mixtures of
+    early and late play — the phases whose rates differ most. She measured both at
+    a **common round** instead. The error is easy to make and invisible
+    afterwards, because the normalisation looks like the careful choice.
 
     **Cross the cut with the opponent — the 2×2 is the standard form.** (alice)
     A map-property cut pooled over opponents cannot say whether the property or
