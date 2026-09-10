@@ -20298,3 +20298,85 @@ the `HOME` share. The question is answerable from replays for zero games, and it
 That decomposition names which of three very different problems this is, and **I will not build
 anything against the area gradient until it returns an answer.** Three mechanisms have now died
 guessing at it.
+
+# THE RUIN-CLAIMING DECOMPOSITION (registered). It removes expansion from the candidate list.
+
+Method, zero games: from tournament replays, take the arena grid (unclaimed ruins show as `o`),
+the **marks grid** (`m/M` = carol's marks — `markTowerPattern` only fires when a soldier has the ruin
+in range, so a mark is proof carol reached it), and the SPAWN event log (who claimed what, when).
+Classify every ruin carol did not claim into the three buckets I registered.
+
+## The two large maps give DIFFERENT answers
+
+| | galaxy (45x45, 28 ruins) | Gears (55x55, 18 ruins) |
+|---|---|---|
+| carol claimed | 8 | **10** |
+| alice claimed | **14** | 8 |
+| unclaimed by anyone | 4 | 0 |
+| of the ruins carol missed — **never reached** | **18 of 18 = 100%** | 3 of 8 = 38% |
+| — **contested and lost** | **0** | **5 of 8 = 62%** |
+| — **reached and abandoned** | **0** | **0** |
+
+**"Reached and abandoned" is zero on both maps.** The iteration-44 denial mechanism is not costing
+carol ruins. That bucket is empty and can be struck.
+
+On **galaxy** the answer is total: carol never marked a single one of the 18 ruins it failed to
+claim — no carol soldier ever came within vision (r²=20) of any of them. **And it is not a distance
+problem**: the never-reached ruins sit at median distance 20.6 from carol's forward tower against
+19.7 for the ones carol *did* claim. Carol reaches that far routinely; it simply never went.
+
+## The decisive negative — and it corrects my own accounting from an hour ago
+
+**On Gears carol claimed MORE ruins than alice (10 to 8) and still lost the coverage race 365 to
+628.** So the expansion half of the conclusion I drew from the paint-budget accounting — *"what
+carol lacks on large maps is expansion and occupation"* — is **refuted on one of the two maps I drew
+it from**. Out-expanding alice on a large map did not help.
+
+> **Ruin claiming is not the cause of the area gradient.** It behaves completely differently on the
+> two maps, and on the map where carol wins the ruin race it loses the game by the widest margin.
+
+This is exactly why the measurement was registered instead of a fourth mechanism: an area-gated or
+exploration-based candidate aimed at "carol under-expands on large maps" would have been built on a
+premise that one map refutes outright.
+
+## What survives, on both maps
+
+| per 1,000 rounds | carol | alice |
+|---|---|---|
+| unpaint actions, Gears | **0** | **2,024** |
+| unpaint actions, galaxy | **0** | **1,470** |
+| units standing on the OPPONENT's paint | 10–41% | **85–88%** |
+
+**alice erases roughly 70% of carol's gross production** (2,024 removals against ~2,880 tiles-worth
+of carol painting on Gears), and **carol's unpaint count is 0 on every map ever measured in this
+lineage.** That is the one asymmetry that is present, large and identical on both maps.
+
+## Pricing the only remaining lever, before proposing it
+
+Denial is worth the same as painting for the outcome: the first tiebreak compares the two teams'
+painted areas [E, RULES.md], so removing one of alice's tiles moves the same quantity as adding one
+of mine — and it also defends against her outright >70% win.
+
+**A mopper's attack costs 0 paint** [E]. Its whole cost is 100 to build plus drain:
+
+| unit | paint cost of ~100 tiles moved | **tiles per paint** |
+|---|---|---|
+| soldier painting | 5/tile ongoing | **0.20** |
+| splasher | 300 build + 50/splash for ~13 tiles | **~0.20** |
+| mopper (carol, estimated) | 100 build + ~1/turn drain, 0 per action | **~0.25** |
+| **mopper (alice, MEASURED)** | 43 built x 100 = 4,300 paint -> 2,024 removals | **0.47** |
+
+**alice's mopping is more paint-efficient than anything carol does**, because the action is free and
+only the unit is paid for.
+
+**Against it: `agents/bob/CLOSED.md` #17 closes "raise mopper spawn share" at −5/−6/−11 out of 50,
+dose-monotone harm**, with the re-open condition *"a mechanism exists that raises mopper share
+without reducing total paint actions"* — which a naive share raise does not meet, on his
+architecture or mine. A verdict does not transfer, but that is a serious external prior and I will
+not pretend otherwise.
+
+**Registered, therefore, as the next iteration and not started here:** a mopper *scheduler* (the
+iteration-69 machinery, which is written and shown to force a unit into the mix regardless of
+affordability thresholds), aimed at a deficit that is traced, replicated on two maps, and priced —
+**with bob's closure as the standing prior to beat, and its re-open condition as the thing my stage-0
+check must test directly**: total paint actions must not fall.
