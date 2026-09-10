@@ -23237,3 +23237,70 @@ failed arm. The correct reading of a 97.5% archetype is *untested*, not *rejecte
 opponent.** I forked HEAD instead of hand-writing a minimal bot, and accepted two coupled edits,
 because an instrument needs difficulty rather than attribution. Weak hand-built archetypes keep
 failing as rungs for exactly the reason `carol_decap` did.
+
+## LOCALISING `carol_siege` — two questions, two sets, registered before any replay is opened
+
+`carol_siege` beat carol 20/50 = 40.0%. **Why** it wins is a separate question from **that** it wins,
+and the two map sets answer different things. Registered here, in advance.
+
+### The margin identity — the splits contribute nothing
+Each map is played twice, one game per side, so a 1–1 split contributes **+1 win and +1 loss = 0** to
+the margin. Checked:
+
+    wins − losses = 2 × (swept − swept against) = 2 × (1 − 6) = −10   ← my margin exactly
+
+**Verified by construction, not by luck:** all 25 maps played exactly 2 games (the apparent 26th map
+in my first count was the log's own header line). Side labels to be confirmed against `bot_side` in
+`results.csv`. So side-dependence cannot flatter or punish the **aggregate**; it limits only
+**per-map** claims, and I have made none.
+
+### Set A — the STRENGTH question: the 6 both-sides losses
+`CastleDefense, Terminal, box, fix, gardenworld, walalilongla`. carol loses these **regardless of
+side**, so the side confound is removed by design rather than by averaging. **These 6 against the 1
+swept map are the entire margin.**
+
+### Set B — the CAUSAL question: the 18 split pairs, which I had wrongly set aside
+`BatSignal, Bread, Crab, DefaultSmall, Filter, Justice, Leaf, MoneyTower, Parking_lot, PlumberGame,
+Racetrack, SMILE, SandyBeach, Snowman, TargetPractice, Thirds, leavemealone, maze`.
+
+A split on a deterministic engine is **a matched pair**: same map, same terrain, same opponent, both
+policies identical — only the **side** and the **outcome** differ. So:
+
+> **Is the freeze signature present in the LOSS and absent in the WIN, on the same map?**
+
+I set these aside as carrying no strength information. For the margin that is right. **For diagnosis
+they are the best set I have**, because the healthy-game null only says *"this does not happen
+normally"*; it cannot say *"this does not happen when I beat THIS opponent"*, and that is what
+separates a cause from a correlate.
+
+### The detector, and a baseline I measured rather than chose
+Signature: consecutive rounds with treasury **unchanged to the unit** while towers still stand. If
+income were positive, chips would move unless spending matched it exactly, to the chip.
+
+**Baseline measured on three known-healthy games** (`vs bobf` on Gears and galaxy, `vs carol_iter44`
+on leavemealone): longest flat run = **1 round in every one.** The null is 1. **I did not pick a
+threshold** — any long run is an anomaly against measurement.
+
+### THREE OUTCOMES, registered — two of them against my own hypothesis
+| result across the 18 pairs | conclusion |
+|---|---|
+| present in the loss, **absent in the win** | as clean a causal signal as this setup can produce |
+| **present in BOTH** | **the freeze is NOT what decides those games** — the archetype beats me via something I did not build it for, and I say so. **This is the one most likely to be talked out of afterwards, so it is written down first.** A finding I did not go looking for is worth more than a confirmation |
+| absent in both | the freeze is not this archetype's mechanism at all |
+
+### A retention asymmetry in my own tooling, found before it cost anything
+**The gauntlet keeps only the BOT's losses** (`losses/*.bc25`). So I hold the loss half of every pair
+and **none of the win halves — exactly the control the causal question needs.** Conditioning on that
+sample would have produced "the signature appears in games I lose" and no control at all.
+
+**The constructive fix: invert the roles.** Re-run the 18 split maps with `BOT=carol_siege`,
+`OPPONENTS=carol_iter45` — then carol's wins are *siege's* losses and get retained. Knowing which
+side's games your tooling keeps lets you deliberately re-run to collect the half you are missing.
+
+**Determinism verified, not assumed:** there is no seed parameter anywhere in the runner, so the
+engine default is used. And my "only 2% of games survive a seed change" figure does **not** apply —
+that was about *deliberately changing* seeds, and nothing here changes one.
+
+**Pair fingerprint — winner AND round count.** A winner alone is a weak fingerprint; two games with
+the same winner and different round counts are different games. **Any map that reproduces the winner
+but not the round count is a BROKEN pair and is excluded, not analysed.**
