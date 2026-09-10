@@ -1,0 +1,902 @@
+RESULT bob alice quack B 597
+REASON bob alice quack The winning team painted enough of the map.
+RESULT bob alice Piglets2 B 750
+REASON bob alice Piglets2 The winning team painted enough of the map.
+RESULT alice bob quack B 714
+REASON alice bob quack The winning team painted enough of the map.
+RESULT alice bob FourCorners A 179
+REASON alice bob FourCorners The winning team painted enough of the map.
+RESULT bob alice FourCorners B 249
+REASON bob alice FourCorners The winning team painted enough of the map.
+RESULT alice bob Piglets2 B 890
+REASON alice bob Piglets2 The winning team painted enough of the map.
+RESULT bob alice Parking_lot B 586
+REASON bob alice Parking_lot The winning team painted enough of the map.
+RESULT alice bob CastleDefense A 501
+REASON alice bob CastleDefense The winning team painted enough of the map.
+RESULT alice bob Rose A 354
+REASON alice bob Rose The winning team painted enough of the map.
+RESULT bob alice CastleDefense B 511
+REASON bob alice CastleDefense The winning team painted enough of the map.
+RESULT alice bob Parking_lot A 918
+REASON alice bob Parking_lot The winning team painted enough of the map.
+RESULT alice bob AlarmClock B 460
+REASON alice bob AlarmClock The winning team painted enough of the map.
+RESULT bob alice Circuit B 1213
+REASON bob alice Circuit The winning team painted enough of the map.
+RESULT alice bob Circuit B 1039
+REASON alice bob Circuit The winning team painted enough of the map.
+RESULT bob alice Rose A 1343
+REASON bob alice Rose The winning team painted enough of the map.
+RESULT bob alice Racetrack A 352
+REASON bob alice Racetrack The winning team painted enough of the map.
+RESULT alice bob Racetrack B 535
+REASON alice bob Racetrack The winning team painted enough of the map.
+RESULT bob alice AlarmClock B 1136
+REASON bob alice AlarmClock The winning team painted enough of the map.
+RESULT bob alice windmill A 748
+REASON bob alice windmill The winning team painted enough of the map.
+RESULT alice bob Castle A 263
+REASON alice bob Castle The winning team painted enough of the map.
+RESULT alice bob windmill B 1320
+REASON alice bob windmill The winning team painted enough of the map.
+RESULT bob alice Mirage A 523
+REASON bob alice Mirage The winning team painted enough of the map.
+RESULT bob alice Castle A 1048
+REASON bob alice Castle The winning team painted enough of the map.
+RESULT bob alice Oasis B 844
+REASON bob alice Oasis The winning team painted enough of the map.
+RESULT alice bob sierpinski A 1034
+REASON alice bob sierpinski The winning team painted enough of the map.
+RESULT bob alice sierpinski A 539
+REASON bob alice sierpinski The winning team painted enough of the map.
+RESULT alice bob Mirage A 1886
+REASON alice bob Mirage The winning team painted enough of the map.
+RESULT alice bob Jail A 335
+REASON alice bob Jail The winning team painted enough of the map.
+RESULT alice bob Bread A 357
+REASON alice bob Bread The winning team painted enough of the map.
+RESULT bob alice Jail B 682
+REASON bob alice Jail The winning team painted enough of the map.
+RESULT bob alice Bread B 539
+REASON bob alice Bread The winning team painted enough of the map.
+RESULT bob alice walalilongla B 282
+REASON bob alice walalilongla The winning team painted enough of the map.
+RESULT bob alice box B 457
+REASON bob alice box The winning team painted enough of the map.
+RESULT alice bob Oasis A 1561
+REASON alice bob Oasis The winning team painted enough of the map.
+RESULT alice bob box A 868
+REASON alice bob box The winning team painted enough of the map.
+RESULT alice bob walalilongla A 1355
+REASON alice bob walalilongla The winning team painted enough of the map.
+RESULT alice bob gardenworld A 1015
+REASON alice bob gardenworld The winning team painted enough of the map.
+RESULT alice bob catface B 508
+REASON alice bob catface The winning team painted enough of the map.
+RESULT bob alice catface B 663
+REASON bob alice catface The winning team painted enough of the map.
+RESULT alice bob maze A 745
+REASON alice bob maze The winning team painted enough of the map.
+RESULT bob alice gardenworld A 2000
+REASON bob alice gardenworld The winning team won on tiebreakers (painted more of the map).
+RESULT alice bob starburst B 367
+REASON alice bob starburst The winning team painted enough of the map.
+RESULT bob alice starburst B 456
+REASON bob alice starburst The winning team painted enough of the map.
+RESULT bob alice DonkeyKong B 2000
+REASON bob alice DonkeyKong The winning team won on tiebreakers (painted more of the map).
+RESULT alice bob Flower B 2000
+REASON alice bob Flower The winning team won on tiebreakers (painted more of the map).
+RESULT alice bob DonkeyKong A 2000
+REASON alice bob DonkeyKong The winning team won on tiebreakers (painted more of the map).
+RESULT bob alice maze B 2000
+REASON bob alice maze The winning team won on tiebreakers (painted more of the map).
+RESULT bob alice Flower B 1273
+REASON bob alice Flower The winning team painted enough of the map.
+RESULT alice bob sayhi A 2000
+REASON alice bob sayhi The winning team won on tiebreakers (painted more of the map).
+RESULT alice bob fix A 666
+REASON alice bob fix The winning team painted enough of the map.
+RESULT bob alice fix A 528
+REASON bob alice fix The winning team painted enough of the map.
+RESULT bob alice sayhi B 2000
+REASON bob alice sayhi The winning team won on tiebreakers (painted more of the map).
+RESULT bob alice headphones B 1627
+REASON bob alice headphones The winning team painted enough of the map.
+RESULT bob alice leavemealone B 876
+REASON bob alice leavemealone The winning team painted enough of the map.
+RESULT alice bob Thirds A 492
+REASON alice bob Thirds The winning team painted enough of the map.
+RESULT alice bob DefaultSmall A 428
+REASON alice bob DefaultSmall The winning team painted enough of the map.
+RESULT bob alice DefaultSmall B 242
+REASON bob alice DefaultSmall The winning team painted enough of the map.
+RESULT alice bob leavemealone B 2000
+REASON alice bob leavemealone The winning team won on tiebreakers (painted more of the map).
+RESULT alice bob Portal A 893
+REASON alice bob Portal The winning team painted enough of the map.
+RESULT bob alice Thirds B 1335
+REASON bob alice Thirds The winning team painted enough of the map.
+RESULT bob alice Portal B 898
+REASON bob alice Portal The winning team painted enough of the map.
+RESULT alice bob defensetower A 587
+REASON alice bob defensetower The winning team painted enough of the map.
+RESULT alice bob DefaultMedium A 1053
+REASON alice bob DefaultMedium The winning team painted enough of the map.
+RESULT alice bob headphones B 2000
+REASON alice bob headphones The winning team won on tiebreakers (painted more of the map).
+RESULT bob alice defensetower B 910
+REASON bob alice defensetower The winning team painted enough of the map.
+RESULT bob alice DefaultMedium A 1460
+REASON bob alice DefaultMedium The winning team painted enough of the map.
+RESULT alice bob DefaultLarge B 547
+REASON alice bob DefaultLarge The winning team painted enough of the map.
+RESULT bob alice DefaultLarge A 955
+REASON bob alice DefaultLarge The winning team painted enough of the map.
+RESULT bob alice DefaultHuge A 521
+REASON bob alice DefaultHuge The winning team painted enough of the map.
+RESULT bob alice Paintball B 217
+REASON bob alice Paintball The winning team painted enough of the map.
+RESULT alice bob Paintball A 2000
+REASON alice bob Paintball The winning team won on tiebreakers (painted more of the map).
+RESULT alice bob UglySweater A 1046
+REASON alice bob UglySweater The winning team painted enough of the map.
+RESULT bob alice boxofchocolates B 1511
+REASON bob alice boxofchocolates The winning team painted enough of the map.
+RESULT alice bob boxofchocolates B 2000
+REASON alice bob boxofchocolates The winning team won on tiebreakers (painted more of the map).
+RESULT bob alice UglySweater A 723
+REASON bob alice UglySweater The winning team painted enough of the map.
+RESULT alice bob DefaultHuge A 2000
+REASON alice bob DefaultHuge The winning team won on tiebreakers (painted more of the map).
+RESULT alice bob Gears B 1469
+REASON alice bob Gears The winning team painted enough of the map.
+RESULT bob alice Restart A 578
+REASON bob alice Restart The winning team painted enough of the map.
+RESULT alice bob Barcode A 418
+REASON alice bob Barcode The winning team painted enough of the map.
+RESULT bob alice Gears B 2000
+REASON bob alice Gears The winning team won on tiebreakers (painted more of the map).
+RESULT alice bob roads A 607
+REASON alice bob roads The winning team painted enough of the map.
+RESULT bob alice roads B 568
+REASON bob alice roads The winning team painted enough of the map.
+RESULT bob alice sunrise B 856
+REASON bob alice sunrise The winning team painted enough of the map.
+RESULT bob alice Barcode B 2000
+REASON bob alice Barcode The winning team won on tiebreakers (painted more of the map).
+RESULT alice bob Restart A 2000
+REASON alice bob Restart The winning team won on tiebreakers (painted more of the map).
+RESULT bob alice BunnyGame B 358
+REASON bob alice BunnyGame The winning team painted enough of the map.
+RESULT alice bob BunnyGame B 1403
+REASON alice bob BunnyGame The winning team painted enough of the map.
+RESULT alice bob TheBest B 538
+REASON alice bob TheBest The winning team painted enough of the map.
+RESULT alice bob mit A 1000
+REASON alice bob mit The winning team painted enough of the map.
+RESULT alice bob memstore A 645
+REASON alice bob memstore The winning team painted enough of the map.
+RESULT alice bob sunrise A 2000
+REASON alice bob sunrise The winning team won on tiebreakers (painted more of the map).
+RESULT bob alice mit B 1058
+REASON bob alice mit The winning team painted enough of the map.
+RESULT bob alice memstore A 489
+REASON bob alice memstore The winning team painted enough of the map.
+RESULT alice bob SMILE A 639
+REASON alice bob SMILE The winning team painted enough of the map.
+RESULT bob alice TheBest B 1206
+REASON bob alice TheBest The winning team painted enough of the map.
+RESULT bob alice SMILE B 1030
+REASON bob alice SMILE The winning team painted enough of the map.
+RESULT bob alice PlumberGame A 1079
+REASON bob alice PlumberGame The winning team painted enough of the map.
+RESULT alice bob PlumberGame B 1292
+REASON alice bob PlumberGame The winning team painted enough of the map.
+RESULT alice bob BatSignal A 918
+REASON alice bob BatSignal The winning team painted enough of the map.
+RESULT bob alice BatSignal B 2000
+REASON bob alice BatSignal The winning team won on tiebreakers (painted more of the map).
+RESULT bob alice SaltyPepper A 625
+REASON bob alice SaltyPepper The winning team painted enough of the map.
+RESULT alice bob Terminal B 1512
+REASON alice bob Terminal The winning team painted enough of the map.
+RESULT alice bob SaltyPepper B 2000
+REASON alice bob SaltyPepper The winning team won on tiebreakers (painted more of the map).
+RESULT alice bob Filter A 588
+REASON alice bob Filter The winning team painted enough of the map.
+RESULT bob alice Terminal B 773
+REASON bob alice Terminal The winning team painted enough of the map.
+RESULT bob alice Filter B 324
+REASON bob alice Filter The winning team painted enough of the map.
+RESULT bob alice shell B 1133
+REASON bob alice shell The winning team painted enough of the map.
+RESULT alice bob Leaf A 2000
+REASON alice bob Leaf The winning team won on tiebreakers (painted more of the map).
+RESULT bob alice Leaf B 1946
+REASON bob alice Leaf The winning team painted enough of the map.
+RESULT alice bob shell A 1547
+REASON alice bob shell The winning team painted enough of the map.
+RESULT bob alice yearofthesnake B 527
+REASON bob alice yearofthesnake The winning team painted enough of the map.
+RESULT bob alice HungerGames A 621
+REASON bob alice HungerGames The winning team painted enough of the map.
+RESULT alice bob HungerGames B 858
+REASON alice bob HungerGames The winning team painted enough of the map.
+RESULT alice bob Snowglobe B 687
+REASON alice bob Snowglobe The winning team painted enough of the map.
+RESULT alice bob yearofthesnake A 2000
+REASON alice bob yearofthesnake The winning team won on tiebreakers (painted more of the map).
+RESULT bob alice Dominoes B 378
+REASON bob alice Dominoes The winning team painted enough of the map.
+RESULT alice bob Dominoes A 622
+REASON alice bob Dominoes The winning team painted enough of the map.
+RESULT alice bob MoneyTower A 785
+REASON alice bob MoneyTower The winning team painted enough of the map.
+RESULT bob alice MoneyTower A 609
+REASON bob alice MoneyTower The winning team painted enough of the map.
+RESULT bob alice Snowglobe B 883
+REASON bob alice Snowglobe The winning team painted enough of the map.
+RESULT alice bob Crab B 642
+REASON alice bob Crab The winning team painted enough of the map.
+RESULT alice bob Brat A 422
+REASON alice bob Brat The winning team painted enough of the map.
+RESULT bob alice Crab A 1027
+REASON bob alice Crab The winning team painted enough of the map.
+RESULT bob alice Brat B 947
+REASON bob alice Brat The winning team painted enough of the map.
+RESULT bob alice SandyBeach B 307
+REASON bob alice SandyBeach The winning team painted enough of the map.
+RESULT alice bob SandyBeach A 536
+REASON alice bob SandyBeach The winning team painted enough of the map.
+RESULT bob alice UnderTheSea B 1227
+REASON bob alice UnderTheSea The winning team painted enough of the map.
+RESULT alice bob rain A 560
+REASON alice bob rain The winning team painted enough of the map.
+RESULT bob alice rain B 548
+REASON bob alice rain The winning team painted enough of the map.
+RESULT alice bob TargetPractice A 692
+REASON alice bob TargetPractice The winning team painted enough of the map.
+RESULT alice bob UnderTheSea B 1714
+REASON alice bob UnderTheSea The winning team painted enough of the map.
+RESULT bob alice TargetPractice B 770
+REASON bob alice TargetPractice The winning team painted enough of the map.
+RESULT bob alice galaxy B 466
+REASON bob alice galaxy The winning team painted enough of the map.
+RESULT alice bob Justice A 475
+REASON alice bob Justice The winning team painted enough of the map.
+RESULT alice bob Snowman A 228
+REASON alice bob Snowman The winning team painted enough of the map.
+RESULT bob alice Justice A 610
+REASON bob alice Justice The winning team painted enough of the map.
+RESULT alice bob Money B 497
+REASON alice bob Money The winning team painted enough of the map.
+RESULT bob alice Snowman A 1855
+REASON bob alice Snowman The winning team painted enough of the map.
+RESULT alice bob galaxy B 1465
+REASON alice bob galaxy The winning team painted enough of the map.
+RESULT bob alice Money A 1104
+REASON bob alice Money The winning team painted enough of the map.
+RESULT alice bob Bunny A 1153
+REASON alice bob Bunny The winning team painted enough of the map.
+RESULT alice bob Fossil A 557
+REASON alice bob Fossil The winning team painted enough of the map.
+RESULT bob alice Fossil B 989
+REASON bob alice Fossil The winning team painted enough of the map.
+RESULT bob alice Bunny A 1675
+REASON bob alice Bunny The winning team painted enough of the map.
+RESULT bob alice giver B 1023
+REASON bob alice giver The winning team painted enough of the map.
+RESULT bob alice lighthouse B 2000
+REASON bob alice lighthouse The winning team won on tiebreakers (painted more of the map).
+RESULT alice bob lighthouse A 2000
+REASON alice bob lighthouse The winning team won on tiebreakers (painted more of the map).
+RESULT alice bob giver B 1497
+REASON alice bob giver The winning team painted enough of the map.
+RESULT alice carol quack B 1110
+REASON alice carol quack The winning team painted enough of the map.
+RESULT alice bob gridworld A 2000
+REASON alice bob gridworld The winning team won on tiebreakers (painted more of the map).
+RESULT carol alice quack B 547
+REASON carol alice quack The winning team painted enough of the map.
+RESULT alice carol Parking_lot A 425
+REASON alice carol Parking_lot The winning team painted enough of the map.
+RESULT carol alice Parking_lot B 482
+REASON carol alice Parking_lot The winning team painted enough of the map.
+RESULT bob alice gridworld A 2000
+REASON bob alice gridworld The winning team won on tiebreakers (painted more of the map).
+RESULT carol alice Piglets2 B 1225
+REASON carol alice Piglets2 The winning team painted enough of the map.
+RESULT alice carol FourCorners B 397
+REASON alice carol FourCorners The winning team painted enough of the map.
+RESULT alice carol CastleDefense A 245
+REASON alice carol CastleDefense The winning team painted enough of the map.
+RESULT carol alice FourCorners A 281
+REASON carol alice FourCorners The winning team painted enough of the map.
+RESULT carol alice CastleDefense A 168
+REASON carol alice CastleDefense The winning team painted enough of the map.
+RESULT alice carol Rose B 438
+REASON alice carol Rose The winning team painted enough of the map.
+RESULT carol alice Rose B 466
+REASON carol alice Rose The winning team painted enough of the map.
+RESULT alice carol Piglets2 A 2000
+REASON alice carol Piglets2 The winning team won on tiebreakers (painted more of the map).
+RESULT alice carol AlarmClock B 563
+REASON alice carol AlarmClock The winning team painted enough of the map.
+RESULT carol alice AlarmClock A 1061
+REASON carol alice AlarmClock The winning team painted enough of the map.
+RESULT carol alice Circuit B 1454
+REASON carol alice Circuit The winning team painted enough of the map.
+RESULT alice carol Circuit A 1369
+REASON alice carol Circuit The winning team painted enough of the map.
+RESULT alice carol windmill B 657
+REASON alice carol windmill The winning team painted enough of the map.
+RESULT alice carol Racetrack B 2000
+REASON alice carol Racetrack The winning team won on tiebreakers (painted more of the map).
+RESULT carol alice windmill A 700
+REASON carol alice windmill The winning team painted enough of the map.
+RESULT carol alice Racetrack A 1462
+REASON carol alice Racetrack The winning team painted enough of the map.
+RESULT alice carol Castle B 574
+REASON alice carol Castle The winning team painted enough of the map.
+RESULT carol alice Mirage A 932
+REASON carol alice Mirage The winning team painted enough of the map.
+RESULT carol alice Castle A 1526
+REASON carol alice Castle The winning team painted enough of the map.
+RESULT alice carol Oasis A 1050
+REASON alice carol Oasis The winning team painted enough of the map.
+RESULT carol alice Oasis B 798
+REASON carol alice Oasis The winning team painted enough of the map.
+RESULT alice carol Mirage B 2000
+REASON alice carol Mirage The winning team won on tiebreakers (painted more of the map).
+RESULT alice carol Jail A 934
+REASON alice carol Jail The winning team painted enough of the map.
+RESULT alice carol sierpinski B 1300
+REASON alice carol sierpinski The winning team painted enough of the map.
+RESULT alice carol Bread B 456
+REASON alice carol Bread The winning team painted enough of the map.
+RESULT carol alice Bread A 356
+REASON carol alice Bread The winning team painted enough of the map.
+RESULT carol alice Jail B 1606
+REASON carol alice Jail The winning team painted enough of the map.
+RESULT alice carol walalilongla A 813
+REASON alice carol walalilongla The winning team painted enough of the map.
+RESULT carol alice walalilongla B 762
+REASON carol alice walalilongla The winning team painted enough of the map.
+RESULT alice carol box B 1335
+REASON alice carol box The winning team painted enough of the map.
+RESULT carol alice sierpinski A 1914
+REASON carol alice sierpinski The winning team painted enough of the map.
+RESULT carol alice box B 1617
+REASON carol alice box The winning team painted enough of the map.
+RESULT carol alice DonkeyKong B 774
+REASON carol alice DonkeyKong The winning team painted enough of the map.
+RESULT alice carol catface B 286
+REASON alice carol catface The winning team painted enough of the map.
+RESULT carol alice catface A 430
+REASON carol alice catface The winning team painted enough of the map.
+RESULT alice carol gardenworld B 2000
+REASON alice carol gardenworld The winning team won on tiebreakers (painted more of the map).
+RESULT carol alice gardenworld A 2000
+REASON carol alice gardenworld The winning team won on tiebreakers (painted more of the map).
+RESULT alice carol maze A 1116
+REASON alice carol maze The winning team painted enough of the map.
+RESULT alice carol starburst B 2000
+REASON alice carol starburst The winning team won on tiebreakers (painted more of the map).
+RESULT carol alice starburst B 393
+REASON carol alice starburst The winning team painted enough of the map.
+RESULT carol alice Flower B 654
+REASON carol alice Flower The winning team painted enough of the map.
+RESULT alice carol Flower A 849
+REASON alice carol Flower The winning team painted enough of the map.
+RESULT alice carol sayhi A 302
+REASON alice carol sayhi The winning team painted enough of the map.
+RESULT alice carol DonkeyKong A 2000
+REASON alice carol DonkeyKong The winning team won on tiebreakers (painted more of the map).
+RESULT alice carol headphones A 492
+REASON alice carol headphones The winning team painted enough of the map.
+RESULT carol alice maze B 1552
+REASON carol alice maze The winning team painted enough of the map.
+RESULT carol alice headphones B 662
+REASON carol alice headphones The winning team painted enough of the map.
+RESULT alice carol fix A 1122
+REASON alice carol fix The winning team painted enough of the map.
+RESULT carol alice sayhi B 1555
+REASON carol alice sayhi The winning team painted enough of the map.
+RESULT carol alice fix B 1504
+REASON carol alice fix The winning team painted enough of the map.
+RESULT alice carol leavemealone B 1277
+REASON alice carol leavemealone The winning team painted enough of the map.
+RESULT alice carol DefaultSmall B 325
+REASON alice carol DefaultSmall The winning team painted enough of the map.
+RESULT carol alice DefaultSmall A 133
+REASON carol alice DefaultSmall The winning team painted enough of the map.
+RESULT carol alice Thirds A 595
+REASON carol alice Thirds The winning team painted enough of the map.
+RESULT alice carol Thirds A 1169
+REASON alice carol Thirds The winning team painted enough of the map.
+RESULT carol alice leavemealone B 2000
+REASON carol alice leavemealone The winning team won on tiebreakers (painted more of the map).
+RESULT alice carol Portal A 1261
+REASON alice carol Portal The winning team painted enough of the map.
+RESULT carol alice DefaultMedium B 519
+REASON carol alice DefaultMedium The winning team painted enough of the map.
+RESULT alice carol DefaultMedium B 1170
+REASON alice carol DefaultMedium The winning team painted enough of the map.
+RESULT carol alice Portal B 1558
+REASON carol alice Portal The winning team painted enough of the map.
+RESULT alice carol DefaultLarge B 933
+REASON alice carol DefaultLarge The winning team painted enough of the map.
+RESULT carol alice DefaultLarge B 874
+REASON carol alice DefaultLarge The winning team painted enough of the map.
+RESULT carol alice defensetower B 1208
+REASON carol alice defensetower The winning team painted enough of the map.
+RESULT alice carol Paintball B 733
+REASON alice carol Paintball The winning team painted enough of the map.
+RESULT alice carol defensetower A 1731
+REASON alice carol defensetower The winning team painted enough of the map.
+RESULT carol alice DefaultHuge A 579
+REASON carol alice DefaultHuge The winning team painted enough of the map.
+RESULT carol alice Paintball A 882
+REASON carol alice Paintball The winning team painted enough of the map.
+RESULT alice carol boxofchocolates B 2000
+REASON alice carol boxofchocolates The winning team won on tiebreakers (painted more of the map).
+RESULT carol alice boxofchocolates A 1952
+REASON carol alice boxofchocolates The winning team painted enough of the map.
+RESULT alice carol DefaultHuge A 1396
+REASON alice carol DefaultHuge The winning team painted enough of the map.
+RESULT alice carol UglySweater A 1547
+REASON alice carol UglySweater The winning team painted enough of the map.
+RESULT alice carol Gears B 2000
+REASON alice carol Gears The winning team won on tiebreakers (painted more of the map).
+RESULT carol alice UglySweater B 2000
+REASON carol alice UglySweater The winning team won on tiebreakers (painted more of the map).
+RESULT alice carol Restart A 1538
+REASON alice carol Restart The winning team painted enough of the map.
+RESULT carol alice Barcode B 829
+REASON carol alice Barcode The winning team painted enough of the map.
+RESULT carol alice Gears B 2000
+REASON carol alice Gears The winning team won on tiebreakers (painted more of the map).
+RESULT alice carol Barcode A 1013
+REASON alice carol Barcode The winning team painted enough of the map.
+RESULT carol alice roads A 425
+REASON carol alice roads The winning team painted enough of the map.
+RESULT carol alice Restart A 2000
+REASON carol alice Restart The winning team won on tiebreakers (painted more of the map).
+RESULT alice carol sunrise A 529
+REASON alice carol sunrise The winning team painted enough of the map.
+RESULT alice carol roads A 845
+REASON alice carol roads The winning team painted enough of the map.
+RESULT alice carol BunnyGame B 320
+REASON alice carol BunnyGame The winning team painted enough of the map.
+RESULT carol alice BunnyGame A 635
+REASON carol alice BunnyGame The winning team painted enough of the map.
+RESULT carol alice TheBest B 653
+REASON carol alice TheBest The winning team painted enough of the map.
+RESULT carol alice sunrise B 1407
+REASON carol alice sunrise The winning team painted enough of the map.
+RESULT alice carol TheBest A 995
+REASON alice carol TheBest The winning team painted enough of the map.
+RESULT carol alice memstore B 420
+REASON carol alice memstore The winning team painted enough of the map.
+RESULT carol alice mit B 1301
+REASON carol alice mit The winning team painted enough of the map.
+RESULT alice carol mit B 2000
+REASON alice carol mit The winning team won on tiebreakers (painted more of the map).
+RESULT alice carol SMILE A 844
+REASON alice carol SMILE The winning team painted enough of the map.
+RESULT carol alice SMILE B 819
+REASON carol alice SMILE The winning team painted enough of the map.
+RESULT alice carol memstore B 2000
+REASON alice carol memstore The winning team won on tiebreakers (painted more of the map).
+RESULT carol alice PlumberGame A 738
+REASON carol alice PlumberGame The winning team painted enough of the map.
+RESULT alice carol PlumberGame B 1143
+REASON alice carol PlumberGame The winning team painted enough of the map.
+RESULT carol alice BatSignal B 670
+REASON carol alice BatSignal The winning team painted enough of the map.
+RESULT alice carol BatSignal B 957
+REASON alice carol BatSignal The winning team painted enough of the map.
+RESULT alice carol Leaf B 759
+REASON alice carol Leaf The winning team painted enough of the map.
+RESULT carol alice Leaf B 872
+REASON carol alice Leaf The winning team painted enough of the map.
+RESULT alice carol Terminal B 407
+REASON alice carol Terminal The winning team painted enough of the map.
+RESULT alice carol SaltyPepper A 545
+REASON alice carol SaltyPepper The winning team painted enough of the map.
+RESULT carol alice SaltyPepper B 1038
+REASON carol alice SaltyPepper The winning team painted enough of the map.
+RESULT alice carol Filter A 2000
+REASON alice carol Filter The winning team won on tiebreakers (painted more of the map).
+RESULT carol alice Filter B 2000
+REASON carol alice Filter The winning team won on tiebreakers (painted more of the map).
+RESULT carol alice shell B 484
+REASON carol alice shell The winning team painted enough of the map.
+RESULT carol alice Terminal B 2000
+REASON carol alice Terminal The winning team won on tiebreakers (painted more of the map).
+RESULT alice carol shell A 855
+REASON alice carol shell The winning team painted enough of the map.
+RESULT alice carol HungerGames B 538
+REASON alice carol HungerGames The winning team painted enough of the map.
+RESULT carol alice yearofthesnake B 848
+REASON carol alice yearofthesnake The winning team painted enough of the map.
+RESULT alice carol yearofthesnake A 1150
+REASON alice carol yearofthesnake The winning team painted enough of the map.
+RESULT carol alice Snowglobe B 520
+REASON carol alice Snowglobe The winning team painted enough of the map.
+RESULT alice carol Dominoes B 717
+REASON alice carol Dominoes The winning team painted enough of the map.
+RESULT alice carol Snowglobe A 987
+REASON alice carol Snowglobe The winning team painted enough of the map.
+RESULT carol alice Dominoes A 595
+REASON carol alice Dominoes The winning team painted enough of the map.
+RESULT alice carol MoneyTower B 693
+REASON alice carol MoneyTower The winning team painted enough of the map.
+RESULT carol alice MoneyTower A 989
+REASON carol alice MoneyTower The winning team painted enough of the map.
+RESULT alice carol UnderTheSea B 687
+REASON alice carol UnderTheSea The winning team painted enough of the map.
+RESULT carol alice HungerGames A 1659
+REASON carol alice HungerGames The winning team painted enough of the map.
+RESULT alice carol Crab A 1000
+REASON alice carol Crab The winning team painted enough of the map.
+RESULT carol alice Crab B 1134
+REASON carol alice Crab The winning team painted enough of the map.
+RESULT carol alice UnderTheSea B 1274
+REASON carol alice UnderTheSea The winning team painted enough of the map.
+RESULT carol alice Brat B 706
+REASON carol alice Brat The winning team painted enough of the map.
+RESULT carol alice SandyBeach A 267
+REASON carol alice SandyBeach The winning team painted enough of the map.
+RESULT alice carol Brat B 2000
+REASON alice carol Brat The winning team won on tiebreakers (painted more of the map).
+RESULT alice carol SandyBeach B 909
+REASON alice carol SandyBeach The winning team painted enough of the map.
+RESULT carol alice rain A 768
+REASON carol alice rain The winning team painted enough of the map.
+RESULT carol alice TargetPractice A 367
+REASON carol alice TargetPractice The winning team painted enough of the map.
+RESULT alice carol TargetPractice B 853
+REASON alice carol TargetPractice The winning team painted enough of the map.
+RESULT alice carol rain B 1419
+REASON alice carol rain The winning team painted enough of the map.
+RESULT carol alice Justice A 205
+REASON carol alice Justice The winning team painted enough of the map.
+RESULT alice carol Justice B 240
+REASON alice carol Justice The winning team painted enough of the map.
+RESULT carol alice Snowman A 229
+REASON carol alice Snowman The winning team painted enough of the map.
+RESULT alice carol Money B 445
+REASON alice carol Money The winning team painted enough of the map.
+RESULT alice carol galaxy B 1099
+REASON alice carol galaxy The winning team painted enough of the map.
+RESULT alice carol Snowman A 2000
+REASON alice carol Snowman The winning team won on tiebreakers (painted more of the map).
+RESULT carol alice Money A 745
+REASON carol alice Money The winning team painted enough of the map.
+RESULT alice carol Bunny A 969
+REASON alice carol Bunny The winning team painted enough of the map.
+RESULT carol alice galaxy B 1416
+REASON carol alice galaxy The winning team painted enough of the map.
+RESULT carol alice Fossil A 324
+REASON carol alice Fossil The winning team painted enough of the map.
+RESULT alice carol Fossil A 843
+REASON alice carol Fossil The winning team painted enough of the map.
+RESULT alice carol giver A 594
+REASON alice carol giver The winning team painted enough of the map.
+RESULT carol alice giver A 794
+REASON carol alice giver The winning team painted enough of the map.
+RESULT carol alice Bunny B 1962
+REASON carol alice Bunny The winning team painted enough of the map.
+RESULT alice carol gridworld B 259
+REASON alice carol gridworld The winning team painted enough of the map.
+RESULT carol alice gridworld A 295
+REASON carol alice gridworld The winning team painted enough of the map.
+RESULT alice carol lighthouse A 1161
+REASON alice carol lighthouse The winning team painted enough of the map.
+RESULT bob carol quack B 743
+REASON bob carol quack The winning team painted enough of the map.
+RESULT carol alice lighthouse B 1398
+REASON carol alice lighthouse The winning team painted enough of the map.
+RESULT bob carol Piglets2 B 897
+REASON bob carol Piglets2 The winning team painted enough of the map.
+RESULT carol bob Parking_lot B 485
+REASON carol bob Parking_lot The winning team painted enough of the map.
+RESULT bob carol Parking_lot A 587
+REASON bob carol Parking_lot The winning team painted enough of the map.
+RESULT bob carol FourCorners B 274
+REASON bob carol FourCorners The winning team painted enough of the map.
+RESULT carol bob FourCorners A 215
+REASON carol bob FourCorners The winning team painted enough of the map.
+RESULT carol bob CastleDefense A 96
+REASON carol bob CastleDefense The winning team painted enough of the map.
+RESULT bob carol CastleDefense B 314
+REASON bob carol CastleDefense The winning team painted enough of the map.
+RESULT carol bob quack B 2000
+REASON carol bob quack The winning team won on tiebreakers (painted more of the map).
+RESULT carol bob Rose A 551
+REASON carol bob Rose The winning team painted enough of the map.
+RESULT bob carol Rose B 579
+REASON bob carol Rose The winning team painted enough of the map.
+RESULT carol bob Piglets2 A 1397
+REASON carol bob Piglets2 The winning team painted enough of the map.
+RESULT bob carol AlarmClock B 301
+REASON bob carol AlarmClock The winning team painted enough of the map.
+RESULT carol bob AlarmClock A 510
+REASON carol bob AlarmClock The winning team painted enough of the map.
+RESULT bob carol Racetrack B 348
+REASON bob carol Racetrack The winning team painted enough of the map.
+RESULT carol bob Circuit A 876
+REASON carol bob Circuit The winning team painted enough of the map.
+RESULT bob carol windmill A 511
+REASON bob carol windmill The winning team painted enough of the map.
+RESULT bob carol Circuit B 1475
+REASON bob carol Circuit The winning team painted enough of the map.
+RESULT carol bob Racetrack B 1985
+REASON carol bob Racetrack The winning team painted enough of the map.
+RESULT carol bob windmill A 2000
+REASON carol bob windmill The winning team won on tiebreakers (painted more of the map).
+RESULT carol bob Mirage A 653
+REASON carol bob Mirage The winning team painted enough of the map.
+RESULT bob carol Mirage A 1269
+REASON bob carol Mirage The winning team painted enough of the map.
+RESULT carol bob Castle A 1156
+REASON carol bob Castle The winning team painted enough of the map.
+RESULT bob carol Castle A 1799
+REASON bob carol Castle The winning team painted enough of the map.
+RESULT bob carol sierpinski A 616
+REASON bob carol sierpinski The winning team painted enough of the map.
+RESULT bob carol Jail B 425
+REASON bob carol Jail The winning team painted enough of the map.
+RESULT bob carol Oasis A 1047
+REASON bob carol Oasis The winning team painted enough of the map.
+RESULT carol bob sierpinski A 787
+REASON carol bob sierpinski The winning team painted enough of the map.
+RESULT bob carol Bread B 356
+REASON bob carol Bread The winning team painted enough of the map.
+RESULT carol bob Jail A 1151
+REASON carol bob Jail The winning team painted enough of the map.
+RESULT carol bob Bread A 381
+REASON carol bob Bread The winning team painted enough of the map.
+RESULT carol bob Oasis B 1307
+REASON carol bob Oasis The winning team painted enough of the map.
+RESULT bob carol box B 405
+REASON bob carol box The winning team painted enough of the map.
+RESULT carol bob walalilongla A 588
+REASON carol bob walalilongla The winning team painted enough of the map.
+RESULT bob carol walalilongla A 1323
+REASON bob carol walalilongla The winning team painted enough of the map.
+RESULT bob carol gardenworld B 1000
+REASON bob carol gardenworld The winning team painted enough of the map.
+RESULT carol bob box A 1588
+REASON carol bob box The winning team painted enough of the map.
+RESULT carol bob gardenworld A 1077
+REASON carol bob gardenworld The winning team painted enough of the map.
+RESULT bob carol catface B 310
+REASON bob carol catface The winning team painted enough of the map.
+RESULT carol bob catface A 275
+REASON carol bob catface The winning team painted enough of the map.
+RESULT bob carol DonkeyKong A 878
+REASON bob carol DonkeyKong The winning team painted enough of the map.
+RESULT bob carol starburst B 860
+REASON bob carol starburst The winning team painted enough of the map.
+RESULT carol bob DonkeyKong B 761
+REASON carol bob DonkeyKong The winning team painted enough of the map.
+RESULT carol bob starburst A 183
+REASON carol bob starburst The winning team painted enough of the map.
+RESULT bob carol Flower A 886
+REASON bob carol Flower The winning team painted enough of the map.
+RESULT carol bob maze A 2000
+REASON carol bob maze The winning team won on tiebreakers (painted more of the map).
+RESULT bob carol maze A 2000
+REASON bob carol maze The winning team won on tiebreakers (painted more of the map).
+RESULT carol bob Flower A 2000
+REASON carol bob Flower The winning team won on tiebreakers (painted more of the map).
+RESULT bob carol headphones A 587
+REASON bob carol headphones The winning team painted enough of the map.
+RESULT bob carol fix A 606
+REASON bob carol fix The winning team painted enough of the map.
+RESULT bob carol sayhi B 2000
+REASON bob carol sayhi The winning team won on tiebreakers (painted more of the map).
+RESULT carol bob fix B 656
+REASON carol bob fix The winning team painted enough of the map.
+RESULT carol bob sayhi B 2000
+REASON carol bob sayhi The winning team won on tiebreakers (painted more of the map).
+RESULT carol bob headphones B 689
+REASON carol bob headphones The winning team painted enough of the map.
+RESULT bob carol leavemealone A 719
+REASON bob carol leavemealone The winning team painted enough of the map.
+RESULT carol bob Thirds A 594
+REASON carol bob Thirds The winning team painted enough of the map.
+RESULT bob carol DefaultSmall B 222
+REASON bob carol DefaultSmall The winning team painted enough of the map.
+RESULT carol bob DefaultSmall A 84
+REASON carol bob DefaultSmall The winning team painted enough of the map.
+RESULT bob carol Thirds B 801
+REASON bob carol Thirds The winning team painted enough of the map.
+RESULT bob carol DefaultMedium B 326
+REASON bob carol DefaultMedium The winning team painted enough of the map.
+RESULT carol bob Portal A 598
+REASON carol bob Portal The winning team painted enough of the map.
+RESULT carol bob DefaultMedium B 600
+REASON carol bob DefaultMedium The winning team painted enough of the map.
+RESULT bob carol Portal A 1065
+REASON bob carol Portal The winning team painted enough of the map.
+RESULT carol bob leavemealone B 1923
+REASON carol bob leavemealone The winning team painted enough of the map.
+RESULT bob carol defensetower B 1579
+REASON bob carol defensetower The winning team painted enough of the map.
+RESULT carol bob defensetower A 1450
+REASON carol bob defensetower The winning team painted enough of the map.
+RESULT bob carol DefaultLarge A 1257
+REASON bob carol DefaultLarge The winning team painted enough of the map.
+RESULT bob carol Paintball B 135
+REASON bob carol Paintball The winning team painted enough of the map.
+RESULT carol bob Paintball A 141
+REASON carol bob Paintball The winning team painted enough of the map.
+RESULT carol bob DefaultLarge A 1890
+REASON carol bob DefaultLarge The winning team painted enough of the map.
+RESULT carol bob DefaultHuge B 680
+REASON carol bob DefaultHuge The winning team painted enough of the map.
+RESULT carol bob boxofchocolates A 1067
+REASON carol bob boxofchocolates The winning team painted enough of the map.
+RESULT bob carol UglySweater B 1260
+REASON bob carol UglySweater The winning team painted enough of the map.
+RESULT bob carol boxofchocolates B 2000
+REASON bob carol boxofchocolates The winning team won on tiebreakers (painted more of the map).
+RESULT bob carol Gears B 1149
+REASON bob carol Gears The winning team painted enough of the map.
+RESULT bob carol DefaultHuge B 2000
+REASON bob carol DefaultHuge The winning team won on tiebreakers (painted more of the map).
+RESULT carol bob UglySweater A 2000
+REASON carol bob UglySweater The winning team won on tiebreakers (painted more of the map).
+RESULT bob carol Barcode B 408
+REASON bob carol Barcode The winning team painted enough of the map.
+RESULT carol bob Barcode A 346
+REASON carol bob Barcode The winning team painted enough of the map.
+RESULT carol bob Gears B 1599
+REASON carol bob Gears The winning team painted enough of the map.
+RESULT carol bob Restart B 714
+REASON carol bob Restart The winning team painted enough of the map.
+RESULT carol bob roads A 299
+REASON carol bob roads The winning team painted enough of the map.
+RESULT bob carol roads B 633
+REASON bob carol roads The winning team painted enough of the map.
+RESULT bob carol BunnyGame B 267
+REASON bob carol BunnyGame The winning team painted enough of the map.
+RESULT bob carol Restart B 1657
+REASON bob carol Restart The winning team painted enough of the map.
+RESULT bob carol sunrise B 745
+REASON bob carol sunrise The winning team painted enough of the map.
+RESULT carol bob BunnyGame A 577
+REASON carol bob BunnyGame The winning team painted enough of the map.
+RESULT carol bob sunrise A 943
+REASON carol bob sunrise The winning team painted enough of the map.
+RESULT carol bob TheBest B 533
+REASON carol bob TheBest The winning team painted enough of the map.
+RESULT bob carol mit A 1158
+REASON bob carol mit The winning team painted enough of the map.
+RESULT bob carol memstore B 2000
+REASON bob carol memstore The winning team won on tiebreakers (painted more of the map).
+RESULT carol bob memstore B 632
+REASON carol bob memstore The winning team painted enough of the map.
+RESULT bob carol TheBest A 1092
+REASON bob carol TheBest The winning team painted enough of the map.
+RESULT carol bob mit A 2000
+REASON carol bob mit The winning team won on tiebreakers (painted more of the map).
+RESULT carol bob PlumberGame A 330
+REASON carol bob PlumberGame The winning team painted enough of the map.
+RESULT bob carol PlumberGame B 618
+REASON bob carol PlumberGame The winning team painted enough of the map.
+RESULT bob carol SMILE B 1352
+REASON bob carol SMILE The winning team painted enough of the map.
+RESULT carol bob Leaf B 567
+REASON carol bob Leaf The winning team painted enough of the map.
+RESULT bob carol BatSignal B 439
+REASON bob carol BatSignal The winning team painted enough of the map.
+RESULT carol bob SMILE B 1084
+REASON carol bob SMILE The winning team painted enough of the map.
+RESULT bob carol SaltyPepper A 761
+REASON bob carol SaltyPepper The winning team painted enough of the map.
+RESULT bob carol Terminal B 311
+REASON bob carol Terminal The winning team painted enough of the map.
+RESULT carol bob BatSignal A 1923
+REASON carol bob BatSignal The winning team painted enough of the map.
+RESULT carol bob SaltyPepper B 1019
+REASON carol bob SaltyPepper The winning team painted enough of the map.
+RESULT carol bob Terminal A 476
+REASON carol bob Terminal The winning team painted enough of the map.
+RESULT bob carol Filter B 124
+REASON bob carol Filter The winning team painted enough of the map.
+RESULT carol bob Filter A 117
+REASON carol bob Filter The winning team painted enough of the map.
+RESULT bob carol yearofthesnake A 575
+REASON bob carol yearofthesnake The winning team painted enough of the map.
+RESULT carol bob shell B 834
+REASON carol bob shell The winning team painted enough of the map.
+RESULT carol bob yearofthesnake B 429
+REASON carol bob yearofthesnake The winning team painted enough of the map.
+RESULT bob carol shell A 1624
+REASON bob carol shell The winning team painted enough of the map.
+RESULT bob carol Leaf A 2000
+REASON bob carol Leaf The winning team won on tiebreakers (painted more of the map).
+RESULT bob carol Snowglobe A 572
+REASON bob carol Snowglobe The winning team painted enough of the map.
+RESULT bob carol HungerGames A 1233
+REASON bob carol HungerGames The winning team painted enough of the map.
+RESULT bob carol Dominoes B 461
+REASON bob carol Dominoes The winning team painted enough of the map.
+RESULT carol bob Dominoes A 752
+REASON carol bob Dominoes The winning team painted enough of the map.
+RESULT bob carol MoneyTower B 672
+REASON bob carol MoneyTower The winning team painted enough of the map.
+RESULT carol bob HungerGames B 1704
+REASON carol bob HungerGames The winning team painted enough of the map.
+RESULT carol bob UnderTheSea B 947
+REASON carol bob UnderTheSea The winning team painted enough of the map.
+RESULT carol bob MoneyTower A 2000
+REASON carol bob MoneyTower The winning team won on tiebreakers (painted more of the map).
+RESULT carol bob Snowglobe A 1815
+REASON carol bob Snowglobe The winning team painted enough of the map.
+RESULT bob carol Brat A 848
+REASON bob carol Brat The winning team painted enough of the map.
+RESULT bob carol Crab B 875
+REASON bob carol Crab The winning team painted enough of the map.
+RESULT bob carol SandyBeach B 366
+REASON bob carol SandyBeach The winning team painted enough of the map.
+RESULT bob carol UnderTheSea B 2000
+REASON bob carol UnderTheSea The winning team won on tiebreakers (painted more of the map).
+RESULT carol bob SandyBeach A 354
+REASON carol bob SandyBeach The winning team painted enough of the map.
+RESULT bob carol rain B 568
+REASON bob carol rain The winning team painted enough of the map.
+RESULT carol bob rain A 630
+REASON carol bob rain The winning team painted enough of the map.
+RESULT carol bob Brat B 2000
+REASON carol bob Brat The winning team won on tiebreakers (painted more of the map).
+RESULT carol bob Crab B 1842
+REASON carol bob Crab The winning team painted enough of the map.
+RESULT bob carol TargetPractice B 461
+REASON bob carol TargetPractice The winning team painted enough of the map.
+RESULT carol bob TargetPractice A 455
+REASON carol bob TargetPractice The winning team painted enough of the map.
+RESULT bob carol Justice B 245
+REASON bob carol Justice The winning team painted enough of the map.
+RESULT carol bob Justice A 201
+REASON carol bob Justice The winning team painted enough of the map.
+RESULT carol bob Snowman A 231
+REASON carol bob Snowman The winning team painted enough of the map.
+RESULT bob carol Snowman A 729
+REASON bob carol Snowman The winning team painted enough of the map.
+RESULT bob carol galaxy B 2000
+REASON bob carol galaxy The winning team won on tiebreakers (painted more of the map).
+RESULT bob carol Bunny B 343
+REASON bob carol Bunny The winning team painted enough of the map.
+RESULT carol bob Money B 1430
+REASON carol bob Money The winning team painted enough of the map.
+RESULT carol bob galaxy B 2000
+REASON carol bob galaxy The winning team won on tiebreakers (painted more of the map).
+RESULT bob carol Fossil B 472
+REASON bob carol Fossil The winning team painted enough of the map.
+RESULT carol bob Bunny A 940
+REASON carol bob Bunny The winning team painted enough of the map.
+RESULT bob carol Money A 2000
+REASON bob carol Money The winning team won on tiebreakers (painted more of the map).
+RESULT bob carol giver B 450
+REASON bob carol giver The winning team painted enough of the map.
+RESULT carol bob Fossil A 1264
+REASON carol bob Fossil The winning team painted enough of the map.
+RESULT bob carol gridworld B 362
+REASON bob carol gridworld The winning team painted enough of the map.
+RESULT carol bob lighthouse B 1224
+REASON carol bob lighthouse The winning team painted enough of the map.
+RESULT carol bob gridworld A 323
+REASON carol bob gridworld The winning team painted enough of the map.
+RESULT bob carol lighthouse A 2000
+REASON bob carol lighthouse The winning team won on tiebreakers (painted more of the map).
+RESULT carol bob giver A 1844
+REASON carol bob giver The winning team painted enough of the map.
+TOURNAMENT-COMPLETE
+
