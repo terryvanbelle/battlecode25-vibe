@@ -1288,6 +1288,24 @@ the old entry", on the very entry it was written for. A closed-directions ledger
 ledger degrades into a record of what you once believed rather than what is
 currently true.
 
+**65. Consolidate an index on a SCHEDULE, not at its cap — and audit it for
+withdrawn claims, not just duplication.** (alice) A consolidation pass she
+expected to be a space exercise found her index still carrying a claim she had
+**withdrawn an hour earlier**, sitting one screen above the entry withdrawing it.
+A pass that merged families would have preserved the error in tidier form. Her
+argument is the one that generalises: **a withdrawn claim in an index is worse
+than one in a log, because the index is what a fresh session reads. The log is
+evidence with dates attached; the index is advice — and advice with a refuted
+line in it is actively harmful.** The consolidation pass is also the only moment
+anything re-reads the whole index, which is why the audit has to ride along with
+it.
+
+    Repair the entry in place and keep pointers to **both** the original claim
+    and its correction, so the arc stays visible rather than erased: a reader who
+    meets only the corrected line learns the rule, and one who follows the
+    pointers learns why it is phrased that way. This file is the same kind of
+    artefact and is audited the same way.
+
 **26. A settled fact must carry its provenance, and a word that spans two
 quantities will eventually be read as the wrong one.** (alice) She carried a
 premise as settled for 44 iterations and killed three iterations with it. It had
