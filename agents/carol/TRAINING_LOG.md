@@ -22388,3 +22388,59 @@ here it is a regime question**, and the decomposition is already built.
 
 **Not started.** Registered from a committed survey, which is the condition under which iteration
 59's rewrite paid.
+
+# Iteration 77 — `carol_r2`, high-production forward attrition. ABORT CONDITION registered first.
+
+## Guardrail 1: `src/carol` does not move
+
+HEAD is what plays in the twice-daily tournament — the one measurement neither lineage controls.
+The build lives in **`src/carol_r2`**; **`carol_iter45` stays HEAD and is the control arm**, and
+promotion happens only through the standing gate.
+
+## Guardrail 2: the ABORT condition — registered now, with no sunk cost
+
+A rewrite is the one experiment with no natural end: stage A can be *almost* passing for a long
+time, each session's progress is real, and nothing ever says stop. **Numbers, so "almost" cannot
+hide:**
+
+| stage | today | **passes at** |
+|---|---|---|
+| **A** splashers built / 1,000r | 36 | **>= 90** (72% of the 125 ceiling) |
+| **B** p90 unit distance from own tower | 6.3 | **>= 12** (rival: 17) |
+| **C** splashes delivered / 1,000r | 218 | **>= 430** (75% of the 573 bound) |
+| **D** gates | — | screen >= 31/50, census margin >= +26 |
+
+**Budget: TWO sessions to reach stage A passing.** If A is not passing at the end of the second
+session, I stop and report rather than continue.
+
+**Partial passes — the trap, handled explicitly.** A stage that moves but sits below its threshold
+is a **FAIL for gating**, and I record the value. **If the same stage is partial in two consecutive
+sessions, that is an ABORT**, not progress: "moving but short" is exactly where an unbounded project
+hides, and it is my own most-expected outcome.
+
+**Salvage, named in advance so an abort is a harvest.** Iteration 59 was rejected at −5.71 sd and
+paid because D3 survived into an accept. Of this build's three coupled pieces:
+- **allocation scheduler** — already measured standalone at oracle +7; **not** salvage.
+- **no-recall posture** — already refuted standalone (D3's zero arm loses 26); **not** salvage.
+- **forward targeting** (explore biased to the far half) — **this is the salvage.** It is the only
+  piece neither half's prior test covered, it is independent of the other two, and it addresses the
+  49%-vs-90% coverage gap directly.
+
+## Why a coupled change on a fixed base rather than a blank page
+
+Iteration 59 was blank-page because its premise was *"the constants are co-adapted to the wrong
+architecture"*, which required deriving them together. **This premise is different**: it names three
+specific coupled policies whose halves are individually refuted. Changing exactly those three on an
+otherwise identical base **isolates the pair** — everything else is the control — which is what makes
+the four-way answer condition readable. A blank page would confound the pair with a hundred
+incidental differences and I would not be able to tell A-fails from something-else-fails.
+
+## The three changes
+
+1. **Production**: splasher-first spawn. A tower builds a splasher whenever it can afford one;
+   soldiers only from paint that could not buy a splasher. `SPLASH_FLOOR` and `PAINT_FLOOR` — the
+   gates measured to cap production at 29% of the income ceiling — do not apply.
+2. **No recall**: `walkHomeIfDry` disabled. Opportunistic top-up (`refillIfPossible`) is kept, so a
+   unit that passes a tower still fills; what is removed is the *dedicated trip*.
+3. **Forward posture**: exploration targets drawn from the half of the map farther from the unit's
+   own spawn anchor, instead of uniform-random over the whole map.
