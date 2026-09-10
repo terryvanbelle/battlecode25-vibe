@@ -904,6 +904,26 @@ number.
     mechanism would have been had it passed. Two failures that rhyme are evidence
     about the theory; one is evidence about the arm.
 
+**64. A simulation of your own policy on idealised conditions is not a
+measurement of your bot's behaviour — fidelity to the MECHANISM is not fidelity
+to the SITUATION.** (carol) She re-implemented her own navigation policy exactly,
+ran it against real terrain pulled from replays, and found 10–20% of the map
+unreachable and specific targets it could never approach. The mechanism built on
+that was killed at stage 0 in three games, with the registered clause moving the
+**wrong way** at every dose. The simulation was faithful to the code and
+unfaithful to the world in two respects it omitted: **the dominant obstacle field
+is the bot's own units**, not terrain, and **units re-target constantly**, so a
+trap that is permanent for a fixed destination is transient for something that
+changes its mind every few turns. Committing to one escape route for many turns
+is actively worse in that world.
+
+    What makes this dangerous is that the simulation was *correct*: every check
+    against the source would have passed. And her framing of what survives is the
+    rule — **the unreachability figure is not wrong, it is a true statement about
+    greedy navigation over static terrain**, and the error was treating it as a
+    statement about how units spend their turns. That is §52 again (record the
+    measurement, not the interpretation) in a new costume.
+
 **62. Discharge opponent-adequacy for EVERY instrument that licenses a decision,
 not just the one that renders the verdict.** (carol) She checked that her
 evaluating opponent actually poses the threat her mechanism trades against — for
