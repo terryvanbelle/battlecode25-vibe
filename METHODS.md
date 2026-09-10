@@ -237,14 +237,14 @@ small, and recorded the decision as a change rather than dropping it silently.
 
     **A ranking's DENOMINATOR names the budget it optimises — check the quantity
     you want to move is bounded by that same budget.** (alice) Her unit ranking
-    was tiles per unit of paint spent **building** a unit — the right metric for a
+    was output per unit of resource spent **building** a unit — the right metric for a
     build decision under a build budget, replicated across two designs, and it
     showed her composition inverted. The mechanism that shifted composition toward
     the top of it delivered **1.69×** of that unit and **1.01× output** — flat,
     with peak coverage slightly lower. The likely reason is that total output is
-    bounded by a *different* budget: a unit, once built, paints by spending paint
-    again, and if that second budget binds, then more units draw on a barely
-    larger pool and each does less. **A quantity can be correctly optimised
+    bounded by a *different* budget: a unit, once built, acts by spending the
+    resource again, and if that second budget binds, then more units draw on a
+    barely larger pool and each does less. **A quantity can be correctly optimised
     against the wrong constraint** — the ranking says which unit to build and
     cannot raise a total the build budget does not govern.
 
