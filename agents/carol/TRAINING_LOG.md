@@ -19857,3 +19857,96 @@ here is the concrete plan, so a future session does not have to invent one:
   but cross-architecture. They never change, so they qualify.
 - **`bobf` prices bob's style only.** It cannot certify "closes the alice gap"; the twice-daily
   tournament remains the only instrument for that, and I do not control it.
+
+# Defense towers — KILLED ON MAGNITUDE for zero games, discharging a 60-iteration-old precondition
+
+At roughly iteration 5 I noted defense towers as an idea and attached a precondition to it:
+*"Needs a trace of how often enemies are actually in tower range first."* It was never discharged,
+and `src/carol/` has never contained the string `DEFENSE`. The direction was open, unbuilt and
+unclosed for ~60 iterations. The trace costs nothing now, so here it is.
+
+**Motivation was strong.** On Gears, alice performs **2,024 unpaint actions per 1,000 rounds and
+carol performs 0**, and carol does **2,139 paint actions to alice's 1,027 while holding 365
+per-mille of coverage to her 628** — carol paints twice as much and holds 58% as much. A defense
+tower out-ranges everything (r²=16 against a paint/money tower's 9), one-shots a 50-HP mopper at
+40–60 damage, and buffs every allied tower's single-target damage by +5/+7/+9.
+
+**The trace, from the tournament action log, r1000–1400: 831 alice UNPAINT events against 10 carol
+towers.**
+
+| alice's mopping, distance to carol's NEAREST tower | share |
+|---|---|
+| within r²<=9 (paint/money tower reach) | **1.1%** |
+| **within r²<=16 (DEFENSE tower reach)** | **4.1%** |
+| within r²<=36 | 14.8% |
+| within r²<=100 | 67.6% |
+| **median distance** | **8.5 tiles** |
+
+**A defense tower could intercept at most 4.1% of the mopping.** The threat does not come into range
+— alice mops the mid-field, and no static structure reaches it. Killed on magnitude, zero games,
+against a deficit of ~2,000 tiles per 1,000 rounds.
+
+**The practice is what paid here.** A precondition written 60 iterations ago, in one line, turned a
+plausible-looking direction into a one-measurement kill. That is the same instrument as a re-open
+condition, pointed at an idea that was never opened.
+
+# Iteration 69 — the INTENDED mix, which affordability silently destroys. Pre-registered.
+
+## The traced deficit, and it is a number I have never looked at
+
+On Gears, r1000–2000: **307 soldiers built and 7 splashers — a realized ratio of 44:1.**
+The spawn roll is 15% splasher / 10% mopper / 75% soldier — an **intended ratio of 5:1**.
+
+> **A 9x divergence between the mix I wrote and the mix the bot plays.**
+
+My own LEARNINGS carries *"realized != intended says one of them is wrong; I assumed four times it
+was the realized one"*. Here the realized mix is not a policy at all — it is an artefact.
+
+**The cause is a RACE, not a threshold.** A tower accumulates ~5–15 paint/turn. At 200 a soldier
+roll (75% of turns) takes the entire stash, so the tower almost never reaches a splasher's 300.
+Soldiers win by arriving first, five times out of six.
+
+**Why this is not iterations 62/63/64 again.** All three were *thresholds on paint* or a phase
+switch, and a threshold on the very quantity the soldier consumes cannot separate "save up for a
+splasher" from "never build anything" — iteration 63 drove soldiers to 0 and towers to 2 doing
+exactly that. A **scheduler** can: after `SPLASHER_EVERY` soldiers, the tower will build nothing but
+a splasher, so it simply accumulates until it can. The ratio is then guaranteed independent of the
+paint dynamics, and the cost to tower growth is a delay rather than the soldiers themselves.
+
+**Noted from bob (rule 0):** `agents/bob/CLOSED.md` #20 closes *"unit-mix / composition changes
+generally"* for him, with an interior optimum on his **slot rotation**. His spawn is a deterministic
+rotation and mine is a random roll, so his realized mix tracks his intended one far more closely and
+the defect I am attacking barely exists on his architecture. A verdict does not transfer; I record
+the closure and why mine differs.
+
+## Arms
+
+`SPLASHER_EVERY` = **2 / 4 / 8** (a guaranteed 33% / 20% / 11% splasher share), zero arm
+`carol_iter45` (`0` disables the branch, byte-identical play), shared `BUILD = "i69"`.
+
+## Registered mechanism check (stage 0, Mirage — a median map, and NOT a gate)
+
+**The realized splasher:soldier ratio must move from 44:1 toward `SPLASHER_EVERY`:1**, measured from
+replay aggregates (`+spl` / `+sold`), free. This is an outcome-side count the bot does not compute
+for its own decisions — a distinction that has cost me two iterations.
+
+## Registered falsifier
+
+**If the realized ratio moves to target and neither instrument shows a gain, then the
+realized-vs-intended divergence is not what costs the large-map games**, the whole
+"splasher supply" account of the area gradient is wrong, and I must find the real cause before
+proposing another mix mechanism. That would be the fourth mechanism to die on this account, and a
+fifth guess would not be a plan.
+
+## Gate — both instruments, each doing what only it can
+
+1. **Screen on `bobf`** (the only instrument that can see the deficit; calibrated at **sd 4.18 per
+   150 games**): full 75-map corpus, 150 games, against the exact baseline **96/150**.
+   > **>= 105/150 (delta >= +9 = 2.15 sd) to proceed. <= 104: the direction closes.**
+   The bar is 2 sd *derived from a measured floor*, not registered in ignorance as iteration 68's
+   was.
+2. **Then the standing self-play census** vs `carol_iter45`, full corpus, **margin >= +26**. An
+   accepted build must beat its own predecessor as well as an external opponent; `bobf` prices bob's
+   style only and cannot certify a replacement for HEAD.
+
+**Both required.** Neither alone licenses an accept.
