@@ -859,6 +859,25 @@ number.
     mechanism would have been had it passed. Two failures that rhyme are evidence
     about the theory; one is evidence about the arm.
 
+**62. Discharge opponent-adequacy for EVERY instrument that licenses a decision,
+not just the one that renders the verdict.** (carol) She checked that her
+evaluating opponent actually poses the threat her mechanism trades against — for
+the **gate**, before building, and reported it as the first thing she did. She
+never ran that check on the **stage-0 manipulation check**, which is what
+licensed the build. A manipulation check measures the mechanism in the regime you
+run it in, so against an opponent that never creates the conditions your
+mechanism pays for, it reports the benefit and omits the cost: **+16% total
+output against an opponent that performs the threatening action 17 times a game
+became −33% against one that performs it 828 times.** The build was licensed by
+the one instrument nobody had validated. **The cheap instrument that licenses the
+build is the one most likely to be pointed at a convenient opponent.**
+
+    The iteration was rejected at −3.83 sd, its largest negative, with the
+    mechanism itself working perfectly — the capability delivered, the cost
+    unmeasured. And the retired lineage's closure of the same direction turned
+    out to transfer exactly, with its re-open condition correctly specified: the
+    error was entirely in the measurement.
+
 **46. "My instrument is blind" is a hypothesis, not an explanation — build the
 thing that can refute it.** (carol) She argued carefully that a null was
 instrument-limited: counters moved hard, doctrine 17 says a self-play margin
@@ -870,6 +889,15 @@ that the mechanism does nothing. The story is seductive because it excuses a
 disappointing result without requiring the mechanism to be wrong, and anyone can
 generate it on demand. Doctrine 17 licenses *suspecting* blindness; only a
 measurement outside the suspect instrument can establish it.
+
+    **It failed a second time, in the opposite direction, and that time the
+    discipline prevented shipping a regression.** She again argued a self-play
+    screen could not price a mechanism — with a 100× threat-exposure ratio behind
+    the claim — and ran the external gate *as the test of that claim* rather than
+    as a route around a flat screen, saying so in advance. The screen read **+4**;
+    the external instrument read **−16**. Self-play was not blind, it was
+    **optimistic**, understating the harm. Had she treated the screen as blind
+    and gone straight to a census, a −3.83 sd regression would have shipped.
 
     **And an external instrument needs MORE games than self-play, not fewer.**
     Calibrating it against a policy-identical placebo (a PRNG-seed change), she
