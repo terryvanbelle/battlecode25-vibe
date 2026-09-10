@@ -19291,3 +19291,81 @@ direction, without disabling the unit — and nothing more.
 
 **Screen launched**: `BOT=carol_iter45`, three arms, fresh 25-map sample, 150 games, gate and
 selection rule unchanged from the pre-registration.
+
+# Iteration 66 — NULL. `SPLASH_MIN_SCORE` closes again, this time with a REASON rather than an assumption.
+
+Run `20260910-043647`, `BOT=carol_iter45`, three arms, fresh 25-map sample, 150 games.
+
+| `SPLASH_MIN_SCORE` | candidate wins | margin | stage-0 median fire score |
+|---|---|---|---|
+| 4 | 25/50 | **+0** | 13.5 |
+| **8 (zero arm, control)** | **25/50** | **0** | 15.0 |
+| 14 | 21/50 | **−8** | 20.0 |
+| 20 | 23/50 | **−4** | 24.0 |
+
+**Registered selection rule: nothing reaches 31/50. The direction closes and the census is not
+spent.** The curve is **flat below the incumbent and harmful above it**: the incumbent 8 sits at the
+edge of a plateau, and both bracket ends are now measured.
+
+## My registered falsifier fired, so I owe the arithmetic error — here it is
+
+> *"If the manipulation works and no dose beats the control, then low-score splashes are not waste,
+> the '14 paint per tile' accounting is wrong somewhere, and the direction closes for good with the
+> arithmetic error identified rather than re-dosed."*
+
+The manipulation worked emphatically (median fire score 13.5 -> 15.0 -> 20.0 -> 24.0, monotone) and
+**no dose beat the control.** Two errors, and the first is the one that mattered:
+
+**1. Wrong referent (doctrine 5) — I priced against an alternative that does not exist.** I wrote
+that a score-9 splash converts at *"~14 paint per tile — nearly 3x worse than a soldier's 5"*. But
+this build fields **three soldiers per game**, and **a soldier cannot paint an enemy tile at all**
+[E, RULES.md]. There is no soldier standing by to do it cheaper. **The real alternative to a
+low-score splash is no conversion, whose value is zero — and against zero, 14 paint per tile is
+worth taking.** The number was correct and the comparison was meaningless.
+
+**2. The bot's own splash score does not track coverage.** Floor 14 fired **20% more often** at
+**27% higher mean score** — *+52% on "total splash value" by the bot's own proxy* — and **lost 8
+games**. A proxy that moves +52% while the outcome moves −8 is not measuring the objective.
+
+## The pattern this makes, which is worth more than the null
+
+**This is the second time a carol internal decision proxy has moved hugely without moving the
+outcome**, and I should have recognised the shape:
+
+| iteration | proxy | proxy movement | outcome |
+|---|---|---|---|
+| 61 | `noPaint` share | 0.0% -> 49.0% | **flat** (+0/−4/+2) |
+| 66 | splash score | +52% total value | **−8 / −4** |
+
+Both are quantities the bot computes **to make its own decisions**, and such quantities are chosen
+for being cheap to compute in bytecode, not for correlating with winning. I keep reaching for them
+as pre-registered mechanism checks because they are free and already instrumented. **They are valid
+manipulation checks — they prove the knob moved the behaviour — and they are worthless as evidence
+that the behaviour is worth having.** That distinction is exactly what iteration 64 taught me about
+stage 0 (*"does it FIRE" is not "does firing PAY"*), restated at the level of the metric rather than
+the map.
+
+## An untested hypothesis for WHY, recorded with its free check rather than acted on
+
+Raising the floor concentrates fire on high-score targets, and score weights **enemy paint within
+r²<=2 at 3 points** against **empty ground at 2**. So a high floor steers splashers toward *dense
+enemy paint* — contested ground the opponent re-converts — and away from *uncontested empty
+frontier* that stays painted. **The win condition is area painted at the end, not tiles converted
+during.** That would explain a proxy rising while coverage falls.
+
+**Not acted on**: it is a hypothesis with no measurement behind it. The free check is per-tile
+retention — how long a tile converted by a splash stays ours, split by whether it was empty or
+enemy when converted — and it must be run before any candidate is built on this.
+
+## Ledger
+
+| axis | status |
+|---|---|
+| `SPLASH_MIN_SCORE` | **CLOSED, bracketed both sides** — flat at 4 (+0), harmful at 14 (−8) and 20 (−4); incumbent 8 sits at the plateau edge |
+
+**RE-OPEN condition**: a *targeting* change that raises the value of a splash without raising the
+floor — i.e. one that changes which centre is chosen, not which splashes are permitted. Any such
+candidate must first show, from replays and for zero games, that **converted tiles are retained at
+materially different rates depending on whether they were empty or enemy when converted.** If
+retention does not differ, the scoring weights are not the lever and this whole area is closed for
+good, not merely bracketed.
