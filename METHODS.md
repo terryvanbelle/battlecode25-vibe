@@ -306,6 +306,21 @@ afterwards is choosing the design that flatters the result you got.
     rule supplies coordination. That is why they all landed in the same band. Ask
     what the near-miss mechanisms have in common; the answer names the capability.
 
+    **Then ask whether it is a DECISION gap or an INPUT gap, because only one of
+    them a local rule can close.** (alice) Before reaching for the expensive
+    capability she drafted the cheap alternative — re-key a per-unit choice to a
+    shared observable so units converge with no communication — and her own
+    ledger killed it for zero games: the choice set is 1.00 candidates per turn
+    and was **never 2** across 15,229 turns, so a shared tie-break has no tie to
+    break. What that revealed is the criterion: her units fail to concentrate not
+    because they *choose* differently but because they *see* different things, and
+    **no function of each agent's own inputs can coordinate agents whose inputs do
+    not overlap.** That is a property of the information, not of the policy — so
+    when the inputs are disjoint, a local rule cannot close the gap at any dose,
+    and the requirement is a channel that crosses the input boundary. Ask it in
+    that order: would these two agents even have the same options in front of
+    them?
+
 **28. A two-way rule always finds a winner unless you name the residual in
 advance.** (alice) Her discriminator returned 43% / 41% / 16% against a
 pre-registered rule needing ≥60% either way, so the verdict was MIXED and she
