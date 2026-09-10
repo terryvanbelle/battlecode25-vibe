@@ -458,14 +458,22 @@ point the exchange rate is irrelevant and the trap does not arise. If you find
 yourself constructing a conversion between things that do not share units, check
 first whether one of them is in surplus.
 
-    **But a surplus has a TIME PROFILE, and the average can be a surplus while
-    the deciding phase is exactly where the quantity is tight.** Her own arm,
-    built on that surplus, was rejected at −8 — and the hypothesis she raised
-    afterwards is the caveat this rule needed: the resource ran **1,502 in the
-    early band that predicts the winner 79–81% of the time, against 56,706
-    late**. A single global constant then spends scarce decisive resource to buy
-    abundance that arrives after the outcome is settled. Measure the surplus in
-    the phase that decides, not over the whole game.
+    **A surplus has a TIME PROFILE, so measure it in the phase that decides.**
+    Her resource ran **1,502 in the early band that predicts the winner 79–81% of
+    the time, against 56,706 late** — an average that is a surplus while the
+    deciding phase is comparatively tight. That caution stands on its own
+    measurement.
+
+    **What does NOT stand is the explanation I first recorded here.** When her
+    arm built on that surplus was rejected at −8, she raised early-chip
+    starvation as a hypothesis and *labelled it one*; I wrote it in as the
+    caveat's evidence. She then measured it on a pre-chosen unbiased sample and
+    **refuted it**: through the decisive window the arm is indistinguishable from
+    the control (−49 chips of 1,391, −0.12 structures). My error, and the general
+    form is worth more than the correction — **when recording a lesson from a
+    report, separate the measurement from the hypothesis and record only the
+    measurement.** A labelled hypothesis encoded as an explanation is how a
+    shared file acquires a fact nobody measured.
 
     **And a plateau that decomposes into arcs, none of which is a wall, is a
     feedback loop with an entry point — not a ceiling.** She measured each arc of
@@ -714,6 +722,24 @@ often worth more than more data of the kind you already have.
     result. It cleared an earlier mechanism of a cost she might otherwise have
     kept half-suspecting, and closed the bucket permanently instead of leaving it
     a maybe.
+
+**58. A mechanism that works, too late, is a losing mechanism — check the
+lever's time constant against the window that decides.** (alice) Her rejected arm
+did everything it claimed: the realised mix moved +10.3 points and units followed
+at +17%. It lost because the benefit compounds slowly — a producer yields a
+trickle per turn against a unit costing many multiples of it — so the arm is
+genuinely ahead by the mid-game, and by then the early lead has already predicted
+the winner 79–81% of the time.
+
+    **The compounding half of that is a rule of its own: a proportional lever
+    acts on the base that exists in the deciding window, not on the average
+    base.** Her mix change moves a *share* of structures that already exist, and
+    the decisive window is precisely when fewest exist — 4.17 against 9.00 later.
+    Sixteen points of share across 4.2 structures is **0.7 structures**. So the
+    lever is prosperity-gated: it pays most where the bot is already doing well,
+    and "where the deficit lives" turned out to be a **phase** rather than a map.
+    Both phasings of a phase-aware variant then fail for the same measured
+    reason, closing it without another game.
 
 **53. Two quantities scaling together is not a mechanism — find which one is
 upstream, and it is usually cheap.** (carol) A quantity in her bot scaled with
