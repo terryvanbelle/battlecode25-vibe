@@ -24939,3 +24939,66 @@ so a zero-cost argument has no destination for the freed paint.
 whether the work it is idle for is work only it can do.* Utilisation is a ratio whose numerator can
 be worth zero — I nearly registered a conversion-rate study on a numerator that another unit already
 owns. Same family as the denominator lesson, on the other half of the fraction.
+
+# ============ DIRECTION 1 — aiming at the opponent's structures: WHAT THE LEDGER SAYS ============
+
+Checked before spending. Three parts: the sweep finding is **confirmed**, the cooldown premise is
+**false at the bytecode**, and the closure is **half adjacent** — with its own re-open condition
+naming direction 2.
+
+## 1. The sweep finding is real and correctly located
+
+Alice's tower damage, attributed: **SPLASHER 100% · SOLDIER 0% · TOWER 0%.** *"No alice soldier has
+damaged an enemy tower in any game I have measured."* And the reason the unused-API sweep never
+caught it, from my own entry: *"An API-usage sweep catches unused METHODS; it cannot catch an unused
+TARGET. The capability was never on any list of things I had not tried, because the **verb** was in
+constant use and only the **object** was missing."* Confirmed.
+
+## 2. The cooldown premise is FALSE — checked at the bytecode, not inferred [E]
+
+The hoped-for fact was a cooldown charged only against one class of **target**, with towers outside
+it. It does not exist:
+
+- **`RobotControllerImpl.attack(loc, bool)`** adds `UnitType.actionCooldown` whenever
+  `robot.getType().isRobotType()` — at offset 15, **before** dispatch, with no reference to what is
+  at the location. The cooldown is charged on the **attacker's** class, never the target's.
+- **`InternalRobot.soldierAttack`** calls **`addPaint(-SOLDIER.attackCost)` unconditionally at
+  offset 50**, and only *then* (offset 61) looks up whether a robot is there and whether it
+  `isTowerType()`.
+
+> **A soldier attacking an enemy tower pays exactly what painting a tile pays: 5 paint and a full
+> action cooldown.** There is no exemption. The rung-one probe's cooldown finding was about **towers
+> as attackers** — `attack` adds no cooldown for a non-robot type, towers being limited instead by
+> `towerHasSingleAttacked` / `towerHasAreaAttacked` — which is a fact about my towers' *action
+> budget*, not about enemy towers as targets. **The direction cannot be opened on that basis.**
+
+## 3. But the closure IS half adjacent, and the surviving half is real
+
+The funnel closed it on: *soldiers reach enemy towers ALONE — 1.01 of them on 99.6% of opportunities;
+mean tower HP in range 1,636 = 33 hits; a lone soldier has ~20 attacks in its whole life; it cannot
+finish.* **That is the correct test for a BURST kill and the wrong test for an ACCUMULATED one**,
+because tower damage is **permanent** [E]:
+
+- `addHealth` caps at `type.health` and calls `destroyRobot` at ≤0 — no regeneration path;
+- **`upgradeTower` explicitly carries damage forward**: new health = `newType.health − (oldType.health
+  − currentHealth)`. Damage survives even an upgrade;
+- towers are outside `processEndOfTurn`, which is gated on `isRobotType` (already established).
+
+**So 33 hits need not be simultaneous — they can be 33 visits across hundreds of rounds.** And my own
+win-sample shows accumulation converting: **Leaf T2, 128 hits → 5 kills; SMILE T1, 52 hits → 2 kills**
+— about **25 hits per kill**, with splashers doing 100% of it.
+
+## 4. What that leaves, and why I am NOT spending on it
+
+The accumulate version has already been tested once: **iteration 15b — soldiers attack enemy towers
+with spare actions, 44 engagements, ZERO kills, enemy tower count unchanged at 8.** At ~25 hits/kill,
+44 engagements predicts ~1.8 kills and delivered 0. That is evidence against, on a small n — and
+iteration 15b's registered re-open condition says exactly why the n is the problem:
+
+> *"an instrument exists where soldier↔tower contact is frequent (the tournament shows ~20x more
+> contact vs `bob` than in self-play). **A synthetic archetype that contests our half would create
+> one. Do not re-open on a self-play run.**"*
+
+> **Direction 1's registered re-open condition IS direction 2.** They are not alternatives and not an
+> ordering I get to choose: my own ledger forbids re-opening tower offence on a self-play run, and
+> the only instrument that would license it is the stress archetype. **Nothing spent on direction 1.**
