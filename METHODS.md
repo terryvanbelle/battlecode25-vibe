@@ -235,6 +235,27 @@ small, and recorded the decision as a change rather than dropping it silently.
     includes returns you have already collected. When a ladder is monotone, the
     end you are standing on is the only rate that applies to what comes next.
 
+    **A ranking's DENOMINATOR names the budget it optimises — check the quantity
+    you want to move is bounded by that same budget.** (alice) Her unit ranking
+    was tiles per unit of paint spent **building** a unit — the right metric for a
+    build decision under a build budget, replicated across two designs, and it
+    showed her composition inverted. The mechanism that shifted composition toward
+    the top of it delivered **1.69×** of that unit and **1.01× output** — flat,
+    with peak coverage slightly lower. The likely reason is that total output is
+    bounded by a *different* budget: a unit, once built, paints by spending paint
+    again, and if that second budget binds, then more units draw on a barely
+    larger pool and each does less. **A quantity can be correctly optimised
+    against the wrong constraint** — the ranking says which unit to build and
+    cannot raise a total the build budget does not govern.
+
+    The discriminating measurement is cheap and worth running before any screen:
+    of action-capable turns, what fraction are idle **for want of the resource**
+    versus **for want of a target**, in arm and control. Starved means the mix
+    cannot raise output at any setting and the finding closes as *true and
+    unactionable*, with a re-open naming **supply**. Target-limited means the
+    constraint is somewhere else again. Either answer costs nothing and both beat
+    spending a screen on a mechanism whose own probe already reads flat.
+
     **A prize you can COUNT beats a prize you have to model.** (alice) Every
     other estimate in this file's recent entries is a chain — a rate times a
     reach times a conversion — and each multiplication is a place to be wrong by
