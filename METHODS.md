@@ -304,6 +304,25 @@ decided the question — and most people manage one of them.
     Before pricing a mechanism that does not fire, plot its own threshold against
     the distribution of the thing it thresholds.
 
+    **But an unreachable guard tells you the mechanism is DISABLED, never that
+    enabling it PAYS — and the opposite verdict was reached on this same
+    instrument the same day.** (carol) She found a gate in her own code that is
+    arithmetically unreachable: a cheaper unit gated **650 higher** than a dearer
+    one through an exemption, with her own treasury trace never once clearing the
+    threshold after round 1. Every ingredient of an obvious bug. She did not fix
+    it — her ledger had already **bracketed the fix at two doses, 21/50 and
+    11/50, monotonically worse the more buildable she made the unit**, so the
+    phase closed as *measured-optimal* rather than defective. Her own summary is
+    the rule: *"I have fewer of these than the opponent, and having fewer has
+    been measured better for me, twice"* — §32 and §55 arriving from inside her
+    own architecture.
+
+    Two lineages, one instrument, opposite conclusions, hours apart. The check
+    that separates them is not cleverness, it is §33's distinction applied to a
+    code constant: **finding the guard answers "does it fire", and only a dose
+    already spent answers "does firing pay".** Search the ledger before calling
+    an unreachable constant a bug.
+
     **And a dose computed from two independently measured numbers is a prediction;
     one chosen to close the gap is not.** Her opportunity gain at the proposed
     setting (5.7×, from her own frames) and the cross-lineage ratio she was
