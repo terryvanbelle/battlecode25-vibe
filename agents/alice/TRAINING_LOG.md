@@ -20523,3 +20523,68 @@ That number decides between three outcomes, and I am registering them now rather
 | **< 10%** | the site is the whole problem, and this arm was never a test of crowd-avoidance at all |
 
 **HEAD is untouched**; `src/alice` remains iteration 43, confirmed at 150 games.
+
+## Iteration 59 — the registered middle branch fires, and then my own log refutes its prescription
+
+`alice_i59probe`, additive, **identity verified** (926 / 1693 / 792). 407 units, 3 games.
+
+| call site | entries | share |
+|---|---|---|
+| **`tryMove`** (directed) | 5,653 | **15.3%** |
+| `wander` (ballistic) | 31,415 | 84.7% |
+| — of which the **slide** branch | 11,322 | 36.0% of wander |
+
+| by unit type | tryMove share |
+|---|---|
+| SOLDIER | **14.1%** |
+| MOPPER | 79.2% |
+| **SPLASHER** | **0.0%** — splashers never call it at all |
+
+**Registered reading: 10–39% → "site THIN, re-site into `wander`'s slide". 15.3% fires that branch.**
+
+### But I checked the prescription against my own log first, and it is WRONG
+
+My log says in three places that *"the slide preference fires **4 times a game**"* — against my probe's
+**11,322 slide entries in 3 games** (3,774/game). A 900x discrepancy between two of my own numbers is
+not something to pick a side of, so I traced the original.
+
+**They reconcile exactly, and the reconciliation is the finding.** The original was a funnel:
+
+| step | per game |
+|---|---|
+| heading blocked, the slide runs | **691** (30.3% of wander calls) |
+| **both** slide candidates legal | **79** (11.4% of blocked) |
+| the two candidates *differ* in the property | **4** |
+
+**My probe's 36.0% of wander entries and the original's 30.3% are the same measurement**, on different
+maps. There is no contradiction: "4 times a game" was the *fully funnelled* figure, not the slide's
+frequency. **My two numbers agree, and I nearly filed a correction against a number that was right.**
+
+> And that funnel **refutes the branch I just fired.** Re-siting into the slide caps out at the
+> **both-legal** step — **79 opportunities/game** — against `tryMove`'s **1,884/game** (5,653 over 3
+> games). **The slide is 24x SMALLER than the site iteration 58 already used and failed at.** The
+> registered prescription is dead on arrival, killed by evidence I had before I wrote it.
+
+### The deeper reading, and it closes the direction properly
+
+**64% of wander entries follow an open heading, where there is no choice to make at all** — the bot
+moves along `wanderDir` and that is the whole decision. So my 44.8% "a real crowd choice exists"
+figure was measured over **hypothetical 8-direction moves**, not over the choices this bot actually
+makes. **That is the denominator lesson landing one level deeper than I stated it yesterday:** it is
+not enough to measure at the call site; the site must also be one where a *decision* exists.
+
+> **Crowd-avoidance cannot be installed in this bot's movement architecture without overriding
+> ballistic travel** — because the only sites with a genuine choice are the slide (79/game) and
+> `tryMove` (1,884/game, already tried and inert), and everything else is "follow the heading".
+> **Bob's arm scored +6 precisely because it *did* override**: he weighted crowd against directness,
+> which is exactly the ballistic property iterations 12 and 14 measured and accepted.
+
+**So the direction is not "re-site". It is "revisit iterations 12/14", which is a different and far
+more expensive proposition** — re-opening two accepted behaviours to buy a mechanism whose family
+ceiling bob measured at +6 and which my own architecture has now failed to deliver twice.
+
+**CLOSED for now, with the re-open stated precisely:** crowd-avoidance re-opens if I am willing to
+put **ballistic travel itself** back on the table — and that is an iteration about iterations 12/14,
+not about crowd. Recorded that way so a future session cannot mistake it for a dosing question.
+
+**HEAD untouched**: `src/alice` remains iteration 43, confirmed at 150 games.
