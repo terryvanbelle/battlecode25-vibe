@@ -19253,3 +19253,41 @@ arithmetic error identified rather than re-dosed.
 Fresh 25-map screen at `BOT=carol_iter45`, highest margin reaching **>= 31/50**, ties to the dose
 nearer the incumbent; then the full 75-map census at **margin >= +26 ACCEPT | +18..+25 REPLICATE |
 <= +17 REJECT**.
+
+## Iteration 66 stage 0 — both registered clauses PASS, and the dose does something I did not predict
+
+Mirage, rounds 300–700, one game per arm vs `carol_iter44`. Control is `carol_iter45` (floor 8).
+
+| `SPLASH_MIN_SCORE` | fires | % of control | median score | mean | `lowScore` turns |
+|---|---|---|---|---|---|
+| 4 | 202 | **157%** | 13.5 | 14.6 | 216 |
+| **8 (control)** | **129** | **100%** | **15.0** | **16.5** | **860** |
+| 14 | 155 | **120%** | 20.0 | 20.9 | 1,406 |
+| 20 | 129 | **100%** | 24.0 | 24.3 | 2,404 |
+
+1. **Manipulation: PASSES.** Median fire score is monotone across the full bracket —
+   13.5 < 15.0 < 20.0 < 24.0 — and falls at dose 4 exactly as registered. This is a real dose, not
+   iteration 64's dormant trigger.
+2. **Overshoot guard: PASSES at every dose.** Fires stay at 100–157% of control, nowhere near the
+   30% disable threshold.
+
+### The surprise, recorded because I predicted the opposite
+
+**Raising the floor did not reduce firing — it raised it.** Floor 14 blocks 43% of the control's
+fires by score and yet fires **20% MORE often**; floor 20 blocks 68% by score and still fires
+**exactly as often**. Blocking more turns produced more splashes.
+
+The mechanism is the compounding I registered as a hoped-for second-order effect and did not expect
+to see at stage 0: **paint not spent on a bad splash stays in the stash, so the splasher makes fewer
+refill trips** (D3's `HOME` state was running at 58.8% of splasher turns) **and drains its tower
+less, so more splashers exist.** The `lowScore` counts confirm the gate is doing the work — 860 ->
+1,406 -> 2,404 blocked turns — while the fire count rises anyway.
+
+**I am not reading Mirage coverage, as pre-registered**, and I am not treating "total splash value"
+(fires x mean score) as a result either: score is the bot's own target-value proxy, not tiles, and
+at a low floor the extra fires land on overlapping ground so the product double-counts. Stage 0
+answered what I registered it to answer — the knob moves the behaviour, hard, in the intended
+direction, without disabling the unit — and nothing more.
+
+**Screen launched**: `BOT=carol_iter45`, three arms, fresh 25-map sample, 150 games, gate and
+selection rule unchanged from the pre-registration.
