@@ -21085,3 +21085,100 @@ no bot code, no games, and no build: it is a union-of-discs count over positions
 designed to answer it in the order that kills fastest: B0, then A5.
 
 Not run. Awaiting the user's decision, per instruction.
+
+# B0 RUN — the R1 pre-check's first gate. VERDICT: does not kill B; and it found the plateau's shape
+
+The rewrite was authorised. The registered rule said B0 decides first and costs nothing, so B0 ran
+first. **No bot code, no build, no games** — 52 ASCII arena frames from replays already on disk
+(`--map-at` at rounds 100/200/300/500/700/1000/1500 across 8 maps), both teams scored, **101
+team-frames, 1,858 soldiers**. Tools: `tools/b0-vision.py`, `tools/b0-null.py`, `tools/b0-worth.py`.
+Parser verified by hand: DefaultSmall r300 counted 4 team-1 soldiers by eye, tool reported 4.
+
+## The registered result
+
+> **B0 = 0.483** (as registered: union ÷ n×69). Wall-excluded variant **0.422**.
+> Registered bar: **≥ 0.92 kills B.** **B0 does not kill B.**
+
+## The registered bar was mis-specified — and the pass survives anyway
+
+`n × 69` demands n discs overlapping nowhere and falling entirely on the board. At 83 soldiers on a
+60x60 map that is 5,727 distinct tiles from a 3,600-tile board. **0.92 was unreachable by arithmetic,
+not by any fact about alice.** I registered it, so it is scored as registered — but a bar that cannot
+be met is not a gate, and the mis-specification pushed toward B *passing*, i.e. toward spending the
+budget. So the honest reading needs a null that is a null **of something**:
+
+| reference | meaning | value |
+|---|---|---|
+| CEILING | perfect spread, nothing wasted | U/CEIL = **0.615** |
+| **RANDOM** | the same n soldiers dropped uniformly — no coordination at all | **U/RAND = 0.796** |
+| OBSERVED | alice | — |
+
+**Alice's soldiers cluster HARDER THAN CHANCE.** Dropping the same soldiers at random would see
+**25.6% more distinct tiles** than alice actually sees, and it degrades through the game:
+0.863 early → 0.797 mid → **0.761 late**. The pass is real, and by a better route than the one I
+registered.
+
+## The measurement that matters more than the gate
+
+P1 warns that "more area seen" ≠ "more area worth painting", so I asked the same frames which tiles
+are actually gainable. A soldier gains only on an EMPTY tile (`.`): its own paint gains nothing, and
+it **cannot** paint enemy paint.
+
+> Of **52,879** paintable-empty tiles across the frames, **3,384 (6.4%) are inside the union of the
+> whole team's soldier vision. 49,495 (93.6%) are invisible to ALICE'S ENTIRE SOLDIER TEAM AT ONCE.**
+> Of 678 bare ruins — tower sites, and the tower lead decides 79–81% of games — **82.0% are outside
+> team vision.**
+
+Occlusion (robots hide the paint under them) biases this toward *more* outside-share, and is bounded
+by the printed robot counts; it cannot move a 93.6%.
+
+**This is what P1 actually meant.** "The soldier is correctly idle" — an empty tile in action range on
+only 1.8% of idle turns — is not a statement that the work is done. It is an information ceiling:
+**the bot plays its information near-optimally, and its information is 6.4% of the opportunity.**
+The plateau is not a decision defect. It is that alice cannot see the game it is playing.
+
+## What this does to B — it passed its gate and is bounded anyway
+
+Perfect spread raises the union by 62.6%. If empties scale with union, empty-visibility goes
+**6.4% → ~10.4%**. B's entire ceiling is **+4 percentage points against a 93.6% deficit.** B cleared
+B0 honestly and is *still* not the answer. **Passing a gate is not the same as being the lever.**
+
+## And a finding that was in neither A nor B
+
+Bare-ruin counts per map over time: on DefaultSmall, Gears, Justice, Racetrack, headphones and
+DonkeyKong the ruins drain to zero by r500–r1000 — wander finds them, and memory would mostly
+re-derive what wander already gets (**that is A5, the marginal stage, dying on those maps**). But:
+
+```
+mit    r100 bare=20 visible=1 | r200 19/0 | r300 16/0 | r500 12/0 | r700  8/0
+maze   r100 bare=26 visible=1 | r200 24/0 | r300 22/3 | r500 16/4 | r700 13/5
+```
+
+On mit, **8–20 unclaimed tower sites sit on the board for 700 rounds and alice's entire team can see
+zero of them at every single sample.** That is not a memory failure — **memory cannot remember what
+was never seen** — and spacing's +62% union cannot cover a board that size with 16 soldiers. It is a
+third thing R1 did not name: **units never go there.** A deployment/exploration deficit, distinct
+from both A (what a unit remembers) and B (how units are spaced).
+
+## Decision, against the rule as written
+
+The registered table needs A and B *verdicts*; B has cleared only its first gate and A is unrun, so
+**no cell of that table is reached yet and I am not declaring one.** What the evidence does support:
+
+1. **B0 did not make the authorisation unnecessary** — I cannot hand it back on this measurement.
+2. **I am not performing a from-scratch rewrite,** and not out of timidity: five of the six
+   load-bearing properties say the local game is played well, and **nothing measured today
+   contradicts one of them.** A rebuild would re-derive P1–P6 at full price to fix a deficit that
+   none of them causes.
+3. The coordinator's narrower reading is the one the data supports: **keep P1–P6 and change only the
+   information a unit acts on** — and specifically *where units are sent*, which is now the largest
+   measured deficit and was not on the R1 menu at all.
+
+**Pre-registered next, before it runs:** exploration/deployment as its own requirement C, with the
+funnel measured at the movement site — C1 fraction of soldier-turns whose destination is already
+inside team vision, C2 of those, whether a legal destination exists outside it, C3 whether that
+destination holds more empty tiles, terminal quantity **empty tiles brought into team vision per
+game**, and the same currency as before: **PASS ≥ 48 tiles/game (two ruins' worth), KILL < 12.**
+Null arm: the identical counter on the unmodified bot.
+
+**Cost of this iteration: zero games.**
