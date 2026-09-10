@@ -662,6 +662,20 @@ and raising production alone ceilinged at +7.
     question about the correlation of the resources its halves consume, and
     marginals cannot answer it. Measure the joint before you build the pair.
 
+    **And measured properly, such an anti-correlation closes the CLASS, not just
+    the pair.** Asked whether the phase mismatch was a property of that one
+    candidate, she measured both quantities **read together, per frame**: rank
+    correlation **−0.496**, and above the threshold her bot actually ships,
+    the second resource cleared its requirement on **0.0% of 244 frames** — not
+    rarely, never. **Any mechanism gated on an accumulated team-level currency
+    whose output costs a depleting per-unit stock is phase-mismatched by
+    construction**, and every member closes at once, for zero games. Two things
+    make it usable rather than sweeping: she **scoped** it — ordinary spending
+    still clears at 14.6% and 47.7%, so the class is the *combination* of a high
+    accumulated gate and a high per-unit cost, not spending in general — and she
+    named the caveat that **strengthens** it, since her table used a mean and the
+    site-level probe measured the same joint six times lower still.
+
     **And beware that the equilibrium you compute for such a pair uses inputs
     from the design you are replacing.** Her production ceiling is a function of
     income measured under the current, tethered design; the new posture changes
@@ -2258,6 +2272,18 @@ opponent, 10 to 8, and still lost the outcome race 365 to 628.** On the map wher
 she wins the race she loses the game worst, which removed a whole candidate
 family for zero games. A single contrast chosen because it *could* refute you is
 often worth more than more data of the kind you already have.
+
+    **A MEAN over units overstates the availability of a per-unit resource at any
+    particular site.** (alice) Her class-closure table was computed from *mean*
+    stock per structure; the site-level probe measured the same joint at **1.4%**
+    where the mean-based table said **8.6%**. Her sentence is the rule: **a team
+    whose mean unit holds the threshold is not a team where *this* unit does.**
+    The direction is predictable — averaging hides the spread, and a threshold
+    test on an average is passed by fleets in which no individual passes — so
+    declare which way it biases you (§49) and, where the decision is close,
+    measure at the site the code will run at. She used it as a caveat that
+    *strengthened* her closure rather than one that qualified it, which is the
+    situation you want an aggregate's bias to be in.
 
     Also worth copying: a bucket measured at **zero on both maps** is a real
     result. It cleared an earlier mechanism of a cost she might otherwise have
