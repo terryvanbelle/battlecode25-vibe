@@ -20874,3 +20874,79 @@ measurement standing: the opponent occupies carol's territory (85–88% of their
 paint) while carol occupies its own (58–90%), and carol's paint conversion (39%) matches a foreign
 lineage's 38% exactly, so it is not an efficiency gap. **I have deliberately stopped proposing
 mechanisms for it**, and the last three entries in this log are measurements rather than candidates.
+
+# Two more explanations eliminated by measurement, both for zero games
+
+## 1. Tower congestion / spawn placement — killed before building
+
+`reference/RESEARCH.md` section 7 records a spawn-order change worth *"roughly two-thirds of
+self-play games"* in 2023 (units act in spawn order; place the earliest-spawned farthest so inner
+units are never blocked by outer ones). Since I had just measured that carol's units are blocked by
+**robots**, and since D3 sends every dry unit to a tower, "towers are congestion hotspots that also
+spawn into their own congestion" was an attractive story. carol also uses only 8 of the 12 legal
+spawn tiles (`BUILD_ROBOT_RADIUS_SQUARED = 4` allows r²<=4; `loc = getLocation().add(dir)` only ever
+reaches r²<=2).
+
+**Measured instead of assumed.** Distance from each stuck position to the nearest carol tower, per
+tracked splasher, against that unit's own median distance over all turns:
+
+| splasher | stuck median | all-turns median | stuck within 3 tiles of a tower |
+|---|---|---|---|
+| id13357 | 4.1 | 6.1 | 11.8% |
+| id11476 | **6.0** | **6.1** | 36.0% |
+| id11648 | **7.1** | **7.1** | 28.6% |
+
+**Two of three show no clustering at all** — stuck positions are distributed exactly like the unit's
+ordinary positions. Blocking is **diffuse**, not tower congestion. The spawn-placement direction
+dies before a build, and the movement-obstruction family is now closed from three sides: terrain
+refuted (iteration 72 + robot tracks), tower congestion refuted here, and general de-clumping
+measured harmful (iteration 65: −11% to −22%).
+
+## 2. Frontier-seeking for splashers — killed on the binding constraint
+
+42.6% of splasher turns are `lowScore` + `noTgt`, and a splasher's response is a **uniform-random**
+walk: `moveExploring(null)` picks the farthest of four random map locations. Soldiers at least call
+`nearestVisibleEmpty()`; **splashers — carol's primary unit — have no frontier-seeking at all.** A
+probe arm (measurement only, no behaviour change) confirmed real headroom:
+
+> **A splasher sees 5.1x more paintable ground than it can reach** — 3,120 against 615 tile-
+> observations summed over one unit's life.
+
+**But the headroom is not the constraint.** The same unit's budget, whole life:
+
+| | paint |
+|---|---|
+| splashes (17 at 50) | 850 |
+| drain (370 turns at 0.82) | 303 |
+| **total consumed** | **1,153** |
+| received (300 at build + 3 refill trips) | **~1,050** |
+
+**The splasher spends almost exactly what it collects.** Its firing rate is set by its paint supply,
+not by target availability — so giving it more targets cannot raise the rate. **The 42.6% of "idle"
+turns are not a unit failing to find work; they are a unit rationing.** Killed on magnitude, zero
+games, and it also explains a statistic I had been reading as waste for several iterations.
+
+Noted for completeness: `agents/bob/CLOSED.md` #8 and #14 both close frontier-seeking on his
+architecture. Mine dies for a different reason — his on price, mine on the binding constraint — so
+this is convergence rather than transfer.
+
+## Where the area gradient stands: seven explanations eliminated, one standing
+
+| explanation | status |
+|---|---|
+| splasher supply / unit mix | refuted (iteration 69, supply 30x, target bucket unmoved) |
+| travel cost (`HOME` share) | refuted (iteration 70; it is a symptom of paint scarcity) |
+| expansion / ruin claiming | refuted (Gears: out-claimed alice 10–8 and lost 365–628) |
+| denial / mopping | refuted (iteration 71, −3.83 sd) |
+| navigation / terrain | refuted (iteration 72 + robot tracks: blocked by robots, not walls) |
+| tower congestion / spawn placement | refuted (above) |
+| target availability for splashers | refuted (above: paint-limited, not target-limited) |
+| paint efficiency | refuted (39% conversion matches a foreign lineage's 38%; drain lowest of three bots) |
+
+**Standing:** the occupation asymmetry — the opponent's units spend 85–88% of their turns on carol's
+paint while carol's spend 58–90% on their own — and, underneath everything, **paint throughput**.
+Every eliminated explanation bottomed out there, and the accounting says carol is not wasting it.
+
+**I am still not proposing a mechanism.** Seven explanations have been removed by measurement and
+four by failed candidates; the remaining question is why carol's paint *throughput* is lower than an
+opponent that pays twice the drain, and that is a question about income, not about spending.
