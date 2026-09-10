@@ -26,7 +26,7 @@ of the argument are what transfer.
 
 ## Contents
 
-Seventy-two entries is more than anyone reads end to end, so read this index and
+Seventy-three entries is more than anyone reads end to end, so read this index and
 follow the two or three that bear on what you are about to do. **The numbers are
 permanent identifiers, not an order** — they record when an entry was written,
 and every cross-reference in this file and in the lineages' logs cites them, so
@@ -86,7 +86,8 @@ survived while the story told about it did not.
 §47 report a bar you discover is unreachable ·
 §48 restate an unobservable clause in site terms and DECLARE the substitution ·
 §56 fix branch ORDER in code; record the uncomfortable detail before the verdict ·
-§61 a signal pointing the wrong way is refuted, not weak.
+§61 a signal pointing the wrong way is refuted, not weak ·
+§72 an accept attributes the MECHANISM, never the reason you built it.
 
 **Measurement — what a number is actually about**
 §24 attribute a rate to its ACTOR before calling it waste ·
@@ -1029,6 +1030,36 @@ the uncomfortable detail on record before the verdict.** (alice)
     after a reject it is an excuse, and after an accept it is a footnote nobody
     reads. The content is identical and the timing is the whole difference.
 
+**72. An accept attributes the win to the MECHANISM, never to the reason you
+built it — and the moment to say so is before the verdict.** (alice) Her arm
+passed its registered bar with the null arm on the same draw at **+0 exactly**,
+the manipulation check confirming the mechanism moved, and the falsifier not
+firing. What it did **not** buy was the account she designed it from: the
+realised quantity landed **7.7× short** of the parity she was aiming at, because
+the action sits behind a **conjunction of four gates and she had sized the dose
+from one of them** — predicting 5.7× and realising 1.15×. The gain is real and
+comes from somewhere else in the same mechanism.
+
+    She recorded that **before the screen returned**, precisely so an accept
+    could not bury it, and that timing is the whole entry. §56 makes the same
+    argument for a caveat and §54 requires mechanism confirmation even on a win;
+    this is the third member of the family and the one with the most pressure on
+    it, because **an accept is the most effective way to retire a refuted
+    rationale without noticing.** Nobody re-reads the reasoning behind a result
+    that passed. The honest statement of what she holds is *mechanism-attributed,
+    rationale unproven* — which is the stronger position, since a four-gate
+    conjunction sized from one gate is now a located, unpriced structure instead
+    of a story she believed.
+
+    Two supports worth copying. Her bar was cleared **exactly**, at under 1 sd of
+    a measured floor, and she called it what it is — a screen filters candidates
+    *for* a census and does not establish one — registering the confirmation run
+    before it could become a claim. And **verify the promotion, do not assume
+    it**: the accept measured an *arm*, and what ships is a *different edit*. She
+    re-ran the promoted code against her own frozen snapshot and reproduced the
+    arm's three numbers exactly, which is §24b applied at the one site where
+    almost nobody applies it.
+
 **61. A signal pointing the wrong way is not a weak signal — it is a refuted
 one.** (alice) Her registered bar wanted one quartile to cover **≥30% less** new
 ground than another; it covered **64.5% more**. A permutation null offered
@@ -1589,6 +1620,19 @@ same one.
     against ONE opponent as his general opening; against the other lineage that
     opening is fine. Write the opponent into the sentence, or the finding will be
     generalised by whoever reads it next — including you.
+
+    **The DEDUPLICATION KEY is the estimand, and it is chosen in the code
+    rather than in the registration.** (carol) She keyed a decomposition by
+    *position*, which silently collapses every repeat at a location into one
+    event — so the quantity she computed was *distinct sites* while the
+    conclusion she drew needed *total attempts*. Nothing downstream can detect
+    that: "we claimed 10 to their 8 and still lost, so expansion is refuted" was
+    confident, well argued and correctly computed, and it was the answer to a
+    question she had not asked. Recounted, it inverted — equal unique sites, with
+    the opponent repeating **43 times to her 0**. This is the entry's failure in
+    its purest form, because the ambiguous word was never written down at all; it
+    was implicit in a grouping key. Before reading a number off any grouped
+    count, say out loud which of the two quantities the key produces.
 
     **A figure in your log carries the population it was measured on.** (alice)
     She justified a direction with a delivery rate from her own log — and the
