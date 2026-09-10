@@ -21759,3 +21759,61 @@ protocol intends. `alice_e2`, `alice_e2ctl` and `alice_e2null` stay on disk as t
 mechanism is confirmed to fire, so what failed is the *design* — spending a surplus that exists in
 the wrong phase — and not an inert branch. That is the reject this session had not yet been able to
 buy.
+
+# REQUIREMENT G, answered on an unbiased sample — and it REFUTES my own hypothesis
+
+The screen's retained replays are the arm's *wins*, so G could not be answered there. The three
+manipulation matches **were chosen before any outcome existed**, and arm and control each played the
+same opponent on the same maps. Small (n=3) but not conditioned on who won. **Zero new games.**
+
+| band | Δ chips | Δ towers | Δ paint/tower | Δ mobile | Δ coverage |
+|---|---|---|---|---|---|
+| **EARLY 1–300** (decides 79–81%) | **−49** | **−0.12** | **+2.9** | **+0.17** | **+2** |
+| mid 300–600 | −676 | +0.14 | +6.7 | +2.19 | +19 |
+| late 600–1200 | −17,765 | +0.28 | +0.7 | +7.44 | +10 |
+| end 1200+ | −47,118 | +0.00 | −4.7 | +13.05 | +100 |
+
+**Read the early band only.** All three maps are present there; two games end by r926, so the later
+bands are progressively **one map** and are not interpretable. I am not using them.
+
+> **Through the decisive window the arm is indistinguishable from the control.** −49 chips out of
+> 1,391 (3.5%), −0.12 towers, +0.17 units, +2 per-mille coverage. Everything is noise.
+
+## This kills my late-game-surplus hypothesis, and replaces it with a better one
+
+I proposed that the arm **starves itself of scarce early chips**. It does not: the early chip delta is
+−49, which is nothing. **The hypothesis was wrong and the measurement says so.**
+
+What the data supports instead: **the lever's benefit arrives after the window that decides the
+game.** A paint tower yields 5–15 paint/turn and a soldier costs 200, so the mix change compounds
+slowly — by r600+ the arm is genuinely ahead on units, but the r300 tower lead has already predicted
+the winner 79–81% of the time. The arm pays a small early cost for a large late benefit in a game
+that is decided early.
+
+## And the cause is the shape I named before the verdict
+
+**The mix is a choice about towers that already exist, and the decisive window is precisely when the
+fewest exist** — 4.17 towers at r100–300 against 9.00 by r1200. Moving 16 points of type-share across
+4.2 towers is **0.7 towers**. That is the prosperity-gated lever, exactly as written: *a lever keyed
+to a choice the bot only faces when it is already doing well is structurally absent where the deficit
+lives* — and here "where the deficit lives" is a **phase**, not a map.
+
+## Which closes the phase-aware variant without another game
+
+The coordinator's question was whether a *phase-aware* version is the same lever. **It is worse.**
+Phase-awareness in the natural direction — money towers early, paint towers late — makes the arm
+*more* identical in the decisive window and pushes the benefit even later. The opposite phasing has
+no surface: 4.2 towers is not enough of a denominator to move anything. **Both directions fail, for
+the same measured reason, and neither needs building.**
+
+> **The count leg's only control variable is the tower mix, and the tower mix has no surface in the
+> phase that decides games.** Count is therefore closed *as I framed it* — not because more units
+> would not help (E1's marginal of 5.9–17.6 empty tiles per soldier stands) but because **the one
+> knob that changes unit count acts too slowly and on too small a base to move the decisive window.**
+
+## Standing
+
+`src/alice` unchanged. E2 rejected on its bar. Requirement G answered as far as an n=3 unbiased
+sample allows, and its answer refuted the hypothesis I would have preferred. **The plateau's loop is
+still a loop with a free entry point — but this entry point has a time constant longer than the
+game's decision window, and that is now measured rather than argued.**
