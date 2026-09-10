@@ -20373,3 +20373,59 @@ the way the heading probe's did. The 25% bar rests on the unbiased statistic onl
 - **falsifier, named now**: a genuine gain must show **adjacency per unit-turn falling** *and*
   **paint actions per soldier rising**. Bob's arm cut crowd 26–48% and still paid in position; if
   mine cuts crowd and paint actions do not rise, it is his failure mode and not my success.
+
+## Pre-check PASSES at 44.8% — and the null taught me something I nearly got backwards
+
+`alice_i58probe`, additive, **identity verified on all three maps** (926 / 1693 / 792, each
+reproducing a round count already on record). 407 units, **7,808 movement-ready turns**.
+
+| | value |
+|---|---|
+| legal destinations per turn | 4.44 |
+| **turns with a REAL crowd choice (`max − min >= 1`)** | **44.8%** |
+| mean spread per turn | 0.58 |
+| crowd where the unit actually is | 0.580 |
+| min crowd available | 0.098 |
+| headroom (current − min) | **+0.483** |
+
+> **PRE-REGISTERED KILL: a real choice on under 25% of movement turns. Measured 44.8% — SURVIVES,
+> and comfortably**, unlike iteration 56 squeaking past 2.00% at 2.23%. The bar rests on `max − min`,
+> a **spread**, which carries no winner's-curse bias — that choice of statistic was registered in
+> advance precisely so the pass would not need a null.
+
+### The null, run as registered — and it says the opposite of what it said last time
+
+Simulating iid crowd across a unit and its ~4–5 candidates: **null headroom 0.544–0.564** against an
+observed **+0.483**. The observed is *below* the null.
+
+**My first instinct was "the headroom is entirely selection, so discount it" — and that is wrong
+here, for a reason that distinguishes this probe from the heading probe:**
+
+| | what the statistic is | does the winner's curse bite? |
+|---|---|---|
+| iteration 50, heading | a **prediction** about the next **25 turns** from a noisy sector estimate | **Yes, fully.** The estimate need not persist, so best-of-8 was largely illusory |
+| **this probe** | a choice among **adjacent tiles the unit occupies next turn** | **Only partially.** The unit actually stands on the chosen tile; the value is realised, not predicted |
+
+> **Selecting the minimum of N real, immediately-realised values is a mechanical gain, not a
+> bias.** The null being ≈ the observed says crowd is roughly **spatially random** at this scale —
+> so the gain is *mechanical rather than structural*, and mechanical gains are still gains when the
+> chosen tile is the one you stand on. The only discount owed is **persistence**: allies move too, so
+> the crowd sensed is not exactly the crowd experienced.
+
+**I nearly published the opposite conclusion**, and the thing that stopped me was asking what the
+null is a null *of*. Same statistic, same simulation, opposite meaning, because the estimand changed
+from a prediction to a realisation. **Recording that as the lesson rather than the number.**
+
+### Priced, with the persistence discount stated rather than assumed
+
+Un-discounted, the choice avoids **0.483 adjacent allies per unit-turn** against the **0.70 paint/turn**
+alice pays in adjacency — a 69% cut, which is implausible as a realised outcome. **Bob's three arms
+realised 26–48%**, which is the empirical persistence discount from a lineage that actually built it.
+Applying that band: **~0.13–0.23 paint/unit-round saved**.
+
+Against his measured exchange rate (1.0 paint/unit-round ≈ 25 wins/50, saturating near +6, and his
+arms saved 0.240–0.285 for +6), that lands **at or just below his saturation point** — so the honest
+expectation is **somewhere under +6, against my +4 screen bar.** Close enough to be worth a screen and
+not close enough to assume; which is what a screen is for.
+
+**Next: build it as a WEIGHT, with the null arm and manipulation share already registered.**
