@@ -21887,3 +21887,61 @@ corrected** (a position-keyed count that inverted a conclusion, and a gross-for-
 
 **I am not proposing a mechanism**, and I am not going to manufacture a seventeenth candidate from
 material I have already priced at the bar. This is on the desk with the numbers attached.
+
+# Decision 1 — HARDER RUNGS BUILT. Decision 3 — the reachable-gain enumeration, and it is not empty.
+
+## Decision 1: the roster is repaired (placement run in flight)
+
+Six of eleven rungs were saturated at 100%, so the instrument could not register a regression. Added
+**four cross-architecture rungs** from `agents/bob/src/` (open ground under rule 0), unmodified apart
+from package renames: **`bobf`** (his frozen HEAD — already measured at **64.0%**, my hardest rung
+and it was never in the roster), plus **`bobf20` / `bobf18` / `bobf12`** from his accepted snapshot
+ladder. Roster: 11 -> **15**. **Nothing retired**, per the rule. Placement run `20260910-143006`.
+
+## Decision 3: where are the reachable GAINS, as opposed to where is the deficit?
+
+I had only ever asked the second question. Ceilings, from the current tournament:
+
+| regime | games | carol | losses | **ceiling if all won** | reachable? |
+|---|---|---|---|---|---|
+| small | 22 | ~70% | 7 | +14 | small pool |
+| **mid** | **64** | **55%** | **29** | **+58** | **never analysed** |
+| large | 64 | ~34% | 42 | +84 | **priced at the bar under a perfect oracle** |
+
+**Every trace I have run in this project was on Gears (3,025) or galaxy (2,025) — both large.** The
+mid band is 64 of 150 games and I had never opened one.
+
+## And the mid-map failure mode is the OPPOSITE of the one I have spent 16 iterations on
+
+Three mid-map losses to alice, traced. Coverage per-mille, carol vs alice:
+
+| map | r700 | r1400 | end |
+|---|---|---|---|
+| Terminal (1,200) | **599 – 351** | **621 – 359** | **376 – 609** |
+| Bunny (1,320) | **515 – 375** | **537 – 417** | **263 – 701** |
+| leavemealone (1,500) | 622 – 328 *(r1000)* | — | **351 – 636** |
+
+> **carol LEADS decisively through r1400 in every one — often by 200+ per-mille — and then collapses
+> in the final third.** 3 of 3.
+
+The splasher counts invert with the coverage: Terminal carol **16 -> 4** while alice goes **7 -> 15**;
+Bunny carol 6 -> 5 while alice goes **0 -> 8**.
+
+**This is a "cannot HOLD" failure.** Every one of my sixteen iterations targeted "cannot
+ACQUIRE" — coverage, claiming, expansion, symmetry, exploration. On the regime with the second
+largest ceiling and by far the best reachability, **carol already acquires more than enough and
+loses it back.**
+
+**Why carol stops building splashers late, as a hypothesis and not yet a claim:** its treasury sits
+at **$1,270–$1,790** against a splasher gate of **$1,600**, while alice ends leavemealone on
+**$50,310**. carol's tower paint at that point is healthy (1,282). So late-game carol looks
+**chip**-limited on mid maps, where on Gears it was paint-limited with $6,730 idle.
+
+**Not building on that yet** — "obvious suspect" is what four dead mechanisms were built on, and
+`MONEY_MOD` is a closed axis whose closure I would have to justify re-opening on the grounds that it
+was measured corpus-pooled while this constraint is regime-specific. **The next step is to price the
+hold-vs-acquire axis, not to build in it.**
+
+**Reporting to the coordinator:** the enumeration is **not** empty. There is a large, reachable,
+never-examined regime with a failure mode opposite to everything tried so far, so the architectural
+escalation is **not** warranted yet.

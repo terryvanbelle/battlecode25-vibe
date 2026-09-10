@@ -4,3 +4,7 @@ examplefuncsplayer
 carol_iter44
 carol_racer
 carol_r1
+bobf
+bobf20
+bobf18
+bobf12
