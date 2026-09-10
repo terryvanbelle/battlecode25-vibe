@@ -503,6 +503,14 @@ clear but nothing like as crisp as the raw number reads. She had measured her
 accept gate's floor long ago and never this one. The null arm costs nothing
 because it ships in the same batch as the arms you were already building.
 
+    **Used deliberately the next time, it paid twice in one run.** Her treatment
+    moved a quantity +6.4% where the bar wanted a 15% fall; the null arm — two
+    byte-identical bots — moved it ±7.7%, so the effect was inside the noise, and
+    without that number "+6.4%, the mechanism runs backwards" was the confident,
+    publishable, wrong reading. The second payment came free: **the treatment arm
+    went 4–2 and the null arm also went 4–2**, which turns "a 6-game score is
+    worth nothing" from an intuition into a measurement.
+
     Two more from the same run, both worth copying. **Check your inventory
     before you make a design decision, not after** — hers went from three
     surviving levers to two, and from ~48% of the gap to ~33%, which changed the
@@ -537,6 +545,16 @@ less dead.
     lost her four iterations. An opportunity being free does not make the action
     free: price every resource it consumes against the binding budget, not only
     the one it obviously spends.
+
+    **Measure the denominator the mechanism will actually see — at the exact
+    call site the code will live at, not a superset of it.** (alice, stating it
+    as a rule after the third instance.) She measured a choice set over *all*
+    movement-ready turns, then installed the mechanism inside a single movement
+    path, and never measured that path's share of movement. Her two earlier
+    versions of the same miss: one priced a unit's *surplus* and not its
+    *adjacency*; another priced an *opportunity* and not the *resource* it
+    spends. Each time the pre-check was honest about a population the code would
+    never meet. Run the funnel where the branch lives.
 
     Three properties make it a rule rather than a story. It **validates itself**:
     the funnel predicted 1.2% firing against ~1% observed in an ablation, so the
