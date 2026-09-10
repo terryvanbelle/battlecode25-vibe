@@ -21688,3 +21688,69 @@ loss-only replay set is the relevant sample rather than a distortion of it. The 
 opposite one — I must not read a chain-link delta measured on losses as the arm's *average* behaviour,
 only as its behaviour *when it lost*. If G is ever used to make a positive claim about the arm
 overall, the screen must be re-run with all replays retained.
+
+# ITERATION E2 — REJECTED on the registered bar. net = −8 against +4
+
+The screen finished: 100 games, both arms, one shared 25-map sample. `tools/e2-gate.py` applied the
+gate with the branch order fixed in code, on the complete file, with no partial number ever read.
+
+```
+alice_e2      50 games  25 maps   arm wins 17   ctl wins 33   net = 17 - 25 = -8
+alice_e2null  50 games  25 maps   null wins 25  ctl wins 25   net = 25 - 25 = +0
+```
+
+> **NULL ARM = +0 EXACTLY.** The control against itself over 50 games returned precisely its true
+> value. The instrument resolves the bar, so the VOID branch does not apply and the gate stands.
+> **VERDICT: REJECT.** net = **−8** against a bar of **+4** — not near it, 12 below it.
+
+**Per-map: the arm swept 0 maps; the control swept 8.** On 17 maps the pair split 1–1; on 8 maps the
+arm lost both. The arm is never dominant and sometimes much worse.
+
+## Requirement G — and it CANNOT be answered on this sample. My own sampling note had it backwards
+
+G asks which link broke. I measured L5 (tower count) matched within each game and got:
+
+| | arm | control | delta |
+|---|---|---|---|
+| towers @r300 | 8.91 | 7.73 | **+1.18** |
+| paint towers @r300 | 5.64 | 4.64 | +1.00 |
+| soldiers @r300 | 12.00 | 10.91 | +1.09 |
+
+Every link positive, outcome −8. **That is contradictory, and the contradiction is the sample, not
+the bot.** The gauntlet keeps only the *bot's* losing replays, and the bot here was the **control** —
+so the 39 retained replays are the games the **arm WON**. Every upstream link measured on an
+outcome-conditioned sample is biased upward by construction: of course the arm has more towers in the
+games it won.
+
+**I wrote a sampling note two commits ago asserting the opposite** — that losses/ would hold the
+arm's losses and would therefore be the right conditioning for "which link broke". **That was wrong,
+and it is corrected here rather than quietly dropped.** The note's *second* half survives and is the
+part that binds: a chain-link delta from this set is the arm's behaviour **when it won**, never its
+average, and any claim from it needs the screen re-run with all replays retained.
+
+> **Requirement G: INCONCLUSIVE. The registered falsifier (L5 negative) is not refuted — it is
+> UNTESTED.** I am explicitly not reading +1.18 as "the chain worked, it just needs a bigger dose".
+> That reading is available, it is flattering, and the sample cannot support it.
+
+## What is established, and what is only a hypothesis
+
+**Established:** the mechanism fires (+10.3 points of realised paint share, +17% units); the
+instrument is clean (null +0); the design loses by 8.
+
+**Hypothesis, labelled as one:** E1 measured chips at a mean of **1,502 in rounds 100–300** and
+**56,706 in rounds 1000–2100**. The r300 tower lead predicts the winner 79–81% of the time. **So the
+surplus I priced the mechanism against is a LATE-game surplus, and the phase that decides games is
+the one phase where chips are actually tight.** A single global constant spends early chips — which
+are scarce and decisive — to buy late paint, which arrives after the game is settled. That is
+consistent with a −8 and with every arc of E1, but it is **not measured**, and the measurement that
+would test it is a phase-conditioned re-run, not another argument.
+
+## Standing
+
+`src/alice/RobotPlayer.java` is **unchanged** — the incumbent was never at risk, exactly as the
+protocol intends. `alice_e2`, `alice_e2ctl` and `alice_e2null` stay on disk as the evidence.
+
+**A rejected iteration is a delivered result, and this is the more informative reject**: the
+mechanism is confirmed to fire, so what failed is the *design* — spending a surplus that exists in
+the wrong phase — and not an inert branch. That is the reject this session had not yet been able to
+buy.
