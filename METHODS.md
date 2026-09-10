@@ -26,7 +26,7 @@ of the argument are what transfer.
 
 ## Contents
 
-Eighty entries is more than anyone reads end to end, so read this index and
+Eighty-one entries is more than anyone reads end to end, so read this index and
 follow the two or three that bear on what you are about to do. **The numbers are
 permanent identifiers, not an order** — they record when an entry was written,
 and every cross-reference in this file and in the lineages' logs cites them, so
@@ -100,6 +100,7 @@ survived while the story told about it did not.
 §25 prove your check can fail — SELFTEST, and reachable is not detecting ·
 §35 build a FUNNEL of preconditions before re-dosing, and measure it JOINTLY ·
 §36 if X at round R predicts the outcome, plot X PAST R ·
+§80 confirming every LINK of a chain does not establish the terminal effect ·
 §42 the bot's own decision statistics are the least trustworthy secondaries ·
 §43 a relationship measured under your policy is an equilibrium of that policy ·
 §49 measure with a DECLARED bias, then convert the proxy back ·
@@ -1562,6 +1563,38 @@ symptom was the only face of it she could see.
     and register the fork — a decline in the quantity itself versus a decline in
     what it produces — before you trace, because they are different defects with
     different fixes.
+
+**80. Confirming every link of a causal chain does not establish the terminal
+effect — a complete chain can convert only in a regime that is a minority of
+your corpus.** (carol) Her arm's chain was validated end to end on
+**outcome-side** quantities rather than decision proxies: coverage 37%→65%,
+targets acquired 9→13, structures 10→14, terminal output 459→700 per mille, and
+it won the demonstration game 700 to 219. **The registered gate still closed it**
+— +0 / −10 / −4, no arm reaching its bar. That is a considerably stronger failure
+than §42's proxy version, because there is nothing to dismiss: every quantity
+that moved is one you would have accepted as evidence beforehand.
+
+    The decomposition is why: all three arms were **positive on large maps
+    (+2/+4/+4) and negative on small and mid (−2/−14/−8)**, because the chain
+    produces a resource that is only scarce in the first regime — elsewhere it
+    just rearranges behaviour. **28 of 50 screen games were the wrong regime**,
+    so the net was negative. A chain is a conditional statement, and validating
+    each link tells you the conditional holds; it says nothing about how often
+    the antecedent does.
+
+    **The payoff was a correction to a different direction she already held.**
+    A separate, unbuilt iteration had been sized at **+61%** through this same
+    chain. Having now measured the chain end to end, she re-read that figure as a
+    **large-map number rather than a corpus number**, and discounted the two
+    expensive unbuilt prerequisites behind it accordingly. Only an end-to-end
+    test could have produced that correction — which is the argument for running
+    the cheapest member of a family early even when you expect it to fail (§1),
+    since what it re-prices may not be itself.
+
+    The follow-on question is the one to ask next in that situation: when two
+    *independent* members of an axis fail **for the same measured reason**, §51
+    says the shared premise is refuted rather than the implementations — so ask
+    whether the **axis** is closed, not the member, before building a third.
 
 **42. The bot's own DECISION statistics are the most tempting and least
 trustworthy secondaries.** (carol) Twice in her own log a quantity the bot
