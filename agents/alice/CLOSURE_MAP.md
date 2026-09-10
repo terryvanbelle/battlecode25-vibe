@@ -195,7 +195,13 @@ is why M2's extra units produced no extra output, and it strengthens §17 rather
 happens only if the map stops saturating, e.g. a genuinely larger reachable frontier. Phase drift
 measured at 44.8% → 28.2% → 23.5% → **13.3%**, so it is moving *away* from re-opening.
 
-**Not closed, and needing its own registration:** **moppers are travel-bound where soldiers are
-sight-bound** — 56.88% of mopper idle turns have enemy paint in vision but outside its r²≤2 action
-radius (vision is r²=20). 12.6% of turns; a separate question with a separate bar; **not** a rescue
-of the falsified hypothesis.
+**Sub-thread, now CLOSED for zero games — moppers travel-bound (56.88% of mopper idle turns have
+enemy paint in vision, outside its r²≤2 radius):** **dead on arrival against the redundancy closure.**
+Only a splasher takes enemy-painted ground [E]; it reaches further (centre to r²≤4), converts
+enemy → ALLY in one step where the mopper yields only enemy → EMPTY, and does up to 13 tiles per
+action against the mopper's one. The pattern-shade exclusivity that could have saved it fails: the
+soldier's ruin branch already repaints ally wrong-shade tiles to the correct shade. **The idle
+capacity is idle for work another unit owns.**
+
+> *Before pricing a unit's idle capacity, check whether the work it is idle for is work only it can
+> do.* Utilisation is a ratio whose numerator can be worth zero.

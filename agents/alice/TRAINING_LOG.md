@@ -24906,3 +24906,36 @@ turns. The pooled verdict is soldier-dominated (125,695 of 193,655 turns) and th
 I registered, so **SIGHT-BOUND is the verdict**. The mopper cell is a *different question on a
 subpopulation of 12.6% of turns*, and turning it into a lever requires a fresh registration with its
 own bar — it does not rescue H and I am not treating it as such.
+
+## The mopper travel-bound thread: DEAD ON ARRIVAL against the redundancy closure. Zero games.
+
+Checked before registering. The 56.9% is enemy paint in vision outside the mopper's r²≤2 radius —
+so the job it represents is **converting enemy-held ground**. My own engine finding [E]:
+
+> **"only a splasher takes enemy-painted ground (overwritten within r²≤2 of the centre)"** — and the
+> centre may sit up to r²≤4 away, so the splasher's reach for that job **strictly exceeds** the
+> mopper's r²≤2, converts **enemy → ALLY in one step** where the mopper yields only **enemy → EMPTY**
+> (still needing a soldier), and does it for **up to 13 tiles per action against the mopper's one.**
+
+**The one exclusivity that could have saved it — pattern shade — does not hold.** A pattern tile
+needs a specific primary/secondary shade, so "splasher paints it ally-primary, which is the wrong
+shade" would make the mopper's enemy→EMPTY route exclusive for ruin patterns. It is not: the soldier's
+ruin branch attacks **any non-enemy tile whose paint ≠ its mark**, passing `mark == ALLY_SECONDARY`,
+i.e. **it already repaints ally wrong-shade tiles to the correct shade.** Splasher output is
+correctable by the unit that is already there. Both routes are two-step; the splasher's covers 13x
+the tiles and reaches further.
+
+**Remaining mopper-only capabilities, and why neither carries the thread:** its attack costs **0
+paint** (splasher 50), and it can steal paint from enemy robots. But mopper *share* is already closed
+`structurally-blocked` — **refusing a mopper yields a SOLDIER by construction**, claim rate 58.1% —
+so a zero-cost argument has no destination for the freed paint.
+
+> **The 56.9% is a travel problem for a unit that is superseded on the job the out-of-range ground
+> represents.** No conversion rate rescues it: even at 100% conversion the mopper is doing, one tile
+> at a time and at shorter reach, a job another unit does better in one action. **Not registered, not
+> built, zero games.** Filed to §18 as a closed sub-thread rather than an open question.
+
+**And the general form, which is the reusable part:** *before pricing a unit's idle capacity, check
+whether the work it is idle for is work only it can do.* Utilisation is a ratio whose numerator can
+be worth zero — I nearly registered a conversion-rate study on a numerator that another unit already
+owns. Same family as the denominator lesson, on the other half of the fraction.
