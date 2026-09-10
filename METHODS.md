@@ -437,6 +437,29 @@ stale" as a defect to fix before the next build rather than a note.
     accept's original map-level prediction exactly, at 150 games instead of the 8
     it was accepted on. Register the ACTION, not just the metric.
 
+**52. When two quantities are incommensurable, do not build an exchange rate —
+measure whether one is in SURPLUS.** (alice) She had once fallen into pricing two
+different currencies against each other with a per-turn rate, a category error
+that cost a full census, and had carried a standing caution about it ever since.
+The escape, when she next met the same trap, was not a better argument: she
+measured the levels. One currency sat at **42× the cost of the purchase it was
+supposed to fund** while the other could not afford a single unit — at which
+point the exchange rate is irrelevant and the trap does not arise. If you find
+yourself constructing a conversion between things that do not share units, check
+first whether one of them is in surplus.
+
+    **And a plateau that decomposes into arcs, none of which is a wall, is a
+    feedback loop with an entry point — not a ceiling.** She measured each arc of
+    her own stagnation separately (information → structures → income → production
+    → units → information) and then asked whether *any* arc was a hard limit.
+    None was: the cooldown sat five times from binding, the resource was in
+    surplus, and the capacity cap was half unused. That converts "a ceiling the
+    game prevents closing" into "a loop with a free entry point", which is a
+    completely different object to act on — a search rather than an architecture
+    question. The discriminator that made one arc unambiguous is worth copying
+    too: a producer that does not produce is either too poor or declining to, and
+    **at-cap at 0.0% across 2,542 frames** settles it with one number.
+
 **50. Exhausting one AXIS is not exhausting the space — name the axes before
 you claim an enumeration is complete.** (alice) She had closed four routes for
 zero games and concluded the remaining deficit was structural. Asked whether the
