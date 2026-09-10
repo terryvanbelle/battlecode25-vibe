@@ -493,3 +493,19 @@ both directions, and do not let a reject you agree with quietly answer a questio
   frozen for 1,887 / 1,881 / 44 consecutive rounds once the last money tower dies.
 - **A rung that beats you localises the capability it was built to stress and nothing else.** Its win
   rate is not a general strength reading. Keep it a diagnostic; do not let it become a benchmark.
+
+- **Sweep a new detector across every replay you already hold before trusting a null of n=3.** Mine
+  held at n=117 (median 1 round) -- but the same sweep showed the signature in only 17% of the games
+  it was supposed to explain, and in winners too. A prevalence baseline costs zero games and can
+  pre-empt the whole causal design.
+- **A confirmed mechanism can be an irrelevant one.** The absorbing state was exactly as recorded --
+  treasury pinned near zero for up to 1,602 rounds while towers stood with paint at capacity -- and
+  it still was not what decided the matchup. "The mechanism is real" and "the mechanism explains this
+  result" are separate claims needing separate evidence.
+- **Both teams live in the same replay, so a retained loss also retains a controlled winner.** Map,
+  terrain and round count are held constant by construction. That turned a loss-biased corpus into a
+  within-game comparison (carol peak 4.7 towers losing 39%, the archetype 7.5 losing 2%) with no
+  confound at all -- far stronger than comparing against healthy games on other maps.
+- **When the registered alternative fires, change the measured quantity, not the design.** The
+  matched-pair set was built for the freeze; the freeze is not the mechanism; the pairs are still the
+  right control, now applied to tower trajectory instead.

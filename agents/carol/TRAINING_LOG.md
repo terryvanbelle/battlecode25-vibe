@@ -23304,3 +23304,75 @@ that was about *deliberately changing* seeds, and nothing here changes one.
 **Pair fingerprint — winner AND round count.** A winner alone is a weak fingerprint; two games with
 the same winner and different round counts are different games. **Any map that reproduces the winner
 but not the round count is a BROKEN pair and is excluded, not analysed.**
+
+## PREVALENCE SWEEP — the registered MIDDLE outcome FIRES. The freeze is not what decides these games.
+
+Reported immediately, as registered, because it changes what the 18 pairs can tell me. Zero games:
+the detector was swept over **every replay I hold** — 117 team-traces from 78 retained replays.
+
+### 1. The absorbing state is REAL and its mechanism is confirmed
+
+| replay | team | frozen | treasury | towers | max tower paint in window |
+|---|---|---|---|---|---|
+| `carol_conv__fix__botA` | carol | **1,602 of 2,000 rounds** | **20** | 5 (peak 7 → final 2) | **1,000** |
+| `carol_siege__SandyBeach__botB` | carol | **1,022 of 2,000** | 140 | 1 | 1,000 |
+| `carol_siege__walalilongla__botA` | carol | 397 | 40 | 4 | 1,000 |
+| `carol_siege__fix__botA` | carol | 142 | 350 | 1 | 1,000 |
+
+> **Treasury pinned at 0–350 while towers still stand with paint at CAPACITY (1,000), for up to
+> 1,602 consecutive rounds.** Chips are the dead resource and paint is not — exactly what losing the
+> money towers predicts, and the paint towers survive full and useless because building needs chips.
+> The degeneracy is confirmed as a mechanism.
+
+### 2. But it does not decide the matchup — and the null widened from n=3 to n=117
+
+| role | n | median | >5 rounds | >50 rounds |
+|---|---|---|---|---|
+| loser's trace | 78 | **1** | 13% | 6% |
+| winner's trace | 39 | **1** | 5% | 5% |
+
+**The median is 1 in both — my n=3 healthy baseline holds at n=117.** But:
+
+- **In the 30 games carol loses to `carol_siege`, the freeze appears in 5. That is 17%.** It cannot
+  be the mechanism of a matchup carol loses 30 times.
+- **It is not archetype-specific.** The single worst case in the entire corpus — 1,602 flat rounds —
+  is against `carol_conv`, not siege. It also appears against `bobf18`.
+- **It appears in WINNERS.** On SandyBeach, carol froze 1,022 rounds and **`carol_siege` froze 670
+  rounds in the same game and won it.** The freeze is survivable and not sufficient to lose.
+
+> **REGISTERED OUTCOME 2 FIRES: the freeze is not what decides these games; the archetype beats
+> carol via something it was not built to exploit.** Written down before the run precisely because
+> it is the branch most easily talked away afterwards. It is a finding I did not go looking for.
+
+### 3. What actually decides them — structures, measured WITHIN the same games
+
+Both teams are in the same replay, so map, terrain and round count are controlled by construction:
+
+| in the 30 games carol LOST to `carol_siege` | peak towers | final | destroyed |
+|---|---|---|---|
+| **carol** | **4.7** | 2.9 | **39%** |
+| **`carol_siege`** | **7.5** | 7.4 | **2%** |
+
+carol never gets established (peak 4.7) *and* loses 39% of the little she builds, while the archetype
+holds 7.5 and loses 2%. **The freeze is the extreme 17% tail of this, not a separate failure.**
+
+**Confound declared:** carol's peak of 4.7 here against 8–10 in healthy probe games is **not** a
+controlled comparison — different maps, different opponents. The **within-game** 4.7-vs-7.5 contrast
+*is* controlled and is the load-bearing one. The matched-pair set now answers the sharper question,
+with the measured quantity changed from the freeze to the tower trajectory:
+
+> **On the same map, does carol's tower peak differ between the side she wins and the side she loses?**
+
+Inverted run `20260910-172313` launched (`BOT=carol_siege`, 18 pinned split maps, 36 games) to
+retain the win halves my own tooling does not keep.
+
+### 4. Placement, final — and the side balance is exact
+
+| rung | carol | verdict vs the registered bands |
+|---|---|---|
+| **`carol_siege`** | **20/50 = 40.0%**, margin −10 | **RUNG ACQUIRED (<50%)** |
+| `carol_denier` | 44/50 = 88.0% | weak rung — add, do not rely on it |
+| `carol_conv` | 47/50 = 94.0% | weak rung — add, do not rely on it |
+
+**Side balance verified from `bot_side`: exactly 25 games per side** (carol 9/25 as A, 11/25 as B).
+The margin identity holds by construction, not by luck.
