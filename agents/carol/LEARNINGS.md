@@ -525,3 +525,20 @@ both directions, and do not let a reject you agree with quietly answer a questio
 - **A weak rung is not a useless rung.** At 88% and 94% they adjudicate nothing close, but they
   extend the ladder's range and are what registers a LARGE regression first. Say what a rung is for
   when you add it.
+
+- **A decomposition can invert between regimes, and the regime that carries the margin is the one
+  that counts.** My matched pairs said acquisition beats retention 2.3:1; the both-sides losses --
+  which ARE the entire margin -- say retention beats acquisition 2.4:1. Near mirror images. Two
+  proximate mechanisms in two regimes, not two rival explanations of one. Check the decomposition
+  separately in the subset that carries the margin before choosing what to build.
+- **Register a magnitude check alongside a presence check; the presence answer may be right and
+  uninformative.** "Does the gap appear?" answered PRESENT exactly as predicted. The magnitude check
+  I registered as a selection control fired NEITHER of its two branches -- the gap was smaller, not
+  larger or similar -- and that anomaly was the actual finding.
+- **A design that varies only X can never identify X's own effect.** My matched pairs varied only the
+  side, so they could see mechanisms downstream of the side and were structurally blind to the side
+  itself. The set I had discarded for carrying no margin information was the only one that could
+  break that confound.
+- **Two sets can support different contrasts, and must not be reported as one.** Win-half versus
+  loss-half is a different comparison from carol versus opponent; the both-sides losses cannot supply
+  the first at all. Compare like for like across sets before claiming a pattern holds.

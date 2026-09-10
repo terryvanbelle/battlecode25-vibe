@@ -23454,3 +23454,115 @@ identified, and I am not claiming it is.
   but they **extend the ladder's range** and are the rungs that will register a **large regression
   first** — the censoring point. A rung that only fires when something goes badly wrong is still an
   instrument.
+
+## SET A — the side-confound test. PREDICTION REGISTERED BEFORE LOOKING.
+
+Set B (the 18 matched pairs) varies **only the side**. By construction it can identify mechanisms
+**downstream of the side** and can **never** identify the side's own effect — which is exactly why my
+finding stopped at *proximate*. **Set A breaks that confound**: the 6 maps carol loses from **both**
+sides have no side difference left to mediate anything. Combined with the controlled-winner insight
+(the opponent's trajectory inside the same replay is a matched control on map, terrain and round
+count), this is one measurement on data already held.
+
+> **Does the acquisition gap appear in the 6 both-sides losses, where there is no side difference?**
+
+| outcome | conclusion |
+|---|---|
+| **PRESENT** | acquisition is **not** side-mediated; the mechanism generalises beyond the split maps, and the 2.3 : 1 pricing applies to the whole matchup rather than to 18 of 25 maps |
+| **ABSENT** | the gap **is** side-mediated; the root is the side asymmetry itself, and what I priced is a symptom of something upstream that Set B is structurally unable to see — a mechanism that would evaporate on contact |
+
+### My prediction, on the record: **PRESENT**
+
+Two reasons, and one reason to doubt it:
+1. The archetype's edge — a splasher that out-ranges towers and contests ruins — has **no
+   side-specific component** in its code. Nothing in `carol_siege` reads the side.
+2. The pooled measurement over all 30 losses (4.7 peak vs the opponent's 7.5) **already contains
+   Set A's 12 games**, so a gap that vanished on Set A would have to be offset by a larger one on
+   Set B.
+
+**The reason to doubt:** *both-sides losses are selected for being carol's worst maps.* If the
+acquisition gap is largest exactly where carol loses hardest, PRESENT is partly guaranteed by
+selection and would overstate how general the mechanism is. **So I will also report the gap's
+magnitude against Set B's loss halves, not just its presence** — selection predicts a *larger* gap on
+Set A, whereas generality predicts a *similar* one. That distinction is registered too, because
+"present" alone would not discriminate them.
+
+## SET A RESULT — PRESENT, as predicted. But the magnitude check answered a THIRD way, and that is the finding.
+
+### 1. The registered question: PRESENT
+
+| carol peak MINUS opponent peak, measured within each replay | n | gap | sign test |
+|---|---|---|---|
+| **SET A — both-sides losses** | 12 | **−2.17** | opponent higher on **9 of 10** decisive maps, **p = 0.0107** |
+| SET B — loss halves | 18 | −3.33 | 15 of 17, p = 0.0012 |
+
+**The acquisition gap appears where there is no side difference to mediate it.** So acquisition is
+**not side-mediated**, the mechanism generalises beyond the split maps, and **the branch where it
+"would evaporate on contact" is closed.**
+
+### 2. The magnitude check I registered fired neither way — and that is the real result
+
+I registered: *selection predicts a **larger** gap on Set A (its worst maps); generality predicts a
+**similar** one.* Observed: **smaller — −2.17 against −3.33, ratio 0.65.** Neither branch. The reason
+is that on Set A **a different mechanism dominates**:
+
+| | carol peak | opp peak | **carol retention** | opp retention |
+|---|---|---|---|---|
+| **SET A** (loses both sides) | **5.33** | 7.50 | **53.9%** | 97.6% |
+| **SET B** (loses one side) | 4.22 | 7.56 | 74.1% | 93.5% |
+
+> On the maps carol loses **regardless of side**, her acquisition is **+1.11 BETTER** than on the
+> split maps, and her retention is **−20.2 points WORSE.**
+
+| counterfactual | SET A | SET B |
+|---|---|---|
+| fix acquisition only | +1.01 | **+2.02** |
+| fix retention only | **+2.42** | +0.89 |
+| **ratio** | **RETENTION 2.4 : 1** | **ACQUISITION 2.3 : 1** |
+
+> **Near mirror images. These are not two competing explanations of one phenomenon — they are the
+> mechanisms of two different regimes.** Where carol loses on one side only, she failed to
+> **acquire**. Where she loses from both sides, she acquires adequately and then **loses what she
+> built**.
+
+### 3. Why this reverses the priority
+
+**Set A IS the margin.** 6 both-sides losses against 1 swept map is the whole −10; the 18 splits
+contribute exactly zero. **So the mechanism that decides the margin is RETENTION, and the 2.3 : 1
+acquisition pricing I reported an hour ago applies to the maps that do not move it.**
+
+Had I built against acquisition on the strength of Set B alone — which was the entire matched-pair
+result — I would have aimed at the regime with no margin in it. **That is precisely the "evaporate on
+contact" failure, arriving through the door I was not watching.**
+
+### 4. Endogeneity tested, and the finding survives
+
+Retention losses are late-weighted overall, so I tested whether Set A's deficit is just the losing
+process:
+
+| | loss events | median timing | in final 10% | before 50% |
+|---|---|---|---|---|
+| **SET A** | 40 | 71% | **15%** | **20%** |
+| SET B | 32 | 75% | 25% | 12% |
+
+**Set A's losses are LESS end-loaded than Set B's**, not more. And carol's Set A structure count
+rises 4.08 → 5.25 through r800, peaks at median round **250**, then declines to a final **2.75** at a
+median end of round **1,095**. That is sustained attrition across hundreds of rounds, not a death
+rattle. **The retention deficit is real.**
+
+### 5. Limitation declared — the two sets do not support the same contrast
+
+Set B compares **carol's win half against carol's loss half** on one map. Set A **cannot**: carol
+loses both sides, so there is no win control by construction, and its contrast is
+**carol against the opponent within the same replay**. Those are different contrasts and I will not
+report them as if they were one. Compared **like for like** on the carol-vs-opponent contrast, the
+pattern holds:
+
+| carol-vs-opponent, same contrast both sets | SET A | SET B |
+|---|---|---|
+| acquisition gap | −2.17 | −3.33 |
+| **retention gap** | **−43.7 pts** | −19.4 pts |
+
+**Root cause still not claimed.** I now have two proximate mechanisms localised to two regimes. Why
+carol cannot hold structures on the maps that carry her margin is not established, and I am not
+asserting it.
