@@ -20807,3 +20807,75 @@ different story from a uniform plateau.
 **Run id `20260910-052944`.** Detached, so it survives this session ending; only collation is at risk.
 Recovery: `../../tools/gauntlet-collect.sh 20260910-052944` then `tools/gate-read.sh gauntlet/20260910-052944`.
 **Do not re-run it** — 150 games of shared VM time, and the decision rule above is already fixed.
+
+# PLATEAU CONFIRMED — the registered middle branch, and the number is worse than it looks positive
+
+**Correction to the resume note first:** the census finished and I **collated and read it before the
+rate limit killed me** — it was not left at 135/150. Run `20260910-052944`, `alice_iter43` vs
+`alice_iter30`, **75 maps, 150 games, 0 exceptions**:
+
+| | maps | SW | SL | split | record | net swept |
+|---|---|---|---|---|---|---|
+| `alice_iter43` | 75 | 23 | 13 | 39 | 85–65 | **+10** |
+
+Identity check passes (+10 = +10). **Registered branches: `<= −12` regression / `−11..+11` PLATEAU
+CONFIRMED / `>= +12` real gain. +10 is the middle branch — and it sits at the very top edge of it,
+two points below the threshold, which I am saying rather than rounding away.**
+
+### The precise framing, and it is the finding
+
+| | value |
+|---|---|
+| my census **accept bar for ONE iteration** | **+12** (2.27 sd on my measured floor of 5.29) |
+| **thirteen accepted iterations**, 30 → 43 | **+10** (1.89 sd) |
+
+> **Thirteen iterations of accumulated work measure LESS than the bar I require of a single accept.**
+> That is not "no gain" — +10 at 1.89 sd is probably real, and I will not overstate it as zero. It is
+> that the *entire span* since iteration 30 is worth under one iteration's worth of evidence.
+
+**And the registered secondary comes back null**, so the total is not hiding two moving halves:
+Spearman rho vs map size **−0.112, p = 0.322 — no trend** (small maps 61.4%, large 52.5%, descriptive
+only). **The plateau is uniform.**
+
+## What a rewrite would have to CHANGE — two requirements, measured, not a design
+
+Asked for cheaply, and this session's nine closures all bottom out in exactly two places. **These are
+requirements, not proposals**, and each carries the measurement that makes it a requirement.
+
+### R1 — a unit must be able to act on information beyond its own r²=20 vision
+
+Every coordination failure this session traced to **disjoint input sets**, not to bad policy:
+
+- mean **open ruins in vision = 1.00** over 15,229 ruin-turns, choice set = 2 on **zero** turns — so
+  no shared tie-break can converge two units, because there is no tie to break;
+- completing a tower pattern needs a **4.5-soldier relay** and gets **2.41**;
+- killing a tower needs **1.6 soldiers' whole paint budgets** on one target and gets **1.01** in range.
+
+**And BC25's only cross-vision channel is measured and closed**: messaging is impossible
+tower-originated (no two ruins are mutually visible, min d² = 25 vs vision 20, all 75 maps) and
+**0.45%** soldier-originated, because *being where the work is means being where the towers are not*.
+
+> **So the requirement is NOT "add communication" — that is priced and dead.** It is that a unit must
+> either carry **persistent accumulated state** (a map model built across its lifetime, so its
+> effective information exceeds its instantaneous vision) or units must be **positioned so their
+> vision overlaps by construction**. This bot decides everything from what one unit sees this turn,
+> and that is the property nine closures keep hitting.
+
+### R2 — the bot must not hold units alive while idle
+
+- soldiers have their action **unused on 87.5%** of turns — idle for lack of a *target*, not a turn;
+- they live **87.8 turns** and convert **50.6%** of a 200-paint tank to ground;
+- because upkeep is charged **per turn**, the loss is `lifetime × rate` — spending the tank in 40
+  turns instead of 88 is worth **+10.5 paint actions per soldier**, where every mechanism aimed at
+  the *rate* priced at **7–17%**.
+
+> **The requirement is that unit lifetime be coupled to available work.** A long-lived idle unit is a
+> pure loss in this engine, and alice's are long-lived and idle. Either spawn against measured
+> demand, or guarantee a unit always has something to do.
+
+## What I am NOT doing
+
+**Not acting on the plateau.** The from-scratch question is not mine to decide, it bears on a budget
+that has already been cut from three lineages to two, and my job was the number and its
+decomposition. Both are now on record. **HEAD untouched**: `src/alice` remains iteration 43,
+confirmed against iteration 39 at +2 and against iteration 30 at +10, both over 150 games.
