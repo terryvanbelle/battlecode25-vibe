@@ -21738,3 +21738,70 @@ completely different family from coverage, and unconditional in code.
 iteration: gate the soldier tower attack, doses over the gate's strictness. **Registered, not
 started** — and unlike the last two directions it is not routed through the coverage chain, so it
 does not inherit that closure.
+
+# Tournament `20260910-1300`, and the tower-attack candidate KILLED by a free check
+
+## 1. The tournament moved my way and it is NOT mine
+
+| bot | win% | vs last |
+|---|---|---|
+| alice | 59.3% | +1.0 |
+| **carol** | **56.0%** | **+2.3** |
+| bob | 34.7% | −3.3 |
+
+alice–carol went **78–72** (carol 48.0%) from **94–56** (carol 43.3%) — **+7 games my way.**
+
+**But carol's HEAD did not change** (`3610230`, the iteration-60 accept, both tournaments) **and
+alice's did** (`55c8037` -> `217f4de`, her iteration K3, a refill-reserve change). **The swing is
+alice's accept moving against her in our head-to-head, not carol improving.** The engine is
+deterministic and carol is byte-identical, so none of that +2.3 is attributable to me.
+
+Recording it that way because the *previous* tournament was the mirror image — alice was fixed and
+my +9 **was** mine, and I claimed it. The same discipline has to cut both ways.
+
+## 2. The tower-attack sink — KILLED for zero games by the check I was told to run
+
+I had just found that carol's ungated soldier tower-attack spends paint scaling **8.8x with map
+area** (490 -> 4,296 paint per 1,000 rounds, Mirage -> Gears) while painting *falls*. Before pricing
+it further: **which side of that metric is the winner on?**
+
+| map | area | carol attacks/1,000r | `bobf` attacks/1,000r | ratio |
+|---|---|---|---|---|
+| Mirage | 1,600 | 98 | **253** | **2.58x** |
+| galaxy | 2,025 | 208 | 182 | 0.88x |
+| **Gears** | **3,025** | **859** | **1,265** | **1.47x** |
+
+**`bobf` attacks MORE than carol on two of three maps — including Gears, the map carol loses worst,
+where it attacks 1.47x as often and wins.** carol is not over-attacking; carol attacks *less* than
+the bot beating it.
+
+**And the 8.8x co-scaling is mechanical, not a defect**: larger maps hold more towers, so both bots'
+attack counts rise with area. Co-scaling is the cheapest coincidence in a system with one binding
+constraint, and I have paid three games for that lesson once already.
+
+> **Killed on magnitude and direction, zero games.** The candidate is dead before a build.
+
+### This is the THIRD time I have been at the "efficient" end of a cost metric while losing
+
+| metric | carol | winner | who is "better"? |
+|---|---|---|---|
+| paint drain per unit-round | **0.21–0.82** | 1.71–1.77 | **carol** |
+| tower attacks per 1,000 rounds | **859** | 1,265 | **carol** |
+| soldiers fielded | **1–11** | 12–39 | carol (and measured optimal) |
+
+Every one of these looked like waste and none of them was. **A cost metric on which I lead the
+field is not a defect; it is usually the shape of not doing the thing that wins.**
+
+## 3. Where that leaves the board — the honest box
+
+Metrics where carol is genuinely **worse** than the opponent, with status:
+
+| metric | carol vs opponent | status |
+|---|---|---|
+| map coverage | 49% vs 90% | **axis CLOSED on magnitude** — oracle prices at exactly the +26 bar |
+| paint income | 55–75 vs 75–195 | routes through claims, which route through coverage |
+| unpaint / denial | 0 vs 828–2,024 | **tested, −3.83 sd** (iteration 71) |
+
+**The deficit is 100% large-map (small +10, mid 0, large −30), and all three routes into it are
+closed, priced at the bar, or already refuted.** That is a genuinely tight box, and I would rather
+state it than manufacture a fourth candidate from the same material.
