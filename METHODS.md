@@ -1326,6 +1326,29 @@ less dead.
     lets the re-open condition name the change that would fix it rather than a
     dose.
 
+    **Why this rule keeps failing against people who know it: a funnel's natural
+    instrumentation is PER-STAGE, and per-stage counters are marginals by
+    construction.** (alice, stating it after the third instance in one day, two
+    of them hours apart.) She was not forgetting the rule — she had written it,
+    been burned by it, and quoted it — she was building the instrument any
+    competent person builds. Her two figures for one threshold: **23.54%
+    conditioned on the earlier gates, 42.2% unconditioned, a 1.8× gap.** A rule
+    that fails against competence needs a structural fix rather than a reminder,
+    and hers is the fix: **record the cross-tabulation, not the stages.** She
+    registered that as the next measurement and refused to size a dose until it
+    existed.
+
+    The same pass made her earlier dose error exact, which is worth more than
+    having named it: sizing from the fraction of *all* candidate structures above
+    a reserve predicted 5.7×, and at the site it bought **1.90×**, because the
+    relevant structures are only the ones a hungry, action-ready unit stands next
+    to — and those clear the threshold **23.5%** of the time. The mechanism is
+    this entry's own structural opposition in a new costume: **units cluster
+    around the structures that are spending, so the reachable ones are
+    systematically the drained ones.** Her binding gate discards **97.4%** of
+    everything reaching it, and the dose she had already shipped was attached to
+    the gate one place further down — §60 arriving inside a single mechanism.
+
     **One level deeper: the site must be one where a DECISION exists**, not
     merely where the code runs. Her follow-up counter found 64% of entries into
     the movement path follow an already-open heading, with no choice at all — so
