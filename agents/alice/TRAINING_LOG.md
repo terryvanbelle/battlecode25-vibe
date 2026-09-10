@@ -24557,3 +24557,195 @@ want = SOLDIER; if (paint >= SPLASHER.cost && rnd(4) == 0) want = SPLASHER;   //
 - **volume unchanged** — no skip, no extra gate. **Exactly one selection is altered.**
 - **the chip-gated splasher override is disabled under the flag**, so composition is set by one rule
   rather than two interacting ones.
+
+# M1 DOES NOT TEST MY FINDING — re-aiming, and registering why (option 1)
+
+**My ranking says shift composition toward the TOP: splasher 0.1291, soldier 0.0603, mopper 0.**
+**M1 converts the zero into the middle.** Its realised effect was **4.1x soldiers with splashers up
+only 12%** — a test of *"replacing a worthless unit with a mediocre one pays"*, which is a **much
+weaker claim than my measurement supports**, and a null on it would say nothing about the ranking.
+
+**And the arm's own numbers already fit that reading:** the generator grew **1.5–1.9x** while output
+per round **fell to 0.87x**. **Expanding a 0.0603 type while a 0.1291 type stays flat is exactly what
+that should look like.** I wrote the sentence and did not follow it through.
+
+> **Taking option 1: re-aim at the finding. M1 is retired unrun** — it was a valid experiment aimed
+> at the wrong claim, and I am not spending 50 games to learn about the middle of my own ranking.
+
+## Iteration M2 — shift toward the TOP-ranked type
+
+**One change, and it is additive** (the baseline-yield lesson: nothing that is already producing gets
+removed):
+
+```java
+// after the existing mopper/soldier selection, before the existing chip override:
+if (rc.getPaint() >= UnitType.SPLASHER.paintCost) want = UnitType.SPLASHER;
+```
+
+- **Gated on the tower's OWN PAINT**, never chips — a chip threshold opens when the paint is gone.
+- **The chip-gated override is KEPT.** It produces 38.2% of spawns in the control on this population;
+  `tools/baseline-yield.py` measured that before I touched anything, which is the control I built
+  after deleting it by mistake.
+- **Moppers are left alone.** Removing them too would test two things at once, and the ranking's
+  strongest claim is about the *top*, not the bottom.
+- **No volume mechanism** — so under the amended clause, any volume movement is a consequence and
+  does not void.
+
+> **Registered checks:** baseline-yield on the test population first; then **splasher COUNT up ≥50%**
+> (a count, not a share — the denominator moves, and that error has now cost me twice today);
+> identity exact on `m1ctl`'s reference numbers; screen only after both.
+>
+> **And the claim a pass licenses, bounded in advance:** *shifting composition toward the highest
+> production-efficiency type won* — **not** that production efficiency is the route to strength
+> generally, which K3 and K7 already refuted.
+
+# ============ CENSUS RESULT: HEAD is NOT weaker than alice_iter39 — REFUTED, both arms ============
+
+Run `20260910-163921`, `BOT=alice_iter39`, `OPPONENTS="alice alice_iter43"`, 75 maps, **300 games, 0
+exceptions.** Read against the bars exactly as registered above (`net = shipped bot's wins − 75`;
+CONFIRMED ≤ −12, REFUTED ≥ 0).
+
+| shipped bot | wins / 150 | win rate | net swept | verdict |
+|---|---|---|---|---|
+| **alice** (HEAD = iter43 + K3) | 82 | 54.7% | **+7** | **REFUTED** |
+| **alice_iter43** (pre-K3) | 77 | 51.3% | **+2** | **REFUTED** |
+
+**Neither confirms. Both clear the REFUTED bar outright** — this is not the inconclusive band.
+
+Registered consequence, applied without amendment:
+
+> *"If neither confirms → the 18/50 was multiplicity noise exactly as I first flagged, the rung keeps
+> its trajectory, and I record that the promotion was correct procedure with a null result."*
+
+So: **the 18/50 = 36% cell was multiplicity noise.** The true rate is 54.7% at n=150 — the original
+screen sat 2.0 sd low on a draw of 12 rungs where P(≥1 at |z|≥2) ≈ 43%. The rung keeps its
+trajectory. **K3's revert clause does NOT fire**, and K3's UNCONFIRMED entry keeps its census failure
+but gains no second one; HEAD-with-K3 is +7 against iter43's +2, a +5 gap that is itself inside noise
+and licenses nothing.
+
+**The procedure was right and the result is null.** That is the entry. Promoting an alarming cell to
+a census was correct even though the census found nothing — §41's rule ("a trigger for a census,
+never a finding") is vindicated in the direction that is easy to under-record.
+
+## A sign convention nearly inverted this verdict — and it is the same defect as the denominator
+
+The gauntlet's `results.csv` is written from `bot=alice_iter39`'s perspective (`bot_result` ∈
+{win, loss}); the registration denominates `net` in the **shipped bot's** wins. Recounting straight
+off the csv gives iter39's side — 68 and 73 wins, net **−7 and −2** — which sits in the inconclusive
+band and reads as *weak evidence of a regression*. The registered numbers are the complements, 82 and
+77, net **+7 and +2**: **REFUTED**. Same 300 games, opposite reading, from one unstated numerator.
+
+> **A net-swept figure is meaningless until you name whose wins are in the numerator.** This is the
+> same defect I was handed today one level down — *a ranking's denominator names the budget it
+> optimises* — and it is the third distinct member of the family this session (share-vs-count twice,
+> now numerator-side). The general rule covering all of them:
+>
+> **Every ratio carries two names, and neither is recoverable from the number. Write both at the
+> registration site, not at the reading site.**
+
+The registration above says `net = wins − 75` and does **not** say whose wins. It was recoverable only
+because the prose two paragraphs up quotes "18/50" as the *shipped bot's* rate. That is luck, not
+design. Registrations from here name the numerator explicitly.
+
+# ============ M2: THE BINDING BUDGET — measured before the screen, and M2 is REJECTED ============
+
+**Handed to me as a mechanism I had not considered:** my production-efficiency ranking is
+denominated in **spawn paint** — tiles produced per unit of paint spent *building* the unit. That is
+the correct denominator for a *build* decision under a *build* budget. But total output is bounded by
+**action paint**: a unit, once built, paints by spending paint *again*, and the tiles come out of that
+second budget. So the ranking could be entirely right about which unit to build and still be unable
+to raise total output, because *the quantity it optimises is not the quantity that binds.* That is
+exactly the shape of M2's result — splasher count **1.69x**, output per round **1.01x**.
+
+Registered before reading: *if units are paint-starved and the arm made that worse*, the finding
+closes **true and unactionable**, re-open naming **supply**. *If they are idle for want of targets*,
+the mix is not the constraint and the answer is somewhere else entirely.
+
+## The probe: classify every action-capable unit-turn at the site, by cause
+
+`alice_m3` / `alice_m3ctl` = `alice_m2` / `alice_m2ctl` plus counters only, tagging each unit-turn:
+
+| code | meaning |
+|---|---|
+| 1 | **acted** |
+| 2 | idle, `paint < ENGINE attack cost` — hard starvation (SOLDIER 5, SPLASHER 50, MOPPER 0) [E] |
+| 3 | idle, affordable but below **my own guard** (15 / 60) — my choice, not the engine's |
+| 5 | off-duty, walking to a tower to refill — *also* caused by paint, just earlier |
+| 4 | idle, could afford it, **no valid target in range** |
+| 0 | not action-ready (cooldown) — excluded from the denominator |
+
+Splitting my guard from the engine cost matters: **both my guards sit above the engine's price**
+(15 > 5, 60 > 50), so a naive "paint-starved" count would have charged my own reserve to the engine.
+
+**Identity verified before use, both arms, exact round counts against their parents:**
+`alice_m3` = **1525 / 1887 / 2000** (= `alice_m2`), `alice_m3ctl` = **304 / 2000 / 1560** (=
+`alice_m2ctl`) on DefaultSmall / Gears / mit vs `alice_iter28`. Counters are behaviour-neutral.
+
+## The answer is BOTH BRANCHES, in different phases — and that decides M2 against it
+
+**Rounds 1–300, absolute counts, the phase where the race is decided:**
+
+| | ARM | CTL | ratio |
+|---|---|---|---|
+| action-capable unit-turns | 6018 | 8128 | 0.74x |
+| **ACTED (paint actions)** | **1670** | **2342** | **0.71x** |
+| **idle: paint < engine cost** | **948** | **240** | **3.95x** |
+| idle: below my own guard | 216 | 362 | 0.60x |
+| off-duty: refill walk | 54 | 227 | 0.24x |
+| idle: NO TARGET | 3130 | 4957 | 0.63x |
+
+In the first 100 rounds it is starker still: acted **0.68x**, engine-starvation **4.40x** (295 vs 67),
+and the share of action-capable turns lost to *want of paint* goes **4.6% → 24.5%**.
+
+> **M2 cuts early output by 29% and quadruples hard paint starvation while doing it.** A splasher
+> costs 300 paint to build against a soldier's 200 and 50 per attack against a soldier's 5 — it is
+> the most expensive unit to own on *both* budgets, and buying more of them in the opening spends the
+> action budget before the army exists. **REJECTED, on a within-game mechanism measurement, without
+> spending the 50-game screen.** The registered "true and unactionable, re-open naming supply" branch
+> fires — and it fires *against* the arm, not neutrally.
+
+**Rounds 301–2000 — and this is the larger finding:**
+
+| | ARM | CTL | ratio |
+|---|---|---|---|
+| action-capable unit-turns | 108150 | 56014 | 1.93x |
+| ACTED | 5157 | 2869 | 1.80x |
+| **idle: NO TARGET** | **92433** | **45883** | **2.01x** |
+
+1.93x the turns buys 1.80x the actions — *less* output per turn, not more. And the cause is not paint.
+
+## The number that dwarfs the mix question
+
+> **After round 300 my units act on ~4% of their action-capable turns, and 80–91% of those turns are
+> idle because there is no valid target in range — in BOTH arms.** Pooled over the whole game:
+> **83.7% arm / 79.3% ctl idle for want of a TARGET, against 10.3% / 12.6% for want of PAINT.**
+
+**~96% of my army's action capacity is unused, and not for want of paint.** Every mix question — M1,
+M2, the mopper-share exchange rate, the whole production-efficiency ranking — is arguing over how to
+spend a budget that is not the one running out. A soldier's opportunistic branch looks for an EMPTY
+passable tile within its own action radius; "no target" therefore means **the unit is not standing
+next to unpainted ground**, which is a *placement and travel* problem, not a supply problem and not a
+mix problem. That is the "somewhere else entirely" the disjunction named, and it is now measured.
+
+**Closure recorded on the ranking itself:** *production efficiency per spawn paint is a real quantity
+and it ranks the units correctly, and it cannot raise total output at any mix.* Filed as
+`refuted-on-value` — not `measured-and-small`, because the effect is large and points the wrong way.
+
+> **A ranking's denominator names the budget it optimises. Before acting on one, check that the
+> quantity you want to move is bounded by that same budget.** Mine was not, twice over: the build
+> budget binds only in the opening, and after r300 *neither* budget binds — targets do.
+
+## Methods: I nearly discarded this data as fabricated, and the check was aimed at the wrong producer
+
+The dump carrying these games (`twPaint`, `xfer`, `starved`, `acts[p…]`) matched no bot source in the
+repo — those strings appear in `src/` only inside *comments* — so I called the parse void and said so.
+That was wrong. The lines are **per-round aggregates computed by `tools/replaydump/ReplayDump.java`
+from the replay stream** (`ind-dump.sh`'s `DUMP_EVERY` path, whose own comment says
+*"needed for twPaint/cov comparisons, which live on the summary line"*). I searched for the emitter
+among the **bots** when the producer was the **reading tool**. Confirmed genuine independently: the
+round counts recovered from that dump (1525/1887/2000 and 304/2000/1560) are exactly the counts the
+fresh identity runs reproduced.
+
+> **Provenance has two candidate producers — the thing measured and the thing measuring — and a
+> "nothing emits this" result only rules out the one you searched.** Retracted the void in the same
+> breath as raising it, which is the only reason it cost minutes rather than a rebuilt instrument.

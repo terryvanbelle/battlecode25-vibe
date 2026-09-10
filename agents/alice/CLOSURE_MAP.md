@@ -139,3 +139,33 @@ strongest thing I hold now.**
 **13 of 16 mechanism axes transfer. 3 re-open** (mopper dose, D2, D3). **4 survey premises lose their
 evidence, 1 of which (B) survives on independent absolute grounds.** **1 entry is promoted.** The
 prize is untouched and better justified.
+
+---
+
+## 17. Production efficiency per spawn paint — `refuted-on-value` (2026-09-10)
+
+**The axis:** rank unit types by tiles painted ÷ paint spent spawning that type, then build more of
+the top-ranked type. Splashers rank first; M2 built one whenever the tower could afford it.
+
+**Closing number, absolute (no rival in the sentence):** splasher count **1.69x**, output per round
+**1.01x**. Then, at the action site: in **r1–300** the arm does **0.71x** the paint actions of its
+control while hard paint-starvation runs **3.95x** higher; after r300 **80–91%** of action-capable
+unit-turns are idle **for want of a target**, in both arms, with units acting on **~4%** of turns.
+
+**Why it closes, and it is not "small":** the ranking is denominated in **spawn paint** — a *build*
+budget. Total output is bounded by **action paint**. The ranking is *correct about which unit to
+build* and *cannot raise total output*, because the quantity it optimises is not the quantity that
+binds. Worse, splashers are the priciest unit on *both* budgets (300/50 vs a soldier's 200/5), so
+buying them in the opening spends the action budget before the army exists.
+
+**Re-open condition:** *only* if action paint becomes the binding constraint outside the opening —
+i.e. the "idle for want of PAINT" share after r300 exceeds the "idle for want of TARGET" share. It is
+currently 10.3% against 83.7%. **Naming supply as the re-open, not mix.**
+
+**What this closure hands forward — larger than the axis it closes:** ~96% of my army's action
+capacity is unused after r300, and **not for want of paint**. "No target" means the unit is not
+standing next to unpainted ground: a **placement and travel** problem. Every mix question is arguing
+over a budget that is not the one running out.
+
+> **A ranking's denominator names the budget it optimises. Before acting on one, check that the
+> quantity you want to move is bounded by that same budget.**
