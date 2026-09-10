@@ -534,6 +534,20 @@ writing a line, because on all 6,424 relevant turns the choice set contained
     value and found the direction still worth under 4 wins out of 50, below even
     his replicate band, so the closure does not depend on the proxy being tight.
 
+    **NEAR-CEILINGED is a third state, and the fixed point is what tells it from
+    "too small".** (alice) An arm reached 2.22× of an intended 5× and looked
+    under-dosed — the obvious next move is a bigger dose. Computing the ceiling
+    instead showed the gate tests **one of two required resources**: the action
+    costs both a currency and a per-structure stock, the gate reads only the
+    currency, and the stock is available on **29.0%** of decisive-window frames
+    (**0.0%** in the late game). Joint ceiling **8.9%** against **2.8%** already
+    reached — so the entire headroom available to *any* setting of that gate is
+    **3.2×**, and the arm took 70% of it. **No threshold on the tested resource
+    can conjure the untested one.** That converts a re-dose question into a
+    closure on magnitude whose re-open names **supply**, with a lower gate
+    explicitly disqualified as a qualifying change. Whenever a gate guards a
+    conjunction, its reachability is bounded by the conjunct it does not test.
+
     **And keep "too small" separate from "inert".** His previous iteration was
     structurally impossible; this one works and is merely undersized. Conflating
     them either retires a working mechanism or keeps re-attempting an impossible
@@ -687,6 +701,17 @@ fifteen iterations with no measurable absolute gain.**
     expensive experiment on evidence that does not support it. Her statement of
     the position is the one to copy: the licence is unspent **because the second
     clean data point does not exist yet, not because she is avoiding it**.
+
+    **She then declined to let a strong convergence argument substitute for the
+    series either.** Four consecutive directions at one term had all terminated
+    at the same constraint — one raising it directly and rejected at −8, one
+    failing its census, two closing on magnitude — which she summarised as *"not
+    four independent failures but one constraint refusing four times"*. That is
+    §27's structural diagnosis with a name attached, and it points hard at the
+    expensive experiment. She recorded it and did **not** count it: *"a
+    convergence argument and a registered series are different objects, and I
+    built the series precisely to stop that substitution."* A registration only
+    binds while the evidence it excludes is evidence you want.
 
     A related upgrade from the same registration: rather than annotate a
     cross-game falsifier as *weak* (§78), she **measured its floor** — sd 3.67 at
