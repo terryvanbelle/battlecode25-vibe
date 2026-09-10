@@ -22066,3 +22066,64 @@ at a barrier (reaching new ground) that measurement says was never the barrier. 
 constraint is ruin density against vision area, and neither term is something the bot controls.**
 That is a stronger and more useful statement than "there is an information ceiling", and it is the
 one the evidence supports.
+
+# LITTLE'S LAW ON THE WORKING SET — it corrects my own headline, and the ledger closes the lead
+
+## The term I ignored
+
+I concluded two entries ago that *"discovery is the rate limiter"* and that *"the binding constraint
+is ruin density against vision area"*. The evidence was that visible bare ruins sit **flat at 1.56**
+while the on-map stock halves. **That inference does not hold.** For any queue, `L = λW`: a flat
+working set is consistent with a low arrival rate **or** a long service time, and I attributed it
+entirely to arrivals without measuring service. With L = 1.56 and λ ≈ 0.021 towers/round (built 2.75
+→ 6.88 over r100–300), **W ≈ 74 rounds** — a quantity I had never looked at.
+
+## Measured, two independent ways, and they agree
+
+`tools/j1-ruincrew.py`, on frames already held. **Zero games.**
+
+| | mean crew on a visible bare ruin | implied completion |
+|---|---|---|
+| all rounds | **1.61** | 46–78 rounds |
+| **decisive window (r≤300)** | **1.47** | **62–86 rounds** |
+
+Crew is bracketed deliberately: the pattern footprint is Chebyshev ≤2, but a soldier's action radius
+is r²≤9, so one standing 3 tiles outside can still paint pattern tiles — the narrow count
+under-counts and the Chebyshev-≤5 count over-counts, so the truth is inside. **Little's law's 74
+rounds sits inside both brackets.** Three routes, one number.
+
+> And directly measured, needing no model: **25.4% of visible bare ruins have NOBODY inside their
+> pattern footprint, and 39.3% have exactly one soldier.**
+
+**So the working set of 1.6 is service time, not a discovery famine. My headline over-reached and I
+am correcting it.**
+
+## And then the ledger closed the lead — fifth time this session
+
+Before proposing "concentrate soldiers on ruins", I grepped, as the rule requires. Two neighbours:
+
+- **Iteration 56's concentration kill (1.01 soldiers) does NOT cover this** — its subject was *enemy
+  towers*, converting 5-paint hits into a kill. Different site, action and payoff. Citing it here
+  would be the scope creep I caught in C2 this morning.
+- **The commitment / target-stickiness closure DOES cover it, and exactly.** Its measured chain:
+  > *"completion is a ~4.5-soldier relay -> the relay drops because soldiers run out of **paint**,
+  > not because they are mis-targeted, mis-informed, or short of ruins."*
+
+**My new numbers corroborate that closure rather than re-opening it.** 1.5 soldiers concurrently over
+~74 rounds is **~4.5 distinct soldiers** — the relay already described, arrived at from a completely
+different direction (queueing theory on a working set, versus a paint ledger). Two measurements made
+far apart in this log, of the same phenomenon, agreeing.
+
+> **The binding constraint on tower throughput is PAINT ENDURANCE during pattern completion** — the
+> relay drops because each soldier's tank runs out, and adding crew does not add tank. That is the
+> 7–17% family, closed on magnitude (iterations 49–50: real in size, largely uncollectable).
+
+## Standing
+
+**Not re-opened.** The lead was real, the measurement was worth making — it corrected a headline of
+mine that was already in circulation — and it terminated in a closure that predicted its own numbers.
+`src/alice` unchanged since iteration 43.
+
+**The corrected statement of the plateau:** not "ruin density against vision area", which I withdraw,
+but **tower throughput limited by paint endurance across a ~4.5-soldier completion relay** — a
+constraint alice has already measured, already attacked twice, and already priced at 7–17%.
