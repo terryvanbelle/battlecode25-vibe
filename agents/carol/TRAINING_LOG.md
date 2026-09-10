@@ -22256,3 +22256,63 @@ are closed (two at oracle ceilings at or below the bar), and **the one architect
 measurements pointed at is dominated by the null action.** I have a standing authorisation I am not
 spending, an instrument freshly repaired that can register a regression, and no candidate I can
 honestly price above the bar.
+
+# EXISTENCE PROOF — my architectural claim was wrong, and the free upper bound says so
+
+I claimed the tether was **architectural**: `transferPaint` is r²<=2 for every unit type [E], so a
+unit must touch a tower, so D3 must recall it. **But that constraint is identical for every
+lineage**, and I hold the data to test whether a rival escapes it.
+
+**Distance from each mobile unit to its OWN nearest tower:**
+
+| game | carol median / p90 | alice median / **p90** |
+|---|---|---|
+| galaxy | 4.0 / **6.3** | 5.0 / **17.0** |
+| Gears | 5.1 / 13.0 | 7.2 / **16.2** |
+
+> **carol's units essentially never leave a 6-tile radius on galaxy; alice's routinely operate at
+> 16–17 — under exactly the r²<=2 constraint I said forces the leash.**
+>
+> **r²<=2 is NOT the cause. The tether is a property of my logistics design, not of the game.**
+> My "no candidate above the bar" conclusion rested on that architectural claim, and this refutes it.
+
+**And how the rival does it is visible without reading anything of hers** (galaxy, r1160, same game):
+
+| | standing units | died | **starved** | splashers built /1,000r |
+|---|---|---|---|---|
+| carol | 22 | 88 | 75 | **36** (ceiling 125 — 29%) |
+| alice | **53** | 248 | **200** | **106** |
+
+**She does not solve the tether — she PAYS it and replaces the units**, running 2.4x the army at
+2.7x the starvation. That is a different *design*, not a different mechanism.
+
+# ENUMERATING DESIGNS — I enumerated mechanisms twenty axes deep and never enumerated architectures
+
+My one rewrite premise was generated ad hoc from my strongest measurement and died on a primitive —
+exactly the failure the coverage enumeration fixed one level down, where the direction I found first
+ranked **last of six** on cost. Applying that discipline upward. **Each premise checked against the
+free upper bound first: is it already refuted by a rival's behaviour or by my own experiment?**
+
+| # | design premise | cost | status |
+|---|---|---|---|
+| 1 | **drop the dedicated refill trip**, keep opportunistic top-up | one constant (`REFILL_LOW=0`) | **REFUTED — that is the iteration-60 zero arm; D3 beat it by +26** |
+| 2 | raise allocation toward the 125/1,000r ceiling | one constant | **REFUTED — iteration 69, oracle ceiling +7 = 27% of the bar** |
+| 3 | **high-production forward attrition**: 1 and 2 TOGETHER — stop recalling units *and* produce near the ceiling to replace them | **rewrite** (logistics + allocation + posture) | **NOT REFUTED.** The existence proof shows it is reachable under my constraints, and the rival demonstrably runs it |
+| 4 | soldier-primary | rewrite | **REFUTED — iteration 59, −5.71 sd** |
+| 5 | mopper ferry logistics | rewrite | **KILLED at rung one — mopper carries 1/3 a splasher tank; dominated by the null action** |
+| 6 | comms-coordinated posture | rewrite + unbuilt primitive | no traced deficit; and symmetry inference already showed the memory prerequisite is unmet |
+
+**Premise 3 is the only survivor, and its shape is exactly why a rewrite exists as a track.** Its two
+halves are *individually refuted* — dropping the tether alone loses 26 games, raising allocation
+alone ceilings at +7 — **but the pair has never been tested, and each single-constant step being
+downhill while the joint move is not is the destructive-pair logic that motivated iteration 59.**
+Dropping the tether is only a loss *if you cannot replace the units it saves*; producing at the
+ceiling is only worth little *if the units you buy are recalled anyway*.
+
+**It is also distinct from iteration 59's premise** (soldier-primary, settled at −5.71 sd) and from
+the premise I killed an hour ago (ferry logistics, dominated). And unlike both, **a rival is
+observably running it**, which is the strongest prior a premise can have here.
+
+**Not started.** The next step is to price premise 3 — specifically whether carol's income can
+actually sustain the replacement rate the posture requires, which is the equilibrium question that
+killed two candidates today and is answerable before any code.
