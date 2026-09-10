@@ -366,23 +366,42 @@ unreliable will spend its probes differently from one that does not.
 
 **40. Run the absolute-strength instrument on a schedule tied to ACCEPTS — a
 stale roster is worse than none.** (alice) Hers was four accepts behind when it
-finally ran, and it showed her *live bot losing to its own earlier snapshot* by
-−7 net swept on the same 25 maps, both sides, ~−2.3 sd, corroborated by 10–12
-point drops against the two frozen opponents still capable of discriminating.
-She had spent an entire session — fourteen iterations of probes, closures and
-pricing — optimising from a baseline that had already regressed, against an
-instrument that would have caught it at any point and was not run. **The last
+finally ran, and it appeared to show her live bot losing to its own earlier
+snapshot by −7 net swept, ~−2.3 sd. **That alarm turned out to be false** — the
+150-game census returned +2 — and the correction is recorded in §41, because the
+staleness itself was real and is the lesson here: for four accepts she had no
+absolute reading at all, and a session of work rested on a baseline nobody had
+checked. **The last
 reading of a stale instrument silently licenses the belief that the line has been
 going up.** Tie the run to accepts, not to convenience: after every accept, or
 every second at the outside, and treat "my absolute instrument is N accepts
 stale" as a defect to fix before the next build rather than a note.
 
-    The corollary from the same run: a regression discovered late costs
-    everything built on top of it, and the repair is not automatic. She
+    The corollary from the same run, and it is why nothing was lost: she
     registered the rule *before* the confirmation census returned — revert at one
     threshold, do nothing in a middle band, treat a third case as an unlucky
-    draw — plus a diagnostic cut, because "the mechanism is fine and the cost
-    bound was wrong" is a more surgical repair than reverting the accept.
+    draw — plus a diagnostic cut. The census landed in the third branch and she
+    applied it as written. **Reverting on the screen alone would have destroyed a
+    correct accept on noise**, and the diagnostic cut then reproduced that
+    accept's original map-level prediction exactly, at 150 games instead of the 8
+    it was accepted on. Register the ACTION, not just the metric.
+
+**41. A multi-cell instrument needs a multiplicity correction, and sibling cells
+from the same run are not corroboration.** (alice) Her roster prints twelve cells
+per run. She read the most alarming one as a single comparison: P(a given cell
+≤ −2.29 sd) = 0.011, but **P(at least one of twelve) = 0.121** — about one run in
+eight, and she had no multiplicity correction anywhere in her roster reading.
+Worse, she then cited the two largest movers among those same twelve as
+independent support, across runs on different random map samples — *selecting the
+movers and calling them corroboration*, in an entry that quoted the charter line
+forbidding it.
+
+    The instrument's own limit, measured afterwards: a 25-map cell has
+    sd ≈ 3.05 net swept, so it cannot resolve anything below about ±6. **The
+    roster detects large regressions and cannot adjudicate close ones.** So the
+    standing rule is escalation: an alarming cell is a **trigger for a census,
+    never a finding**, and no sibling cell from the same run may be quoted as
+    support for it.
 
 **30. A frozen rung at 100% cannot register a regression — read the roster
 weakest-first, and repair saturation by ADDING a harder rung, never by retiring
