@@ -427,3 +427,22 @@ both directions, and do not let a reject you agree with quietly answer a questio
   paint (71.5% -> 78.2%) while splasher-first spending drove chips down (38.3% -> 10.3%), so joint
   affordability of the 400-chips-AND-300-paint build fell 21.1% -> 0.2%. Before pairing two
   mechanisms, check the JOINT condition they must satisfy together, not each one's own resource.
+
+- **A winner-side check is only as good as the winner.** "The bot beating me is on the other side of
+  this metric, so it is not my defect" killed three of my candidates for zero games. It was my most
+  productive instrument of the session and its authority was always conditional on the reference
+  being a good bot. When the reference turns out to lose 75-100% of its own games to an external
+  standard, every closure of that form re-opens — by the change of objective, not by preference.
+  Two of my three survived because they had an independent absolute closure underneath; record which
+  closures have one, because that is what decides whether a comparative kill survives a re-framing.
+- **A regime decomposition of a head-to-head margin is a fact about the matchup, not about you.**
+  "The deficit is 100% large-map" organised several iterations of targeting. It says where I lose to
+  one specific co-evolved rival, and says nothing about where I am absolutely weak.
+- **Self-play dose ladders are mirror optima.** They tune against an opponent carrying my own
+  weaknesses, which should overstate mechanisms exploiting my architecture's failings and understate
+  those that only matter against dissimilar opponents. That is the shape of a joint local optimum.
+  Declare it as a caveat; the remedy is cross-architecture rungs, not a re-run.
+- **Re-examining a closure can move the sign AWAY from the candidate.** Re-opening the tower-attack
+  gate cost the "for gating" argument its authority (it was rival-specific) while the "against
+  gating" arithmetic survived. A re-examination is not a licence to revive; report it when it points
+  the other way.

@@ -269,3 +269,160 @@ Every one of these has already cost me, or was caught only by an implausible mag
    mode this document exists to prevent.
 5. If a successor design is attempted, **begin from a committed survey and register the ABORT
    condition before writing a line.** That is what took a rewrite from one session to 8 probe games.
+
+---
+
+## 7. RE-EXAMINATION under the absolute-strength objective (2026-09-10)
+
+`OBJECTIVE.md` is binding: the objective is now **absolute strength**, not the head-to-head gap. The
+test applied to every entry above: **was its closing number computed relative to a co-evolving
+lineage, or absolutely?** Re-examined, not re-run. Zero games.
+
+### 7.1 The absolute baseline, from `benchmarks/HISTORY.md` (score only — the whole of my access)
+
+| run | carol vs `v3` | maps swept | maps **swept against** | carol vs `TSPAARKHS` |
+|---|---|---|---|---|
+| 20260908 | 5.3% | 1 | 68 of 75 | **0/150** |
+| 20260909 | 20.7% | 8 | 52 | **0/150** |
+| 20260910 (`3610230`) | **24.7%** | **10** | **48** | **0/150, swept on 75 of 75 maps** |
+
+Read in one direction only, as the file itself instructs: near the floor it has little room to show a
+*regression*, so it measures distance to a tournament-winning bot and nothing else.
+
+**This changes the reading of my own plateau finding.** I recorded "the loop has plateaued" on 16
+iterations with 0 accepts. That is still true and stands. But the same span shows carol going
+**5.3% → 24.7%** against `v3` — the strongest of the three lineages — and **maps where carol loses
+every single game falling 68 → 48 of 75.** What plateaued was *accepts*; the accepts that did land
+moved the absolute number a long way. The 09-10 run played `3610230`, the iteration-60 accept, and
+HEAD has not moved since, so there is **no benchmark evidence at all** about the 16 barren
+iterations — correctly, since they changed no build.
+
+**And the honest floor: 0 wins in 450 games against `TSPAARKHS`, swept on every map, every run.**
+
+### 7.2 Transfers UNCHANGED — the bulk of the map
+
+Everything measured on my own bot, against my own bar, or from the engine:
+
+- **All engine facts** (§4 item 19) and every closure resting on them.
+- **Both oracle ceilings** — coverage = +26, allocation = +7 — computed from my own coverage→margin
+  conversion against my own census bar.
+- **`MONEY_MOD`'s integer optimum** — a `min()` ceiling cannot be raised by a knob that trades its
+  two terms. Arithmetic.
+- **`CHIP_RESERVE` / the gate at equilibrium** — a fixed point on my own economy.
+- **Soldier ceiling on feasibility** — no robot-count API, no comms.
+- **The fungibility correction** — pooled paint income vs one tower paying 300 from its own stock.
+- **"A gate is worth minus the side you switch off"** and the whole area-gate re-derivation.
+- **Premise 3's arithmetic** — the 1.09× vs 2.02× relief, and the mutual-destruction table
+  (21.1% → 0.2%). Measured on my own bot against a matched control of my own.
+- **Bracketed dose ladders**: `REFILL_LOW`, `SPLASH_MIN_SCORE`, splash weights, de-clumping,
+  obstacle tracing, navigation-family.
+- **The expansion exclusions** (85% marked / 73% claimed / `pb`=0 / claim-rate 57).
+- **Symmetry inference BLOCKED** on witness accumulation (4.7–5.6 before death).
+
+### 7.3 Transfers on a NARROWER basis — the comparative half loses authority, an absolute half survives
+
+| entry | what weakens | what survives |
+|---|---|---|
+| **drain-reduction family** | "alice pays 2–8× carol's drain and wins both games", replicated by bob #26 — both references are lineages that lose ~75–100% to the external standard | **the mechanism argument, which is absolute**: lowering drain means standing *more* on my own paint, where a soldier **cannot paint at all** [engine fact] and a splasher gains nothing. Carol's 0.21–0.82 is the lowest ever measured in this project. Stays closed on the engine fact, not on the comparison |
+| **soldier count** | "carol is at the efficient end of the metric, 1–11 vs 12–39" | **iteration 59 tested soldier-primary absolutely and it lost at −5.71 sd** on a self-play census against my own bar. Stays closed on that |
+
+### 7.4 RE-OPENS — the winner-side check loses its authority
+
+> **My winner-side check killed three candidates for zero games this session. Its authority was
+> always conditional on the reference being a good bot.** Two of the three have an independent
+> absolute closure (§7.3) and stay shut. **One does not, and it re-opens.**
+
+**Soldier tower-attack gating — RE-OPENED.** Killed on this table and nothing else:
+
+| map | area | carol attacks/1,000r | `bobf` attacks/1,000r | ratio |
+|---|---|---|---|---|
+| Mirage | 1,600 | 98 | 253 | 2.58× |
+| galaxy | 2,025 | 208 | 182 | 0.88× |
+| Gears | 3,025 | 859 | **1,265** | **1.47×** |
+
+The whole inference was *"`bobf` attacks more than carol on the map carol loses worst, and wins —
+so carol is not over-attacking."* `bobf` is another co-evolved lineage; bob's own benchmark line is
+**4.7% vs `v3` and 0.0% vs `TSPAARKHS`, unchanged across all three runs.** Being ahead of it is not
+evidence of being near optimal. **No dose ladder was ever run — the candidate was registered and
+killed before a build.** It re-opens by the change of objective, not by preference.
+
+### 7.5 RE-FRAMED, not re-opened
+
+- **"The deficit is 100% large-map (small +10 / mid 0 / large −30)"** is a fact about the
+  **carol–alice matchup**, not about absolute weakness. It has organised the targeting of several
+  iterations. Under the new objective it no longer identifies where I am weak, and I have no
+  regime decomposition of the absolute instrument: `HISTORY.md` gives me *how many* maps I am swept
+  on (48 of 75 vs `v3`), never *which*. **That decomposition must be rebuilt on the roster.**
+- **"coverage 49% vs 90%"** — the 49% is mine and absolute; the **90% target is alice's** and loses
+  its authority as a target. The coverage oracle survives because it was priced against my own bar.
+- **"Two lineages, the same 38% conversion — a property of the game"** — still the strongest form of
+  cross-architecture evidence I have, but both architectures are near the same floor. It is evidence
+  about *these* designs, not necessarily about the game.
+
+### 7.6 A caveat class that is now larger — declared, not used to re-open anything
+
+**Every dose ladder in §2 was run in self-play against my own predecessor.** Under a head-to-head
+objective that was a known limitation. Under absolute strength it is a **mirror optimum**: tuned
+against an opponent with my own weaknesses. **Direction declared:** a mirror optimum should
+*overstate* mechanisms that exploit my own architecture's failings and *understate* mechanisms that
+only matter against dissimilar opponents — which is the exact shape of a joint local optimum.
+
+I am **not** re-opening on this. It is a caveat, and the remedy is already built and named by the
+objective: the frozen roster's **8 discriminating cross-architecture rungs** are the outcome
+instrument precisely because they are not a mirror.
+
+### 7.7 Pricing the re-opened set
+
+One entry re-opened, so the set is one. Priced the way everything else today was priced:
+
+**Cost, measured absolutely on my own bot** (vs `bobf`, per 1,000 rounds):
+
+| map | area | attacks | **paint spent attacking** | paint ACTIONS | attack share of action-paint |
+|---|---|---|---|---|---|
+| Mirage | 1,600 | 98 | 490 | 4,297 | **2.3%** |
+| galaxy | 2,025 | 208 | 1,040 | 3,844 | — |
+| **Gears** | **3,025** | **859** | **4,296** | 3,392 | **20%** |
+
+The attack is **completely ungated in code** — every soldier attacks any enemy tower in range, every
+turn it can, at 5 paint. Spending scales **8.8× with map area while painting falls.** On the largest
+maps carol spends **more paint attacking towers than it has paint actions**, and paint is the
+binding resource on the only axis with a ceiling at the bar.
+
+**Benefit, and why the sign is genuinely uncertain.** I priced it both ways when I found it:
+- *against gating*: ~43 tower kills on Gears each cost the opponent 1,000 chips and ~25 rounds of
+  that tower's income — crudely a **1.56:1 trade in carol's favour on the tiebreak quantity**;
+- *for gating*: the opponent **rebuilt all 43**, and runs 2.6× carol's income, so paint denied to
+  her is worth less per unit than paint spent by carol.
+
+**The "for gating" half is alice-specific and loses authority with the objective; the "against
+gating" half is arithmetic on the tiebreak quantity and survives.** So the re-examination moves the
+sign *toward* leaving the attack ungated — which is the opposite of what re-opening a candidate
+usually does, and worth saying plainly.
+
+> **Verdict: the sign is uncertain, the cost is large and absolute, and it is settleable by a
+> zero-armed dose ladder — the exact instrument for an uncertain sign.** It does not route through
+> the coverage chain, so it does not inherit that closure. It is the only priced candidate the new
+> objective produces from the existing map, and it was found by re-examination, not manufactured.
+
+### 7.8 REGISTERED — next iteration, before any game
+
+**Mechanism:** gate the soldier tower attack. **Doses:** over the gate's strictness (never attack /
+attack only when the tower is below a health threshold / attack only when carrying surplus paint),
+with a **zero arm** that is byte-identical to HEAD.
+
+| # | check | must move |
+|---|---|---|
+| **0** | manipulation: attack paint per 1,000r on a large map | must **fall** monotonically in dose; if it does not, the knob is not the knob and I stop for 3 games |
+| **A** | paint actions per 1,000r | must **rise** — otherwise the freed paint is not being spent, and the mechanism is a no-op with a cost |
+| **B** | dose screen | **≥ 31/50** to proceed |
+| **C** | **primary outcome instrument, per `OBJECTIVE.md`: the 15-rung frozen roster**, reported on the 8 discriminating rungs | a placement run, read for regression as well as gain |
+| **D** | self-play census | **≥ +26 ACCEPT / +18..+25 REPLICATE / ≤ +17 REJECT** — the bar does not change |
+
+**Falsifier, registered:** if check 0 passes and check A fails, the paint is freed and not converted,
+and the whole "attack spending is a sink" premise is refuted rather than the implementation — that
+closes the direction on value, at 3 games, exactly as premise 3's production half closed.
+
+**Pre-registered caveat:** the cost table above was measured against `bobf` on three maps. It is a
+cost measured on **my own bot** (my attacks, my paint), so it does not inherit the mirror-optimum
+caveat of §7.6 — but the three maps are a convenience sample and the 8.8× area scaling is the load-
+bearing claim, not the level on any one map.
