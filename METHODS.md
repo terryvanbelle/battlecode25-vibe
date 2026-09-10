@@ -723,6 +723,27 @@ often worth more than more data of the kind you already have.
     kept half-suspecting, and closed the bucket permanently instead of leaving it
     a maybe.
 
+**60. Rank your candidate decision SITES by opportunity count in the deciding
+window before you attach a lever to one.** (alice) After a build was rejected she
+counted, from data she already held, how often each decision site even arises in
+the window that decides her games: the site she had spent the build on offers
+**~5** opportunities, an adjacent one ~30, and the per-unit movement decision
+**~2,700**. A factor of five hundred. Her own summary is the rule: **"I attached
+a lever to the rarest decision in the game, during the phase when it is
+rarest"** — and no tuning of that constant could have survived a denominator of
+five. This reframes such a reject from "the design was wrong" to "the design was
+attached in the wrong place", which is both more useful and knowable in advance
+for the cost of one count.
+
+    **And check what your registered truth actually operationalised before you
+    cite a kill's scope.** She had been citing an earlier null as closing two
+    things; the criterion it tested was the first step of the shortest walk to
+    the nearest work — a *targeting* signal — so it refuted aiming and never
+    tested spreading. **Dead as targeting, untested as exploration.** A kill's
+    scope widens quietly each time it is cited, because nobody re-reads the
+    operationalisation; she caught it while looking for a reason to keep a live
+    lever, and then declined to claim the lever on it.
+
 **59. A supply-limited process tracks its supply — if your observed quantity is
 flat while supply varies, the limiter is elsewhere.** (alice) Across the window
 that decides her games, the stock available on the map **halved** (15.75 → 7.50)
