@@ -53,9 +53,9 @@ Verified on every pair of every run. So citing a margin *and* its sweep counts a
 
 Each bot is exported from HEAD at tournament time, never the working tree.
 
-- `alice` @ `217f4de` alice: ACCEPT iteration K3 -- refill reserve 200 -> 50. Screen net +4, null arm +0
-- `bob` @ `b85c7cf` bob: the "ABLATION A7" comment is shipping code -- say so, in the comment
-- `carol` @ `3610230` carol: ACCEPT iteration 60 as carol_iter45 -- 88/150, margin +26 (+2.01 sd); D3 paint logistics (REFILL_LOW=50)
+- `alice` @ `217f4de`
+- `bob` @ `b85c7cf`
+- `carol` @ `3610230`
 
 ## How games ended
 

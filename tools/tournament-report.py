@@ -133,19 +133,22 @@ def flags(run):
 
 
 def played_commits(run):
-    """{bot: (commit, subject)} from a run's bots.txt, or {} if absent.
+    """{bot: commit} from a run's bots.txt, or {} if absent.
 
-    Compared as a whole by duplicate_pairs(); the subject is derived from the
-    commit, so tuple equality is commit equality.
+    Hash only. Runs written before 2026-09-10 also carry the commit SUBJECT on
+    the line; it is discarded here and never rendered, because a subject names
+    the mechanism and often the constant, and this report is read by every
+    lineage. Isolation is what makes the tournament a measurement rather than
+    three bots converging on each other.
     """
     f = run / "bots.txt"
     if not f.is_file():
         return {}
     out = {}
     for line in f.read_text().splitlines():
-        parts = line.split(None, 2)
+        parts = line.split()
         if len(parts) >= 2:
-            out[parts[0]] = (parts[1], parts[2] if len(parts) > 2 else "")
+            out[parts[0]] = parts[1]
     return out
 
 
@@ -308,8 +311,7 @@ def main():
         L.append("\n## What played\n")
         L.append("Each bot is exported from HEAD at tournament time, never the working tree.\n")
         for b in bots:
-            sha, subj = commits.get(b, ("?", ""))
-            L.append(f"- `{b}` @ `{sha}` {subj}")
+            L.append(f"- `{b}` @ `{commits.get(b, '?')}`")
 
     # How games actually end. Worth printing rather than leaving each lineage to
     # derive it: one derived it by hand and reported "none by elimination" when

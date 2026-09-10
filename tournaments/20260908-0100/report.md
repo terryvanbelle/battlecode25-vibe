@@ -44,9 +44,9 @@ Verified on every pair of every run. So citing a margin *and* its sweep counts a
 
 Each bot is exported from HEAD at tournament time, never the working tree.
 
-- `alice` @ `25c3160` alice: repair the splasher dead branch (inert), and size the direction
-- `bob` @ `f67ac8b` bob: ACCEPT iteration 18 -- spend the last paint on the tower pattern
-- `carol` @ `6c55fc4` carol: ACCEPT iteration 29 -- 88% and 19 swept wins to zero on a fresh random 25-map sample
+- `alice` @ `25c3160`
+- `bob` @ `f67ac8b`
+- `carol` @ `6c55fc4`
 
 ## How games ended
 

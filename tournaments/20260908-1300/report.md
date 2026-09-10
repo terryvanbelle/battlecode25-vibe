@@ -44,9 +44,9 @@ Verified on every pair of every run. So citing a margin *and* its sweep counts a
 
 Each bot is exported from HEAD at tournament time, never the working tree.
 
-- `alice` @ `920dafd` alice: ACCEPT iteration 30 -- 58.0%, +12 net swept, fires on EVERY map
-- `bob` @ `e425f46` bob: ACCEPT iteration 20 -- spawn 2 splashers per 5 units, not 1
-- `carol` @ `432d702` carol: ACCEPT iteration 36 -- the PAINT floor; 28/50, and the mopper share falls 12.8% -> 0.19%
+- `alice` @ `920dafd`
+- `bob` @ `e425f46`
+- `carol` @ `432d702`
 
 ## How games ended
 

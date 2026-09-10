@@ -53,9 +53,9 @@ Verified on every pair of every run. So citing a margin *and* its sweep counts a
 
 Each bot is exported from HEAD at tournament time, never the working tree.
 
-- `alice` @ `55c8037` alice: ACCEPT iteration 43 -- de-degenerate the tower key; +3 on the four, 0 on the other 71
-- `bob` @ `eb894c1` bob: iteration 40 scaffolding -- SMALL_AREA, defaulted to the exact zero arm
-- `carol` @ `5be82ca` carol: ACCEPT iteration 44 -- 97/150, margin +44 (6.8 sd); DENIED RUINS
+- `alice` @ `55c8037`
+- `bob` @ `eb894c1`
+- `carol` @ `5be82ca`
 
 ## How games ended
 

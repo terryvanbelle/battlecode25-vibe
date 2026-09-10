@@ -85,8 +85,15 @@ done
 # later: HEAD moves constantly (three agents commit into this repo all day), so
 # by the time anyone reads the results, "what was alice at 01:00?" is no longer
 # answerable from the log.
+# NOTE: hash ONLY, never the subject. A commit subject routinely names the
+# mechanism and the constant it changed ("... D3 paint logistics (REFILL_LOW=50)"),
+# and bots.txt is read by every lineage as part of the sanctioned tournament
+# channel. The hash is what attribution and de-duplication need; the subject is
+# pure mechanism leak, pushed into a rival's context whether or not they go
+# looking for it. One lineage found a rival's mechanism named here, declined to
+# use it, and reported the boundary -- which is how this was caught.
 for B in $BOTS; do
-  git -C "$REPO_ROOT" log -1 --format="$B %h %s" -- "agents/$B/src/$B" 2>/dev/null
+  git -C "$REPO_ROOT" log -1 --format="$B %h" -- "agents/$B/src/$B" 2>/dev/null
 done > "$OUT/bots.txt" || true
 
 # pairs

@@ -1,3 +1,3 @@
-alice 920dafd alice: ACCEPT iteration 30 -- 58.0%, +12 net swept, fires on EVERY map
-bob e425f46 bob: ACCEPT iteration 20 -- spawn 2 splashers per 5 units, not 1
-carol 5be82ca carol: ACCEPT iteration 44 -- 97/150, margin +44 (6.8 sd); DENIED RUINS
+alice 920dafd
+bob e425f46
+carol 5be82ca

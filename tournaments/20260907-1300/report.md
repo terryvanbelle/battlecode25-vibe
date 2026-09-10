@@ -44,9 +44,9 @@ Verified on every pair of every run. So citing a margin *and* its sweep counts a
 
 Each bot is exported from HEAD at tournament time, never the working tree.
 
-- `alice` @ `688a75b` alice: ACCEPT iteration 14 -- wander slides along obstacles instead of re-rolling
-- `bob` @ `ceef7af` bob: iteration 12 -- revert the hash, REMOVE the ruin memory, on sweep evidence
-- `carol` @ `c213c1b` carol: REVERSE the iteration 12 rejection -- ACCEPT it; the mirror control refutes my noise argument
+- `alice` @ `688a75b`
+- `bob` @ `ceef7af`
+- `carol` @ `c213c1b`
 
 ## How games ended
 
