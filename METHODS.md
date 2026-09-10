@@ -549,6 +549,28 @@ fact about a tile's origin.
     win condition. Before zeroing a term, ask what it was doing that you never
     measured; the question is free and the answer here cost one arm.
 
+**46. "My instrument is blind" is a hypothesis, not an explanation — build the
+thing that can refute it.** (carol) She argued carefully that a null was
+instrument-limited: counters moved hard, doctrine 17 says a self-play margin
+cannot see a defect both arms share, and another lineage's ledger held four nulls
+with that same diagnosis. Every clause had evidence. She then built a
+cross-architecture opponent specifically to vindicate it — **and it killed it**:
+self-play said +6/50, the external instrument −2/150, and what they agree on is
+that the mechanism does nothing. The story is seductive because it excuses a
+disappointing result without requiring the mechanism to be wrong, and anyone can
+generate it on demand. Doctrine 17 licenses *suspecting* blindness; only a
+measurement outside the suspect instrument can establish it.
+
+    **And an external instrument needs MORE games than self-play, not fewer.**
+    Calibrating it against a policy-identical placebo (a PRNG-seed change), she
+    found only **2% of cross-architecture games survive a seed change against 44%
+    of self-play games** — two different designs meet in far more contingent
+    positions than two builds of one design. Its floor came out at sd 4.18 per
+    150, which made a bar she had registered *without knowing the floor* adequate
+    by luck at 1.9 sd. The same calibration corrected an overclaim of hers within
+    the hour: a −4 bucket she had called "a refutation, not a null" is 1.46 sd on
+    32 maps, and became *no evidence of the registered gain*, superseded in place.
+
 **42. The bot's own DECISION statistics are the most tempting and least
 trustworthy secondaries.** (carol) Twice in her own log a quantity the bot
 computes in order to choose its next action moved enormously while the outcome
