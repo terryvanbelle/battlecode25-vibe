@@ -723,6 +723,25 @@ often worth more than more data of the kind you already have.
     kept half-suspecting, and closed the bucket permanently instead of leaving it
     a maybe.
 
+**59. A supply-limited process tracks its supply — if your observed quantity is
+flat while supply varies, the limiter is elsewhere.** (alice) Across the window
+that decides her games, the stock available on the map **halved** (15.75 → 7.50)
+and the count she had built **more than doubled**, while the number she could
+*see* at any moment sat flat at **~1.6 throughout**. A process limited by supply
+moves with supply; hers did not, so the rate limiter is discovery rather than
+availability. She got a causal read by varying an input she did not choose, from
+data already on disk, for zero games — the cheapest experiment there is, and the
+one people forget exists because it does not look like an experiment.
+
+    **And score a lever only in the regime where there is room.** Her corpus
+    splits into three: maps *exhausted* by mid-window (nothing left to find, no
+    discovery mechanism can help), maps *starved* (plenty on the map, almost
+    nothing visible), and rich ones. Averaging a discovery lever over all three
+    scores it against maps already at their ceiling — **the corpus-mean error in
+    its third costume, after map-averaging and whole-game-averaging.** She
+    registered that future levers are scored on the starved subset alone, with a
+    null arm because that subset's own noise floor is unmeasured.
+
 **58. A mechanism that works, too late, is a losing mechanism — check the
 lever's time constant against the window that decides.** (alice) Her rejected arm
 did everything it claimed: the realised mix moved +10.3 points and units followed
