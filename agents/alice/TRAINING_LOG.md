@@ -23846,3 +23846,61 @@ MECHANISMS on the binding term is finished.**
 extracts **2x** alice's per-unit output from these same three engine-fixed routes. **Both of those
 cannot be true of a fixed design** — which is precisely what makes the next question a design
 question.
+
+# DESIGN ENUMERATION — each premise checked against the free upper bound first
+
+Not mechanisms. **Architectural premises**, each tested against what another lineage's *observable
+behaviour* already refutes, since a premise a rival disproves costs nothing to discard. **Everything
+below about carol is from replays of games alice played; no source of theirs was read.**
+
+## First, the premise everything rests on — and it SURVIVES
+
+| | |
+|---|---|
+| r300 tower leader won | **13 of 16 decided-lead games = 81%** — matching P2's cross-lineage 79–81% |
+| alice led at r300 | **12 of 19** |
+| alice won | **9 of 19** |
+
+> **alice converts its own leads at 9/12 = 75%. carol converts its 4 leads at 4/4 = 100%, and takes
+> all 3 ties.** So **D1 (expansion-first) is validated, not refuted** — alice targets the right
+> variable and wins the race 12–4. **Its architecture picks the correct objective and then
+> under-converts it.** That is a much better-located defect than "alice is behind."
+
+## The enumeration
+
+| | premise | refuted by the free upper bound? |
+|---|---|---|
+| **D1** | expansion-first: maximise tower count | **NO — validated at 81%, and alice wins the race 12–4** |
+| **D2** | **spawn-and-forget**: a unit gets 200 paint at birth and is rarely resupplied (0.383/unit) | **YES — carol resupplies 2.044/unit, 5.3x** |
+| **D3** | **mix by dice**: `rnd(4)` mopper/soldier, splasher on a chip surplus | **YES — carol fields 0 moppers and 30.6% splashers against alice's 21% and 11.3%** |
+| **D4** | **disperse to find work**: units wander ballistically away from towers (7.88% adjacent) | **YES — carol's units are adjacent 16.21%, 2.1x** |
+| D5 | local-only decisions, no memory or coordination | **NO** — engine-fixed for both; not separable from observables |
+| D6 | chip reserve protects tower construction | **NO** — chips in 42x surplus, the reserve is not binding |
+
+**Three of six die to a rival's observable behaviour, for zero games.** And they are not independent:
+**D2, D3 and D4 are one premise wearing three hats — how many units to run, where they stand, and
+what feeds them.** Carol runs **fewer** units (14.09 v 18.21), **fewer** spawns (2,630 v 3,540),
+**closer** to towers, **better fed**, and gets **2x the per-unit output.**
+
+## The §84 correlation filter, applied
+
+**D2 requires D4 by measurement, not by argument:** K4 measured the refill's binding gate as
+**adjacency, 2.61% pass**. Refills cannot rise while units are not beside towers. **So D2+D4 is a pair
+whose halves share one resource — position — rather than two anti-correlated ones.** That is the
+opposite of the i53+K8 pair that died today, and it is the distinction the caveat exists to make.
+
+> **The surviving design premise, stated so it can be attacked:** *alice disperses many
+> thinly-supplied units to cover ground; the alternative is fewer units held within resupply range,
+> accepting slower coverage for higher per-unit output.* **Alice's own P4 (ballistic wander) and the
+> expansion-first premise both push toward dispersal — so this is not a tuning of alice's design, it
+> is its inverse on one axis.**
+
+**And it is untested in both directions.** Requirement B tested *more* spreading and was
+ceiling-bounded; crowd-avoidance tested spacing and found no decision site. **Nothing has ever tested
+holding units IN.**
+
+**Before pricing it — and this is the inverted-premise warning applied:** D4's claim is that alice's
+units disperse *by design*. **That must be verified against the code and a measurement, not inferred
+from the 7.88%**, because a low adjacency could equally be a consequence of expansion-first sending
+units to distant ruins, in which case the premise is D1's shadow and not a separate axis at all.
+**That check comes before any build.**
