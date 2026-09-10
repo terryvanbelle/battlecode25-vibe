@@ -19458,3 +19458,45 @@ approximately zero.
 Fresh 25-map screen at `BOT=carol_iter45`; highest margin reaching **>= 31/50**, ties to the ratio
 nearer the incumbent; then the full 75-map census at **margin >= +26 ACCEPT | +18..+25 REPLICATE |
 <= +17 REJECT**.
+
+## Iteration 67 stage 0 — the manipulation check FAILED as first designed, and the fix changed the run
+
+**First attempt read backwards**: the share of carol's conversions coming from EMPTY ground *fell*
+(control 70.6% -> 39.9% at 3:3). Before treating that as a refutation I recognised the shape —
+**the treatment changes the composition of ground available to convert, so the share's denominator
+is caused by the treatment.** That is METHODS item 10, which is in my own LEARNINGS, and I walked
+into it anyway.
+
+**Repaired with a normalised statistic**: *selectivity* = (share of conversions from empty) /
+(share of available convertible tiles that are empty), measured on the same window. A bot that
+converts empty ground exactly in proportion to its availability scores 1.00.
+
+| arm | `W_EMPTY:W_ENEMY` | conversions | **selectivity** |
+|---|---|---|---|
+| `carol_iter45` (control) | 2:3 | 391 | **0.95** |
+| `carol_i67_33` | 3:3 | 254 | 0.90 |
+| `carol_i67_32` | 3:2 | 258 | 0.93 |
+| `carol_i67_31` | 3:1 | 230 | **1.31** |
+| `carol_i67_51` | 5:1 | 157 | **1.47** |
+| `carol_i67_30` | 3:0 | 131 | **1.67** |
+
+**Two of my three registered arms are not doses.** At 3:3 and 3:2 selectivity sits at 0.90 and 0.93
+— at or slightly *below* the control. The reason is mechanical: the score sums over a 13-tile disc,
+so most candidate centres hold a mix and a 3:2 weighting barely reorders them. Only once the
+weighting is lopsided does the ranking actually change. Doctrine 2: **a parameter is only a dose if
+it changes the condition evaluated.**
+
+### The ladder repaired on a validity criterion, not on outcomes
+
+I dropped 3:3 and 3:2 and built **5:1** and **3:0**, giving a monotone selectivity ladder
+**0.95 -> 1.31 -> 1.47 -> 1.67**. This is the same repair iteration 64 made by adding a dose, and it
+is made **without having looked at a single win/loss for the dropped arms** — their matches were run
+with output suppressed and only paint grids were read.
+
+**One outcome I did see incidentally and am reporting rather than hiding**: the 3:0 game ended at
+round 474, `carol_iter44` winning by MAJORITY_PAINTED — carol was painted out. That is what
+*ignoring enemy paint entirely* looks like, and it is exactly why the extreme belongs in the bracket
+rather than being the proposal. It does not drive inclusion; selectivity 1.67 does.
+
+**Screen launched**: `BOT=carol_iter45`, arms 3:1 / 5:1 / 3:0, fresh 25-map sample, 150 games. Gate,
+selection rule and falsifier unchanged from the pre-registration.
