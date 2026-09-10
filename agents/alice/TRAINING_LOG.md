@@ -22008,3 +22008,61 @@ write this entry. That is the guard doing precisely the job the document version
 five minutes of existing. `AC_SKIP_POINTERS=1` exists for the legitimate case — a LEARNINGS edit
 whose log entry is not yet written — and I did not use it, because the right fix was to write the
 entry.
+
+# REQUIREMENT I, STAGE 1 — the re-open condition COUNTED. It is met, and it fails on size
+
+Stage 0 closed the gradient and left one condition as a testable sentence: *re-open only if a
+measurement shows a population of soldiers simultaneously idle and near unexplored ground.* Counted
+here on the same starved-map trajectory data. **Zero games.** Tool: `tools/i1-slack.py`.
+
+| | n | median distance to unexplored | mean NEW team area in 50 turns |
+|---|---|---|---|
+| **IDLE** (no empty tile anywhere in vision) | 13 (39.4%) | **4 tiles** | 68.1 |
+| busy (work in sight) | 20 (60.6%) | **4 tiles** | 95.3 |
+
+> **The population exists: 39.4% of soldiers are idle, and every one of them is within 6 tiles of
+> unexplored ground.** But idle soldiers already bring back 68.1 new team tiles per 50 turns — they
+> are already exploring. **The SLACK — idle, near unexplored ground, and bringing back almost
+> nothing — is 3 of 13, i.e. 9.1% of all soldiers.**
+
+**9.1% of ~9 mobile units in the decisive window is 0.8 soldiers.** That is the same trivial
+denominator that killed both halves of E2, arrived at from a third direction. **The condition is
+formally met and fails on size**, which is exactly what the exploration/work tension predicted. Not
+re-opened.
+
+## The finding that matters more: the frontier is never far
+
+**Median distance to unexplored ground is 4 tiles — for idle and busy soldiers alike.** Alice's units
+are standing next to unexplored map *constantly*. So discovery is not limited by the ability to reach
+new ground, and every mechanism I have considered for "get units to unexplored territory" was aimed
+at a problem that does not exist.
+
+**What limits discovery is what is IN the new ground.** maze carries 32 ruins on 2,888 non-wall
+tiles: **ruins are ~1.1% of the map.** Seeing 68 new tiles yields well under one ruin. Discovery is
+not a movement problem — **it is a density problem, and density is a property of the map.**
+
+## Which closes requirement I's terminal bar by arithmetic
+
+The registered terminal bar was **1.56 → 2.4 visible ruins, +54%.** Ruin density is fixed, so +54%
+visible ruins requires a sustained **+54% new-area rate**. Against that:
+
+| available gain in vision union | measured |
+|---|---|
+| beating random placement (what a real rule could plausibly reach) | **+25.6%** |
+| perfect spread (an oracle no rule achieves) | +62.6% |
+
+> **The target sits above what any achievable spacing gain delivers and just under an oracle's
+> ceiling.** Requirement I's terminal bar is **unreachable by the spacing family**, and that follows
+> from three numbers I already had rather than from any new experiment.
+
+## Standing
+
+Requirement I: **stage 0 KILLED, stage 1 condition met but failing on size, terminal bar closed on
+arithmetic.** The direction is finished. `src/alice` unchanged since iteration 43.
+
+**And the loop's shape is now fully characterised.** Every arc was measured; none is a wall; but each
+one's lever is either prosperity-gated, too slow, attached to a denominator of ~5, or — here — aimed
+at a barrier (reaching new ground) that measurement says was never the barrier. **The binding
+constraint is ruin density against vision area, and neither term is something the bot controls.**
+That is a stronger and more useful statement than "there is an information ceiling", and it is the
+one the evidence supports.
