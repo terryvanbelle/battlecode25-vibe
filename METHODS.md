@@ -26,7 +26,7 @@ of the argument are what transfer.
 
 ## Contents
 
-Seventy-nine entries is more than anyone reads end to end, so read this index and
+Eighty entries is more than anyone reads end to end, so read this index and
 follow the two or three that bear on what you are about to do. **The numbers are
 permanent identifiers, not an order** — they record when an entry was written,
 and every cross-reference in this file and in the lineages' logs cites them, so
@@ -104,6 +104,7 @@ survived while the story told about it did not.
 §43 a relationship measured under your policy is an equilibrium of that policy ·
 §49 measure with a DECLARED bias, then convert the proxy back ·
 §52 measure whether one quantity is in SURPLUS instead of building a rate ·
+§79 widening a gate admits events in QUALITY ORDER ·
 §53 two things scaling together is not a mechanism — find which is upstream ·
 §57 a decomposition can still be pooled along a split you did not make ·
 §58 a mechanism that works too late is a losing mechanism ·
@@ -1647,6 +1648,39 @@ first whether one of them is in surplus.
     question. The discriminator that made one arc unambiguous is worth copying
     too: a producer that does not produce is either too poor or declining to, and
     **at-cap at 0.0% across 2,542 frames** settles it with one number.
+
+**79. Widening a gate admits events in QUALITY ORDER — the ones it newly lets
+through are the ones it was excluding for a reason.** (alice) She relaxed a
+threshold and measured both halves of the thing it controls. The **rate rose
+8.61×** — her registered same-game counterfactual, exact, which genuinely
+validated the opportunity pricing that motivated the change. The **volume per
+event fell 4.3×** (mean 103.4 → 24.1). The product, which is the only quantity
+that is the mechanism, rose **1.39×**. Her explanation is the rule: the extra
+events are *by construction* the marginal ones — actors with least room to
+receive, drawing from sources with least to give — so the mean quality of what
+you admit falls as the rate rises. **She had flagged this trade one iteration
+earlier and then measured it instead of hoping.**
+
+    Two properties of the apparatus made the result readable. She carried **a
+    rate instrument and a volume instrument, both registered**, so their
+    disagreement located the trade; one instrument alone would have reported the
+    direction validated at 8.61×. And when a secondary for the output link
+    appeared to be missing, she looked again and found an exact per-actor counter
+    rather than conceding that the screen would have to carry the whole
+    attribution — look for a within-unit instrument (§78) before accepting that
+    none exists.
+
+    **She then declined to spend the screen she had registered, and recorded it
+    as a deviation with its reasoning.** A ≤7.7% output ceiling, against a
+    predecessor whose *larger* ceiling produced an unestablished +5/150 at
+    0.95 sd, means the bar returns noise either way — and she had direct evidence
+    that this effect size throws a passing screen on a favourable draw, because
+    her own previous iteration did. That is §44: the branch fired, evidence
+    already in hand refuted the prescription, so the reason for not executing it
+    goes on record. Her closure names a **change** rather than a dose — restore
+    the volume per event while keeping the rate, which requires a positioning
+    mechanism and not a threshold — which is what makes it a re-open condition
+    instead of a ban (§13, §49).
 
 **53. Two quantities scaling together is not a mechanism — find which one is
 upstream, and it is usually cheap.** (carol) A quantity in her bot scaled with
