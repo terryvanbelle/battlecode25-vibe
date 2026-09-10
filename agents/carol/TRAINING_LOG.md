@@ -20607,3 +20607,81 @@ for in units, and the unit is the binding resource. Carol's splashers already co
 within r²<=2 at zero marginal unit cost, and iteration 67 measured the incumbent's targeting weights
 as optimal. **Any successor must show, before building, that it adds denial without removing a
 painter** — and it must measure that against an opponent that mops, not against a lineage snapshot.
+
+# Iteration 72 — obstacle tracing. Found by the stall remedy I had never used.
+
+Four mechanisms have now died on the area gradient. TRAINING_ALGORITHM's stalled-loop section names
+three remedies: re-read tournament replays (done repeatedly), run the unused-API sweep (done), and
+**re-read `reference/` for prior-year lessons — which this lineage has never done.** I did.
+
+`reference/RESEARCH.md` section 5 calls hybrid bug-navigation *"the most consistent engineering
+story across every year"*: teams start with a textbook or greedy step, discover it fails, and
+converge on greedy **plus a bounded escape for the shapes greedy movement actually gets stuck on**.
+Its short-list entry 5 also says: *price the mechanism before building on it.*
+
+## carol has never had one, and I simulated her exact policy to prove it matters
+
+`stepToward` tries the direct direction, then ±1, then ±2, then gives up. It **re-decides which way
+to skirt on every turn**, so it cannot circumnavigate anything. I re-implemented that exact policy
+against real terrain from the tournament replays and ran it from carol's own towers:
+
+| | greedy-reachable |
+|---|---|
+| ruins carol **CLAIMED** on galaxy | **8/8 = 100%** |
+| ruins carol **NEVER REACHED** | **6 of 18 are unreachable — the simulation LOOPS forever** |
+| share of passable tiles reachable (Mirage 1,600 / galaxy 2,025 / Gears 3,025) | **89.3% / 79.3% / 80.3%** |
+
+**Greedy-reachability separates the claimed set perfectly (100%), and 10–20% of the map is
+unreachable by carol's navigation** — worse on the larger maps, and not explained by wall density
+(Gears has the *fewest* walls at 4.0% and is among the worst).
+
+## The sharpest consequence is a defect in my own accepted code
+
+`walkHomeIfDry()` — shipped in iteration 60 — calls `stepToward` **directly and has no stuck-escape
+of any kind.** `moveExploring` at least re-targets after `stuckTurns >= 6`; the refill path has
+nothing. **A splasher whose tower sits behind a concave obstacle loops until it starves**, which is
+consistent with the measured 15–48 turn refill trips and the 35–59% `HOME` share.
+
+## Magnitude, priced honestly and BEFORE the build — I do not expect this to close the gradient
+
+Direct cost: ~20% of navigation targets unreachable, each wasting up to the 6-turn stuck timeout
+before re-targeting — order 5–10% of unit-turns. **That is well short of a 46-point win-rate swing,
+and I am registering that expectation now.** What raises it above a curiosity is the refill path,
+where there is no escape at all and the failure mode is a dead unit rather than a wasted turn.
+
+**This is not an area-gradient candidate and I am not registering it as one.** It is a general
+navigation capability gap, found by a remedy I had not tried, and it is in a completely different
+family from the four economy/mix mechanisms that died.
+
+## Mechanism and arms
+
+Go direct when possible; when blocked, **commit to one rotation direction and keep it across turns**
+until the unit gets strictly closer to the target than it has ever been (the progress reset that
+escapes concave traps), with a time-box as the safety valve. The side is chosen by robot ID, never
+by team (play-symmetry, Phase 0 item 7). `TRACE_MAX` = **15 / 40 / 100**; **0 restores the incumbent
+path exactly** and is the zero arm.
+
+## Instrument choice, under the rule I adopted an hour ago
+
+This mechanism's cost is paid against **the map** (terrain), not against an opponent's behaviour, so
+by the rule I just adopted the **self-play** instrument is the correct one for both stage 0 and the
+gate. `bobf` is not required here, and saying so is the point of having written the rule down.
+
+## Registered stage-0 mechanism check (Mirage, self-play — not a gate)
+
+1. **`HOME` share of splasher turns must fall from 35.5%** — the refill path is where the missing
+   escape bites hardest.
+2. **`noPaint` must not rise above ~2%** — iteration 70 failed by sending units back to work dry,
+   and I will not accept the same trade dressed differently.
+
+## Registered falsifier
+
+**If reachability is the problem and tracing fixes it, splasher `HOME` share must fall.** If it does
+not move, then the loops my simulation found are not what units actually spend their time on — the
+simulation would be measuring a policy the bot does not really execute (because real units have
+robots, allies and re-targeting in the way) — and the direction closes with that named.
+
+## Gate
+
+Self-play 25-map screen selects the dose (>= 31/50 to proceed, my standing bar), then the standing
+full-corpus census at **margin >= +26**.
