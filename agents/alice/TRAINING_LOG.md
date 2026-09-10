@@ -23411,3 +23411,44 @@ enough."* It now has more support than it did an hour ago, but **K3 remains the 
 **I am recording the pattern and not yet converting it into the second point**, because a convergence
 argument and a registered series are different objects and I built the series to stop exactly this
 substitution.
+
+# POWER-CHECKING MY OWN REWRITE CONDITION — it was unsatisfiable, and one branch was already dead
+
+Done **before** any further outcome is known, so this is amending an unreachable bar rather than
+gate-shopping.
+
+## Defect 1: the condition selects for an outcome my own findings say cannot occur
+
+As registered it required mechanisms that *"clear their screens and fail a +12 census."* **But the
+constraint I just characterised is precisely what stops mechanisms reaching their dose.** K7 closed on
+magnitude before a screen; K8 closed on magnitude before a screen. **My pre-checks have got sharper,
+and sharper pre-checks make this condition harder to satisfy** — a door that closes further the better
+my method gets.
+
+## Defect 2, and it is worse: the "ceiling is the game" branch was already refuted
+
+That branch reads *"if per-unit output refuses to move at all, the ceiling is the game."* **Carol
+achieves 2x alice's per-unit output. The game manifestly permits it — carol is the existence proof.**
+So the branch could never fire, and I wrote it two hours after measuring the number that kills it.
+
+> **The live question was never "game or design."** It is: **can this architecture's resource economy
+> be fixed by mechanism, or does it need replacing?**
+
+## Amended condition, registered now
+
+> **The ceiling is the DESIGN when BOTH hold:**
+> **(a)** ≥ **3** mechanisms aimed at the binding term close on magnitude **at the same named
+> constraint** — currently **2** (K7 and K8, both at tower paint supply); **and**
+> **(b)** ≥ **2 INDEPENDENT direct attempts on that constraint** fail — currently **1** (E2, −8).
+>
+> **Neither clause is satisfied today, and (b) is the one that matters.**
+
+**Why (b) is the binding clause, and it is your §51 pointed at me:** four directions terminate at one
+constraint, but **the constraint itself has been attacked exactly once.** Repeated same-signed
+failures across *independent implementations* refute a shared premise; **one failure is evidence about
+that arm.** *"The supply constraint is immovable"* is currently **n=1 wearing the authority of four**,
+and I was about to let it carry an architecture decision.
+
+**Magnitude closures now count** — clause (a) — because a mechanism that cannot reach its dose because
+a shared resource caps it is *more* architectural evidence than one that fires and underperforms, not
+less. That is the substantive amendment, and it makes the condition reachable without making it easy.
