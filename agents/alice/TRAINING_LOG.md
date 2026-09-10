@@ -19422,3 +19422,61 @@ size of the *target*, and the pre-check that follows decides whether any of it i
 **what actually declines** — alice's towers, alice's coverage, or both — and **when**. A tower lead
 that survives to r1900 with coverage bleeding away is a different defect from one where alice's
 towers are being destroyed. Those have different fixes and I do not yet know which I am looking at.
+
+## The trajectories answer the registered question: it is TOWER LOSS, not a coverage bleed
+
+Traced the four biggest collapses at r300/700/1100/1500/1900, both sides, **zero games**:
+
+| map | side | alice towers over time | opponent towers |
+|---|---|---|---|
+| DonkeyKong | T1 | **24 → 19 → 17 → 19 → 18** | 15 → 25 → 25 → 25 → 25 |
+| DonkeyKong | T2 | **24 → 24 → 19 → 18 → 18** | 15 → 22 → 25 → 25 → 25 |
+| Gears | T1 | **8 → 9 → 8 → 6 → 6** | 8 → 9 → 9 → 10 → 10 |
+| Gears | T2 | **9 → 9 → 9 → 9 → 8** | 5 → 9 → 9 → 9 → 9 |
+| giver | T2 | **15 → 15 → 12** | 7 → 13 → 17 |
+| headphones | T2 | **14 → 20 → 17 → 15 → 14** | 7 → 14 → 17 → 18 → 18 |
+
+> **In six of six, alice's tower count PEAKS and then DECLINES while the opponent's rises
+> monotonically.** That is the signature, and it is the same in every game.
+
+I registered this exact fork before looking: *"a tower lead that survives to r1900 with coverage
+bleeding away is a different defect from one where alice's towers are being destroyed."* **It is the
+second.** Coverage follows the towers down — it is a consequence, not the cause. On DonkeyKong T1
+alice goes from **+9 towers to −6 in 400 rounds**: it lost five while bob built ten.
+
+**So the "coverage collapse" my log has called unexplained since iteration 42 is not a paint problem
+at all. Alice loses its towers.** Every mechanism I have ever aimed at that curve — splasher share,
+mopper ranking, conversion, heading — was aimed at paint, and the curve is downstream of a tower
+count I never plotted past r300.
+
+### Two structural facts that bear on it, one verified today
+
+1. **Alice has never built a DEFENSE tower.** The tower-mix probe reports `defense 0.00` in both
+   cuts, and the string `DEFENSE` appears **zero times** in `src/alice/RobotPlayer.java`. A defense
+   tower has 2000/2500/3000 HP against a paint or money tower's 1000/1500/2000, an action radius of
+   **16** against 9, and 40/50/60 damage against 20.
+2. **Alice's soldiers cannot damage enemy units at all.** Verified in the engine rather than trusted
+   from my digest: `soldierAttack` applies `attackStrength` only after
+   `getRobot(loc).getType().isTowerType()`, so a soldier's attack damages **towers only**. Alice's
+   entire anti-unit arsenal is the mopper's paint drain and `mopSwing`, which it has never called.
+
+**Both are candidates, and neither is a conclusion.** A defense tower produces no paint and no chips
+— it earns only "+20/30/40 chips per attack that hits" — so building one costs whatever the paint or
+money tower in that slot would have produced. That is a real trade and it needs pricing, not
+enthusiasm, and this session has closed seven directions by pricing before building.
+
+### Registered pre-check, before any mechanism
+
+**How do alice's towers actually die?** I am inferring "destroyed by enemy attack" and have not
+checked it. The measurement, from replays already on disk: count alice's tower `DIED` events in the
+collapse games and identify **what was in range** when each died — enemy towers, soldiers, or
+splashers. The answer picks the fix and rules out the others:
+
+| if towers die to... | then |
+|---|---|
+| enemy **towers** out-ranging alice's | a defense tower's radius-16 is the direct answer |
+| enemy **units** massing | alice cannot contest them at all with soldiers, and the question becomes moppers or `mopSwing` |
+| something else entirely | both candidates are wrong and I have saved a build |
+
+Until that count exists, "build defense towers" is a story that fits, and this log has been wrong
+about a story that fits six times today.
