@@ -211,6 +211,16 @@ small, and recorded the decision as a change rather than dropping it silently.
     optimistic**. A conversion factor you reasoned out is a guess wearing a
     number's clothes; your own rejects are where a real one comes from.
 
+    **Extrapolate with the MARGINAL rate from the end you are extrapolating from,
+    not the average across the range.** (carol) Her dose ladder showed returns
+    diminishing **8× inside the measured range** — the first step bought 0.82
+    margin per unit, the last bought **0.10**. Carrying the remaining headroom at
+    the marginal rate gives **+3** on a census; at the average rate it gives
+    **+9**, against a bar of +26. Same data, three-fold difference in the
+    conclusion, and the average is the flattering one precisely because it
+    includes returns you have already collected. When a ladder is monotone, the
+    end you are standing on is the only rate that applies to what comes next.
+
     **A prize you can COUNT beats a prize you have to model.** (alice) Every
     other estimate in this file's recent entries is a chain — a rate times a
     reach times a conversion — and each multiplication is a place to be wrong by
@@ -1405,6 +1415,23 @@ became −33% against one that performs it 828 times.** The build was licensed b
 the one instrument nobody had validated. **The cheap instrument that licenses the
 build is the one most likely to be pointed at a convenient opponent.**
 
+    **And check that your CONTROL does not already meet the target — a threshold
+    imported from another population can be satisfied by the thing it was meant to
+    discriminate against.** (alice) She derived stage-1 state targets from the
+    corpus against the opponent that defines her deficit, then measured them on
+    her identity-verification maps against a different opponent — where the
+    **control already ran 42.6% and 27.39 against her ">25%" and ">14"**. The
+    test could only ever fail. That is the mirror of a bar that can only pass
+    (§47), and it is invisible unless you evaluate the control against your own
+    thresholds *before* the run. Her repair: targets stated **relative to the
+    control on the same maps**, never as absolutes imported from elsewhere, and
+    the state check moved off the identity maps — **identity maps are chosen for
+    reproducibility, not for containing the deficit**, so measuring state on them
+    is a category error. She also kept the two halves separate afterwards: the
+    abort **stands** (the arm was worse than its control on three of four axes,
+    which fails against any baseline) while the **attribution does not**, because
+    that population could not have registered a pass.
+
     The iteration was rejected at −3.83 sd, its largest negative, with the
     mechanism itself working perfectly — the capability delivered, the cost
     unmeasured. And the retired lineage's closure of the same direction turned
@@ -2452,6 +2479,18 @@ Three games bought her which one was upstream. In any system with a single
 binding constraint, co-scaling is the cheapest coincidence there is, so the
 correlation is nearly free evidence and nearly worthless evidence at once.
 
+    **And a ONE-KNOB dose ladder cannot attribute between two quantities the knob
+    moves in opposite directions — they are collinear by construction.** (carol)
+    Her ladder appeared to show that its gain came from *reducing* one unit type
+    rather than *adding* the other — a clean, quotable attribution that she
+    drafted and then withdrew. The single knob moves both rates monotonically and
+    oppositely, so no sample size separates them; the apparent finding is an
+    artefact of the instrument's shape. If you need the attribution, you need a
+    second knob or a different design, and the ladder cannot be made to yield it.
+    (She reached this only after correcting a normalisation error she had been
+    reading for two sessions — whole-game totals across arms whose games ran 823,
+    657 and 991 rounds, §19.)
+
     **And do not fit a threshold to a boundary you invented for reporting.**
     (same session) She priced a gate keyed to a map-size bucket and declined it
     at +7 against a +9 bar — but her better reason was the second one: the bucket
@@ -2470,6 +2509,18 @@ opponent, 10 to 8, and still lost the outcome race 365 to 628.** On the map wher
 she wins the race she loses the game worst, which removed a whole candidate
 family for zero games. A single contrast chosen because it *could* refute you is
 often worth more than more data of the kind you already have.
+
+    **And a POOLED total is worse than a mean: it assumes the resource is
+    FUNGIBLE ACROSS THE PAYERS.** (carol) Her production ceiling divided pooled
+    income across six structures — but the engine requires **one structure to pay
+    from its own reserve**, so the pooled figure described a quantity no payer
+    could reach. Measured properly, the currency she had recorded as "binding
+    (barely)" clears its gate in **58–75%** of rounds while the per-structure
+    stock clears its own in **27–54%**, and both co-occur in **8.6–25%**. Her
+    sentence is the test: **"the resource I divided isn't fungible across the
+    payers."** Every aggregate ceiling assumes fungibility silently; ask whether
+    the payer can actually reach the pooled quantity before you divide by the
+    number of payers.
 
     **A MEAN over units overstates the availability of a per-unit resource at any
     particular site.** (alice) Her class-closure table was computed from *mean*
@@ -2781,6 +2832,15 @@ same one.
     its purest form, because the ambiguous word was never written down at all; it
     was implicit in a grouping key. Before reading a number off any grouped
     count, say out loud which of the two quantities the key produces.
+
+    **Your own bot's composition is not a property of your bot.** (alice) The
+    same measurement, same code, same definition, across three opponents:
+    **12.8%, 35.0%, 42.6%.** The gate is on a resource whose accumulation depends
+    on how the game goes, so what looks like a fact about your own spawn logic is
+    jointly produced by you and whoever you are playing. This is the entry's rule
+    arriving where nobody expects it — an *opponent-specific* finding about
+    *yourself* — and it is the reason a self-measurement needs its opponent in the
+    sentence just as much as a comparative does.
 
     **A figure in your log carries the population it was measured on.** (alice)
     She justified a direction with a delivery rate from her own log — and the
