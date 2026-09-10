@@ -23610,3 +23610,66 @@ r200–300**, and alice's visible-bare-ruin working set is a flat **1.6**.
 > site"*? **PASS ≥ 2% of soldier-turns; KILL < 0.5%.** Measured at the site, within game. The
 > ungated arm's harm (10 v 12 towers) is the falsifier this gate exists to avoid, so the pre-check
 > must also confirm the gate is **closed** while unbuilt ruins remain.
+
+# SRP PRICED BEFORE BUILDING — and it closes on GATE UN-IMPLEMENTABILITY, not on another null
+
+Engine constants, exact: `EXTRA_RESOURCES_FROM_PATTERN = 3`, `COMPLETE_RESOURCE_PATTERN_COST = 200`,
+`RESOURCE_PATTERN_ACTIVE_DELAY = 50`, `RESOURCE_PATTERN = 28873275` → **13 secondary / 12 primary
+tiles.**
+
+## The prize, as an integral rather than a rate
+
+An SRP completed at r350 on a 2,000-round map pays **1,650 × 16.6 = 27,390 paint**, against alice
+putting **8,040** on the ground per game. **Large.** But it is only collectable on maps where a safe
+gate opens — **3 of 8 = 37.5% of the corpus** — so the corpus prize is 0.375 of that however well it
+works where it fires.
+
+## Three costs, two of them new
+
+1. **Displacement** (iteration 10a, ungated): SRP work displaces tower work → **10 v 12 towers, 403 v
+   581‰. Lose badly.**
+2. **The two-shade repaint — NEW, from the engine.** The pattern needs **13 secondary tiles**. On
+   ground already ours, repainting them **costs 65 paint for ZERO coverage gain** (an own-tile
+   repaint is already counted). And `RULES` advises building SRPs in the interior for safety —
+   **which is exactly where the repaint cost is maximal.** Cheap ground is the frontier; safe ground
+   is expensive.
+3. **The 50-round delay, resettable by one enemy mopper.** On contested ground a single opposing
+   mopper holds the pattern at zero income indefinitely. *(Noted in the other direction: carol spawns
+   **1 mopper per 21 games**, so against carol specifically this cost is near zero — which is a fact
+   about one opponent, not about the mechanism.)*
+
+## And the gate I proposed reproduces the harmful extreme
+
+My "principled" gate was *"no unbuilt ruin visible to this soldier."* **A soldier's disc holds 0.145
+bare ruins on average — so that gate fires on roughly 87% of soldier-turns.** That is nearly arm 10a,
+which lost badly. **The gate I called the untested middle is the harmful extreme in disguise.**
+
+The safe gate is team-level — *"the team sees no unbuilt ruin"* — and **a soldier cannot observe it**:
+no shared vision, and messaging is closed. So the only global observable is `getNumberTowers()`, which
+iteration 10 used. **Is it a usable proxy?**
+
+| | | | |
+|---|---|---|---|
+| Justice 6 towers / **0** ruins | Racetrack 7 / **0** | Gears 9 / **0** | DefaultSmall 6 / 1 |
+| maze 4 / **22** | mit 4 / **16** | DonkeyKong **21** / 12 | headphones 13 / 9 |
+
+> **correlation(towers, bare ruins remaining) = +0.01, n=8.** A usable proxy needs a strong *negative*
+> correlation. **DonkeyKong holds 21 towers with 12 ruins left; Justice holds 6 with none.** The proxy
+> is inverted on that pair.
+
+## Closure
+
+> **SRPs CLOSE — on gate un-implementability, which is a reason rather than a null.** The signal that
+> would make the mechanism safe (*expansion is exhausted*) is **not observable at the site**: the
+> per-soldier proxy fires 87% of the time and reproduces the arm that lost, and the only global
+> observable is **uncorrelated (+0.01)** with the thing it would proxy. **No threshold on
+> `SRP_MIN_TOWERS` works at any value** — which explains iteration 10's null far better than its own
+> re-open condition did, and retires "the untested middle" I claimed two entries ago.
+>
+> **Re-open condition, and it can fire:** an **implementable observable that correlates with expansion
+> exhaustion** — e.g. per-soldier memory of ruins it has personally seen and whether they are built
+> (memory of *seen* ruins is sound; requirement A died on ruins **never** seen, which is a different
+> claim). **Re-open when such an observable is measured at |r| ≥ 0.6 against remaining bare ruins.**
+
+**Cost: zero games.** The engine gave the prize, the corpus gave the coverage, and my own 8-map census
+gave the proxy correlation that closed it.
