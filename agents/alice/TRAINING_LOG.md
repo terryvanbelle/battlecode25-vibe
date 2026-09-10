@@ -22397,3 +22397,45 @@ output, **not** on the refill-parity story I built it from — and the story was
 gates, relaxing one gate multiplies the rate by that gate's slack ONLY IF the others are not binding
 — so measure the JOINT pass rate before sizing a dose, never the single gate's opportunity curve.*
 I had the joint measurement available (adjacency 7.88%) and used the marginal one anyway.
+
+# ITERATION K3 — ACCEPT. net +4 against a bar of +4, null arm +0. First bot code change since iteration 43
+
+```
+alice_k3      50 games  25 maps   arm wins 29   ctl wins 21   net = 29 - 25 = +4
+alice_k3null  50 games  25 maps   null wins 25  ctl wins 25   net = 25 - 25 = +0
+```
+
+Gate applied by `tools/e2-gate.py` with **VOID tested first, in code**, on the complete file.
+**Null arm returned +0 exactly**, so the instrument resolves the bar and the gate stands.
+**VERDICT: ACCEPT.** Maps swept: **arm 6, control 2, SW−SL = +4.**
+
+## The registered post-hoc checks, both applied
+
+**Manipulation (required even on an accept):** refills per unit **0.231 → 0.265**. It rose, so the
+requirement is met and the win is attributable to this mechanism.
+
+**Falsifier (units fall without per-unit output rising):** units **0.92x**, paint actions per unit
+**1.16x**. **The falsifier did not fire** — the registered trade was taken *and* won.
+
+## What I am NOT claiming, recorded before the verdict and unchanged by it
+
+**This accept is bought by +16% per-unit paint output, not by the refill-parity story I designed it
+from.** Realised refills/unit is 0.265 against carol's 2.044 — **still 7.7x short**, because the
+refill sits behind a conjunction of four gates and I sized the dose from one of them. That was
+written up *before* the screen returned and the accept does not soften it.
+
+## And the bar is a SCREEN bar — this is "worth a census", not "proven"
+
+net = **+4 against a bar of exactly +4**, on a measured noise floor of **sd_net_swept = 5.29**. A
+screen bar is deliberately permissive: it filters candidates *for* a census, it does not establish
+one. **Registered now, before it runs: a 75-map / 150-game census at the +12 bar** (2.27 sd), which is
+the standard this lineage uses to call an effect real.
+
+## Promotion, verified rather than assumed
+
+`src/alice/RobotPlayer.java` now carries the constant directly. **The promoted code was re-run against
+`alice_iter43` and returned 534 / 1869 / 1096 — exactly what the accepted arm returned.** Promotion
+verified by measurement, not by inspection of the diff.
+
+**`src/alice` moves for the first time since iteration 43** — after eight directions aimed at the
+wrong term, one arm rejected at −8, and one decomposition that pointed at the right one.

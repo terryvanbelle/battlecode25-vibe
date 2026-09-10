@@ -163,7 +163,18 @@ public class RobotPlayer {
         for (int i = 0; i < near.length; i++) {
             RobotInfo t = near[i];
             if (!t.getType().isTowerType()) continue;
-            int surplus = t.getPaintAmount() - UnitType.SOLDIER.paintCost;
+            // ITERATION K3 (ACCEPT, screen net +4, null arm +0). The reserve was a
+            // full spawn cost (200) -- but towers hold a MEAN OF 154.8 and sit
+            // below 200 on 82.9% of tower-frames, so this guard disabled the
+            // refill in exactly the regime it exists for: towers are poor BECAUSE
+            // they spend everything spawning, and the refill was gated on them not
+            // being poor. Reserve 50 fires on 98.2% of tower-frames against 17.1%.
+            // It deliberately trades spawns for endurance, which is the correct
+            // direction: alice held 1.35x carol's spawns at 0.52x its per-unit
+            // paint output. Realised on the arm: +16% paint actions per unit for 8%
+            // fewer units. NOTE it did NOT reach refill parity with carol (0.265
+            // vs 2.044) -- the accept is bought by per-unit output, not by parity.
+            int surplus = t.getPaintAmount() - 50;
             if (surplus <= 0) continue;
             int amt = cap - p;
             if (surplus < amt) amt = surplus;   // never over-ask: the clamp TRAP burns paint
