@@ -18805,3 +18805,59 @@ and I will report it as a slope rather than reading it as a peak.
 Fresh 25-map screen at `BOT=carol_iter45`; take the highest margin reaching **>= 31/50**, ties to the
 smaller `TOWER_TARGET`; then the full 75-map census at **margin >= +26 ACCEPT | +18..+25 REPLICATE |
 <= +17 REJECT**. Mirage is the stage-0 probe and is **not** a gate.
+
+## Iteration 64 stage 0 — ALL THREE registered clauses PASS, and the 26-invariant is broken
+
+Mirage, one game per arm, vs `carol_iter44`. Whole-game totals.
+
+| arm | chips idle | coverage | standing spl | towers | tower paint | +soldiers | **+splashers** | starved |
+|---|---|---|---|---|---|---|---|---|
+| `carol_iter45` (zero) | $80,850 | 296 | **0** | 9 | 380 | **331** | **26** | 309 |
+| `TOWER_TARGET=4` | $10,910 | **701** | **17** | 8 | 333 | 3 | **54** | 21 |
+| `TOWER_TARGET=6` | $770 | **705** | **17** | 9 | 882 | 3 | **41** | 19 |
+| `TOWER_TARGET=8` | $770 | **705** | **17** | 9 | 882 | 3 | **41** | 19 |
+
+1. **Splashers built rise well above 26 — the clause that killed 62 and 63.** 26 -> **54 / 41 / 41**.
+   The invariant that survived removing 331 competing soldiers is broken by moving the *timing*
+   instead of the quantity. PASS.
+2. **Standing splashers non-zero**: 0 -> **17** at every dose. PASS.
+3. **Coverage above 296**: **701 / 705 / 705** — and above `carol_iter44`'s 673 as well. PASS.
+
+Soldiers built fall **331 -> 3**, which is `carol_iter44`'s exact figure. The switch reproduces, on
+purpose and from an observable, the configuration the incumbent reaches by accident through chip
+poverty. Starvation collapses 309 -> ~20 and idle chips $80,850 -> $770.
+
+### Doctrine 3's identity check, run before interpreting — and it fired
+
+`TOWER_TARGET` 6 and 8 are identical to the dollar, the tile and the unit, which is exactly the
+shape that should never be read as "two doses agreeing". Dumped both games at stride 50 and diffed:
+
+> **6 vs 8: 0 differing lines across the whole game — BYTE-IDENTICAL. 4 vs 6: 19 differing lines.**
+
+So on Mirage the ladder has **two** distinct arms, not three. Doctrine 2 states it directly: a
+parameter is only a dose if it changes the condition actually evaluated, and a sweep once produced
+byte-identical games because the parameter fed a check that never ran. Here the tower count crosses
+6 and 8 without an affordable soldier roll in between, so both thresholds fire at the same moment.
+
+**This is map-specific, not a broken mechanism** — on a ruin-poor map neither threshold is ever
+reached, and on a ruin-rich one they separate. But it means 6 and 8 will be correlated across the
+screen, and I will re-run the identity count on the screen results rather than assume they separate.
+
+### The ladder repaired, on a validity criterion and NOT on outcomes
+
+I am adding **`TOWER_TARGET = 2`** as a fourth arm rather than replacing anything, so the
+pre-registration stands intact and the screen becomes 4 arms x 25 maps x 2 sides = **200 games**.
+
+Two reasons, both stated before seeing any screen number, and neither of them "which dose won" —
+doses 4 and 6 are within 4 tiles of each other on Mirage, so there is nothing to select on:
+
+1. **A dose that produces byte-identical games is not a dose.** Repairing separation is a mechanical
+   validity repair, prescribed by doctrine 2, not dose-shopping.
+2. **Bracket the low end in the SAME run.** My registered risk says "too early a switch leaves too
+   few towers", and dose 2 is the arm that can show it. Iteration 61 cost a whole extra iteration
+   precisely because iteration 60 bracketed its optimum above but never below. Paying 50 extra games
+   now is cheaper than paying another 150-game screen later to learn the same thing.
+
+**The gate, the selection rule and the census threshold are unchanged.** Screen launched at
+`MAXJOBS=2` rather than 3, deliberately, because the 01:00 UTC tournament starts within the hour and
+it is the higher-value instrument.
