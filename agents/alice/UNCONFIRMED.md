@@ -49,6 +49,12 @@ newest-first until it does. That is the point at which a hidden plateau surfaces
       size was never measured on that draw. The screen's null read +0, which
       corroborates and does not replace it. This does not change the decision; it
       is part of it.
+      **Tournament 20260910-1300, the first absolute-strength reading carrying
+      K3:** alice 59.3% overall, +1.0 vs last -- but **+6.7 vs bob and -4.7 vs
+      carol**, i.e. it lost ground in the exact matchup the change was designed
+      for. Does NOT trigger the revert clause (census estimate >= 0, no
+      falsifier fired), so K3 stands, still UNCONFIRMED, with unfavourable
+      context attached.
 
 ## Confirmed in aggregate
 
