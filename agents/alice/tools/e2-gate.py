@@ -1,0 +1,100 @@
+#!/usr/bin/env python3
+"""Apply iteration E2's PRE-REGISTERED gate to a gauntlet run. Nothing else.
+
+    tools/e2-gate.py gauntlet/<run>/results.txt
+
+The run is BOT=alice_e2ctl against OPPONENTS="alice_e2 alice_e2null", so every
+RESULT line is scored from the CONTROL's side and the arm's net is its negation.
+`collate.sh` defines the encoding and this matches it exactly: the bot won the
+game iff winner_side == bot_side.
+
+REGISTERED BEFORE THE SCREEN RAN, and applied here verbatim:
+
+  net      = arm wins - 25          (25 maps, both sides, 50 games)
+  ACCEPT   net >= +4                 -- and no other outcome is an accept
+  VOID     |net_null| >= 4           -- the null arm is the control against
+                                        itself on the IDENTICAL map sample, so
+                                        its true net is 0. If the instrument
+                                        cannot hold zero to within the bar, the
+                                        bar cannot resolve the effect and this
+                                        is VOID, not a reject.
+  REJECT   everything else
+
+VOID is checked FIRST. A reject read off an instrument that cannot resolve the
+bar is not a reject, and deciding the order after seeing the numbers is how a
+void quietly becomes whichever verdict the author preferred.
+"""
+import sys, collections
+
+def main():
+    path = sys.argv[1] if len(sys.argv) > 1 else "results.txt"
+    games = []
+    complete = False
+    for ln in open(path):
+        if ln.startswith("GAUNTLET-COMPLETE"): complete = True
+        if not ln.startswith("RESULT "): continue
+        p = ln.split()
+        if len(p) < 6: continue
+        _, opp, mp, side, win, rnd = p[0], p[1], p[2], p[3], p[4], p[5]
+        games.append(dict(opp=opp, map=mp, side=side, win=win,
+                          rnd=int(rnd) if rnd.isdigit() else -1,
+                          ctl_won=(win == side)))
+    if not games:
+        print("!! no RESULT lines -- refusing to print a verdict"); return 1
+
+    print(f"run complete marker: {'YES' if complete else 'NO -- PARTIAL, verdict withheld'}")
+    by = collections.defaultdict(list)
+    for g in games: by[g['opp']].append(g)
+
+    nets = {}
+    for opp in sorted(by):
+        gs = by[opp]
+        ctlw = sum(1 for g in gs if g['ctl_won'])
+        oppw = len(gs) - ctlw
+        maps = len({g['map'] for g in gs})
+        net = oppw - maps          # opponent's net, in the registered units
+        nets[opp] = (net, oppw, ctlw, len(gs), maps)
+        print(f"  {opp:<16} games={len(gs):>3} maps={maps:>3}"
+              f"  {opp} wins={oppw:>3}  ctl wins={ctlw:>3}"
+              f"  net({opp}) = {oppw} - {maps} = {net:+d}")
+
+    if not complete:
+        print("\nPARTIAL RUN -- no verdict. The gate is applied only to a finished screen.")
+        return 0
+
+    arm = nets.get("alice_e2"); null = nets.get("alice_e2null")
+    if arm is None or null is None:
+        print("\n!! missing an arm -- cannot apply the gate"); return 1
+
+    print(f"\n=== GATE, as registered ===")
+    print(f"  net_null = {null[0]:+d}   (true value is 0: control vs itself)")
+    if abs(null[0]) >= 4:
+        print(f"  |net_null| = {abs(null[0])} >= 4  ->  **VOID**")
+        print("  The instrument cannot hold zero to within the bar on this map sample,")
+        print("  so it cannot resolve a +4 effect. This is NOT a reject: the mechanism")
+        print("  was not tested. Re-run on a fresh sample or widen the screen.")
+        print(f"  (for the record, net_arm = {arm[0]:+d}, but it is not interpretable here)")
+        return 0
+    print(f"  |net_null| = {abs(null[0])} < 4  ->  instrument resolves the bar; gate applies")
+    print(f"  net_arm  = {arm[0]:+d}   bar = +4")
+    print("  VERDICT: " + ("**ACCEPT**" if arm[0] >= 4 else "**REJECT**"))
+    if arm[0] < 4:
+        print("  A rejected iteration is a delivered result: the mechanism fired")
+        print("  (manipulation check passed) and did not clear the bar.")
+
+    print("\n=== per-map table (arm vs control) -- read it even on a reject ===")
+    print(f"  {'map':<20}{'arm wins':>10}{'of':>4}")
+    per = collections.defaultdict(lambda: [0, 0])
+    for g in by["alice_e2"]:
+        per[g['map']][1] += 1
+        if not g['ctl_won']: per[g['map']][0] += 1
+    for mp in sorted(per, key=lambda m: (-per[m][0], m)):
+        w, n = per[mp]
+        flag = "  <- swept" if w == n and n > 1 else ("  <- lost both" if w == 0 and n > 1 else "")
+        print(f"  {mp:<20}{w:>10}{n:>4}{flag}")
+    sw = sum(1 for m in per if per[m][0] == per[m][1] and per[m][1] > 1)
+    sl = sum(1 for m in per if per[m][0] == 0 and per[m][1] > 1)
+    print(f"  maps swept by arm: {sw}   swept by control: {sl}   SW-SL = {sw-sl:+d}")
+    return 0
+
+sys.exit(main())

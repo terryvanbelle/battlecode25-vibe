@@ -21581,3 +21581,27 @@ and a reason to read the per-map table rather than only the total.)
 
 Both runs are launched in one gauntlet so the map sample is drawn once and shared, making the
 arm-vs-null comparison exact.
+
+## E2 post-hoc mechanism confirmation — PASSED, measured while the screen was still in flight
+
+Registered requirement: *even on an accept*, the arm's realised paint-tower fraction must actually
+rise, or the win is not this mechanism. Measured on the three manipulation-check matches (24 arena
+frames, rounds 200/300/500/700, arm and control each vs `alice_iter43`):
+
+| | paint towers | money towers | **realised paint share** | soldiers | mobile |
+|---|---|---|---|---|---|
+| `alice_e2` (arm) | 3.33 | 3.08 | **51.9%** | **10.17** | 16.08 |
+| `alice_e2ctl` | 2.67 | 3.75 | **41.6%** | 8.67 | 14.50 |
+
+> **The mix moved +10.3 points in the intended direction, and the causal chain fired downstream:
+> +17% soldiers, +11% mobile units.** More paint towers → more paint → more units, exactly as the
+> hypothesis said.
+
+**And mit is explained.** Its round count was unchanged at 792, which I flagged as a reason to read
+the per-map table. In every frame mit shows **3 paint / 1 money for BOTH arm and control** — on that
+map alice only ever holds four towers, so the cut point never changes a decision. **A mechanism
+cannot fire where the bot never gets to make the choice**, and mit's ruin famine is precisely why it
+does not get to. That is a reachability limit on this mechanism, on the map with the worst deficit.
+
+This is the *mechanism* confirmed, not the *outcome*. Three maps are not the screen, and the gate is
+the screen.
