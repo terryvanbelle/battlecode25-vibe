@@ -21599,3 +21599,70 @@ links; this is one constant, no memory, and it moves coverage by 28 points.
 
 **Screen launched**, gate and falsifier unchanged: 25-map self-play screen, `>= 31/50` to proceed to
 the standing full-corpus census at margin `>= +26`.
+
+# Iteration 76 — CLOSED on the registered gate. And the whole validated chain moved anyway.
+
+Run `20260910-123040`, `BOT=carol_iter45`, three arms, fresh 25-map sample, 150 games.
+
+| `EXPLORE_RANK` | stage-0 coverage | candidate wins | margin |
+|---|---|---|---|
+| 1 (zero arm) | 37% | 25/50 | 0 |
+| 2 | 47% | 25/50 | **+0** |
+| 3 | 47% | 20/50 | **−10** |
+| 4 | 65% | 23/50 | **−4** |
+
+> **No arm reaches 31/50. The direction closes and the census is not spent.**
+
+## The uncomfortable part: every intermediate link moved, in the right direction, by a lot
+
+On the stage-0 galaxy game, rank 4 against rank 1:
+
+| link in the chain I validated an hour ago | rank 1 | rank 4 |
+|---|---|---|
+| tiles ever sensed | 37% | **65%** |
+| ruins ever marked | 9 | **13** |
+| towers built | 10 | **14** |
+| tower paint | 1,024 | **1,666** |
+| **map coverage (the win condition)** | **459‰** | **700‰** |
+
+**It also won that game 700 to 219.** Coverage -> ruins -> claims -> towers -> paint -> painted area:
+**every single link moved as the chain predicted, and the 25-map screen says −4.**
+
+These are not decision proxies — coverage, towers and painted area are outcome-side quantities. So
+this is a stronger version of the failure than iterations 61 and 66: **a fully validated causal
+chain, every link confirmed, and the terminal outcome does not follow.**
+
+## Why — the chain is real but REGIME-LIMITED, and the regime is the minority
+
+| arm | small + mid (<=1600) | **large (>1600)** |
+|---|---|---|
+| rank 2 | −2 | **+2** |
+| rank 3 | **−14** | **+4** |
+| rank 4 | **−8** | **+4** |
+
+**All three arms are positive on large maps and negative on small/mid.** Mechanistically clean: on a
+small map the whole map is already within reach, so shortening dispatch distance just keeps units
+milling near home where there is nothing left to sense; on a large map achievable trips are the
+whole point. **28 of 50 screen games are small+mid, so the net is negative.**
+
+**And the area-gated version is priced below the bar, by the same method that declined it before.**
+The large-map gain is **+4 on 22 games = 0.85 sd** — not significant. Scaling to a census's 64
+large-map games gives roughly **+12 against a +26 bar**. Declined, and for the second time I note
+that gating on 1,600 tiles would be fitting a boundary I invented for a report table.
+
+## Ledger
+
+| axis | status |
+|---|---|
+| explore-target sampling rank (`EXPLORE_RANK`) | **CLOSED** — +0 / −10 / −4; positive only on large maps at 0.85 sd, and the area-gated form prices at ~+12 against +26 |
+| the coverage chain itself | **VALIDATED as a mechanism, REGIME-LIMITED as a lever** — every link moves (37%->65% coverage, 10->14 towers, 459->700‰ area) but only where coverage is scarce, which is the minority of the corpus |
+
+**What this costs the symmetry chain, which is the honest implication.** Iteration 75's +61% sizing
+runs through *exactly this chain*, and I have now measured the chain end-to-end: it converts on
+large maps and is harmful on small ones. **So the +61% is a large-map figure, not a corpus figure**,
+and the two unbuilt memory links would be bought to move the minority regime. That materially
+weakens the case for building them, and it is the kind of correction only an end-to-end test of the
+chain could produce.
+
+**Coverage rank 2 and rank 5 (refresh period, distance-aware refill) remain unbuilt** — but they
+feed the same chain, so they inherit the same regime limit and the same discount.
