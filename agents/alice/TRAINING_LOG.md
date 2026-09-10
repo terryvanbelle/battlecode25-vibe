@@ -23904,3 +23904,58 @@ units disperse *by design*. **That must be verified against the code and a measu
 from the 7.88%**, because a low adjacency could equally be a consequence of expansion-first sending
 units to distant ruins, in which case the premise is D1's shadow and not a separate axis at all.
 **That check comes before any build.**
+
+# INVERTED-PREMISE CHECK — the answer is CONSEQUENCE, and D4 collapses into D1
+
+Run on the discriminating population: **units with no distant assignment.** In alice's code a soldier
+targets a ruin it can *see* and otherwise wanders. If dispersal is a **policy** the unassigned spread
+anyway; if it is a **consequence** of expansion-first, only the assigned are far.
+
+| lineage | ruin in vision | n | median distance to an ally tower |
+|---|---|---|---|
+| alice | **ASSIGNED** | 122 | **7.0** |
+| alice | **unassigned** | 166 | **3.5** |
+| carol | ASSIGNED | 39 | 6.0 |
+| carol | unassigned | 92 | 4.0 |
+
+> **Alice's unassigned units sit at half the distance of its assigned ones — ratio 0.50x. VERDICT:
+> CONSEQUENCE.** Units are far because they are chasing ruins, not because the wander policy pushes
+> them out. **D4 is not a separate axis. It is D1's shadow**, and my enumeration was carrying it as
+> an independent premise it had already validated the cause of. Carol shows the same pattern (0.67x),
+> so this is a property of expansion play, not of alice.
+
+## So the premise is a TRADE, and I am re-stating it as one
+
+**Phrased as "hold units in", it would be priced against a baseline that also loses the race — which
+is not the comparison worth making.** The honest statement:
+
+> **Expansion-first sends units to distant ruins. That is what wins the race, and it is the same act
+> that puts them out of resupply range (`transferPaint` needs r²≤2; assigned units sit at median 7).
+> The thing that wins the race is the thing that costs the conversion.**
+
+## The trade has observed values on both sides
+
+| | alice | carol |
+|---|---|---|
+| r300 leads | **12** | 4 |
+| conversion of own leads | **75%** (9/12) | **100%** (4/4) |
+| ties (3) | 0 | **3** |
+| games won | 9/19 | 10/19 |
+
+**Carol flips 3 of alice's 12 leads and takes all 3 ties — 6 of the 19 games — while winning the
+expansion race only 4 times.** Alice's expansion advantage is worth **+8 in leads**; its conversion
+deficit gives back **6**.
+
+> **The prize, bounded by observation rather than modelled:** alice converting its *existing* leads at
+> carol's rate is **+3 games in 19**, and the ties are a further 3. **Nothing here requires winning
+> more races — alice already wins them 12–4.**
+
+## And one structural fact that shapes any answer
+
+**Towers are built ON ruins.** So a unit sent to a distant ruin is travelling *toward a future tower*
+— the frontier acquires resupply once the work is done. **The starvation is in the JOURNEY and the
+work, not in the destination.** Any design that resolves the trade has to act on transit, which is
+where alice's 200-paint tank is spent at ~2/turn upkeep over a median 7-tile approach.
+
+**Not building yet, as instructed.** The premise is now stated as a trade with both sides measured,
+which is the form that can be priced against the right baseline.
