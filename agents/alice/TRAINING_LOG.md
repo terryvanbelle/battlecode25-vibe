@@ -20588,3 +20588,63 @@ put **ballistic travel itself** back on the table — and that is an iteration a
 not about crowd. Recorded that way so a future session cannot mistake it for a dosing question.
 
 **HEAD untouched**: `src/alice` remains iteration 43, confirmed at 150 games.
+
+## Messaging payload pre-check — an EXACT ZERO, and it is a theorem I verified rather than trusted
+
+I had built this measurement before the rate-limit stop and never read it. Reading it costs zero
+games. `alice_i57probe` stage 2, 3 games, 17,923 tower turns:
+
+| step | count | share |
+|---|---|---|
+| relay possible (>=2 soldiers reachable) | 1,640 | 9.2% — **reproduces the stage-1 number exactly** |
+| ... AND an **open ruin in the tower's sight** | **0** | **0.0%** |
+| ... AND that ruin under-manned = would fire | **0** | **0.0%** |
+
+**PRE-REGISTERED KILL: below 2.0% of tower turns. Measured 0.00%. CLOSES.**
+
+### An exact zero gets checked before it is believed — and this one is geometry
+
+Twice today an exact zero has needed scrutiny (the "0 of 2,377 repaints", my "zero enemy towers"). So
+rather than trust `RULES.md`, which has now been wrong twice this week, I computed ruin spacing
+**directly from the engine jar's own `.map25` files** across all 75 official maps:
+
+| | value |
+|---|---|
+| **minimum pairwise d² between ruins** | **25** (Barcode, (15,18)–(15,13)) |
+| vision radius squared | **20** |
+| **pairs of ruins mutually visible** | **0** |
+
+> **A tower stands exactly ON a ruin, and no two ruins in the corpus are within vision of each other
+> (min d² = 25 > 20). Therefore a tower can NEVER see an unbuilt ruin.** The zero is not rare — it is
+> *impossible*, and it is impossible on every map in the game.
+
+**And I nearly made the mirror of this error in reverse three days ago**, when I "proved" the soldier
+choice set was a singleton by the same 5-apart argument and was **wrong** — because a soldier stands
+*near* a ruin (d²<=2), not on it, so a second ruin sits at d² >= 12.9, inside vision. **The tower case
+is the one where the theorem actually holds, precisely because the tower is exactly on the ruin.**
+Same geometry, opposite conclusions, and the difference is one tile.
+
+### What this closes, and what it does NOT
+
+**CLOSED: the payload I registered** — "a tower knows of a ruin worth calling about". It cannot exist.
+**I registered a protocol the geometry forbids**, and the pre-check I wrote is what caught it, at the
+cost of a dump I had already paid for.
+
+**NOT closed: messaging-for-rendezvous itself.** The measurement kills my **design**, not the
+direction — the same distinction as lever B being *untested* rather than rejected. The protocol has
+to originate at a **soldier**, which *can* see a second ruin, and relay through a tower:
+
+> soldier A (sees an under-manned ruin) → tower → soldier B
+
+**Registered pre-check for that version, before any protocol is written**, and it is a three-step
+funnel of which I already hold two numbers:
+
+| step | status |
+|---|---|
+| a soldier sees an open, under-manned ruin | **unmeasured** |
+| ... AND can message a tower | 34.0% of soldier turns (measured) |
+| ... AND that tower reaches a second soldier | 9.2% of tower turns (measured) |
+
+**Kill condition, same bar as before: below 2.0% of soldier turns for the full chain.** And the
+denominator lesson from iteration 59 applies — that chain must be measured **at the soldier**, which
+is where the code would live, not as a product of three separately-measured marginals.

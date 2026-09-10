@@ -99,6 +99,13 @@ line refs below are to `engine/src/main/battlecode/world/*.java`.
 | Mopper | 50 | 100 | 100/300 | 0 | 30 (mop), 10 (transfer), 20 (swing) | **2** | -10 paint from enemy robot (+5 to self) |
 
 - All robots+towers: **vision^2 = 20** (sqrt20 ≈ 4.47).
+  - **[E] COROLLARY, verified 2026-09-10 from the engine jar's own `.map25` files across
+    all 75 official maps: the minimum pairwise d² between ruins is 25**, against vision 20,
+    so **no two ruins are ever mutually visible** and **a TOWER — which stands exactly on a
+    ruin — can never see another ruin.** Zero mutually-visible pairs in the whole corpus.
+  - **The same argument FAILS for a soldier**, and I got it wrong that way once: a soldier
+    sits *near* a ruin (d²<=2), not on it, so a second ruin can be at d² >= 12.9, inside
+    vision. The theorem holds only for a unit exactly on a ruin. One tile decides it.
 
 ### Reading `UnitType` from the jar — the field order (verified 2026-09-08)
 
