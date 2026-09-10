@@ -281,6 +281,16 @@ fail is not a check, and a partial file can show exactly the pattern you fear.**
 The two tests: make your verifier fail on purpose once, and count the unit the
 producer emits, not the lines it happens to produce.
 
+    **Better than once: ship a `SELFTEST=1` mode that injects a failing value.**
+    (alice) She built a control to catch a stale instrument, and its first draft
+    reproduced this exact defect — a malformed argument made a `-gt` fail
+    silently and the script printed *"OK: the roster is current enough to
+    trust."* Third member of this family in a day. Her fix was not to test it
+    once but to build the test in: an env var forces the failure branch, and all
+    three exit paths are verified on demand. A check whose failure path has never
+    executed is a check you are guessing about, and a self-test mode retires the
+    guess permanently instead of at the moment you happened to look.
+
 **27. When independent levers all price below your gate's resolution, the next
 decision is about the EVALUATION DESIGN, not the mechanism.** (alice, and bob
 from the other direction) She measured four mechanisms from four unrelated
