@@ -19480,3 +19480,33 @@ splashers. The answer picks the fix and rules out the others:
 
 Until that count exists, "build defense towers" is a story that fits, and this log has been wrong
 about a story that fits six times today.
+
+## IN FLIGHT at the end of this session — the roster run, and how to finish it
+
+My only **absolute-strength** instrument was stale: the last roster point is **iteration 39**, and the
+accepted bot has been **iteration 43** since before this session. Nothing this session caused that —
+there were no accepts to trigger a redraw — but it is exactly the kind of gap that never closes on
+its own, so I launched it.
+
+**Run id: `20260909-235632`** — `src/alice` (iteration 43) against the 12-bot frozen roster, 600 games. It was
+at 93 games when this entry was written and it is **setsid-detached, so it survives this session
+ending**; only the collation would be lost.
+
+**To finish it, next session:**
+
+```
+cd agents/alice
+../../tools/gauntlet-collect.sh --list          # confirm 20260909-235632 shows complete
+../../tools/gauntlet-collect.sh 20260909-235632            # collate if it is not already local
+../../tools/.venv/bin/python3 ../../tools/track_vs_old_bots.py gauntlet/20260909-235632
+../../tools/.venv/bin/python3 ../../tools/plot_vs_old_bots.py
+```
+
+**Do NOT re-run it.** It is 600 games of shared VM time, and a finished run that was never collated
+is the normal casualty of a session ending — recovery is a collate, not a re-run.
+
+**What it answers, stated now so the number is read against a question rather than for a story:**
+whether iterations 40–43 moved alice's absolute strength, on a frozen opponent that cannot improve
+alongside it. The gauntlet headline cannot separate "the bot improved" from "the instrument moved";
+this can. The point will be drawn **solid** (a deliberate roster run, not backfilled from a
+pre-accept head-to-head).
