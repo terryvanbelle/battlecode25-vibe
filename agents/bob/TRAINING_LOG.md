@@ -18282,3 +18282,60 @@ r100 — **magnitude wrong for the tenth time** — but the direction still clos
 case rather than the band. Tally: **right 2, nominally right 3, plainly wrong 8.**
 
 `src/bob/` untouched. **`bob_iter20` remains the bot.**
+
+---
+
+## Iteration 61 — PRE-REGISTERED: ABLATE iteration 12's accepted SRP mechanism
+
+**Why ablate something already accepted.** An accepted mechanism becomes a premise, and premises in this
+project have been overturned three times today. Iteration 12 accepted SRPs **long ago and against a
+different opponent**. Measured now, on the current opponent:
+
+- **34.4% of bob's marks are SRP marks** (135/game) against **alice's 1.4%** (4/game) — iteration 56.
+- Iterations 56–60 closed **every** other mechanism for bob's own-side ruin gap: ranking (#6), abandonment
+  (#30), memory (#31), symmetry inference (#32), dispersal (#33) — while the defect stands. Bob misses
+  **2.2x** alice's own-side ruins **at the same distances**, with the **same army size**, from the **same
+  start**. The soldiers are present and doing something else. **This is the something else.**
+
+**Doses** (`bob-tools/make-srp-arms.sh`): `s0 = 500` (**exact zero arm** — verified semantically identical
+to `src/bob`), `s1 = 3000` (partial), `s2 = 999999999` (**full ablation**, no SRP ever started).
+`workOnSrp()` tests the chip gate **before any sensing and before any RNG draw**, so the ablation does not
+perturb control flow above it.
+
+**The payer, named before building (doctrine 46)**: an active SRP gives **+3 resource per turn to every
+allied mining tower** (engine-verified), and bob completes ~3.67 SRPs a game. **Ablating them costs paint
+income.** If ruin marks rise and paint income falls in proportion, this is a transfer and I will say so.
+
+### GATE — and every band now carries a QUANTIFIER, with branches that partition the space
+
+That is the rule my own third band-specification failure produced (iteration 60). Let `D` = the **maximum**
+delta over the treated arms, `delta = 25 − (iter20's wins vs that arm)`.
+
+- **VOID** unless `bob_s0` is exactly 25/50 **with all 25 maps split by side**.
+- **`D ≥ +10`** ⇒ accept-eligible.
+- **`+7 ≤ D ≤ +9`** ⇒ replicate on a fresh sample.
+- **`D ≤ +6`** ⇒ REJECT.
+
+Those three branches are exhaustive and mutually exclusive over every value `D` can take.
+
+**Secondaries, in order, each with its own quantifier, read at r≤200 (LEARNINGS 87):**
+
+1. **Mechanism engaged**: SRP marks per game must fall monotonically, and **`s2` must reach zero** (not
+   "approach zero"). If `s2`'s SRP marks are non-zero the ablation did not land and nothing else counts.
+2. **The channel**: own-side ruins marked per game must **rise in at least one treated arm**.
+3. **The payer**: paint-tower income and total paint actions. If **both** treated arms lose paint income in
+   proportion to the ruin gain, this is a transfer.
+4. **Objective**: `dCov` at r≤200.
+
+**Corpus note**: the primary is a gauntlet (a treatment effect against an exact null, which a mirror
+*can* measure — LEARNINGS 93); the SRP-mark and own-side-ruin secondaries are read on the same gauntlet
+replays, not on tournament games, because they are levels under bob's own policy rather than
+outcome-conditioned comparisons.
+
+**Prediction**: `s2` clears +7. Tally: right 2, nominally right 3, plainly wrong 8 — and by that record
+the magnitude here is the part to distrust, so I am registering only the sign.
+
+**Shared-VM courtesy**: the 01:00 tournament is the project's highest-value instrument and is starting, so
+this run goes out at **MAXJOBS=2** rather than 3.
+
+`src/bob/` untouched. **`bob_iter20` remains the bot.**
