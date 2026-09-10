@@ -20935,3 +20935,57 @@ alone**, and R1 is the one I was told not to touch pending the user's decision �
 touching.
 
 **HEAD untouched**: `src/alice` remains iteration 43.
+
+# What the incumbent's r²=20-local design GETS RIGHT — the properties a rewrite must keep
+
+Asked for while the rewrite question is with the user. **A from-scratch attempt that loses any of
+these is worse than no rewrite**, and each is a measurement rather than an opinion.
+
+### P1 — the per-turn local decision is already near-optimal
+
+> Soldiers act on **19.0%** of turns, and on the 81.0% they do not, an EMPTY tile — the only tile type
+> that gains coverage — is in reach on just **1.8%** (mean 0.122). **The unit acts whenever work
+> exists and is idle when none does.** Three independent instruments agree on the output: 16.7
+> actions/soldier implied here, 20.3 from the r300 tournament census, 19.7 from the paint ledger.
+
+**This is the property most at risk in a rewrite**, because it is invisible: it looks like idleness.
+A rewrite that "fixes" the 81% idle rate by giving units something to do will be spending paint on
+tiles that gain nothing.
+
+### P2 — expansion-first targets the right variable, and alice WINS that race
+
+> The **r300 tower lead predicts the winner at 79–81%** cross-lineage — 13/14 in self-play, and 83%
+> vs 21% inside my own screens. And alice wins that race: **+0.53 towers vs carol on small maps and
+> 2.06x on large.** Its whole production model is `towers × ~75 paint actions`.
+
+Alice's losses are *not* expansion failures — 48% of them are games it led at r300. **A rewrite that
+trades away out-expansion to buy something else is trading its one confirmed strength.**
+
+### P3 — the engine traps are correctly guarded, at corpus scale
+
+> A soldier cannot paint enemy paint (the attack debits 5 and does nothing). Iteration 23 guards both
+> attack sites, and the guard holds in the field: **0 of 12,409** over-enemy paints came from a
+> soldier. **Zero redundant same-shade repaints by soldiers** — all 6,488 were splasher footprint —
+> independently corroborated by bob at **0 of 2,377** across both bots.
+
+### P4 — ballistic movement beats diffusive, measured
+
+> Iterations 12 and 14: long straight runs with a slide-on-obstacle beat re-rolling the heading, worth
+> real tower count. This is the property crowd-avoidance would have had to override, and the reason I
+> closed that direction rather than dose it.
+
+### P5 — no play-symmetry bias
+
+> Left/right tie-breaks are randomised at every site (Phase 0 item 7). Mirror checks show no
+> persistent one-sided map result. A rewrite reintroduces this bug class by default.
+
+### P6 — bytecode is not a constraint
+
+> Peak **1,638 / 17,500** for soldiers (9%), 534 / 20,000 for towers. Expensive logic is affordable —
+> which means a rewrite's budget is *design*, not compute, and there is no efficiency excuse for
+> keeping decisions local.
+
+**The uncomfortable summary**: five of these six say the incumbent is doing the local game well, and
+the plateau is not explained by anything on this list. **That is the case for R1 being the whole
+remaining question — and equally the case for a rewrite being risky, because most of what it would
+have to rebuild is already right.**
