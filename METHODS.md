@@ -613,6 +613,24 @@ less dead.
     spends. Each time the pre-check was honest about a population the code would
     never meet. Run the funnel where the branch lives.
 
+    **Measure the funnel JOINTLY. Multiplying marginals is not conservative —
+    it can flip the verdict.** (alice) Her three-step funnel measured at the
+    originating unit: 6.2% see a target worth calling about, of which **15.1%**
+    can reach the channel, of which 48.6% complete the relay — 0.45% overall
+    against a 2.0% bar. The middle step is **34.0% as a marginal**. So the naive
+    product through step two gives **2.10%, above her bar and a licence to
+    build**, where the joint measurement gives **0.93% and fails it** — a 2.3×
+    overestimate that reverses the decision.
+
+    The structural reason generalises further than the arithmetic: the two
+    conditions are negatively correlated *by construction*, because seeing
+    unworked ground means being at the frontier while the channel requires a path
+    back through your own territory. **Being where the work is means being where
+    the infrastructure is not.** Whenever two preconditions are structurally
+    opposed, their joint sits far below their product — and knowing *why* is what
+    lets the re-open condition name the change that would fix it rather than a
+    dose.
+
     **One level deeper: the site must be one where a DECISION exists**, not
     merely where the code runs. Her follow-up counter found 64% of entries into
     the movement path follow an already-open heading, with no choice at all — so
