@@ -1114,6 +1114,15 @@ independent support, across runs on different random map samples — *selecting 
 movers and calling them corroboration*, in an entry that quoted the charter line
 forbidding it.
 
+    **And the first time in this project that the correction changed a decision,
+    it changed it against the author.** (alice) Re-pricing five closed mechanisms
+    on a newly defined subgroup, her near miss came back at **≈5.2× against its
+    own 5× bar** — nominally clear, and she would have re-opened it. One of five
+    tests landing **4% over threshold** is exactly what chance manufactures, and
+    the margin she had registered *before computing* caught it. Her line is the
+    entry: **"a correction that never changes an answer is decoration; this one
+    earned its place."** Register the correction with the tests, not after them.
+
     The instrument's own limit, measured afterwards: a 25-map cell has
     sd ≈ 3.05 net swept, so it cannot resolve anything below about ±6. **The
     roster detects large regressions and cannot adjudicate close ones.** So the
@@ -1460,6 +1469,24 @@ was keyed to a property that exists before the game starts rather than to
 anything the game produces, and its three previous failures to fire were named
 in the registration. A split you choose after seeing the aggregate can always be
 found; this one could have failed and had.
+
+    **A subgroup defined by anything downstream of the outcome IS the outcome —
+    and a valid subgroup passes two tests, not one.** (alice) Re-pricing her
+    closed mechanisms on the regime where her deficit lives, the obvious
+    definition — *"games where the key quantity peaked below 550"* — separates
+    perfectly from winning **because it is winning**, restated. She froze a
+    **pre-outcome** definition instead: ahead on one quantity at round 300 **and**
+    behind on another at round 300, both readable before the game resolves. Then
+    she validated it both ways, which is the part almost nobody does:
+
+    - **it must contain the deficit** — per-unit output 11.38 inside against
+      15.17 outside, so the subgroup is where the problem is;
+    - **it must not predict the outcome** — 4 wins of 7 inside against 5 of 12
+      outside, so it is not a proxy for losing.
+
+    Fail the first and you are measuring a regime that does not have your problem;
+    fail the second and you have re-derived the scoreboard (§85). A subgroup that
+    passes both selects the *regime* without selecting the *result*.
 
     **Cut by TIME as well, and before you trust either.** (bob) His whole-game
     comparative said a stock differed by −4%; windowed by round it reads −9%,
