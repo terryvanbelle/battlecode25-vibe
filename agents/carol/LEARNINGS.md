@@ -542,3 +542,17 @@ both directions, and do not let a reject you agree with quietly answer a questio
 - **Two sets can support different contrasts, and must not be reported as one.** Win-half versus
   loss-half is a different comparison from carol versus opponent; the both-sides losses cannot supply
   the first at all. Compare like for like across sets before claiming a pattern holds.
+
+- **A closure's basis can be regime-specific in a way its wording hides.** Five separate closures near
+  "why can't I hold structures" all rested on one fact -- against the rival, carol loses zero towers.
+  True when measured, false in the regime carrying the margin. Grep by hypothesis name, then ask of
+  each hit: was it measured on THIS regime, and did it operationalise the quantity I mean?
+- **Watch for name collisions when grepping a ledger.** "Retention" in my closure map meant paint-TILE
+  retention; I meant structure retention. A grep hit is a candidate, not a match.
+- **The cleanest re-open is a condition you wrote in advance and later satisfy by measurement.** My
+  "denial of lost sites" entry carried the re-open "a regime where carol loses towers"; in the margin
+  regime carol loses 40 structures across 12 games. That is not preference, and it is why re-open
+  conditions are worth writing even for directions you expect to stay shut.
+- **A beautifully controlled measurement on a set that carries no margin is worse than a rough one on
+  the set that does, because it is persuasive.** My cleanest result of the day (p=0.0012) described
+  the regime contributing exactly zero to my margin.

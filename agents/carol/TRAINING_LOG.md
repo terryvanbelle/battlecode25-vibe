@@ -23566,3 +23566,47 @@ pattern holds:
 **Root cause still not claimed.** I now have two proximate mechanisms localised to two regimes. Why
 carol cannot hold structures on the maps that carry her margin is not established, and I am not
 asserting it.
+
+## LEDGER CHECK before designing anything — grep by hypothesis name, then the two tests
+
+*"Why can't I hold structures"* is adjacent to closed directions. Grepped `CLOSURE_MAP.md` and the log
+by hypothesis name first. Five near neighbours, each put to the two tests: **(1) was it measured on
+this regime?** and **(2) did it operationalise retention, or something adjacent?**
+
+| near neighbour | its basis | (1) this regime? | (2) retention? | covers? |
+|---|---|---|---|---|
+| **denial of lost sites** | "real, measured, not the deficit — vs the rival carol loses **zero** towers". **Re-open condition written on the entry: *"a regime where carol loses towers"*** | **NO** — measured where carol loses zero. Here she loses 3.3× the opponent | NO — it operationalised what carol does about a site **after** losing it | **NO** |
+| **mopper supply / paint denial** | −16/150 vs `bobf`, **−3.83 sd** | partly | **NO — it operationalised removing enemy PAINT.** Defending a structure is a different quantity | **NO** |
+| splash targeting "**retention**" | re-open spent | — | **FALSE HIT — that is paint-TILE retention.** A name collision, flagged so a later grep does not mistake it | **NO** |
+| **defense towers** | closed on a precondition: *"a defense tower could intercept at most **4.1%** of the mopping; the threat does not come into range"* | **NO** — sized vs alice | **NO** — sized against **mopping interception**, not against a splasher attacking structures from outside their reach | **NO** |
+| **rebuilding** | *"On Gears against alice, carol loses ZERO towers while alice rebuilds 43 times… Rebuilding cannot be carol's deficit"* | **NO** — same zero-loss regime | closer, but concluded from a regime with nothing to rebuild | **NO** |
+
+> **Every one of these closures rests on the same fact: *against alice, carol loses zero towers.***
+> That fact is **regime-specific**, it was true when measured, and it is **false in the regime that
+> carries my margin.** This is the objective-re-target argument applied to a subset rather than to an
+> opponent — not a re-open on preference.
+
+**And one of them re-opens on a condition I wrote in advance.** `denial of lost sites` carries the
+re-open *"a regime where carol loses towers"*. In Set A carol loses **40 structures across 12 games**.
+**The condition is met by measurement, not by argument** — the cleanest form of re-open there is.
+
+> **There is no prior closure against structure retention in this regime.** It is a margin-carrying
+> mechanism with nothing shut against it — the first such thing I have held all day.
+
+## The mechanism, sharpened — carol loses more AND replaces less
+
+Set A (the 6 both-sides losses = the entire margin), measured within each replay:
+
+| | structures lost | gained | replacement ratio | **regained prior level after a loss** |
+|---|---|---|---|---|
+| **carol** | **40** | 49 | 1.23 | **9 of 40 = 22%** |
+| **`carol_siege`** | **12** | 76 | **6.33** | **10 of 12 = 83%** |
+
+**carol loses 3.3× as many structures and recovers 22% of them against the opponent's 83%.** This
+confirms, in the regime that matters, the note I made at iteration 5 and then set aside:
+*"carol rebuilds 0 and 2 — carol's towers die and stay dead."* It was true, it was measured on a
+regime where it did not cost anything, and it costs something here.
+
+**Root still not claimed, and the discriminator is already controlled:** the opponent retains ~98%
+in the *same games, on the same maps* where carol retains 53.9%. **It is not the map.** What it is
+has not been established, and I am not asserting it.
