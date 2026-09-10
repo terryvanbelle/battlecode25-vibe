@@ -19500,3 +19500,73 @@ rather than being the proposal. It does not drive inclusion; selectivity 1.67 do
 
 **Screen launched**: `BOT=carol_iter45`, arms 3:1 / 5:1 / 3:0, fresh 25-map sample, 150 games. Gate,
 selection rule and falsifier unchanged from the pre-registration.
+
+# Iteration 67 — NULL, and a large one. The targeting area CLOSES FOR GOOD, as registered.
+
+Run `20260910-050147`, `BOT=carol_iter45`, three arms, fresh 25-map sample, 150 games.
+
+| `W_EMPTY:W_ENEMY` | selectivity | candidate wins | margin |
+|---|---|---|---|
+| **2:3 (zero arm, incumbent)** | **0.95** | **25/50** | **0** |
+| 3:1 | 1.31 | 14/50 | **−22** |
+| 5:1 | 1.47 | 18/50 | **−14** |
+| 3:0 | 1.67 | **2/50** | **−46** |
+
+**Every dose is far worse than the incumbent, and the extreme is catastrophic.** (3:1 vs 5:1 differ
+by 1.1 sd — noise; the real structure is "any de-weighting of enemy paint is harmful, and zeroing it
+is fatal".)
+
+> **Registered falsifier: "if the empty-share of conversions rises and no dose beats the control,
+> then retention differences do not convert into wins — the whole targeting area closes for good
+> rather than being re-dosed, and my expected-value accounting is wrong somewhere that I will have
+> to name."**
+>
+> Selectivity rose at every dose. No dose beat the control. **The area closes. Here is the error.**
+
+## Error 1 — I priced the offense and drove the defense to zero
+
+I wrote that enemy conversion "carries unpriced defensive value" and then built a dose (`3:0`) that
+sets that value to exactly nothing. The engine does not let me: **>70% of paintable squares is an
+instant win for EITHER side**, so converting enemy paint is not merely offense — it is the only
+brake carol has on the opponent's own win condition. The 3:0 game on Mirage ended at **round 474,
+`carol_iter44` winning by MAJORITY_PAINTED**. A splasher blind to enemy paint does not lose slowly
+on area; it gets painted out.
+
+**Naming something "unpriced" and then dosing it to zero is not bracketing, it is assuming.**
+
+## Error 2 — the deeper one: I treated a POLICY-DEPENDENT quantity as a property of the world
+
+This is the part worth keeping. I measured, correctly and on two disjoint maps, that
+enemy-converted tiles are lost 2.7–6.4x more often than empty-converted ones. **But I measured it
+under the incumbent's behaviour, and then applied it to a policy that changes that behaviour.**
+
+Enemy-converted tiles are lost more often *because they sit in contested territory where the enemy
+is active*. Stop contesting it and the enemy keeps that ground **and keeps expanding** — so the
+front advances toward me and the retention of my *empty* conversions falls too. Retention is not a
+fixed property of a tile's origin; it is an equilibrium outcome of both policies.
+
+**A conditional probability estimated under the current policy is not a fact about the game.
+Applying it to a different policy silently assumes the policy does not move it — and here the policy
+moves it hard, and in the direction that destroys the estimate.** This is the same family as the
+denominator confound that broke my manipulation check two hours ago, one level up: there the
+treatment moved the denominator, here it moves the conditional itself.
+
+## What this establishes positively, which is worth having
+
+**The incumbent's splash weights (enemy 3, empty 2) are not an accident — they are load-bearing, and
+now measured against three alternatives.** Selectivity 0.95 beats 1.31, 1.47 and 1.67. Before today
+those two literals had never been varied in this lineage's history; they are now bracketed, and the
+direction of the bias is confirmed correct.
+
+## Ledger
+
+| axis | status |
+|---|---|
+| splash scoring weights (`W_EMPTY` : `W_ENEMY`) | **CLOSED FOR GOOD** — 2:3 incumbent beats 3:1 (−22), 5:1 (−14) and 3:0 (−46); enemy-targeting is the only brake on the opponent's 70% win |
+| splash targeting as a family (the iteration-66 re-open) | **CLOSED** — the re-open condition was satisfied (retention differs 2.7–6.4x) and the mechanism built on it failed at every dose, because the retention gap is policy-dependent rather than exogenous |
+
+**No re-open condition is offered for the weights.** A re-open would need a mechanism that raises
+empty-selectivity *without* reducing pressure on enemy paint — and since the score is a single
+ranking over one candidate set, those are the same knob. If a future session wants this area it must
+first show that retention differences survive under a policy that acts on them, which is the
+measurement this iteration proved cannot be taken from control-policy replays.
