@@ -305,6 +305,26 @@ both directions, and do not let a reject you agree with quietly answer a questio
   keyed on 1,600 tiles — a bucket edge I invented for a report table. Priced at +7 against a +9 bar
   and declined on arithmetic; the better objection is that a mechanism keyed to your own presentation
   is fitted to it. → TRAINING_LOG, *"PRICED AND DECLINED"*
+- DOCTRINE 7 GOVERNS THE MECHANISM CHECK, NOT ONLY THE GATE. I checked that my GATE opponent posed
+  the threat before building iteration 71 and wrote it up proudly — then ran the stage-0 manipulation
+  check against carol_iter44, which mops 17 times a game against bobf's 828. Stage 0 reported total
+  paint actions **+16%**; against an opponent that actually applies the pressure the same metric is
+  **-33%**. A manipulation check measures the mechanism in the regime you run it in: against an
+  opponent that never creates the conditions the mechanism trades against, it reports the benefit
+  without the cost. Stage 0 is what licenses the build, so it needs the check MORE than the gate does.
+  → TRAINING_LOG, *"The lesson, and it is one level up"*
+- A FOREIGN RE-OPEN CONDITION CAN BE RIGHT WHILE YOUR TEST OF IT IS WRONG. bob's #17 asks for a
+  mechanism raising mopper share "without reducing total paint actions". I measured that clause as
+  MET and built on it; measured properly it fails, and the iteration died at -3.83 sd — the largest
+  negative this lineage has recorded. His closure transferred and his condition was well specified;
+  only my measurement of it was not. When you take a foreign closure as "the prior to beat", the
+  clause you test is only as good as the regime you test it in.
+- I HAVE NOW ARGUED "MY SELF-PLAY GATE IS BLIND" TWICE AND BEEN REFUTED BOTH TIMES. Iteration 68:
+  self-play +6/50, bobf -2/150 — they agreed. Iteration 71: self-play +4/50, bobf **-16/150** — the
+  self-play gate was OPTIMISTIC, not blind, and understated the harm in the safe direction. Both
+  times I had a quantitative argument (a 100x threat-exposure ratio the second time). The story
+  explains a disappointing number without requiring the mechanism to be wrong, which is why it keeps
+  appealing. Run the external instrument as the TEST of the claim, never as a way around the screen.
 
 ## Housekeeping
 
