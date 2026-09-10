@@ -20016,3 +20016,62 @@ games.
 
 **`bobf` screen launched** on `carol_i69_2`: full 75-map corpus, 150 games, against the exact
 baseline **96/150**, bar **>= 105 (2.15 sd on a measured floor of 4.18)**.
+
+# Iteration 69 — CLOSED on the registered gate. And the deficit account it rested on is refuted.
+
+Run `20260910-101308`, `carol_i69_2` vs `bobf`, full 75-map corpus, 150 games.
+
+> **99/150 = 66.0%. Delta +3 over the 96 baseline = 0.72 sd. Registered gate: >= 105 (+9, 2.15 sd).**
+> **FAILS. Per the pre-registration, the direction closes and the self-play census is not spent.**
+
+| bucket | `carol_iter45` | `carol_i69_2` | delta |
+|---|---|---|---|
+| small (<900) | 17/22 | 20/22 | +3 |
+| mid (900–1600) | 46/64 | 50/64 | +4 |
+| **large (>1600)** | **33/64** | **29/64** | **−4** |
+
+## The mechanism worked. The account of *why it would help* did not.
+
+The scheduler did exactly what it was built to do — realized ratio 12.7:1 -> 0.4:1, tower count
+intact, a monotone self-play ladder (+4/+10/+12, the first in this area to point anywhere). And on
+the regime it was aimed at, **large maps, it is the one bucket that goes backwards.**
+
+**This is the second mechanism in two iterations to show −4 in the large bucket** (iteration 68's
+phase switch, also −4; also 1.46 sd on that bucket's floor of 2.73, so neither is established
+individually). Two independent mix-shifting mechanisms, both raising splasher share, both costing
+the large bucket while gaining elsewhere, is a pattern worth naming:
+
+> **On large maps carol may need MORE soldiers, not fewer** — more distant ruins to claim, and vastly
+> more empty ground where a cheap 1-tile-per-action unit is not obviously the wrong tool. Every mix
+> mechanism I have built pushes the opposite way, and the area gradient is precisely where they all
+> fail to pay.
+
+**My registered falsifier does not fire on its literal wording** — I wrote *"if the realized ratio
+moves and NEITHER instrument shows a gain"*, and the self-play screen did show +12/50. But the
+substance behind it is refuted: **the splasher-supply account of the area gradient is wrong.**
+Raising splasher supply by 30x moves small and mid maps and does not move (or slightly harms) the
+large ones. Whatever costs carol the 26.6%-vs-alice bucket, it is not the mix.
+
+## The residual signal, stated rather than banked
+
+Both instruments came back positive overall (+12/50 self-play at 1.7 sd, +3/150 on `bobf` at
+0.72 sd). That is a small, consistent, unimpressive effect — and it is **not** what I registered
+this iteration to test. Running the self-play census now, hoping for +26 on a mechanism whose stated
+purpose has just been refuted, would be gate-shopping with extra steps. **The gate said both, `bobf`
+said no, and the direction closes.**
+
+## Ledger
+
+| axis | status |
+|---|---|
+| spawn **scheduler** (`SPLASHER_EVERY`, hold-for-splasher) | **CLOSED on the registered gate** — bobf +3 (0.72 sd) against a +9 bar; large bucket −4 |
+| "splasher supply causes the area gradient" | **REFUTED** — supply raised 30x, large bucket unmoved/negative |
+
+**RE-OPEN condition, written to be checkable and honest about what it is:** a future session may
+re-open the *scheduler* as a **general-purpose** improvement — not as an area-gradient fix — but only
+by registering it that way **from the start**, with the standing self-play census as the sole gate
+and no claim about large maps. The residual is +12/50 and +3/150; the census bar is +26, so such a
+session should expect a reject and should say so in advance.
+
+**And the peak was never bracketed above** (the ladder still rose at `K=2`), so any such re-open must
+include `K=1`.
