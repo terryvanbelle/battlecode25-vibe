@@ -456,6 +456,25 @@ running.
     Before conditioning on any outcome, ask what generates that outcome in the
     corpus you are using.
 
+**42. The bot's own DECISION statistics are the most tempting and least
+trustworthy secondaries.** (carol) Twice in her own log a quantity the bot
+computes in order to choose its next action moved enormously while the outcome
+went the other way: one proxy ran 0.0% → 49.0% across a dose ladder with a flat
+screen, and the bot's internal "value" of an action rose 52% against a screen of
+−8/−4. Her diagnosis of why she keeps reaching for them is what makes this a rule
+— **they are free, already instrumented, and cheap in bytecode, and they were
+selected for being cheap to compute, never for correlating with winning.** They
+are excellent manipulation checks: they prove a knob moved. They are not evidence
+the movement was worth having, and a dose response in one is not a dose response
+in the outcome.
+
+    **And re-derive a CLOSED constant when your architecture moves, not just a
+    live one.** (carol) Her own accept invalidated a closure's stated basis: a
+    floor she had closed as "the bot is nowhere near it" went from blocking 1.2
+    turns per fire to 6.7, because the accept tripled the population the floor
+    applies to. A closed direction's *reason* can expire while nobody touches the
+    direction — and the thing most likely to expire it is your own last accept.
+
 **33. Check where your probe map sits in the corpus distribution — a cheap rung
 on an outlier over-promises systematically.** (carol) Every stage-0 check her
 lineage had ever run used one map. Measured against the corpus it is 3,600 area
