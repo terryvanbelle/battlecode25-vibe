@@ -21925,3 +21925,58 @@ an exploration signal.**
 > passes does the terminal bar (ruins visible over r1–300, 1.56 → PASS ≥2.4) become worth chasing.
 
 **Nothing built. `src/alice` unchanged since iteration 43.**
+
+# REQUIREMENT I, STAGE 0 — RUN. KILLED, with the sign INVERTED, and the gradient family is now closed
+
+C2 refuted the own-paint gradient as a *targeting* signal; I recorded that it left *spreading*
+untested and registered stage 0 to test it. Run here on the **starved maps only** (maze, mit), 51
+per-round frames per game, 33 soldiers tracked by nearest-neighbour identity. **Zero games.**
+Tool: `tools/i0-explore.py`.
+
+> Registered: **PASS if the top own-paint quartile covers ≥30% LESS new area than the bottom
+> quartile. KILL if <10%.**
+>
+> Measured: bottom quartile **99.5** tiles, top quartile **163.7**. **GAP = −64.5%.**
+> **VERDICT: KILL** — and not narrowly. The sign is **inverted**: soldiers deepest in their own paint
+> cover *more* new ground, not less.
+
+## I checked my own operationalisation before believing it — the lesson from an hour ago, applied
+
+The registered phrase was "new area it covers", and I had operationalised it **soldier-relative**
+(union of its discs minus its own disc at t). The mechanism actually needs area new to the **TEAM**.
+Having just caught myself citing C2 beyond its registered truth, I computed the team-relative version
+rather than closing a direction on a possibly-wrong measure:
+
+> team-relative gap = **−14.6%.** **Same sign.** The premise fails on both operationalisations, so
+> the kill is a fact about the world and not about my choice of denominator.
+
+**A mechanism needs the right sign before it needs significance**, which is why I am not leaning on
+the permutation null here — it gives p = 0.028 but places the observed value just inside its own 95%
+band (the null is skewed at n=25), and the conservative read is "not cleanly distinguishable". It
+does not matter: **a signal pointing the wrong way is not a weak signal, it is a refuted one.**
+
+## Why — and the finding is bigger than the mechanism
+
+The likely cause is visible in the numbers and matters more than the arm: **a frontier soldier stops
+to work, and an interior soldier cruises.** A soldier deep in its own paint has nothing to paint and
+open, already-painted ground to travel over, so it covers distance. A soldier at the frontier finds
+empty tiles and stays to paint them.
+
+> **Exploration and work are in direct tension: the units covering the most ground are precisely the
+> ones with nothing to do.** That is P1 seen from the other side — "the soldier is correctly idle"
+> and "the idle soldier is the one exploring" are the same fact. **Any mechanism that pushes units
+> toward unexplored ground is pushing them away from work, and the bot is already making that
+> trade-off in the direction the measurement says is right.**
+
+## Ledger status of the gradient family — now complete
+
+| framing | verdict | evidence |
+|---|---|---|
+| gradient as a **targeting** signal | **dead** | 0.95x random (C2) |
+| gradient as an **exploration** signal | **dead** | −64.5% registered, −14.6% team-relative — wrong sign both ways |
+
+**Closed. Re-open condition, as a testable sentence:** re-open only if a measurement shows a
+population of soldiers that are *simultaneously* idle and near unexplored ground — the tension above
+says that population is small, and it has never been counted.
+
+**`src/alice` unchanged since iteration 43.**
