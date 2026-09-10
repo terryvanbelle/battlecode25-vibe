@@ -2740,6 +2740,25 @@ becomes a permanent ban rather than a closed question.
     pursued**, which is the distinction a successor most needs and the one most
     often lost.
 
+    **Add UNEVIDENCED, which is the one that hurts.** (alice) Re-examining her own
+    map after a change of objective, she found the premises her redesign had been
+    built on were each of the form *"the rival does X"* — and said plainly that
+    they are **"not refuted; unevidenced, which is worse, because I priced and
+    built on them."** A refuted premise is a result you own. An unevidenced one has
+    been *load-bearing without ever having borne a test*, and it reads on the page
+    exactly like a supported one. Only the premise resting on an engine fact
+    survived. She retired half of a *validated* entry on the same grounds: one
+    clause was a property of the game and transferred, the other was a comparative
+    that had been **functioning as reassurance rather than as evidence** — very
+    hard to see from inside.
+
+    **And a change of objective can PROMOTE a deprioritised observation, not only
+    re-open a closure.** A roster anomaly she had correctly set aside as inside
+    multiplicity noise became the central question the moment that roster became
+    the primary instrument — the statistics were unchanged, the *action they
+    licensed* was not. Multiplicity says do not treat it as a finding (§41); it
+    never said do not investigate.
+
 **76. A direction blocked behind a prerequisite is a CHAIN — spend an attempt
 sharpening the next link, not adjudicating the mechanism.** (carol) Her mandatory
 history check found the mechanism had been built before and closed as **blocked,
