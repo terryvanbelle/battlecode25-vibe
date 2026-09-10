@@ -22791,3 +22791,55 @@ why K4's 1.9x is trustworthy and the realised 1.15x is not.
 whether the quantity is measured WITHIN or ACROSS the unit of randomisation. Across-game per-unit
 rates of rare events have floors so wide that the check cannot fail — and a check that cannot fail is
 one I have now shipped twice.*
+
+# BEFORE K7 RUNS — the attribution chain, written down, and a secondary I did not think I had
+
+## First, the retraction stated correctly
+
+**The claim stood; the evidence for it changed.** K3's mechanism attribution is intact — K4's
+same-game counterfactual (97 permitted draws against 51, identical games, identical turns) is exact
+and establishes it. What I withdrew was the *cross-game refill ratio* I had originally cited. Those
+are different events, and conflating them would make a retraction read as a collapse.
+
+## The secondary for the OUTPUT link exists after all — and it is exact and within-game
+
+I was told the within-game counter proves only that the *gate* opened, leaving the screen's net to
+carry the whole attribution. **But `i25Paint` accumulates the paint actually moved, at the transfer
+site, per robot** — exact, and with no game-to-game term:
+
+> **97 refills moved 10,034 paint — a mean of 103.4 per refill. That is 2,007 potential paint
+> actions, or 20.0% of alice's 10,024 paint actions on the same maps.** The K3 *increment* (≈46 extra
+> refills) bounds at **≈9.5% of output.**
+
+An **upper** bound — it assumes every point moved becomes an action that would not otherwise have
+happened — which is the safe direction, and it is consistent with K3's small positive result.
+
+## And it reframes the prize, because paint is CONSERVED
+
+Paint moved into a tank comes **out of a tower**, and E2 measured towers at `atcap` **0.0%** — they
+spend everything. So a refill does not create paint; **it diverts paint from spawning.** The right
+question is which use converts better, and both numbers are measured:
+
+| 200 paint spent on… | delivers |
+|---|---|
+| **spawning a unit** | **9.54 paint actions** (K1: 33,767 actions ÷ 3,540 units) |
+| **refilling existing units** | up to **40 paint actions** (200 ÷ 5 per action) |
+
+> **≈4x better per unit of paint** — because a new unit pays its upkeep from scratch over ~88 turns
+> (measured ~50/50 tank split), while a refill tops up a unit whose upkeep is already sunk.
+> **Refilling avoids paying upkeep twice.** That is the clearest statement yet of why this direction
+> should pay, and it rests on measured quantities rather than on the parity story I retired.
+
+## What I will claim on a PASS — registered now, before the run
+
+> **On a pass I claim exactly two links, and name the third as unmeasured:**
+> 1. **The gate opened** — within-game counterfactual, exact, ≥3x or the cross-tab's pricing is false.
+> 2. **Paint moved** — within-game, exact, and its ÷5 upper bound on added output.
+> 3. **The screen won (+N ≥ 4)** — null arm in the same batch, VOID first, in code.
+>
+> **NOT claimed:** that the moved paint *became* the extra output. Nothing I own can show that — no
+> cross-game rate can, at any n — so the middle link stays **inferred, not measured**, and the ÷5
+> figure is a ceiling on it and not an estimate of it.
+>
+> **This chain is weaker than K3 appeared to have**, and it is stated before the result so an accept
+> cannot retire the weakness unnoticed.
