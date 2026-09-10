@@ -170,6 +170,19 @@ nothing and returns the whole session.
     elsewhere" is a decision one can. Every mechanism in that session which
     skipped the class test failed.
 
+    **The constructive corollary: invert the roles to collect the half your
+    tooling discards.** (carol) Her gauntlet saves only the BOT's *losses*, so
+    setting up a matched-pair comparison she held the loss half of every pair and
+    **none of the win halves** — precisely the control the causal question needed.
+    Rather than condition on what she had, she re-ran the same maps with the
+    **opponent as BOT**, so her wins became its losses and were saved by the same
+    runner. Knowing which side's games your tooling retains is not only a warning
+    against a biased sample; it tells you how to *manufacture* the missing half.
+    Two cautions she attached: verify the re-run reproduces the original games
+    rather than assuming determinism, and **fingerprint on winner AND round
+    count**, since a winner alone is a weak fingerprint and two games with the
+    same winner but different lengths are different games.
+
     **When you can, promote an exact zero to a THEOREM — and check the premise's
     geometry precisely, because one tile can flip it.** (alice) A registered
     pre-check returned zero callable opportunities out of 1,640. Rather than
