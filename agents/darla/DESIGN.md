@@ -285,3 +285,35 @@ experiment, and they were re-ordered ahead of the mopper arms on this basis.
 and the coverage race and still lose. Then coverage is not reachable from this
 economy either, and the bot needs a different production engine rather than a
 different constant.
+
+### Amendment to the dose ladder, written before either arm returned
+
+Traced the gate arithmetic properly instead of reasoning from the median alone.
+carol already handles the pinned-treasury case: after `STAGNANT_ROUNDS = 10` turns
+with chips in `[CHIP_RESERVE, CHIP_RESERVE + 250)`, `reserve` drops to 0. So on
+SaltyPepper, where the treasury sits at $1,350 for 1,200 rounds, the reserve is
+already being freed — and a soldier is *still* blocked, because `SPLASH_FLOOR`
+then demands `chips - 250 >= 2000`, i.e. $2,250, which $1,350 never reaches.
+
+**`SPLASH_FLOOR` is therefore the sole remaining blocker, which sharpens both
+arms into a prediction about whether the mechanism fires at all:**
+
+| arm | floor | soldier needs (reserve freed) | vs a $1,350 treasury |
+|---|---|---|---|
+| `darla1` | 2000 | $2,250 | never affordable |
+| `darla4` | 1400 | $1,650 | **still rarely affordable** |
+| `darla5` | 0 | $250 | affordable |
+
+So `darla4` is expected to be **close to a null**, and if it returns flat that is
+**the mechanism not firing, not the axis being flat** — the exact
+untested-versus-refuted confusion this file keeps warning about. `darla5` is the
+arm that actually tests the question.
+
+**Mechanism check, and it must be read before either win rate**: soldier build
+events per game, straight off the replay aggregates (`sold` and `+sold`), against
+darla1's zero-to-five. If `darla5` does not raise the soldier count materially,
+no verdict is read off its score at all.
+
+This also demotes carol's own dose-0 result rather than contradicting it. Her
+−3.26 sd at floor 0 was measured against `carol_iter44`, a splasher-flood bot
+that wins on coverage — the opponent her ledger says cannot answer the question.
