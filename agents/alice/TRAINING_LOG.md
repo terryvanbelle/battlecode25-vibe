@@ -22196,3 +22196,72 @@ lineage, so this is measured on **replays alice already holds**, never by readin
 **`src/alice` unchanged since iteration 43.** Five directions closed, one arm built and rejected on
 its bar, one headline withdrawn, and now the session's *aim* corrected — by a measurement that was in
 my own log the whole time.
+
+# K1 — THE DECOMPOSITION RUNS, AND IT PASSES. The deficit is PER-UNIT OUTPUT, and the differentiator is PAINT REFILL
+
+21 alice-vs-carol games from tournament run `20260910-0100` (150 available; the `[A-F]*` slice is
+deterministic and outcome-blind). **Read from replays of games alice played — no carol source
+opened.** Tool: `tools/k1-output.py`.
+
+## Alice is ahead on every count term and behind on the only one that matters
+
+| quantity | alice | carol | alice/carol |
+|---|---|---|---|
+| mean towers alive | 6.78 | 6.16 | **1.10x** |
+| total units spawned | 3,540 | 2,630 | **1.35x** |
+| mean units alive | 18.21 | 14.09 | **1.29x** |
+| **total paint actions** | **33,767** | **49,880** | **0.68x** |
+| **paint actions per unit-round** | **7.19** | **13.72** | **0.52x** |
+
+> **Alice holds 10% more towers, spawns 35% more units, keeps 29% more alive — and each unit does
+> HALF the work.** Per unit lifetime: alice **9.54** paint actions, carol **18.96**.
+
+This is the third independent confirmation that **count was never the problem**, and it retrospectively
+explains why eight directions aimed at count all failed. It also vindicates E1's marginal-return
+finding while burying its usefulness: more units genuinely see more, and alice already has more units.
+
+## The sink, and it is not subtle
+
+| sink, per unit spawned | alice | carol | alice/carol |
+|---|---|---|---|
+| died | 0.951 | 0.857 | 1.11x |
+| starved | 0.555 | 0.451 | 1.23x |
+| **paint transfers** | **0.383** | **2.044** | **0.19x** |
+
+> **Carol refills its units 5.3x more often than alice does.** Alice starves 23% more, which is the
+> same fact seen from the other end.
+
+**Bar check, as registered:** *continue if a single sink is ≥25% of the gap; KILL the output framing
+if none exceeds 10%.* Carol's advantage is **+9.42 paint actions per unit lifetime** on **+1.66
+transfers per unit**. The transfer route covers the whole gap if a transfer delivers ~28 paint — well
+inside a 200-capacity tank. **Even at a conservative 50 paint per transfer it accounts for ~88% of
+the gap. PASS, decisively.**
+
+**Stated as an assumption, not a result:** I have measured *counts* of transfers, not paint moved per
+transfer. The 28-paint figure is what the gap would require, not what was observed. That is the next
+measurement, not a conclusion.
+
+## Ledger check — and the neighbouring closure does NOT cover this
+
+`RULES.md` records the engine fact and `src/alice` already carries iteration 25's use of it:
+`transferPaint(towerLoc, -N)` lets **any robot withdraw from an ally tower** within r²≤2, for **zero
+chips**. Alice does it 0.383 times per unit; carol 2.044.
+
+- **The iteration-54 mopper-transfer closure does NOT cover this.** Its subject was a *mopper giving
+  paint to a soldier* and it died on delivery at 1.2%. This is a *robot withdrawing from a tower* — a
+  different actor, a different site, a different range test. Citing it here would be the C2 scope
+  creep again, and I am not citing it.
+
+## Registered before anything is built
+
+> **Reachability first, at the site, and it is the right question because alice already has the
+> mechanism:** on soldier-turns where a soldier is within r²≤2 of an ally tower holding ≥50 paint and
+> is itself below half tank, **what fraction actually withdraw?** If alice has the opportunity and
+> declines it, this is a *gating* defect and cheap. If the opportunity is rare, it is a *positioning*
+> defect and expensive.
+> **PASS ≥ 20% of such turns already withdrawing → gating is fine, look elsewhere.
+> KILL the gating hypothesis at ≥20%; PURSUE it below 5%.**
+> Second stage: **paint moved per transfer**, to replace the 28-paint assumption above with a number.
+
+**`src/alice` unchanged since iteration 43.** For the first time this session, a measurement has
+landed on the term the decomposition says carries the loss.
