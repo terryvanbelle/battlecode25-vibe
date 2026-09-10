@@ -21167,3 +21167,74 @@ zero games:
 ruins entering vision per soldier* against the count *ever marked* — both obtainable from replays.
 They are acquisition and selection respectively, and, as with this measurement, they are different
 iterations with different gates.
+
+# The never-sensed / never-selected split, registered — answered, with both queue terms measured
+
+Per the warning that a flat quantity names the term that is *not* moving rather than the one that
+binds, I measured **rate and service time as well as the funnel**, and I name below only terms I
+measured.
+
+## 1. The funnel — galaxy vs alice, 28 ruins, sampled every 100 rounds with unit, paint and MARK grids
+
+| stage | carol |
+|---|---|
+| ruins on the map | 28 |
+| ever **SENSED** by a carol unit (r²<=20) | **13 = 46%** |
+| ever **MARKED** by carol (of sensed) | 11 = **85%** |
+| **CLAIMED** (of marked) | 8 = **73%** |
+| *claimed by alice* | *14* |
+
+**Selection and completion are healthy — 85% and 73%. The loss is entirely upstream.** carol only
+ever works 11 of 28 ruins, and the 17 it never marks are the whole gap.
+
+**Instrument caveat, stated plainly:** sensing is sampled at 100-round resolution, so 46% is a
+**lower bound** — a unit may pass a ruin between samples. Marks persist, so the 11 *marked* is exact.
+The distinction between "never sensed" and "sensed too briefly to act on" is therefore **not
+resolvable at my sampling density** — but both are acquisition, and that is what the registered
+question asked.
+
+## 2. Rate and service time — the deficit is a STALL, not a slow rate
+
+| | claims | median gap | **max gap** |
+|---|---|---|---|
+| carol | 6 | **57 rounds** | **621** |
+| alice | 12 | 37 rounds | 176 |
+
+carol claims at **25, 54, 174, 191, 248 … then 869.** Its median cadence (57) is the same order as
+alice's (37) — **carol is not slow, carol stops.** At its own early cadence the 621-round gap was
+worth roughly **11 more sites**, which is the entire deficit.
+
+## 3. What is in the field during the stall — and it is a two-phase answer
+
+| round | 100 | 200 | 300 | 400 | 500 | 700 | 900 | 1100 |
+|---|---|---|---|---|---|---|---|---|
+| **carol soldiers** | **1** | **1** | **1** | 3 | 10 | 7 | 8 | 10 |
+| **alice soldiers** | 2 | 3 | **12** | **28** | 31 | 30 | 39 | 34 |
+| carol splashers | 3 | 7 | 12 | 11 | 9 | 13 | 11 | 9 |
+
+**Soldiers are the only unit that can claim a ruin, and carol fields ONE for the first 300 rounds
+while alice reaches 12 by r300 and 28 by r400.** That is the early limiter, measured directly.
+
+**But it does not explain the whole stall**, and I am not going to pretend it does: from r500 carol
+has **6–11 soldiers and still claims nothing** until r869. So the later limiter is not supply — it is
+that the soldiers carol has never reach the remaining ruins, which is the same 46%-sensed ceiling
+from the funnel.
+
+> **Two phases, two different binding terms: soldier supply to ~r400 (1 against 12), and coverage
+> thereafter (only 46% of ruins ever sensed, 39% ever worked).** Naming one of them as "the" cause
+> would be the §59 error the warning was about.
+
+## Ledger
+
+| item | status |
+|---|---|
+| ruin **selection** and **completion** as the deficit | **EXCLUDED by measurement** — 85% of sensed are marked, 73% of marked are claimed |
+| "selected but abandoned" | **EXCLUDED at rung zero** — `pb` (patience bans) is 0 in the counters I already had |
+| denial of **lost** sites | **real, measured, and NOT the deficit** — confirmed on the games where it occurs, but vs alice carol loses zero towers |
+| claim **rate** | **EXCLUDED** — median gap 57 vs alice's 37 |
+
+**Still not building.** Four mechanisms died guessing at this deficit and the explanation set is now
+narrow and measured rather than assumed. The next question — why one soldier for 300 rounds when
+chips are idle in the thousands — is answerable from the tower spawn logic and its gates for zero
+games, and it is a *different* question from why the soldiers that exist never reach the far half of
+the map.
