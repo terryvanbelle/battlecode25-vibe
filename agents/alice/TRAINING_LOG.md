@@ -23013,3 +23013,41 @@ game and recovers most of the spend, which is a far better shape than a dose app
 > vision? tower paint? soldier starvation?), and does it **self-terminate**. Measured from replays
 > already on the VM. **PASS to build if a single precondition is present in all three tail games and
 > absent in the median games; KILL if the tail has no common trigger** and it is simply variance.
+
+# TAIL PRECONDITION CHECK — candidates enumerated FROM THE CODE and registered before looking
+
+n=3 with an unbounded candidate set always succeeds, so the candidates come from the spawn decision
+itself, not from the replays. **The decision, verbatim from `src/alice`:**
+
+```java
+UnitType want = (rnd(4) == 0) ? UnitType.MOPPER : UnitType.SOLDIER;
+if (want == UnitType.MOPPER && rc.getPaint() < UnitType.SOLDIER.paintCost) want = UnitType.SOLDIER;
+```
+
+**Iteration 5 already diagnosed and GUARDED the absorbing state** — its own comment names it: *"once
+tower paint reaches 0 only the 100-paint mopper is affordable, moppers complete no tower patterns, so
+paint income never recovers."* The guard is *"only build a mopper if a soldier was affordable too."*
+**And the realized share is 23.0% of spawns against an intended 25% roll — which is the guard
+working.** So I expect a KILL, and say so before measuring.
+
+## Candidates, fixed now
+
+| | candidate | what it would mean |
+|---|---|---|
+| **C1** | **mopper SHARE of spawns elevated in the tail** (baseline ~23–25%) | the guard is failing — a real pathology |
+| C2 | total spawn volume elevated in the tail | mopper count = share × volume; a constant share is not a pathology |
+| C3 | tower paint in [100, 200) more often in the tail | the window where the guard fires; if it fires more, moppers should be FEWER, not more |
+| C4 | game length elevated in the tail | more rounds, more spawns |
+| C5 | tower count elevated in the tail | more spawners |
+
+**Measured as prevalence-in-tail against prevalence-in-rest, never presence-in-tail** — a property
+shared by all three tail games *and* most of the other eighteen explains nothing.
+
+## Decision rule, registered
+
+> **PASS to build only if C1 holds — tail mopper share > 40% against a ~23% baseline.** That is the
+> only candidate indicating a *pathology* rather than *volume*.
+> **KILL if the tail is explained by C2/C4/C5** — then the mopper count is the intended 25% design
+> applied to a longer, richer game, and there is nothing to cap.
+> **A weak hit reads as KILL**, not as encouragement: with three games the power to separate a shared
+> trigger from coincidence is genuinely low, so only a large, clean separation counts.
