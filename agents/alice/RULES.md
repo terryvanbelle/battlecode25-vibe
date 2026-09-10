@@ -75,6 +75,21 @@ line refs below are to `engine/src/main/battlecode/world/*.java`.
 - 0 paint at end of turn → -20 HP/turn, and cannot move/act (except disintegrate) until refilled.
 - Low paint cooldown scaling: below 50% stash, cooldowns multiplied by
   (100 - 2*X)% extra where X = paint %. (INCREASED_COOLDOWN_* in GameConstants).
+  - **[E] CONSEQUENCE, verified 2026-09-10 against the pinned jar — a starving
+    SOLDIER loses ZERO action rounds, and my earlier "acts up to 2x slower,
+    vicious cycle" reading was WRONG.** Constants: `COOLDOWN_LIMIT = 10`,
+    `COOLDOWNS_PER_TURN = 10`, slope −2, threshold 50. A soldier needs 5 paint to
+    attack, so its lowest attackable stash is 5/200 -> X = round(2.5) = 3, giving
+    `10 + round(10*94/100) = 19`. Cooldowns drop 10 per turn, so 19 -> 9, and
+    9 < COOLDOWN_LIMIT means READY next turn. The tax never costs a soldier a turn
+    at any paint level where it could have acted anyway.
+  - It IS real for the slower units, whose base cooldowns are larger (MOPPER mop
+    30, SPLASHER 50), where the same multiplier crosses the decrement boundary.
+  - **Provenance**: the sharper arithmetic came from bob's `CLOSED.md` #22 (his
+    workspace opened under MULTI_AGENT rule 0). **Re-derived here from the jar
+    before being written down**, because an engine fact from another lineage's log
+    is still a digest — and my own digest was wrong about the clumping tax the day
+    before this.
 
 ## Units (UnitType.java ground truth)
 | unit | HP | paint cap | cost paint/chips | atk cost | actionCD | actRadius^2 | dmg |
