@@ -21871,3 +21871,57 @@ located; the mechanism is a separate question and it needs its own pre-check wit
 
 **Session tally: five directions closed, one re-opened and re-closed, one arm built and rejected on
 its bar — all with `src/alice` unchanged since iteration 43, and the defect finally located.**
+
+# REQUIREMENT I's REACHABILITY QUESTION, answered first — and a ledger check that fired
+
+The question, registered before any mechanism: **is there any mechanism whose denominator is
+non-trivial in r1–300?** Both halves of E2 died on that denominator, so it is asked before anything
+else. **Zero games.**
+
+## The ledger check fired, and saved a direction from being re-opened blind
+
+The obvious idea for finding unseen ruins is **map symmetry** — BC25 maps are guaranteed symmetric,
+so a seen ruin implies its mirror. **Grepping the ledger first, as the rule requires, it is already
+closed:** demoted on a registered pre-check at "discovery is at most 17% of the unclaimed-ruin
+supply", and independently corroborated at 31.5% from bob's data. The killing line is geometric and
+was already written down: **symmetry maps MY half to the ENEMY's half — it tells me where *their*
+ruins are, not where mine are.** Not re-opened. That ledger has now caught a re-open in progress four
+sessions running.
+
+## The denominators available in the decisive window
+
+| decision site | opportunities in r1–300 | used by |
+|---|---|---|
+| **tower TYPE** (which pattern to mark) | **~5** (built 2.75 → 6.88) | **E2 — the smallest one available** |
+| tower spawn | ~30 actual (~120 CD slots, paint-limited) | — |
+| **soldier movement turn** | **~2,700** (9 units × 300 rounds) | — |
+
+> **Answer: yes, one — the per-soldier movement decision, at ~2,700 opportunities, roughly 500x the
+> denominator E2 spent its build on.** Everything structural about the window (4 towers, 9 units) is
+> hostile to tower-keyed levers and neutral to unit-turn-keyed ones.
+
+That reframes E2's failure in one line: **I attached a lever to the rarest decision in the game
+during the phase when it is rarest.**
+
+## What C2 did and did NOT kill — stated carefully, because this is the crux
+
+C2 killed the own-paint gradient at **0.95x random**. But its registered *truth* was "the sector
+containing the first step of the **shortest walk to the nearest empty tile**". That is a
+**shortest-path** criterion. **It is not the same objective as discovery rate.** A rule can carry zero
+information about where the nearest work is and still increase new-area coverage, because moving away
+from your own paint leaves explored territory *by definition* — a soldier sees 36.48 of 69 tiles as
+its own paint, so it spends its life inside ground already counted.
+
+**I am not claiming this is a live lever.** I am recording that C2's verdict is narrower than I have
+been treating it: it refutes *aiming*, not *spreading*, and the two were conflated by me in the entry
+that closed C-local. **The honest status of the gradient is: dead as a targeting signal, untested as
+an exploration signal.**
+
+> **Registered before anything is built — requirement I's stage 0, and it is cheap:** does a soldier's
+> own-paint fraction predict the NEW area it covers over the following 50 turns? Measured on
+> trajectories, on the **starved maps only**, with a null arm because that subset's noise floor is
+> unmeasured. **PASS if the top own-paint quartile covers ≥30% less new area than the bottom
+> quartile** — that is the effect a gradient rule could recover. **KILL if < 10%.** Only if stage 0
+> passes does the terminal bar (ruins visible over r1–300, 1.56 → PASS ≥2.4) become worth chasing.
+
+**Nothing built. `src/alice` unchanged since iteration 43.**
