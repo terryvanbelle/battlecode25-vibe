@@ -20155,3 +20155,55 @@ of 4.18, baseline 96) **and** the standing self-play census (margin >= +26). Bot
 iteration 69. **Registered secondary: the gain must appear in the LARGE bucket** (baseline 33/64) —
 that is what the mechanism is for, and iteration 69 taught me to check it rather than bank an
 overall number.
+
+## Iteration 70 — KILLED AT STAGE 0 for 3 games. The registered `HOME` clause fails.
+
+Mirage, rounds 300–700, one game per arm vs `carol_iter44`.
+
+| `MAX_HOME` | splasher turns | **`HOME` share** | `noPaint` share |
+|---|---|---|---|
+| 0 (zero arm) | 2,771 | **35.5%** | 0.0% |
+| 32 | 2,314 | 34.2% | 0.3% |
+| 16 | 2,477 | **35.9%** | 1.4% |
+| 8 | 992 | **36.9%** | 2.4% |
+
+**Registered clause 1 required the `HOME` share to fall monotonically with the dose. It does not
+fall at all** — it is flat, and at the tightest dose it *rises*. Clause 2 also drifts the wrong way
+(`noPaint` 0.0% -> 2.4%), and the tightest arm has **64% fewer splasher-turns**, i.e. fewer
+splashers alive.
+
+**Killed at stage 0 for 3 games. No screen, no `bobf` run, no census.**
+
+## Why it failed, and this is worth more than the arm
+
+Bounding a trip does not create paint. A splasher sent back to work at 43 paint drops below
+`REFILL_LOW` almost immediately and **re-latches**, so the time-box converts a few long trips into
+many short ones and the *total* time spent travelling is conserved. The tighter the box, the more
+round trips — which is exactly the rising `HOME` share, and the rising `noPaint`.
+
+> **The `HOME` share is not a travel problem. It is the visible face of a paint shortage.**
+> A unit is in `HOME` because it is below its floor and cannot fill — carol's towers hold ~42 paint
+> — and no scheduling of the journey changes how much paint is waiting at the end of it.
+
+I had this backwards: I read a quantity that scales with map area (35.5% -> 58.8%) as a *cause* of
+the area gradient, when it is a *symptom* of tower paint scarcity that happens to scale the same way.
+Two quantities scaling together is not a mechanism, and I have now paid three games to learn which
+of the two was upstream.
+
+## Where this leaves the area gradient — both standing accounts eliminated
+
+| account | status |
+|---|---|
+| **splasher supply** (the mix) | **REFUTED** (iteration 69) — supply raised 30x, large bucket unmoved |
+| **travel cost** (`HOME` share) | **REFUTED as a cause** (iteration 70) — bounded, and the share does not move; it is downstream of paint |
+
+What both bottom out in is **tower paint scarcity**, which iterations 62 and 63 already attacked
+from the threshold side and failed. That is the same convergence bob recorded in his own ledger
+(`agents/bob/CLOSED.md` #24: *"all three sources of `acts` are now closed... each closure bottomed
+out in the same place: a fixed paint budget"*), reached independently on a different architecture.
+
+**I am NOT proposing a third mechanism.** My registered falsifier said that eliminating both
+accounts sends me back to measurement, and that is what it means: the next thing this lineage
+should do is measure where its paint actually goes on a large map — an accounting of the paint
+budget, not another candidate — because every mechanism aimed at this deficit so far has assumed an
+answer instead of measuring one.
