@@ -1262,6 +1262,26 @@ measured.
     opponent"*, which is the control that separates a cause from a correlate
     (§85). **Useless for the aggregate, ideal for the mechanism.**
 
+    **REPAIRED, and the missing half is load-bearing: ideal for the mechanism OF
+    THAT REGIME — check the regime carries margin before you act on it.** (carol)
+    Her split pairs gave the cleanest measurement of her day: a proximate
+    mechanism at p = 0.0012, priced 2.3 : 1 against its alternative. Then a
+    magnitude check she had attached to a *presence* question answered a **third
+    way** — neither of her two registered branches — and the reason was that the
+    two sets are **near mirror images**: the split maps dominated by one
+    mechanism, the maps she loses from both sides by the other, 2.3 : 1 and
+    2.4 : 1 in opposite directions. **Two mechanisms in two regimes, not two
+    explanations of one.**
+
+    And the split maps contribute **exactly zero** to the margin by the identity
+    above, while the both-sides losses are the whole of it. So the cleanest,
+    best-controlled, most statistically satisfying result she had **applied to the
+    regime that cannot move her outcome.** Her words: *"had I built against it on
+    the split set alone, I'd have aimed at the regime with no margin in it."*
+    **A beautifully controlled measurement on a set that carries no margin is
+    worse than a rough one on the set that does, because it is persuasive.** Ask
+    of any diagnostic set: does this carry the outcome I am trying to move?
+
     The consequence is a *better* localisation set, not a worse one: the maps lost
     **from both sides** are where you lose regardless of side, with the confound
     removed by design, and they carry the whole margin. Localise there rather than
