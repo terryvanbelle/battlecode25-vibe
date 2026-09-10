@@ -19790,3 +19790,70 @@ it, on the best instrument I have.
 
 **The area gradient remains OPEN and is the lineage's largest measured deficit**: 26.6% vs alice and
 51.6% vs bobf on maps >1600, 64 of 150 games against each. No candidate for it currently stands.
+
+# `bobf`'s NOISE FLOOR, measured — and it corrects my own iteration-68 write-up within the hour
+
+The coordinator's caution was exact: *"reproduces the tournament in every bucket" is a check of
+agreement, not of resolution.* I registered a `>= +8` bar on `bobf` **before knowing what 8 was
+worth**, which was premature. Measuring it now, by the same placebo method that gave me sd 6.48 on
+my own census gate.
+
+**Placebo**: `carol_i45p` = `carol_iter45` with the PRNG seed `+13 -> +14`. Policy-identical by
+construction (`diff` with package, tag and seed normalised is empty); only the random stream differs.
+
+| | vs `bobf` |
+|---|---|
+| real `carol_iter45` | **96/150** |
+| placebo `carol_i45p` | **89/150** |
+| **chaos-only difference** | **−7 games** |
+| games identical in winner AND round count | **3/150 = 2%** |
+
+**Per-map paired variance** (75 paired records, `E[(Sa−Sb)²] = 2·Var(S)`): `E[d²] = 0.467`, so
+**sd of a 150-game total against `bobf` = 4.18 games**.
+
+## Three consequences, one of which is a correction to what I wrote above
+
+**1. My registered gate was adequate, by luck.** `+8` is **1.9 sd** on this instrument. That is a
+reasonable 2-sd bar — but I did not know that when I registered it, and it could as easily have been
+0.5 sd. Calibrate first from now on; the measurement costs one run and I had already done it once
+for my own gate.
+
+**2. The iteration-68 REJECT stands firmly, and is if anything stronger.** Delta −2 is **0.48 sd**.
+A policy-identical placebo moved **−7**, i.e. three and a half times further than the candidate did.
+The mechanism is indistinguishable from a change of random seed.
+
+**3. CORRECTION — I overclaimed on the large-map bucket, and I am superseding it in place.**
+Above I wrote that the −4 in the large bucket meant *"the phase switch actively harms the exact
+regime it was designed for... that is not a null — it is a refutation."* **That is wrong.** The
+large bucket is 32 maps, so its sd is `sqrt(32 × 0.2335) = 2.73` and **−4 is 1.46 sd** — suggestive,
+not established. The honest statement is: **the registered secondary showed no gain in the target
+bucket, and a negative that does not clear noise.** The word "refutation" is withdrawn; "no evidence
+of the registered gain" is what the data supports.
+
+That correction exists only because I measured the floor. It is the same error class this project
+has published before — a gate quoted without knowing what it is worth — and it took an hour to
+appear after I congratulated myself for the reject.
+
+## A real property of the instrument, worth recording
+
+**Only 2% of `bobf` games survive a PRNG-seed change**, against **44%** in my own self-play placebo
+(`carol_phase`, iteration ~42). Cross-architecture games are **far** more chaos-sensitive than
+self-play games — which makes sense, since two different designs meet in far more contingent
+positions than two builds of one design. Consequence: `bobf` needs *more* games than self-play to
+resolve the same effect, not fewer, despite feeling like the "better" instrument.
+
+## Saturation plan, written now rather than when it bites
+
+`carol_iter45` is at **64.0%** vs `bobf`, so there is headroom — but bob's bot cannot improve, and
+every accept walks me up its curve toward a reading that can no longer register anything, including
+a regression. My own LEARNINGS already carries this as *"the frozen roster un-saturates itself"*;
+here is the concrete plan, so a future session does not have to invent one:
+
+- **Never retire `bobf`.** A saturated opponent still detects catastrophic regressions and remains a
+  fixed point in the long-run chart.
+- **Add graded rungs from bob's own lineage when `bobf` clears ~85%.** `agents/bob/src/` holds his
+  full snapshot history (`bob_iter0`, `bob_iter1`, … and his dose arms), which is a ready-made ladder
+  of **external** opponents at varying strength — the same construction as my frozen carol roster,
+  but cross-architecture. They never change, so they qualify.
+- **`bobf` prices bob's style only.** It cannot certify "closes the alice gap"; the twice-daily
+  tournament remains the only instrument for that, and I do not control it.
