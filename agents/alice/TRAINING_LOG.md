@@ -22139,3 +22139,60 @@ never which term IS binding — `L = λW`, measure both sides.*
 **That is the real argument for consolidating on a schedule rather than at the cap:** the pass is the
 only moment anything re-reads the whole index, and a withdrawn claim sitting in an index is worse
 than one sitting in a log, because the index is what a fresh session reads.
+
+# I SPENT THIS SESSION ON THE TERM ALICE IS ALREADY WINNING
+
+Checking whether "paint endurance across a ~4.5-soldier relay" — my corrected headline from an hour
+ago — was consistent with the rest of the log, I found it is not. An earlier entry, backed by a
+**falsifier registered before its numbers**, says:
+
+> *"The deficit is not in alice's soldier paint budget."* Alice's own paint output per tower is
+> **75.0 against carol and 62.6 against bob** — it performs **better** by its own production metric in
+> the matchup it **loses** 39.5%, and worse in the one it **wins** 68.4%. **The whole swing sits on
+> the opponent's side of the ledger: 152.5 per tower against 95.4.**
+
+And the decomposition is exact: `production ratio = tower ratio / per-tower-output ratio`, giving
+**1.12 / 2.03 = 0.55** on small maps against carol.
+
+## What that means for everything I did today
+
+Two different questions were being answered as if they were one:
+
+| question | answer | this session |
+|---|---|---|
+| what limits **alice's** tower throughput? | the completion relay, service ~74 rounds | **all of it** |
+| why does alice **lose**? | the opponent converts each tower into **2.03x** the painted ground | **none of it** |
+
+**Alice already wins the tower race** — P2: +0.53 towers small, 2.06x large, and 1.12x here. Every
+direction I opened today (memory, spacing, gradient, messaging, count, mix, discovery, service time)
+was aimed at **getting more towers**. That is the numerator alice is *ahead* on. **The measured swing
+is entirely in the denominator — output per tower — and I did not touch it once.**
+
+## The failure was in choosing, and the correction was already on disk
+
+The coordinator observed today that my process is instrumented everywhere except the choice of which
+measurement to make next, where the ledger carries it. **This is that gap firing.** The ledger stops
+me re-opening closed directions; **nothing was checking whether the direction I was opening addressed
+the term the decomposition says is binding.** The decomposition was already written, already exact,
+already falsifier-backed — and I did not re-read it before spending a session and one build.
+
+> **New rule, and it is the cheapest one I have found: before opening a direction, re-derive which
+> TERM of your own outcome decomposition it moves, and confirm that term is the one carrying the
+> deficit.** A direction can be reachable, well-instrumented, honestly gated and completely
+> irrelevant.
+
+## What is live, stated precisely
+
+> **Per-tower output: alice 75.0 paint actions per tower, carol 152.5 — a 2.03x deficit on the term
+> that the decomposition says carries the entire loss.**
+
+Registered before anything is built, and deliberately *not* a mechanism: **the first measurement is a
+decomposition of per-tower output itself** — of the paint a tower issues, what fraction reaches
+ground as new coverage for alice versus for carol, and where the rest goes (upkeep, repaint, enemy
+paint, death-in-transit). **PASS to continue if any single sink accounts for ≥25% of the 2.03x gap;
+KILL the "output" framing if no sink exceeds 10%** and the gap is diffuse. Carol is a sibling
+lineage, so this is measured on **replays alice already holds**, never by reading carol's source.
+
+**`src/alice` unchanged since iteration 43.** Five directions closed, one arm built and rejected on
+its bar, one headline withdrawn, and now the session's *aim* corrected — by a measurement that was in
+my own log the whole time.
