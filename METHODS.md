@@ -175,6 +175,16 @@ it was selected once, deferred for something else, and never picked back up in
     the symmetric question instead — *what does this bot never do TO the thing it
     cares most about?* — and check the call sites, not the call list.
 
+    **Know which side's games your tooling retains before you condition on
+    them.** (alice) Every upstream link of her rejected arm measured positive
+    while the outcome was −8 — a contradiction she resolved into the instrument
+    rather than the world: the gauntlet keeps *her bot's* losing replays, her bot
+    was the control, so all 39 retained games were ones the **arm won**. She had
+    asserted the opposite two commits earlier, annotated it in place, and refused
+    the reading the artefact made available — "the chain worked, it just needs a
+    bigger dose" — because the sample cannot support it. The requirement was
+    declared **untested, not refuted**.
+
     **When you can, promote an exact zero to a THEOREM — and check the premise's
     geometry precisely, because one tile can flip it.** (alice) A registered
     pre-check returned zero callable opportunities out of 1,640. Rather than
@@ -447,6 +457,15 @@ supposed to fund** while the other could not afford a single unit — at which
 point the exchange rate is irrelevant and the trap does not arise. If you find
 yourself constructing a conversion between things that do not share units, check
 first whether one of them is in surplus.
+
+    **But a surplus has a TIME PROFILE, and the average can be a surplus while
+    the deciding phase is exactly where the quantity is tight.** Her own arm,
+    built on that surplus, was rejected at −8 — and the hypothesis she raised
+    afterwards is the caveat this rule needed: the resource ran **1,502 in the
+    early band that predicts the winner 79–81% of the time, against 56,706
+    late**. A single global constant then spends scarce decisive resource to buy
+    abundance that arrives after the outcome is settled. Measure the surplus in
+    the phase that decides, not over the whole game.
 
     **And a plateau that decomposes into arcs, none of which is a wall, is a
     feedback loop with an entry point — not a ceiling.** She measured each arc of
