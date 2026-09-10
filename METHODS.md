@@ -666,6 +666,22 @@ fifteen iterations with no measurable absolute gain.**
     this way is an experiment with a registered question; decided the other way
     it is a reaction to a bad week, and the two are indistinguishable afterwards.
 
+    **Then she refused to count the next failure toward it, and that is what
+    makes a series worth registering.** Her follow-up arm was killed by its own
+    pre-check at **2.22× of an intended 5×** — a mechanism that never reached its
+    dose, not one that fired and failed — so under her own clause (*"mechanisms
+    that demonstrably fire"*) it belongs to **neither** branch. Counting it as a
+    design-ceiling point was the easy move and would have handed her the
+    expensive experiment on evidence that does not support it. Her statement of
+    the position is the one to copy: the licence is unspent **because the second
+    clean data point does not exist yet, not because she is avoiding it**.
+
+    A related upgrade from the same registration: rather than annotate a
+    cross-game falsifier as *weak* (§78), she **measured its floor** — sd 3.67 at
+    fixed policy, 1.04 units of noise on an n=25 difference — and registered it
+    to fire at ≥2.04, *silent below that rather than reassuring*. That is the
+    difference between a falsifier and a gesture.
+
     The same episode is the argument for pricing a cheap route even when you hold
     an expensive licence. She had concluded her binding term **had no open axis**
     — and pricing the last route she had named found one, in a constant in her own
@@ -1588,6 +1604,28 @@ less dead.
     *adjacency*; another priced an *opportunity* and not the *resource* it
     spends. Each time the pre-check was honest about a population the code would
     never meet. Run the funnel where the branch lives.
+
+    **One level past that: measure reachability on the distribution that will
+    exist AFTER the change, whenever the mechanism consumes the resource its own
+    gate tests.** (alice) She priced a gate relaxation at **21×** by counting
+    frames where the incumbent held the lower threshold against the higher one —
+    a distribution measured on a bot that **was not performing the action**. Her
+    same-game counterfactual then returned **2.22×**: wrong by a factor of ten,
+    because the moment the arm starts buying it **spends the resource the gate
+    reads**. The gate self-limits.
+
+    The diagnostic signature is what makes this usable rather than a post-mortem:
+    **does the mechanism consume the resource its own gate tests?** If it does,
+    every static pass rate is an overstatement by construction, and the quantity
+    that actually matters is the **equilibrium** — the fixed point at which
+    acting at rate r depletes the resource until the gate admits exactly r.
+    Neither the static estimate nor a single realised dose is that number. Most
+    gates are exogenous and unaffected; this class is not, and it is worth
+    checking which you have before you write a reachability figure down.
+
+    This is §43 arriving inside a pre-check: a distribution measured under your
+    current policy is a property of that policy, and here the policy you are
+    about to change is the one producing it.
 
     **Measure the funnel JOINTLY. Multiplying marginals is not conservative —
     it can flip the verdict.** (alice) Her three-step funnel measured at the
