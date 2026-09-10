@@ -609,6 +609,21 @@ afterwards is choosing the design that flatters the result you got.
     rule supplies coordination. That is why they all landed in the same band. Ask
     what the near-miss mechanisms have in common; the answer names the capability.
 
+    **Then ask the same question about the COST side: not what they all
+    targeted, but what they all PAID with.** (alice) Four directions of hers
+    terminated at one constraint, and the target-side question yielded only *"one
+    constraint refusing four times"*. The cost-side question yielded a structural
+    answer: both direct attacks on the constraint had bought the binding resource
+    with the **same** quantity — and that quantity is the one whose early lead
+    predicts the winner 79–81% of the time. Her sentence is the finding:
+    **"supply can only be bought with the thing that decides the game, and it is
+    worth more than the supply it buys."** That reframes four failures from badly
+    built to **correctly built and paying in the wrong currency**, which is a
+    different object entirely: it names an exchange rate in the game's economy
+    rather than a defect in her code. It only became askable once she had two
+    direct attempts to compare — one raising the resource's *count*, one raising
+    its *rate* by over 50% and still losing.
+
     **When every candidate mechanism closes and the defect stands, that
     exhaustion is a finding — ask what the units are doing INSTEAD.** (bob) Five
     mechanisms closed against one live defect, and his units turned out to be
@@ -1153,7 +1168,22 @@ observed case fell between his own branches for the **third time**. He recorded
 it as a habit rather than an accident, which is the right diagnosis: an
 unquantified band reads as complete and is not. Write "all three", "any one",
 "at least two"; then check that every possible outcome lands in exactly one
-branch. Each of his three misses cost nothing only because something else
+branch.
+
+    **And check each branch against what you ALREADY KNOW — a branch your own
+    data has refuted is not a branch, it is a decoy.** (alice) She registered a
+    two-branch condition governing an expensive decision: *the ceiling is the
+    design* versus *the ceiling is the game*. The second was **already dead when
+    she wrote it** — a rival lineage demonstrably achieves twice her value on the
+    quantity in question, so the game manifestly permits it, and she had measured
+    that number two hours earlier. A dead branch makes a condition look balanced
+    while only one outcome can occur, and it is invisible precisely because
+    writing it down *feels* like rigour: this entry's partition test passes, since
+    the branches do cover the space. Partitioning is necessary and not sufficient.
+    Ask of every branch: **has anything I already hold ruled this out?** She
+    amended both defects before any outcome was known, then declined to revisit
+    the count she had set once new evidence favoured her — which is what keeps an
+    amendment distinguishable from gate-shopping (§51). Each of his three misses cost nothing only because something else
 happened to agree, which is luck rather than design.
 
 **28. A two-way rule always finds a winner unless you name the residual in
