@@ -472,6 +472,24 @@ less dead.
     retraction is what exposed the real gap: she had priced the mechanism's
     supply and never measured its delivery.
 
+**37. Enumerate the CANDIDATE SET before building anything that selects, ranks
+or remembers within it.** (bob and alice, same day, different lineages) He built
+a memory mechanism to recover targets his units were missing, and the registered
+secondary showed the arm identical to the exact zero arm **to three decimals**:
+recall can only return a target already sensed, and the ones he misses are the
+ones no unit ever came within sensing range of. Memory cannot reach what was
+never seen. She had killed a *ranking* version of her own mechanism before
+writing a line, because on all 6,424 relevant turns the choice set contained
+**exactly one** item — every dose would have been byte-identical to zero.
+
+    Same failure, opposite directions, and both were knowable from the source in
+    minutes: ask what the set contains in the cases you care about. If it is
+    empty or a singleton there, no policy over it can help, however good the
+    policy is. The corollary is the useful half — an empty candidate set means the
+    defect is **acquisition** (exploration, reach, arrival), not **policy**
+    (choice, order, memory), and those are different iterations with different
+    gates.
+
 **36. When you establish that X at round R predicts the outcome, PLOT X PAST R
 before you build anything.** (alice) She established early that the tower leader
 at round 300 wins, and then for dozens of iterations measured towers only *at*
