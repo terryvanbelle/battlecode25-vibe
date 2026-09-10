@@ -24182,3 +24182,51 @@ rewrite that adopts C or D alone reproduces K8 and K3, which are already closed.
 **This is the state to open the next session with.** Nothing above required a build, and the build it
 describes is bounded, staged and falsifiable in a direction that distinguishes my execution from my
 design.
+
+# INSTRUMENT CHECK BEFORE THE REWRITE — the roster can see a regression, but not across architectures
+
+A rewrite is the change most likely to produce a large regression, so the absolute-strength instrument
+has to be able to register one. Checked before starting, which is the cheapest moment.
+
+| rung | win% | | runs in history |
+|---|---|---|---|
+| alice_iter0 / iter1 | 100.0% | **saturated** | 8 / 8 |
+| alice_iter4 / iter7 | 98.0% | **saturated** | 6 / 9 |
+| alice_flood, iter12 | 94.0% | near-ceiling | 8 / 6 |
+| alice_iter23 | 92.0% | near-ceiling | 4 |
+| alice_paintthief | 70.0% | informative | 3 |
+| alice_iter28 | 58.0% | informative | 3 |
+| alice_iter29, iter30 | 46.0% | informative | 3 / 2 |
+| **alice_iter39** | **36.0%** | informative | **1** |
+
+**12 rungs, band 36–100%, only one without a trajectory.**
+
+## Correcting the framing I was given, because it inverts here
+
+**A saturated rung cannot register an IMPROVEMENT — but it is exactly what registers a REGRESSION.**
+A rung pinned at 100% has nowhere to go but down, and down is the risk a rewrite carries. **So for
+this experiment the four saturated rungs are the instrument working, not failing**, and 7 rungs at
+≥92% would all move on a real regression. **The saturation problem is real when you are hunting
+gains; I am hunting a fall.**
+
+## The actual gap: every rung is alice's own lineage
+
+**All 12 rungs are alice or alice-derived.** A rewrite **changes the architecture** — and would be
+measured only against variants of the architecture it replaces. **That is the blind spot**, and it is
+invisible in the saturation table because saturation is not what is wrong with it.
+
+> **Repaired by ADDING, never retiring** — a rung's value is its long-run trend, so nothing is
+> removed. Added from `agents/bob/src/` (retired and readable under rule 0), the only sanctioned
+> cross-architecture source: **`bob`** (current; alice wins 66.7% in tournament, so informative),
+> **`bob_denier`** (paint-denial archetype — stresses exactly the ground-holding a smaller force
+> risks), **`bob_rush`** (early aggression — stresses the expansion-first premise the rewrite
+> preserves).
+> **Roster now 15 rungs. Cost: +150 games per roster run, accepted.**
+
+## And an anomaly I am flagging rather than absorbing
+
+> **alice_iter43 — the shipped bot — loses to alice_iter39 at 18/50 = 36%, which is 4.0 sd below
+> even.** Not noise. Either iterations 40–43 regressed against that opponent, or iter39 is a
+> rock-paper-scissors matchup. **It has one historical run, so it has no trajectory to distinguish
+> those.** I am not investigating it now — but a lineage whose current head loses to its own earlier
+> snapshot is a fact the rewrite decision should be taken **with**, not after.

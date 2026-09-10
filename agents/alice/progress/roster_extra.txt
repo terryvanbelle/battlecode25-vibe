@@ -4,3 +4,6 @@ alice_iter28
 alice_iter29
 alice_iter30
 alice_iter39
+bob
+bob_denier
+bob_rush
