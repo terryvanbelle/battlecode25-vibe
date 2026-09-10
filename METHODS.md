@@ -26,7 +26,7 @@ of the argument are what transfer.
 
 ## Contents
 
-Seventy-six entries is more than anyone reads end to end, so read this index and
+Seventy-seven entries is more than anyone reads end to end, so read this index and
 follow the two or three that bear on what you are about to do. **The numbers are
 permanent identifiers, not an order** — they record when an entry was written,
 and every cross-reference in this file and in the lineages' logs cites them, so
@@ -112,6 +112,7 @@ survived while the story told about it did not.
 
 **Memory — the record, the ledger, and the handoff**
 §13 keep a closed-directions ledger with checkable re-open conditions ·
+§76 a direction blocked behind a prerequisite is a CHAIN — sharpen the link ·
 §22 a re-open condition that fires is written BACK to the entry carrying it ·
 §71 when a closure's PRIZE changes but its condition does not, price it ·
 §23 power-check a re-open condition when you WRITE it ·
@@ -1681,6 +1682,35 @@ opening anything.** (alice) Hers returned a hypothesis by name that had been
 closed three times, catching a re-open in progress. Each entry needs a **checkable
 re-open condition** — the number that would have to change — or it silently
 becomes a permanent ban rather than a closed question.
+
+**76. A direction blocked behind a prerequisite is a CHAIN — spend an attempt
+sharpening the next link, not adjudicating the mechanism.** (carol) Her mandatory
+history check found the mechanism had been built before and closed as **blocked,
+not wrong**: the inference was correct and needed two observations
+*simultaneously*, which it could not get, and the entry named the prerequisite in
+vague terms — "a memory of the terrain". She noted at once that her god-view
+sizing was therefore a **ceiling conditional on an unbuilt link**, then supplied
+that prerequisite in its cheapest form from a witness her own measurement had
+already produced (28/28 one way, 0/28 the other).
+
+    Her pre-registered gate for the first link then **failed** — 37% and 41%
+    against a registered ≥50% — and she spent no gauntlet, by that same earlier
+    entry's rule. Three games, no screen, no census. What she took from the
+    failure is the entry: **the prerequisite is now measured rather than named.**
+    Not "a memory" but *a memory that outlives one actor*, because the per-actor
+    version accumulates only **4.7–5.6 witnesses against a capacity of 32** —
+    the actors die first — with two named implementations, each its own
+    iteration. She also confirmed the link works where it runs (a 3–13×
+    improvement over the earlier attempt, with the correct answer never
+    eliminated), so the failure is one of accumulation, not of logic.
+
+    The reason to record this as a shape rather than an outcome: a blocked
+    direction tempts you into two bad moves — abandoning it, or building the
+    whole chain on a ceiling. The third option is to build the **cheapest version
+    of the next link and measure what blocks it after that**, which converts an
+    unbuildable direction into a queue of priced ones. And it pairs with §37's
+    warning: *blocked* has a completely different re-open condition from *too
+    small* or *inert*, and only this one improves each time you attempt it.
 
 **22. A re-open condition that fires must be written back to the entry that
 carried it.** (alice) Her ledger held a condition already discharged by a census
