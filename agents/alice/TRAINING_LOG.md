@@ -22265,3 +22265,69 @@ chips**. Alice does it 0.383 times per unit; carol 2.044.
 
 **`src/alice` unchanged since iteration 43.** For the first time this session, a measurement has
 landed on the term the decomposition says carries the loss.
+
+# K2/K3 — the refill guard located, and it is ONE CONSTANT on the binding term
+
+## K2: gating or positioning? Registered verdict POSITIONING — but the binary hid the better answer
+
+Matched inside the same 11 alice-vs-carol games, positional half only:
+
+| | unit-frames | mean towers | **adjacent to an ally tower (r²≤2)** |
+|---|---|---|---|
+| alice | 584 | **6.53** | **7.88%** |
+| carol | 401 | 5.16 | **16.21%** |
+
+Registered: *POSITIONING if adjacency < 0.5x.* Measured **0.49x**. **Verdict: POSITIONING** — by
+one hundredth, and I am recording it as registered rather than rounding into the MIXED band.
+
+**But my threshold was a binary on a multiplicative quantity, and that obscured the real split:**
+`transfer ratio = adjacency ratio × conditional-withdraw ratio`, i.e. **0.19 = 0.49 × 0.39.** In log
+terms positioning is 43% of the gap and **gating is 57% — the larger half**, which the binary verdict
+does not say. *A threshold on one factor of a product cannot decide which factor dominates.*
+And note alice holds **more** towers (6.53 vs 5.16) while standing beside them **half** as often.
+
+## The gating half is one line, and a measurement I already had prices it exactly
+
+```java
+int surplus = t.getPaintAmount() - UnitType.SOLDIER.paintCost;   // reserve = 200
+if (surplus <= 0) continue;
+```
+
+The refill reserves a **full soldier's spawn cost** before a unit may draw. And E2 measured what
+towers actually hold: **mean 154.8 paint, starved below 200 on 82.9% of tower-frames.**
+
+> **The guard is set above the level towers normally sit at, so the mechanism is disabled in exactly
+> the regime it exists for.** It is self-defeating: towers are poor *because* they spend everything
+> spawning, and the refill is gated on them not being poor.
+
+| reserve | refill can fire on |
+|---|---|
+| **200 (current)** | **17.1%** of tower-frames |
+| 100 | 58.4% |
+| **50** | **98.2%** |
+
+200 → 50 multiplies firing opportunity by **5.7x**. **Carol's transfer advantage is 5.3x.** Applying
+it to the decomposition: 0.49 × (0.39 × 5.7) = **1.08x — parity with carol on transfers, from the
+gating change alone.** Two independently measured numbers meeting is what makes this a dose rather
+than a guess.
+
+## Iteration K3, pre-registered before building
+
+**Which term does it move?** — my own new rule, applied first. It moves **paint actions per unit**,
+measured at **0.52x**, the term the decomposition says carries the entire loss. **This is the first
+mechanism this session aimed at the binding term**; E2 and the other seven aimed at count, where
+alice already leads.
+
+**Mechanism — ONE constant:** the refill reserve, `UnitType.SOLDIER.paintCost` (200) → **50**.
+
+**P1–P6:** touches no movement rule (P4), no tie-break (P5), no attack guard (P3), negligible
+bytecode (P6). It does not chase the idle 81% (the P1 trap) — it makes each unit's existing actions
+affordable. It *does* trade against P2 by taking paint that would have spawned units, which is
+deliberate: alice has **1.35x** carol's spawns and **0.52x** its per-unit output.
+
+> **Screen:** 25 maps, both sides, 50 games, `alice_k3` vs `alice_k3ctl`. **net = arm wins − 25.**
+> **ACCEPT if net ≥ +4.** Null arm `alice_k3null` in the same batch on the identical sample;
+> **|net_null| ≥ 4 ⇒ VOID**, tested first, in code.
+> **Falsifier:** unit count falls without per-unit paint actions rising — the trade taken and lost.
+> **Manipulation check:** refills per unit must rise from 0.383 toward carol's 2.044; if the refill
+> count does not move, the win is not this mechanism and I do not claim it.
