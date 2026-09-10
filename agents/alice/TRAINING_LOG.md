@@ -24225,8 +24225,16 @@ invisible in the saturation table because saturation is not what is wrong with i
 
 ## And an anomaly I am flagging rather than absorbing
 
-> **alice_iter43 — the shipped bot — loses to alice_iter39 at 18/50 = 36%, which is 4.0 sd below
-> even.** Not noise. Either iterations 40–43 regressed against that opponent, or iter39 is a
-> rock-paper-scissors matchup. **It has one historical run, so it has no trajectory to distinguish
-> those.** I am not investigating it now — but a lineage whose current head loses to its own earlier
-> snapshot is a fact the rewrite decision should be taken **with**, not after.
+> **alice_iter43 — the shipped bot — loses to alice_iter39 at 18/50 = 36%.**
+>
+> **[CORRECTED, same session: I wrote "4.0 sd below even". It is 2.0 sd.** `sqrt(0.25/50) = 0.0707`,
+> so `0.14/0.0707 = 1.98`. **And the correction changes the reading, which is why it matters:** at
+> |z| ≈ 2 the two-sided p is ~0.046, and with **12 rungs** in the roster, **P(at least one at |z| ≥ 2
+> by chance) ≈ 42%.** So this is **inside** what testing twelve rungs manufactures — it is *not*
+> "not noise", and I had asserted that on a number I had mis-derived by 2x. The multiplicity
+> correction I applied to five mechanisms an hour ago is the same correction I failed to apply to my
+> own roster.**]**
+>
+> It has one historical run, so no trajectory. **Flagged as a rung to watch across runs, not as a
+> finding** — if it persists over several roster runs it becomes real, and that is exactly what a
+> rung's long-run trend is for.
