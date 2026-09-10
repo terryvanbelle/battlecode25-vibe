@@ -210,6 +210,15 @@ small, and recorded the decision as a change rather than dropping it silently.
     optimistic**. A conversion factor you reasoned out is a guess wearing a
     number's clothes; your own rejects are where a real one comes from.
 
+    **A prize you can COUNT beats a prize you have to model.** (alice) Every
+    other estimate in this file's recent entries is a chain — a rate times a
+    reach times a conversion — and each multiplication is a place to be wrong by
+    5×. Hers was counted off finished games: converting the leads she *already
+    wins* at the rival's observed rate is **+3 games in 19, plus 3 ties, with no
+    additional races required.** No assumption in it, both sides observed, and a
+    bound rather than a point estimate. When a prize can be phrased as *"these
+    specific games would have gone the other way"*, phrase it that way.
+
     **Price it against the NULL ACTION — what the same resource buys if you do
     nothing new.** (carol) Her registered rewrite premise depended on one
     unit ferrying a resource to another. The engine gave her the deciding number
@@ -713,8 +722,15 @@ saturating dead end.
     and what feeds them — and then noticed they were **not independent**. They are
     one premise wearing three names, and a rival runs the whole cluster: fewer
     units, fewer spawns, closer in, better supplied, at twice the per-unit output.
-    That matters twice over. It shrinks the option count you thought you had, and
-    it means **none of the three can be fixed alone** — which is why a mechanism
+    The test for it is a **discriminating population**, not a bigger sample: she
+    resolved one such collapse by measuring only the units with **no assignment**,
+    where the two hypotheses predict opposite things. Assigned units sat at
+    distance 7.0 and unassigned at **3.5** — so the apparent "dispersal policy"
+    was the *consequence* of the targeting premise she had already validated, and
+    the rival showed the same pattern, making it a property of the play rather
+    than of her bot. **An axis that stops varying when you hold another fixed was
+    never an axis.** That matters twice over: it shrinks the option count you
+    thought you had, and it means **none of the members can be fixed alone** — which is why a mechanism
     aimed at any one of them had been failing. Before pricing an enumeration,
     check its members for dependence as well as for completeness.
 
@@ -877,6 +893,22 @@ fifteen iterations with no measurable absolute gain.**
     She also checked the new premise against the **previous** rewrite's finding,
     so the most expensive thing available was not re-running a settled question.
     A ledger's highest-value use is on the one build nobody screens first.
+
+    **How that one ended, and every part of the ending is worth copying.**
+    (carol) Total cost: **8 probe games, no screen, no census.** She **aborted one
+    session early**, on evidence rather than by exhausting a budget she was
+    entitled to spend — *a budget is a ceiling, not an entitlement*, and the last
+    session would have run an experiment she had already refuted. The staged
+    condition then did the thing it was written for: instead of filing *"the
+    premise fails"*, she filed **"one half's premise is refuted and the pair was
+    never tested"** — which would have been very easy to lose, because the arm won
+    every probe game it played, quickly, through a mix already settled at
+    **−5.71 sd**. And the registered salvage was **built, verified to work, and
+    then declined**: it moved its intermediate quantity by 7 of 43 available
+    points, which the axis oracle prices at **~+4 against a +26 bar**, so
+    screening it would spend 300 games to confirm a reject she could already
+    price. A salvage you build, measure and decline is still a salvage; what it
+    is not is an excuse to spend.
 
     **A rewrite's answer condition must separate EXECUTION failure from PREMISE
     failure at every stage, or a rejection teaches nothing.** (carol) Before
