@@ -389,6 +389,16 @@ ones carry no information. The answer was steep gains to about a third of the wa
 through her iteration history and **no demonstrable movement since — roughly
 fifteen iterations with no measurable absolute gain.**
 
+    **State a plateau against your own accept bar — it is the framing that makes
+    it decision-grade.** Her confirmation census: thirteen accepted iterations
+    measure **+10 net swept at 1.89 sd**, against the **+12** she requires of a
+    *single* accept. Not "no gain" — she refused to round 1.89 sd to zero, and
+    noted the +10 sits two points under the threshold rather than comfortably
+    inside the band. **The whole span carries less evidence than one accept
+    demands.** She also ran the registered secondary that would have shown the
+    total hiding two moving halves, and it came back null (rho −0.112, p = 0.322),
+    so the flatness is uniform rather than a cancellation.
+
     Two things make it usable rather than demoralising. She applied her own
     multiplicity rule *against her own conclusion*: the six "declining" cells were
     one 25-map draw, not six signals, so the honest reading is **plateau, not
