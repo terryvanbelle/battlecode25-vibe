@@ -91,7 +91,8 @@ public class RobotPlayer {
                 if (rc.getRoundNum() > startRound) overruns++;
                 else if (bc > limit - limit / 7) nearMisses++;
                 rc.setIndicatorString("M t=" + m_turns + " o=" + m_one + " tw=" + m_two
-                        + " s=" + m_sum + " qt=" + q_turns + " qr=" + q_reach + " | "
+                        + " s=" + m_sum + " qt=" + q_turns + " qr=" + q_reach
+                        + " pr=" + p_ruin + " pu=" + p_under + " pw=" + p_w + " | "
                         + "i25=" + i25Refills + "/" + i25Paint + " "
                         + (rc.getType() == UnitType.MOPPER
                         ? "i24=" + i24Moves + " p=" + rc.getPaint() + " " : "")
@@ -125,6 +126,9 @@ public class RobotPlayer {
     static long m_sum   = 0;   // reachable soldiers, summed
     static long q_turns = 0;   // soldier turns
     static long q_reach = 0;   //  ... that can message some tower
+    static long p_ruin  = 0;   // relay-possible turns WITH an open ruin in sight
+    static long p_under = 0;   //  ... and it is UNDER-MANNED  = WOULD FIRE
+    static long p_w     = 0;   // soldiers already on it, summed
 
     static void relayFunnel(RobotController rc) {
         try {
@@ -138,6 +142,35 @@ public class RobotPlayer {
                 m_sum += n;
                 if (n >= 1) m_one++;
                 if (n >= 2) m_two++;
+                // --- iteration 57 stage 2: PAYLOAD reachability ---
+                // Availability is necessary and not sufficient: a rendezvous needs a
+                // ruin worth calling about, not merely two soldiers at one tower.
+                // Defined concretely: an OPEN ruin this tower can see, with fewer
+                // than 2 ally soldiers already working it (completion needs a ~4.5
+                // soldier relay and gets 2.41, so <2 is unambiguously under-manned).
+                // Registered kill: below 2.0% of tower turns.
+                if (n >= 2) {
+                    MapLocation[] rr = rc.senseNearbyRuins(-1);
+                    MapLocation here = rc.getLocation();
+                    MapLocation best = null;
+                    int bd = 1 << 30;
+                    for (int i = 0; i < rr.length; i++) {
+                        if (rc.canSenseRobotAtLocation(rr[i])) continue;   // tower on it
+                        int d = here.distanceSquaredTo(rr[i]);
+                        if (d < bd) { bd = d; best = rr[i]; }
+                    }
+                    // NEAREST open ruin deliberately: its neighbourhood is the part of
+                    // vision the tower sees most completely, which limits the
+                    // undercount that would otherwise inflate "under-manned".
+                    if (best != null) {
+                        p_ruin++;
+                        int w = 0;
+                        for (int i = 0; i < a.length; i++)
+                            if (a[i].getType() == UnitType.SOLDIER
+                                    && a[i].getLocation().distanceSquaredTo(best) <= 8) w++;
+                        if (w < 2) { p_under++; p_w += w; }
+                    }
+                }
             } else if (rc.getType() == UnitType.SOLDIER) {
                 q_turns++;
                 RobotInfo[] a = rc.senseNearbyRobots(-1, rc.getTeam());

@@ -57,3 +57,15 @@ date,current_snapshot,opponent,wins,total,win_pct,source
 2026-09-09T08:10:21+00:00,alice_iter39,alice_iter4,49,50,98.0,roster-run
 2026-09-09T08:10:21+00:00,alice_iter39,alice_iter7,49,50,98.0,roster-run
 2026-09-09T08:10:21+00:00,alice_iter39,alice_paintthief,41,50,82.0,roster-run
+2026-09-09T23:56:32+00:00,alice_iter43,alice_flood,47,50,94.0,roster-run
+2026-09-09T23:56:32+00:00,alice_iter43,alice_iter0,50,50,100.0,roster-run
+2026-09-09T23:56:32+00:00,alice_iter43,alice_iter1,50,50,100.0,roster-run
+2026-09-09T23:56:32+00:00,alice_iter43,alice_iter12,47,50,94.0,roster-run
+2026-09-09T23:56:32+00:00,alice_iter43,alice_iter23,46,50,92.0,roster-run
+2026-09-09T23:56:32+00:00,alice_iter43,alice_iter28,29,50,58.0,roster-run
+2026-09-09T23:56:32+00:00,alice_iter43,alice_iter29,23,50,46.0,roster-run
+2026-09-09T23:56:32+00:00,alice_iter43,alice_iter30,23,50,46.0,roster-run
+2026-09-09T23:56:32+00:00,alice_iter43,alice_iter39,18,50,36.0,roster-run
+2026-09-09T23:56:32+00:00,alice_iter43,alice_iter4,49,50,98.0,roster-run
+2026-09-09T23:56:32+00:00,alice_iter43,alice_iter7,49,50,98.0,roster-run
+2026-09-09T23:56:32+00:00,alice_iter43,alice_paintthief,35,50,70.0,roster-run
