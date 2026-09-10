@@ -21238,3 +21238,72 @@ narrow and measured rather than assumed. The next question — why one soldier f
 chips are idle in the thousands — is answerable from the tower spawn logic and its gates for zero
 games, and it is a *different* question from why the soldiers that exist never reach the far half of
 the map.
+
+# The spawn gates, READ — the "1 soldier" phase is explained, and it is not a defect
+
+## The gates are inverted relative to cost
+
+    boolean afford = chips >= reserve + want.moneyCost;                       // CHIP_RESERVE = 1200
+    if (afford && want != UnitType.SPLASHER && chips - want.moneyCost < SPLASH_FLOOR) afford = false;   // 2000
+
+**The splasher is exempt from `SPLASH_FLOOR`.** Working the arithmetic through:
+
+| unit | chip cost | **gate** |
+|---|---|---|
+| **SOLDIER** | **250** | **2,250** |
+| MOPPER | 300 | 2,300 |
+| **SPLASHER** | **400** | **1,600** |
+
+> **A soldier costs 150 chips LESS than a splasher and is gated 650 chips HIGHER.**
+
+## The limit cycle, confirmed empirically — the soldier gate is never reached
+
+carol's treasury, galaxy vs alice, first 260 rounds:
+
+| round | 1 | 20 | 40 | 60 | 100 | 120 | 140 | 180 | 200 | 240 | 260 |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| chips | 2,030 | 1,800 | 1,400 | 600 | 1,400 | 1,600 | **1,800** | 800 | 400 | 1,600 | 1,040 |
+
+**After round 1 the treasury never once reaches 2,250 — the maximum observed is 1,800.** The
+splasher gate (1,600) is satisfied at 6 of 16 samples. **carol is arithmetically incapable of
+building a soldier after round 1 in this game**: splashers drain the treasury at 1,600 before it can
+ever climb to 2,250. That is a complete explanation of "one soldier for 300 rounds", confirmed for
+zero games.
+
+## And it is NOT a defect — the alternatives are already measured, and they are worse
+
+`SPLASH_FLOOR` dosing changes exactly this gate, and this lineage has already bracketed it:
+
+| `SPLASH_FLOOR` | soldier gate | splasher gate | measured |
+|---|---|---|---|
+| **2000 (incumbent)** | 2,250 | 1,600 | — (zero arm) |
+| 1400 | 1,650 | 1,600 (gates nearly equal) | **21/50** |
+| 0 | 1,450 | 1,600 (soldier gated LOWER) | **11/50** |
+
+**Every step toward making soldiers buildable has measured worse, monotonically.** The bot is better
+with one soldier than with more, which is iteration 59's architecture finding arriving from the
+economy side: a splasher paints ~2.6x more area per turn than a soldier.
+
+> **This is the "check which side of the metric the winner is on" rule again, on my own bot: I have
+> fewer soldiers than the opponent, and having fewer has been measured better for me — twice.**
+
+**So the early phase is explained and closed.** "carol fields 1 soldier while alice fields 12" is
+true, traced to an unreachable gate, and **not actionable** — the ladder that makes it reachable was
+run and it costs 4 and 14 games out of 50.
+
+## Which narrows the deficit to ONE phase, for zero games
+
+| phase | limiter | status |
+|---|---|---|
+| to ~r400 | soldier supply (1 vs 12), from an unreachable gate | **explained and measured optimal** — do not re-open via `SPLASH_FLOOR` |
+| after ~r500 | **coverage** — 6–11 soldiers exist and still only 46% of ruins are ever sensed | **OPEN, and now the only standing candidate** |
+
+The claiming stall runs r248 -> r869 *while carol holds 6–11 soldiers*. Those soldiers are not
+gated, not abandoned (`pb` = 0), not out-competed on selection (85% of sensed get marked) and not
+slow (median gap 57 vs 37). **They simply never go where the remaining ruins are** — and carol's
+exploration target is the farthest of four uniform-random map locations, with no term for unclaimed
+ruins, unpainted ground, or where the unit has already been.
+
+**Still not building.** But the explanation set for the area gradient is now a single named term with
+four mechanisms and eight rival explanations eliminated behind it, and that term is a property of
+one function I can read rather than a matchup statistic.
