@@ -69,3 +69,73 @@ A rewrite discards the context that made these safe. Each is **true**, and each 
    must carry its opponent in the sentence.**
 6. **"Towers are starved."** They hold ~154 paint and pay **no upkeep** (verified: the `processEndOfTurn`
    block is gated on `isRobotType`). The only outflows are **spawning and transfers.**
+
+---
+
+# 5. RE-EXAMINATION under the absolute-strength objective (2026-09-10)
+
+`OBJECTIVE.md` is binding. One question per entry: **was the closing number computed relative to the
+rival, or absolutely?** Re-examined, not re-run.
+
+## Transfers unchanged — 13 of 16 mechanism axes
+
+Axes **1–12, 14, 15, 16** all close on numbers measured **on alice alone or on the engine**: the
+engine enumerations, the permutation nulls, the oracle ceilings against *my own* bar, the phase
+relationship, gate un-implementability, and the structural result that spending is the investment.
+**None of them says "the rival is on the other side of this metric."** They stand.
+
+**Note the screens and censuses transfer too** (E2 −8, i53 −2, K3 +4/+5, K7, K8, the pair): every one
+was **arm versus its own byte-identical control**, never against carol. That was worth the discipline.
+
+## RE-OPENED by the change of objective — not by preference
+
+| | entry | why it does not transfer |
+|---|---|---|
+| **13** | **mopper share (dose)** | It closed because *"refusing a mopper yields a SOLDIER, and soldiers are the term alice already leads carol 1.35x on."* **That is a pure relative argument.** Being ahead of a bot that loses ~75% of its games to the external standard is not evidence that more soldiers are worthless. **The substitution is still real — the freed paint does become soldiers — but "soldiers are not worth having" is now unevidenced.** |
+| **D2** | **spawn-and-forget** | Closed on *"carol resupplies 2.044/unit against my 0.383."* **Purely relative.** Neither refuted nor supported now — an **open question**, not a closed premise. |
+| **D3** | **mix by dice** | Closed on *"carol runs 0% moppers and 30.6% splashers against my 21% / 11.3%."* **Purely relative.** Same status. |
+
+## And the survey's premise set was derived the same way — this is the larger correction
+
+**The four premises the redesign was built on (A fewer units, B no moppers, C ~30% splashers, D
+resupply first-class) were every one of them "carol does X."** Under the new objective **that is not
+evidence.** They are not refuted — they are **unevidenced**, which is a different and worse state,
+because I priced and built on them.
+
+> **One survives on absolute grounds and should be kept: premise B.** *Moppers emit `UnpaintAction`
+> and never `PaintAction`* is an engine fact about alice alone — a mopper contributes exactly zero to
+> paint output whatever any rival does. **B's justification is independent of the objective; A, C and
+> D's is not.**
+
+## D1 needs splitting, because half of it is relative
+
+- **"The r300 tower lead predicts the winner ~81%"** — a property of the *game dynamic*, corroborated
+  cross-lineage. **Transfers.** Expansion-first remains the validated objective.
+- **"...and alice wins that race 12–4"** — **relative, and it was functioning as reassurance.** Winning
+  a race against a bot that loses three quarters of its games says nothing about whether alice expands
+  *well*. **Retired as evidence.**
+
+## The counted prize survives, and its justification gets STRONGER
+
+I had stated it as *"alice converts leads at 75%, carol at 100%."* **The 100% target does not need
+carol at all**: **12 of 12 is the ceiling.** So the absolute statement is
+
+> **alice loses 3 of its own 12 winnable games — 3 games in 19 it had already earned by r300.**
+
+That is an **absolute** loss, unchanged by who the opponent is, still **+23.7 net swept** at full
+capture against a **+12** bar. **It was the strongest thing I held this morning and it is the
+strongest thing I hold now.**
+
+## One entry the new objective PROMOTES rather than re-opens
+
+> **The shipped bot loses to its own `alice_iter39` at 18/50.** I flagged it as inside 12-rung
+> multiplicity noise and deprioritised it — **correctly, under the old objective, where the roster was
+> a side check.** The roster is now the **primary outcome instrument**, and "my current head is beaten
+> by my own earlier snapshot" is a direct absolute-strength question. **Promoted from a rung to watch
+> to a diagnostic worth resolving.**
+
+## Tally
+
+**13 of 16 mechanism axes transfer. 3 re-open** (mopper dose, D2, D3). **4 survey premises lose their
+evidence, 1 of which (B) survives on independent absolute grounds.** **1 entry is promoted.** The
+prize is untouched and better justified.
