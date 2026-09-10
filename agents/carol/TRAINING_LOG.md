@@ -21024,3 +21024,81 @@ opponent recapture the site, does carol recapture it, or does it stay empty — 
 take? That is the decomposition that would distinguish "carol cannot rebuild" (a denial problem)
 from "carol never tries" (an attention problem) from "carol is out-raced" (a production problem).
 Three different causes, three different fixes, and 3 sites cannot tell them apart.
+
+# The attrition replication — it REFUTES my own finding, and then corrects an earlier one
+
+Five games, two opponents, three maps. Every carol tower site classified by what happens after it is
+lost: opponent recaptures, carol recaptures, or it stays empty.
+
+| game | carol sites | losses | opp-recap | carol-recap | empty |
+|---|---|---|---|---|---|
+| bobf / Gears | 9 | 3 | 2 | 0 | 1 |
+| bobf / galaxy | 9 | 2 | 0 | 0 | 2 |
+| bobf / Mirage | 10 | **0** | — | — | — |
+| alice / Gears | 10 | **0** | — | — | — |
+| alice / galaxy | 8 | **0** | — | — | — |
+| **POOLED** | | **5** | **2 (40%)** | **0 (0%)** | 3 (60%) |
+
+**Three of five games had ZERO tower losses.** The "carol's income peaks at r800 and falls" story
+came from a single game, and it does not replicate. **My own attrition finding is refuted**, which is
+what the replication was registered to test. The one thing that survives is that **carol recaptured
+0 of 5** — but on 5 events that is a suggestion, not a result.
+
+## And then the income check I should have run before generalising
+
+I measured income against **one opponent** and drew a general conclusion. Re-run across both:
+
+| game | carol paint towers | carol income | opponent | opponent income | ratio |
+|---|---|---|---|---|---|
+| bobf / Gears | 6 | 75 | 13 | 125 | 1.67x |
+| bobf / galaxy | 7 | 55 | 5 | 75 | 1.36x |
+| alice / Gears | 5 | 75 | 31 | 195 | **2.60x** |
+| alice / galaxy | 5 | 55 | 7 | 95 | 1.73x |
+
+**The income deficit DOES replicate — 1.36x to 2.60x against both opponents on both maps** — and
+carol's own base income is remarkably constant at **55–75/turn in every single game**, regardless of
+map size, ruin count or opponent. (The SRP column is unreliable in this batch: `--quiet` suppresses
+the aggregate line the count comes from, so these totals understate bobf's Gears income, which I
+measured separately at 3 patterns.)
+
+## The correction: my earlier ruin decomposition undercounted rebuilds, and it changes a conclusion
+
+Separating **unique sites** from **total build events**:
+
+| game | carol builds / sites / rebuilds | opponent builds / sites / rebuilds |
+|---|---|---|
+| **alice / Gears** | 8 / 8 / **0** | **51 / 8 / 43** |
+| alice / galaxy | 6 / 6 / **0** | 12 / 12 / 0 |
+| bobf / Gears | 9 / 7 / 2 | 25 / 10 / **15** |
+| bobf / galaxy | 7 / 7 / 0 | 15 / 15 / 0 |
+
+**My earlier decomposition keyed tower claims by POSITION, which silently collapses every rebuild
+into one.** That is how I reported *"on Gears carol claimed 10 ruins to alice's 8 and still lost"*
+and concluded that expansion was refuted. **Correctly counted, they claim the SAME number of unique
+sites on Gears — 8 each — and alice builds 51 times to carol's 8.** The conclusion drawn from that
+comparison is withdrawn.
+
+**Two regimes, and they need different explanations:**
+
+- **Contested maps (Gears):** unique sites are EQUAL. The opponent rebuilds **43 and 15** times;
+  **carol rebuilds 0 and 2.** carol's towers die and stay dead.
+- **Uncontested maps (galaxy):** nobody rebuilds at all, and carol simply claims **half** as many
+  sites (6 vs 12, 7 vs 15).
+
+**carol rebuilds 0 times in three of four games.** Against opponents that rebuild 43 and 15.
+
+## What this leaves — honestly
+
+**Withdrawn:** "carol's income peaks and declines" (one game, not replicated); "carol out-claims
+alice on Gears" (a counting artefact of mine).
+
+**Standing and replicated:** the income deficit (1.36–2.60x, both opponents, both maps); carol's
+base income pinned at 55–75/turn in every game; and a rebuild rate of ~0 against opponents in the
+tens on contested maps.
+
+**Still not building.** The rebuild finding has an obvious suspect in my own code — `RUIN_BAN_ROUNDS
+= 250` bans a ruin after a denial or patience give-up, and a ruin whose tower has just been destroyed
+sits in enemy-painted ground, which is exactly what triggers `denyBans` — but "obvious suspect" is
+what the last four mechanisms were built on. **The next measurement is whether carol's soldiers ever
+re-target a lost site at all**, which distinguishes a ban (they never consider it) from a failure
+(they consider it and cannot complete it).
