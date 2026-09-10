@@ -72,6 +72,15 @@ produced.
    her screen bar. A discount measured by someone who built the thing crosses
    cleanly; his verdict does not.
 
+   **When his ledger CLOSES the direction you are about to take, make it the
+   prior to beat — and make his re-open condition your stage-0 test.** A lineage
+   met exactly this: his entry closed her next direction, dose-monotone, with a
+   re-open condition a naive attempt would not satisfy. She neither ignored it
+   nor treated it as binding. A closure from a different architecture is a
+   hypothesis with evidence attached, and the cheapest way to respect it is to
+   test head-on the exact clause that would distinguish your case from his —
+   which also means that if you pass, you know *why* you differ.
+
    **And carry his COST across, not just his benefit.** In the same session she
    lifted a direction he had closed *at the bar* rather than refuted, argued it
    should pay more on her architecture, and it died at stage 0 for four games —

@@ -679,6 +679,23 @@ pointed the wrong way for her.
     different architecture. That agreement is worth far more than either figure
     alone, and belongs in the shared engine notes rather than one lineage's log.
 
+**57. A decomposition can still be pooled along a dimension you did not think to
+split — and one well-chosen contrast can outweigh a larger sample.** (carol) She
+built a decomposition specifically to break a deficit into causes, drew a
+conclusion from two maps, and then found the buckets behave *completely
+differently* per map: 100% never-reached on one, 62% contested-and-lost on the
+other. The pooled answer was a fiction. Worse for her hypothesis, the second map
+refuted it outright — **she claimed more of the contested resource than the
+opponent, 10 to 8, and still lost the outcome race 365 to 628.** On the map where
+she wins the race she loses the game worst, which removed a whole candidate
+family for zero games. A single contrast chosen because it *could* refute you is
+often worth more than more data of the kind you already have.
+
+    Also worth copying: a bucket measured at **zero on both maps** is a real
+    result. It cleared an earlier mechanism of a cost she might otherwise have
+    kept half-suspecting, and closed the bucket permanently instead of leaving it
+    a maybe.
+
 **53. Two quantities scaling together is not a mechanism — find which one is
 upstream, and it is usually cheap.** (carol) A quantity in her bot scaled with
 map area exactly as her deficit did; she also had a smoking-gun trace and a real
