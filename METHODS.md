@@ -26,7 +26,7 @@ of the argument are what transfer.
 
 ## Contents
 
-Seventy-seven entries is more than anyone reads end to end, so read this index and
+Seventy-eight entries is more than anyone reads end to end, so read this index and
 follow the two or three that bear on what you are about to do. **The numbers are
 permanent identifiers, not an order** — they record when an entry was written,
 and every cross-reference in this file and in the lineages' logs cites them, so
@@ -86,6 +86,7 @@ survived while the story told about it did not.
 §44 a fired branch fixes the DECISION, not the validity of its prescription ·
 §68 re-read hardest the registered branch that PERMITS you to ship ·
 §47 report a bar you discover is unreachable ·
+§77 register what a CONFIRMATION FAILURE does to a promoted change ·
 §48 restate an unobservable clause in site terms and DECLARE the substitution ·
 §56 fix branch ORDER in code; record the uncomfortable detail before the verdict ·
 §61 a signal pointing the wrong way is refuted, not weak ·
@@ -1057,6 +1058,41 @@ the moment to notice is when it passes.
     bounded the mechanism she was testing: perfect spacing lifts visibility from
     6.4% to about 10.4%, a +4-point ceiling against a 93.6% deficit, which closes
     a plausible lever that utilisation statistics would have left open.
+
+**77. Register what a CONFIRMATION FAILURE does to a change you already
+promoted — and if the rule you write is keep-biased, give it a ratchet.**
+(alice) She registered a confirmation census and its bar, ran it, and it failed:
+**+5 over 150 games against a +12 bar**, after a screen that had passed at +4
+against +4. What she had *not* registered was what a fail does to a change
+already sitting in HEAD — so there was no rule to apply and she improvised, in
+precisely the situation pre-registration exists to prevent. She reported that as
+a defect rather than deciding quietly, and wrote the missing rule for every
+future census.
+
+    **The diagnostic worth copying is how she read the two runs.** Not verdict
+    against verdict, but **effect size per map**: +0.16 on 25 maps against
+    **+0.067 on 75** — both positive, neither clearing, and the effect **2.4×
+    smaller on the larger draw.** That is the signature of a screen landing on a
+    favourable draw exactly at its threshold, and comparing the totals to their
+    two different bars cannot show it. Two draws also make the pooled statement
+    available: 109 of 200, about 1.3 sd.
+
+    **The rule she registered is the part that needs care, and it generalises
+    past this project.** *Keep if the point estimate is ≥0 and no falsifier
+    fired* will answer **keep** for nearly every unconfirmed positive result
+    anyone ever gets, which is most results. Applied twenty times it yields a
+    HEAD that is an accumulation of individually-unconfirmed changes, none
+    harmful on its own evidence, with no moment at which the accumulation is
+    tested — a mechanism that can manufacture the plateau of §45 and then hide
+    it. A keep-biased rule therefore needs a **ratchet**: count the UNCONFIRMED
+    changes standing in HEAD and require the absolute-strength instrument (§40)
+    to clear a bar on their *cumulative* effect every N of them. Then no single
+    keep decision has to carry weight it cannot bear.
+
+    One caveat belongs in any such entry: a keep resting on *no evidence of harm*
+    is only as strong as the instrument's power to detect harm, and a census
+    carries **no null arm** (§73) — that power was never measured on the draw
+    that decided it.
 
 **48. If a registered clause is not observable at the site, restate it in
 site-observable terms and DECLARE the substitution.** (alice) She had registered
