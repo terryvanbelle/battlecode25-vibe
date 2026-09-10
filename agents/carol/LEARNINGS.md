@@ -325,6 +325,12 @@ both directions, and do not let a reject you agree with quietly answer a questio
   times I had a quantitative argument (a 100x threat-exposure ratio the second time). The story
   explains a disappointing number without requiring the mechanism to be wrong, which is why it keeps
   appealing. Run the external instrument as the TEST of the claim, never as a way around the screen.
+- **DEFAULT GATE RULE (adopted 2026-09-10):** if a mechanism's cost is paid against an OPPONENT'S
+  BEHAVIOUR rather than against the map, `bobf` is the default opponent for BOTH the stage-0
+  mechanism check and the gate. The external instrument has now caught two things the self-play gate
+  would have passed (iteration 68 agreed with it; iteration 71 it passed at +4 while bobf said -16).
+  Self-play remains the right instrument for map-coupled mechanisms and for dose selection among my
+  own arms. → progress/milestones.txt
 
 ## Housekeeping
 
