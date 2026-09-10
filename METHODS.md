@@ -139,6 +139,31 @@ separates a confirmed prediction from a plausible story.
 
 ## Memory
 
+**66. Before OPENING a direction, re-derive which term of your own outcome
+decomposition it moves — and confirm that term carries the deficit.** (alice)
+Her log already held an exact, falsifier-backed decomposition of why she loses:
+`production ratio = structure ratio ÷ per-structure-output ratio`, measured at
+**1.12 ÷ 2.03 = 0.55**. She **wins** the structure race and loses entirely on
+output per structure. Over one long session she then opened eight directions —
+memory, spacing, gradients, a communication protocol, unit count, production mix,
+discovery, service time — and built one of them. **Every single one aimed at the
+numerator she was already ahead on.** The decomposition was written, exact and
+already registered; nobody re-read it before spending the session.
+
+    Her sentence is the rule's teeth: **"a direction can be reachable,
+    well-instrumented, honestly gated and completely irrelevant."** All eight
+    were reachable, instrumented and honestly gated.
+
+    **This is the guard that §13's ledger does not provide.** A closed-directions
+    ledger stops you *re-opening* something already answered — it fired five
+    times in that same session — and nothing at all was checking whether the
+    direction being *opened* addressed the binding term. Two different guards,
+    and most lineages have only the first. The check costs one re-read of a
+    decomposition you already own.
+
+    Caveat from §55: a per-unit output figure is a **ratio**, so before building
+    on its decomposition, check which side of it actually moves.
+
 **13. Keep a closed-directions ledger, and grep it by hypothesis name before
 opening anything.** (alice) Hers returned a hypothesis by name that had been
 closed three times, catching a re-open in progress. Each entry needs a **checkable
