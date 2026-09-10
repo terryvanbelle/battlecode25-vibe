@@ -22455,3 +22455,58 @@ instead of letting the VOID branch vanish silently: this run's bar rests on a fl
 *earlier*, not on this draw. **That is weaker than the screen was, and stating it is the point** —
 the screen's own null read +0 on the same shape, which corroborates but does not replace a floor
 measured here.
+
+# K4 — the refill's FOUR GATES, priced JOINTLY. The binding one is ADJACENCY, and my dose error is now exact
+
+Additive probe `src/alice_k4probe`, identity-verified at **534 / 1869 / 1096** — the incumbent's own
+numbers. 387 robots, **52,242 unit-turns**. Counted sequentially, so these are a joint funnel and not
+four marginals. **Zero games beyond the three identity matches.**
+
+| gate | count | % of what reaches it | % of all unit-turns |
+|---|---|---|---|
+| `tryRefill` reached | 52,242 | — | 100% |
+| 1 · below half tank | 22,618 | 43.29% | 43.29% |
+| 2 · AND action ready | 15,801 | 69.86% | 30.25% |
+| **3 · AND adjacent to an ally tower** | **412** | **2.61%** | **0.79%** |
+| 4 · AND tower paint > 50 *(shipped)* | 97 | 23.54% | **0.19%** |
+| *counterfactual:* > 200 *(old)* | 51 | 12.38% | 0.10% |
+
+> **Adjacency is the binding gate: it discards 97.4% of everything that reaches it.** The other three
+> pass at 43%, 70% and 24%.
+
+## My dose error, finally exact — and it is one level deeper than I diagnosed
+
+I sized the reserve dose from the curve "fraction of **tower-frames** above the reserve": 17.1% → 98.2%,
+so 5.7x. **At the site it bought 1.90x** (12.38% → 23.54%), and realised 1.15x in play.
+
+**The curve was measured on the wrong population.** The relevant towers are not all towers — they are
+**the towers a hungry, action-ready unit happens to be standing next to**, and those are far poorer:
+only **23.5%** hold more than 50 paint, against 98.2% of tower-frames at large. Units cluster around
+towers that are *spending*, so the towers they can reach are the drained ones.
+
+> **A gate's pass rate must be measured on the population that REACHES it, not on the population at
+> large.** "Size from the joint, not the marginal" was the right lesson and still not specific enough:
+> even a single gate's own curve is wrong if it is drawn over the wrong denominator.
+
+## And my probe has a defect I am recording rather than hiding
+
+I instrumented **two thresholds** (50 and 200) instead of the **distribution** of adjacent-tower
+paint. So I can price the reserve change I already made and cannot price the next one — I do not know
+what fraction of reachable towers hold >25 or >0. **Instrument the distribution, not the two values
+you happen to be considering.**
+
+## What this says about the next move, registered before the census returns
+
+Joint = 0.4329 × 0.6986 × 0.0261 × 0.2354. The available slack, largest first:
+
+- **gate 3, adjacency (2.61%)** — up to 38x, and it is *positioning*, the expensive kind this session
+  repeatedly failed at. Carol runs 2.1x alice's adjacency (16.21% vs 7.88%).
+- **gate 4, reserve (23.54%)** — up to 4.2x more, one constant, but unpriced because of the probe
+  defect above.
+- **gate 1, half-tank (43.29%)** — up to 2.3x, one constant; but a nearly-full unit can only accept
+  `cap − p`, so the paint moved shrinks as the gate opens. **Rate and volume move oppositely here**,
+  which is exactly the trap that makes a rate-only funnel misleading.
+
+**Registered:** whatever the census says, the next measurement is the **distribution of paint held by
+towers adjacent to a hungry, ready unit** — it prices gates 4 and 1 together and costs one probe run.
+**No mechanism until that number exists.**
