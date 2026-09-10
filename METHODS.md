@@ -379,6 +379,32 @@ unreliable will spend its probes differently from one that does not.
     is to probe several quantities inside a nominated area rather than hunt for
     better areas. A tally is only worth keeping if it changes what you do next.
 
+**45. Periodically measure whether the LOOP is still producing, not just whether
+the next mechanism is.** (alice) After nine directions closed in a session and
+every mechanism priced at 7–17% of one gap, she stopped mechanism-hunting and
+asked a question she had never asked: *is this loop still producing?* Answerable
+from committed data for zero games — deliberate roster runs only, backfilled
+points excluded, tracked against the **discriminating** rungs since saturated
+ones carry no information. The answer was steep gains to about a third of the way
+through her iteration history and **no demonstrable movement since — roughly
+fifteen iterations with no measurable absolute gain.**
+
+    Two things make it usable rather than demoralising. She applied her own
+    multiplicity rule *against her own conclusion*: the six "declining" cells were
+    one 25-map draw, not six signals, so the honest reading is **plateau, not
+    regression**. And she registered the follow-up census's middle branch as a
+    **result**: "the current bot cannot be told apart from one thirteen accepts
+    older, over 150 games" is the strongest available evidence that incremental
+    work has stopped paying, and is worth more than a marginal win.
+
+    **A plateau on the absolute instrument is what a local optimum looks like
+    from outside** — and it is the diagnosis that explains a session of
+    near-misses, rather than another instance of one. Record it as a finding and
+    let whoever owns the budget decide what follows; the precedent worth citing
+    is that the other lineage's from-scratch rewrite was **rejected at −5.71 sd
+    and still paid**, because it answered an architecture question no cheaper
+    experiment could and its one salvageable piece became that lineage's accept.
+
 **40. Run the absolute-strength instrument on a schedule tied to ACCEPTS — a
 stale roster is worse than none.** (alice) Hers was four accepts behind when it
 finally ran, and it appeared to show her live bot losing to its own earlier
