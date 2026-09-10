@@ -24013,3 +24013,46 @@ is NOT a member, and the family is not already dead.**
 **14 paint of a 200 tank — 7%.** **Transit is cheap; the tank is consumed by the ~88-turn lifetime,
 not by the journey.** So "feed units in transit" is a real site outside the closed class **and too
 small to carry a two-thirds capture.** I am recording that before designing for it, rather than after.
+
+# RE-PRICING THE CLOSED SET ON THE DEFICIT'S OWN REGIME — registered BEFORE computing
+
+Every mechanism I closed today was priced over the **whole corpus**, which includes 10 games alice
+wins with coverage at 560–703 — **where a coverage lever has no room at all.** That is the
+corpus-mean error in the costume I have not yet caught it in: averaging a lever over regimes that are
+already at their ceiling. Re-pricing what I already measured; **not a new axis.**
+
+## 1. The subpopulation — and it must NOT be outcome-conditioned
+
+**The obvious definition is a trap.** "Games where coverage peaked below 550" separates perfectly from
+the outcome — because it **is** the outcome (peaks are 179–545 in losses, 560–703 in wins).
+Conditioning on it would be the selection error I have caught three times today.
+
+> **Registered definition, both terms measured at r300, before any result is known:**
+> **alice leads on towers at r300 AND alice's coverage at r300 is below carol's.**
+> *Has the structures, is not converting them* — the signature, identified pre-outcome.
+
+## 2. The mechanisms to be re-priced — fixed now, five of them
+
+| | mechanism | its corpus number | its original bar |
+|---|---|---|---|
+| 1 | K3 refill (reserve 200→50) | +16% per-unit output | census +12 |
+| 2 | K7 refill widening | ≤7.7% output ceiling | ≥48 paint actions/game |
+| 3 | K8 splasher chip gate | 3.2x ceiling, 2.22x realised | ≥5x |
+| 4 | mopper dose-down | 58.1% claim rate | PASS <40% claimed |
+| 5 | pair i53+K8 | joint 1.94x | ≥5x |
+
+## 3. The threshold, and the multiple-comparisons correction
+
+**Five re-prices will find one that looks good by chance.** P(at least one) is not P(this one).
+
+> **A mechanism re-opens only if, on the subpopulation, it clears its ORIGINAL bar by ≥2x** — the
+> doubled margin is the correction for testing five, and it is deliberately cruder than a p-value
+> because these are ceilings and ratios, not test statistics.
+> **And a hit is a TRIGGER FOR A CENSUS, never a finding.** The subpopulation qualifies as
+> independent only because it was defined by an analysis that had nothing to do with any mechanism —
+> **that stops being true the moment I adjust its definition against a result, so the definition
+> above is now frozen.**
+>
+> **If nothing clears even in the deficit's own regime, that is a strong closure** — the regime where
+> the deficit lives cannot be reached by anything I have built — **and I will say so plainly rather
+> than softening it.**
