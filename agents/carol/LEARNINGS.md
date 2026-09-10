@@ -556,3 +556,16 @@ both directions, and do not let a reject you agree with quietly answer a questio
 - **A beautifully controlled measurement on a set that carries no margin is worse than a rough one on
   the set that does, because it is persuasive.** My cleanest result of the day (p=0.0012) described
   the regime contributing exactly zero to my margin.
+
+- **Check a rate comparison for a phase confound before trusting it.** My win halves ran 568 rounds
+  against the margin set's 1,095, and a per-1,000-round rate in a short game is dominated by the
+  opening build-out. Re-measuring on matched windows in raw counts did not overturn the ranking -- it
+  widened it from 2.7:1 to 10:1 -- but the check is what licensed the number.
+- **A matched window can localise a gap in TIME, which a whole-game rate cannot.** Over r1-300 carol
+  builds identically whether she wins or loses (2.33 vs 2.41); the gap opens after r300 and is 91%
+  a build failure, 9% a defence failure. "Not present at the start, develops later" also bounds the
+  endogeneity: if the losing side were simply poorer from the outset, the gap would be there at the
+  outset.
+- **Sweep your own set-aside notes on the same schedule as your re-open conditions.** Twice in one
+  session the answer was already written down and walked past. In a log, a note deferred for lack of
+  a regime looks exactly like a note that was wrong.

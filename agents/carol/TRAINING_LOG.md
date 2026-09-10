@@ -23610,3 +23610,78 @@ regime where it did not cost anything, and it costs something here.
 **Root still not claimed, and the discriminator is already controlled:** the opponent retains ~98%
 in the *same games, on the same maps* where carol retains 53.9%. **It is not the map.** What it is
 has not been established, and I am not asserting it.
+
+## PRICING THE TWO HALVES — and REGISTERING which one I aim at, before designing
+
+My headline was two mechanisms in one sentence: *"carol loses 3.3× as many structures **and**
+replaces them a quarter as reliably."* A **loss rate** and a **replacement rate** — different fixes,
+different costs. Priced separately on Set A (the margin), **against a level carol has been observed
+to reach — her own win halves — not against the opponent's 83%, which is an aspiration.**
+
+### 1. Whole-game rates
+
+| | median rounds | lost /1,000r | gained /1,000r | regain-prior | final |
+|---|---|---|---|---|---|
+| **SET A** (the margin) | 1,095 | **3.42** | 3.62 | **22%** | 2.75 |
+| **carol's own WIN halves** | 568 | 1.38 | **7.89** | 65% | 6.33 |
+
+Counterfactual on Set A final structures (`final = start + gains − losses`), targets from carol's own
+winning behaviour:
+
+| | final | gain |
+|---|---|---|
+| current | 2.75 | — |
+| fix LOSS RATE only | 4.53 | +1.78 |
+| **fix REPLACEMENT RATE only** | **7.51** | **+4.76** |
+| both | 9.29 | +6.54 |
+
+> **REPLACEMENT : LOSS RATE = 2.7 : 1.**
+
+### 2. The confound I had to clear first — and it strengthened the result
+
+**The win halves run 568 rounds against Set A's 1,095**, and a per-1,000-round rate in a short game is
+dominated by the opening build-out, which is the highest-rate phase. That biases *toward* the win
+halves. So I re-measured on **matched windows**, in raw structures rather than rates:
+
+| window | SET A lost / gained / net | WIN halves lost / gained / net | **share of the gap from GAINS** |
+|---|---|---|---|
+| r1–300 | 0.33 / 2.33 / **+2.00** | 0.00 / 2.41 / **+2.41** | 20% (gap is tiny: 0.41) |
+| r1–500 | 0.60 / 3.30 / +2.70 | 0.18 / 4.64 / +4.45 | **76%** |
+| **r300–800** | 1.12 / 1.88 / **+0.75** | 0.83 / 4.83 / **+4.00** | **91%** |
+| r500–1000 | 1.67 / 1.33 / **−0.33** | 0.75 / 2.75 / +2.00 | 61% |
+
+**Two things fall out that the whole-game rates could not show:**
+
+1. **The opening is not the problem.** Over r1–300 carol builds at **2.33 against 2.41** — essentially
+   identical whether she goes on to win or lose. The divergence is **not** present at the start, so it
+   is not a static map-position effect; it **develops**.
+2. **The divergence is mid-game and it is a BUILD failure, not a defence failure.** Over r300–800 the
+   gap is **3.24 structures**, of which **91% comes from gains** (1.88 vs 4.83) and **9% from losses**
+   (1.12 vs 0.83). By r500–1000 Set A is **net negative (−0.33)**: carol is losing structures faster
+   than she replaces them.
+
+**The confound did not overturn the ranking — it widened it** (2.7 : 1 whole-game, up to 10 : 1 in
+the r300–800 window).
+
+### 3. REGISTERED — the half I am aiming at
+
+> **REPLACEMENT — carol's failure to keep building structures after roughly round 300 on the maps
+> that carry her margin. NOT defence, and NOT the opening.**
+
+Registered before any design, because I spent this session learning what a clean measurement of the
+wrong half costs: Set B's p=0.0012 acquisition result described the regime with zero margin in it,
+and this is the same hazard one level down.
+
+**Endogeneity declared, not resolved.** Building and winning are mutually causal: on a map she is
+losing, carol has fewer resources to build with. The **r1–300 identity partially addresses it** — if
+the weaker side were simply poorer from the start, the gap would appear at the start, and it does
+not. It develops from r300. That bounds the confound; it does not eliminate it, and I am not
+claiming it does.
+
+### 4. A standing sweep, added because this happened twice today
+
+**Twice today the answer was already written down and walked past:** the iteration-5 note *"carol
+rebuilds 0 and 2 — carol's structures die and stay dead"*, and the `explore` third-writer that made
+CHANGE 3 a no-op. **Adding a standing sweep of my own set-aside notes on the same schedule as my
+re-open conditions** — a note deferred for lack of a regime is indistinguishable, in the log, from a
+note that was wrong.
