@@ -19510,3 +19510,66 @@ whether iterations 40–43 moved alice's absolute strength, on a frozen opponent
 alongside it. The gauntlet headline cannot separate "the bot improved" from "the instrument moved";
 this can. The point will be drawn **solid** (a deliberate roster run, not backfilled from a
 pre-accept head-to-head).
+
+## The pre-check ANSWERS, kills its own candidate, and finds something larger: alice destroys ZERO enemy towers
+
+**109 alice tower deaths across the 8 collapse games**, every one attributed to the attacker type that
+dealt it the most damage:
+
+| killer | deaths | share | share of the 148,900 HP dealt |
+|---|---|---|---|
+| **SOLDIER** | **106** | **97.2%** | 82.9% |
+| SPLASHER | 3 | 2.8% | 17.1% |
+| **enemy TOWER** | **0** | **0%** | 0% |
+
+**My registered decision table resolves cleanly and against my own candidate.** I wrote: *"enemy
+towers out-ranging alice -> a defense tower's radius-16 is the direct answer."* **Not one alice tower
+was killed by an enemy tower.** The out-ranging rationale is refuted, and with it the reason I had
+for building a defense tower. (A defense tower might still help through HP and damage against massing
+soldiers — but that is a *different* argument, and adopting it now because the first one failed is
+precisely the wrong-referent move this log has caught six times today. It gets its own pricing or it
+gets nothing.)
+
+### And the symmetric measurement is the real finding
+
+Having established what kills alice's towers, I asked the obvious inverse — **does alice do it back?**
+
+| | alice → enemy towers | enemy → alice towers |
+|---|---|---|
+| damage events | **131** | **3,276** (25:1) |
+| **towers destroyed** | **0** | **109** |
+
+> **Across eight games alice destroyed ZERO enemy towers while losing 109.** Its 131 damage events —
+> about 16 a game, against 400 — are its *own towers* firing defensively, not an offensive effort.
+
+**The code says why, and it is not a tuning problem.** Every `rc.attack(...)` in `runSoldier` is a
+**paint** call — the pattern loop and the opportunistic tile paint. **There is no branch anywhere in
+which an alice soldier targets an enemy tower**, despite a soldier dealing **50 damage** to towers
+(engine-verified today) and towers being the master variable this lineage established at iteration 39.
+
+### The caveat that bounds this, stated because the number is spectacular
+
+**I selected these four maps as alice's biggest collapses**, so the *rate* — 109 towers lost per eight
+games — is inflated by that selection and is not a corpus figure. **What is not selected is the
+zero**: alice destroyed no enemy towers on any of them, and the reason is a missing code branch, which
+is a property of the bot and not of the sample. **The rate is selected; the absence is structural.**
+
+### Why the API sweep never caught this — a new failure mode
+
+My unused-API sweep has run at iterations 5, 29, 45 and 53 and reports `attack` as **used**. It is:
+alice calls it constantly, to paint. **An API-usage sweep catches unused METHODS; it cannot catch an
+unused TARGET.** The capability was never on any list of things I had not tried, because the *verb*
+was in constant use and only the *object* was missing.
+
+### Registered before building: price it, because it is not free
+
+A tower has 1,000–2,000 HP and a soldier deals 50, so **20–40 soldier attacks per tower killed**, at 5
+paint each — **100–200 paint, or one to two entire soldier lifetimes** (a soldier delivers ~20 paint
+actions). Against that, a tower is worth ~75 paint actions of production over its life *and* denies
+the same to the enemy. **That is plausibly a good trade and it is not obviously one**, and this
+session has closed seven directions by pricing before building.
+
+**The pre-check owed:** in the games alice *wins*, how many enemy towers does it destroy — still zero?
+If a lineage that never attacks towers wins the tournament at 61.3%, the trade may already be
+correctly declined, and the collapse games may be the price of a strategy that is net positive. That
+is the discriminating question and it costs nothing: the replays are on disk.
