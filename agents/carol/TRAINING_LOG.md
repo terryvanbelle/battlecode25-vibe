@@ -21666,3 +21666,75 @@ chain could produce.
 
 **Coverage rank 2 and rank 5 (refresh period, distance-aware refill) remain unbuilt** — but they
 feed the same chain, so they inherit the same regime limit and the same discount.
+
+# The AXIS, closed — and the deficit decomposed by regime for the first time
+
+## 1. The coverage AXIS closes on magnitude, not just its members
+
+My own rule: repeated same-signed failures across independent implementations refute the **shared
+premise**. Ranks 1 and 6 of the coverage axis have now both failed, and iteration 76 measured the
+shared premise end-to-end. **Oracle ceiling for ANY coverage mechanism:**
+
+| | |
+|---|---|
+| iteration 76 rank 4 | coverage 37% -> 65% (+28 pts) -> large-map margin **+4 on 22 games** |
+| an oracle at **100%** coverage | 2.25x that gain = **+9 on 22** |
+| scaled to a census's 64 large-map games | **+26** |
+| **accept bar** | **+26** |
+
+**A PERFECT coverage mechanism prices exactly AT the bar** — and only if it costs nothing on
+small/mid, where all three real arms measured **−2, −14, −8**. No realisable member can clear it.
+
+> **The coverage axis is CLOSED on magnitude.** Ranks 2 (refresh period) and 5 (distance-aware
+> refill) are not built and will not be: they are different implementations of a premise now priced
+> at or below the bar. That is a closure for **zero further games**.
+
+This also finishes re-pricing iteration 75: its +61% ran through this chain, and the chain's oracle
+is +26. **The two unbuilt memory links are dead** — they would buy a chain whose ceiling is the bar.
+
+## 2. The deficit BY REGIME — never decomposed before, and it is startling
+
+`carol_iter45` vs alice, tournament, 150 games:
+
+| bucket | games | carol won | **margin** |
+|---|---|---|---|
+| small (<900) | 22 | 16 | **+10** |
+| mid (900–1600) | 64 | 32 | **0 — exactly break-even** |
+| **large (>1600)** | **64** | **17** | **−30** |
+| TOTAL | 150 | 65 | −20 |
+
+> **The deficit is 100% a large-map deficit.** Small maps are positive, mid maps are *exactly*
+> break-even, and large maps carry the entire −30. Every mechanism I have priced "for the area
+> gradient" was aimed at the right regime; the coverage family was simply too small for it.
+
+## 3. A large-map sink I have never examined, scaling 8.8x with area
+
+The soldier's tower attack is **completely ungated**:
+
+    for (RobotInfo e : enemies)
+        if (e.type.isTowerType() && rc.canAttack(e.location)) { rc.attack(e.location); break; }
+
+Every soldier attacks any enemy tower in range, every turn it can, at **5 paint per attack**.
+Measured against `bobf`, per 1,000 rounds:
+
+| map | area | attacks | **paint spent attacking** | paint ACTIONS |
+|---|---|---|---|---|
+| Mirage | 1,600 | 98 | **490** | 4,297 |
+| galaxy | 2,025 | 208 | 1,040 | 3,844 |
+| **Gears** | **3,025** | **859** | **4,296** | **3,392** |
+
+**Attack spending scales 8.8x with map area while painting FALLS.** As a share of paint that becomes
+an action, attacking goes from **2.3% on Mirage to 20% on Gears** — a large-map-specific sink, in a
+completely different family from coverage, and unconditional in code.
+
+**Priced honestly in BOTH directions, because the sign is genuinely uncertain:**
+- **Against gating**: carol's ~43 tower kills on Gears each cost alice 1,000 chips and ~25 rounds of
+  that tower's income. Crudely, carol spends ~6,900 paint (≈1,785 of its own tiles) to deny ~10,750
+  of alice's (≈2,792 tiles) — a **1.56:1 trade in carol's favour on the tiebreak quantity.**
+- **For gating**: alice **rebuilt all 43**, and she runs 2.6x carol's income, so paint denied to her
+  is worth less per unit than paint spent by carol, whose supply is the binding constraint.
+
+**That is exactly the situation a dose ladder with a zero arm exists to settle**, and it is the next
+iteration: gate the soldier tower attack, doses over the gate's strictness. **Registered, not
+started** — and unlike the last two directions it is not routed through the coverage chain, so it
+does not inherit that closure.
