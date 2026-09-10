@@ -23820,3 +23820,108 @@ primary outcome instrument), and check D (self-play census, **≥ +26 ACCEPT / +
 memory's contents are conditioned on a losing trajectory. That is the correct conditioning for this
 question — I am asking what a *losing* carol could have built on — but it does not license reading
 M2 as the value of the mechanism in a won game.
+
+## Iteration 80 stage 0 — the falsifier DOES NOT FIRE. And the number it was built on is wrong.
+
+Six probe games, two byte-identical no-op builds. Both reproduced `carol_siege`'s wins at the
+**identical end rounds** (fix 666, walalilongla 1372, gardenworld 2000), which is the control check:
+the engine is deterministic, so equal end rounds on both arms means play was untouched.
+
+### M0 — PASS. The probe is a control.
+
+`ov=` (bytecode overruns) is **0** on all three maps; peak usage **7,206** against the 20,000 robot
+limit. The probe adds ~3k worst case and never came near.
+
+### M1 — PASS. The memory is not empty.
+
+Pooled over 16,064 blind soldier-turns: **71.2%** hold a remembered still-unclaimed ruin
+(fix 79.3%, gardenworld 70.0%, walalilongla 77.6%), against a registered **≥ 50%**.
+
+### M2 as registered — PASS at 37.3% ≥ 33%, and I am NOT banking it, because it is a knife-edge
+
+| threshold | pooled M2 | fix / gardenworld / walalilongla |
+|---|---|---|
+| d ≤ 6.00 | 24.5% | 58.1 / 28.2 / **0.0** |
+| d ≤ 6.24 | 24.5% | 58.1 / 28.2 / **0.0** |
+| **d ≤ 6.32 (REGISTERED)** | **37.3%** | 58.1 / 28.2 / **84.2** |
+| d ≤ 7.94 | 37.3% | 58.1 / 28.2 / 84.2 |
+
+**The ruin→nearest-tower distance is QUANTISED** — ruins and towers sit at fixed map coordinates, so
+the distribution is a set of mass points, and it is **bimodal**: a near cluster over d ∈ [5.0, 6.4]
+holding **33.6%**, an almost empty gap, then a far cluster over d ∈ [8, 11] holding **~47%**.
+
+**My registered threshold landed exactly on the top mass point of the near cluster.** 1,459 turns
+sit at exactly d = 6.3246, all on one map, and they are the entire margin: read at d ≤ 6.24 — which
+is the literal p90 of 6.3 I quoted — the same data gives **24.5% and REFUTES**. The verdict turned on
+whether I wrote 6.3 or 6.32. Map-weighting does not rescue it either (56.8% mean over maps at 6.32,
+28.8% at 6.24); the same mass point is load-bearing under both weightings, and gardenworld alone is
+**83% of the pooled turns**.
+
+> **So I recorded stage 0 as INCONCLUSIVE as registered and went to get a better instrument.**
+
+### The instrument was CIRCULAR, and that is the real defect
+
+`p90 distance 6.3` is the p90 of **where carol's units are** — a statistic dominated by units parked
+next to a tower refilling. I used it as a threshold for **where carol can build**. Those are different
+quantities and conflating them is exactly the class of error §4 of `CLOSURE_MAP.md` exists to catch.
+Using it as a feasibility bar asks "are remembered ruins where my units already go?", which is
+circular: of course the answer clusters around the towers.
+
+### The threshold-free replacement — carol's DEMONSTRATED claim envelope
+
+`carol_memp2` emits, at the single `completeTowerPattern` site, the distance from the completed ruin
+to the nearest ally tower **that soldier knew about**. That is a revealed capability: every tower
+carol actually finished, with `REFILL_LOW=50` fully active, in the same three games.
+
+| n = 18 completions | d |
+|---|---|
+| median | **8.89** |
+| p75 | **11.70** |
+| p90 | **15.00** |
+| **max** | **25.24** |
+
+**Only 27.8% of the towers carol actually built were within d ≤ 6.0, and 38.9% within 6.4.** The
+registered proxy of 6.3 excludes **72% of her own real claims**. It was not merely knife-edge, it was
+**wrong by about 3× in the strict direction.**
+
+### M2 re-read against the demonstrated envelope — PASS, and not narrowly
+
+| remembered unclaimed ruins lying within… | share |
+|---|---|
+| the **median** distance carol actually claims at (8.89) | **46.3%** |
+| the **p75** (11.70) | **84.6%** |
+| the p90 (15.00) | 87.6% |
+| the max ever claimed (25.24) | 100.0% |
+
+> **VERDICT: the registered falsifier does not fire.** "Seeing a ruin is not reaching it" is refuted
+> by carol's own revealed behaviour: **she routinely completes towers far outside her p90 position
+> radius, up to d = 25.24, with the refill tether fully switched on.** The tether and the build
+> envelope are **not the same constraint**. Directing a soldier to a remembered ruin at d ≈ 9
+> therefore does **not** require dropping `REFILL_LOW`, and the mechanism does **not** inherit
+> iteration 60's **−26**.
+
+### On changing the instrument after seeing the data — the honest accounting
+
+I am aware this is the shape of a rescue, so stating the chain plainly:
+
+1. **The registered gate passed on its own terms** (37.3% ≥ 33%). I was not rescuing a failure.
+2. I declined to bank it and ran a **stricter, threshold-free** check that was **capable of killing
+   the mechanism** — had the demonstrated envelope come back at d ≤ 6, the registered pass would have
+   been overturned into a REFUTE and I would have closed the direction.
+3. It came back at median 8.89 / max 25.24, so the correction runs **against my own registered
+   threshold**, not against the falsifier.
+
+### Two things stage 0 bought for free, both of which constrain the build
+
+1. **The tether number is corrected, and it is load-bearing elsewhere.** `p90 = 6.3` is a *position*
+   statistic, not a *capability* statistic. Anywhere this lineage has reasoned "carol cannot operate
+   beyond ~6", that inference is unsupported — the build envelope is median 8.89. Recorded in
+   `CLOSURE_MAP.md` §4 as a misreadable fact.
+2. **A naive ruin memory GOES STALE.** 3.7% of remembered "unclaimed" ruins sit at **d = 0** from a
+   known tower — i.e. a tower has since been built there and the memory never learned it, because
+   `probeForget` only fires in sense range. 3.7% is a **lower bound** (it only catches the case where
+   the same robot also remembers that tower). Any built mechanism needs staleness handling, and I
+   know this before writing it rather than after a failed screen.
+
+**Stage 0 passes. The mechanism now owes check B (screen ≥ 31/50), check C (the 15-rung frozen
+roster) and check D (self-play census, ≥ +26). The bar does not move.**
