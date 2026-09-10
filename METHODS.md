@@ -656,6 +656,25 @@ fact about a tile's origin.
     win condition. Before zeroing a term, ask what it was doing that you never
     measured; the question is free and the answer here cost one arm.
 
+**53. Two quantities scaling together is not a mechanism — find which one is
+upstream, and it is usually cheap.** (carol) A quantity in her bot scaled with
+map area exactly as her deficit did; she also had a smoking-gun trace and a real
+defect in her own accepted code pointing the same way. Every ingredient of a
+causal story. Bounding it left the share **flat and rising at the tightest dose**,
+because bounding a journey does not create the resource the journey exists to
+fetch — the bound converted a few long trips into many short ones and conserved
+the total. **The quantity was the visible face of a shortage, not its cause.**
+Three games bought her which one was upstream. In any system with a single
+binding constraint, co-scaling is the cheapest coincidence there is, so the
+correlation is nearly free evidence and nearly worthless evidence at once.
+
+    **And do not fit a threshold to a boundary you invented for reporting.**
+    (same session) She priced a gate keyed to a map-size bucket and declined it
+    at +7 against a +9 bar — but her better reason was the second one: the bucket
+    edge was a line she had drawn to summarise results, not a feature of the
+    game, so a mechanism keyed to it would have been fitted to her own
+    presentation.
+
 **51. When your registered instrument says no, running a different one is
 gate-shopping — even when you are entitled to run it.** (carol) Both of her
 instruments came back mildly positive overall, a census was available and
