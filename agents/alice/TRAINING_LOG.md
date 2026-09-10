@@ -24481,3 +24481,47 @@ production alone would reproduce exactly the error that closed both.
 >
 > **So the claim I will make is a ranking of PRODUCTION EFFICIENCY, with conversion left as an open
 > term** — not assumed to follow, and with the specific quantity that would overturn it named above.
+
+# THE INVERSION CONDITION IS CLOSED — and this is the first live direction under the new objective
+
+**Engine first, not memory** — the whole ranking rests on this claim. `splasherAttack`, decompiled:
+the tile loop branches on `teamFromPaint(getPaint(loc))`, and the second branch is gated on
+**`iconst_2`** — a radius²≤2 test — before its `setPaint`. **A splasher overwrites enemy paint within
+r²≤2 (9 tiles), directly.** So **the higher-ranked unit takes the ground the mopper only enables**,
+and redundancy, not inefficiency, is the mopper's problem.
+
+## Quantified in the same units as the ranking
+
+| reading | mopper's marginal value |
+|---|---|
+| **A — absolute coverage** (what the replays report: *"the winning team painted enough of the map"*) | enemy and empty tiles are both **+1 to me**, and the soldier that paints a mopped tile could have painted an empty one instead → **marginal value 0. Strictly dominated.** |
+| **B — coverage difference** (the mopper's best case) | 9.76 tiles claimed × 1 extra unit = **0.0976 units/paint** |
+
+> **Splasher ≥ 0.1291 (and its r²≤2 tiles are themselves enemy overwrites, so this is a lower bound)
+> against a mopper's upper bound of 0.0976. THE INVERSION DOES NOT FIRE — under either reading of the
+> win condition, and with every assumption set in the mopper's favour.**
+
+## So the finding stands, and it is absolute, replicated, and actionable
+
+> **Alice's unit mix is upside-down on the only quantity that can rank a spawn choice.** It spends
+> **21% of spawns on a type worth 0**, and **11% on the type worth 2.14x the one it spends 65% on.**
+> Replicated independently on another design's units, same ordering. **No rival appears in that
+> sentence** — it is a fact about my bot measured against the engine.
+
+## Registered before building — and the constant-volume clause is load-bearing
+
+> **The mechanism must hold TOTAL SPAWN VOLUME CONSTANT and shift only composition.** My own
+> structural result says **spawning is what builds the generator**: cutting spawns took towers
+> 6.89 → 3.25 with total paint falling in the same ratio. **A mix change that improves the ratio by
+> spawning less would re-run the experiment that aborted this afternoon, and afterwards the two
+> failures would be indistinguishable.**
+>
+> **Manipulation checks, both required, both within-game:**
+> **(1) composition moved** — mopper share → <5%, splasher share up; **(2) VOLUME UNCHANGED** — total
+> spawns within **±10%** of control. **If volume falls, the arm is void as a test of mix**, not a
+> rejection of it — the same abort/reject distinction that saved the R1 result from being misread.
+> **Screen: 25 maps / 50 games / net ≥ +4, null arm, VOID first.**
+>
+> **And the claim it can support is bounded now, not later:** this ranks **production**. If it passes,
+> I claim *the mix was inverted on production efficiency and correcting it won* — **not** that
+> production is the route to strength generally, which is the inference K3 and K7 already refuted.
