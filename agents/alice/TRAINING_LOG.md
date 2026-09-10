@@ -19590,3 +19590,11 @@ is the discriminating question and it costs nothing: the replays are on disk.
    worse than an error, and anyone reading `symmetry.txt` would see `aliceDmgToTheirTowers=0` and
    could read it as "alice dealt no damage" rather than "the sum did not compute" — the two happen to
    agree in direction here, which is exactly when a silent failure is most dangerous.
+
+**Correction to the note above: I REVERTED the broken patch rather than committing it.** The
+mangling affects the shared `grep -E "$TG"` line, so the *default* paint/unpaint path went through
+the same broken substitution — leaving it in would have shipped a tool whose working mode I had only
+assumed still worked. `tools/paint-trace.sh` is now back to its last-known-working state (the
+108,417-line trace earlier today used it successfully in that form). **The override does not exist
+rather than existing and being broken**, which is the honest state and the one a future session can
+trust.
