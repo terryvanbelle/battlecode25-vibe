@@ -23925,3 +23925,87 @@ I am aware this is the shape of a rescue, so stating the chain plainly:
 
 **Stage 0 passes. The mechanism now owes check B (screen ≥ 31/50), check C (the 15-rung frozen
 roster) and check D (self-play census, ≥ +26). The bar does not move.**
+
+## Iteration 80 — STAGE 0's M1 IS OVERSTATED 3.5×, AND I CAUGHT IT FROM THE BUILT ARM
+
+Before reading the screen, I ran the liveness check the iteration-79 lesson demands: does the
+mechanism actually fire? It does — 215 `memNav` turns on gardenworld, `ov=0`, peak bytecode 7,111 —
+**but on only 2.5% of blind soldier-turns, against the 70% availability stage 0 reported.** A 28×
+gap between what I priced and what I built is not a detail, so I chased it before trusting 150 games
+to the arms.
+
+### The discriminating case, because two hypotheses fitted
+
+(a) the arm's **ban filter** drains the memory; (b) the arm's **divergent trajectory** drains it (it
+holds 12 towers to the control's 6, so more sensed ruins are occupied and forgotten). These are not
+distinguishable from the arm alone. `carol_memp3` is a no-op build — **byte-identical play, verified
+by reproducing the control's loss at exactly round 2000** — that counts both quantities:
+
+| gardenworld, 13,551 blind soldier-turns | share |
+|---|---|
+| memory holds **any** remembered ruin — **this is stage 0's M1** | **70.0%** |
+| memory holds a **non-banned** ruin — what the arm can actually navigate to | **20.0%** |
+| **share of remembered ruins that are BANNED** | **77.0%** |
+| held: median 3 (max 9) | **usable: median 0** (max 5) |
+
+**Hypothesis (b) is refuted** — identical play, same trajectory, same 13,551 blind turns as the
+control. **It is the ban filter, and it removes 77% of the memory.**
+
+### What went wrong, exactly
+
+The probe and the arm order the same two filters differently, and it is worth ten times what it looks:
+
+```java
+// PROBE: remembers BEFORE the ban check, and probeForget only fires on OCCUPIED ruins,
+//        so a banned ruin enters the memory and never leaves.
+if (rc.canSenseRobotAtLocation(r)) { probeForget(r); continue; }
+probeRemember(r);
+if (ruinBanned(r)) { banSkips++; continue; }
+
+// ARM: forgets a banned ruin on sight, so it can never be a navigation target.
+if (rc.canSenseRobotAtLocation(r)) { memForget(r); continue; }
+if (ruinBanned(r)) { memForget(r); banSkips++; continue; }
+memRemember(r);
+```
+
+A ruin is banned when `workOnRuin` finds an **enemy-painted pattern tile** — a tile no soldier can
+ever overwrite [E]. **So stage 0's memory was three-quarters full of ruins carol had already proved
+she cannot build on**, and M1 measured the availability of *unbuildable* targets.
+
+### The corrected verdict on M1 — it FAILS
+
+M1's registered bar was **≥ 50%**. Corrected to usable ruins, gardenworld gives **20.0%**, and
+gardenworld is **83% of the pooled stage-0 turns** — so even granting the other two maps 100%, the
+pooled figure is ~33.6%. **M1 as registered does not pass on the quantity that matters.** I am
+recording that against my own stage-0 write-up, which claimed a comfortable pass.
+
+The M2 distances inherit the same defect: they were computed over a set that is 77% unbuildable.
+**The demonstrated-envelope finding (median claim distance 8.89, max 25.24) is unaffected** — it was
+measured at the `completeTowerPattern` site on real completions and never touched `ruinMem`.
+
+### And yet — the arm is not dead, and I will not pretend either half of this away
+
+On gardenworld the arm **flips the result**: `carol_i80_inf` wins at r1826 where every control build
+loses at r2000, and the tower trajectory diverges exactly where the mechanism was aimed —
+**identical through r600** (5/6/8 vs 5/6/8, confirming the opening is not the channel, as measured),
+then **12 towers against the control's 6 by r1400**.
+
+So both of these are measured and both stand: **availability is far scarcer than I priced (2.5% of
+blind turns, not 70%)**, and **the few firings appear to be worth a great deal** (215 redirects,
++6 structures). That is a rarer, higher-value channel than the one I registered, not the one I
+registered. **n=1 game on one side of a map I chose because the mechanism should help most there —
+the definition of a favourable sample. It decides nothing.** The 150-game screen on a fresh random
+25-map sample is the test, and it is in flight.
+
+### The design defect this exposes, which is worth more than the correction
+
+**Bans are TEMPORARY** — `banUntil[i] = now + RUIN_BAN_ROUNDS`, and `ruinBanned` checks
+`now <= banUntil[i]`. A ruin banned at r400 for enemy paint may be perfectly buildable at r900. **The
+arm forgets it at RECORD time, so it can never come back**, discarding 77% of the memory permanently
+to encode a condition that expires.
+
+> **The fix is to filter at NAVIGATION time, not at record time:** remember every empty ruin, and
+> skip banned ones when *selecting* a target. An expired ban then restores the target for free. That
+> is the variant that would actually deliver what stage 0 priced, and it is a strictly better design
+> than either arm now in the screen. Registered as `carol_i80_lazy`, to run after the screen returns
+> so I do not add VM load to an in-flight 150-game run.
