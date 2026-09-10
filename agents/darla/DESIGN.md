@@ -353,3 +353,52 @@ metric-artefact reading predicts, and not what noise would pick out.
 promoted. darla2 established that Darla's *blind* moppers are worth roughly their
 keep; darla3 asks what they are worth when they can see. It stays queued behind
 the `SPLASH_FLOOR` arms, which the win-type tally made the main line.
+
+## The soldier turn budget, measured — and it names two distinct failures
+
+Indicator-string census of darla1's own games (mechanism only; no verdict is read
+off replays). The build tags every soldier turn with why it did or did not paint.
+
+**Regime A — the soldier never exists.** On Leaf, DonkeyKong and SaltyPepper there
+are **zero soldier-turns** in mid-game windows, because `SPLASH_FLOOR` never lets
+one be built. Leaf (56 ruins) vs alice, darla as team 1:
+
+| round | darla | alice |
+|---|---|---|
+| 300 | sold 2, tw 9, cov 271, **tower paint 4,072** | sold 24, tw 21, cov 353 |
+| 600 | sold 1, tw 9, cov 422, tower paint 1,058 | sold 36, tw 22, cov 482 |
+| 900 | sold 2, tw 14, cov 379, **tower paint 8,028** | sold 67, tw 25, cov 564 |
+| 1146 | **sold 0**, tw 16, cov 270, **tower paint 9,716** | sold 38, tw 25, **cov 700** |
+
+Darla finishes holding **9,716 paint in her towers with no soldiers to spend it**,
+chips pinned at $1,420, coverage falling 422 → 270 while alice climbs to 700. The
+resource is there; the gate forbids converting it. Note $1,420 is also below
+`darla4`'s $1,650 threshold — a second independent confirmation of the amendment
+that `darla4` may not fire.
+
+**Regime B — the soldier exists and is blocked.** DefaultHuge (53 ruins) is rich
+enough to clear the gate: ~40 soldiers alive. 777 soldier-turns, rounds 600–630:
+
+| what the soldier did | turns | share |
+|---|---|---|
+| **IDLE-ENEMY** — enemy paint in reach, and a soldier cannot overwrite it | **413** | **53.2%** |
+| IDLE-ALLY — standing in our own paint, nothing to do | 187 | 24.1% |
+| HOME — dry, walking back to a tower | 138 | 17.8% |
+| **painted a tile** | **14** | **1.8%** |
+| hit an enemy tower | 10 | 1.3% |
+
+**1.8% of soldier-turns produce paint**, and the soldiers are not dry — median
+paint held is 150 of a 200 capacity. The frontier-seeking fallback fails almost
+completely: `frontNone` 185 against `frontFound` 2.
+
+**The 53.2% is the number to act on, and it re-reads two earlier results.**
+Soldiers cannot overwrite enemy paint; only splashers and moppers can. So a
+majority of soldier-turns are blocked by a condition the *other* two units exist
+to clear. That is why `darla2` (moppers removed) lost, and it promotes `darla3`
+(moppers that can see) from "a better version of a marginal unit" to a direct
+attack on the largest single line in this table.
+
+**Ranking the remaining levers by the share of soldier-turns each could reclaim**:
+`SPLASH_FLOOR` first (regime A is most maps, and it is total), then unblocking
+IDLE-ENEMY (53.2% where soldiers exist), then IDLE-ALLY navigation (24.1%, and
+the existing frontier search is measurably broken at 2/187).
