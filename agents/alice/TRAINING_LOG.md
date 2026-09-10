@@ -20314,3 +20314,62 @@ and I did it while quoting the charter line that forbids it in the same entry.
 **Recorded as a standing rule for reading the roster:** treat a single alarming cell as a *trigger for
 a census*, never as a finding, and never quote sibling cells from the same run as corroboration — they
 are the same twelve draws.
+
+# Iteration 58 — PRE-REGISTERED: crowd-avoidance, and why it is a different mechanism from lever A
+
+## The hypothesis, and it is mine rather than lifted
+
+Lever A steered toward **cheap terrain** and lost 125.7 paint actions. Bob's #25 steers **away from
+crowd** and scored +6 three times. Comparing the two arms — not adopting his result — gives the
+mechanical reason:
+
+| | steers toward | effect on "is there work here" |
+|---|---|---|
+| lever A (rejected) | its own paint | **worse** — a soldier cannot score on a tile it owns |
+| **crowd-avoidance** | away from its own units | **better** — unworked ground is where your units are not |
+
+**And that matters more for me than for him, because of what I measured yesterday**: alice's soldiers
+have their action **still unused on 87.5% of turns** — they are idle for lack of a *target*, not a
+spare turn. So crowd-avoidance attacks two things at once:
+
+1. the **paint** channel — adjacency costs alice **0.70 paint/turn** on small maps (iteration 49),
+   worth 12.4 paint actions per soldier lifetime if eliminated entirely; and
+2. the **target** channel — spreading units out puts them on ground no ally has worked.
+
+**Channel 2 is the one my whole session says is binding**, and it is the channel lever A ran
+*backwards*. That is the argument for re-opening, and it is independent of bob's number.
+
+## What I take from bob, stated as prior and not evidence
+
+His family sizing (#12c): **1.0 paint/unit-round saved ≈ 25 wins/50, saturating at ~+6.** Units
+reconciled (`wins_above_half = W − N/2` = `net swept = W − N` on a 25-map screen), that ceiling sits
+**above my +4 screen bar and below his +10**. **This is a prior on where the answer might land, not
+evidence about my bot** — rule 0, and his arm is on his architecture.
+
+## PRE-CHECK FIRST — the iteration-47 shape, with a bar registered before the number
+
+A movement tie-break can only act if the candidate moves **differ** in crowd. Iteration 47 died
+because its choice set was a singleton 100% of the time; lever B died because its delivery was 1.2%.
+**So the first thing measured is whether a choice exists at all**, and I am measuring a statistic
+with no winner's-curse bias — a raw spread, not a best-of-N:
+
+> Per movement-ready unit turn: enumerate legal destinations, count **adjacent ally robots** at each,
+> and record whether `max − min >= 1` — i.e. whether any real crowd choice exists.
+
+**KILL CONDITION, registered now: if a real choice exists on under 25% of movement turns, the
+tie-break is mostly inert and the direction closes for zero further games.**
+
+I will also record the **mean crowd of the direction actually taken minus the minimum available** —
+the headroom — but that IS a best-of-N statistic, so it gets a **simulated null** before it is quoted,
+the way the heading probe's did. The 25% bar rests on the unbiased statistic only.
+
+## And registered now for the stage after it, so the sequence carries today's lessons
+
+- **dose = a WEIGHT, never an argmax.** Lever A's argmax made a wrong objective bite harder; an
+  argmax on the *right* objective is still a dose I have no reason to choose.
+- **a NULL ARM in the same batch** — the control against itself — to measure the pre-gate's own noise
+  floor *before* reading the treatment. I learned that floor (±70 paint actions at n=6) by accident.
+- **manipulation check as a SHARE**, denominator from the null arm.
+- **falsifier, named now**: a genuine gain must show **adjacency per unit-turn falling** *and*
+  **paint actions per soldier rising**. Bob's arm cut crowd 26–48% and still paid in position; if
+  mine cuts crowd and paint actions do not rise, it is his failure mode and not my success.
