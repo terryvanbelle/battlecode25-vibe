@@ -120,3 +120,44 @@ about a metric and a false one about the unit. In that case the next arm is
 **Not evidence either way**: the overall rate against any single opponent taken
 alone. n=48 per leg, and the carol leg of `213703` split by side on 10 of 12
 maps — a sample that mostly measures who spawned better.
+
+## Registration — iteration 2, the seeing-mopper arm (`darla3`)
+
+Written before any game of the arm was played, and before `darla2`'s result was
+read. Same baseline: `darla1`, **89/144**, same two pinned samples.
+
+**Found while `darla2` was still running, and it changes what `darla2` measures.**
+alice's iteration 7 was **accepted at 20/23 (87%)**, and its whole mechanism was
+one line of mopper navigation: unpaints per mopper alive rose ~3x. Darla inherits
+carol's mopper, and carol's mopper is the *blind* one alice fixed — it picks
+targets from `senseNearbyMapInfos(2)`, its 8 adjacent tiles, then calls
+`moveExploring(null)` and wanders, while its vision is r²=20, about 60 tiles. It
+is blind to ~90% of what it can already see.
+
+So `darla2` is not testing "moppers vs no moppers". It is testing **"blind
+wandering moppers vs no moppers"** — a much weaker question, and one whose answer
+does not settle the unit. I am recording that now, with `darla2` unread, rather
+than after a result that would make it look like reinterpretation.
+
+**The change**: the mopper walks toward the nearest enemy paint anywhere in
+vision instead of wandering. Population unchanged, cost unchanged — the
+"capability preserved at zero marginal cost" shape. `moveExploring` already
+takes a target, so the port is the target computation and nothing else.
+
+**Mechanism check, and it comes first**: the build carries `ms=<seek>/<seekHit>`
+in its indicator string. If `seekHit` is ~0 the mopper never found enemy paint in
+vision and the arm is **untested, not refuted** — the trap that cost alice
+iteration 15b and carol iteration 10. No verdict is read off the win rate until
+that counter says the mechanism fired.
+
+**Gate**: accept if darla3 > 89/144 with no leg below 50%; reject if ≤ 89/144
+*with the mechanism firing*. Bytecode is the named risk — a full-vision scan per
+mopper turn — so `ov=` (overruns) must stay at 0; a non-zero overrun count voids
+the arm regardless of the score, because a robot that misses its turn is a
+different bot, not a worse one.
+
+**Together, darla2 and darla3 bracket the unit.** darla2 removes it; darla3 makes
+it see. If both beat darla1, the base's moppers were simply wasted and the next
+question is seeing-moppers against no-moppers directly. If darla3 wins and darla2
+loses, finding #2 is a fact about alice's production metric — which prices enemy-
+paint removal at zero by construction — and not about the unit.
