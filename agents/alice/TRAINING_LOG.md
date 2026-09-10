@@ -14834,7 +14834,7 @@ looking for an engine call that supplies one. `javap` on the pinned 3.1.0 jar gi
 |---|---|---|
 | **resource patterns** (`markResourcePattern`, `completeResourcePattern`, `getResourcePattern`) | **closed with a recorded re-open condition** | Iteration 10 measured it three times on disjoint samples: 13/24, 13/24, 14/24 — all within 1 sd of even. Closed *conditionally*: "a future bot that expands properly and then runs out of chips would be a genuine re-open." |
 | **`mopSwing`** | closed | Costed from the engine constants; the write it performs is to *robot* paint, not tile paint (`LEARNINGS.md:2059-2078`). |
-| **messaging** (`sendMessage`/`readMessages`/`broadcastMessage`) | closed | Examined at length; `alice_commcensus` exists as the probe snapshot. |
+| **messaging** (`sendMessage`/`readMessages`/`broadcastMessage`) | **RE-OPENED (C run)** | Examined at length; `alice_commcensus` exists as the probe snapshot. **Closed because "re-opening it needs a message worth sending, and I do not have one." That condition is now DISCHARGED: 79.4% of soldiers see no empty tile, their work is a median 14-20 tiles off and reachable 99.4% of the time, and no local signal points at it (0.95x random). The message worth sending is a BEARING. See "discharges the messaging re-open condition".** |
 
 **The resource-pattern re-open condition is the interesting one, because today's data speaks
 directly to it — and it says NO, in the opposite direction from the one I would have guessed.**
@@ -16588,6 +16588,10 @@ to walk to, and no information a message could carry about where it is.
 > unpainted ground". The census says the reason they could not find any is that **there is
 > almost none**. The defect was real — soldiers idle on 70–96% of turns — but the cause I
 > assigned it was wrong, and so were all three fixes.
+
+> **[SUPERSEDED by requirement C's run — see "discharges the messaging re-open condition".** The
+> stated condition below is the one that has since been met: a bearing is a message with a
+> measured referent. The paragraph stands as written; only its conclusion is overtaken.]**
 
 **Messaging is therefore NOT re-opened on the iteration 45 reasoning.** The channel is open (the
 iteration 23 pre-check measured 53–65% of robot turns in range of a tower) and it remains the
