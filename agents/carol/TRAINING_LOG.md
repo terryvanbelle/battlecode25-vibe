@@ -20075,3 +20075,83 @@ session should expect a reject and should say so in advance.
 
 **And the peak was never bracketed above** (the ladder still rose at `K=2`), so any such re-open must
 include `K=1`.
+
+# The area-gate, PRICED AND DECLINED before building it (METHODS item 2)
+
+Iteration 69's screen, decomposed by area on data I already owned — zero games:
+
+| `SPLASHER_EVERY` | ratio | small+mid margin | large margin |
+|---|---|---|---|
+| 8 | 3.2:1 | +2 | +2 |
+| 4 | 1.4:1 | +8 | +2 |
+| 2 | 0.4:1 | **+14** | **−2** |
+
+**More splashers helps small/mid monotonically (+2/+8/+14) and does nothing on large.** A third
+independent dataset agreeing with the two bobf large-bucket readings.
+
+The obvious next move is an **area-gated scheduler** — `SPLASHER_EVERY = 2` below 1,600 area,
+disabled above — and map area is exactly readable in-bot (`getMapWidth() * getMapHeight()`, turn 1,
+free, no comms). **I priced it instead of building it.** On `bobf` the ungated version scored
+small +3 / mid +4 / large −4 = +3 overall. Gating away the large bucket's −4 buys **about +7 against
+a +9 bar** — still short, for a mechanism whose small/mid gain is already measured and whose large
+effect is 0.4–1.46 sd, i.e. indistinguishable from nothing.
+
+**Declined, and recorded as a decision rather than dropped.** It would also be fitting a threshold to
+a bucket boundary I invented for reporting, which is overfitting with a tidy story.
+
+# Iteration 70 — the refill trip is unbounded, and the cost scales with map area. Pre-registered.
+
+## The defect, in my own accepted code
+
+`walkHomeIfDry` latches below `REFILL_LOW` and unlatches only at **capacity/2 = 150 paint**. But
+carol's towers hold **~42 paint each** on Mirage, so **that exit condition is frequently
+unreachable**, and a splasher tours tower after tower instead of returning to work.
+
+**Smoking gun, straight from the replay indicator:**
+
+    id13357  rt=3 ht=45  ... | P HOME p=43
+
+Three trips, 45 turns spent walking, **still at 43 paint**. Measured trip length is **15–48 turns**
+against a work cycle of 25 turns per five splashes.
+
+## Why this is the right target for the area gradient specifically
+
+| map | area | **`HOME` share of splasher turns** |
+|---|---|---|
+| Mirage | 1,600 | **35.5%** |
+| Leaf | 3,600 | **58.8%** |
+
+**The travel tax scales with map area, which is the shape of the deficit** (carol 26.6% vs alice and
+51.6% vs `bobf` on maps >1600). It is the only large-map-specific quantity I have measured, and
+unlike the mix — refuted twice over — it has not been attacked at all.
+
+**Evidence quality, stated plainly:** the aggregate `HOME` shares come from thousands of turns and
+are solid. The per-trip lengths come from a handful of long-lived splashers and are **thin**. The
+mechanism check below is what settles it, and it is free.
+
+## Arms
+
+`MAX_HOME` = **8 / 16 / 32** turns; a trip longer than that is abandoned and the unit returns to
+work. Zero arm `carol_iter45` (`0` disables, byte-identical), shared `BUILD = "i70"`.
+
+## Registered mechanism check (stage 0, Mirage — not a gate)
+
+1. **`HOME` share of splasher turns must fall monotonically with the dose from 35.5%.**
+2. **`noPaint` must NOT reappear.** Iteration 60 drove it 41.2% -> 0.0%; sending a splasher back to
+   work below the 50-paint splash cost would recreate the inert state, which is the obvious way this
+   mechanism could buy travel time with dead units. **Both required** — a `HOME` reduction bought by
+   `noPaint` is a failure, not a success.
+
+## Registered falsifier
+
+**If `HOME` falls and neither instrument gains, then travel is not what costs the large-map games**,
+and — with the mix account already refuted — I will have eliminated both of my standing explanations
+for the area gradient and must go back to measurement rather than propose a third mechanism.
+
+## Gate
+
+Self-play 25-map screen selects the dose; then **`bobf` >= 105/150** (2.15 sd on the measured floor
+of 4.18, baseline 96) **and** the standing self-play census (margin >= +26). Both required, as in
+iteration 69. **Registered secondary: the gain must appear in the LARGE bucket** (baseline 33/64) —
+that is what the mechanism is for, and iteration 69 taught me to check it rather than bank an
+overall number.
