@@ -344,6 +344,16 @@ both directions, and do not let a reject you agree with quietly answer a questio
   showed it converts only on large maps, so that +61% is a large-map figure and the two unbuilt
   memory links would buy the minority regime. A chain measured for one candidate re-prices every
   candidate that shares it — check what else you sized through it.
+- A COST METRIC ON WHICH I LEAD THE FIELD IS NOT A DEFECT — THIRD INSTANCE, NOW A STANDING CHECK.
+  paint drain 0.21-0.82 vs the winner's 1.71-1.77; tower attacks 859 vs bobf's 1,265 on the map I
+  lose worst; soldiers 1-11 vs 12-39 (and measured optimal). All three looked like waste, none was.
+  **Before pricing any cost as a defect, measure the winner's value of it FIRST** — it is one dump
+  and it has killed three candidates for zero games. → TRAINING_LOG, *"THIRD time I have been at the efficient end"*
+- CLAIM A TOURNAMENT SWING ONLY WHEN THE OPPONENT IS FIXED, AND APPLY IT BOTH WAYS. carol went
+  +2.3 in standings and +7 head-to-head against alice while carol's HEAD was BYTE-IDENTICAL and
+  alice had accepted a change — so none of it was mine. The previous tournament was the mirror image
+  (alice fixed, my +9 was mine) and I claimed it. The discipline only means something if it also
+  makes you give back the favourable one. → TRAINING_LOG, *"The tournament moved my way and it is NOT mine"*
 
 ## Housekeeping
 
