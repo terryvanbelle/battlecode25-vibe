@@ -20530,3 +20530,80 @@ and it also has the highest screen margin. There is no conflict to adjudicate.
 
 **`bobf` gate launched**: `carol_i71_4`, full 75-map corpus, 150 games, baseline **96/150**, bar
 **>= 105**.
+
+# Iteration 71 — REJECTED at −3.83 sd. bob's closure TRANSFERS, and his condition was right.
+
+Run `20260910-110218`, `carol_i71_4` vs `bobf`, full 75-map corpus, 150 games.
+
+> **80/150 = 53.3%. Delta −16 games = −3.83 sd against a gate of >= 105 (+9).**
+> Not a near miss — the largest negative this lineage has measured on any instrument.
+
+| bucket | `carol_iter45` | `carol_i71_4` | delta |
+|---|---|---|---|
+| small (<900) | 17/22 | 18/22 | +1 |
+| mid (900–1600) | 46/64 | 38/64 | **−8** |
+| **large (>1600)** | **33/64** | **24/64** | **−9** |
+
+**The harm concentrates in the regime the mechanism was built for.** Registered secondary, failed
+as hard as it can fail.
+
+## The discriminating case, run before naming the fault — and it inverts the stage-0 headline
+
+Stage 0 said total paint actions **rose 16%**, which is how I concluded bob's re-open condition was
+met. That measurement was taken on **Mirage against `carol_iter44`** — an opponent that mops **17**
+times a game. Re-measured against `bobf`, which mops **828**, normalised per 1,000 rounds
+(doctrine 11, because the games differ in length: 711 vs 1,599):
+
+| vs `bobf`, Gears, per 1,000 rounds | paint actions | unpaints | splashes |
+|---|---|---|---|
+| `carol_iter45` | **3,392** | 0 | 271 |
+| `carol_i71_4` | **2,286** | 80 | 173 |
+| | **−33%** | capability delivered | −36% |
+
+> **The same metric that read +16% against a weak opponent reads −33% against a real one.**
+
+**So bob's re-open condition was correct and my test of it was not.** `agents/bob/CLOSED.md` #17
+asks for a mechanism that raises mopper share *without reducing total paint actions*. Against an
+opponent that actually applies the pressure, mine reduces them by a third. **His closure transfers,
+his condition was well specified, and the error was entirely mine.**
+
+## The lesson, and it is one level up from where I applied it
+
+I discharged doctrine 7 — *check the evaluating opponent poses the threat* — **for the gate**, before
+building, and wrote it up as the first thing I did. I did not discharge it **for the stage-0
+mechanism check**, and stage 0 is what licensed the build in the first place.
+
+> **Doctrine 7 governs the mechanism check, not only the gate.** A manipulation check measures the
+> mechanism *in the regime you run it in*. Run it against an opponent that does not create the
+> conditions the mechanism trades against, and it will report the benefit without the cost — which
+> is exactly the +16%/−33% inversion above.
+
+## And my "the instrument is blind" argument was wrong for the SECOND time
+
+Before the `bobf` run I set out, with a 100x threat-exposure ratio, why the self-play screen could
+not price this mechanism. The screen said **+4**. `bobf` said **−16**. The self-play instrument was
+not blind — it was **optimistic**, and it understated the harm in the safe direction.
+
+That is now twice (iteration 68, iteration 71) that I have argued my self-play gate was blind to a
+specific mechanism, built the external test, and been refuted — once by agreement, once by the
+external instrument being far more negative. **The blindness story has never once survived the test
+I built to check it.** I keep reaching for it because it explains a disappointing number without
+requiring the mechanism to be wrong.
+
+**What I did right, and it is the only reason this cost 300 games instead of an accept:** I ran the
+`bobf` gate as the *test* of the blindness claim rather than as a way around the screen, and I said
+so in advance. Had I treated the flat screen as blind and skipped to a census, I would have shipped
+a −3.83 sd regression into HEAD.
+
+## Ledger
+
+| axis | status |
+|---|---|
+| mopper supply / paint denial (`MOPPER_EVERY` scheduler) | **CLOSED, decisively** — −16/150 vs `bobf` (−3.83 sd), −9 in the target bucket; total paint actions −33% against an opponent that poses the threat |
+| bob's `CLOSED.md` #17 (mopper share) | **CONFIRMED cross-architecture.** His re-open condition is met only against opponents that do not apply the pressure |
+
+**RE-OPEN condition**: a denial mechanism that does **not** consume build slots — moppers are paid
+for in units, and the unit is the binding resource. Carol's splashers already convert enemy paint
+within r²<=2 at zero marginal unit cost, and iteration 67 measured the incumbent's targeting weights
+as optimal. **Any successor must show, before building, that it adds denial without removing a
+painter** — and it must measure that against an opponent that mops, not against a lineage snapshot.
