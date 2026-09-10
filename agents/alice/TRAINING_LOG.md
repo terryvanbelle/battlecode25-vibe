@@ -23740,3 +23740,55 @@ is the *precondition* — its units are not connected when they hold the informa
 existing code spend it on?** If it goes to soldiers by construction — as the mopper branch did — the
 pair collapses to the substitution trap and closes for zero games. **That check comes before the
 build, and it is the same one that killed the mopper dose.**
+
+# PAIR P1 — BUILT AND KILLED at 1.94x against a ≥5x bar. The halves are ANTI-CORRELATED, not complementary
+
+The §84 template said: look for a pair whose halves are each individually refuted, where each fails
+because the other is absent. **i53 + K8 is exactly that shape** — i53 makes paint the spend cannot
+direct (its extra paint became more of the 65%-soldier mix); K8 directs a spend there is no paint for
+(towers hold 154.8 against a 300 requirement). Built as a probe. **Control identity-verified at
+534 / 1869 / 1096. Zero screens.**
+
+## The joint counterfactual, measured on identical turns
+
+| | new | old | ratio |
+|---|---|---|---|
+| chip gate alone | 4,573 | 2,505 | 1.83x |
+| **JOINT — chip gate AND tower holds 300 paint** | **64** | **33** | **1.94x** |
+
+> **Of the 4,573 turns the new chip gate opens, only 64 — 1.4% — have the 300 paint.**
+> Registered PASS was ≥5x on the joint. **1.94x. FAIL — the pair does not compose.**
+
+**And the i53 half contributed nothing**: the arm returned **651 / 816 / 1067, identical to K8 alone**,
+because i53's block is gated on `expansionFinished`, which did not fire on these maps.
+
+## Why it fails, and it is the third instance of one error today
+
+I estimated the joint as the **product of two marginals**: chips ≥1850 on 30.8% × paint ≥300 on 29.0%
+= **8.9%**. The measured conditional is **1.4% — six times lower.**
+
+> **The two conditions are ANTI-CORRELATED IN TIME.** `getMoney()` is a **team** quantity that rises
+> monotonically to a 42,712 surplus, so the chip gate opens **late and for every tower at once**. Tower
+> paint runs the other way: ≥300 on 29.0% early, **0.0% after r1200.** **The chip gate opens exactly
+> when the paint is gone.**
+
+**Third instance today of one error**: sizing a dose from one gate of a conjunction (5.7x → 1.15x);
+drawing a gate's curve over the wrong population (21x → 2.22x); and now **multiplying marginals that
+are anti-correlated** (8.9% → 1.4%). **Each time the true joint was far below the estimate, and each
+time the estimate was built from quantities measured separately.**
+
+> **The rule, and it is the counterpart to §84:** *two halves can each fail for want of the other and
+> still not compose.* The pair template identifies **candidates**; whether they compose is a question
+> about the **correlation of the resources they need**, and marginals cannot answer it. **Measure the
+> joint on identical turns before building the pair — which is exactly what this probe did, for zero
+> screens.**
+
+## Standing
+
+> **CLOSED: pair i53+K8, on a measured joint of 1.94x against a ≥5x bar.** Re-open only if the two
+> resources are made to co-occur — which requires a mechanism that holds tower paint high **late**,
+> when the chip gate is open. **That is the same tower-paint supply problem, arriving for the fifth
+> time**, and it is now the single named constraint behind every closed direction on this term.
+
+`src/alice` unchanged since K3. **Zero screens spent on K7, K8, SRP, or this pair** — four directions
+closed on pre-checks, each with a stated reason rather than a null.
