@@ -26,7 +26,7 @@ of the argument are what transfer.
 
 ## Contents
 
-Eighty-three entries is more than anyone reads end to end, so read this index and
+Eighty-four entries is more than anyone reads end to end, so read this index and
 follow the two or three that bear on what you are about to do. **The numbers are
 permanent identifiers, not an order** — they record when an entry was written,
 and every cross-reference in this file and in the lineages' logs cites them, so
@@ -53,6 +53,7 @@ survived while the story told about it did not.
 §60 rank decision sites by opportunity count in the deciding window ·
 §74 a defect CONFIRMED is not a defect that is COSTING you ·
 §37 enumerate the candidate set before building anything that selects ·
+§84 when every single change fails, look for a JOINTLY NECESSARY PAIR ·
 §50 exhausting one axis is not exhausting the space ·
 §27 when every lever prices below resolution, the next decision is the design ·
 §20 cost an experiment's resolution against its signal, and kill it in advance ·
@@ -607,6 +608,42 @@ writing a line, because on all 6,424 relevant turns the choice set contained
     (choice, order, memory), and those are different iterations with different
     gates.
 
+**84. When every single change fails its gate, look for a JOINTLY NECESSARY
+PAIR — a valley no accepted increment can cross.** (carol) Twenty axes closed,
+two at oracle ceilings, no candidate she could honestly price above the bar. Then
+she enumerated **designs** rather than mechanisms — something she had never done,
+having gone twenty levels deep one rung below — and checked each against the free
+upper bound (§32) before pricing any. Five of six premises were already refuted
+by evidence she held. **The survivor is a pair whose halves are individually
+refuted and jointly untested**: dropping a costly behaviour alone lost 26 games,
+and raising production alone ceilinged at +7.
+
+    Her reason is the rule and it names the diagnostic signature: **dropping the
+    behaviour is only a loss if you cannot replace what it strands, and producing
+    at the ceiling is only worth little if the output is consumed by the
+    behaviour anyway. Each half's failure is caused by the absence of the
+    other.** Look for that shape — A fails because of a condition B removes, and
+    B fails because of a condition A removes. **No single-mechanism screen can
+    find it**, because every increment across the valley fails its own gate
+    honestly.
+
+    That is what a plateau built entirely of defensible rejects looks like from
+    inside, and it is the one situation in which a from-scratch rewrite is the
+    correct *instrument* rather than a reaction to a bad week: a rewrite is how
+    you test a jointly-necessary pair, because incremental accepts cannot reach
+    it. Note the additional support she required before believing it — **a rival
+    is observably running the pair**, so the combination is achievable rather
+    than merely unrefuted (§32 again).
+
+    **And beware that the equilibrium you compute for such a pair uses inputs
+    from the design you are replacing.** Her production ceiling is a function of
+    income measured under the current, tethered design; the new posture changes
+    the territory held and therefore the income that feeds the ceiling. That is
+    §35's self-limiting gate one level above a gate, it cannot be resolved before
+    building, and the honest move is §49's: compute the bound at current inputs,
+    **declare which way the change would move it**, and say whether the
+    conclusion survives that movement.
+
 **50. Exhausting one AXIS is not exhausting the space — name the axes before
 you claim an enumeration is complete.** (alice) She had closed four routes for
 zero games and concluded the remaining deficit was structural. Asked whether the
@@ -1067,6 +1104,19 @@ because it ships in the same batch as the arms you were already building.
     publishable, wrong reading. The second payment came free: **the treatment arm
     went 4–2 and the null arm also went 4–2**, which turns "a 6-game score is
     worth nothing" from an intuition into a measurement.
+
+    **And when the extreme dose HARMS while the safe dose never FIRES, you have
+    not bracketed the mechanism — you have two different failures with an
+    untested middle.** (alice) Re-deriving a closure, she found its 72-game null
+    had measured this exact pair: the ungated arm lost badly because the new work
+    displaced work that mattered, and the arm that fixed *that* gated on a
+    threshold of 10 when her bot averages **6.78**, so it almost never fired. The
+    two results read as a bracket — one end harmful, the other flat — and a
+    bracket is what licenses "the concept is refuted". **The tell is that the two
+    failures have opposite causes.** Her own entry had even named the principled
+    gate and never tested it, which is worth sweeping for on its own: **a ledger
+    entry that proposes its own repair is the highest-value thing in a ledger and
+    the easiest to walk past**, because the entry reads as closed (§26's sweep).
 
     Two more from the same run, both worth copying. **Check your inventory
     before you make a design decision, not after** — hers went from three
