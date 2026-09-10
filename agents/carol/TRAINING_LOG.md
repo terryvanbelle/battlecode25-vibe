@@ -22316,3 +22316,75 @@ observably running it**, which is the strongest prior a premise can have here.
 **Not started.** The next step is to price premise 3 — specifically whether carol's income can
 actually sustain the replacement rate the posture requires, which is the equilibrium question that
 killed two candidates today and is answerable before any code.
+
+# PRICING PREMISE 3 — with the endogeneity declared, and the ANSWER CONDITION registered
+
+## The bias, declared before the number (§49)
+
+**The inputs to this equilibrium are endogenous to the design I propose to replace.** The 125/1,000r
+ceiling comes from income measured under a *tethered* bot holding its own half; a forward-attrition
+posture changes the territory held and therefore the income that feeds the ceiling. **I cannot
+resolve that before building, so I am declaring the direction instead.**
+
+- **Upward, unquantified:** forward posture may convert more ground and claim more ruins (coverage
+  is 49% today), and towers are the only income source.
+- **Downward, and I have quantified it:** units in enemy territory drain **1.7/unit-round** against
+  carol's current **0.5**. In an attrition design there are no refills, so a unit lives on its
+  initial 300.
+
+| | life from one 300 tank | splashes delivered |
+|---|---|---|
+| on own paint (drain 0.5) | 28.6 turns | 5.7 |
+| **in enemy territory (drain 1.7)** | 25.6 turns | **5.1 (−10%)** |
+
+**The drain penalty is only ~10%, because splash spending (10/turn) dominates drain.** That is the
+term I feared would sink it and it does not.
+
+## The bound
+
+| | |
+|---|---|
+| chip income 50/turn -> 50/400 | 125 splashers per 1,000r |
+| paint income 45/turn -> 45/300 | 150 |
+| **ceiling = min** | **125 per 1,000 rounds** |
+| the rival runs | **106** |
+
+> **The posture is affordable on carol's CURRENT economy, before any territorial gain.**
+
+In delivered splashes: **125 x 5.1 = 637 per 1,000 rounds**, against carol's measured **218**.
+Applying the 10% drain penalty **and** granting no territorial gain at all: **573 — still 2.6x.**
+
+**So the conclusion survives the movement in the known direction.** The downward term is measured and
+small; the upward term is unquantified and can only help. **This is a lower bound, not an estimate** —
+which is what declaring the bias buys.
+
+## THE ANSWER CONDITION — registered before a line is written
+
+A rewrite is an experiment, and iteration 59 paid *despite* rejection because this distinction was
+recoverable afterwards. Registered checks, in order, each with the number it must move:
+
+| # | check | today | target |
+|---|---|---|---|
+| **A** | splashers built per 1,000 rounds | **36** | toward **125** |
+| **B** | p90 unit distance from its own nearest tower | **6.3** | toward **17** (the rival's, same constraint) |
+| **C** | splashes delivered per 1,000 rounds | **218** | toward **573** |
+| **D** | the standing gates | — | screen >= 31/50, census margin >= +26 |
+
+**The discrimination, which is the point of writing this now:**
+
+- **A fails** -> allocation execution is wrong. The *pair* is untested; salvage is a better scheduler.
+- **A passes, B fails** -> posture execution is wrong. Pair still untested; salvage is the posture code.
+- **A and B pass, C fails** -> **THE PAIR IS WRONG.** Units produced at the ceiling and operating at
+  range still do not deliver, so attrition itself is refuted — and that closes the design, not the
+  implementation.
+- **A, B and C pass, D fails** -> **THE PAIR IS RIGHT AND SOMETHING DOWNSTREAM IS WRONG.** Delivery
+  tripled and did not convert, which points at targeting or holding rather than at production or
+  posture — and each of those is a separate, cheaper iteration.
+- **All pass** -> accept.
+
+**The failure I most expect** is A-and-B pass, C partially, D fails — because that is what happened
+to the coverage chain, where every link moved and the terminal outcome did not. **If that recurs
+here it is a regime question**, and the decomposition is already built.
+
+**Not started.** Registered from a committed survey, which is the condition under which iteration
+59's rewrite paid.
