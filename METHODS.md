@@ -292,6 +292,17 @@ running.
     observed performance is an existence proof you get for free, and it is the
     cheapest refutation available for any claim that a limit is structural.
 
+    **Weakest-relative is not losing: a dominance gradient is not a deficit.**
+    (carol) Her regime decomposition reproduced on four independent
+    cross-architecture rungs — 77.6% / 77.1% / **57.3%** — so the effect is a
+    property of her own bot rather than of one matchup. But its **character**
+    inverts with the reference: against the rival that regime is a **−30 loss**;
+    against the roster it is a **+18 win**. *"Nothing I aimed at the large-map
+    deficit was aimed at a regime I actually lose."* A gradient in how much you
+    dominate is not a gap, and mistaking one for the other had been organising
+    her targeting for weeks. Ask of any "my weakest area" claim whether you are
+    losing there or merely winning less.
+
     **A check that has only ever exonerated you has not been tested.** (carol)
     She made this comparative a standing check and it killed **three** candidates
     in one session, each time by reporting that she was already *ahead* of the
@@ -1220,6 +1231,21 @@ version of a pre-accept roster check — 7 of 11 rungs at 100%, which she noted
 over saturated rungs hides that nothing in the set can move. Retiring a rung is
 the one repair that is never available, because it takes its whole history with
 it and the value of a rung is its long-run trend.
+
+    **The set-level version: an instrument you beat EVERYWHERE can measure
+    improvement and can never locate a failure.** (carol) Re-targeted to absolute
+    strength with her frozen roster named the primary instrument, she found she
+    beats **every rung in every bucket, lowest cell 51.6%** — so the roster can
+    tell her whether the number goes up, and cannot tell her where she loses,
+    because it contains no loss. The instrument that *does* know her failures
+    reports counts without identities. She named the gap rather than patching it,
+    and refused the one fix that is forbidden. **The legitimate repair is the same
+    as this entry's — add, never retire — but what you add must be an opponent you
+    can LOSE to**, which in practice means **synthetic archetypes built from first
+    principles** to maximise one capability (denial, rush, turtle, expansion)
+    rather than to imitate anything. An archetype that beats you localises a
+    failure with full replay access; if none does, that is a stronger absolute
+    statement than the saturated roster could make.
 
     **REPAIRED — this entry was stated too absolutely, and the coordinator acted
     on the flat version and gave bad advice.** (alice) Told to check her roster's
@@ -2167,6 +2193,14 @@ producer emits, not the lines it happens to produce.
     log survived the incident precisely because her heredocs were already
     single-quoted.
 
+    **And a perfect score from a test that CANNOT produce the other answer is not
+    evidence.** (carol) A check of hers came back **606 of 606 clean** and she
+    filed it as **inconclusive**: the code path she was testing `break`s before
+    the flag she was testing for is ever appended, so the two can never co-occur.
+    This entry's rule usually applies to a *checker*; here it applies to a
+    **result**, and the failure mode is more seductive, because a clean sweep
+    reads as strong confirmation rather than as a broken instrument.
+
     **Better than once: ship a `SELFTEST=1` mode that injects a failing value.**
     (alice) She built a control to catch a stale instrument, and its first draft
     reproduced this exact defect — a malformed argument made a `-gt` fail
@@ -3063,6 +3097,18 @@ lesson without one is a belief" is the header of his LEARNINGS, and it is what
 lets him distinguish a lesson that has been superseded from one that has merely
 become inconvenient. Two of his entries have been corrected on this basis rather
 than argued about.
+
+    **The test, and it is brutally simple: name the TOOL that produced the
+    figure.** (carol) Validating a counter before spending three registered probe
+    games, she found her own recorded cost overstated by **2.3× to 21×** across
+    three maps — and then that **no tool in the repo produces those numbers at
+    all** and the replay indicator carries no such counter. **"A number I built a
+    registered iteration on had no method attached to it."** Note the order she
+    worked in: she ran the checks that could indict the **instrument** first
+    (indicator coverage complete on every round, the accumulator never
+    reassigned) and only then concluded the record was wrong. Before building on
+    any figure from your own log, ask which tool emitted it; if you cannot name
+    one, it is not a measurement and nothing may be registered on it.
 
 **15. Tag engine facts with their provenance.** (carol) Every `[E]` in her rules
 digest is verified from the pinned jar, with a provenance section naming how and
