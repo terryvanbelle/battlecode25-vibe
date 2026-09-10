@@ -23550,3 +23550,63 @@ amending it again today: it counts magnitude closures as evidence the economy is
 engine says the economy is not exhausted, carol says it is not exhausted, and **a third closure would
 tell me nothing the enumeration has not already settled.** The honest position is that the design
 question is now sharply posed and the counting condition is vestigial.
+
+# RE-DERIVING THE SRP CLOSURE — its door cannot open, and its null was a GATE that never fired
+
+## 1. The closure is broken, independent of anything else
+
+Re-open condition: *"the chip constraint becomes binding in r0–r400."* **E1 measured chips at a
+42,712 surplus with 97.4% of tower-frames holding ≥1,000.** The condition cannot fire. **A closure
+whose door is known not to open is not a closure**, and it is the one ledger state re-reading cannot
+detect — the entry looks complete.
+
+## 2. What the engine actually pays, verified on the pinned jar
+
+`extraResourcesFromPatterns(team) = getNumResourcePatterns(team) * 3`, added in
+`processBeginningOfRound` to **each producing tower, in that tower's own currency** — paint towers
+get paint, money towers get chips (gated on `paintPerTurn != 0` / `moneyPerTurn != 0`).
+
+> **At alice's measured 5.52 paint towers: one SRP = +16.6 paint/turn against a tower paint income of
+> 27.6/turn. +60%.** Cost: **200 chips**, from a 42,712 surplus. **And the 25 pattern tiles are
+> painted ground — they count toward coverage regardless, so the marginal cost is the *arrangement*,
+> not the paint.**
+
+**This is the tower-free route that escapes the currency trap**: it buys the binding resource with
+chips alice cannot otherwise spend, not with the towers that decide the game.
+
+## 3. Neither lineage builds a single one
+
+**alice 0.00 SRPs standing, carol 0.00, max 0, across 21 games.** So this is *not* carol's advantage
+— it is unexploited by both. That cuts both ways and I am not treating it as encouragement.
+
+## 4. And iteration 10's null was a firing failure, which my own entry flagged and never resolved
+
+| arm | what it did | result |
+|---|---|---|
+| **10a** ungated — *"mark an SRP wherever a soldier stands"* | SRP work displaced tower work | **10 v 12 towers, 403 v 581‰ — lose badly** |
+| shipped | gated on **`SRP_MIN_TOWERS = 10`** | **alice averages 6.78 towers — the gate rarely opens** |
+
+> **Both ends failed for opposite reasons: ungated is actively harmful, and the gate that fixed that
+> was set above the tower count alice reaches.** The 72-game null is a measurement of a gate that
+> almost never fired — the exact class of defect my manipulation checks now catch, and iteration 10
+> predates them.
+
+**My own entry named the fix and left it:** *"`SRP_MIN_TOWERS = 10` is a fixed constant... the
+principled form is 'when no unbuilt ruin remains'."* **That dose was never tested** — and this
+session measured it reachable: on **3 of 8 maps (Justice, Racetrack, Gears) bare ruins hit zero by
+r200–300**, and alice's visible-bare-ruin working set is a flat **1.6**.
+
+## 5. Replacing the unsatisfiable condition
+
+> **The SRP direction is RE-OPENED**, not on preference but because its stated basis is refuted: its
+> re-open condition cannot fire, and its null measures a gate rather than the mechanism.
+>
+> **New closure condition, one that can fire:** *SRPs close for good if an arm gated on "no unbuilt
+> ruin visible to this soldier" is measured to complete **≥1 SRP per game** and still fails its
+> screen.* That is a firing check plus an outcome, which is what iteration 10 lacked.
+>
+> **Registered pre-check before any build — and it is the gate, not the concept, that must be
+> priced:** how many soldier-turns satisfy *"no unbuilt ruin in vision AND standing on a legal 5×5
+> site"*? **PASS ≥ 2% of soldier-turns; KILL < 0.5%.** Measured at the site, within game. The
+> ungated arm's harm (10 v 12 towers) is the falsifier this gate exists to avoid, so the pre-check
+> must also confirm the gate is **closed** while unbuilt ruins remain.
