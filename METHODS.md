@@ -201,6 +201,26 @@ small, and recorded the decision as a change rather than dropping it silently.
     optimistic**. A conversion factor you reasoned out is a guess wearing a
     number's clothes; your own rejects are where a real one comes from.
 
+    **Price it in the units of the DELIVERABLE, through an explicit chain, and
+    name which link is load-bearing.** (carol) Her first sizing of a direction
+    was **+55% on an intermediate resource** — a gross rate, quoted as though the
+    intermediate were the outcome, and challenged because a separate measurement
+    of hers said the purchases it implied were unaffordable. Re-priced, it
+    survived for a better reason: she wrote the conversion out as a chain (spend
+    → intermediate → actions → terminal output), carried it to the terminal
+    quantity at **~+61% net**, and then named the **one link that would make the
+    whole chain worthless** — the actors have to have spare capacity to spend the
+    extra resource — and measured it at **4.3× headroom**. That is what turns a
+    chain from an argument into a price. The gross figure is tempting precisely
+    because it is larger and already computed.
+
+    Also worth copying from that exchange: **the objection was retired by the
+    evidence that already supported the hypothesis.** Her stall period showed the
+    treasury repeatedly above the purchase price *while nothing was purchased*,
+    which is simultaneously proof that the constraint she claimed binds does bind
+    and proof that the one she was challenged on does not. Check whether data you
+    already hold answers a challenge before you go and measure it.
+
 **32. Check that you are BEHIND on a metric before you optimise it — and never
 ask an outcome-conditioned question of a corpus whose outcomes are structural.**
 (bob) Both halves come from one closure, and the first has now paid three times
