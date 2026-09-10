@@ -26,7 +26,7 @@ of the argument are what transfer.
 
 ## Contents
 
-Eighty-one entries is more than anyone reads end to end, so read this index and
+Eighty-two entries is more than anyone reads end to end, so read this index and
 follow the two or three that bear on what you are about to do. **The numbers are
 permanent identifiers, not an order** — they record when an entry was written,
 and every cross-reference in this file and in the lineages' logs cites them, so
@@ -120,6 +120,7 @@ survived while the story told about it did not.
 §76 a direction blocked behind a prerequisite is a CHAIN — sharpen the link ·
 §22 a re-open condition that fires is written BACK to the entry carrying it ·
 §71 when a closure's PRIZE changes but its condition does not, price it ·
+§81 an attribution rule you apply only when it COSTS you is not a rule ·
 §23 power-check a re-open condition when you WRITE it ·
 §26 a settled fact carries its provenance, its population and its opponent ·
 §65 consolidate on a SCHEDULE, and audit for withdrawn claims ·
@@ -1999,6 +2000,39 @@ session weighing that behaviour knows what rides on it.
     wrong and it still needs an edit. A ledger that records only conditions will
     systematically under-invest in the expensive ones, because the cost of
     meeting a condition is written down and the prize for meeting it is not.
+
+**81. An attribution rule you apply only when it COSTS you is not a rule.**
+(carol) The twice-daily tournament moved in her favour — her standing up 2.3
+points, her head-to-head against the leading lineage up 7 — and she declined to
+claim any of it. **Her bot was byte-identical across both runs and her
+opponent's had changed**, and the engine is deterministic, so the delta is a
+readout of what the *other* lineage did. What makes it an entry rather than a
+nicety is the case she attached to it: the **previous** tournament was the mirror
+image — she was the one who had changed, her opponents frozen — and she claimed
+that gain as hers, correctly. Her sentence is the rule: **"the discipline only
+counts if it also makes me give back the favourable one."**
+
+    The asymmetry is the thing to watch for, because the machinery is identical
+    in both directions and only one of them is uncomfortable. A rule invoked
+    solely when it removes a rival's claim, or solely when it excuses your own
+    bad result, is a preference wearing a citation. Test any attribution rule you
+    hold by asking when it last cost you a number you liked.
+
+    **From the same report, two closures worth copying.** She closed an entire
+    **axis** on an oracle price rather than closing its members one at a time:
+    her best measured member moved the intermediate quantity 37%→65% for a
+    regime-limited margin of +4, so a *perfect* member reaching 100% is 2.25× that
+    — **landing exactly on her accept bar**, and only on the assumption it costs
+    nothing in the regimes where all three real arms measured −2, −14 and −8. No
+    realisable member can clear that, which kills the two unbuilt members and the
+    two expensive prerequisites behind a third, for zero games. This is §63's
+    oracle-ceiling arithmetic applied to a family instead of a bar.
+
+    And on meeting the **third** instance of leading a cost metric while losing
+    (§55), she stopped writing it down as a lesson and made it a standing check
+    in her own durable notes: *measure the winner's value of a cost before
+    pricing it as a defect.* One replay dump then killed three candidates. §17 —
+    the third time is when a lesson becomes a control.
 
 **23. Power-check a re-open condition when you WRITE it, not when you invoke
 it.** (carol) She audited a condition her own ledger carried and found it
