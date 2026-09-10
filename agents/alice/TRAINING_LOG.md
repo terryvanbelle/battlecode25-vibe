@@ -23959,3 +23959,57 @@ where alice's 200-paint tank is spent at ~2/turn upkeep over a median 7-tile app
 
 **Not building yet, as instructed.** The premise is now stated as a trade with both sides measured,
 which is the form that can be priced against the right baseline.
+
+# THE PRIZE IN BAR UNITS — it clears. And a symmetric artefact I nearly read as a mechanism
+
+## Conversion
+
+| capture of the observed conversion gap | arm wins of 150 | net swept | vs +12 |
+|---|---|---|---|
+| **full (3 leads)** | 98.7 | **+23.7** | **CLEARS, 2x** |
+| **two thirds** | 90.8 | **+15.8** | **CLEARS** |
+| half | 86.8 | +11.8 | below |
+| one third | 82.9 | +7.9 | below |
+
+> **A mechanism must capture ≥ ~two thirds of the gap to clear a census.** Every prize priced today
+> came out a *fraction* of its bar — K7 at 7.7% of output, K8 capped at 3.2x against 5x. **This one
+> clears at 2x.** It is the first candidate in days that is bar-clearing rather than bar-adjacent.
+
+## The artefact, recorded because I was one step from building on it
+
+The three flipped games all showed alice's coverage **peaking then falling** while carol's rose. That
+looked like a mechanism: *alice loses ground it has taken.* **Measured across all 21 games, it is
+symmetric and it is an artefact of losing:**
+
+> **alice keeps 99.3% of its peak in games it WINS and 69.4% in games it LOSES — and carol shows the
+> mirror image, 62.9% and 99.6%.** The winner ends near the ~700‰ win threshold and the loser is being
+> painted over at that moment. **The collapse is downstream of the outcome, so it cannot be its
+> cause.** I was reading the scoreboard and calling it a defect.
+
+## What actually discriminates, from the same table
+
+| | alice's coverage PEAK |
+|---|---|
+| 10 games alice **won** | 560–703 |
+| 11 games alice **lost** | 179–545 |
+
+> **Alice wins exactly when its coverage peak reaches the win threshold, and loses when it stalls at
+> 400–450.** In the three flipped games it led on towers at r300 and peaked at **213 / 423 / 454**.
+> **It had the towers and never converted them** — which is per-unit output (0.52x) expressed as a
+> game outcome rather than a rate.
+
+**And that sizes the requirement honestly: the stalled games need roughly +60% coverage**, which is
+close to what closing the 0.52x per-unit gap would deliver. **The prize and the deficit are the same
+number seen twice**, which is a consistency check I did not plan and would have noticed had it failed.
+
+## Membership check, before designing anything for the transit site
+
+**Is a transit-support mechanism inside the class I closed?** That class is *gated on an accumulated
+team-chip threshold AND costing substantial tower paint.* Transit support would cost tower paint, but
+its gate is **positional** — `transferPaint` needs r²≤2 — **not an accumulated chip threshold. So it
+is NOT a member, and the family is not already dead.**
+
+**But the site is smaller than I implied.** A median 7-tile approach at ~2/turn upkeep costs about
+**14 paint of a 200 tank — 7%.** **Transit is cheap; the tank is consumed by the ~88-turn lifetime,
+not by the journey.** So "feed units in transit" is a real site outside the closed class **and too
+small to carry a two-thirds capture.** I am recording that before designing for it, rather than after.
