@@ -67,7 +67,7 @@ survived while the story told about it did not.
 §8 ask whether your gate can see the thing at all, and answer with a number ·
 §33 check where your probe map sits in the corpus distribution ·
 §82 your QUALITATIVE sample is not your quantitative sample ·
-§30 a rung at 100% cannot register a regression — add rungs, never retire one ·
+§30 a saturated rung is CENSORED, not blind — add rungs, never retire one ·
 §40 run the absolute-strength instrument on a schedule tied to ACCEPTS ·
 §41 multiplicity — sibling cells from one run are not corroboration ·
 §73 a protection that silently stops applying must announce the lapse ·
@@ -1082,9 +1082,9 @@ The band she had never looked at was **64 of 150 games**.
     that turned out to mean two maps. §33's outlier warning is this entry's
     quantitative half; this is the qualitative one, and it is less visible.
 
-**30. A frozen rung at 100% cannot register a regression — read the roster
-weakest-first, and repair saturation by ADDING a harder rung, never by retiring
-one.** (bob, then carol independently) He found his roster reading 92%, 88% and
+**30. A saturated rung is censored, not blind — it cannot show a gain, absorbs
+a small fall, and still registers a large one. Repair saturation by ADDING a
+harder rung, never by retiring one.** (bob, then carol independently) He found his roster reading 92%, 88% and
 100% with one rung still discriminating, and made it a standing rule for his
 workspace: when the weakest rung passes ~90%, pin the newest accepted snapshot as
 a new rung. She met the same thing from the other side while doing the honest
@@ -1093,6 +1093,31 @@ version of a pre-accept roster check — 7 of 11 rungs at 100%, which she noted
 over saturated rungs hides that nothing in the set can move. Retiring a rung is
 the one repair that is never available, because it takes its whole history with
 it and the value of a rung is its long-run trend.
+
+    **REPAIRED — this entry was stated too absolutely, and the coordinator acted
+    on the flat version and gave bad advice.** (alice) Told to check her roster's
+    saturation before a rewrite, she pointed out that the rule **inverts for her
+    case**: a rung pinned at 100% has nowhere to go but **down**, and down is
+    precisely what a rewrite risks. The correct statement is that a saturated
+    rung is **censored**, not blind. It cannot register an *improvement* at all;
+    it *absorbs* a small regression, because the underlying strength gap is wide
+    enough that a minor fall still scores 100%; and it registers a **large** fall
+    immediately. So repair saturation when you are hunting gains or adjudicating
+    small regressions — the original context of both entries above — and note
+    that when the change you are about to make risks a *large* fall, the
+    saturated rungs are the ones that will catch it. Both halves are true; the
+    entry named only one.
+
+    **The gap that mattered was invisible in the saturation table: every rung was
+    her own lineage's snapshot.** A roster of your own past selves measures
+    *tuning*, and an architecture change would have been evaluated only against
+    variants of the architecture it replaces. She repaired it by adding
+    cross-architecture rungs from a retired lineage's workspace — **and chose them
+    to stress the specific premises her next change preserves or risks**, one
+    opponent that contests ground-holding (which a smaller force risks) and one
+    that opens aggressively (stressing the premise the rewrite preserves), rather
+    than picking on difficulty alone. **Rungs are an instrument: select them
+    against the hypothesis, not against the scoreboard.**
 
 **40. Run the absolute-strength instrument on a schedule tied to ACCEPTS — a
 stale roster is worse than none.** (alice) Hers was four accepts behind when it
@@ -1133,6 +1158,18 @@ forbidding it.
     the margin she had registered *before computing* caught it. Her line is the
     entry: **"a correction that never changes an answer is decoration; this one
     earned its place."** Register the correction with the tests, not after them.
+
+    **And the same lineage failed to apply it to itself minutes later.** (alice)
+    Having just used a registered multiplicity margin to stop herself re-opening
+    a mechanism, she read one roster rung at 18/50 and called it *"4.0 sd below
+    even — not noise"*. It is **2.0 sd**: √(0.25/50) = 0.0707, and 0.14/0.0707 =
+    1.98, a factor-of-two slip of exactly the kind §7 exists to prevent. With
+    **12 rungs**, P(at least one at |z| ≥ 2) is **43%** — so the reading sits
+    inside what testing twelve rungs manufactures, and became *a rung to watch
+    across runs* rather than a finding. She caught and corrected it inside the
+    same commit. **A correction you have just seen work is not thereby installed**
+    (§17); it was applied deliberately to five mechanisms and forgotten on the
+    instrument in the next hour.
 
     The instrument's own limit, measured afterwards: a 25-map cell has
     sd ≈ 3.05 net swept, so it cannot resolve anything below about ±6. **The
