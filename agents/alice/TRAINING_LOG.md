@@ -19598,3 +19598,71 @@ assumed still worked. `tools/paint-trace.sh` is now back to its last-known-worki
 108,417-line trace earlier today used it successfully in that form). **The override does not exist
 rather than existing and being broken**, which is the honest state and the one a future session can
 trust.
+
+## The pricing pre-check ANSWERS — and it corrects my own "zero" before anyone else had to
+
+Registered question: *"in the games alice WINS, does it destroy any enemy towers?"* Matched sample —
+alice's longest **wins** against bob on large maps, the same conditions as the collapse set:
+
+| map | side | result | alice hits on their towers | **their towers killed** | their hits on alice's | alice towers killed |
+|---|---|---|---|---|---|---|
+| sunrise | T1 | WON | 7 | 0 | 388 | 13 |
+| sunrise | T2 | WON | 6 | 0 | 35 | 1 |
+| boxofchocolates | T1 | LOST | 4 | 0 | 46 | 1 |
+| boxofchocolates | T2 | WON | 4 | 0 | 171 | 4 |
+| Leaf | T1 | WON | 20 | 0 | 345 | 10 |
+| **Leaf** | T2 | WON | 128 | **5** | 215 | 6 |
+| **SMILE** | T1 | WON | 52 | **2** | 248 | 5 |
+| SMILE | T2 | WON | 0 | 0 | 33 | 0 |
+
+**Correction to my own headline: alice is NOT structurally incapable of destroying towers — it
+destroyed 7 here.** My "zero" was true of the *collapse* sample and I stated it as a property of the
+bot. It is a property of those games. **The absence I claimed was structural is narrower than I
+said**, and the pre-check I registered is what caught it, one iteration after I wrote that knowing
+which half of a finding survives selection is the hard part. This half did not.
+
+### But the sharper claim survives, and it is sharper than the one I lost
+
+Attributing all 7 kills and all 20,000 HP of alice's tower damage on those two maps:
+
+> **SPLASHER 100%. SOLDIER 0%. TOWER 0%.**
+
+**No alice soldier has damaged an enemy tower in any game I have measured.** All of alice's tower
+offence comes from splashers — of which it fields **0.3–0.9** at r300 — while its 7–15 soldiers
+contribute nothing. That is the structural absence, correctly located this time.
+
+**And even in games it WINS, alice loses the tower exchange about 6 to 1** (40 of its towers
+destroyed against 7 of theirs). Alice wins on painting *while conceding the tower war*, which is the
+direct answer to the pricing question: **a lineage that never attacks towers with its main unit is
+leading the tournament at 61.3%, so the trade is not required to win.**
+
+### The pricing is genuinely ambiguous, and I am not going to resolve it by preference
+
+| | damage per paint | paint to kill a 1,000 HP tower |
+|---|---|---|
+| **soldier** (50 dmg, 5 paint) | **10.0** | **100** |
+| splasher (100 dmg, 50 paint) | 2.0 | 500 |
+
+**A soldier is five times more paint-efficient at killing towers than a splasher — and alice does
+100% of its tower damage with the splasher and 0% with the soldier.**
+
+Two honest readings, pointing opposite ways:
+
+- **Favourable:** 100 paint is ~20 soldier paint-actions forgone, to destroy a tower worth ~75 paint
+  actions of enemy production over its remaining life, plus its spawning. On denial arithmetic that
+  is a good trade.
+- **Unfavourable:** it spends **soldier paint**, which this session established is alice's binding
+  constraint — the resource that already cannot complete tower patterns without a 4.5-soldier relay.
+  Every mechanism today that spent the binding resource to buy a non-binding one lost.
+
+**Both arguments are strong and they disagree, so this is exactly the case that needs a
+pre-registered test rather than a verdict.** I am not building it tonight at the end of a very long
+session; I am leaving it registered, priced, and with the two readings written down before any number
+exists, so the next session cannot pick the flattering one after the fact.
+
+**Registered for next session, in order:** (1) collate the roster run and read the absolute-strength
+point for iterations 40–43; (2) pre-register a soldier tower-attack with a **manipulation share** and
+a **null arm** for the pre-gate's noise floor — both lessons this session paid for; (3) the
+falsifier, named now: **a genuine gain must show alice's tower count staying flat or rising past
+r700**, since that is the curve the whole direction exists to fix, and a win with that curve
+unchanged is not this mechanism working.
