@@ -21449,3 +21449,82 @@ requires pricing the chips forgone, and that is the pre-check, not the answer.
 
 **Tally: four routes closed for zero games, one re-opened and re-closed, and the fifth — the one I
 had not enumerated — is live.** No bot code has changed and no budget has been spent.
+
+# E2 STAGE 1 — RUN. PASS at 82.9%, and the plateau closes into a LOOP
+
+Registered: **PASS ≥40% paint-starved, KILL <15%.** Run from per-round replay aggregates across the
+same 8 maps (2,542 tower-frames at round ≥100; the opening rounds are excluded because two towers
+seeded with 500–710 paint are not a steady state and would flatter the rich side). **Zero new games.**
+Tool: `tools/e2-starve.py`.
+
+Starvation proxy: `twPaint / tw < 200` (a soldier costs 200 paint). **Declared bias:** this is a
+*mean* over the team's towers, and a MONEY tower makes zero paint per turn — it spawns from the 500
+it is born with and never regenerates — so one rich paint tower masks three empty money towers. **The
+mean understates starvation, so a PASS measured this way is a floor.**
+
+| | mean paint/tower | **STARVED (<200)** | rich (≥400) | **at cap (≥950)** |
+|---|---|---|---|---|
+| all maps (n=2,542) | 154.8 | **82.9%** | 8.8% | **0.0%** |
+| small | 218.8 | 69.1% | 23.9% | 0.0% |
+| large | 117.7 | **90.9%** | 0.1% | 0.0% |
+
+> **STAGE 1: PASS at 82.9% against a 40% bar.**
+
+**The discriminator settles the alternative explanation.** A tower that does not spawn is either too
+poor or *choosing not to*. If it were choosing, paint would pile up against the 1000 cap.
+**At-cap = 0.0%, on every map, in 2,542 frames.** Towers are not declining to spawn; they are broke.
+
+## Stage 2's premise, checked for free — and the iteration-34 trap is disarmed by measurement
+
+Stage 2 exists to price the chips forgone by converting a money tower to a paint tower: 20 chips/turn
+against a 1,000-chip tower, i.e. a ~50-turn delay. **That pricing assumes chips are scarce. They are
+not:**
+
+| round band | mean chips | median | ≥1000 | mean towers |
+|---|---|---|---|---|
+| 100–300 | 1,502 | 1,320 | 84.4% | 6.81 |
+| 300–600 | 2,289 | 1,920 | 98.8% | 10.18 |
+| 600–1000 | 7,109 | 2,680 | 98.5% | 11.60 |
+| **1000–2100** | **56,706** | 3,830 | **100.0%** | 13.45 |
+
+> On large maps alice holds a mean of **42,712 chips — 42.7 towers affordable right now** — while its
+> towers sit at **117.7 paint each and cannot afford a 200-paint soldier.** The tower cap is 25 and
+> alice has 13.45, so the cap is not binding either.
+
+**Alice is chip-saturated and paint-starved.** The chips a mix change would forgo are chips that are
+provably converting into nothing. I fell into the iteration-34 category error once by *comparing*
+these two currencies with a per-turn rate; the escape is not a better argument but this measurement —
+**one currency is in 42x surplus and the other is the binding constraint, and no rate comparison is
+needed to see it.**
+
+## The plateau, as a loop rather than a ceiling
+
+Every measurement of this sweep now closes on itself:
+
+```
+  can't SEE ruins (82% of bare ruins outside team vision, B0)
+        -> few towers built, though chips pile to 56,706 unspent
+        -> and half the towers built make ZERO paint (5.52 of 11.33 on large)
+        -> towers paint-starved 82.9%, at-cap 0.0%
+        -> spawning throttled to 15-22% of the engine's cooldown ceiling (E1)
+        -> few soldiers
+        -> small vision union; 93.6% of empty tiles invisible to the whole team
+        -> can't SEE ruins
+```
+
+**This is not an information ceiling that BC25's mechanics prevent closing. It is a feedback loop
+with a free entry point**, and the entry point is the one currency alice has in surplus. The marginal
+return on breaking in is largest exactly where the famine is worst (mit: 17.6 tiles per extra
+soldier, against the 16.7 a soldier paints in its whole life).
+
+## What remains, and its gate is already registered
+
+Stage 2's **bar** — ≥ +1 net tower at r300 — needs a built arm and a screen; it is not free and I am
+not claiming it. Stage 1 is PASS, stage 2's premise is disarmed, and the arm is the next build:
+shift the tower-type choice toward paint towers when the tower is paint-starved, `alice_e2` against
+a byte-identical `alice_e2ctl`, identity verified before the screen, null arm, and the accept
+decided by the bar as written.
+
+**Tally: five routes examined for zero games. Four closed, one re-opened and re-closed, and the
+fifth — count — now has a passed reachability gate and a disarmed trap.** `src/alice` still
+unchanged since iteration 43.
