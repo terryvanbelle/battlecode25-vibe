@@ -2,7 +2,9 @@
 
 **State at time of writing:** `src/carol` = `BUILD "i45a"`, unchanged since the iteration-60 accept
 (commit `3610230`). Snapshot copy: `src/carol_iter45`. Every axis and design premise below is
-closed or blocked. **This document, not the 22,000-line training log, is where a successor starts.**
+closed or blocked, **except §7.9** — iteration 80's ruin memory, the first margin-carrying mechanism
+with nothing shut against it, whose stage 0 has passed and whose screen is in flight.
+**This document, not the 23,000-line training log, is where a successor starts.**
 
 Iteration 59's rewrite cost a full session; iteration 77's cost **8 probe games** — the difference
 was that 77 began from a committed survey. This is that survey, generalised.
@@ -235,6 +237,22 @@ Every one of these has already cost me, or was caught only by an implausible mag
     `SPLASHER` = 400 chips + 300 paint. `BUILD_ROBOT_RADIUS_SQUARED = 4`. SRPs stack linearly.
 20. **The tether is not forced by r²≤2.** I claimed it was; the existence proof refuted it — a rival
     operates at p90 distance **17.0** against carol's **6.3** under the identical constraint.
+22. **`p90 distance 6.3` is a POSITION statistic, not a CAPABILITY limit — and it has been used as
+    one.** It is the p90 of where carol's units *are*, dominated by units parked beside a tower
+    refilling. The distance at which carol **demonstrably completes towers**, measured at the single
+    `completeTowerPattern` site with `REFILL_LOW=50` fully active, is **median 8.89, p75 11.70,
+    p90 15.00, max 25.24** (iteration 80 stage 0, 18 completions over 3 games). **Only 27.8% of the
+    towers carol actually built lie inside the 6.3 figure.** Anywhere this lineage has argued "carol
+    cannot operate beyond ~6", that inference is unsupported. The tether (a refill latch) and the
+    build envelope are **different constraints**, and iteration 60's **−26** prices the former only.
+23. **A distance threshold in this game sits on a QUANTISED, BIMODAL distribution — never read one
+    off a single cut.** Ruins and towers occupy fixed map coordinates, so ruin→tower distance is a
+    set of mass points: a near cluster over d ∈ [5.0, 6.4] and a far cluster over d ∈ [8, 11], with
+    an almost empty gap between. Iteration 80's registered threshold landed **exactly on the top mass
+    point**; the same data read at d ≤ 6.24 gave 24.5% and at d ≤ 6.32 gave 37.3%, flipping a
+    registered verdict on 0.08 of a distance unit. **Always print the sensitivity across the
+    plateau before quoting a share.**
+
 21. **The bar is not the binding constraint.** Checked independently: at a conventional 2 sd the bar
     would be ~**+18.5** rather than +26, and **nothing priced clears either** — best measured
     candidate +11 at 1.2 sd, production extrapolation +3 to +9. The impasse is not an artefact of a
@@ -411,7 +429,47 @@ usually does, and worth saying plainly.
 > the coverage chain, so it does not inherit that closure. It is the only priced candidate the new
 > objective produces from the existing map, and it was found by re-examination, not manufactured.
 
-### 7.8 REGISTERED — next iteration, before any game
+### 7.8 RESOLVED — iteration 79 CLOSED the re-opened tower-attack gate, at ZERO games
+
+The registration below was executed and **closed before stage 0 spent a game**, because validating the
+counter refuted the premise's magnitude. The recorded cost table was wrong: 98/208/859 attacks per
+1,000r were actually **5/10/379** (two of them **21× over**), and the "paint ACTIONS" column was
+equally unreproducible — **a number a registered iteration was built on had no method attached to it.**
+Re-priced on engine facts (a soldier's paint *is* `rc.attack`, so an attack displaces at most one paint
+action, and only if there was one to displace): attacks are **2.43% of soldier-turns on the worst map,
+0.24–0.29% elsewhere**, and a *perfect* gate recovers ~252 tiles = **~13% of the bar, ~+3 census** before
+subtracting tower denial. **Closed: refuted-on-value.** Re-open only on a mechanism that raises the
+attack's cost by an order of magnitude.
+
+> **The transferable lesson, now standing practice: validate the instrument before spending the games.**
+> It cost zero here and it caught a knife-edge in iteration 80 the same day.
+
+### 7.9 OPEN — iteration 80, the RUIN MEMORY. Stage 0 PASSED; screen in flight.
+
+The first margin-carrying mechanism with **nothing closed against it** (ledger-checked against five
+near neighbours, all of which rest on "against alice carol loses zero towers", which is false in the
+regime carrying the margin).
+
+- **Traced:** on Set A — the six maps carol loses from **both sides** against `carol_siege`, i.e. the
+  entire margin — the failure is **replacement, not defence and not the opening** (2.7:1 whole-game,
+  ~10:1 over r300–800). Split three ways it is **availability 77.5%** vs affordability 13.1% and
+  choice 9.4%; **77.7% of blind rounds still have unclaimed ruins left, median 7.** Positioning, not
+  exhaustion.
+- **Root, from the code:** `nearestEmptyRuin()` is sense-range only. carol keeps a 12-slot `towerMem`
+  and **no memory of unclaimed ruins at all**, while sighting **67%** of them per game and finishing
+  with a mean of **2.75** structures. Acquired and discarded.
+- **Stage 0 (6 games, two no-op probe builds, both reproducing the control's exact end rounds):**
+  M0 `ov=0`. M1 **71.2%** of 16,064 blind soldier-turns hold a remembered unclaimed ruin (bar 50%).
+  M2 registered **37.3%** (bar 33%) — **passed, but knife-edge and not banked**; re-read against the
+  threshold-free demonstrated envelope it is **46.3%** within carol's median claim distance and
+  **84.6%** within her p75. **The falsifier does not fire.**
+- **Known before the build, from stage 0:** a naive memory **goes stale** — ≥3.7% of remembered
+  "unclaimed" ruins already carry a tower. The built arms forget on sense and on ban.
+- **In flight:** dose screen, `BOT=carol_iter45` vs `carol_i80_10 / _20 / _inf` (MEM_REACH d²=100,
+  400, unlimited), one shared 25-map sample, 150 games. **Gate ≥ 31/50 for the candidate.** Then the
+  15-rung frozen roster, then the self-play census at **+26**.
+
+### 7.8 (original registration, kept for the record) — the tower-attack gate
 
 **Mechanism:** gate the soldier tower attack. **Doses:** over the gate's strictness (never attack /
 attack only when the tower is below a health threshold / attack only when carrying surplus paint),
