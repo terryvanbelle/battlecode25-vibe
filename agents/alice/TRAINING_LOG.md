@@ -20429,3 +20429,97 @@ expectation is **somewhere under +6, against my +4 screen bar.** Close enough to
 not close enough to assume; which is what a screen is for.
 
 **Next: build it as a WEIGHT, with the null arm and manipulation share already registered.**
+
+## Iteration 58 — the ARM, and the discriminator registered before launch
+
+**The mechanism, deliberately narrow.** `wander()` and `tryMove()` already consider a **3-candidate**
+set — the heading, then its left and right rotations, with the left/right order randomised (the
+play-symmetry guard from Phase 0 item 7). The change re-keys the choice *within that existing set*:
+pick the candidate with the **fewest adjacent allies at the destination**, breaking ties by
+directness in the current order.
+
+This preserves what iterations 12/14 bought — the **heading is unchanged**, so run length and
+ballistic travel are untouched — and it preserves the randomised left/right tie-break. It is a
+**narrow-set weight**, not an argmax over all 8 directions: lever A's argmax made a wrong objective
+bite harder, and I have no reason to pick a wide dose on the first test of a corrected objective.
+
+### The distinguishing criterion — because at this effect size a NULL IS THE PREDICTED OUTCOME
+
+Bob's family **saturates** near +6, and my priced expectation lands **at or just below** that. So a
+null is not a surprise here, and **"saturated as expected" and "did not fire" produce identical
+scoreboards.** Registering the discriminator now, before any run:
+
+| crowd per unit-turn, arm vs control | net swept | reading |
+|---|---|---|
+| **falls >= 15%** | >= +4 | **ACCEPT** — fired and cleared the bar |
+| **falls >= 15%** | −4 to +3 | **SATURATED** — the mechanism worked and the effect is at/below the family ceiling. A *null with a mechanism*, not an inert arm, and it closes the family for me at a measured ceiling |
+| **falls >= 15%** | <= −5 | **HARMFUL** — fired and paid, bob's position cost in my architecture |
+| **falls < 15%** | anything | **DID NOT FIRE** — the score carries no information about the mechanism and I report exactly that |
+
+I chose 15% deliberately below bob's realised **26–48%**: my candidate set is 3 wide where his was up
+to 8, so I expect a smaller cut, and a bar set at his realised range would misclassify a working
+narrow dose as inert.
+
+### And a NULL ARM ships in the same batch
+
+`alice_i58null` is a second byte-identical copy of the control, run **control-vs-control**, to
+measure the pre-gate's own noise floor **before** the treatment is read. I learned that floor
+(±70 paint actions at n=6) by accident from a non-firing lever; this time it is deliberate and it
+costs nothing extra, because it runs in the same batch.
+
+**Falsifier, restated:** a genuine gain must show **crowd falling AND paint actions per soldier
+rising**. Bob's arms cut crowd 26–48% and still paid in position — if mine cuts crowd and per-soldier
+output does not rise, that is his failure mode reproduced in my tree, not my success.
+
+## Iteration 58 pre-gate — DID NOT FIRE, and the null arm is the only reason I can say so
+
+6 games arm-vs-control and 6 games **null-vs-control** (two byte-identical copies), same batch, same
+six maps.
+
+| batch | A side crowd | B side crowd | delta |
+|---|---|---|---|
+| **ARM vs control** | 0.5184 | 0.4874 | **+6.4%** |
+| **NULL vs control** | 0.4810 | 0.5211 | **−7.7%** |
+
+> **PRE-REGISTERED: crowd must FALL >= 15% for the score to carry information. It moved +6.4%, and
+> the null arm's floor — between two byte-identical bots — is ±7.7%. The measured effect is INSIDE
+> the noise floor. Verdict: DID NOT FIRE**, which by the discriminator I registered before launch
+> means the scoreboard says nothing about the mechanism.
+
+**And the scoreboard confirms that independently: the arm went 4–2, and the NULL ARM ALSO WENT 4–2.**
+Two identical bots, 4–2. A 6-game score is worth nothing here and I now have the number rather than
+the intuition.
+
+**The null arm paid for itself the first time I used it deliberately.** Without it, +6.4% reads as
+*"crowd went UP — the mechanism is backwards"*, which is a confident, publishable, wrong conclusion.
+With it, +6.4% is inside ±7.7% and means nothing. I learned this floor by accident from a non-firing
+lever two days ago; this time it was registered, shipped in the same batch, and cost no extra games.
+
+### Why it did not fire — and it is the same miss as lever B, a third time
+
+I measured the choice set over **all movement-ready turns** (44.8% have a real crowd choice), and
+then applied the mechanism **only inside `tryMove`** — directed movement toward a target — on the
+reasoning that this is where units converge. **I never measured what fraction of movement actually
+goes through `tryMove` rather than `wander()`.**
+
+> **That is exactly lever B's failure a third time: the reachability was measured somewhere other
+> than the site the code was installed at.** Lever B priced mopper *surplus* and not mopper
+> *adjacency*; iteration 56 priced tower *opportunity* and not the *paint* it spends; this priced the
+> crowd choice over *all* movement and installed at *one* call site. **The pre-check has to be run at
+> the exact site the mechanism will live, not at a superset of it.**
+
+That generalisation is worth more than the arm was. The first two instances I diagnosed after the
+fact; this one I can state as a rule: **measure the denominator the mechanism will actually see.**
+
+### Registered next, and it is cheap
+
+One counter: of movement-ready unit-turns, what share passes through `tryMove` versus `wander()`?
+That number decides between three outcomes, and I am registering them now rather than choosing after:
+
+| `tryMove` share of movement | reading |
+|---|---|
+| **>= 40%** | the site is fine; the dose (3-candidate, ties to directness) is too weak — re-dose |
+| **10–39%** | the site is thin; re-site into `wander()`'s slide as well, accepting the ballistic risk |
+| **< 10%** | the site is the whole problem, and this arm was never a test of crowd-avoidance at all |
+
+**HEAD is untouched**; `src/alice` remains iteration 43, confirmed at 150 games.
