@@ -19984,3 +19984,82 @@ not merely two soldiers at one tower.
    **Kill condition: below 2.0% of tower turns, matching the bar iteration 56 was held to.**
 2. Only then the encoding (4-byte int, 5-round buffer) and the gate, with the manipulation share and
    the null arm already registered from earlier today.
+
+# 2026-09-10 — THE ROSTER RUN CAME BACK AND MY CURRENT BOT IS A REGRESSION
+
+Resumed after a rate-limit stop at ~01:00 UTC. The 600-game roster run **completed while I was
+dead**; the local directory held a partial 551 rows and no `results.csv`, and my `ls` guard wrongly
+read that as "already collated" — so I forced the collation and got the full 600.
+
+**Then the only absolute-strength instrument I own said this:**
+
+| current bot `alice_iter43` vs | record | SW | SL | **net swept** |
+|---|---|---|---|---|
+| **alice_iter39** | **18–32** | 4 | 11 | **−7** |
+| alice_iter30 | 23–27 | 6 | 8 | −2 |
+| alice_iter29 | 23–27 | 7 | 9 | −2 |
+| alice_iter28 | 29–21 | 10 | 6 | +4 |
+| alice_paintthief | 35–15 | 13 | 3 | +10 |
+
+> **My live bot loses to three of its own older snapshots, and loses to iteration 39 by −7 net
+> swept.** That head-to-head is *within one run on the same 25 maps, both sides*, so it carries none
+> of the cross-run map-sample noise my charter warns about. On my measured floor it is about
+> **−2.3 sd**.
+
+**And the corroboration is consistent**, comparing what iteration 39 scored against the same frozen
+opponents when *it* was the current bot:
+
+| frozen opponent | iter39 | iter43 | delta |
+|---|---|---|---|
+| alice_iter30 | 56.0% | 46.0% | **−10.0** |
+| alice_paintthief | 82.0% | 70.0% | **−12.0** |
+| alice_iter4 | 98.0% | 98.0% | 0.0 |
+| alice_iter7 | 98.0% | 98.0% | 0.0 |
+
+The two saturated opponents are unchanged; the two **discriminating** ones both drop by 10–12 points.
+
+## This is exactly the failure the frozen roster exists to catch, and I let it go stale
+
+My charter: *"This is your only absolute-strength instrument. Your gauntlet headline is measured
+against a pool that changes and a map sample redrawn each run, so it cannot tell 'the bot improved'
+from 'the instrument moved'; a frozen opponent can."* **I last ran it at iteration 39.** Iteration 43
+was accepted after that, and I then spent iterations 44–57 — an entire session — characterising,
+probing and trying to improve a bot that had regressed, against a baseline I never re-measured.
+
+**Iteration 43's accept is the suspect.** It was not accepted on the standing census bar; it passed a
+**regime-matched** test — 7/8 on the four single-parity maps — with a claimed **"cost bound +2"**
+everywhere else. A targeted accept whose off-target cost is bounded on too little evidence is
+precisely the shape that produces this, and the roster is the instrument that sees it.
+
+## Confirmation census LAUNCHED, with the decision rule registered BEFORE it returns
+
+`alice_iter43` vs `alice_iter39`, **75 maps, 150 games**. −7 on a 25-map screen is suggestive, not
+decisive, and reverting the bot that plays in the tournament is not a decision to take on 2.3 sd.
+
+| census result (net swept, iter43's perspective) | decision |
+|---|---|
+| **<= −12** | regression **CONFIRMED** on my standing census bar (2.27 sd on the measured floor) → **revert `src/alice` to iteration 39's behaviour** |
+| −11 to −1 | **inconclusive** → do not revert; investigate iteration 43's off-target cost before touching HEAD |
+| **>= 0** | the roster screen was an unlucky draw; iteration 43 stands and I re-examine the roster instead |
+
+**Registered diagnostic cut, whatever the total says:** iteration 43's accept claimed its gain sits on
+**the four single-parity maps** and ~0 elsewhere. So cut the census that way. If iteration 43 still
+wins the four and loses the other 71, its mechanism is fine and its **cost bound was wrong** — which
+is a different repair from reverting, and a more surgical one.
+
+## Two pieces of news recorded, and what I am NOT doing with them
+
+**Benchmarks.** The overnight run scored this lineage's **first wins against TSPAARKHS (2/150**, where
+every lineage in every prior run was 0/150), and **12.7% → 17.3%** against v3, a third consecutive
+rise. Both are frozen external opponents, so unlike the standings they cannot be explained by what
+anyone else did. **I am recording these as distance and nothing else** — my charter permits reading a
+benchmark *score* and forbids everything else, and a score is not a target. I also note the obvious
+tension worth holding rather than resolving: those numbers were produced by the same `alice_iter43`
+that the roster just called a regression, on two instruments that disagree.
+
+**Bob is retired and `agents/bob/` is open ground** (MULTI_AGENT rule 0, read). Carol remains fully
+isolated in both directions and nothing about that changes. I have not opened bob's tree yet — the
+regression is the priority — but the thing to read first is his **`CLOSED.md`**, because a
+closed-directions ledger with re-open conditions tells me which local mechanisms are already priced,
+and rule 0 is explicit that **a verdict does not transfer**: anything I take needs my own
+pre-registration, gate and census, and my log must say what I took and from where.
