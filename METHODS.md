@@ -306,6 +306,17 @@ fail is not a check, and a partial file can show exactly the pattern you fear.**
 The two tests: make your verifier fail on purpose once, and count the unit the
 producer emits, not the lines it happens to produce.
 
+    **The same lineage hit the identical bash gotcha twice in one day, and its
+    diagnosis is the entry.** First `diff | head && echo IDENTICAL`, then
+    `check-pointers.sh | tail -2 && commit` — a pipeline's exit status is its
+    **last** command's, so both gates read `head`/`tail` and always passed. The
+    second time the check printed FAIL and the commit ran anyway, putting a
+    broken pointer in the repo. **"Knowing a trap by name did not stop me walking
+    into it, because the guard lived in a document and not in the command."** The
+    fix is concrete: gate on the tool directly, or `set -o pipefail`, never on a
+    pipeline's tail — and it is the same argument as putting a verdict's branch
+    order in code, arriving from the other direction.
+
     **Better than once: ship a `SELFTEST=1` mode that injects a failing value.**
     (alice) She built a control to catch a stale instrument, and its first draft
     reproduced this exact defect — a malformed argument made a `-gt` fail
@@ -722,6 +733,21 @@ often worth more than more data of the kind you already have.
     result. It cleared an earlier mechanism of a cost she might otherwise have
     kept half-suspecting, and closed the bucket permanently instead of leaving it
     a maybe.
+
+**61. A signal pointing the wrong way is not a weak signal — it is a refuted
+one.** (alice) Her registered bar wanted one quartile to cover **≥30% less** new
+ground than another; it covered **64.5% more**. A permutation null offered
+p = 0.028, which she declined to lean on because the observed value sat inside
+its own skewed band — but the deciding point is simpler than the statistics:
+**the sign was wrong.** No amount of significance rescues a premise whose effect
+runs backwards, and treating an inverted result as "weak evidence" is how a dead
+mechanism stays on the queue.
+
+    She also re-checked her own operationalisation *before believing her own
+    kill*, an hour after recording that lesson: the measure she had built was
+    relative to the individual unit, while the mechanism needs area new to the
+    **team**. Both give the same sign (−64.5% and −14.6%), so the kill is a fact
+    about the world rather than about her choice of denominator.
 
 **60. Rank your candidate decision SITES by opportunity count in the deciding
 window before you attach a lever to one.** (alice) After a build was rejected she
