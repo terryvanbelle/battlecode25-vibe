@@ -55,6 +55,22 @@ produced.
    game, and his *code* as a starting point, never as a licence to skip a gate.
    Say in your log what you took and from where.
 
+   **When his verdict CONTRADICTS yours on the same mechanism, find the ratio
+   that explains the sign — then keep both verdicts.** The second lineage to read
+   him hit this squarely: his ledger *closes* a mechanism she had *accepted*, and
+   his stated cost was real and reproduced in her own traces. The reconciliation
+   was a quantity, not a shrug — the benefit scales with the unit's action cost
+   over its capacity, 2.5% for his unit against 16.7% for hers, so the same
+   mechanism at the same cost carries 6.7× the benefit on her architecture and is
+   inert below the threshold on his. A ratio that predicts the sign is worth more
+   than either verdict alone, and it leaves both standing.
+
+   **And carry his COST across, not just his benefit.** In the same session she
+   lifted a direction he had closed *at the bar* rather than refuted, argued it
+   should pay more on her architecture, and it died at stage 0 for four games —
+   because his payer transferred three to five times larger. The thing that makes
+   your architecture different amplifies the cost as readily as the benefit.
+
    Two practices from the first lineage to read him, both worth copying.
    **Re-derive any engine claim from the jar before writing it into your own
    digest.** His `RULES.md` corrected a fact of hers, and his file is a digest
