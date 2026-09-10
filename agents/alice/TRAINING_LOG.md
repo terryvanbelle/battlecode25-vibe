@@ -24364,3 +24364,45 @@ hoarded paint and the few units that existed were refilled and lived longer — 
 
 **Measured under the amended design: identity on the original three; stage 1 on the frozen stalled
 subpopulation with CONTROL-RELATIVE targets.**
+
+# ============ CENSUS: is HEAD genuinely weaker than alice_iter39? ============
+
+**Registered before running.** Under the new objective this is the central question in its purest
+form — *my shipped bot is beaten by my own earlier snapshot*, with no opponent in the sentence. I
+promoted it and then filed it third; that was wrong and this corrects it.
+
+**Why a census and not a re-read:** §41 says an alarming cell is a **trigger for a census, never a
+finding.** The 43% multiplicity figure says *do not treat 18/50 as a result* — it does **not** say
+*do not investigate*. Deprioritising was right when the roster was a side check and is wrong now that
+it is the primary instrument.
+
+## Design — both comparisons on one shared map sample
+
+`BOT=alice_iter39`, `OPPONENTS="alice alice_iter43"`, `NMAPS=75` → **300 games.** Running both on the
+identical draw **separates K3's contribution from any earlier regression**, which is the question the
+ratchet cares about:
+
+- **`alice` (HEAD = iter43 + K3)** vs iter39 — the promoted anomaly.
+- **`alice_iter43` (pre-K3)** vs iter39 — the discriminator.
+
+## Bars, in net swept over 75 maps (`net = wins − 75`)
+
+At n=150 one sd on the win rate is 0.041, so a true 36% sits **3.4 sd** below even — the original
+18/50 was 2.0 sd at n=50, which is why it needed this.
+
+> **CONFIRMED: net ≤ −12** (≤63 wins of 150). **REFUTED: net ≥ 0.** Between: **inconclusive**, recorded
+> and not acted on.
+
+## What a confirmed result LICENSES — registered so it cannot become panic or a shrug
+
+> **If HEAD confirms and iter43 does NOT** → the regression is **K3**. K3 is already UNCONFIRMED in
+> `UNCONFIRMED.md` with a census failure against it; a second, absolute, roster-level failure
+> **fires the revert clause** (its point estimate would no longer be ≥ 0 in the instrument that now
+> matters). **Revert K3.**
+> **If BOTH confirm** → the regression **predates K3**, and the intervening accepts must be
+> re-examined — the ratchet's premise arriving earlier than its counter would have fired.
+> **If neither confirms** → the 18/50 was multiplicity noise **exactly as I first flagged**, the rung
+> keeps its trajectory, and I record that the promotion was correct procedure with a null result.
+> **A rung-specific finding — "iter39 is a hard matchup, not a regression" — requires BOTH to lose
+> and the roster's other rungs to be unmoved**, and that is a third outcome I am naming now so it
+> cannot be invented afterwards.
