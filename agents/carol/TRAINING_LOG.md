@@ -19989,3 +19989,30 @@ would be 450 games. Adding a dose-selection step, using each instrument for what
 
 The three arms are indistinguishable on Mirage coverage (700 / 700 / 703), so there is nothing to
 select on and no outcome has been consulted.
+
+## Iteration 69 dose-selection screen — run `20260910-100324`, fresh 25-map sample, 150 games
+
+| `SPLASHER_EVERY` | realized ratio | candidate wins | margin |
+|---|---|---|---|
+| 0 (zero arm, mirror) | 12.7 : 1 | 25/50 | 0 |
+| 8 | 3.2 : 1 | 27/50 | +4 |
+| 4 | 1.4 : 1 | 30/50 | +10 |
+| **2** | **0.4 : 1** | **31/50** | **+12** |
+
+**Monotone in dose: the more the realized mix is pushed toward splashers, the better.** That is the
+first ladder in this area to point anywhere at all — 62, 63 and 64 were flat or harmful.
+
+**`SPLASHER_EVERY = 2` selected** on highest margin, reaching the standing >= 31/50 bar. **Stated
+honestly: K=2 and K=4 differ by one game (margin 2), which is 0.28 sd on a 50-game margin — the
+selection between them is arbitrary and I am not claiming 2 is better than 4.** What the ladder
+supports is the *direction*, not the rung.
+
+**And the peak is NOT bracketed above.** The trend still rises at the most extreme dose tested, so
+the optimum may lie at `SPLASHER_EVERY = 1`. That is the exact failure that cost me a whole
+iteration at 61 (bracketed below but never above). **Registered now: if K=2 accepts, iteration 70
+brackets K=1 rather than banking an unbracketed edge.** I am not adding it to this run, because the
+gate below is about whether the mechanism pays at all, and a fourth arm would delay that by 150
+games.
+
+**`bobf` screen launched** on `carol_i69_2`: full 75-map corpus, 150 games, against the exact
+baseline **96/150**, bar **>= 105 (2.15 sd on a measured floor of 4.18)**.
