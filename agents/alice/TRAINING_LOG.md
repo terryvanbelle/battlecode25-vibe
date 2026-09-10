@@ -23354,3 +23354,60 @@ a failed dose masquerade as evidence about the architecture.
 > gate failed its pre-check. **The rewrite grant remains unspent**, and the honest reason is that I
 > have not yet produced the second clean data point my own condition requires — not that I am
 > avoiding it.
+
+# K8's FIXED POINT — the axis closes on magnitude, and the gate was testing the wrong resource
+
+You were right that I had closed an implementation and was about to bank it as an axis. Estimating
+the fixed point cost zero games and changed the verdict's *kind*.
+
+**A splasher costs TWO resources: 400 chips (team) and 300 PAINT (the tower's own stash). The K8 gate
+tests only the chips.**
+
+| band | chips ≥1850 | **PAINT/tower ≥300** | ≥200 (soldier) | ≥100 (mopper) |
+|---|---|---|---|---|
+| **DECISIVE 1–300** | 30.8% | **29.0%** | 47.7% | 79.4% |
+| 300–600 | 49.1% | 20.0% | 23.6% | 54.5% |
+| 600–1200 | 68.3% | 10.0% | 11.7% | 60.0% |
+| **1200+** | 36.4% | **0.0%** | 0.0% | 63.6% |
+
+> **The binding resource is PAINT and the gate tests CHIPS.** In the decisive window the joint ceiling
+> is **8.9%**, and the *old* gate already reached **2.8%** on chips alone. **So the entire headroom
+> available to any chip-gate setting is 3.2x — and K8 measured 2.22x, roughly 70% of it.**
+
+## Which settles the question you posed: NOT under-dosed. Near-ceilinged
+
+**The fixed point sits at ~3.2x, below my registered 5x bar, at every gate setting** — because no
+chip threshold can conjure the 300 paint. **This is a closure on magnitude, not a failed dose**, and
+the two have different re-open conditions:
+
+> **CLOSED: the splasher chip gate, on magnitude, at a 3.2x ceiling against a 5x bar.**
+> **Re-open condition — a change to the RESOURCE SUPPLY, never a dose:** re-open only when tower paint
+> reaches ≥300 on **more than 50%** of tower-frames in r1–300 (currently **29.0%**). A lower chip gate
+> is explicitly *not* a qualifying change.
+
+**And the tail of that table is its own finding: from r1200 onward a tower can afford a splasher on
+0.0% of frames.** Alice's splashers are structurally an early-game unit and cannot be otherwise —
+which is why iteration 28's chip-surplus trigger, firing *late*, was aimed at a window where the unit
+had already become unaffordable.
+
+## The convergent pattern, and it is the strongest case yet for spending the grant
+
+Four consecutive directions at per-unit output, and **every one terminates at tower paint supply**:
+
+| | direction | outcome |
+|---|---|---|
+| E2 | raise paint supply directly (more paint towers) | **REJECTED −8** |
+| K3 | refill units from tower paint | screen +4, **census FAIL +5**, UNCONFIRMED |
+| K7 | widen the refill gates | **capped** — paint moved rose 1.39x against 8.61x more draws |
+| K8 | shift the mix toward splashers | **capped at 3.2x** — towers cannot afford 300 paint |
+
+> **Three mechanisms are capped by tower paint supply, and the one direct attempt to raise that
+> supply was rejected at −8.** That is not four independent failures; it is one constraint refusing
+> four times, and the only attempt on the constraint itself failed.
+
+**This is the shape my registered condition was written to detect** — *"the term moves but never by
+enough."* It now has more support than it did an hour ago, but **K3 remains the only clean point**
+(fired, moved the term, failed its census); K7 and K8 are magnitude closures, not census failures.
+**I am recording the pattern and not yet converting it into the second point**, because a convergence
+argument and a registered series are different objects and I built the series to stop exactly this
+substitution.
