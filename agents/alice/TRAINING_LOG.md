@@ -22676,3 +22676,61 @@ tests.** A second unestablished +5 would say the refill term is real but small, 
 different conclusion from the one I have been working toward.
 
 **Standing:** `src/alice` carries K3, marked UNCONFIRMED. Screen ACCEPT, census FAIL, both recorded.
+
+# THE KEEP RULE GETS A RATCHET — because the rule I registered was keep-biased and its failure is slow
+
+The rule I wrote after K3's census — *keep if the point estimate is ≥ 0 and no falsifier fired* —
+**says keep for nearly every unconfirmed positive result, and most results are that.** Twenty
+applications give a HEAD that is an accumulation of individually-unconfirmed changes, none harmful on
+its own evidence, **with no point at which the accumulation is ever tested.** This lineage has already
+measured a fifteen-iteration plateau. **That rule is a mechanism for manufacturing one and hiding
+it**, and I did not see it when I wrote it.
+
+**Built, not written down:** `UNCONFIRMED.md` (the ledger) + `tools/unconfirmed.sh` (the check),
+wired into `tools/ac.sh` so it fires **only when `src/alice/` is in the commit** — the promotion site,
+the one moment an unconfirmed change enters HEAD.
+
+> **After every 3 unconfirmed changes standing in HEAD, the accumulation must be measured against the
+> last confirmed snapshot — 75 maps / 150 games at the +12 bar — before anything further is promoted.
+> PASS → mark them confirmed-in-aggregate and reset. FAIL → revert newest-first until it passes.**
+
+**Why 3 is derived and not tidy:** an unconfirmed change is by construction one that failed a +12
+census; K3's came in at **+5**. Three of them reach **~+15 if additive — above the bar** — so 3 is the
+smallest count at which the accumulation is detectable by the instrument I already own.
+
+**Verified both ways, and scoped:** `SELFTEST=1` trips it (exit 3, promotion refused); the normal path
+passes at 1 of 3; and a commit that does *not* touch `src/alice/` correctly does not fire it. Override
+is `UNCONFIRMED_OK=1`, named so that using it is a decision rather than a reflex.
+
+**Caveat recorded in the ledger itself, because the keep rests on "no evidence of harm":** K3's census
+**carried no null arm**, so its power to detect harm at this effect size was never measured on that
+draw. The screen's null read +0, which corroborates and does not replace it. This does not change the
+decision — it is part of it.
+
+# And pricing K7 GIVEN the census, not given the parity story
+
+| | opportunity at the gate | realised refills/unit | per-unit paint actions | net |
+|---|---|---|---|---|
+| K3 | 1.9x (same-game counterfactual, K4) | 1.15x | +16% | +5/150, unestablished |
+| **K7** | **~10.6x (cross-tab)** | **?** | **?** | **?** |
+
+**Two extrapolations, both stated rather than picked:**
+- **conversion-preserving** — K3 turned 1.9x opportunity into 1.15x realised, so log-conversion ≈ 0.22.
+  Applied to 10.6x: realised refills **≈1.7x**.
+- **opportunity-tracking** — if realisation tracked opportunity, **≈2.8x**.
+
+So **my registered ≥3x prediction sits above both brackets, and I am revising it before the run rather
+than letting it fail for the wrong reason.** The ≥3x figure came from opportunity alone; K3 has since
+*measured* the conversion, which was not available when I wrote it. **Revised: realised refills/unit
+≥ 1.7x; below 1.5x falsifies the cross-tab's pricing.** Recording both numbers so the revision is
+visible.
+
+**Is 10.6x worth a screen given a census that failed?** On the same log-scaling, +16% per-unit actions
+becomes **≈+70%**, which would move the binding term from **0.52x to ~0.88x of carol** — most of the
+measured gap. **That is worth one screen even at a poor conversion**, and the falsifiable refill
+prediction is what stops a pass being read as vindication of the pricing.
+
+**One honest caveat on the extrapolation:** log-linear scaling from a *single* dose is an assumption,
+not a measurement, and K3's own realised figure (1.15x, n=3 maps, arm and control in different games)
+is the noisiest number in the chain. **The prize estimate is a reason to run the screen, not a
+prediction of its result.**

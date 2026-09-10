@@ -92,4 +92,20 @@ elif [ -f "$CHECK" ]; then
   rm -f "$OUT"
 fi
 
+# --------------------------------------------------------------- RATCHET GATE
+# Fires only when src/alice/ is in the commit -- i.e. at the PROMOTION site, the
+# one moment an unconfirmed change enters HEAD. The census-fail keep rule is
+# keep-biased and its failure mode is slow: twenty keeps give a HEAD nobody ever
+# tested in aggregate. tools/unconfirmed.sh makes that visible; this makes it
+# unavoidable. No pipe, so the gate reads the tool's own exit status.
+if printf '%s\n' "${args[@]}" | grep -q '^agents/alice/src/alice/'; then
+  RATCHET="$ROOT/agents/alice/tools/unconfirmed.sh"
+  if [ -f "$RATCHET" ]; then
+    if ! bash "$RATCHET"; then
+      echo "!! ac.sh REFUSING TO PROMOTE -- see the ratchet message above." >&2
+      exit 3
+    fi
+  fi
+fi
+
 exec "$ROOT/tools/agent-commit.sh" alice "${args[@]}"
