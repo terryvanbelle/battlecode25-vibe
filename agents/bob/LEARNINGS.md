@@ -104,6 +104,7 @@ Companion files, and what each is for:
 - **56.** A gate that **converts** instead of delaying inverts the feature it guards. → #56
 - **57.** Closing the **fix** is not closing the **defect**. → #29
 - **58.** A heuristic that *nominates* a candidate is not evidence about it. → #16
+- **58b. NEW — the rule my worst build produced.** **Enumerate the candidate set before building anything that selects, ranks or remembers within it.** If it is empty or a singleton in the cases you care about, no policy over it can help — knowable from source in minutes, not from a 150-game gauntlet (iter58 shipped an arm identical to its zero arm to 3 d.p.). Keep **inert-by-construction** (#31) distinct from **too-small** (#32): different verdicts, different futures. → #95
 - **59.** My entire opponent pool cannot produce the games I lose. → #55
 - **59b. NEW — three closures in a row rested on it.** On tournament games bob is *ahead* of alice on every quantity it was about to optimise: territory discipline, paint-tower upgrade rate, and chip liquidity (alice runs on **41% less money** and wins 60–40). When a comparative shows you beating the bot that beats you on your candidate metric, that is the closure. → #93, `CLOSED.md` #4/#26/#28
 
@@ -117,6 +118,7 @@ Numbers live in `RULES.md`; these are the ones that changed a decision.
 - **63.** The engine **never cleans up marks**, and neither did my bot. → #65
 - **64.** `disintegrate()` is a pure suicide with no refund. → #67
 - **65.** Every map in the corpus is symmetric — but only **27 of 75** the way you would guess. → #28
+- **65b. NEW — and now explained.** The transform is recoverable from the ruin set alone and is **UNIQUE on 95% of maps**: **reflectH 43% / rot180 28% / reflectV 24% / ambiguous 5%**. The bad guess was *rotation*; reflection is two-thirds of the corpus. **Infer, never assume.** → #95
 - **66.** Symmetry and fixed-order decisions are this lineage's recurring bug class. → #3
 - **66b. NEW.** **A condensed rule is a cache, and mine went 47 iterations without invalidation.** `RULES.md`'s paint-penalty digest hid that crowding is charged on your **own** paint and that `crowd` counts **towers** — i.e. it hid the largest single paint sink in the game (~24,900/game). **Re-derive a digested number from the bytecode as the FIRST step of any mechanism that depends on it.** → #88
 - **67. NEW (iteration 47).** The **low-paint cooldown tax is exactly zero for soldiers**. `num` tops out at 19 (< 20) at X=1, so one decrement always clears it. Real only for MOPPER (3→5 turns/action) and SPLASHER (5→9) — both of which already run far below their untaxed ceilings. → `CLOSED.md` #22

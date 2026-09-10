@@ -18110,3 +18110,57 @@ horizontal reflection, vertical reflection. Then for every own-side ruin bob nev
   a tally of right 2 / nominally right 2 / plainly wrong 7, is worth exactly what it is worth.
 
 `src/bob/` untouched. **`bob_iter20` remains the bot.**
+
+## Iteration 59 — **CLOSED before a line of the mechanism was written.** Zero games, no VM work.
+
+Pure re-analysis of `ru_tour.tsv` (75 tournament maps). The map symmetry was **inferred from each map's
+own ruin set** — which transform maps the set onto itself.
+
+```
+maps analysed 75    ambiguous transform: 4 (5%)
+   reflectH   32 (43%)     rot180  21 (28%)     reflectV  18 (24%)     ambiguous  4 (5%)
+
+bob's OWN-SIDE UNMARKED ruins: 127 over 75 games  (1.69/game)
+   mirror is also a ruin       127 (100.0%)
+   MIRROR WAS MARKED BY BOB     40  (31.5%)   <-- PRIMARY
+```
+
+**Primary: 31.5%**, against registered bands of *≥50% build / ≤20% close / between ⇒ size*. It lands in
+the sizing band, and the sizing closes it:
+
+- Bob misses **1.69** own-side ruins a game; **0.53** of them are ones bob demonstrably had the
+  observation to infer. That is **19% of the 2.72-ruin completion gap**, at the **ceiling** — knowing a
+  ruin exists is not marking it, and alice claims contested ruins a median 361 rounds earlier.
+- Converting at iteration 54's anchor (the whole 2.72-ruin gap sits against a 60–40 deficit, ~10 wins in
+  50): **0.53 ruins ≈ 2 wins out of 50.**
+
+**And the closure is robust to the proxy's weakness, which is the part that makes it safe.** "Mirror was
+*marked*" is a **lower bound** on "bob had the information" — bob may have *seen* mirrors it never marked,
+so the true inferable share is somewhere in [31.5%, 100%]. That range is too wide to close on directly.
+But **doubling the measured value to 63% still yields only ~1.06 ruins/game ≈ 4 wins**, below even the
++7 replicate band. The mechanism cannot reach the +10 bar at twice its measured reach, so the closure does
+not depend on the proxy being tight.
+
+**My pre-registered structural objection was WRONG, and I am recording that.** I argued before measuring
+that symmetry maps own-side ruins to the enemy half, which bob sees least, so inference would be worst
+exactly where the gap is. The data says bob had marked the mirror of **31.5%** of its own misses — not
+nothing, and materially more than my argument implied. **The mechanism is not inert the way iteration 58's
+was; it is simply too small.** Those are different verdicts and conflating them would have been the easy
+error: iteration 58 died of *construction*, this dies of *size*.
+
+### What is worth keeping — a corpus fact that sharpens LEARNINGS 28
+
+**95% of maps have a UNIQUE transform recoverable from the ruin set alone**, and the distribution is
+**reflectH 43% / rot180 28% / reflectV 24%**. LEARNINGS 28's "only 27 of 75 are symmetric the way you'd
+guess" is confirmed and now explained: the guess was **rotation**, and rotation is 21–27 of 75 while
+**reflection is two-thirds of the corpus**. Any future symmetry mechanism in this lineage should default to
+inferring, never to assuming rotation — and it can expect a unique answer 19 times in 20.
+
+### Prediction, scored
+
+I predicted the primary would come in **below 20%** and close without a build. It came in at **31.5%** —
+**magnitude wrong for the ninth time**, decision right. Tally: **right 2, nominally right 3** (48, 54, 59),
+**plainly wrong 7**. The series is now unambiguous: my decision calls are usable and my magnitude calls are
+not, which is an argument for always sizing with a measurement rather than an estimate.
+
+`src/bob/` untouched. **`bob_iter20` remains the bot.**

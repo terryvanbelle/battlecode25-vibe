@@ -3419,3 +3419,31 @@ shape. **An opponent-specific finding must carry its opponent in the sentence.**
 **Method note**: the whole-game/windowed split is LEARNINGS 89 applied to a *comparative* rather than to a
 secondary, and it fired here in the direction that reverses a conclusion rather than merely sharpening it.
 Sweep comparatives windowed, always.
+
+## 95. Enumerate the candidate set before building a mechanism that selects within it (2026-09-10)
+
+Iteration 58 shipped an arm that was **inert by construction**: soldier ruin *memory* could only ever
+return a ruin the soldier had already sensed, while `chooseRuin()` already targeted every visible
+unoccupied ruin — so the recall set was, in the cases that mattered, empty. The gauntlet said delta 0 and
+the census said *identical to the exact zero arm to three decimals*.
+
+**The rule**: before building anything that **selects, ranks or remembers** within a set, **enumerate that
+set in the cases you care about**. If it is empty or a singleton there, no policy over it can help, and
+that is knowable from the source in minutes rather than from a 150-game gauntlet.
+
+This is the same class as `CLOSED.md` #6, whose closing number was a mean choice set of **0.83** — and I
+had that number on file while building iteration 58.
+
+**Applied immediately to my own next idea, which is the point.** Iteration 59 pointed the rule at the
+symmetry-inference nomination *before* writing it: of bob's own-side unmarked ruins, how many had their
+mirror already marked? **31.5%** — non-empty, so the mechanism would have *worked*, but only 0.53 ruins a
+game, ≈2 wins. **Closed by sizing, with no build.**
+
+**And the two verdicts are different in a way worth keeping distinct**: iteration 58 died of
+**construction** (the set was empty), iteration 59 died of **size** (the set was small). Conflating them
+would wrongly retire a working mechanism, or wrongly keep re-attempting a structurally impossible one.
+
+**A corollary from getting my own structural argument wrong.** I predicted symmetry inference would be
+near-useless because mirrors of own-side blind spots lie in the enemy half. It was 31.5%, not ~0. A
+structural argument is a hypothesis about a candidate set, and enumerating the set is cheaper than
+defending the argument.
