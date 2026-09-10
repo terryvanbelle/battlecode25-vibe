@@ -20989,3 +20989,99 @@ trades away out-expansion to buy something else is trading its one confirmed str
 the plateau is not explained by anything on this list. **That is the case for R1 being the whole
 remaining question — and equally the case for a rewrite being risky, because most of what it would
 have to rebuild is already right.**
+
+# R1 PRE-CHECK, designed before building anything — two requirements, two funnels, bars registered first
+
+R1 has been carried as one thing. It is **two**, with different reachability questions, different
+sites, and different consequences for whether a rewrite is needed at all:
+
+- **A — persistent accumulated state.** A unit remembers tiles it saw on earlier turns and acts on
+  the remembered map, not only on the r²=20 disc it can see now.
+- **B — vision that overlaps by construction.** Units are *placed* so the team's vision tiles the
+  map with less redundancy — a global spacing property, not a per-unit rule.
+
+Geometry both funnels are measured against, from the engine: vision r²≤20 is **69 tiles**; action
+r²≤9 is **29 tiles**; a ruin's 5x5 pattern is **24 paintable tiles** around the centre, so
+**+1 tower ≈ 24 correctly-placed paint actions.** That 24 is the unit every bar below is denominated
+in, because it is the only conversion from "decisions changed" to "the thing that wins" (P2: the
+r300 tower lead predicts the winner 79–81% of the time).
+
+---
+
+## Funnel A — persistent accumulated state
+
+Site: the soldier's target-selection, the same site iteration 43 last touched. **A decision exists
+only where remembered-best and visible-best DISAGREE** — everywhere else memory is decoration.
+
+| # | Stage | What is counted, at the site | Why it can be zero |
+|---|---|---|---|
+| A1 | Reach | soldier-turns holding ≥1 remembered tile that is *outside current vision* and still worth going to | the ballistic run may keep vision ahead of memory — nothing is ever remembered that isn't also seen |
+| A2 | Discrimination | of A1, turns where the remembered target ≠ the target chosen now | memory may agree with the current rule at every decision |
+| A3 | Survival | of A2, remembered tiles **still empty when the unit arrives** | memory goes stale — an ally or enemy painted it in the interim |
+| A4 | Affordability | of A3, arrivals inside the unit's remaining life | a correct target 30 turns away is not a target |
+| A5 | **Marginal** | of A4, cases where **ballistic wander would not have found an equally good tile in the same turns** | P4 says wander is good; this is the stage that kills A if it dies |
+
+**Terminal quantity: redirected paint actions per game** = A5 × actions gained per redirect.
+
+**Bars, registered now:**
+- **PASS: ≥ 48 redirected paint actions per game** (two ruins' worth). Build it.
+- **KILL: < 12 per game** (half a ruin). Close A, log it, do not dose it.
+- 12–48: dose-shaped, not architecture-shaped — worth an arm inside the incumbent, never a rewrite.
+- **Null arm required.** Run the identical counter against a control with memory writes live and
+  memory *reads* disabled. The counter must read **≤ 12/game** there or it is measuring its own
+  noise and every number above is void.
+- **Manipulation check:** A1 > 0 with the probe on and = 0 with it off. If A1 is nonzero with memory
+  disabled the instrument is wrong, not the mechanism.
+
+**Falsifier:** A5 near zero with A1–A4 healthy. That is the *specific* way A dies and it is the
+likely one — it says the bot already goes where memory would send it, which is exactly what P1
+("the soldier is correctly idle") and P4 (ballistic beats diffusive) predict.
+
+---
+
+## Funnel B — vision overlap by construction
+
+Site: the movement decision. **B has a prior strike**: crowd-avoidance (iteration 58) was closed for
+*"no site with a decision"* — the local version of this idea already failed to find one. So B's first
+stage is not a rate, it is a **headroom measurement**, and it can be run against existing position
+dumps with no new bot code at all.
+
+| # | Stage | What is counted | Why it can be zero |
+|---|---|---|---|
+| B0 | **Headroom** | per turn, union of vision tiles over all alive soldiers ÷ (n_soldiers × 69) | if soldiers are already spread, the union is already near n×69 and there is nothing to recover |
+| B1 | Co-visibility | soldier-turns with ≥1 ally soldier inside vision | the overlap being optimised may be rare |
+| B2 | Recoverable | of B1, tiles double-covered that a legal move would un-double | overlap can be geometrically forced by ruins/walls |
+| B3 | Free | of B2, moves that cost no ballistic progress (P4) | de-overlapping may only be available by moving backwards |
+| B4 | Payoff | of B3, the de-overlapped disc actually containing **more empty tiles** | more area seen is not more area worth painting — this is where P1 bites |
+
+**Bars, registered now:**
+- **B0 KILL, zero code, decides first:** if measured non-redundancy is **≥ 0.92**, B is dead. Stop.
+  Do not run B1–B4. Do not rewrite for it.
+- B0 < 0.92 → continue, and **PASS requires B4 ≥ 10% of movement turns** — deliberately higher than
+  A's, because a direct relative of B already came back empty and one refuted local version is
+  evidence about the family.
+- **Null arm:** same counters on the unmodified bot. B0 has no null (it is pure geometry), which is
+  precisely why it goes first and costs nothing.
+
+**Falsifier:** B0 ≥ 0.92, or B4 ≈ 0 with B1–B3 healthy — soldiers spread out and see *emptier* map,
+which does not help because empty-in-vision was never the binding constraint (1.8%).
+
+---
+
+## The decision rule — and why this pre-check can retire the rewrite question
+
+Registered before any of it runs:
+
+| A | B | What it means | Rewrite? |
+|---|---|---|---|
+| pass | fail | R1 is a **mechanism**, not an architecture. Memory drops into the incumbent at one site. | **No** |
+| fail | pass | Spacing is a global property; it cannot be dosed at a site. | **Yes** |
+| pass | pass | Build A first anyway — it is dosable, cheap, and falsifies faster. | Only if A lands and stalls |
+| fail | fail | R1 is dead, and the plateau is not an information problem. | **No — and stop looking here** |
+
+**Three of the four outcomes do not need a rewrite.** The measurement that decides it — B0 — needs
+no bot code, no games, and no build: it is a union-of-discs count over positions I already dump.
+**The rewrite question is answerable more cheaply than it is arguable**, and the pre-check is
+designed to answer it in the order that kills fastest: B0, then A5.
+
+Not run. Awaiting the user's decision, per instruction.
