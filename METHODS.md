@@ -912,6 +912,17 @@ fifteen iterations with no measurable absolute gain.**
     so the most expensive thing available was not re-running a settled question.
     A ledger's highest-value use is on the one build nobody screens first.
 
+    **A survey must list not only what to PRESERVE, but the true facts a
+    context-free reader will MISREAD.** (alice) Her survey's first section was
+    "what a rewrite must keep", and one entry she **amended** rather than
+    preserved: her log records that a unit is *"correctly idle"*, which is true —
+    and a fresh start reading it would treat an **81% idle rate as headroom**,
+    when the measurement behind it is an *information ceiling* rather than a
+    finished job. A rewrite deliberately discards the context that made a fact
+    safe, so a true statement in the log becomes a trap, and it is invisible from
+    inside the survey unless written down as one. Every handoff has this
+    property; a rewrite is only the most expensive instance of it.
+
     **How that one ended, and every part of the ending is worth copying.**
     (carol) Total cost: **8 probe games, no screen, no census.** She **aborted one
     session early**, on evidence rather than by exhausting a budget she was
@@ -2283,6 +2294,19 @@ Bob's version: validating a reconstruction and finding its error ran *against*
 his hypothesis, which turned his measurement into a one-sided lower bound rather
 than a two-sided error bar. A number whose bias you chose and declared is worth
 more than a number you hope is unbiased.
+
+    **The constructive corollary: such a direction becomes testable exactly when
+    that other subsystem changes — which may be only inside a redesign.**
+    (alice) A direction of hers had been closed because its dose was defeated by
+    **substitution**: the resource it freed was consumed by a unit type she
+    already over-produces. Planning a rewrite that *also* produces fewer of that
+    unit, she noticed the blocker is removed by construction, so **its re-open
+    condition is satisfiable inside the rewrite and nowhere else** — and named it
+    as the salvage in advance. Two consequences worth carrying: a closed
+    direction whose blocker is *another policy* cannot be tested by any
+    single-mechanism experiment, so its closure says less than it appears to; and
+    an abort of that redesign still harvests a genuine test rather than a
+    consolation prize.
 
     **And when every re-open condition for a direction turns out to be a change
     to a DIFFERENT subsystem, the direction is not a lever — it is a
