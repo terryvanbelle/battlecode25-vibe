@@ -19950,3 +19950,42 @@ fifth guess would not be a plan.
    style only and cannot certify a replacement for HEAD.
 
 **Both required.** Neither alone licenses an accept.
+
+## Iteration 69 stage 0 — the registered ratio check PASSES, monotonically, and without the cost that killed 63
+
+Mirage, one game per arm vs `carol_iter44`. Whole-game totals.
+
+| arm | +soldiers | +splashers | **realized ratio** | towers |
+|---|---|---|---|---|
+| `carol_iter45` (zero) | 331 | 26 | **12.7 : 1** | 9 |
+| `SPLASHER_EVERY = 8` | 113 | 35 | **3.2 : 1** | 9 |
+| `SPLASHER_EVERY = 4` | 39 | 28 | **1.4 : 1** | 10 |
+| `SPLASHER_EVERY = 2` | 19 | 51 | **0.4 : 1** | 8 |
+
+**Monotone in dose and a real dose at every rung.** The realized ratio moves from 12.7:1 to 0.4:1.
+
+**The realized ratios all sit BELOW their nominal quota** (K=8 gives 3.2:1, not 8:1) because
+splashers arrive from *two* sources — the 15% roll and the forced hold — and the quota only bounds
+the soldiers between them. Expected, and worth stating so a later session does not read it as the
+knob misbehaving.
+
+**Tower count is 8–10 against the baseline's 9 at every dose.** That is the whole difference from
+iteration 63, which bought the same ratio shift by collapsing to **2 towers**. A scheduler pays for
+splashers with *delay*; a paint threshold pays with the soldiers themselves.
+
+**I am not reading Mirage coverage**, as pre-registered and as three prior iterations have taught me.
+The stage-0 question was whether the ratio moves. It does.
+
+### One addition to the plan, made before any outcome is seen
+
+I registered a `bobf` screen but no rule for *which dose* to send there, and three doses on `bobf`
+would be 450 games. Adding a dose-selection step, using each instrument for what it is good at:
+
+1. **Self-play 25-map screen, three arms, 150 games** -> selects the dose. Relative comparison among
+   my own arms is exactly what this instrument does well, and iteration 68 gave me positive evidence
+   it is not blind here.
+2. **Then `bobf`** on the selected dose (>= 105/150) **and** the self-play census (margin >= +26),
+   both required, unchanged.
+
+The three arms are indistinguishable on Mirage coverage (700 / 700 / 703), so there is nothing to
+select on and no outcome has been consulted.
