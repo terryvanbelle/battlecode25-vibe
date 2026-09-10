@@ -22562,3 +22562,64 @@ K5 distribution is *again* a marginal where I need a joint: I do not have the to
 **Registered, and no mechanism until it exists:** paint in the richest reachable tower,
 **cross-tabulated by (hungry, ready)** — three cells, one probe run. That is the number that prices a
 gate-1 relaxation and a further reserve cut *together*, which is how they will actually interact.
+
+# K6 — THE CROSS-TABULATION. Both doses now priced on the population that reaches the gate
+
+`src/alice_k6probe`, additive, **identity-verified at 534 / 1869 / 1096**. Reachable-tower paint
+bucketed and **split by (hungry, ready)** — the joint cell, not the stages.
+
+| richest reachable tower | **hungry + ready** (the shipped mechanism's population) | **ready, NOT hungry** (what a gate-1 relaxation adds) |
+|---|---|---|
+| ≤ 0 | 5.1% | 10.6% |
+| 1–25 | 15.3% | 20.8% |
+| **26–50** | **56.1%** | 21.5% |
+| 51–100 | 6.3% | 12.4% |
+| 101–200 | 4.9% | 22.8% |
+| > 200 | 12.4% | 11.9% |
+| **n** | **412** | **1,026** |
+
+**Instrument validated first:** at R=50 this cell reads **23.5%** — K4's stage counter said
+**23.54%**. Two instruments, one number. That is what licenses the rest.
+
+## And the same threshold, three ways — the defect made visible in one table
+
+| measurement | R=50 |
+|---|---|
+| conditioned on hungry+ready (correct) | **23.5%** |
+| over ready-but-not-hungry | 47.1% |
+| unconditioned (K5) | 42.2% |
+
+**56.1% of the towers a hungry, ready unit can reach hold 26–50 paint** — the reserve I shipped sits
+*on top of the modal bucket*. That is why 200→50 bought so little: it moved the threshold to the
+edge of the mass instead of through it.
+
+## The two doses, priced jointly for the first time
+
+| change | gate-4 pass within its own population | opportunity |
+|---|---|---|
+| reserve 50 → **25** | 23.5% → **79.6%** | **3.4x** on the existing 412 events |
+| gate 1 relaxed (draw when not hungry) | adds 1,026 events at 68.6% (R=25) | **~5x** more events |
+| **both** | 328 + 704 = 1,032 permitted vs **97** today | **≈10.6x** |
+
+**Rate and volume priced together, as registered:** a not-hungry unit can still accept a mean of
+**32.3 paint = 6.5 paint actions**, against **1 action** spent on the transfer — a **6.5x return per
+action**. *Bounded honestly:* 32.3 is the unit-side headroom; the transfer is also clamped by the
+tower's own surplus, so realised volume is lower and the tower-side clamp is visible in the same
+table (21.5% of that cell's towers sit at 26–50, offering only 1–25 above a reserve of 25).
+
+## Registered — iteration K7, and the dose comes from the cross-tab, not from a curve
+
+> **Mechanism:** reserve **50 → 25**, and gate 1 relaxed from `p*2 < cap` to `p < cap` — **two
+> constants, one site.** I am taking both because the cross-tab prices them *together* and they act
+> on disjoint populations; taking them separately would re-run the same screen twice for a
+> known-interacting pair.
+> **Screen:** 25 maps / 50 games / **net ≥ +4**, null arm in the same batch, VOID first, in code.
+> **Manipulation check (required even on an accept):** refills per unit must rise from **0.265**
+> toward carol's 2.044 — and this time the prediction is **≈10.6x opportunity**, so a realised
+> refill rate below **3x** falsifies the cross-tab's pricing even if the screen passes.
+> **Falsifier:** per-unit paint actions flat or down while refills rise — units topping up and then
+> dying or idling, i.e. paint moved but not spent.
+
+**That last clause is the one this iteration exists to test.** Every dose I have sized this session
+was wrong in the same direction; **this is the first with a pre-registered numeric prediction that can
+be shown false independently of the outcome.**
