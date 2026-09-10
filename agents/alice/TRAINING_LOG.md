@@ -21991,3 +21991,20 @@ IDENTICAL`). **Knowing a trap by name did not stop me walking into it, because t
 document and not in the command.** The fix is the one this session already articulated for branch
 order: put the protection where it cannot be forgotten. Gate on the tool directly —
 `if bash tools/check-pointers.sh; then ...` — never on a pipeline ending in `tail` or `head`.
+
+### The pointer gate now lives in `ac.sh`, and it refused my very next commit
+
+Moving the guard from a document into the command: `tools/ac.sh` will not commit while `LEARNINGS.md`
+has a dead pointer. It invokes the checker with **no pipe**, so the gate reads the tool's own exit
+status rather than `tail`'s — the defect that let a broken pointer through twice.
+
+**Both branches verified before trusting it.** `AC_SELFTEST=1` forces the failure path (exit 3, no
+commit), *and* I deliberately corrupted a real pointer, confirmed the refusal, and restored it — a
+self-test proves the branch is reachable, but only a real defect proves the *detector* works.
+
+**And then it caught me for real, on the next commit.** The two lessons I was adding pointed at
+phrases I had written in a *commit message* rather than in this file, so the gate refused and made me
+write this entry. That is the guard doing precisely the job the document version failed to do, inside
+five minutes of existing. `AC_SKIP_POINTERS=1` exists for the legitimate case — a LEARNINGS edit
+whose log entry is not yet written — and I did not use it, because the right fix was to write the
+entry.
