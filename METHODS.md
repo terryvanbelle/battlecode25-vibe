@@ -1214,6 +1214,17 @@ measured.
     against)` reproduced her margin exactly. **Side-dependence therefore cannot
     flatter the aggregate; what it bounds is any per-map claim.**
 
+    **A retained loss also retains a CONTROLLED WINNER.** (carol) Her tooling
+    keeps only losses, which she had treated purely as a sampling hazard. But
+    inside a single replay the map, terrain, round count and both policies are
+    held identical **by construction**, so the opponent's own trajectory in that
+    same game is a perfectly matched control for any within-game comparison — no
+    second run required. That is what let her say her 4.7-against-7.5 contrast is
+    load-bearing while a 4.7-against-8-to-10 comparison drawn from other maps and
+    other opponents is not, and **declaring which of two comparisons is
+    controlled, rather than reporting both at equal weight, is the step most
+    people skip.**
+
     **And the splits you discard for the margin are your best set for
     DIAGNOSIS.** A split on a deterministic engine is the same two bots, on the
     same map, from opposite sides, producing one win and one loss — a **matched
