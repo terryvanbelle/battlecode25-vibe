@@ -22867,3 +22867,73 @@ failure. Production is not chip-allocation-limited, so a spawn-order change coul
 **What stays open:** the *posture* half of premise 3 (p90 unit distance 6.3 vs the rival's 17.0)
 is untouched by this and remains unrefuted. I am not opening it today and I am not manufacturing an
 axis; I am recording that the pair has been separated and only one half is closed.
+
+## Does premise 3 close ENTIRELY? Running the pair logic backwards — and then measuring the hinge
+
+The completion argument put to me: the pair's logic was *"posture alone loses because you cannot
+replace the units it strands; production alone is worth little because the units are recalled
+anyway."* Having refuted the production half **on value** rather than on reachability, the posture
+half's original refutation (losing 26 games) was only ever conditional on **being able to replace the
+stranded units** — so if production can never be worth having, that condition can never be met and
+the pair cannot work.
+
+**The logic is right, and I nearly accepted it as written. But it has a hole, and it is my own worst
+error class.** Every number in the production refutation was measured **under the tethered posture**.
+The pair's entire claim is that production is worth more *when posture is forward*. Carrying a
+measurement across the policy change that the hypothesis exists to make is **iteration 67 exactly** —
+retention measured under the incumbent's policy, applied to a policy that changes it, cost -22/-14/-46.
+So "production is worth +3..+9 under the tether" does not by itself license "production is worth
++3..+9 under forward posture". The backwards argument needs the hinge measured, not assumed.
+
+### The hinge, named and then measured
+The two halves are coupled through **one tower needing 400 chips AND 300 paint at the same moment**:
+
+- forward posture **removes refill trips**, which currently drain tower paint -> should **relieve**
+  the binder. This is the pair's funding source and it had never been measured.
+- forward posture **raises replacement demand** (units die away from home) -> **tightens** it.
+
+`carol_r2` is the measured arm with `walkHomeIfDry` disabled, and
+`carol_iter45-vs-carol_iter44-on-leavemealone` is a matched control: same map, same opponent.
+r2's game ran 522 rounds against the control's 1393, and early rounds are poorer, so I compared on
+the **matched window, rounds 1-522**:
+
+| rounds 1-522, leavemealone, vs carol_iter44 | median chips | chips >= 1600 | a tower >= 300 paint | **BOTH at once** |
+|---|---|---|---|---|
+| `i45a` incumbent, tether ON | 1,520 | 38.3% | 71.5% | **21.1%** |
+| `r2b` tether OFF + splasher-first | 1,260 | **10.3%** | **78.2%** | **0.2%** |
+
+> **The pair's funding source is REAL and it is SMALL.** Dropping the tether does relieve the
+> binding resource — a tower holds 300 paint in 78.2% of rounds against the control's 71.5%. That is
+> **+6.7 points, a 1.09x relief.** The mechanism the pair depends on exists. It is one ninth of what
+> the pair needs.
+
+### The arithmetic that closes it
+The top allocation dose reaches **62 splashers per 1,000 rounds** against the **125** ceiling — the
+pair requires a **2.02x** lift. Posture relieves the binder by **1.09x**. Granting the relief in full
+and converting all of it to production gives **68 per 1,000r**, closing **6 of the 63-unit remaining
+headroom — 9%.**
+
+> **Required relief 100%, measured relief 9% — an order of magnitude apart.** That gap is why the
+> single-game, three-changes-coupled nature of the r2 estimate does not matter: the estimate would
+> have to be wrong by a factor of ten, in the favourable direction, to change the verdict.
+
+And the same table shows the pair's other half paying for the relief: joint affordability falls from
+**21.1% to 0.2%**, a hundredfold collapse, because splasher-first spending drives chips from 38.3%
+to 10.3%. The two halves do not compose — **each relieves the resource the other exhausts.** That is
+the mechanism behind iteration 77's stage A producing 12 against a control's 43, now measured rather
+than inferred.
+
+### VERDICT
+
+> **Premise 3 CLOSES ENTIRELY.** The production half is refuted on value; the posture half's
+> refutation stands unrescued, because the rescue route has now been *measured* at 9% of the relief
+> it would need. The design enumeration is complete: **6 of 6 premises closed**, five refuted for
+> zero games and the sixth built, aborted, and now closed on its own hinge.
+
+I did not open the posture half to get here and I did not add an axis. I measured the one coupling
+the backwards argument had to assume, and it pointed the same way as the argument.
+
+**Noted, from the coordinator and not checkable by me:** my accept bar is not the binding constraint.
+At a conventional 2 sd the bar would be ~+18.5 rather than +26, and nothing priced today clears
+either — best measured candidate +11 at 1.2 sd, production extrapolation +3..+9. The impasse is not
+an artefact of a conservative gate.

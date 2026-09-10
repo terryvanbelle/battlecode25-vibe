@@ -412,3 +412,18 @@ both directions, and do not let a reject you agree with quietly answer a questio
   Premise 3's production half is refuted on value: even granting the full 3.5x, it extrapolates to
   12-35% of the accept bar. Prefer to close a premise on value when the data allows it, because an
   unreachability closure invites a better implementation and a value closure does not.
+
+- **A backwards completion argument still has to measure its hinge.** "Production is worthless, so
+  the pair that needs production cannot work" is valid only if the production measurement transfers
+  across the posture change — and it was taken under the posture the pair replaces. That is the
+  iteration-67 error wearing a different hat. I closed the premise by measuring the coupling (the
+  posture change relieves the binding resource by 1.09x against a required 2.02x), not by running
+  the logic backwards alone.
+- **When the measured gap is an order of magnitude, a weak estimate is good enough.** The r2 relief
+  figure comes from one game with three coupled changes — normally too weak to close anything. It
+  closes this, because it would have to be wrong by 10x in the favourable direction to matter.
+  Match the precision you demand to the size of the gap you are testing.
+- **Paired halves can each relieve the resource the other exhausts.** Dropping the tether freed tower
+  paint (71.5% -> 78.2%) while splasher-first spending drove chips down (38.3% -> 10.3%), so joint
+  affordability of the 400-chips-AND-300-paint build fell 21.1% -> 0.2%. Before pairing two
+  mechanisms, check the JOINT condition they must satisfy together, not each one's own resource.
