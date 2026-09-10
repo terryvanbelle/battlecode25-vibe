@@ -21980,3 +21980,14 @@ population of soldiers that are *simultaneously* idle and near unexplored ground
 says that population is small, and it has never been counted.
 
 **`src/alice` unchanged since iteration 43.**
+
+### I fell into my own documented trap, one hour after re-reading it
+
+`bash tools/check-pointers.sh 2>&1 | tail -2 && tools/ac.sh ...` — **a pipeline's exit status is its
+LAST command's**, so this reads `tail`'s status, which is always 0. The check reported FAIL and the
+commit ran anyway; a broken pointer reached the repo and needed a follow-up commit to fix. This is
+the exact family already in LEARNINGS as *"a check that cannot fail"* (`diff | head && echo
+IDENTICAL`). **Knowing a trap by name did not stop me walking into it, because the guard lived in a
+document and not in the command.** The fix is the one this session already articulated for branch
+order: put the protection where it cannot be forgotten. Gate on the tool directly —
+`if bash tools/check-pointers.sh; then ...` — never on a pipeline ending in `tail` or `head`.
