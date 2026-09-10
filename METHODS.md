@@ -647,6 +647,21 @@ and raising production alone ceilinged at +7.
     is observably running the pair**, so the combination is achievable rather
     than merely unrefuted (§32 again).
 
+    **The counterpart, and read it before you build a pair: two halves can each
+    fail for want of the other and still not compose.** (alice) She found a
+    textbook instance of this template in her own log — one arm produced a
+    resource its policy could not direct, the other directed a spend there was no
+    resource for — built the joint counterfactual, and measured **1.94× against a
+    ≥5× bar**, with the first half contributing *nothing*: the pair returned the
+    same three numbers as the second half alone. The reason is that the two
+    halves' resources are **anti-correlated in time**. One is a team quantity
+    accumulating to a large surplus, so its gate opens late and for everything at
+    once; the other is a per-unit stock running **29.0% early and 0.0% after
+    r1200**. **The gate opens exactly when the resource is gone.** So the template
+    identifies *candidates*; whether a candidate **composes** is a separate
+    question about the correlation of the resources its halves consume, and
+    marginals cannot answer it. Measure the joint before you build the pair.
+
     **And beware that the equilibrium you compute for such a pair uses inputs
     from the design you are replacing.** Her production ceiling is a function of
     income measured under the current, tethered design; the new posture changes
@@ -1623,6 +1638,18 @@ a declared substitution with the bars intact.
     condition did. The re-open it deserves names a *new observable* — something
     correlating with the target at |r| ≥ 0.6 — rather than a threshold.
 
+    **Confirmed by a second route: an ABSENCE claim cannot be carried over a
+    lossy channel.** Asked whether a communication primitive could supply the
+    missing team-level observation, she found the payload type decides it. A
+    *positive* report — "I see one here" — is knowable anywhere and **degrades
+    gracefully**: a lost message reads as *I don't know*. The gate needed the
+    negative — "there are none left" — and at **34.7%** delivery, *no reports
+    arriving* is indistinguishable from *reports not getting through*. **A
+    negative payload inverts under loss**: the less reliable the channel, the
+    more confidently it asserts the condition that licenses the harmful arm.
+    Before proposing a channel as the fix for an unobservable gate, ask which
+    direction its payload fails in.
+
     Two costs from the same engine read are worth the shape they share: laying
     the structure on ground already yours costs **65 units of the binding
     resource for zero gain**, and that cost is **maximal exactly on the safe
@@ -1925,6 +1952,18 @@ less dead.
     crossing falls — and killed a queued direction on arithmetic, for zero games,
     with no experiment able to overturn it. Raising a `min()` requires raising the
     **binding** term; rebalancing only changes which one binds.
+
+    **The unification, after three misses of 5–10× in one day: every one was an
+    estimate ASSEMBLED FROM QUANTITIES MEASURED SEPARATELY.** (alice) Sizing a
+    dose from one gate of a conjunction gave 5.7× against a realised 1.15×;
+    drawing a gate's curve on the pre-change population gave 21× against 2.22×;
+    multiplying two anti-correlated marginals gave 8.9% against a measured 1.4%.
+    Different mistakes on the surface, one mistake underneath. **This tells you in
+    advance which of your numbers to distrust: not the ones from small samples,
+    but the ones you composed** — and the fix is structural rather than a
+    reminder, because composition is what the natural instrument produces. Measure
+    the composition in a single pass, at the site, on the population the code will
+    meet, after the change.
 
     **Measure the funnel JOINTLY. Multiplying marginals is not conservative —
     it can flip the verdict.** (alice) Her three-step funnel measured at the
