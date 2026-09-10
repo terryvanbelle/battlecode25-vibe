@@ -20950,3 +20950,77 @@ Every eliminated explanation bottomed out there, and the accounting says carol i
 **I am still not proposing a mechanism.** Seven explanations have been removed by measurement and
 four by failed candidates; the remaining question is why carol's paint *throughput* is lower than an
 opponent that pays twice the drain, and that is a question about income, not about spending.
+
+# INCOME, measured for the first time — the axis eight eliminations pointed at
+
+Every eliminated explanation bottomed out at paint, and I had priced only the *spending* side
+(39% conversion matching a foreign lineage's 38%; the lowest drain of three bots measured). Per the
+rule that says that reading should push me upstream rather than reassure me, here is the other side.
+
+## 1. The gap, decomposed — `carol_iter45` vs `bobf` on Gears
+
+| | paint towers | levels | base income | **SRPs** | **total paint income** |
+|---|---|---|---|---|---|
+| **carol** | 6 | [2,2,2,3,3,3] | 75/turn | **0** | **75/turn** |
+| **bobf** | 13 | mostly 2 | 125/turn | **3** | **242/turn** |
+
+> **bobf earns 3.2x carol's paint income** — and carol is *better* at the one part of it she
+> controls directly: mean tower level **2.5 against 2.0**. The deficit is entirely count and SRPs.
+
+**SRPs stack linearly onto every tower** [E, RULES.md: `getNumResourcePatterns(team) * 3`, added to
+each tower's income], so bobf's three patterns multiply his paint income by **1.94x** on their own.
+Paint-tower count supplies the other **2.17x**.
+
+## 2. The SRP closure is intact and its condition is NOT met — but it now has a price
+
+`agents/carol`'s own iteration 48–51 closed SRP with a written re-entry condition:
+
+> *"re-open SRP only if this bot acquires a reason for soldiers to **dwell** — a territory-holding or
+> defensive-station behaviour adopted for its own sake, whose locality SRP could then free-ride on.
+> **Do not re-open it by proposing parking again**; parking has been measured at 7/50."*
+
+carol has no dwelling behaviour, so **the condition is unmet and I am not re-opening it.** What has
+changed is not the condition but the **prize**: that closure was decided on delivery mechanics
+(marks served 5–8x short) *without knowing SRPs are worth 1.94x on the binding resource*. Recording
+the price against the closure so a future session weighing a dwelling behaviour "for its own sake"
+knows what rides on it — which is exactly what the condition anticipates.
+
+## 3. The other half is NEW and has never been measured: carol's income PEAKS and falls
+
+| round | 200 | 400 | 600 | **800** | 1000 | 1200 | 1400 | 1599 |
+|---|---|---|---|---|---|---|---|---|
+| **carol towers** | 6 | 7 | 8 | **9** | 7 | 7 | **6** | **5** |
+| **bobf towers** | 8 | 8 | 8 | 9 | 9 | 10 | **11** | 10 |
+
+**carol peaks at 9 towers at round 800 and declines to 5; bobf grows monotonically.** carol's tower
+stash collapses from **1,174 to 95** over the same span. Paint income is not merely lower — it is
+*falling* while the opponent's rises.
+
+**What happens to the sites** (arena grids at r800 vs r1400, all 3 carol towers lost in between):
+
+| lost site | occupant at r1400 | 5x5 paint around it |
+|---|---|---|
+| (35,21) | **bobf money tower** | enemy 11 / ally 14 |
+| (50,19) | **bobf paint tower** | enemy 25 / ally 0 |
+| (42,11) | **nothing** | ally 18 / **empty 1** — the pattern is one tile short |
+
+**Two of three lost sites were recaptured by the opponent; the third sits free, almost complete, and
+carol never returns to it.** So the dominant loss is a *recapture race carol does not contest*, not
+the enemy-paint denial I would have guessed.
+
+## What this establishes, and what it does not
+
+**Establishes:** the paint deficit is an income deficit, it has two independent causes (SRPs 1.94x,
+tower count 2.17x), carol is not behind on upgrades or on spending efficiency, and carol's income
+**declines after round 800** while the opponent's grows.
+
+**Does not establish:** the recapture finding is **3 sites in 1 game**. It is the first measurement
+of tower attrition in this lineage's history and it is far too thin to build on.
+
+## Registered next measurement — not a mechanism
+
+**Replicate the attrition finding across maps and opponents**: for every carol tower lost, does the
+opponent recapture the site, does carol recapture it, or does it stay empty — and how long does each
+take? That is the decomposition that would distinguish "carol cannot rebuild" (a denial problem)
+from "carol never tries" (an attention problem) from "carol is out-raced" (a production problem).
+Three different causes, three different fixes, and 3 sites cannot tell them apart.
