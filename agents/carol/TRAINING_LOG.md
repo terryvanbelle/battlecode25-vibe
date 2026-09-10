@@ -20825,3 +20825,52 @@ full-corpus census at margin >= +26.** Both as usual.
 relative, so **I expect a small effect and quite possibly a null.** A bug fix that measures as a null
 is still worth having in HEAD if it does no harm, but it will not clear a +26 census bar on its own,
 and I am recording that before the screen rather than after.
+
+## Iteration 73 — DOES NOT PASS. 29/50, margin +8 (1.13 sd) against a registered bar of >= 31.
+
+Run `20260910-113332`, `carol_i73` vs `carol_iter45`, fresh 25-map sample, 50 games.
+
+> **29/50 = 58%, margin +8 = 1.13 sd. Gate: >= 31/50. Does not proceed to the census.**
+
+The mechanism check moved correctly (`HOME` 35.5% -> 33.5%, `noPaint` unchanged at 0.0%), the sign
+is right, and the size is exactly what I priced in advance (~5% of splasher turns; observed −5.6%
+relative). **It is simply not evidence.** +8 on 50 games is what a policy-identical placebo can
+produce.
+
+### The temptation, named and refused
+
+This is a **bug fix** — a code path that tries 5 of 8 directions and then gives up, in a loop that
+can starve the unit — and I registered in advance that *"a bug fix that measures as a null is still
+worth having in HEAD if it does no harm"*. It would be easy to promote it on that reasoning.
+
+**I am not doing that.** "Bug fix" is my own characterisation of a change the instrument scores at
+1.13 sd; accepting below a bar I registered because I like the change is the same move as running a
+census whose purpose has evaporated, which this log already names as *gate-shopping with extra
+steps*. `src/carol` stays at `carol_iter45`.
+
+### What is recorded instead
+
+| item | status |
+|---|---|
+| **Defect**: `walkHomeIfDry` has no fallback and no stuck-escape; a latched unit blocked in its 5 preferred directions stands still with free tiles available and can starve | **LOGGED, unfixed in HEAD.** Measured cost: `HOME` −2.0 points, worth +8/50 = 1.13 sd |
+| navigation / pathfinding family | **CLOSED** by iteration 72's re-open condition, answered: units are blocked by robots, not terrain |
+
+**Re-open / bundling condition:** the fix is written and verified in `src/carol_i73`. **Any future
+iteration that edits `walkHomeIfDry` for another reason should include it**, because at that point it
+costs nothing extra to carry and its sign is known to be positive. It should not be promoted on its
+own evidence.
+
+## Where the lineage stands after this stretch
+
+`carol_iter45` remains HEAD, externally validated (+9 vs alice, +10 vs bob, +6 vs finals v3, all
+against fixed opponents). Since then: **six consecutive closures**, each on a pre-registered rule —
+mopper supply (−3.83 sd), obstacle tracing (stage 0), the refill fallback (below bar), plus the
+splasher-supply, travel-cost and expansion accounts of the area gradient all refuted by measurement
+rather than by candidates.
+
+**The area gradient remains the largest measured deficit** (26.6% vs alice, 51.6% vs `bobf` on maps
+>1600) and now has **four eliminated explanations** — mix, travel, expansion, denial — and one
+measurement standing: the opponent occupies carol's territory (85–88% of their unit-turns on carol's
+paint) while carol occupies its own (58–90%), and carol's paint conversion (39%) matches a foreign
+lineage's 38% exactly, so it is not an efficiency gap. **I have deliberately stopped proposing
+mechanisms for it**, and the last three entries in this log are measurements rather than candidates.
