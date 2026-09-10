@@ -24056,3 +24056,60 @@ Conditioning on it would be the selection error I have caught three times today.
 > **If nothing clears even in the deficit's own regime, that is a strong closure** — the regime where
 > the deficit lives cannot be reached by anything I have built — **and I will say so plainly rather
 > than softening it.**
+
+# THE RE-PRICE — NOTHING RE-OPENS, and the closure is the stronger for it
+
+Subpopulation as frozen in `83029b3`: **7 of 19 games** — Barcode, Brat, Bunny, Castle, DefaultHuge,
+DefaultLarge, Dominoes.
+
+**Validity check first, and it passes:** alice won **4/7** in the subpopulation against 5/12 in the
+rest, so the definition is **not** a proxy for losing — and **per-unit paint actions are 11.38 there
+against 15.17 elsewhere (0.75x)**, so the subpopulation genuinely contains the deficit. It selects
+the regime without selecting the outcome, which is what the pre-outcome definition was for.
+
+| binding constraint | subpop | rest | ratio | vs the registered ≥2x |
+|---|---|---|---|---|
+| **K8 — paint/tower ≥300** | **25.8%** | 15.8% | **1.63x** | **fails** |
+| soldier affordability ≥200 | 30.1% | 28.1% | 1.07x | fails |
+| mopper share | 21.8% | 20.2% | 1.08x | fails |
+| per-unit paint actions | 11.38 | 15.17 | 0.75x | — (the deficit itself) |
+
+> **Nothing clears. Registered outcome: NOTHING RE-OPENS.**
+
+## The correction earned its keep, and I want that on the record
+
+**K8 is the near miss and it is instructive.** Its corpus ceiling was 3.2x against a 5x bar. Its
+binding constraint is **1.63x looser** in the deficit's regime, so its re-priced ceiling is
+**3.2 × 1.63 ≈ 5.2x — nominally over its own bar.**
+
+> **Without the multiple-comparisons correction I would be re-opening K8 right now, on one of five
+> tests landing 4% over its threshold.** That is precisely the shape chance produces when you test
+> five things. **The 2x margin I registered before computing is what stops it**, and it stops it by a
+> wide margin (5.2x needed 10x). **A correction that never changes an answer is decoration; this one
+> changed today's.**
+
+## So, plainly, as registered
+
+> **The regime where the deficit lives cannot be reached by anything I have built.** Not "the
+> mechanisms are too small on average" — **too small where the deficit actually is**, measured on a
+> subpopulation chosen before any mechanism was considered and validated as containing the deficit by
+> a quantity I did not select on.
+
+**That closes the mechanism question completely.** The routes are enumerated from the pinned jar; the
+currencies are measured against each other and phase-mismatched; the mechanism set is re-priced in the
+deficit's own regime and still short. **Every remaining lever I hold has now been priced somewhere it
+could have worked, and none does.**
+
+## Where that leaves the session
+
+- **A prize that clears the bar at 2x** — +23.7 net swept at full capture, +15.8 at two thirds — and
+  it is *counted*, not modelled.
+- **A defect located in game outcomes**: alice leads on towers 12–4 and converts at 75% against 100%.
+- **And no mechanism that reaches it**, including in the regime where it lives.
+
+> **That is the condition for a design change, arrived at by exhaustion rather than by preference**,
+> and I hold a standing authorisation for it. **What I will not do is spend it in the last minutes of
+> a session** — a rewrite registered in haste is the one experiment whose value depends entirely on
+> the question being framed before the code is written. **The next session opens with the design
+> premises and the trade already stated, the prize already counted, and the mechanism space closed
+> behind it** — which is a far better starting position than the one this session opened with.
