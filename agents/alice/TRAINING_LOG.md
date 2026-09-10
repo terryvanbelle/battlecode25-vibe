@@ -19573,3 +19573,20 @@ session has closed seven directions by pricing before building.
 If a lineage that never attacks towers wins the tournament at 61.3%, the trade may already be
 correctly declined, and the collapse games may be the price of a strategy that is net positive. That
 is the discriminating question and it costs nothing: the replays are on disk.
+
+### Two of my own tools broke during this pre-check, and both are recorded rather than silently worked around
+
+1. **`tools/paint-trace.sh`'s new `TRACE_GREP` override is broken** and I did not fix it — the pattern
+   is mangled between the generating shell and the remote heredoc, and the run returns only the
+   `# GAME` headers. I diagnosed far enough to prove it was the *tool* and not the data (a direct
+   scp'd script on the same replay returned 1,984 `DAMAGE`, 896 `DIED`, 1,984 `ATTACK` lines), then
+   used the scp'd-script path for the actual measurement rather than keep debugging quoting. **The
+   override should be treated as non-working until fixed**; the default paint/unpaint path is
+   unaffected and was used successfully earlier today.
+2. **The `bc` sums in my ad-hoc symmetry script returned 0** for every damage total — the
+   `sed | paste | bc` extraction failed silently. **The counts in the same output are sound and are
+   what the finding rests on**, and the damage magnitudes came from the separate, working
+   attribution run (148,900 HP). I am flagging it because a zero that *looks* like a measurement is
+   worse than an error, and anyone reading `symmetry.txt` would see `aliceDmgToTheirTowers=0` and
+   could read it as "alice dealt no damage" rather than "the sum did not compute" — the two happen to
+   agree in direction here, which is exactly when a silent failure is most dangerous.
