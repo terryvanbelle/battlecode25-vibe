@@ -258,6 +258,19 @@ both directions, and do not let a reject you agree with quietly answer a questio
   real alternative was NO conversion, worth zero, against which 14 paint/tile is worth taking. A
   correct number against a counterfactual that does not exist (doctrine 5, wrong referent).
   → TRAINING_LOG, *"Wrong referent (doctrine 5)"*
+- A CONDITIONAL PROBABILITY MEASURED UNDER YOUR CURRENT POLICY IS NOT A FACT ABOUT THE GAME.
+  I measured, correctly and on two disjoint maps, that enemy-converted tiles are lost 2.7-6.4x more
+  often than empty-converted ones — then built a policy on it and lost -22/-14/-46 out of 50. They
+  are lost more often BECAUSE they sit where the enemy is active; stop contesting that ground and
+  the enemy keeps it and expands, so the front moves and the estimate collapses. Retention was an
+  equilibrium of both policies, not a property of a tile's origin. Before acting on a measured
+  conditional, ask whether the action moves the conditioning event. → TRAINING_LOG, *"Error 2 -- the deeper one"*
+- NAMING SOMETHING "UNPRICED" AND THEN DOSING IT TO ZERO IS ASSUMING, NOT BRACKETING. I wrote that
+  enemy conversion "carries unpriced defensive value" and shipped an arm (W_ENEMY=0) that set it to
+  nothing; that arm was PAINTED OUT at round 474 and scored 2/50. >70% of paintable squares is an
+  instant win for EITHER side, so enemy conversion is the only brake on the opponent's win
+  condition. If a term is unpriced, the dose that zeroes it is the one you must justify hardest.
+  → TRAINING_LOG, *"Error 1"*
 
 ## Housekeeping
 
