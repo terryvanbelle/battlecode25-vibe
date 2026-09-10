@@ -23501,3 +23501,52 @@ is a fact about how alice's currencies convert, not about how well any single le
 > tower paint supply **without** my having chosen it because it would close. **If instead a mechanism
 > raises paint supply WITHOUT spending towers, that refutes the sentence above and the whole
 > convergence with it** — and that, not another dose, is the experiment worth looking for.
+
+# THE COMPLETE ENUMERATION — read off the pinned jar. My own sentence is REFUTED, and the conclusion inverts
+
+Read from the engine, not from my replays, because replays only show routes my bot already takes.
+Every method that credits paint, from `javap -c -p` on the pinned 3.1.0 jar:
+
+| call site | effect | requires towers? |
+|---|---|---|
+| `processBeginningOfRound` → `paintPerTurn` | tower income 5/10/15 | **yes** |
+| `processBeginningOfRound` → `extraResourcesFromPatterns` | **SRP income** | **no** |
+| `mopperAttack` | `addPaint(-10)` enemy, **`addPaint(5)` self** | **no** |
+| `spawnRobot` | credits the robot, debits the tower | **net zero** |
+| `mopSwing`, `processEndOfTurn`, `soldierAttack`, `splasherAttack` | negative only | — |
+
+**Completeness check that mattered:** `GameWorld.setPaint` appeared to call `addPaint` — it calls
+**`addPaintedSquares`**, a scoreboard counter. A prefix match, caught because an enumeration claim
+survives one false member and no missing ones.
+
+## My sentence is refuted, and I retract it
+
+> *"Paint supply can only be bought with towers."* **False.** The engine provides **two routes that
+> require no tower at all** — SRP income and mopper theft. I generalised from the two routes my bot
+> happens to use, which is exactly the blind spot reading the engine was supposed to prevent, and I
+> reached for it *after* being warned that replays only show routes already taken.
+
+**But every route is accounted for, which is the stronger claim:**
+
+| route | status |
+|---|---|
+| tower income | attacked **twice**, independently: i53 raised the rate **+639 (+50%) → −2**; E2 raised the count **→ −8**. Both **paid with towers.** |
+| **SRP** | **iteration 10, REJECTED** — 13/24, 13/24, 14/24 across 72 games. Re-open condition: *"the chip constraint becomes binding in r0–r400."* **E1 refutes it outright** — chips run to a 42,712 surplus. |
+| **mopper theft** | targeting **already optimal within vision** (iterations 19/46). Measured now: **21 of 900 mops (2.3%) hit an enemy robot**, worth 105 paint/game — and the limit is *enemy-robot availability*, not targeting. |
+
+## And the enumeration inverts my conclusion about the rewrite
+
+I have been building toward *"the economy is the ceiling."* **The enumeration argues the opposite.**
+These three routes are **fixed by the engine and identical for every lineage** — and **carol extracts
+2x alice's per-unit output from exactly the same three.** A rewrite cannot add a fourth route; nobody
+can. **So the economy is demonstrably not the ceiling: it supports 2x, and someone is getting it.**
+
+> **The ceiling is not which routes exist. It is what alice does with the same three.** That is a
+> statement about *design*, and it is arrived at by enumeration rather than by counting failures —
+> which is what I was one magnitude-closure away from doing instead.
+
+**Clause (a) of my rewrite condition is now the wrong instrument** and I am recording that without
+amending it again today: it counts magnitude closures as evidence the economy is exhausted, but the
+engine says the economy is not exhausted, carol says it is not exhausted, and **a third closure would
+tell me nothing the enumeration has not already settled.** The honest position is that the design
+question is now sharply posed and the counting condition is vestigial.
