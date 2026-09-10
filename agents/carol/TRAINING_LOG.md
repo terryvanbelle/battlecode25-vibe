@@ -23741,3 +23741,82 @@ she finishes with a mean of **2.75 structures**. **The information is acquired a
 > their own tower **6.3**), and **dropping the tether alone is REFUTED at −26** (iteration 60's zero
 > arm). If a remembered ruin is only reachable by breaking the tether, this mechanism inherits that
 > refutation. **That is the falsifier to test at stage 0, before a screen.**
+
+# Iteration 80 — the RUIN MEMORY. Stage-0 falsifier PRE-REGISTERED, before a line of code.
+
+Resumed on a fresh context. State verified first: HEAD `c338ce8`, working tree clean of carol paths,
+all six of 2026-09-10's gauntlet runs `complete` **and** already collated into this log — no orphaned
+run, nothing to recover. Iteration 79 (the re-opened tower-attack gate) is closed and recorded.
+
+## What is registered, and why this shape
+
+`c338ce8` localised the margin-carrying failure: on Set A — the six maps carol loses **from both
+sides** against `carol_siege`, which is the entire margin — the mechanism is **replacement**, failure
+to keep building after ~r300 (2.7:1 whole-game, ~10:1 on r300–800, against the defence alternative).
+Split three ways it is **availability 77.5%** (affordability 13.1%, choice 9.4%), and **77.7% of the
+blind rounds still have unclaimed ruins on the map, median 7**. So: positioning, not exhaustion.
+
+The code fact that names it: `nearestEmptyRuin()` is **sense-range only**, carol keeps a 12-slot
+`towerMem` and **no memory of unclaimed ruins at all**, while her soldiers sight **67%** of the map's
+ruins over a game. The information is acquired and discarded.
+
+**The registered falsifier, from `c338ce8`, tested BEFORE any screen:**
+
+> **Seeing a ruin is not being able to reach it.** carol's units are tethered — p90 distance from
+> their own tower **6.3** — and **dropping the tether alone is refuted at −26** (iteration 60's zero
+> arm, `REFILL_LOW=0`). If a remembered ruin is only reachable by breaking the tether, this mechanism
+> **inherits that refutation** and closes without a screen.
+
+## The instrument — and why it is a NO-OP build
+
+Iteration 79 cost zero games because I validated the counter before spending, and the counter refuted
+the premise's magnitude (a recorded 859 attacks/1,000r was actually 379; two others were **21× over**,
+from a number with no reproducible method attached). I am applying that lesson as a rule here.
+
+The existing replays **cannot** answer this: the indicator string carries `ruin=(x,y)` only when a
+ruin is in sense range, which by construction never holds on a blind round, and it carries **no robot
+or tower location at all**. So the falsifier needs new games — but it does **not** need a new policy.
+
+`src/carol_memp` is a **measurement build with byte-identical play**: it records the memory and
+reports it, and **never acts on it**. No branch reads `ruinMem` to make a decision. That makes stage 0
+free of the confound that killed several arms here — a behaviour change measured as if it were an
+observation — and it means a REFUTED verdict costs 3 games and nothing else.
+
+- record: every empty, unbanned ruin sensed goes into a 24-slot `ruinMem`; a remembered ruin seen to
+  carry a robot is dropped. Recording happens inside `nearestEmptyRuin()`'s existing sense loop.
+- report, **only on blind soldier-turns** (`nearestEmptyRuin()` returned `null`), appended to the
+  indicator: whether the memory holds a still-unclaimed ruin, the soldier's own distance to the
+  nearest one, and — the falsifier quantity — `min over towerMem of d(ruin, tower)`, evaluated
+  **generously**: does there EXIST a remembered ruin inside the tether envelope, not merely the
+  nearest one. A falsifier should refute only if the mechanism's best case fails.
+
+**Bytecode is the one way a no-op build can stop being a no-op.** Worst case is 24 ruins × 12 towers
+with an early break. `ov=` (overruns) must read **0** in the probe output or the arm is not a control
+and I discard it.
+
+## Registered checks — 3 probe games, Set A maps `fix`, `walalilongla`, `gardenworld` vs `carol_siege`
+
+Those three are the Set A maps with the most unclaimed-while-blind ruins (13 of 24, 9 of 18, 8 of 22).
+
+| # | check | threshold | what failing it means |
+|---|---|---|---|
+| **M0** | `ov=` bytecode overruns in the probe | **must be 0** | the probe is not a control; discard and re-cut it cheaper |
+| **M1** | of blind soldier-turns, share holding ≥1 remembered still-unclaimed ruin | **≥ 50%** | the memory is usually EMPTY — the mechanism is a no-op with a cost, refuted on a different ground than the tether |
+| **M2** | **the registered tether falsifier.** Of blind turns with a memory hit, share where SOME remembered unclaimed ruin lies within **d ≤ 6.3** (d² ≤ 40) of a known allied tower | **≥ 33%** | remembered ruins are predominantly OUTSIDE the tether envelope; the mechanism inherits iteration 60's **−26** and **closes at stage 0, no screen** |
+| **M3** | report-only: distribution of ruin→nearest-tower distance, and soldier→ruin distance | — | tells me *by how much* M2 fails, and whether a tether-EXTENDING variant is a distinct hypothesis rather than a rescue of this one |
+
+**Why 33%.** Availability is 77.5% of non-building turns and 77.7% of those have ruins left. A third
+of that is **~20% of non-building rounds converted into an actionable, tether-legal build target** —
+a real quantity against a replacement gap priced at +4.76 final structures. Below a third, the
+mechanism is mostly asking for the tether break that is already refuted at −26, and I would be
+funding it by the route that closed premise 3.
+
+**Registered in advance: M2 passing is NOT an accept.** It clears the falsifier only. The mechanism
+then still owes check B (screen ≥ 31/50), check C (the 15-rung frozen roster, per `OBJECTIVE.md` the
+primary outcome instrument), and check D (self-play census, **≥ +26 ACCEPT / +18..+25 REPLICATE /
+≤ +17 REJECT**). The bar does not move.
+
+**Endogeneity carried forward, not resolved:** the probe runs inside games carol is losing, so the
+memory's contents are conditioned on a losing trajectory. That is the correct conditioning for this
+question — I am asking what a *losing* carol could have built on — but it does not license reading
+M2 as the value of the mechanism in a won game.
