@@ -23673,3 +23673,70 @@ iteration 10 used. **Is it a usable proxy?**
 
 **Cost: zero games.** The engine gave the prize, the corpus gave the coverage, and my own 8-map census
 gave the proxy correlation that closed it.
+
+# RE-DERIVING THE MESSAGING CLOSURE FOR THE SRP PAYLOAD — it holds, and it holds HARDER
+
+The SRP gate needs team-level state, and messaging is the engine's only primitive for it. So I
+re-derived that closure the way I re-derived SRP's: does its stated basis hold **for this payload**,
+under the bot I have now?
+
+**The basis was:** the paint-path clause means every report originates inside *painted* — already
+explored — territory, so the channel selects reporters **against** their payload (2.48x fewer empty
+tiles seen by those who can reach a tower).
+
+**My first thought was that this payload escapes it.** A bearing is known only by soldiers *outside*
+painted ground; *"I can see an unbuilt ruin"* is known by soldiers anywhere. **That is true and it
+does not save it**, for a reason specific to what the gate asks:
+
+> **The SRP gate needs an ABSENCE claim — "nobody sees an unbuilt ruin."** With report-side
+> connectivity at **34.7%**, *no reports arriving* is indistinguishable from *reports not getting
+> through*. **A positive payload degrades gracefully with delivery; a negative one inverts** — the
+> less reliable the channel, the more confidently it asserts the very condition that licenses the
+> harmful arm.
+
+**So the closure does not merely survive this payload, it applies more strongly to it than to the one
+I originally tested.** And the failure mode is the dangerous direction: unreliable delivery would make
+alice *more* likely to build SRPs while ruins remain, which is arm 10a, which lost badly.
+
+> **Not re-opened. And the SRP gate's un-implementability is now confirmed by a second, independent
+> route** — the proxy is uncorrelated (+0.01) *and* the direct signal cannot be transmitted.
+
+## Two routes landing on one capability
+
+§27 recorded that my near-miss mechanisms were **all local rules, and no local rule supplies
+coordination.** The SRP gate has now closed because it needs **team-level information a single unit
+cannot observe.** **Same diagnosis, second independent route** — and that is the signal to read the
+capability rather than the mechanisms.
+
+**But the capability is not simply "messaging."** The engine supplies the primitive; what alice lacks
+is the *precondition* — its units are not connected when they hold the information worth sending.
+**That is a property of where alice's units stand, which is a design property, not a mechanism.**
+
+## §84 pair analysis — my individually-refuted halves, and which fail for want of another
+
+| half | how it failed | is the failure caused by another half's absence? |
+|---|---|---|
+| E2 — raise paint supply (count) | −8; benefit arrives after r300 | timing, not another half |
+| i53 — raise paint supply (rate) | −2, having moved it **+639 (+50%)** | **the extra paint became more of the unit alice already over-produces** |
+| K3 — refill from towers | census FAIL | **adjacency 7.88% — units are not beside towers** |
+| K7 — widen refill gates | capped 1.39x | volume, not another half |
+| K8 — shift mix to splashers | capped 3.2x | **towers cannot afford 300 paint** |
+| messaging | reporters disconnected | **connectivity-while-exploring, never built** |
+
+> **Two candidate pairs, stated as candidates:**
+> **(i) i53 + K8** — i53 *proved* it can raise tower paint by 50%, and its paint became soldiers, the
+> term alice already leads 1.35x. K8 could not fire *for want of exactly that paint*. **Each half's
+> failure is the other half's absence**, and neither single-mechanism screen could have found it.
+> **(ii) messaging + connectivity** — messaging fails because reporters are disconnected;
+> connectivity-while-exploring was never built *because messaging was closed*.
+>
+> **Pair (i) is the stronger candidate**: both halves are *measured*, one with a demonstrated +50%
+> move in the resource, and the composition is arithmetic rather than hopeful. **Pair (ii) has an
+> untested half**, so it is a pair in shape only — and I am not going to let a never-built half count
+> as refuted.
+
+**Registered before anything is built:** pair (i)'s precondition is that i53's extra paint can be
+*directed*. **Measure first, at the tower's spawn site: when i53-style paint arrives, what does the
+existing code spend it on?** If it goes to soldiers by construction — as the mopper branch did — the
+pair collapses to the substitution trap and closes for zero games. **That check comes before the
+build, and it is the same one that killed the mopper dose.**
