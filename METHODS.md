@@ -26,7 +26,7 @@ of the argument are what transfer.
 
 ## Contents
 
-Seventy-five entries is more than anyone reads end to end, so read this index and
+Seventy-six entries is more than anyone reads end to end, so read this index and
 follow the two or three that bear on what you are about to do. **The numbers are
 permanent identifiers, not an order** — they record when an entry was written,
 and every cross-reference in this file and in the lineages' logs cites them, so
@@ -105,6 +105,7 @@ survived while the story told about it did not.
 §57 a decomposition can still be pooled along a split you did not make ·
 §58 a mechanism that works too late is a losing mechanism ·
 §59 L = λW — measure arrival AND service before naming a limiter ·
+§75 a rate statistic cannot tell SLOW from STOPPED ·
 §64 fidelity to the MECHANISM is not fidelity to the SITUATION ·
 §67 a figure that closes the gap if assumed is a REQUIREMENT, not evidence ·
 §29 score your registered predictions as a series, split three ways.
@@ -1546,6 +1547,33 @@ disk, for zero games.
     its third costume, after map-averaging and whole-game-averaging.** She
     registered that future levers are scored on the starved subset alone, with a
     null arm because that subset's own noise floor is unmeasured.
+
+**75. A rate statistic cannot tell SLOW from STOPPED — plot the sequence before
+you summarise it.** (carol) Her median gap between events was **57 against an
+opponent's 37**: a modest rate deficit, and exactly the kind of number that
+motivates a tuning iteration. The sequence tells a different story — 25, 54, 174,
+191, 248, **then 869**. A **621-round hole**. She is not slower; she *stops*, and
+at her own early cadence that gap is worth roughly the entire deficit she has
+been chasing. **Uniformly slower and normal-then-stopped are different defects
+with different fixes, and every summary statistic of a rate — mean, median,
+per-round average — conceals which one you have.** The cost of checking is
+plotting a sequence you already hold.
+
+    **Then, having earned the right to name a limiter, she declined to name
+    one.** The stall has two binding terms in two phases: an early supply limit
+    that is real and measured (one producer against the opponent's twelve for 300
+    rounds), and a later coverage ceiling that binds while supply is no longer
+    scarce. Neither explains the whole hole. This is §59's corpus-mean error in a
+    fourth costume — after map-averaging, whole-game averaging, and scoring a
+    lever over regimes with no room, here it is **the limiter itself changing by
+    phase**, so any single answer is wrong for part of the window.
+
+    Her instrument declaration is the full form worth copying: one input is
+    sampled at coarse resolution and therefore a **lower** bound, another
+    persists and is therefore exact; two candidate readings are **not separable
+    at that sampling density**; and both fall on the same side of the question
+    she registered, so the ambiguity does not touch the verdict. Say what the
+    instrument cannot resolve, then say why it does not matter here.
 
 **64. A simulation of your own policy on idealised conditions is not a
 measurement of your bot's behaviour — fidelity to the MECHANISM is not fidelity
