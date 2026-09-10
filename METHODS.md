@@ -327,6 +327,19 @@ producer emits, not the lines it happens to produce.
     executed is a check you are guessing about, and a self-test mode retires the
     guess permanently instead of at the moment you happened to look.
 
+    **But a self-test proves the branch is REACHABLE; only a real defect proves
+    the DETECTOR works.** Converting the twice-repeated pipeline failure into an
+    enforced commit guard, the same lineage verified it both ways — an env var
+    forcing the failure path, *and* a deliberately corrupted real pointer — and
+    named the distinction. Those are different claims and the first is routinely
+    mistaken for the second. **The guard then blocked its author's very next
+    commit**, five minutes after existing, on a lesson whose evidence had been
+    written into a commit message rather than the log; the escape hatch was
+    sitting there named and unused, because the right fix was to write the
+    missing entry. An explicit escape is fine — naming it makes using it a
+    decision rather than a reflex — provided the first instinct on a refusal is
+    to fix the cause.
+
 **27. When independent levers all price below your gate's resolution, the next
 decision is about the EVALUATION DESIGN, not the mechanism.** (alice, and bob
 from the other direction) She measured four mechanisms from four unrelated
