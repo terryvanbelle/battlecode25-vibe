@@ -20245,3 +20245,72 @@ comparing the two arms, not from lifting his. **Registered as the re-open**: a *
 tie-break, not a terrain one, dosed as a weight rather than an argmax. It is **not** started now: the
 regression census outranks it, and my own iteration-49 probe already measured alice's adjacency at
 **0.70 paint/turn on small maps**, which is the number to price it against when it does start.
+
+# THE REGRESSION ALARM WAS FALSE — and the pre-registered rule is what stopped me acting on it
+
+Census `20260910-042101`, `alice_iter43` vs `alice_iter39`, **75 maps, 150 games, 0 exceptions**:
+
+| | maps | SW | SL | split | record | net swept |
+|---|---|---|---|---|---|---|
+| `alice_iter43` | 75 | 19 | 17 | 39 | 77–73 | **+2** |
+
+Identity check passes (+2 = +2). **My registered rule's third branch: `>= 0` means the roster screen
+was an unlucky draw, iteration 43 stands, and I do NOT revert.** Applying it as written.
+
+> The screen said **−7 on 25 maps** (−2.29 sd). The census says **+2 on 75 maps** (+0.38 sd). Three
+> times the sample, and the effect is gone. **There is no regression.**
+
+## And the registered diagnostic cut VINDICATES iteration 43 in full
+
+I registered this cut before the census returned, precisely so I could not choose it afterwards.
+Iteration 43's original accept claimed **"+3 on the four single-parity maps, 0 on the other 71"**,
+with a **cost bound of +2** off-target.
+
+| cut | maps | record | net swept |
+|---|---|---|---|
+| **the four single-parity maps** | 4 | **7–1** | **+3** |
+| the other 71 | 71 | 70–72 | **−1** |
+
+**The census reproduces its pre-registered map-level prediction exactly.** The gain is +3 and sits
+precisely where it was registered; the off-target cost is −1, inside the +2 bound that was claimed.
+**Iteration 43 was a correct accept, and it is confirmed at 150 games rather than the 8 it was
+accepted on.**
+
+## What actually went wrong — and it is a mistake I have not made before today
+
+**I read the most alarming of twelve comparisons as though it were one.** The roster run scores the
+current bot against **12** frozen opponents. I took the single worst cell, at −2.29 sd, and treated
+it as a finding.
+
+| | value |
+|---|---|
+| P(one comparison lands <= −2.29 sd) | 0.011 |
+| **P(at least one of 12 does)** | **0.121** |
+
+> **A −2.3 sd cell somewhere in a 12-opponent roster is expected roughly one run in eight.** That is
+> not a regression signal; it is the ordinary behaviour of a multi-cell instrument, and I have no
+> multiplicity correction anywhere in my roster reading.
+
+**And my "corroboration" was worse than the alarm.** I cited iter30 56%→46% and paintthief 82%→70%
+as independent support. Those are **cross-run** comparisons on **different random map samples** — the
+exact comparison my own charter warns is "noisier than it looks" — and I selected the two cells that
+moved most out of the same twelve. **Selecting the movers and calling them corroboration is circular**,
+and I did it while quoting the charter line that forbids it in the same entry.
+
+## What I am keeping from a false alarm
+
+1. **The pre-registered rule did its whole job.** I wrote `<= −12 revert / −11..−1 inconclusive /
+   >= 0 stands` *before* the census, and the outcome landed in a branch I would have been tempted to
+   argue away at the time. **Reverting HEAD on the screen alone would have destroyed a correct accept
+   on noise.** This is the clearest case all week for registering the action, not just the metric.
+2. **The staleness finding survives entirely.** The roster *was* four accepts stale, that *was* a real
+   process failure, and `tools/roster-stale.sh` remains the right fix. **A stale instrument is still
+   worse than an absent one — it just was not hiding a regression this time.**
+3. **A new limit on my own instrument, measured:** a 25-map roster cell has sd ≈ **3.05** net swept, so
+   it cannot resolve anything smaller than about **±6** — and it is read 12 times per run. **The
+   roster detects *large* regressions and cannot adjudicate close ones.** For a close call the census
+   is the instrument, which is exactly the escalation I ran.
+
+**Recorded as a standing rule for reading the roster:** treat a single alarming cell as a *trigger for
+a census*, never as a finding, and never quote sibling cells from the same run as corroboration — they
+are the same twelve draws.
