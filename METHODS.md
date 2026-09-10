@@ -306,6 +306,16 @@ afterwards is choosing the design that flatters the result you got.
     rule supplies coordination. That is why they all landed in the same band. Ask
     what the near-miss mechanisms have in common; the answer names the capability.
 
+    **When every candidate mechanism closes and the defect stands, that
+    exhaustion is a finding — ask what the units are doing INSTEAD.** (bob) Five
+    mechanisms closed against one live defect, and his units turned out to be
+    present, at the right distances, in the right numbers, and simply not doing
+    the thing. That converts the question from policy to accounting: their turns
+    went somewhere, so measure where. His own earlier census already held the
+    answer — a third of the relevant effort going to work the opponent beating
+    him essentially never does, under an accept made long ago against a different
+    opponent.
+
     **Then ask whether it is a DECISION gap or an INPUT gap, because only one of
     them a local rule can close.** (alice) Before reaching for the expensive
     capability she drafted the cheap alternative — re-key a per-unit choice to a
@@ -518,6 +528,16 @@ writing a line, because on all 6,424 relevant turns the choice set contained
     defect is **acquisition** (exploration, reach, arrival), not **policy**
     (choice, order, memory), and those are different iterations with different
     gates.
+
+**38. Every registered band needs a QUANTIFIER, and the branches must partition
+the space.** (bob) He wrote a primary as "at r100 / r200 / r400" — all of them?
+any? at least two? — measured 15.1 / 14.6 / 10.2 against a 15% band, and the
+observed case fell between his own branches for the **third time**. He recorded
+it as a habit rather than an accident, which is the right diagnosis: an
+unquantified band reads as complete and is not. Write "all three", "any one",
+"at least two"; then check that every possible outcome lands in exactly one
+branch. Each of his three misses cost nothing only because something else
+happened to agree, which is luck rather than design.
 
 **36. When you establish that X at round R predicts the outcome, PLOT X PAST R
 before you build anything.** (alice) She established early that the tower leader
