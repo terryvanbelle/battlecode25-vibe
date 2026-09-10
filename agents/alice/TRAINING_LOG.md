@@ -23301,3 +23301,56 @@ fixed policy across 19 games, r300 tower count is **mean 7.05, sd 3.67 — 52% o
 > **2.04** is inside the floor and *"the falsifier did not fire"* would carry no information.
 > **Registered: the falsifier fires on a fall ≥ 2.04 towers at r300.** Below that it is silent, not
 > reassuring — stated now rather than after the verdict.
+
+# K8 — MANIPULATION CHECK FAILS at 2.22x against a ≥5x bar. Screen not spent, and the 10x miss is the finding
+
+Control identity-verified at **534 / 1869 / 1096**. Arm diverges hard: **651 / 816 / 1067** — and it
+**lost DefaultSmall, which the control won.**
+
+**The registered same-game counterfactual, both gates evaluated on identical turns:**
+
+| | new gate permits | old gate permits | ratio |
+|---|---|---|---|
+| all rounds | 4,560 | 2,417 | 1.89x |
+| **r1–300** | **1,710** | **771** | **2.22x** |
+
+> **Registered PASS was ≥5x. Measured 2.22x. FAIL — the gate was not the binding constraint.**
+> Reachability predicted **21x**. I was wrong by a factor of ten.
+
+## Why the estimate was 10x off, and it is a rule I did not have
+
+My 21x came from counting frames where the *incumbent* held ≥1,850 chips against ≥3,950 — **a
+distribution measured on a bot that was not buying splashers.** The moment the arm starts buying, it
+**spends the chips the gate reads**, and the balance falls. The gate self-limits.
+
+> **A gate's reachability must be measured on the distribution that will exist AFTER the change, not
+> the one that exists before it — whenever the mechanism CONSUMES the resource its gate tests.**
+> This is one level past "measure the pass rate on the population that reaches the gate": that
+> population is not exogenous when the mechanism feeds on it. **Every static reachability estimate I
+> have made this session assumed an exogenous distribution, and this is the first mechanism whose
+> gate reads its own fuel.**
+
+## Decision: the screen is not spent
+
+The manipulation check is a registered pre-screen gate and it failed. **A screen would test a
+2.22x dose that was priced at 21x**, and K3 already showed that a real dose on this term returns
++5/150 unestablished. Declining, as with K7 — the ladder exists so a failed pre-check saves the games
+below it.
+
+*(The three arm matches all lost, including one the control won. n=3 and cross-game, so that is
+context, not evidence — noted because it points the same way, not because it decides anything.)*
+
+## What this does to the rewrite series — and it is NOT a data point for it
+
+My registered condition reads: *"if per-unit output refuses to move at all across mechanisms that
+**demonstrably fire**, the ceiling is the game."* **K8 did not demonstrably fire** — it reached 2.22x
+of an intended 5x, so it is a mechanism that never got to its dose, not a mechanism that fired and
+failed. **It does not count toward either branch of the rewrite condition**, and I am not going to let
+a failed dose masquerade as evidence about the architecture.
+
+**The series still stands at one point: K3 — moved the term (+16% per-unit), failed its census.**
+
+> **Standing:** `src/alice` unchanged since K3. Refill family closed, mopper branch closed, splasher
+> gate failed its pre-check. **The rewrite grant remains unspent**, and the honest reason is that I
+> have not yet produced the second clean data point my own condition requires — not that I am
+> avoiding it.
