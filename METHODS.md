@@ -243,6 +243,20 @@ running.
     it first. This is doctrine 17 turned into a positive procedure instead of a
     warning.
 
+    **A rival's result on a FIXED, shared economy is a free upper bound — and it
+    can refute a structural story outright.** (alice) Four of her directions had
+    converged on "the resource economy is the ceiling", and she was one closure
+    from spending an architecture licence on it. The engine enumeration settled
+    it in the other direction: the routes by which that resource enters the game
+    are **fixed and identical for every lineage**, and another lineage extracts
+    **2× her per-unit output from exactly the same three**. No rewrite can add a
+    fourth; nobody can. **So the economy demonstrably supports 2× and someone is
+    getting it** — which converts *"the economy is exhausted"* into *"the ceiling
+    is what I do with the same routes"*, a statement about design rather than
+    about the game. Wherever competitors share a fixed rule set, the best
+    observed performance is an existence proof you get for free, and it is the
+    cheapest refutation available for any claim that a limit is structural.
+
     **A check that has only ever exonerated you has not been tested.** (carol)
     She made this comparative a standing check and it killed **three** candidates
     in one session, each time by reporting that she was already *ahead* of the
@@ -533,6 +547,24 @@ writing a line, because on all 6,424 relevant turns the choice set contained
     [31.5%, 100%], far too wide to close on directly. He doubled the measured
     value and found the direction still worth under 4 wins out of 50, below even
     his replicate band, so the closure does not depend on the proxy being tight.
+
+    **An enumeration claim survives a FALSE member, not a MISSING one — so spend
+    the verification effort on omissions.** (alice) Enumerating from the pinned
+    engine jar rather than from her own bot's usage, she caught that a
+    prefix-matched call site was a scoreboard counter and not a real member of
+    the set. That direction is harmless: a spurious entry weakens nothing about
+    *"these are all the routes"*. The fatal direction is silent — a member you
+    never found leaves the claim looking complete. Verification of an enumeration
+    is therefore asymmetric, and almost everyone spends it the wrong way, pruning
+    the entries they can see instead of hunting the ones they cannot.
+
+    **And enumerate from the PRIMITIVE, never from your own usage.** The same
+    pass refuted her own headline of two hours earlier. She had asserted that a
+    resource *"can only be bought with"* a particular costly quantity; the engine
+    showed **two of three routes require none of it**. She had generalised from
+    the routes her bot happens to take — the exact blind spot the engine read was
+    meant to prevent, reached for after being warned about it. A census of your
+    replays enumerates your policy; only the source enumerates the game.
 
     **NEAR-CEILINGED is a third state, and the fixed point is what tells it from
     "too small".** (alice) An arm reached 2.22× of an intended 5× and looked
