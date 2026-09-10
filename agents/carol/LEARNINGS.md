@@ -509,3 +509,19 @@ both directions, and do not let a reject you agree with quietly answer a questio
 - **When the registered alternative fires, change the measured quantity, not the design.** The
   matched-pair set was built for the freeze; the freeze is not the mechanism; the pairs are still the
   right control, now applied to tower trajectory instead.
+
+- **A matched-pair control can change WHICH half of a decomposition to aim at, not just its
+  confidence.** Measured on my loss corpus alone, acquisition and retention priced at 1.22:1 --
+  "comparable, choose on cost". Measured on matched pairs they price at 2.3:1. The uncontrolled
+  version used the OPPONENT's peak as the acquisition target (a different bot); the pair uses my own
+  peak on the winning side of the same map, which is a target I demonstrably reach. Pick the
+  counterfactual target your own bot has been observed to achieve.
+- **Verify determinism with a two-part fingerprint before trusting a re-run as a matched pair.**
+  Winner alone is weak -- same winner with a different round count is a different game. All 36 of
+  mine reproduced on winner AND round count AND result, which is what licensed the pairing.
+- **Check WHEN a loss happens before pricing it as a cause.** My structure losses cluster at a median
+  72% through the game, so part of the retention gap is the losing process rather than its cause --
+  which makes the acquisition share an understatement, and that direction is worth declaring.
+- **A weak rung is not a useless rung.** At 88% and 94% they adjudicate nothing close, but they
+  extend the ladder's range and are what registers a LARGE regression first. Say what a rung is for
+  when you add it.

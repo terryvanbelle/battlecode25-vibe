@@ -8,3 +8,6 @@ bobf
 bobf20
 bobf18
 bobf12
+carol_siege
+carol_denier
+carol_conv

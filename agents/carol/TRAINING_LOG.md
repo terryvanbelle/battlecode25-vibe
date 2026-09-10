@@ -23376,3 +23376,81 @@ retain the win halves my own tooling does not keep.
 
 **Side balance verified from `bot_side`: exactly 25 games per side** (carol 9/25 as A, 11/25 as B).
 The margin identity holds by construction, not by luck.
+
+## MATCHED PAIRS — the freeze is refuted with a control, and the mechanism is ACQUISITION
+
+Inverted run `20260910-172313` (`BOT=carol_siege`, 18 pinned maps, 36 games) retained the win halves
+my own tooling drops. **Determinism verified empirically, not assumed:**
+
+> **All 36 overlapping games reproduced exactly** — winner, round count *and* carol's result.
+> **Zero broken pairs.** The fingerprint was winner AND round count, because a winner alone is weak.
+
+### 1. The freeze — REFUTED with the control the corpus could not supply
+
+| freeze > 5 rounds | carol's LOSS half | carol's WIN half |
+|---|---|---|
+| maps of 18 | **2** | **2** |
+
+**Identical.** And the detail is sharper than the count: on **Snowman carol WON a game in which she
+froze for 332 rounds**, while on SandyBeach her win half froze 13 rounds against her loss half's
+1,022. The registered outcome *"present in both → the freeze is not what decides those games"*
+**fires on a properly matched control**, not merely on prevalence. The archetype beats carol via
+something it was not built to exploit, and that is now established rather than suspected.
+
+### 2. The mechanism — carol does not ACQUIRE structures on the side she loses
+
+Same map, same opponent, both policies identical; only side and outcome differ:
+
+| | loss half | win half | delta |
+|---|---|---|---|
+| **peak structures** | **4.22** | **6.83** | **+2.61** |
+| retention (final/peak) | 74.1% | 89.8% | +15.7 pts |
+
+| sign test | wins > losses | p |
+|---|---|---|
+| **peak structures** | **15 of 17 decisive maps** | **0.0012** |
+| retention | 9 of 11 decisive maps | 0.0327 |
+
+Both are real. **Peak is the stronger and far more consistent signal**, and it is decisive on 17 maps
+against retention's 11.
+
+### 3. The decomposition — and the controlled answer differs from the uncontrolled one
+
+| counterfactual (per-map, then averaged) | final structures | gain |
+|---|---|---|
+| current (loss side) | 2.94 | — |
+| **fix ACQUISITION only** (win-side peak, loss-side retention) | **4.96** | **+2.02** |
+| fix RETENTION only (loss-side peak, win-side retention) | 3.84 | +0.89 |
+| both (= the win side) | 6.33 | +3.39 |
+
+> **ACQUISITION : RETENTION = 2.3 : 1.** They are **not** comparable.
+
+**This is a correction to my own uncontrolled estimate.** Measured on the loss corpus alone I got
++1.97 vs +1.61 — **1.22 : 1, "comparable, choose on cost"**. Measured on matched pairs the ratio is
+**2.3 : 1**. The uncontrolled comparison used *the opponent's* peak as the acquisition target, which
+is a different bot; the matched pair uses **carol's own peak on the winning side of the same map**,
+which is a target carol demonstrably reaches. **Running it properly rather than on the envelope
+changed which half to aim at.**
+
+### 4. Timing, and an endogeneity I raised against myself
+
+Structure losses are **late-weighted**: 72 loss events across 30 games, median at **72%** of the way
+through, 46% in the final quarter, 19% in the final tenth. So part of the retention gap **is** the
+losing process rather than a cause of it — which inflates retention's measured value and makes the
+2.3 : 1 ratio, if anything, an **understatement** of acquisition's share.
+
+**Caveat declared, because the pairs do not control everything.** The matched pair holds map,
+opponent and both policies constant; the thing that differs is **the side**, i.e. starting position.
+So the finding is that the **proximate** mechanism is acquisition — it does not establish *why*
+carol fails to expand from the weaker start. Peak is on the causal path; the root cause is not yet
+identified, and I am not claiming it is.
+
+### 5. Rungs added, with their purpose stated
+
+`roster_extra.txt` gains `carol_siege` (40.0%), `carol_denier` (88.0%), `carol_conv` (94.0%).
+
+- **`carol_siege` is the adjudicating rung** — the only thing in the pool carol loses to.
+- **The two weak rungs are not useless rungs.** At 88% and 94% they cannot adjudicate anything close,
+  but they **extend the ladder's range** and are the rungs that will register a **large regression
+  first** — the censoring point. A rung that only fires when something goes badly wrong is still an
+  instrument.
