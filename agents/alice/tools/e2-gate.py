@@ -33,6 +33,10 @@ def main():
     # part that must not be re-typed per experiment.
     ARM  = sys.argv[2] if len(sys.argv) > 2 else "alice_e2"
     NULL = sys.argv[3] if len(sys.argv) > 3 else "alice_e2null"
+    # BAR is an argument so a census (+12 on 75 maps) uses the SAME tool and
+    # the same branch order as a screen (+4 on 25). Re-typing a gate per
+    # experiment is how a threshold drifts.
+    BAR  = float(sys.argv[4]) if len(sys.argv) > 4 else 4.0
     games = []
     complete = False
     for ln in open(path):
@@ -68,12 +72,24 @@ def main():
         return 0
 
     arm = nets.get(ARM); null = nets.get(NULL)
-    if arm is None or null is None:
-        print("\n!! missing an arm -- cannot apply the gate"); return 1
+    if arm is None:
+        print("\n!! the ARM is missing -- cannot apply the gate"); return 1
+    if null is None:
+        # A census is run arm-vs-control only; its bar is derived from a floor
+        # measured earlier (sd_net_swept = 5.29), so the VOID branch has nothing
+        # to evaluate. Say so LOUDLY rather than letting a protection vanish
+        # quietly: a missing null is a weaker run, not an equivalent one.
+        print("\n=== NO NULL ARM IN THIS RUN ===")
+        print("  The VOID branch cannot be evaluated. This run's bar rests on the")
+        print("  PREVIOUSLY measured floor sd_net_swept = 5.29, not on a floor")
+        print("  measured on this draw. That is weaker, and it is stated, not hidden.")
+        print(f"\n=== GATE ===\n  net_arm = {arm[0]:+d}   bar = {BAR:+.0f}")
+        print("  VERDICT: " + ("**PASS**" if arm[0] >= BAR else "**FAIL**"))
+        return 0
 
     print(f"\n=== GATE, as registered ===")
     print(f"  net_null = {null[0]:+d}   (true value is 0: control vs itself)")
-    if abs(null[0]) >= 4:
+    if abs(null[0]) >= BAR:
         print(f"  |net_null| = {abs(null[0])} >= 4  ->  **VOID**")
         print("  The instrument cannot hold zero to within the bar on this map sample,")
         print("  so it cannot resolve a +4 effect. This is NOT a reject: the mechanism")
@@ -81,9 +97,9 @@ def main():
         print(f"  (for the record, net_arm = {arm[0]:+d}, but it is not interpretable here)")
         return 0
     print(f"  |net_null| = {abs(null[0])} < 4  ->  instrument resolves the bar; gate applies")
-    print(f"  net_arm  = {arm[0]:+d}   bar = +4")
-    print("  VERDICT: " + ("**ACCEPT**" if arm[0] >= 4 else "**REJECT**"))
-    if arm[0] < 4:
+    print(f"  net_arm  = {arm[0]:+d}   bar = {BAR:+.0f}")
+    print("  VERDICT: " + ("**ACCEPT**" if arm[0] >= BAR else "**REJECT**"))
+    if arm[0] < BAR:
         print("  A rejected iteration is a delivered result: the mechanism fired")
         print("  (manipulation check passed) and did not clear the bar.")
 

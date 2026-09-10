@@ -22439,3 +22439,19 @@ verified by measurement, not by inspection of the diff.
 
 **`src/alice` moves for the first time since iteration 43** — after eight directions aimed at the
 wrong term, one arm rejected at −8, and one decomposition that pointed at the right one.
+
+### Census launched, and the gate now takes its bar as an argument
+
+`gauntlet/20260910-120010/`: 75 maps, both sides, **150 games**, `alice_k3` vs `alice_k3ctl`, **bar
++12** (2.27 sd on the measured floor sd_net_swept = 5.29).
+
+`tools/e2-gate.py` now takes the bar as an argument, so a census and a screen use the **same tool,
+same branch order**; re-typing a gate per experiment is how a threshold drifts. Regression-checked:
+E2 still REJECT at −8, K3's screen still ACCEPT at +4 — **and K3's screen result correctly FAILS a
++12 bar**, which is precisely why the census is being run rather than assumed.
+
+**A census is run arm-vs-control only, so it carries no null arm**, and the tool now says so loudly
+instead of letting the VOID branch vanish silently: this run's bar rests on a floor measured
+*earlier*, not on this draw. **That is weaker than the screen was, and stating it is the point** —
+the screen's own null read +0 on the same shape, which corroborates but does not replace a floor
+measured here.
