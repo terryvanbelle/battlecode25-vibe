@@ -24123,3 +24123,84 @@ be, and it is the reason the screen exists.
 5. **The probe-build method generalised**: six of the nine games spent here were byte-identical no-op
    builds that answered mechanism questions with zero behavioural confound, verified by reproducing
    the control's exact end rounds.
+
+# Premise 3, posture half — RE-DERIVED against the corrected distance statistic. PRE-REGISTERED.
+
+The p90 correction from iteration 80 carries a debt: I recorded that `p90 = 6.3` was load-bearing in
+premise 3's reasoning, and that it is a *position* statistic while the build envelope is median 8.89
+(max 25.24) with the tether fully on. So does the **−26** that closed the posture half price the
+question the premise asked, or something narrower?
+
+## First, the denominator — and it is a SECOND error in the same statistic, at zero games
+
+The source table (log line 22270) is **"Distance from each mobile unit to its OWN nearest tower"**,
+over **two games**:
+
+| game | carol median / p90 | alice median / p90 |
+|---|---|---|
+| galaxy | 4.0 / **6.3** | 5.0 / **17.0** |
+| Gears | 5.1 / **13.0** | 7.2 / **16.2** |
+
+> **`6.3` is the galaxy figure. On Gears carol runs 13.0 against alice's 16.2 — a 1.25× gap, not the
+> 2.7× that "6.3 vs 17.0" implies.**
+
+`CLOSURE_MAP.md` §5 quotes "p90 unit distance from own nearest tower is **6.3** against a rival's
+**17.0**" as though it were a property of carol. **It is the most extreme of two maps, paired against
+the other map's most extreme rival figure** — the two halves of the quoted comparison come from
+different games. My iteration-80 build envelope (8.89) sits between carol's two values and is
+consistent with the Gears figure.
+
+**So the "capability gap" that motivated premise 3's posture half is real on one map and small on the
+other, and was never a single number.** That is recorded independently of anything below.
+
+## The question the −26 has to answer
+
+Premise 3's posture half asserts: *to operate forward, carol must stop recalling units.* Its
+refutation is iteration 60's zero arm — `REFILL_LOW=0`, which disables `walkHomeIfDry` — measured at
+**−26**.
+
+But `REFILL_LOW=0` does not *instruct* a unit to go anywhere. It removes the walk-home branch, so a
+dry unit keeps doing whatever it was doing until it starves. **Removing a recall is not the same act
+as extending a reach**, and carol demonstrably already builds at median 8.89 / max 25.24 **with the
+tether on**. So there are two possibilities and they are not distinguishable from the −26 alone:
+
+1. `REFILL_LOW=0` **does** push units outward, the −26 prices posture, and the closure stands.
+2. `REFILL_LOW=0` leaves the operating radius **unmoved** and merely starves units where they stand —
+   in which case **the −26 never moved the variable the posture half is about**, and that closure
+   does not cover "operate at range".
+
+**This is decidable by measurement and I have not measured it. The −26 was read as (1) without ever
+checking that the knob moves the radius** — the same shape as iteration 79, where a registered
+iteration rested on a number with no method attached.
+
+## PRE-REGISTERED — the discriminating test, before any game
+
+Two no-op-style probe builds cut from `src/carol`, differing in **one constant**:
+
+- `carol_t50` — `REFILL_LOW=50` (incumbent), plus the distance probe.
+- `carol_t0`  — `REFILL_LOW=0` (**the exact change the −26 priced**), plus the same probe.
+
+Both emit, in `monitorAndYield` for **every mobile-unit turn** — matching the original table's
+denominator — `D=` the squared distance to the nearest ally tower **that robot remembers**.
+
+**Declared proxy:** `towerMem` is the robot's own 12-slot memory, not ground truth, so `D` is a proxy
+for "nearest own tower". It is computed **identically in both arms**, which is what a within-pair
+comparison requires; I am not quoting it against the 6.3/13.0 table, which used a different method.
+
+Maps: `galaxy` and `Gears` — the two the original table was built on — plus `fix`. Opponent
+`carol_siege`. 6 games.
+
+| # | check | registered decision |
+|---|---|---|
+| **P0** | `ov=` overruns | must be **0**, or the probe is not a control |
+| **P1** | does the knob move the radius? p90 of `D`, tether OFF vs ON, per map | **≥ +25% relative rise** on a majority of maps ⇒ the −26 DID price posture; premise 3's posture half **STAYS CLOSED** and the p90 correction changes nothing |
+| **P2** | the converse | p90 **flat or falling** on a majority of maps ⇒ the −26 priced **starvation, not posture**; it never moved the premise's variable, and the closure **does NOT cover "operate at range"** — the posture half re-opens as an *unpriced* question, not as a refuted one |
+| **P3** | report-only | standing mobile units and median `D`, to say what `REFILL_LOW=0` actually does |
+
+**Registered in advance, because this is the direction a re-open would be motivated:** P2 passing
+does **not** revive premise 3, does **not** license a rewrite, and does **not** make forward posture
+worth anything. It would establish only that **the question was never priced** — the −26 would be
+re-scoped to "removing the refill branch", which it genuinely does measure. Any actual posture
+mechanism would still owe the screen, the roster and the +26 census bar from scratch.
+
+**And the null result is the cheap one:** P1 passing costs 6 games and closes a debt permanently.
