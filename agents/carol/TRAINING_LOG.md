@@ -22015,3 +22015,29 @@ a preference** — I will price them before choosing.
 **Standing authorisation noted** (from-scratch rewrite, no escalation needed). **Not spending it.**
 The evidence says there is a large reachable regime with an uncharacterised-until-today failure mode;
 that is the opposite of the condition a rewrite answers.
+
+## Decision 1 CLOSED — the absolute instrument is repaired
+
+Placement run `20260910-143006`, `carol_iter45` vs the new cross-architecture rungs:
+
+| rung | carol | status |
+|---|---|---|
+| `bobf` | **64.0%** (150 games, full corpus) | **DISCRIMINATING** |
+| `bobf20` | **64.0%** | **DISCRIMINATING** |
+| `bobf12` | 78.0% | **DISCRIMINATING** |
+| `bobf18` | 80.0% | **DISCRIMINATING** |
+
+**All four land in the discriminating band (64–80%), and none is saturated.**
+
+| | before | after |
+|---|---|---|
+| rungs | 11 | **15** |
+| saturated at 100% | **6** | 7 (all retained — never retire) |
+| **discriminating** | **4, of which 3 were single-point — ONE moving trajectory** | **8** |
+
+> **The instrument can register a regression again**, for the first time since the roster saturated,
+> and it now spans 64–87% instead of clustering at the ceiling. Every rung is frozen by construction:
+> `bobf*` are another lineage's committed snapshots and cannot change.
+
+That gates everything after this: an accept measured from here carries evidence the last several
+could not have.

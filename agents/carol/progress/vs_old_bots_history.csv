@@ -66,3 +66,6 @@ date,current_snapshot,opponent,wins,total,win_pct,source
 2026-09-09T23:14:16+00:00,carol_i60_50,carol_rush,16,16,100.0,roster-run
 2026-09-09T23:14:16+00:00,carol_i60_50,carol_turtle,16,16,100.0,roster-run
 2026-09-09T23:14:16+00:00,carol_i60_50,examplefuncsplayer,16,16,100.0,roster-run
+2026-09-10T14:30:06+00:00,carol_iter45,bobf12,39,50,78.0,roster-run
+2026-09-10T14:30:06+00:00,carol_iter45,bobf18,40,50,80.0,roster-run
+2026-09-10T14:30:06+00:00,carol_iter45,bobf20,32,50,64.0,roster-run
