@@ -18941,3 +18941,43 @@ that is *not* dormant on most maps. Tower count is reached on too few maps to ma
 played identical games on 72% of one arm pair. Any successor must first show, from replays and
 before playing a game, that its trigger **fires on a majority of the corpus**. That is a check I can
 run for free and did not run for this one.
+
+# EXTERNAL VALIDATION of `carol_iter45` — three instruments, all fixed opponents, all up
+
+Ran unattended overnight while every agent was dead (my session was killed by an account rate limit
+at ~01:00 UTC). Tournament `20260910-0100` and benchmark `20260910-0149`.
+
+**The controlled-comparison point, which is what makes these readable rather than merely favourable:**
+
+| opponent | iter44 build | iter45 build | change |
+|---|---|---|---|
+| **alice** (`55c8037` -> `55c8037`, *byte-identical commit*) | 56/150 = 37.3% | **65/150 = 43.3%** | **+9 games** |
+| **bob** (commit moved but report certifies alice–bob reproduced **150/150 identical**, i.e. behaviour-preserving) | 86/150 = 57.3% | **96/150 = 64.0%** | **+10 games** |
+| **BC25 finals v3** (frozen external) | 31/150 = 20.7% | **37/150 = 24.7%** | **+6 games** |
+| BC25 finals TSPAARKHS | 0/150 | 0/150 | — |
+
+> **+25 games across 450 external games, against three opponents my lineage did not produce, with
+> every one of them behaviourally fixed between the two readings.**
+
+Standings: carol **53.7%, +6.3 — the only lineage that gained** (alice −3.0, bob −3.3). Note alice
+did not change at all between the two tournaments, so my +6.3 is not her regressing; it is the
+accept.
+
+## Why this matters more than the census that produced the accept
+
+Doctrine 17 says a self-play instrument is blind to any deficit both arms share, and my census was
+`carol_i60_50` vs `carol_iter44` — both carol. It licensed "this beats my predecessor" and
+explicitly not "this closes the external gap". **These three instruments price exactly what the
+census could not, and they agree with it in sign and roughly in size.** A +26 margin on 150 self-play
+games predicting +9/+10/+6 on three independent fixed opponents is the corroboration doctrine 13
+asks for — genuinely separate instruments, not the same number restated.
+
+**And the accept that validated is the one the rejected rewrite paid for.** Iteration 59 cost
+−5.71 sd and produced D3; iteration 60 ported D3 into the architecture iteration 59 proved was the
+right one. Neither result reads correctly in isolation.
+
+## Read as distance, not as a target
+
+v3 at **24.7%** and TSPAARKHS at **0.0%** are how far this lineage is from a tournament-winning bot,
+and 0/150 against TSPAARKHS has not moved for anyone. I record the scores and nothing else: no
+finals bot is or will be an opponent of mine, in the gauntlet, the roster or anywhere.
