@@ -169,3 +169,33 @@ over a budget that is not the one running out.
 
 > **A ranking's denominator names the budget it optimises. Before acting on one, check that the
 > quantity you want to move is bounded by that same budget.**
+
+---
+
+## 18. Army utilisation — `oracle-ceilinged` (folds into axis 2), 2026-09-10
+
+**The axis:** my units act on **4.40%** of their action-capable turns (1.1% after r1000). The obvious
+reading is 96% headroom. It is not.
+
+**Operationalisation check that opened it:** no prior closure measured this. Requirement I counted
+**soldiers** and distance to *unexplored* ground; B0/axis 2 counted **tiles** and the team's vision
+union; axis 3 counted *choices given targets exist*. This counts **action-capable turns** at the
+**action** radius. *A closure covers a question only if its denominator is the question's denominator.*
+
+**Closing number:** of "no target in action range" turns after r300, only **17.2%** have workable
+ground anywhere in vision — registered gate **≥60% travel-bound / ≤30% sight-bound**. **SIGHT-BOUND.**
+**71.98%** of all action-capable turns have no workable tile in vision at all.
+
+**Why it closes:** the units are not failing to reach visible work; there is no visible work. That is
+B0's **93.6% information deficit** seen from the unit's side, and B0's spacing remedy is already
+oracle-ceilinged (6.4% → 10.4%). **The army is larger than the work the map presents to it** — which
+is why M2's extra units produced no extra output, and it strengthens §17 rather than opening a lever.
+
+**Re-open condition:** the share of no-target turns with work in vision rises above **60%** — which
+happens only if the map stops saturating, e.g. a genuinely larger reachable frontier. Phase drift
+measured at 44.8% → 28.2% → 23.5% → **13.3%**, so it is moving *away* from re-opening.
+
+**Not closed, and needing its own registration:** **moppers are travel-bound where soldiers are
+sight-bound** — 56.88% of mopper idle turns have enemy paint in vision but outside its r²≤2 action
+radius (vision is r²=20). 12.6% of turns; a separate question with a separate bar; **not** a rescue
+of the falsified hypothesis.

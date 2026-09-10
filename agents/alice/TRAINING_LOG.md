@@ -24749,3 +24749,160 @@ fresh identity runs reproduced.
 > **Provenance has two candidate producers — the thing measured and the thing measuring — and a
 > "nothing emits this" result only rules out the one you searched.** Retracted the void in the same
 > breath as raising it, which is the only reason it cost minutes rather than a rebuilt instrument.
+
+# ============ RE-DERIVING THE CLOSURE THAT APPEARS TO COVER THE 96% — it does not ============
+
+Before building anything on *"after r300 my units act on ~4% of their action-capable turns, idle for
+want of a target"*, I checked the closure that looks like it already answers this. Checking the
+**operationalisation**, not the conclusion: **did anything I closed measure the fraction of
+action-capable turns spent adjacent to workable ground?**
+
+**No. Three closures come near it and each counts a different thing.**
+
+| closure | denominator | radius | the quantity | question it answered |
+|---|---|---|---|---|
+| **Requirement I st.1** — *"median unit sits 4 tiles from unexplored ground"* | **33 soldiers** | IDLE defined by **vision** (r²=20) | distance to **unexplored** ground | can a unit **reach new** ground? |
+| **B0 / axis 2** — *"6.4% empty-visibility, 93.6% deficit"* | **52,879 paintable-empty TILES** | team **vision union** | share of the map's work **the team can see** | does the **team** have the information? |
+| **axis 3** — local gradient | per targeting decision | action | **which** target to pick, given targets exist | is the **choice** rule good? |
+| **THE NEW NUMBER** | **114,168 action-capable unit-TURNS** | **action** (r²≤9) | is there workable ground **I can act on now** | is the unit's **capacity used**? |
+
+**Distance and utilisation are different quantities and they are perfectly compatible.** A unit four
+tiles from work is *close to work and not on it* — and four tiles is four turns of travel in which it
+paints nothing. The four-tiles entry measured that the frontier is near; it never asked how many
+turns pass with nothing in *action* range. Its own corrected text already says the constraint is
+*"throughput across a multi-unit completion relay"* — a travel-and-arrival statement, not a reaching
+one. **It closed the right thing (a spacing/exploration family) and does not cover this.**
+
+Nor does B0, and its numbers point the other way: 6.4% of the map's empties are visible **to the team
+at once — 3,384 tiles.** There are thousands of visible empty tiles while units act on 4% of turns.
+B0 is a statement about **information**; the new number is a statement about **conversion of
+information into actions**, and a bot can be near-optimal on the first and terrible on the second.
+
+> **A closure covers a question only if its denominator is the question's denominator.** Tiles,
+> soldiers and turns are three different denominators and I had closures in all three. The direction
+> is **open on its own terms** — not re-opened on preference.
+
+# ============ REGISTERED BEFORE MEASURING: is the idle army TRAVEL-bound or SIGHT-bound? ============
+
+The 96% splits cleanly in two, and the two have opposite consequences:
+
+- **work is VISIBLE but out of action range** → the unit is not standing on it → **travel/arrival**,
+  a movement-policy problem, and **actionable**;
+- **no workable tile in vision at all** → the work is not near the units → that is exactly B0's
+  **93.6% information deficit**, whose spacing remedy is already **oracle-ceilinged** (6.4% → 10.4%)
+  → **closes, and closes onto an existing ceiling rather than a new direction.**
+
+## Hypothesis
+
+> **H: the dominant cause of "no target in action range" is that workable ground is VISIBLE but not
+> reachable this turn — travel, not sight.**
+
+## Gate — registered with the branch order fixed, TRAVEL-bound tested first
+
+Population: action-capable unit-turns after **r300** classified "no target in action range".
+Statistic: the share of those turns with **≥1 EMPTY passable tile anywhere in vision**.
+
+> **≥ 60% ⇒ TRAVEL-BOUND.** H supported; the direction opens on arrival/movement policy.
+> **≤ 30% ⇒ SIGHT-BOUND.** H **falsified**; the finding folds into B0's ceiling and I build nothing.
+> **Between 30% and 60% ⇒ INCONCLUSIVE**, recorded, not acted on — and the named follow-up is to
+> split by *phase* (r301–600 vs r1000+) before any mechanism, because a saturating map must drift
+> from travel-bound to sight-bound and I want that stated now rather than discovered as a rescue.
+
+**Falsifier, plainly:** if ≤30% I do not build a movement change, and the 96% becomes an *accounting*
+of the B0 ceiling rather than a new lever.
+
+## Manipulation checks — registered now
+
+1. **Behaviour neutrality:** the probe must reproduce HEAD's **exact round counts** on the same maps.
+   Counters only; identity by round count is the guard, as it was for M3.
+2. **Cross-instrument agreement:** the probe's total ACTED count must match the paint-action count
+   `ReplayDump.java` computes independently from the replay stream (`acts[p…]`). Two independent
+   producers of one quantity — the check I did not have when I nearly discarded real data as fake.
+3. **Partition:** the new codes must *partition* the old "no target" bucket exactly (4 + 6 = old 4).
+
+**Measured on HEAD (`src/alice`), not on the M2 lineage** — this is a structural question about the
+shipped bot, and M2 is rejected. Opponent `alice_iter43` (the strongest frozen rung), 6 maps.
+
+## RESULT: SIGHT-BOUND at 17.2%. **H is FALSIFIED.** No movement change is built.
+
+`alice_util` (HEAD + counters) vs `alice_iter43`, 6 maps, **193,655 action-capable mobile unit-turns.**
+
+**Manipulation check 1 — behaviour neutrality: PASSED, exactly.** Identical winners and identical
+round counts on all six maps — **534 / 1869 / 1096 / 277 / 2000 / 898** — against HEAD run on the same
+maps. The extra full-vision scan on idle turns changes nothing.
+
+| cause, all mobile units | turns | share |
+|---|---|---|
+| **acted** | 8,516 | **4.40%** |
+| idle: paint < engine cost | 8,763 | 4.53% |
+| idle: below my own guard | 4,783 | 2.47% |
+| off-duty: refill walk | 799 | 0.41% |
+| **idle: no target, work IS in vision** | 31,395 | **16.21%** |
+| **idle: no target, NO work in vision** | 139,399 | **71.98%** |
+
+**The registered gate, on "no target" turns after r300:** work in vision on **28,080** of **163,402**
+= **17.2%**, against **≥60% TRAVEL-BOUND / ≤30% SIGHT-BOUND**. **SIGHT-BOUND.** The registered
+consequence fires as written: *"if ≤30% I do not build a movement change, and the 96% becomes an
+accounting of the B0 ceiling rather than a new lever."* **Rejected iteration; nothing built.**
+
+**The phase drift I named before looking, and which therefore cannot be a rescue:**
+
+| rounds | turns | acted | work in vision | no work in vision | travel share |
+|---|---|---|---|---|---|
+| 1–300 | 12,429 | **31.3%** | 26.7% | 32.8% | **44.8%** |
+| 301–600 | 22,537 | 8.3% | 23.9% | 61.1% | 28.2% |
+| 601–1000 | 38,915 | 3.6% | 20.7% | 67.6% | 23.5% |
+| 1001+ | 119,774 | **1.1%** | 12.2% | **79.5%** | 13.3% |
+
+Exactly the predicted monotone drift: a saturating map moves from travel-bound to sight-bound. At
+r1001+ my units act on **1.1%** of their action-capable turns and 79.5% cannot see any work at all.
+
+## Manipulation check 2 FAILED — and the failure is in the registration, not the probe
+
+I registered *"the probe's total ACTED must match ReplayDump's `acts[p…]`."* Measured: **16,337 vs
+8,516**, a factor of 1.92. **The check was ill-posed: I registered two different quantities as one.**
+`acts[p…]` counts **tiles painted**; the probe counts **action slots used**. One splasher action
+paints up to 13 tiles and one `completeTowerPattern` paints 24 at a stroke, so the two can never be
+equal for a bot that has splashers or completes patterns.
+
+Reconciled rather than waved away: 16,337 − 5,548 single-tile soldier paints = **10,789 tiles from
+956 splasher actions plus pattern completions**, i.e. **≤11.3 tiles per splasher action against an
+engine maximum of 13** — an upper bound that holds, not a contradiction. Unpaints 2,529 against 2,012
+mopper actions is the same story on the other side.
+
+> **This is the denominator lesson again, and I walked into it while writing the check that was
+> supposed to catch that class of error.** I compared a count of *tiles* to a count of *turns* and
+> called it agreement. **Check 1 is the load-bearing one** — the classification is computed in-line
+> from the engine's own state at the decision site, so it never depended on the tile reconciliation.
+
+## The one caveat that could in principle flip this, bounded by arithmetic
+
+`_visWork` scores a soldier's work as **EMPTY passable tiles only**, ignoring ruin-pattern work. So
+17.2% is a **lower bound**. For the verdict to reach even the inconclusive band, visible pattern work
+would have to appear on **>12.8 percentage points** of no-target turns; to reach TRAVEL-BOUND it needs
+**60%**. Against **ruins at ~1.1% of non-wall tiles** (my own measurement: maze, 32 ruins / 2,888
+tiles) a soldier's ~69-tile vision holds **~0.76 ruins**, most of them already claimed. **The caveat
+cannot carry 43 percentage points.** SIGHT-BOUND stands.
+
+## What the number actually says — recorded, not acted on
+
+**The 96% is real and it is not headroom.** 72% of action-capable turns have *no workable ground in
+vision at all*: the army is **larger than the work the map presents to it**. That is the same fact
+M2 ran into from the other side — more units cannot raise output when the marginal unit has nothing
+in sight — and it **strengthens** the production-ranking closure rather than opening a new lever.
+
+**Per-type heterogeneity, logged as an observation that requires its own registration, NOT an
+amendment to this one:**
+
+| type | turns | acted | work in vision, out of range |
+|---|---|---|---|
+| SOLDIER | 125,695 | 4.41% | **6.76%** |
+| SPLASHER | 43,643 | 2.19% | 20.77% (plus **15.41%** paint-starved) |
+| **MOPPER** | 24,317 | 8.27% | **56.88%** |
+
+**Moppers are travel-bound where soldiers are sight-bound** — a mopper's action radius is r²≤2 (the 8
+adjacent tiles) against vision r²=20, so it *sees* enemy paint it cannot reach on 56.9% of its idle
+turns. The pooled verdict is soldier-dominated (125,695 of 193,655 turns) and the pooled gate is what
+I registered, so **SIGHT-BOUND is the verdict**. The mopper cell is a *different question on a
+subpopulation of 12.6% of turns*, and turning it into a lever requires a fresh registration with its
+own bar — it does not rescue H and I am not treating it as such.
