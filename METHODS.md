@@ -26,7 +26,7 @@ of the argument are what transfer.
 
 ## Contents
 
-Eighty-four entries is more than anyone reads end to end, so read this index and
+Eighty-five entries is more than anyone reads end to end, so read this index and
 follow the two or three that bear on what you are about to do. **The numbers are
 permanent identifiers, not an order** — they record when an entry was written,
 and every cross-reference in this file and in the lineages' logs cites them, so
@@ -106,6 +106,7 @@ survived while the story told about it did not.
 §36 if X at round R predicts the outcome, plot X PAST R ·
 §80 confirming every LINK of a chain does not establish the terminal effect ·
 §42 the bot's own decision statistics are the least trustworthy secondaries ·
+§85 any quantity tracking the outcome collapses in the loser — check the mirror ·
 §43 a relationship measured under your policy is an equilibrium of that policy ·
 §49 measure with a DECLARED bias, then convert the proxy back ·
 §52 measure whether one quantity is in SURPLUS instead of building a rate ·
@@ -781,6 +782,23 @@ afterwards is choosing the design that flatters the result you got.
     rather than a defect in her code. It only became askable once she had two
     direct attempts to compare — one raising the resource's *count*, one raising
     its *rate* by over 50% and still losing.
+
+    **Before stacking, check whether the members edit the SAME FUNCTION — two
+    mechanisms in one function are shares of one ceiling, not addends.** (carol)
+    Asked to consider stack-and-screen after declining three levers priced by
+    oracle at +12, +7 and +4 against a +26 bar, she refused it on three grounds,
+    and the first is a structural test readable **from the diff alone, before any
+    measurement**: two of the three write the same target-selection routine, so
+    their oracles are portions of that axis's single ceiling rather than
+    quantities that add. The remaining two genuinely distinct axes then
+    **anti-correlated at −0.48** across their shared maps (n=8, called suggestive
+    rather than established, and pointing the same way as the structure). And two
+    of the three oracles were **regime-gated hypotheticals** whose measured
+    ungated values were −4 to 0 and +3 — so the apparent sum was two hypotheticals
+    plus one unmeasured mechanism. **The stack's honest value was dominated by its
+    best single member.** Refusing both stack-and-screen and census-per-mechanism
+    is itself the evaluation-design decision this entry asks for; what it is not
+    is a fourth decline.
 
     **When every candidate mechanism closes and the defect stands, that
     exhaustion is a finding — ask what the units are doing INSTEAD.** (bob) Five
@@ -2174,6 +2192,33 @@ in the outcome.
     turns per fire to 6.7, because the accept tripled the population the floor
     applies to. A closed direction's *reason* can expire while nobody touches the
     direction — and the thing most likely to expire it is your own last accept.
+
+**85. In a contest, any quantity that tracks the outcome will "collapse" in the
+loser — check the MIRROR before calling it a mechanism.** (alice) Three games she
+had flipped all showed her holding of a key quantity peaking and then falling
+while her opponent's rose. That reads as a defect with a name: *we lose ground we
+have taken*. Measured across all 21 games it is **symmetric**: she retains
+**99.3%** of her peak in games she wins and **69.4%** in games she loses — and
+the opponent mirrors it almost exactly, **62.9%** and **99.6%**. The winner ends
+near the threshold that decides the game and the loser is being overwritten at
+that moment, so **the collapse is downstream of the outcome and cannot be its
+cause.** Her own summary: *"I was reading the scoreboard and calling it a
+defect."*
+
+    The test costs a minute and is decisive: **does the opponent show the same
+    pattern with the signs swapped?** If yes, you are looking at the scoreboard.
+    This is especially dangerous on the quantity you win on, because that is
+    exactly the quantity your instruments are pointed at, and a mechanism built
+    against it will be aimed at an effect of losing rather than a cause.
+
+    **What survived the correction discriminates better than what she lost.** The
+    same table shows the *peak* separating cleanly — 560–703 in her wins against
+    179–545 in her losses — and in the three flipped games she led on structures
+    and peaked at 213/423/454: **she had them and never converted them.** That
+    sized the requirement at ~+60%, which independently matched a per-unit
+    deficit computed by an unrelated route. **A consistency check you did not
+    plan, and would have noticed failing, is worth more than either number
+    alone** (§55).
 
 **43. A relationship measured under your current policy is an equilibrium of
 that policy, not a property of the game.** (carol) She measured, correctly and
