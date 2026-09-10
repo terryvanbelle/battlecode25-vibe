@@ -19661,3 +19661,74 @@ rather than twice a day.
 75-map corpus, 150 games. It must reproduce the tournament's **96/150 = 64.0%** and its area
 gradient (small 77.3% / mid 71.9% / large 51.6%). **If it does not reproduce, the instrument is not
 faithful and I will not gate anything on it.**
+
+## `bobf` VALIDATED — it reproduces the tournament EXACTLY
+
+Run `20260910-051954`, `carol_iter45` vs `bobf`, full 75-map corpus, 150 games.
+
+| | local `bobf` | tournament `bob` |
+|---|---|---|
+| overall | **96/150 = 64.0%** | **96/150 = 64.0%** |
+| small (<900) | 17/22 = 77.3% | 17/22 = 77.3% |
+| mid (900–1600) | 46/64 = 71.9% | 46/64 = 71.9% |
+| large (>1600) | 33/64 = 51.6% | 33/64 = 51.6% |
+
+**Identical in every bucket, to the game.** The engine is deterministic, so this is not "close" — it
+is the same 150 games. `bobf` is a faithful, on-demand copy of an opponent this lineage did not
+produce, and it is the first such instrument carol has ever had.
+
+**What it is and is not.** It is one frozen opponent, so it prices a capability *against bob's
+style* and cannot certify "closes the gap to alice". It is not a finals benchmark bot. It never
+changes, which is what makes it a yardstick.
+
+# Iteration 68 — re-testing iteration 64 on an instrument that can price it. Pre-registered.
+
+## Why this is a legitimate re-open, and on what grounds
+
+Iteration 64 (grow-then-harvest phase switch) is CLOSED in my ledger, with a re-open condition about
+trigger dormancy. **I am not claiming that condition is met.** I am re-opening on a different and
+stronger ground:
+
+> **The instrument that closed it carries no information about the deficit it addresses.**
+
+METHODS item 8 is mine: *"Before building against a deficit you found in the tournament, check that
+your gauntlet can register it. If it cannot, the accept/reject you are about to spend 50 games on
+carries no information."* Iteration 64 was closed on a **self-play** screen against `carol_iter45` —
+an opponent that shares the exact pathology the candidate fixes. Doctrine 17 says such a margin is
+blind to it, and `agents/bob/CLOSED.md` #15 records four of his own nulls with the same cause and a
+re-open condition — *"an opponent exists that applies the pressure"* — **which is now satisfied.**
+
+The evidence that the closure was instrument-limited rather than mechanism-limited: on Mirage the
+switch moved coverage **296 -> 705**, splashers **0 -> 17**, soldiers **331 -> 3**, starvation
+**309 -> ~20**. A mechanism that moves five counters that hard and scores 28/50 against a bot with
+the same defect is the signature of a blind instrument.
+
+## The test
+
+`carol_i64_4` (`TOWER_TARGET = 4`, the arm that scored best on the self-play screen at 28/50) vs
+**`bobf`**, full 75-map corpus, both sides, 150 games. Baseline is exact and already measured:
+**`carol_iter45` vs `bobf` = 96/150**.
+
+**Note on statistics, because it differs from every gate I have used:** both arms play the *same
+fixed opponent* over the *entire* corpus, so the comparison has **no sampling error at all** — it is
+an arithmetic difference between two exact measurements, not an estimate. The uncertainty is not
+statistical; it is about **generalisation to other opponents**, which no amount of games against
+bobf can reduce.
+
+## Pre-registered gate
+
+> **>= 104/150 (a delta of >= +8 games over the 96 baseline): the mechanism pays against an external
+> opponent, the self-play closure was instrument-limited, and iteration 64 re-opens for a proper
+> dose ladder on this instrument.**
+> **<= 103: the closure stands on its own merits** — the mechanism does not pay even against an
+> opponent that punishes the defect — **and iteration 64 stays closed, now for a much better reason
+> than the one I closed it with.**
+
+**Registered secondary:** the gain must concentrate on **large maps (>1600)**, where the deficit
+lives (carol 51.6% vs bobf, 26.6% vs alice). A gain spread evenly, or concentrated on small maps
+where carol already wins 77.3%, would mean the mechanism is doing something other than what I traced
+on Gears — and I would report that rather than bank the headline.
+
+**Registered risk:** `bobf` is a single opponent. A pass licenses "this pays against bob", and the
+only thing that can license "this closes the alice gap" is the twice-daily tournament, which I do
+not control.
