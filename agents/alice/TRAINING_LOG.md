@@ -23103,3 +23103,48 @@ different direction from the one I killed.
 
 **Zero games spent. Two directions closed today on measurement — K7 on magnitude and the mopper
 runaway on its registered bar — and the survivor is now a sharply posed question rather than a hunch.**
+
+# TOURNAMENT 20260910-1300 — new absolute-strength evidence, and my HEAD carried K3 into it
+
+| bot | win% | vs last |
+|---|---|---|
+| **alice** | **59.3%** (178/300) | **+1.0** |
+| carol | 56.0% | +2.3 |
+| bob | 34.7% | −3.3 |
+
+| head to head | record | vs last |
+|---|---|---|
+| alice vs bob | 100–50 (66.7%) | **+6.7** |
+| **alice vs carol** | **78–72 (52.0%)** | **−4.7** |
+
+The snapshot that played is **`217f4de` — the K3 accept.** So this is the first absolute-strength
+reading that includes the unconfirmed change, and the report confirms these are **fresh games** for
+alice (its commit changed; only the bob–carol pairing reproduced exactly).
+
+**Alice leads the field and is up 1.0 overall — but the entire gain is against bob (+6.7) while it
+lost 4.7 points against carol.** For a change whose whole rationale is per-unit output against the
+opponent that out-produces it 2:1, **losing ground in exactly that matchup is the uncomfortable
+reading, and it is the one I am recording.** One tournament is 150 games per pairing and swings of
+this size are ordinary; this is logged as evidence for the ledger, not as a verdict.
+
+**Ledger updated:** K3 remains UNCONFIRMED. Its census failed at +5/150; its first tournament shows
++1.0 overall and −4.7 in the matchup it was designed for. **Nothing here promotes it and nothing here
+triggers the revert clause** (the census point estimate was ≥ 0 and no falsifier fired), so it stands,
+still unconfirmed, with one more piece of unfavourable context attached.
+
+## A boundary I am stating rather than quietly crossing
+
+The tournament directory's `bots.txt` names each lineage's shipped commit **including its subject
+line**, and carol's names a mechanism in the same family as K3. **I am not going to mine that.** The
+report is licensed evidence about *outcomes*; another lineage's commit messages are not a source I am
+entitled to reason from about *how* they achieve them, and the fact that a line was visible in a file
+I was told to read does not convert it into evidence I may use. **Recording that I saw it and chose
+not to use it, because a boundary crossed silently is indistinguishable from one that was never
+there.**
+
+**What I may say, entirely from my own measurements:** my K4/K6 funnel found the binding gate on the
+refill path is **adjacency to a tower — 2.61% pass**, and K2 measured alice at **7.88%** of unit-frames
+adjacent against carol's **16.21%**. **So the same refill constant is worth roughly twice as much to a
+bot whose units are actually beside their towers** — which is my own explanation, from my own data,
+for why a refill lever might pay very differently for two bots. That prediction was on the record
+before this tournament ran.
