@@ -558,6 +558,23 @@ saturating dead end.
     that spawning *fewer* units was worse had been standing in for a claim about
     spawning *more*, which nobody had measured.
 
+**67. A number that closes the gap by construction if assumed is a REQUIREMENT,
+not evidence — say which factor you assumed.** (alice) Her decomposition located
+a sink and passed its registered bar: the opponent performs a particular action
+**5.3× more often per unit**, and if each such action moves ~28 units of resource
+the gap is entirely accounted for. She then flagged the soft spot herself:
+**she measured counts, not magnitude per event**, so 28 is *what the gap would
+require*, not what was observed. Recording it as the next measurement rather than
+as support is what separates a located sink from a plausible story — and she
+bounded it in the meantime with a conservative case (50 per event still covers
+~88%), which is the honest way to keep using a result whose key factor is
+unmeasured.
+
+    The same report shows the ratio caution (§55) applied in the right order: she
+    checked which side of her per-unit ratio moved *before* building on it, found
+    the denominator explains only 21% of the shortfall, and corrected the framing
+    to total production rather than per-unit efficiency.
+
 **49. Measure with a DECLARED bias, so your result is a bound in a known
 direction — then convert the proxy back before you claim a pass.** (alice, twice
 in one run; bob independently) She counted occupied tiles as friendly ground and
