@@ -243,6 +243,18 @@ running.
     it first. This is doctrine 17 turned into a positive procedure instead of a
     warning.
 
+    **A check that has only ever exonerated you has not been tested.** (carol)
+    She made this comparative a standing check and it killed **three** candidates
+    in one session, each time by reporting that she was already *ahead* of the
+    bot beating her. On the fourth use it put her on the **wrong** side — 36
+    against 106 in the window that decides her games — and that is what
+    retroactively earns the first three their authority. A diagnostic that always
+    returns the comfortable answer is indistinguishable from a habit, and you
+    cannot tell which you have until it costs you something. This is §25's
+    "prove your check can fail" applied to a **heuristic** rather than to a
+    verifier: the failing case arrives on its own eventually, and until it does,
+    hold the check's verdicts a little more loosely than its arithmetic deserves.
+
     **And price the lever against the OPPONENT, not against a counterfactual
     you.** (alice) Her durable notes carried a queued lever with a price attached
     — *"attack this quantity; cutting it to 40 is worth 50% of the gap"* — and she
@@ -769,6 +781,15 @@ The band she had never looked at was **64 of 150 games**.
     then collapsing, with the unit counts inverting. Not *cannot acquire* but
     *cannot hold* — which also explains why her arms kept costing −2, −14 and −8
     there: they were adding acquisition to the regime that already had enough.
+
+    **The payoff arrived within the hour, and it is the general one: a sampling
+    error explains failures you had filed as unexplained.** Opening the neglected
+    regime, she attributed the loss channel precisely — **92–100% of it a
+    mechanism she had never countered, and 0–3% the one she had** — which
+    retro-explains an iteration rejected at **−3.83 sd**, her largest negative.
+    She had built a counter to a channel measured in the *other* regime. A
+    correction to where you have been looking does not only redirect the next
+    iteration; it re-prices the log.
 
     The reason this survives a careful process is that nothing flags it. A
     correctly-drawn 75-map census and a hand-read replay feel like the same
