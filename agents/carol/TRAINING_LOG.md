@@ -22115,3 +22115,80 @@ large-map loss is the same mistake in a mirror. **The next step is to price that
 equilibrium — not to build it** — and specifically to establish whether the −4 on large is real
 (0.85 sd on 64 games) or noise, because at +7/−4 the whole candidate rests on the sign of a
 sub-1-sd number.
+
+# ORACLE CLOSE on the last candidate — and the enumeration is now EMPTY
+
+**A referent error caught by magnitude, first.** My first run of this arithmetic returned
+"small+mid −47, −11.24 sd", which is absurd on its face. Cause: run `20260910-101308` had
+**`BOT=carol_i69_2`**, so `bot_result=='win'` *is* the candidate winning — I had inverted it. Fixed;
+the corrected figures reconcile exactly to the recorded 99/150. **I have now published an inverted
+referent zero times and caught it twice, both times because the number was implausible rather than
+because I re-read the code.**
+
+## The oracle
+
+| iteration 69 (`SPLASHER_EVERY=2`) vs `bobf` | |
+|---|---|
+| small | 20/22 (+3) |
+| mid | 50/64 (+4) |
+| large | 29/64 (**−4**) |
+| **small+mid** | **+7** |
+
+**Oracle: a regime gate that works perfectly, costing exactly nothing on large.**
+
+> **Ceiling = +7 games on the 150-game corpus. The accept bar is +26 — the oracle is 27% of an
+> accept, and 1.67 sd on `bobf`'s own floor. A real gate cannot beat a perfect one.**
+>
+> **CLOSED ON MAGNITUDE.** No re-open on gating; a re-open must name a change to the **size** of the
+> effect, not to how it is gated.
+
+## The enumeration is empty
+
+Every axis I can name is now closed, and — the part that is new today — **the two most promising
+close at their ORACLE ceilings rather than at an implementation failure:**
+
+| axis | basis of closure |
+|---|---|
+| **coverage** (6 members, ranked by cost) | **oracle = +26 = exactly the bar**, and every real member harms the majority regime |
+| **allocation / unit mix** | **oracle = +7 = 27% of the bar** |
+| `MONEY_MOD` | integer optimum — a `min()` ceiling cannot be raised by a knob that trades its two terms |
+| `CHIP_RESERVE` / gate | not the fixed point; equilibrium sits 3.5x above realised behaviour |
+| denial / mopping | −3.83 sd, and 0–3% of the loss channel in the reachable regime |
+| navigation, travel, expansion, paint efficiency, splash weights, `SPLASH_MIN_SCORE`, `REFILL_LOW`, tower attacks, defense towers, symmetry inference, spawn placement, frontier-seeking, soldier ceiling, phase switch, explore rank | closed earlier this session, each with its basis recorded |
+
+**A closure says an implementation failed. A ceiling says no implementation can succeed.** Two
+ceilings at or below the accept bar is a categorically stronger statement than the closure map I
+held at iteration 59, and it is the difference between "I am stuck" and "this design cannot get
+there".
+
+## Therefore: a rewrite is INDICATED on evidence, and I am registering it rather than starting it
+
+The standing authorisation exists; I am not spending it because it exists. **I am spending it
+because the arithmetic says every reachable axis has a ceiling below the bar.**
+
+**The premise must differ from iteration 59's**, which tested soldier-primary, was rejected at
+−5.71 sd, and settled that splasher-primary is correct on area-throughput arithmetic. Repeating it
+would re-run a measured failure.
+
+**The premise the measurements actually point at:** every structural gap left is the same one —
+
+| | carol | opponent |
+|---|---|---|
+| map tiles ever seen | **49%** | 90% |
+| unit-turns spent on the OPPONENT's paint | 10–41% | **85–88%** |
+| splasher production, first vs second half | **87 / 36** | 35 / **106** |
+| tower sites rebuilt | 0–2 | **15–43** |
+
+**carol operates in its own half and the opponent operates in carol's.** And the cause is
+identifiable in my own accepted code: **D3 (iteration 60) tethers every unit to a tower** — `HOME` is
+35–59% of splasher turns, rising with map area — because a unit's only paint source is a tower it
+must physically touch (`transferPaint` is r²<=2 for every unit type [E]).
+
+> **Rewrite premise: a bot whose units can operate at range from their towers.** The engine offers
+> exactly one mechanism for it — **moppers transfer paint robot-to-robot**, the one unit interaction
+> carol has never used — and no parametric knob can reach it, because the tether is the logistics
+> design itself and not a constant in it.
+
+**Registered, not started.** Iteration 59's rewrite worked because it began from a committed survey
+rather than from the context that produced it; this session is that survey. The next session starts
+from here.
