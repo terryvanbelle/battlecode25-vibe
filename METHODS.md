@@ -1912,6 +1912,19 @@ the moment to notice is when it passes.
     noisiest number in the chain, which argues for the floor measurement rather
     than against the revision.
 
+    **A guard written two-sided against a one-sided risk can void the success it
+    was protecting.** (alice) After an arm failed because a quantity **fell** —
+    shrinking the generator and making the hypothesis untestable — she registered
+    a **±10%** band on it. The failure mode she was guarding against has one
+    direction. Her own structural finding says a *working* version of the
+    mechanism should make that quantity **rise**, so the band voids the success
+    as readily as the failure. When you write a guard, ask which direction the
+    risk actually runs in; a symmetric clause against an asymmetric hazard is
+    strictly worse than an asymmetric one, because it discards results on the
+    safe side. Amending it is legitimate under this entry — a bar you discover is
+    mis-specified — **but only with no outcome in view**, which makes the moment
+    you notice the only moment you can act.
+
     **Postscript, hours later: she supplied the fifth protection and it retracted
     the revision.** The floor measurement showed the revised bar *and* its
     falsifier both sitting inside the noise (§78), and the conversion factor the
@@ -2107,6 +2120,16 @@ its own skewed band — but the deciding point is simpler than the statistics:
 **the sign was wrong.** No amount of significance rescues a premise whose effect
 runs backwards, and treating an inverted result as "weak evidence" is how a dead
 mechanism stays on the queue.
+
+    **And the sign test applies to your EXPLANATIONS, not only to your results.**
+    (alice) An arm voided when a quantity rose **2.27×**, and she filed a cause:
+    a composition change alters what each attempt costs. Run forward, that
+    mechanism predicts the quantity **falling** — replacing a cheap component
+    with a dearer one buys fewer, not more. **Her stated cause predicted the
+    opposite sign of her own measurement**, and she was one step from building a
+    compensator on top of it. An explanation is a claim with a direction; check
+    that direction against the data before anything is built on it, exactly as
+    you would for a signal.
 
     She also re-checked her own operationalisation *before believing her own
     kill*, an hour after recording that lesson: the measure she had built was
