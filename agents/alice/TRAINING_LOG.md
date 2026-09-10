@@ -23148,3 +23148,67 @@ adjacent against carol's **16.21%**. **So the same refill constant is worth roug
 bot whose units are actually beside their towers** — which is my own explanation, from my own data,
 for why a refill lever might pay very differently for two bots. That prediction was on the record
 before this tournament ran.
+
+# THE UNIT-MIX AXIS IS CLOSED ON BOTH BRANCHES — and the binding term now has no open axis
+
+## Branch 1: the mopper dose. Registered rule returns NEITHER, and the branch is blocked anyway
+
+`tools/mop-claim.py`, one game's full action log, every event located and timestamped so the rate is
+**within-game**:
+
+| fate of a mopped tile | | |
+|---|---|---|
+| next paint is **alice's** — CLAIMED | 523 | **58.1%** |
+| next paint is the **enemy's** — re-taken | 285 | **31.7%** |
+| never painted again | 92 | 10.2% |
+
+> Registered: PASS to dose down if <40%, KILL if >70%. **58.1% — neither branch fires**, and I am not
+> moving a bar I set. n=1 game, stated.
+
+**But the branch is blocked downstream regardless, and the code says so in one line:**
+
+```java
+if (want == UnitType.MOPPER && rc.getPaint() < UnitType.SOLDIER.paintCost) want = UnitType.SOLDIER;
+```
+
+**Refusing a mopper yields a SOLDIER, by construction.** So dosing moppers down converts mopper paint
+into *more soldiers* — and K1 measured alice at **1.35x carol's spawns with 0.52x the per-unit
+output**. **The freed resource can only go to the term alice already leads.** A dose that cannot
+reach the binding term is not worth its screen whatever the claim rate says.
+
+*(Worth noting anyway: **31.7% of alice's mopping hands the tile to the enemy** — the mop empties it
+and carol paints it first. Alice spends to convert its opponent's tile into a tile its opponent
+re-buys for 5 paint. That is a paint trade the paint-poor side should not want.)*
+
+## Branch 2: the splasher share stays CLOSED — and now for a second, independent reason
+
+Its standard is *"a reason the rest of my bot now supports the share, **not** fresh evidence that the
+siblings still have one."* **Everything I measured today is situational** — per-unit output is the
+binding term, moppers waste paint, the engine favours splashers — which is precisely the form the
+standard rules out. **Not re-opened.**
+
+But the standard also names something testable: *does my bot support splashers?* **It does.**
+
+| | splashes per lifetime | % of ceiling |
+|---|---|---|
+| alice | 3.50 | **18%** |
+| carol | 4.41 | 23% |
+
+**My first pass on this was wrong and I caught it before building on it:** I read actionCooldown 50 as
+"acts every 50 turns" and got an impossible 184% of ceiling. Cooldowns **decrement 10 per turn**
+(`RULES.md`), so CD 50 means ready every **5** turns and the ceiling is ~19 per life, not 1.9. On the
+corrected arithmetic alice's splashers fire at **18% of ceiling against carol's 23%** — comparable, and
+the same 15–19% utilisation my soldiers show. **So "my bot does not support splashers" is false. The
+entire difference is the share, which is the thing that is closed.**
+
+## Where this leaves the binding term
+
+`actions per turn alive` (0.52x) decomposes into **unit mix**, **per-unit action rate**, and **target
+availability**. Per-unit action rate is P1, closed. Target availability was closed repeatedly this
+session. **And unit mix is now closed on both of its branches — one blocked downstream, one by a
+standard that today's evidence is the wrong kind to meet.**
+
+> **The binding term has no open axis.** That is a real state and I am recording it as one rather than
+> reaching for the closed branch. **The next legitimate move is not another mechanism: it is to satisfy
+> the splasher standard on its own terms — build something that makes the share *supportable*, and let
+> the share follow — or to find an axis of per-unit output this enumeration missed.**
