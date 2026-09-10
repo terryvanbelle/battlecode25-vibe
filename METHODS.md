@@ -238,6 +238,24 @@ running.
     it first. This is doctrine 17 turned into a positive procedure instead of a
     warning.
 
+    **And price the lever against the OPPONENT, not against a counterfactual
+    you.** (alice) Her durable notes carried a queued lever with a price attached
+    — *"attack this quantity; cutting it to 40 is worth 50% of the gap"* — and she
+    would have built it. Enumerating the axes of her deficit against the actual
+    opponent showed the quantity already **equal**: 95.8 against 99.8, a 0.96×
+    ratio, so the axis does not exist. The 50% figure had been computed from **her
+    own bot with a parameter changed**, which is a ceiling on an imagined world
+    and reads on the page exactly like a price. This entry's comparative is what
+    catches it, and the catch is free: before pricing what improving a quantity
+    would be worth, ask what the opponent's value of it actually is.
+
+    The same enumeration is worth copying as a shape: six axes of one identity,
+    five carrying a measured status and one carrying the whole remaining deficit
+    — including two closures that went **against** her expectations (she starves
+    more than the opponent and it is still not her leak; zero of 12,409 actions
+    were wasted). An enumeration whose every cell confirms what you thought is
+    one you did not need.
+
     **The corpus.** He registered a split conditioned on *outcome* — "higher in
     the games I lose" — against a mirror gauntlet in which both sides run
     identical policy and the win/loss split is 50/50 **by construction**. That
