@@ -21307,3 +21307,76 @@ ruins, unpainted ground, or where the unit has already been.
 **Still not building.** But the explanation set for the area gradient is now a single named term with
 four mechanisms and eight rival explanations eliminated behind it, and that term is a property of
 one function I can read rather than a matchup statistic.
+
+# Iteration 75 — symmetry inference, unblocked by a ruin memory. PRE-REGISTERED.
+
+## The history pre-check caught a prior attempt, and it changes the build
+
+**Iteration 43 already built this**, and measured it **BLOCKED, not wrong**: refutation was correct
+(no false kill of the truth) but needed a tile and its mirror visible **simultaneously**, so all
+three candidates stayed alive for **1,321 of 1,525 turns** on TheBest and **9,324** on
+DefaultMedium. Its own verdict: *"the fix is a terrain memory so refutation does not require
+simultaneous visibility... carrying it forward rather than evaluating a mechanism I have measured
+as barely running."*
+
+**So my sizing is a ceiling conditional on an unbuilt prerequisite** — I computed mirrors from the
+full ruin list with a god-view, which a robot cannot do. Saying that plainly, because it is the
+difference between a magnitude and a hope.
+
+**But the same measurement supplies the prerequisite in its cheapest form.** On galaxy's 28 ruins:
+
+| candidate transform | maps ruin -> ruin |
+|---|---|
+| **rot180** | **28/28 = 100%** |
+| reflect-X | 0/28 |
+| reflect-Y | 0/28 |
+
+**Ruins are a perfect witness** — sparse, exactly symmetric, and only ~28 per map. So the terrain
+memory iteration 43 asked for is just **an array of remembered ruin centres**, and refutation
+becomes: *if a remembered ruin's mirror is in vision now and is not a ruin, that transform is dead.*
+The two observations no longer need to be simultaneous, which is precisely what was blocking it.
+
+## Magnitude (§74 applied to myself), and the affordability check (§70)
+
+galaxy vs alice, 28 ruins: carol senses 13, marks 11, claims 8. **Of the 17 never marked, 11 (65%)
+have a mirror carol already marked.** At carol's own measured marked->claimed rate of 73% that is
+**+8 sites -> ~+6 paint towers -> ~+30 paint/turn on a base of 55 = +55% paint income**, against an
+income deficit measured at 1.36–2.60x. **Oracle ceiling**: if sensing went 46% -> 100% at unchanged
+downstream rates, claims go 8 -> 17, above alice's 14.
+
+**Affordability, registered as the expected failure mode:** 8 claims cost **8,000 chips**, and
+carol's treasury is pinned at **400–1,800** — claims compete directly with splashers, and I have
+already measured one unit type spending exactly what it collects. The mitigation is that a tower
+repays its 1,000 chips in 33–50 rounds and the stall it fills is 600 rounds long, but **if this
+fails, "reachable but not affordable" is where I expect it to fail.**
+
+**Why bob's closure does not transfer:** `agents/bob/CLOSED.md` #32 closed this **by sizing** at
+31.5% mirror coverage and 0.53 ruins/game against a 2.72-ruin gap. Mine is **65% and 11 ruins
+against a 20-ruin gap** — about 20x the absolute prize. His verdict does not transfer; **his sizing
+method does, and I used it.**
+
+## Arms
+
+`INFER_IN_20` = **5 / 10 / 20** — how often a new exploration target is the nearest *inferred,
+never-sensed* ruin mirror instead of the incumbent's farthest-of-four-random. **0 disables it and
+restores the incumbent exactly** (zero arm `carol_iter45`).
+
+## Registered stage-0 gate — LINK 1, and it is iteration 43's own failure mode
+
+> **The symmetry must pin to a single candidate on >= 50% of robot turns.**
+> Iteration 43 measured **13% and 3%**. Below 50% the mechanism cannot fire, and by that
+> iteration's own rule — *"never spend a gauntlet until link 1 fires"* — **there is no screen.**
+
+Also required: **inferred targets actually used** (`inf` > 0), and **ruins ever marked must rise**
+above the baseline's 11 of 28.
+
+## Registered falsifier
+
+**If the symmetry pins and inferred targets are used but marked-ruins do not rise**, then units are
+being sent to real ruins and still not working them — which is the affordability failure above, not
+an acquisition one, and the direction closes with acquisition exonerated.
+
+## Gate
+
+Map-coupled mechanism, so **self-play** per the rule I adopted: 25-map screen (>= 31/50) then the
+standing full-corpus census (**margin >= +26**). `bobf` reported as corroboration, not as a gate.
