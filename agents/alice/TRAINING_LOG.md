@@ -19862,3 +19862,66 @@ information about paint.
 **how often is a soldier within message range of a tower at the moment it would need to be told
 where to go** — the same delivery question that killed lever B and that I have now, twice running,
 learned to ask before building rather than after.
+
+## Before reaching for messaging I tested the cheap alternative — and my own ledger killed it for ZERO games
+
+The cross-year research says *"look for emergent coordination, not commanded coordination — local
+rules that produce group behaviour"*, and that is a direct challenge to my conclusion that no local
+rule supplies coordination. So I took the challenge seriously and drafted the obvious one:
+
+> **Alice's soldiers each target the NEAREST open ruin in vision.** Two soldiers therefore diverge
+> whenever their nearest ruins differ. Re-key that choice to a **shared** observable — the most
+> pattern-complete ruin, or a deterministic hash of its coordinates — and soldiers with overlapping
+> vision **converge on the same ruin**. Coordination with no communication, one line, zero cost.
+
+**Then I grepped the ledger before building, and iteration 47's probe v2 already answers it:**
+
+> **mean OPEN ruins in vision, per ruin-turn: 1.00**, over **15,229** ruin-target turns; choice set
+> = 2 on **zero** turns; >= 3 on **zero**.
+
+**A shared tie-break cannot converge anything, because there is no tie to break.** Each soldier sees
+exactly one open ruin. The rule would have been byte-identical to the baseline on essentially every
+turn — the same singleton that killed iteration 47's ranking arm, rediscovered by me one front later
+and caught by a grep instead of a screen.
+
+### And that sharpens the synthesis rather than denting it
+
+The reason alice's soldiers do not concentrate is **not** that they choose differently. It is that
+they **see different things**:
+
+> **The coordination gap is a VISION gap, not a decision gap.** Two soldiers five tiles apart have
+> disjoint open-ruin sets, so no rule computed from what each can see individually can bring them to
+> the same target. Concentration requires information that crosses r²=20 — and *nothing local can
+> supply it, by construction.*
+
+This is the same wall iterations 47 and 48 hit from the mopper and soldier sides — *"this bot's units
+act on r²=20 of local information, and the objects that decide the game are further apart than that"*
+— and it is now the explanation for the 7–17% band rather than just another instance of it.
+
+### Which leaves exactly one capability, and its delivery is ALREADY measured
+
+| candidate | reach | verdict |
+|---|---|---|
+| shared tie-break on visible ruins | r²<=20 | **dead** — choice set is 1.00 |
+| `mark`/`removeMark` | r²<=20 to place, vision to read | **does not extend range** — a mark is only seen by a unit already close enough to see the ruin. It extends persistence in TIME, not reach in SPACE |
+| **messaging** | **r²<=20 to a TOWER, which relays** | the only route that crosses the gap |
+
+**And messaging's delivery question — the one that killed lever B and that I registered as the gate —
+is already answered in my own log: the iteration 23 pre-check measured 53–65% of robot turns in range
+of a tower.** That is not a 1.2% funnel; it is a working channel. **The blocker was never delivery.
+It was the payload**, and iteration 45 retired it for a stated and correct reason — the proposed
+payload was a frontier estimate, and the board census proved there is no frontier.
+
+**That reason is spent.** The payload the evidence now demands is a **rendezvous** — *"come to THIS
+ruin"* — and both fronts of this session measure their shortfall in **soldiers-per-target**, which is
+exactly what a rendezvous fixes and what a frontier estimate never would have.
+
+### Registered, and deliberately not built tonight
+
+The direction is messaging-for-rendezvous. **Its delivery is measured, its payload is identified, and
+its retirement reason is discharged** — which is more than any direction I opened today started with.
+What it still needs, in order: (1) the **relay** pre-check — a soldier can only talk to a *tower*, so
+concentration requires **two** soldiers in range of the **same** tower, and that is the lever-B
+adjacency question wearing a new hat and must be measured first; (2) a payload encoding inside a
+4-byte int; (3) the gate. **I am not starting a protocol at the end of this session**, and the relay
+pre-check is the first thing to run, not the last.
