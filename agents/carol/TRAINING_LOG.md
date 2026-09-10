@@ -21102,3 +21102,68 @@ sits in enemy-painted ground, which is exactly what triggers `denyBans` — but 
 what the last four mechanisms were built on. **The next measurement is whether carol's soldiers ever
 re-target a lost site at all**, which distinguishes a ban (they never consider it) from a failure
 (they consider it and cannot complete it).
+
+# The re-target measurement, registered — answered, and it undercuts its own direction
+
+## The registered question: never considered (acquisition) or considered and failed (policy)?
+
+**Answer: considered and failed.**
+
+- **Decision counters** (`carol_iter45` vs `bobf`, Gears, late-game soldiers): `dn` (denial bans)
+  **1–3**, `pb` (patience bans) **0**, `bs` (ban skips) **18–19**, `bp` (ban peak) **1–3**. Bans
+  fire, but the list peaks at three ruins — this is not a mechanism suppressing claims at scale.
+- **Do soldiers return?** For each of the three lost sites, carol units are within vision at most
+  sampled rounds after the loss (1–3 sightings per site). They are not absent.
+- **What stops them:** all three lost sites hold enemy paint in the 5x5 — enemy 11/25, 6/25 and
+  **25/25**. A soldier cannot overwrite enemy paint [E], so it finds a blocked pattern, fires
+  `denyBans`, and leaves. That is the iteration-44 denial mechanism applied to a **lost** site
+  rather than a virgin ruin.
+
+**So it is policy, not acquisition** — which is what the measurement was registered to decide.
+
+## And then the finding that undercuts the whole direction
+
+**On Gears against alice, carol loses ZERO towers while alice rebuilds 43 times.** carol is *winning*
+the tower-destruction war on that map — and loses the game 365 to 628. Rebuilding cannot be carol's
+general problem when on half the sampled games carol has nothing to rebuild.
+
+**The rebuild direction is therefore not the income answer**, and I am recording that before it
+becomes a fifth mechanism built on an obvious suspect. The denial-of-lost-sites mechanism is real
+and measured; it is simply not what costs carol the income deficit.
+
+## What IS solid, and it is a quantity that refuses to move
+
+| game | map ruins | **carol sites** | opponent sites |
+|---|---|---|---|
+| alice / Gears | 18 | **8** | 8 |
+| bobf / Gears | 18 | **7** | 10 |
+| alice / galaxy | **28** | **6** | 12 |
+| bobf / galaxy | **28** | **7** | 15 |
+
+**carol claims 6–8 unique ruin sites whether the map holds 18 ruins or 28**, against opponents who
+claim 8 and 15 on the same pair. And carol's base paint income is **75, 75, 55, 55** per turn across
+both map sizes and both opponents.
+
+> **carol's expansion does not respond to ruin availability at all.** A 56% increase in available
+> ruins produces no increase — if anything a decrease. That is not a matchup statistic; a quantity
+> that refuses to move when its inputs vary is a statement about my own bot.
+
+**And it is not the obvious resources.** Chips are idle at **$6,730–$27,930** in these games, and
+carol builds **156 soldiers** on Gears against bobf. Neither chips nor soldier supply is the cap.
+
+## Registered next measurement — still not a mechanism
+
+**What caps carol's unique-site count at 6–8?** The candidates are distinguishable from replays for
+zero games:
+
+1. **Never sensed** — the extra ruins on a 28-ruin map never enter any carol soldier's vision.
+   (The galaxy decomposition already hinted at this: 18 of 18 missed ruins were never marked.)
+2. **Sensed but never selected** — `nearestEmptyRuin` keeps choosing a nearer one, so distant ruins
+   are permanently out-competed by closer ones and never worked.
+3. **Selected but never completed** — worked and abandoned, which `pb` (patience bans) would show,
+   and `pb` is **0**.
+
+**(3) is already excluded by the counters.** Separating (1) from (2) needs the count of *distinct
+ruins entering vision per soldier* against the count *ever marked* — both obtainable from replays.
+They are acquisition and selection respectively, and, as with this measurement, they are different
+iterations with different gates.
