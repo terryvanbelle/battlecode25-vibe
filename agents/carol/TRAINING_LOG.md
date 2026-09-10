@@ -20685,3 +20685,65 @@ robots, allies and re-targeting in the way) — and the direction closes with th
 
 Self-play 25-map screen selects the dose (>= 31/50 to proceed, my standing bar), then the standing
 full-corpus census at **margin >= +26**.
+
+## Iteration 72 — KILLED AT STAGE 0 for 3 games. The falsifier fired as written.
+
+Mirage, rounds 300–700, one game per arm vs `carol_iter44`.
+
+| `TRACE_MAX` | splasher turns | **`HOME` share** | `noPaint` |
+|---|---|---|---|
+| 0 (zero arm) | 2,771 | **35.5%** | 0.0% |
+| 15 | 1,859 | **49.3%** | 0.0% |
+| 40 | 2,270 | **47.8%** | 0.0% |
+| 100 | 2,115 | **42.8%** | 0.0% |
+
+**Registered clause 1 required the `HOME` share to FALL from 35.5%. It ROSE, at every dose**, to
+42.8–49.3%. Clause 2 passes (`noPaint` stays at 0.0%), but clause 1 is the one that mattered and it
+fails in the wrong direction. Splasher-turns also fall (2,771 -> 1,859–2,270), i.e. fewer splashers
+alive.
+
+> **Registered falsifier: "If it does not move, then the loops my simulation found are not what
+> units actually spend their time on — the simulation would be measuring a policy the bot does not
+> really execute."** It fired.
+
+## What the simulation got wrong, which is the transferable part
+
+The simulation was faithful to `stepToward`'s *code* and unfaithful to its *situation*. It ran one
+unit over static terrain. Real movement has two things it omitted entirely:
+
+1. **Ally robots are obstacles.** `canMove` is false on an occupied tile, so the true obstacle field
+   is dynamic and mostly made of carol's own units — which a terrain-only simulation cannot see.
+2. **Units re-target constantly.** `moveExploring` refreshes its target on arrival, on `stuckTurns
+   >= 6`, and on age. A trap that is permanent for a fixed target is transient for a unit that
+   changes its mind every few turns.
+
+Committing to one rotation direction for up to 100 turns is *worse* in that world: it walks a long
+detour around a wall that a re-targeting unit would simply have abandoned, and it holds that
+commitment while allies block the path. That is why `HOME` rose rather than fell.
+
+> **A simulation of your own policy on idealised terrain is not a measurement of your bot's
+> behaviour.** Mine reproduced the code exactly and still mispredicted the sign, because the
+> dominant obstacles are the bot's own units and the dominant escape is re-targeting — neither of
+> which is in the terrain.
+
+**The 10–20% unreachability figure is not thereby wrong** — it is a true statement about greedy
+navigation over static terrain. It is simply not a statement about how carol's units spend their
+turns, and I treated it as one.
+
+## Ledger
+
+| axis | status |
+|---|---|
+| obstacle tracing / bug navigation | **CLOSED at stage 0** — `HOME` share rose at all three doses (35.5% -> 42.8–49.3%), splasher population fell |
+
+**RE-OPEN condition**: a navigation change validated against a measurement of **real unit movement**
+(turns spent not advancing toward the current target, taken from replays) rather than against a
+terrain simulation. If that measurement shows units are genuinely stuck on *terrain* rather than on
+each other, this re-opens; if it shows they are blocked by allies, the answer is a movement-priority
+or spacing mechanism and not a pathfinder.
+
+**What the reference read still bought**: `reference/RESEARCH.md` was the one stalled-loop remedy
+this lineage had never used, and it produced a testable, falsifiable candidate in a completely
+different family from the four economy mechanisms that preceded it — for three games. Its short-list
+entry 5 (*"price the mechanism before building on it"*) is also what made me register, in advance,
+that I did **not** expect this to close the area gradient.
