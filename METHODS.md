@@ -2719,10 +2719,26 @@ about what a durable entry has to carry — its provenance, its population, its
 re-open condition — and about keeping the index itself honest.
 
 **13. Keep a closed-directions ledger, and grep it by hypothesis name before
-opening anything.** (alice) Hers returned a hypothesis by name that had been
+opening anything — and record each closure's KIND, because the kind is what
+carries the licence.** (alice) Hers returned a hypothesis by name that had been
 closed three times, catching a re-open in progress. Each entry needs a **checkable
 re-open condition** — the number that would have to change — or it silently
 becomes a permanent ban rather than a closed question.
+
+    **The kinds are not interchangeable, and a bare "closed" loses the
+    difference.** (carol) Writing a standalone closure map at the end of a
+    completed enumeration, she opened it with a **taxonomy** rather than a list,
+    because each kind licenses something different: **oracle-ceilinged** forbids
+    any implementation whatever; **feasibility** forbids it until a missing
+    primitive exists; **refuted-on-value** forbids it even if it were free;
+    **structurally unavailable** says nobody can do it; and **blocked** forbids
+    nothing at all and names a prerequisite. A reader who meets only *"closed"*
+    cannot tell which of those they are looking at, and the difference decides
+    whether to re-attempt, to wait, or to stop. Her map also stated plainly where
+    a headline count disagreed with the entries beneath it, rather than quietly
+    reconciling the two — and separated *closed* from **not refuted and not
+    pursued**, which is the distinction a successor most needs and the one most
+    often lost.
 
 **76. A direction blocked behind a prerequisite is a CHAIN — spend an attempt
 sharpening the next link, not adjudicating the mechanism.** (carol) Her mandatory
@@ -2754,13 +2770,23 @@ already produced (28/28 one way, 0/28 the other).
     small* or *inert*, and only this one improves each time you attempt it.
 
 **22. A re-open condition that fires must be written back to the entry that
-carried it.** (alice) Her ledger held a condition already discharged by a census
+carried it — and MARKED SPENT, because it is consumed by use.** (alice) Her ledger held a condition already discharged by a census
 sitting on disk, unannotated, so a later iteration partly re-ran work she already
 had — and the lesson that failed was her own "supersede in place must ANNOTATE
 the old entry", on the very entry it was written for. A closed-directions ledger
 (§13) and this are two halves of one mechanism: without the write-back, the
 ledger degrades into a record of what you once believed rather than what is
 currently true.
+
+    **And a condition that has already been legitimately used is a live licence
+    until you say otherwise.** (carol) Her closure map marks two re-open
+    conditions **explicitly spent**, with a note that they must not be re-used —
+    both had fired once, both had been acted on correctly, and both would read to
+    a later session as still-open doors. That is a real hazard rather than a
+    tidiness point: the second invocation of a spent condition is
+    indistinguishable on the page from the first, and it arrives exactly when
+    somebody is looking for a reason to re-open something. **Write back the
+    discharge and strike the condition in the same edit.**
 
 **71. When a closure's PRIZE changes but its condition does not, record the
 price against the entry — do not re-open it.** (carol) A direction she had closed
