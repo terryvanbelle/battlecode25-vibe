@@ -20187,3 +20187,61 @@ Fixed two ways, because one was not enough:
 
 All three paths verified: garbage limit -> **exit 2**; selftest -> reaches the stale branch, **exit
 1**; normal run -> **exit 0**, reporting iteration 43 measured and 0 accepts behind.
+
+## Second pass through bob's tree — and it explains the sign flip on my lever A
+
+### His #66b independently reproduces the RULES.md error I found yesterday
+
+> *"A condensed rule is a cache, and mine went 47 iterations without invalidation. `RULES.md`'s
+> paint-penalty digest hid that crowding is charged on your **own** paint and that `crowd` counts
+> **TOWERS** — i.e. it hid the largest single paint sink in the game (~24,900/game)."*
+
+**Yesterday I decompiled `processEndOfTurn` and found the identical thing**: my own `RULES.md` said
+*"Only robots count; adjacent towers are free"* and the engine counts towers. **Two lineages, two
+independently written digests, the same clause wrong, found within a day of each other.** That is no
+longer a slip — it is a property of condensing that specific rule, and it raises my confidence in the
+correction from "I read the bytecode" to "we both read the bytecode and got the same answer."
+
+### His #12c prices the whole FAMILY my lever A belongs to — and the unit reconciles to mine
+
+> *"1.0 paint/unit-round saved ≈ 25 wins/50, and it **SATURATES** (iter49 saved 0.240 → +6; iter50
+> saved 0.285 → +6). So +10 needs >= 0.40 saved, and the largest saving in bob's whole budget
+> (crowding's avoidable 0.600) already saturates at +6 — **no paint-saving movement mechanism can
+> reach +10**."*
+
+**Unit check before comparing, because his log exists partly to stop a factor-of-two error here.**
+His `wins_above_half = W − N/2`; on 50 games that is `W − 25`. My `net swept = SW − SL = W − N`; on
+25 maps that is also `W − 25`. **On a 25-map/50-game screen the two are the same number.**
+
+| | value |
+|---|---|
+| family ceiling he measured | **+6, saturating** |
+| **his** accept bar | +10 → **fails on his bot** |
+| **my** screen accept bar | **+4** → **would pass on mine** |
+
+> **The same family sits below his bar and above mine.** That is not a reason to build it — a verdict
+> does not transfer, and his +6 is a fact about his architecture — but it is a reason the re-open is
+> worth taking seriously rather than filing away, and it is exactly the kind of thing that only
+> becomes visible when two lineages publish prices in reconcilable units.
+
+### And comparing the two arms explains the sign flip mechanically
+
+My lever A scored **−125.7 paint actions**; his de-clumping scored **+6 three times, never negative**.
+Same family, same payer named. The difference is **what each steers toward**:
+
+| | steers toward | consequence for "is there work here" |
+|---|---|---|
+| **my lever A** | **cheap TERRAIN** — i.e. alice's own paint | **worse.** A soldier cannot gain coverage on a tile it already owns, so it walks toward ground with nothing to do — the payer I diagnosed |
+| **his #25** | **away from CROWD** — i.e. away from its own units | **better.** Units spread out, and unworked ground is by definition where your units are not |
+
+> **Terrain-seeking and crowd-avoidance are not two doses of one mechanism — they point in opposite
+> directions with respect to finding work.** Terrain-seeking moves a unit toward its own paint;
+> crowd-avoidance moves it away from its own units. My "it failed on dose shape" hypothesis from the
+> first pass is **wrong, or at least incomplete**: it failed on **objective**, and the argmax merely
+> made the wrong objective bite harder.
+
+**That is a better hypothesis than the one I recorded yesterday, and it is mine** — it comes from
+comparing the two arms, not from lifting his. **Registered as the re-open**: a **crowd-avoidance**
+tie-break, not a terrain one, dosed as a weight rather than an argmax. It is **not** started now: the
+regression census outranks it, and my own iteration-49 probe already measured alice's adjacency at
+**0.70 paint/turn on small maps**, which is the number to price it against when it does start.
