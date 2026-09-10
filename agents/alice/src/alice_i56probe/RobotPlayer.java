@@ -91,7 +91,7 @@ public class RobotPlayer {
                 if (rc.getRoundNum() > startRound) overruns++;
                 else if (bc > limit - limit / 7) nearMisses++;
                 rc.setIndicatorString("W t=" + w_turns + " f=" + w_free + " tw=" + w_tower
-                        + " can=" + w_can + " hp=" + w_hp + " | "
+                        + " can=" + w_can + " hp=" + w_hp + " mt=" + w_mates + " c2=" + w_c2 + " c4=" + w_c4 + " | "
                         + "i25=" + i25Refills + "/" + i25Paint + " "
                         + (rc.getType() == UnitType.MOPPER
                         ? "i24=" + i24Moves + " p=" + rc.getPaint() + " " : "")
@@ -117,7 +117,9 @@ public class RobotPlayer {
     static long w_free  = 0;   //  ... action STILL ready at end of turn (nothing to paint)
     static long w_tower = 0;   //  ... AND an enemy tower within r^2<=9 (soldier action radius)
     static long w_can   = 0;   //  ... AND canAttack it  = WOULD FIRE
-    static long w_hp    = 0;   // summed HP of those towers, to price kills per opportunity
+    static long w_hp    = 0;
+    static long w_mates = 0;   // ally soldiers in range of the SAME tower, summed
+    static long w_c2 = 0, w_c4 = 0;   // would-fire turns with >=2 and >=4 of them   // summed HP of those towers, to price kills per opportunity
 
     static void towerFunnel(RobotController rc) {
         try {
@@ -137,6 +139,23 @@ public class RobotPlayer {
             if (!rc.canAttack(best.getLocation())) return;
             w_can++;
             w_hp += best.getHealth();
+            // CONCENTRATION, which is what actually decides this. The registered
+            // measurement was the tower HP DISTRIBUTION, but that is uninformative
+            // by construction: nothing of alice's ever damages a tower, so every
+            // tower in range sits at full HP and a "finish the nearly-dead" dose
+            // could never fire at t=0 whether or not it would work. The deciding
+            // quantity is whether enough soldiers are in range of the SAME tower to
+            // convert 5-paint hits into a kill: mean HP in range is 1,636 = 33 hits,
+            // and one soldier has ~20 usable attacks in its whole life.
+            RobotInfo[] mates = rc.senseNearbyRobots(best.getLocation(),
+                    UnitType.SOLDIER.actionRadiusSquared, rc.getTeam());
+            int nm = 0;
+            for (int j = 0; j < mates.length; j++)
+                if (mates[j].getType() == UnitType.SOLDIER) nm++;
+            if (nm < 1) nm = 1;                 // self may not be returned; never count zero
+            w_mates += nm;
+            if (nm >= 2) w_c2++;
+            if (nm >= 4) w_c4++;
         } catch (Exception e) { /* a probe must never change play */ }
     }
 

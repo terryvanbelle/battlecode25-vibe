@@ -19793,3 +19793,72 @@ dose; (3) then the gate, with the manipulation share and the null arm already re
 **This is the ninth pre-check today to stop a direction before it cost a build**, and the first to do
 it by pricing the *resource* rather than the *opportunity* — which is the distinction I got wrong in
 my own pre-registration one screen earlier.
+
+## Iteration 56 CLOSED on concentration — and it unifies the two fronts of this entire session
+
+**Measurement changed from the registered one, with the reason stated first.** I registered "measure
+the HP *distribution* of towers in range". That quantity is **uninformative by construction**: nothing
+alice owns ever damages a tower, so every tower in range sits at full HP, and a "finish the
+nearly-dead" dose could not fire at t=0 *whether or not it would work*. The deciding quantity is
+**concentration** — whether enough soldiers reach the *same* tower to convert 5-paint hits into a
+kill. I changed the measurement rather than run an uninformative one, and said so before running it.
+
+**Self-check first, because the probe was extended after publishing its funnel numbers:**
+
+> soldiers 558/558, turns 93,727/93,727, free 82,027/82,027, in-range 2,114/2,114, would-fire
+> 2,094/2,094 — **reproduces exactly.** The added counters are additive; the games ended at the same
+> rounds (2000/2000/1693).
+
+### The result
+
+| on the 2,094 would-fire turns | value |
+|---|---|
+| **mean ally soldiers in range of that same tower** | **1.01** |
+| turns with >=2 soldiers on it | 9 — **0.4%** |
+| turns with >=4 soldiers on it | 6 — 0.3% |
+| mean tower HP in range | 1,636 = **33 soldier hits** |
+
+> **Alice's soldiers reach enemy towers ALONE — 1.01 of them, on 99.6% of opportunities.** Killing a
+> 1,636 HP tower takes **33 hits = 1.6 soldiers' entire usable paint budgets**, and a lone soldier has
+> **~20 attacks in its whole life.** It cannot finish. The paint would buy spread damage across many
+> towers and convert into **no kills** — which is exactly what the tournament replays already showed:
+> 131 alice damage events, **zero** towers destroyed.
+
+**CLOSED**, on the condition registered before the measurement: the affordable dose cannot fire, and
+the unaffordable version spends 70% of alice's soldier paint to deliver damage that never converts.
+
+### And this is the same defect as the other front — which is the finding
+
+| | needs | gets |
+|---|---|---|
+| **completing a tower PATTERN** | a **4.5-soldier** relay (measured) | **2.41** soldiers (measured) |
+| **killing a tower** | **1.6 soldiers'** whole budgets on one target | **1.01** soldiers in range |
+
+> **Both fronts of this session are one defect: alice has no mechanism that CONCENTRATES units on a
+> target.** Its expansion fails because patterns need a relay it does not organise, and its tower
+> offence is impossible because kills need a relay it does not organise. The per-tower production
+> deficit and the collapse-from-ahead are the same missing capability seen from two ends.
+
+That is why every mechanism priced today came in at 7–17%: they were all **local** rules — a heading,
+a threshold, an upgrade key, a spare action — and the defect is **coordination**, which no local rule
+supplies.
+
+### The re-open condition, and it points at the oldest unused capability I own
+
+**Both directions re-open together the moment alice can concentrate soldiers on a target.** That is
+one capability, not two, and it is the one thing this lineage has never built:
+
+- **messaging** — `sendMessage`/`readMessages`/`broadcastMessage`, unused for **56 iterations**, the
+  largest unexplored capability I own; and
+- **`mark`/`removeMark`** — a 1-paint durable, ally-visible ground channel that needs no tower path.
+
+Iteration 45 retired messaging for a stated reason: its proposed payload was a *frontier estimate*,
+and the board census showed there is no frontier. **That reason is now spent** — the payload this
+session's evidence asks for is not "where is empty ground" but **"come to THIS ruin"** or **"come to
+THIS tower"**, and both fronts measure the shortfall in soldiers-per-target rather than in
+information about paint.
+
+**I am NOT re-opening it tonight**, and the pre-check it needs is already implied by everything above:
+**how often is a soldier within message range of a tower at the moment it would need to be told
+where to go** — the same delivery question that killed lever B and that I have now, twice running,
+learned to ask before building rather than after.
