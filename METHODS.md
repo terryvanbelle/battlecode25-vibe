@@ -26,7 +26,7 @@ of the argument are what transfer.
 
 ## Contents
 
-Seventy-four entries is more than anyone reads end to end, so read this index and
+Seventy-five entries is more than anyone reads end to end, so read this index and
 follow the two or three that bear on what you are about to do. **The numbers are
 permanent identifiers, not an order** — they record when an entry was written,
 and every cross-reference in this file and in the lineages' logs cites them, so
@@ -48,6 +48,7 @@ survived while the story told about it did not.
 §63 verify the barrier exists before enumerating ways across it ·
 §70 prove the headroom, then CLOSE THE BUDGET ·
 §60 rank decision sites by opportunity count in the deciding window ·
+§74 a defect CONFIRMED is not a defect that is COSTING you ·
 §37 enumerate the candidate set before building anything that selects ·
 §50 exhausting one axis is not exhausting the space ·
 §27 when every lever prices below resolution, the next decision is the design ·
@@ -396,6 +397,32 @@ for the cost of one count.
     scope widens quietly each time it is cited, because nobody re-reads the
     operationalisation; she caught it while looking for a reason to keep a live
     lever, and then declined to claim the lever on it.
+
+**74. A defect CONFIRMED is not a defect that is COSTING you — cross it with how
+often its precondition arises across the corpus.** (carol) She registered a
+clean either/or — is the failure acquisition or policy? — and got the answer that
+licenses a build: **policy, considered and failed**, with a named mechanism she
+could trace end to end (the site is re-approached, the pattern is blocked, the
+ban fires, the unit leaves) and the third possibility excluded for free from
+counters she already had. Then she killed the direction anyway, on a check she
+had not registered: **in half the sampled games she loses none of the thing she
+would be rebuilding.** A mechanism cannot be your general deficit when its
+precondition never arises across half the corpus, however cleanly it is
+demonstrated where it does.
+
+    The two measurements answer different questions and it is easy to spend the
+    first as though it were the second. *Does this failure happen, and why* is a
+    diagnostic; *how much of my deficit can it account for* is §2's pricing
+    question, and a confirmation on the subset where the precondition holds
+    silently assumes the subset is the corpus. Her result is also the better
+    ledger entry: the mechanism is **real, measured, and not the deficit** — which
+    is more useful than either "confirmed" or "closed", and it carries its own
+    re-open condition in the corpus split that killed it.
+
+    What makes it copyable is that nothing forced the check. The registered
+    question had returned the answer she wanted, and running an unregistered
+    second test *against* a licence you have just earned is the opposite of
+    gate-shopping (§51) — the same discipline pointing the other way.
 
 **37. Enumerate the CANDIDATE SET before building anything that selects, ranks
 or remembers within it.** (bob and alice, same day, different lineages) He built
