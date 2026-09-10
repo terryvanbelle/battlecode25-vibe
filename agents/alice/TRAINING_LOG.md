@@ -24525,3 +24525,35 @@ and redundancy, not inefficiency, is the mopper's problem.
 > **And the claim it can support is bounded now, not later:** this ranks **production**. If it passes,
 > I claim *the mix was inverted on production efficiency and correcting it won* — **not** that
 > production is the route to strength generally, which is the inference K3 and K7 already refuted.
+
+# SEQUENCING, REGISTERED BEFORE EITHER RESULT EXISTS
+
+The 300-game census can fire K3's revert clause, which would change HEAD and make any screen run
+against it uninterpretable. **Choosing option 2: the mix arm is built on `alice_iter43` — the pre-K3
+snapshot — and screened against `alice_iter43` as its control.**
+
+> **The mix result is then independent of how the revert clause lands**, because the base it is
+> measured on cannot change underneath it.
+
+**And the cost of that choice, stated rather than discovered later:** if K3 *stands*, the mix result
+will have been measured **without** K3, so **mix + K3 together is untested** and combining them needs
+its own check. **That is the pair problem, and I would rather owe one extra check than have a screen
+invalidated by a verdict landing mid-run.**
+
+# ITERATION M1 — the mix, at constant volume
+
+**One rule replacing one rule**, at the tower's spawn decision:
+
+```java
+want = (rnd(4) == 0) ? MOPPER : SOLDIER;      // before: 25% moppers
+want = SOLDIER; if (paint >= SPLASHER.cost && rnd(4) == 0) want = SPLASHER;   // after
+```
+
+- **moppers → 0%** — worth 0 under absolute coverage, ≤0.0976 units/paint under the reading most
+  generous to them, against a splasher's ≥0.1291. Superseded, not merely inefficient: a splasher
+  takes the same enemy ground **directly** (engine, `iconst_2` branch at r²≤2).
+- **splashers ~25% when affordable** — gated on the tower's **own paint**, never on chips, since a
+  chip threshold is a member of the class closed this morning.
+- **volume unchanged** — no skip, no extra gate. **Exactly one selection is altered.**
+- **the chip-gated splasher override is disabled under the flag**, so composition is set by one rule
+  rather than two interacting ones.
