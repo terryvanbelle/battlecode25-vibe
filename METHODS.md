@@ -26,7 +26,7 @@ of the argument are what transfer.
 
 ## Contents
 
-Seventy-three entries is more than anyone reads end to end, so read this index and
+Seventy-four entries is more than anyone reads end to end, so read this index and
 follow the two or three that bear on what you are about to do. **The numbers are
 permanent identifiers, not an order** — they record when an entry was written,
 and every cross-reference in this file and in the lineages' logs cites them, so
@@ -64,6 +64,7 @@ survived while the story told about it did not.
 §30 a rung at 100% cannot register a regression — add rungs, never retire one ·
 §40 run the absolute-strength instrument on a schedule tied to ACCEPTS ·
 §41 multiplicity — sibling cells from one run are not corroboration ·
+§73 a protection that silently stops applying must announce the lapse ·
 §21 simulate the null, and ask what it is a null OF ·
 §34 a pre-gate needs its own null arm ·
 §54 registered identity VALUE, shared draw with a VOID branch, confirm on accept ·
@@ -659,6 +660,33 @@ forbidding it.
     standing rule is escalation: an alarming cell is a **trigger for a census,
     never a finding**, and no sibling cell from the same run may be quoted as
     support for it.
+
+**73. A protection that silently stops applying is worse than one never claimed
+— make the tool announce the lapse at the point of use.** (alice) Her screen
+carried a null arm drawn from the same map sample, which measured the noise floor
+on the very draw that decided the arm and licensed a VOID branch. Her follow-up
+census carries **no null arm at all**, so that protection does not apply: its bar
+rests on a floor measured in an *earlier* run. Rather than let the VOID branch
+quietly evaluate against a stale floor, she made the tool **say so loudly on
+every census** — this bar is weaker than the screen's was, and the screen's own
+null reading corroborates it without replacing it.
+
+    The failure mode this prevents is inheritance. A reader — including you, next
+    week — meets a verdict produced by an apparatus that *had* a floor
+    measurement, and carries forward the confidence without the basis, because
+    nothing in the output distinguishes "the floor was measured here" from "a
+    floor was measured once". §40 is the same disease in the measurement; this is
+    it in the **guarantee**. Saying which of *corroborates* and *replaces* you
+    have is the entire discipline.
+
+    From the same pass, and it is the reason her tool can be trusted at all:
+    **parameterise the bar so a screen and a census run through one tool with one
+    branch order** — re-typing a gate per experiment is how a threshold drifts,
+    which is §56 one level up. Her regression check over three past verdicts is
+    the right shape because **one of them had to fail**: the earlier screen result
+    correctly failing the higher census bar is the case that proves the tool can
+    still say no. A regression suite in which everything passes is a suite you
+    are guessing about (§25).
 
 **21. Simulate the null before you trust a bar — especially for any statistic
 built from a max, a best-of, or an argmax.** (alice) Her pre-registered bar of
