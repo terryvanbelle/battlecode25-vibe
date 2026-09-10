@@ -223,12 +223,13 @@ public class RobotPlayer {
     public static void run(RobotController rc) throws GameActionException {
         RobotPlayer.rc = rc;
         // Seed per-robot so behavior is not correlated with team identity (play-symmetry).
-        rng = new Random(rc.getID() * 7919 + 13);
+        rng = new Random(rc.getID() * 7919 + 14);
 
         while (true) {
             turnCount += 1;
             int startRound = rc.getRoundNum();
             censusTowers();
+            rememberTowers();
             String state = "";
             try {
                 switch (rc.getType()) {
@@ -260,12 +261,82 @@ public class RobotPlayer {
             + " ov=" + bcOverruns + " nm=" + bcNearMisses
             + " ma=" + mixAsk + " mf=" + mixFlip
             + " sp=" + seenPaint + " sm=" + seenMoney
-            + " dn=" + denyBans + " pb=" + patienceBans + " bs=" + banSkips + " bp=" + banPeak
+            + " rt=" + refillTrips + " ht=" + homeTurns + " dn=" + denyBans + " pb=" + patienceBans + " bs=" + banSkips + " bp=" + banPeak
             + " | " + state);
         Clock.yield();
     }
 
     // ------------------------------------------------------------------ towers
+
+
+    // ================= ITERATION 60: D3, paint logistics with hysteresis =================
+    // Ported from the REJECTED iteration-59 rewrite. The census rejected that bot's
+    // ARCHITECTURE (38/150, margin -74); it never tested this mechanism against the
+    // splasher-primary design, where the traced deficit actually lives.
+    //
+    // The deficit, measured in the post-58 splasher census with no new games: carol's splashers
+    // are INERT, not starving. Of 1,363 splasher decision-turns on Leaf, 41.2% of READY turns
+    // are `noPaint`, at median paint 15 against a splash cost of 50, and only 23.7% of ready
+    // turns fire. A splasher below 50 has no cheaper action -- it is alive, mobile and unable to
+    // act.
+    //
+    // The mechanism matches the deficit exactly. `transferPaint` is hardcoded r^2 <= 2 for EVERY
+    // unit type [E, iteration 38], so a stranded splasher must physically walk to a tower, and
+    // the incumbent has no code that ever does: `refillIfPossible` only tops up when the unit
+    // already happens to be standing next to one. This walks.
+    //
+    // REFILL_LOW is the dose. 0 disables the branch entirely (zero arm, byte-identical play).
+    static final int REFILL_LOW = 50;
+    static final int TOWER_MEM = 12;
+    static int[] towerMem = new int[TOWER_MEM];
+    static int towerN = 0;
+    static boolean refilling = false;
+    static int refillTrips = 0, homeTurns = 0;
+
+    /** Record every distinct ally tower this robot has ever seen. */
+    static void rememberTowers() throws GameActionException {
+        if (!rc.getType().isRobotType() || towerN >= TOWER_MEM) return;
+        for (RobotInfo t : rc.senseNearbyRobots(-1, rc.getTeam())) {
+            if (!t.type.isTowerType()) continue;
+            MapLocation l = t.getLocation();
+            int key = (l.x << 6) | l.y;
+            boolean known = false;
+            for (int i = towerN; --i >= 0; ) if (towerMem[i] == key) { known = true; break; }
+            if (known) continue;
+            if (towerN >= TOWER_MEM) return;
+            towerMem[towerN++] = key;
+        }
+    }
+
+    static MapLocation nearestRememberedTower() {
+        MapLocation me = rc.getLocation();
+        MapLocation best = null;
+        int bestD = Integer.MAX_VALUE;
+        for (int i = towerN; --i >= 0; ) {
+            MapLocation l = new MapLocation(towerMem[i] >> 6, towerMem[i] & 63);
+            int d = me.distanceSquaredTo(l);
+            if (d < bestD) { bestD = d; best = l; }
+        }
+        return best;
+    }
+
+    /**
+     * Below REFILL_LOW, latch and walk to the nearest remembered tower; unlatch at half
+     * capacity. Hysteresis, so a unit does not alternate between one action and a walk home.
+     * Returns true if the whole turn went to logistics.
+     */
+    static boolean walkHomeIfDry(int cap) throws GameActionException {
+        if (REFILL_LOW <= 0) return false;                 // zero arm: mechanism disabled
+        int paint = rc.getPaint();
+        if (paint >= cap / 2) { refilling = false; return false; }
+        if (!refilling && paint > REFILL_LOW) return false;
+        if (!refilling) { refilling = true; refillTrips++; }
+        MapLocation home = nearestRememberedTower();
+        if (home == null) { refilling = false; return false; }
+        homeTurns++;
+        if (rc.isMovementReady()) stepToward(home);
+        return true;
+    }
 
     static String runTower() throws GameActionException {
         // Attack: single-target the lowest-HP enemy robot in range, plus AoE if any enemy near.
@@ -353,7 +424,17 @@ public class RobotPlayer {
         // tiles per unit of BUILD paint than a soldier and costs ~4x less per tile in chips
         // (re-measured AFTER iteration 29 fixed the soldier, since the soldier is what it
         // displaces). Chips are team-shared, so every tower evaluates this identical predicate
-        // and they coordinate without communicating. SPLASH_FLOOR = 0 is the current code.
+        // and they coordinate without communicating.
+        //
+        // SPLASH_FLOOR IS 2000, NOT 0. An earlier version of this comment claimed "SPLASH_FLOOR = 0
+        // is the current code", which was false and contradicted the line directly beneath it.
+        // The value matters and is easy to misread: with reserve = CHIP_RESERVE = 1200, a SPLASHER
+        // needs chips >= 1600 (it is exempt from the floor), while a SOLDIER needs
+        // chips >= 1200 + 250 + 2000 = 2250 and a MOPPER >= 2300. The CHEAPER unit is gated
+        // HIGHER, at a level a ~1,400-chip median treasury reaches only in spikes -- which is why
+        // the realized mix is ~95% splasher / ~5% soldier, and why only 2-3 soldiers are built per
+        // game. Soldiers are the only unit that calls workOnRuin, so this constant is also the
+        // lineage's ruin-conversion throttle. See src/carol_conv, the archetype that sets it to 0.
         final int SPLASH_FLOOR = 2000;
         boolean afford = chips >= reserve + want.moneyCost;
         if (afford && want != UnitType.SPLASHER && chips - want.moneyCost < SPLASH_FLOOR) {
@@ -411,6 +492,7 @@ public class RobotPlayer {
 
         // Refill if low and next to an allied tower with paint.
         refillIfPossible();
+        if (walkHomeIfDry(UnitType.SOLDIER.paintCapacity)) return "S HOME p=" + rc.getPaint();
 
         // Try to finish a tower on a nearby ruin.
         MapLocation ruin = nearestEmptyRuin();
@@ -480,14 +562,6 @@ public class RobotPlayer {
                         MapLocation f = nearestVisibleEmpty();
                         if (f != null) { explore = f; exploreAge = 0; state += " frontFound"; }
                         else state += " frontNone";
-                    } else {
-                        // PROBE ONLY (iteration 45). Measure the choice set that the `foe == 0`
-                        // guard is currently hiding: is there a visible EMPTY tile to steer to
-                        // on the turns where the soldier is stalled in enemy paint? Reads only;
-                        // `explore` is NOT assigned, so play is unchanged and the (winner,
-                        // rounds) identity check must pass against the baseline.
-                        MapLocation f = nearestVisibleEmpty();
-                        state += (f != null ? " feFound" + me.distanceSquaredTo(f) : " feNone");
                     }
                     state += (foe > 0 ? " IDLE-ENEMY" : " IDLE-ALLY") + ally + "/" + foe;
                 }
@@ -651,6 +725,7 @@ public class RobotPlayer {
     static String runMopper() throws GameActionException {
         String state = "M";
         refillIfPossible();
+        if (walkHomeIfDry(UnitType.MOPPER.paintCapacity)) return "M HOME p=" + rc.getPaint();
 
         // Mop enemy paint / steal from enemy robots nearby.
         MapInfo[] tiles = rc.senseNearbyMapInfos(2);
@@ -684,6 +759,7 @@ public class RobotPlayer {
 
     static String runSplasher() throws GameActionException {
         refillIfPossible();
+        if (walkHomeIfDry(UnitType.SPLASHER.paintCapacity)) return "P HOME p=" + rc.getPaint();
         String tag = "";
         int bestScore = 0;
         // Splash toward the most enemy/empty paint within reach.

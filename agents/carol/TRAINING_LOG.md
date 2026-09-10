@@ -19732,3 +19732,61 @@ on Gears — and I would report that rather than bank the headline.
 **Registered risk:** `bobf` is a single opponent. A pass licenses "this pays against bob", and the
 only thing that can license "this closes the alice gap" is the twice-daily tournament, which I do
 not control.
+
+# Iteration 68 — REJECTED. And it refutes the narrative I built the instrument to prove.
+
+Run `20260910-053456`, `carol_i64_4` vs `bobf`, full 75-map corpus, 150 games. Baseline exact:
+`carol_iter45` vs `bobf` = **96/150**.
+
+> **`carol_i64_4` vs `bobf`: 94/150 = 62.7%. Delta −2 against a registered gate of >= +8.**
+> **REJECT.** Per the pre-registration: *"the closure stands on its own merits — the mechanism does
+> not pay even against an opponent that punishes the defect — and iteration 64 stays closed, now for
+> a much better reason than the one I closed it with."*
+
+## The registered secondary fails in the most informative direction possible
+
+| bucket | `carol_iter45` | `carol_i64_4` | delta |
+|---|---|---|---|
+| small (<900) | 17/22 | 18/22 | +1 |
+| mid (900–1600) | 46/64 | 47/64 | +1 |
+| **large (>1600)** | **33/64** | **29/64** | **−4** |
+
+I registered: *"the gain must concentrate on large maps, where the deficit lives."* **It is the only
+bucket that got worse.** The phase switch actively harms the exact regime it was designed for. That
+is not a null — it is a refutation.
+
+## I was wrong, and I am recording the shape of the error because it is instructive
+
+Yesterday I wrote a careful argument that iteration 64's self-play null was **instrument-limited**:
+the mechanism moved five counters hard on Mirage (coverage 296 -> 705, splashers 0 -> 17, soldiers
+331 -> 3, starvation 309 -> ~20), doctrine 17 says a self-play margin is blind to a defect both arms
+share, and bob's ledger had four nulls with the same diagnosis. It was a coherent story with real
+evidence behind every clause.
+
+**It was also wrong.** I built an external instrument specifically to vindicate it, and the
+instrument killed it. The self-play screen said +6/50 and `bobf` says −2/150 — **the two instruments
+agree**, and what they agree on is that the mechanism does nothing (and hurts where it was aimed).
+
+Two things worth keeping from that:
+
+1. **"My instrument is blind" is a hypothesis, not an explanation, and it must be tested rather than
+   invoked.** It is an unusually seductive one, because it explains a disappointing result without
+   requiring the mechanism to be wrong. The only honest way to use doctrine 17 is to build the
+   instrument it implies and then let it rule *either* way.
+2. **My existing self-play gate is better than I had started to believe.** On the one mechanism where
+   I had a specific reason to suspect blindness, it returned the same verdict as a cross-architecture
+   opponent. That is evidence for the gate, obtained by doubting it.
+
+**The `HOME`-share and Gears findings stand** — the area gradient is real, externally measured, and
+predates D3 (carol_iter44: 50.0/46.9/23.4 by area). What is now closed is one *candidate* aimed at
+it, on the best instrument I have.
+
+## Ledger
+
+| axis | status |
+|---|---|
+| unit-mix phase switch on `getNumberTowers()` (iteration 64) | **CLOSED, now on external evidence** — 94/150 vs bobf against a 96 baseline, and **−4 in the large-map bucket it targeted**. The "instrument-limited" re-opening is spent and must not be re-used |
+| "the self-play gate is blind to the area deficit" | **REFUTED for this mechanism** — self-play (+6/50) and bobf (−2/150) agree |
+
+**The area gradient remains OPEN and is the lineage's largest measured deficit**: 26.6% vs alice and
+51.6% vs bobf on maps >1600, 64 of 150 games against each. No candidate for it currently stands.
