@@ -20648,3 +20648,67 @@ funnel of which I already hold two numbers:
 **Kill condition, same bar as before: below 2.0% of soldier turns for the full chain.** And the
 denominator lesson from iteration 59 applies — that chain must be measured **at the soldier**, which
 is where the code would live, not as a product of three separately-measured marginals.
+
+## Iteration 60 — the soldier-originated rendezvous CLOSES at 0.45%, and the joint measurement is why
+
+`alice_i60probe`, additive, **identity verified** (926 / 1693 / 792). 170 soldiers, **18,569
+soldier-turns**, measured **at the soldier** — the site the code would live at.
+
+| step | count | share of previous | of all turns |
+|---|---|---|---|
+| soldier turns | 18,569 | — | 100% |
+| ... sees an **open, under-manned ruin** | 1,149 | 6.2% | 6.19% |
+| **... AND can message a tower** | **173** | **15.1%** | 0.93% |
+| ... AND that tower reaches a 2nd soldier — **would fire** | 84 | 48.6% | **0.45%** |
+
+> **PRE-REGISTERED KILL: below 2.0% of soldier turns. Measured 0.45%. CLOSES.** And the bound is
+> conservative in the safe direction — step 3 sees only the reporting soldier's own r²=20, so allies
+> near the tower but outside its vision are missed, which biases *toward* closing.
+
+### The collapsing step is the whole lesson, and it is quantified
+
+**"Can message a tower" is 34.0% as a marginal and 15.1% conditional on seeing an under-manned ruin
+— less than half.** Had I multiplied the marginals as I was warned not to:
+
+| | value |
+|---|---|
+| naive product through step 2 (6.19% × 34.0%) | **2.10% — ABOVE the 2.0% bar** |
+| joint measurement | **0.93% — below it** |
+| **overestimate** | **2.3x** |
+
+**Multiplying marginals would have passed the gate and licensed a build.** The joint measurement
+fails it. That is not a hypothetical benefit of the rule — it is the rule changing the decision, on
+this iteration, by a factor of 2.3.
+
+### And the structural reason is worth more than the number
+
+The two conditions are **negatively correlated, by construction**:
+
+> A soldier that can see an **open, under-manned ruin** is at the **frontier** of alice's territory —
+> that is what "unclaimed and unworked" means. Messaging requires a **4-adjacent ally-paint path to a
+> tower**, i.e. being **inside** alice's territory. **Being where the work is means being where the
+> towers are not.** The channel is systematically unavailable exactly when there is something worth
+> saying.
+
+That is not a dosing problem or a payload problem. It is the shape of the map relative to the shape
+of the comms rule.
+
+### CLOSED — the largest unused capability I own, retired with numbers after 60 iterations
+
+Both protocol variants are now measured and both fail, for **different** reasons:
+
+| variant | verdict |
+|---|---|
+| **tower-originated** | **impossible** — a tower stands on a ruin and no two ruins are within vision (min d² = 25 vs 20, all 75 maps) |
+| **soldier-originated** | **0.45%** against a 2.0% bar — the frontier and the tower path are mutually exclusive |
+
+**Messaging has been "the largest unexplored capability I own" in this log since iteration 23.** It is
+now closed on delivery, with a measurement rather than a shrug.
+
+**RE-OPEN, stated precisely so it cannot be mistaken for a dosing question:** this re-opens if
+**alice's units come to operate inside its own territory rather than at its frontier** — i.e. if the
+bot's whole positional character changes — **or** if a payload is found that is worth sending from
+*inside* territory, where the channel is actually available. Both are changes to something else that
+would make messaging useful as a consequence; neither is a change to messaging.
+
+**HEAD untouched**: `src/alice` remains iteration 43, confirmed at 150 games.
