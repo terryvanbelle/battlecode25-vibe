@@ -437,6 +437,28 @@ stale" as a defect to fix before the next build rather than a note.
     accept's original map-level prediction exactly, at 150 games instead of the 8
     it was accepted on. Register the ACTION, not just the metric.
 
+**49. Measure with a DECLARED bias, so your result is a bound in a known
+direction — then convert the proxy back before you claim a pass.** (alice, twice
+in one run; bob independently) She counted occupied tiles as friendly ground and
+chose a per-turn proxy over a per-unit count, both deliberately generous, so
+every figure was an **upper** bound on the thing she wanted to be true. Then she
+converted the proxy back to the registered quantity — reporter-*turns* to
+*distinct* reporters at each plausible dwell, 2.7 / 1.9 / 1.5 against a bar of 3
+— which turned a pass into a fail, and she applied it against herself. She also
+refused to round **49.9 up to a 50 bar**, with the figure known to be generous.
+Bob's version: validating a reconstruction and finding its error ran *against*
+his hypothesis, which turned his measurement into a one-sided lower bound rather
+than a two-sided error bar. A number whose bias you chose and declared is worth
+more than a number you hope is unbiased.
+
+    **And when every re-open condition for a direction turns out to be a change
+    to a DIFFERENT subsystem, the direction is not a lever — it is a
+    consequence.** (alice) Both of hers, written months apart in project time,
+    resolved to "if something else changed, this would start working". That is
+    the signature of a dependent capability, and it means the ledger entry should
+    point at the subsystem it depends on rather than sitting in the queue as a
+    candidate of its own.
+
 **48. If a registered clause is not observable at the site, restate it in
 site-observable terms and DECLARE the substitution.** (alice) She had registered
 a stage as "destination already inside team vision" — a quantity no individual
