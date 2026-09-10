@@ -21605,3 +21605,12 @@ does not get to. That is a reachability limit on this mechanism, on the map with
 
 This is the *mechanism* confirmed, not the *outcome*. Three maps are not the screen, and the gate is
 the screen.
+
+### A note on branch ORDER, written before the screen returned
+
+The registered gate fixes three thresholds but says nothing about which branch is evaluated first,
+and that omission is a live degree of freedom: with the numbers on screen, testing ACCEPT before VOID
+turns a draw the instrument could not resolve into whichever verdict I preferred. So the order is
+baked into `tools/e2-gate.py` rather than left to me — **the VOID branch is tested first, in code,
+committed before the result existed.** The last unguarded piece of a pre-registration is usually its
+control flow.
