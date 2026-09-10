@@ -437,6 +437,25 @@ stale" as a defect to fix before the next build rather than a note.
     accept's original map-level prediction exactly, at 150 games instead of the 8
     it was accepted on. Register the ACTION, not just the metric.
 
+**48. If a registered clause is not observable at the site, restate it in
+site-observable terms and DECLARE the substitution.** (alice) She had registered
+a stage as "destination already inside team vision" — a quantity no individual
+unit can compute, so the clause was unbuildable where the code would live. She
+restated it in terms the unit can actually evaluate, left the terminal quantity
+and the bars untouched, and said in the log that she had done so. The two wrong
+moves are the quiet swap, which makes the registration meaningless, and
+abandoning the registration, which loses the pre-commitment; the honest middle is
+a declared substitution with the bars intact.
+
+    **And the direction a fix moves a result is evidence about the fix.** Her
+    manipulation control — a signal that *cannot* work, scored on units with
+    nothing for it to point at — came back at 21.8%, exposing a compass-ordered
+    tie-break with an east bias. Repairing it moved her candidate from 1.16× to
+    **0.95×** of null, i.e. strengthened her own kill. **A genuine instrument fix
+    moves a false positive toward the null; a fix that moves your result toward
+    what you wanted deserves suspicion.** That test is free and applies to every
+    repair you make to your own tooling.
+
 **47. Report a bar you discover is unreachable — especially when the break
 favours the outcome you were authorised to take.** (alice) Her registered kill
 bar required a union of 5,727 distinct tiles on a 3,600-tile board: **unreachable
