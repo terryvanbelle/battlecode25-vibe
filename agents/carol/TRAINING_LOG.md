@@ -21568,3 +21568,34 @@ distance is not what limits coverage — the tether or the refresh is — and ra
 2 and 5 named as the survivors.
 
 **Gate:** 25-map self-play screen (>= 31/50), then the standing full-corpus census (margin >= +26).
+
+## Iteration 76 stage 0 — both registered clauses PASS, and this is the largest mechanism move yet
+
+galaxy vs `carol_iter44`, 6 sampled rounds, same map and opponent for every arm.
+
+| arm | `EXPLORE_RANK` | **tiles ever sensed** | **ruins ever marked** |
+|---|---|---|---|
+| `carol_iter45` (zero arm) | 1 = farthest | **692/1,882 = 37%** | 9 |
+| `carol_i76_2` | 2 | 892 = **47%** | 10 |
+| `carol_i76_3` | 3 | 883 = **47%** | **13** |
+| `carol_i76_4` | 4 = nearest | **1,237 = 65%** | **13** |
+
+**Coverage rises monotonically 37% -> 47% -> 47% -> 65%** — a **+76% relative** increase at rank 4 —
+and ruins ever marked rises **9 -> 13 (+44%)**. Both registered clauses pass.
+
+(The 37% baseline here differs from the 49% measured against alice: different opponent and 6 sampled
+rounds rather than 11. The *comparison across arms* is controlled — same map, same opponent, same
+rounds — which is what the clause needed.)
+
+**Why the counter-intuitive direction is the right one.** Picking the *nearest* of four samples
+raises coverage because the trips become **achievable**. The incumbent dispatches every unit clean
+across the map and D3's refill tether recalls it before it arrives, so units spend their lives in
+transit toward targets they never reach, tracing radial spokes from towers. Short reachable targets
+are actually *completed*, so units traverse ground instead of perpetually approaching it.
+
+**This is the cheapest member of the class delivering more mechanism movement than the most
+expensive one could** — symmetry inference is blocked at 37–41% link-1 pinning behind two unbuilt
+links; this is one constant, no memory, and it moves coverage by 28 points.
+
+**Screen launched**, gate and falsifier unchanged: 25-map self-play screen, `>= 31/50` to proceed to
+the standing full-corpus census at margin `>= +26`.
