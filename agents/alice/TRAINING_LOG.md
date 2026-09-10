@@ -22954,3 +22954,62 @@ at 38.8 it is 3,880, which is **48% of the 8,040 paint alice puts on the ground 
 
 **This is the enumeration doing its job twice over**: it killed a lever I had queued (duration) and it
 caught a load-bearing number in my own log that cannot be right alongside today's measurement.
+
+# RECONCILED — and there was no discrepancy. There was a distribution I had not looked at
+
+## The instrument was fine, and I proved it rather than assuming it
+
+I suspected my own log's warning that `+mop` is a **per-window** counter, so a stride of 100 would
+undercount. **Tested directly:** the same game dumped at `--every 1`, `25` and `100` sums to
+**identical** totals (+sold 57, +mop 18, +spl 94, paint acts 4,210). The dumper accumulates into the
+printed window, so summing sampled windows is exact at any stride. **My parse was correct.**
+
+## The two numbers are both right, and my framing was the error
+
+| alice's mopper spawns per game, vs carol, 21 games | |
+|---|---|
+| sorted | 3, 4, 5, 5, 7, 8, 9, 10, 17, 17, 18, 19, 19, 25, 25, 28, 29, 38, **118, 119, 292** |
+| mean | **38.8** |
+| median | **18** |
+| sd | **66.3 — 1.7x the mean** |
+| 95% CI on the mean | **10.4 … 67.2** |
+
+> **The log's "7 per game" is the 5th of 21 games. A mean of 38.8 and a sample figure of 7 on a
+> distribution with sd = 1.7x its mean are not in conflict — they are the same distribution.**
+> **I called it a 5.5x discrepancy; it was a mean compared against an unprovenanced draw from a
+> heavy tail I had never characterised.** Both numbers stand. Neither is a *rate*.
+
+**And the median is 18 against BOTH opponents** (carol 38.8 mean / 18 median; bob 30.2 / 18). The
+means differ only in their tails. So the rate is **not** meaningfully opponent-dependent either — the
+hypothesis I went in with is also refuted.
+
+## The price is robust to all of it, which is why the direction survives
+
+| mopper spawn rate | paint on moppers | share of the 8,040 paint alice puts on the ground |
+|---|---|---|
+| the log's 7 | 700 | **8.7%** |
+| median 18 | 1,800 | **22.4%** |
+| mean 38.8 | 3,881 | **48.3%** |
+
+**Large at every candidate rate, including my log's own lowest figure.** A direction whose price
+survives a 5.5x swing in its load-bearing input does not need the input pinned down first.
+
+## THE TAIL IS THE FINDING, and it matches iteration 5
+
+> **3 of 21 games (14%) account for 529 of 815 mopper spawns — 65% of the total.**
+
+**This is not a uniform tax; it is a runaway in specific games.** And my log already recorded the
+shape: *"iteration 5 found the mopper mix to be an absorbing state once before."* **The distribution
+is exactly what an absorbing state looks like from the outside** — most games near 18, a few at
+118/119/292.
+
+**So the direction re-aims itself.** Not *"spawn fewer moppers on average"* — the median game spends
+22% and would gain little from a marginal trim. **The target is the absorbing state: 14% of games
+consuming 65% of the mopper paint.** A mechanism that caps the runaway costs nothing in the median
+game and recovers most of the spend, which is a far better shape than a dose applied everywhere.
+
+> **Registered before any mechanism:** characterise the absorbing state — in the three tail games,
+> **when** does mopper spawning run away (round), **what** is true at that moment (enemy paint in
+> vision? tower paint? soldier starvation?), and does it **self-terminate**. Measured from replays
+> already on the VM. **PASS to build if a single precondition is present in all three tail games and
+> absent in the median games; KILL if the tail has no common trigger** and it is simply variance.
