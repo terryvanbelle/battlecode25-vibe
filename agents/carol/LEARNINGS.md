@@ -287,6 +287,24 @@ both directions, and do not let a reject you agree with quietly answer a questio
   survive a PRNG-seed change, against **44%** in my self-play placebo. Two different designs meet in
   far more contingent positions than two builds of one design, so an external instrument needs MORE
   games to resolve the same effect, not fewer — despite feeling like the better instrument.
+- TWO QUANTITIES SCALING TOGETHER IS NOT A MECHANISM. Splasher HOME share scales with map area
+  (35.5% at 1,600 -> 58.8% at 3,600) exactly as my largest deficit does, I had a smoking-gun trace
+  and a real defect in my own accepted code — and bounding it left the share FLAT and RISING at the
+  tightest dose, because bounding a trip does not create the resource the trip fetches. HOME is a
+  symptom of tower paint scarcity, not a travel cost. Co-scaling is the cheapest coincidence in a
+  system with one binding constraint; the test that separates symptom from cause cost 3 games.
+  → TRAINING_LOG, *"Iteration 70 -- KILLED AT STAGE 0"*
+- A LOW COST CAN BE A SYMPTOM OF PASSIVITY, NOT EFFICIENCY. Measured across two large maps: carol's
+  units stand on their OWN paint 58.5-89.7% of the time and pay 0.21-0.82 paint/unit-round of drain;
+  alice stands on CAROL's paint 85-88% of the time, pays 1.71-1.77, and wins both. bob's #26 recorded
+  the same relationship from his side (alice 0.360 vs bob 0.192, 88% more, wins 60-40). Carol's drain
+  is the LOWEST of three bots measured and carol is losing — standing on enemy paint is the price of
+  being in enemy territory. Before optimising a cost DOWN, check which side of it the winner is on.
+  → TRAINING_LOG, *"Where units stand"*
+- A BOUNDARY DRAWN TO SUMMARISE RESULTS IS NOT A NATURAL KIND. I nearly built an area-gated mechanism
+  keyed on 1,600 tiles — a bucket edge I invented for a report table. Priced at +7 against a +9 bar
+  and declined on arithmetic; the better objection is that a mechanism keyed to your own presentation
+  is fitted to it. → TRAINING_LOG, *"PRICED AND DECLINED"*
 
 ## Housekeeping
 
