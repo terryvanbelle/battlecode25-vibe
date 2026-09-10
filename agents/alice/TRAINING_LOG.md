@@ -20712,3 +20712,66 @@ bot's whole positional character changes — **or** if a payload is found that i
 would make messaging useful as a consequence; neither is a change to messaging.
 
 **HEAD untouched**: `src/alice` remains iteration 43, confirmed at 150 games.
+
+# Stocktake — is this lineage still gaining? The absolute instrument says NO since ~iteration 28
+
+Before choosing an eleventh mechanism I asked a question I have never asked: **is the loop still
+producing?** Answerable from committed data, zero games. Deliberate **roster runs only** (61 of 70
+rows; the 9 backfilled candidate points are excluded, since the bot measured there may have been
+rejected), tracking the current bot against the **discriminating** opponents — the saturated ones at
+98–100% carry no information:
+
+| current bot | flood | iter12 | iter7 | iter23 | paintthief | iter28 | iter29 | iter30 |
+|---|---|---|---|---|---|---|---|---|
+| iter14 | 62 | 54 | 58 | — | — | — | — | — |
+| iter23 | 92 | 96 | 94 | — | — | — | — | — |
+| iter28 | 98 | 96 | 96 | 80 | 74 | — | — | — |
+| iter39 | 96 | 100 | 98 | 92 | 82 | 66 | 64 | 56 |
+| **iter43** | 94 | 94 | 98 | 92 | **70** | **58** | **46** | **46** |
+
+**The shape is unmistakable and it has two halves.** From iteration 14 to 28 the gains are enormous —
+flood 62→98, iter12 54→96, iter7 58→96. **From iteration 28 onward the discriminating columns stop
+moving**, and from 39 to 43 they read as down.
+
+### The caveat is one I wrote four hours ago, and it binds here
+
+**Those six "down" cells are ONE map draw, not six.** They come from a single 25-map roster run, so a
+bad sample moves every cell together — which is exactly the *"never quote sibling cells from the same
+run as corroboration"* rule I recorded after the false regression alarm. And the single **census-
+powered** test on that run's worst cell came back **+2** (iteration 43 vs 39, 150 games), against the
+screen's −7.
+
+**So the honest reading is PLATEAU, not regression:**
+
+> Alice's absolute strength rose steeply to ~iteration 28, and **has not demonstrably moved since.**
+> The one high-powered comparison across that span says **flat (+2 over 150 games)**. Nothing supports
+> "the bot got worse"; nothing supports "the bot got better" either. **~15 iterations, no measurable
+> absolute gain.**
+
+### And that is the missing explanation for this entire session
+
+Every mechanism I priced today landed at **7–17%** of its gap, and nine directions closed on
+magnitude or reachability. **A plateau on the absolute instrument is what that looks like from the
+outside**: the architecture is at a local optimum, and local mechanisms cannot leave one. The
+concentration finding said the same thing from the inside — pattern completion needs a 4.5-soldier
+relay and gets 2.41; tower kills need 1.6 budgets and get 1.01 — and the closures since have each
+found the same wall in a different place.
+
+**I am recording this as a finding, not as a decision.** The cross-year research's stuck-list item 9
+is *"consider a from-scratch rewrite rather than another incremental edit — high variance, so at most
+one lineage at a time"*, and this is the first time I have had the evidence that names that
+condition rather than merely feeling it. **That call is not mine to make unilaterally at the end of a
+very long session**, and it interacts with a second live lineage; what is mine is to have measured it
+and put the number in front of the decision.
+
+**What I would want before anyone acts on it**, registered so it is not invented later:
+
+1. **A higher-resolution roster.** A 25-map cell has sd ≈ 3.05 and cannot resolve below ±6, and I read
+   twelve of them per run. Restricting the roster to the **five discriminating opponents** at 75 maps
+   would cost 750 games but give each cell ~1.7x the signal-to-noise — the instrument that would
+   settle "plateau" versus "slow decline" properly.
+2. **One census against iteration 30**, the oldest snapshot iteration 43 appears to lose to. If that
+   comes back negative at census power it is a 13-iteration regression and a different problem
+   entirely; if it comes back flat, the plateau reading stands.
+
+**HEAD untouched**: `src/alice` remains iteration 43, confirmed at 150 games.
