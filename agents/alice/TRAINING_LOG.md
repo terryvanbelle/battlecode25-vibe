@@ -19925,3 +19925,62 @@ concentration requires **two** soldiers in range of the **same** tower, and that
 adjacency question wearing a new hat and must be measured first; (2) a payload encoding inside a
 4-byte int; (3) the gate. **I am not starting a protocol at the end of this session**, and the relay
 pre-check is the first thing to run, not the last.
+
+## Relay pre-check MEASURED — the channel exists, and I have two corrections to make about my own claims
+
+`alice_i57probe`, additive. **Identity verified on all three maps** — DefaultSmall 926, Gears 1693,
+mit 792, each reproducing a round count already on record from an earlier probe. Measured from the
+**tower's** side deliberately: a tower sees its whole r²=20 neighbourhood, whereas a soldier asking
+"is another soldier near that tower" sees only the part inside its own vision and would undercount.
+`canSendMessage` is the engine's own predicate, so the ally-paint-path requirement is enforced by the
+engine rather than approximated by me.
+
+| | value |
+|---|---|
+| soldier turns | 18,569 |
+| ... can message **some tower** | 6,322 = **34.0%** |
+| tower turns | 17,923 |
+| ... >=1 soldier reachable | 4,173 = 23.3% |
+| **... >=2 soldiers — A RELAY IS POSSIBLE** | 1,640 = **9.2%** of tower turns |
+| mean reachable soldiers per tower-turn | 0.37 |
+
+### Correction 1 — I cited the wrong number one entry ago
+
+I wrote that messaging's delivery "is already answered in my own log: 53–65% of robot turns in range
+of a tower... not a 1.2% funnel; it is a working channel." **Checking what iteration 23 actually
+measured**: 53% at r300 and 65% at r800, on the **median map**, over **all robot turns** — moppers and
+splashers included, and sampled at two rounds rather than averaged over whole games.
+
+**My 34.0% is soldiers only, across whole games, on three maps.** The two are not in conflict — they
+measure different populations — but **the number this direction needs is the soldier one**, and I
+quoted the all-robot one to justify the direction. The channel is still working; it is **a third of
+soldier turns, not two thirds**, and I should have gone and measured the population I was about to
+build for instead of reaching for the nearest existing figure.
+
+### Correction 2 — I registered the measurement and forgot to register the BAR
+
+Every pre-check today that produced a clean verdict had a threshold written before the number: lever
+B failed at 1.2%, iteration 56 passed a 2.00% bar at 2.23%, the ruin funnel closed at a registered
+50%. **For this one I registered *what to measure* and not *what would kill it*.** So I cannot claim
+a pre-registered pass, and I am not going to invent a bar now that the number is on screen — that is
+the exact move pre-registration exists to prevent, and I have spent all day refusing it in easier
+cases than this one.
+
+What I can honestly say is where 9.2% sits against my own decided cases: **lever B died at 1.2% and
+iteration 56 survived at 2.23%**, so a relay available on 9.2% of tower turns is roughly **4x** the
+threshold I last accepted as sufficient reachability. That is a comparison, not a verdict.
+
+### What is established, and the bar registered NOW for the next stage
+
+**Established:** the relay is *available* — not abundant, but present on 9.2% of tower turns, with a
+third of soldier turns able to reach a tower at all. Availability is necessary and not sufficient: a
+rendezvous needs the *right* pair — a soldier that knows of an under-manned ruin, and one free to go —
+not merely two soldiers at one tower.
+
+**Registered before any protocol is written**, so the next stage has the threshold this one lacked:
+
+1. **Payload reachability**: of the tower turns where a relay is possible, on how many does the tower
+   know of a ruin worth calling about — one visible, open, and short of the 4.5-soldier relay?
+   **Kill condition: below 2.0% of tower turns, matching the bar iteration 56 was held to.**
+2. Only then the encoding (4-byte int, 5-round buffer) and the gate, with the manipulation share and
+   the null arm already registered from earlier today.
