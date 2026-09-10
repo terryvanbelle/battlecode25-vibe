@@ -226,3 +226,62 @@ opponent" the wrong re-open condition rather than an unmet one.
 **What is not evidence**: any single leg's total, and any single map. n=48 per
 leg; carol's iteration 47 recorded 60% of maps splitting by spawn side on this
 very axis, so **swept maps are the column to read**, not the raw rate.
+
+## The founding thesis is REFUTED, on the win condition itself
+
+Answering the three questions registered for the first run, in the order they
+were registered, and then a fourth that settles the design.
+
+**1. Does it play?** Yes. 144 games, no forfeits, no bytecode overruns.
+
+**2. Does the siege mechanism fire?** **Yes.** Indicator states sampled from a
+40-round mid-game window on SaltyPepper: `ring` 27, `approach` 1 against
+`SPLASH` 12, `cd` 54, `noTgt` 42, `lowScore` 34. Splashers do hold the firing
+ring at r²=10..16 — outside a tower's r²=9 reach, inside their own. So the design
+is **tested, not untested**: this is not alice's iteration 15b or carol's
+iteration 10.
+
+**3. Do towers die?** Barely. Across the loss replays examined, enemy tower
+counts *rise* monotonically — Oasis 5→12→14→14, DefaultHuge 13→16, SaltyPepper
+11→10→11→12→13, one tower killed all game. That is the first registered
+refutation branch verbatim: *"the siege fires often and enemy tower count is
+unmoved → the range advantage does not survive contact."*
+
+**4. And the fourth question, which I did not think to register, decides it.**
+Tallying how all 144 games were actually won:
+
+| win type | games | share |
+|---|---|---|
+| "painted enough of the map" | 125 | 86.8% |
+| "tiebreakers (painted more of the map)" | 14 | 9.7% |
+| **paint coverage, either way** | **139** | **96.5%** |
+| "destroyed all of the enemy team's units" | 5 | 3.5% |
+
+**BC25 is decided by paint coverage in 96.5% of games.** Tower removal is not a
+win condition. It is instrumental at best — a dead money tower freezes the
+victim's production (carol's 1,887 frozen rounds, finding #5) and so reduces the
+ground they paint — but the lever it feeds is coverage, and the thesis named it
+as the objective.
+
+**So the thesis is wrong in the same shape as the one it replaced.** I wrote that
+both lineages "spent weeks optimising economy and coverage" and lost anyway, and
+treated coverage as the framing to escape. The win-type tally says coverage *is*
+the game, and that the two lineages had the right objective and an insufficient
+bot. What Darla actually brought was not a new objective; it was carol's economy,
+which is a coverage engine, plus a siege that fires and does not pay.
+
+**This is not a reason to remove the siege.** It costs nothing observable — the
+splashers were already built and already moving — and it is not what loses the
+games. It is a reason to stop treating it as the design's centre, and to spend
+every remaining iteration on coverage.
+
+**And it promotes the `SPLASH_FLOOR` arms from "a defect I found" to "the main
+line".** Darla loses MAJORITY_PAINTED with her soldier count at zero and thousands
+of tower paint unspent; soldiers are the only unit that paints ground durably and
+the only unit that claims ruins. `darla4`/`darla5` are now the primary
+experiment, and they were re-ordered ahead of the mopper arms on this basis.
+
+**What would refute *this* reading**: `darla4`/`darla5` restore the soldier count
+and the coverage race and still lose. Then coverage is not reachable from this
+economy either, and the bot needs a different production engine rather than a
+different constant.
