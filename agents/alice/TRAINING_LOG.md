@@ -21182,3 +21182,96 @@ game**, and the same currency as before: **PASS ≥ 48 tiles/game (two ruins' wo
 Null arm: the identical counter on the unmodified bot.
 
 **Cost of this iteration: zero games.**
+
+# REQUIREMENT C — RUN. Verdict: the local form is KILLED (pre-registered), and it discharges the messaging re-open condition
+
+C was registered last entry; this runs it. **Zero games again** — same 101 team-frames, 1,858
+soldier-observations. Tools: `tools/c1-site.py`, `tools/c2-gradient.py`.
+
+## C1, measured AT THE SITE — and the registered form had to be restated, which is declared not hidden
+
+B0's 93.6% is a fact about the *team*, and **no soldier can compute it**. My registered C1 said
+"destination already inside team vision" — not observable at the site the code would live at. That
+is precisely the defect the funnel discipline exists to catch, and it was caught before anything was
+built. Terminal quantity and bars unchanged; only the reachability stages moved to the robot's own
+disc.
+
+> Mean own-disc composition (of 69): **empty 2.20, own paint 36.48, enemy paint 7.22, wall 7.36,
+> bare ruin 0.145.** A soldier spends its life looking at its own work — 53% of what it sees.
+> **79.4% of soldiers have ZERO empty tiles anywhere in vision.** No local gradient at all.
+
+## The marginal stage — the one that was going to kill A5, asked of C
+
+> Multi-source BFS from every empty tile, 8-connected, around walls. Nearest work is a median of
+> **14 tiles** away (**20** for the blind ones), p90 = 48. A soldier travels ~1 tile/turn and lives
+> ~87.8 turns: **99.4% of soldiers have work within a lifetime's walk.**
+
+**Distance is not the barrier. Direction is.** That splits C cleanly and tells us which half to test.
+
+## C2 — does any LOCAL signal point at the work? Bars registered before the run
+
+Candidate: **move down the own-paint gradient** — free, no memory, no allies, no messaging; a soldier
+deep in friendly territory sees its own paint, and the frontier is wherever that thins. Signal = the
+sector of 8 with the lowest own-paint fraction. Truth = the sector containing the first step of the
+shortest walk to work. Registered against a **simulated** null (walls and edges make sectors unequal,
+so chance is not 1/8 and was computed, not assumed) because this lineage has already scored a
+best-of-8 statistic against zero once:
+
+> **PASS** exact ≥30% or within-one ≥60%, AND ≥2.0x null. **KILL** exact <20% or <1.5x null.
+
+| population | signal exact / within-1 | empty-tile control | simulated null |
+|---|---|---|---|
+| **BLIND (n=1,375)** | **11.6% / 38.6%** | 8.9% / 37.3% | **12.1% / 35.3%** |
+| sighted (n=383) | 20.1% / 49.3% | **29.8% / 66.8%** | 12.3% / 35.5% |
+
+> **VERDICT: KILL. 11.6% vs a 12.1% null — 0.95x. The own-paint gradient is not merely weak, it is
+> indistinguishable from choosing a direction at random.** No map beats 1.34x.
+
+**The manipulation check passes and it matters here**: the empty-tile control scores **2.4x null on
+sighted soldiers** (29.8% vs 12.3%), so the instrument detects a real signal when one exists — and
+finds none in the gradient.
+
+### An instrument bug, caught by a control that cannot work scoring above chance
+
+First run gave the gradient 1.16x and the empty-control **21.8% on BLIND soldiers** — who have no
+empty tile to point at, so their argmax degenerates to sector 0 (east). A control that *cannot* work
+scoring above chance is a bug, not a finding: **`truth` took the first strictly-decreasing neighbour
+in a fixed compass order, biasing it east** and inflating any east-preferring signal. Fixed to a
+random choice among all decreasing neighbours. The gradient fell 1.16x → **0.95x**: the fix made the
+kill stronger, which is the direction a real defect moves a false positive. **Second time this class
+of check has earned its keep.**
+
+## Where C leaves the three requirements
+
+| | verdict | where it dies |
+|---|---|---|
+| **A** memory | dead where the deficit is worst | mit: 8–20 sites unclaimed 700 rounds, **seen at zero samples** — memory cannot remember what was never seen |
+| **B** spacing | passed B0, **ceiling-bounded** | perfect spread moves empty-visibility 6.4% → ~10.4% against a 93.6% deficit |
+| **C** exploration, **local** | **KILLED, pre-registered** | 0.95x random — nothing in a soldier's own disc points at work |
+
+**All three routes that require no communication are now closed or bounded.** The soldier genuinely
+cannot know which way to go: the information does not exist within its disc, and it never did.
+
+## This discharges the messaging re-open condition — stated in my own ledger, verbatim
+
+> *"Re-opening it needs a message worth sending, and I do not have one."*
+
+**I now have one.** 79.4% of soldiers are blind; their work is a median 14–20 tiles off and reachable
+99.4% of the time; and no local signal points at it. **The message worth sending is a bearing**, and
+its referent is now measured rather than assumed. It also repairs A's fatal flaw — memory cannot
+remember what was never seen, but *collective* memory can, because a tile one soldier saw can be told
+to another who never did.
+
+**Not re-opened tonight, and not built.** The ledger already names its gate, and I am registering it
+as C's successor with the bar set first:
+
+> **Delivery pre-check.** Iteration 23 measured 53–65% of robot turns in tower range — but that is
+> the wrong denominator. The right one is **blind soldiers at the moment they would need telling**.
+> **PASS ≥ 50% of blind-soldier-turns in range of a tower; KILL < 25%.** And a second stage the
+> first version of this idea skipped: **a tower is as blind as a soldier** (engine: min pairwise ruin
+> d²=25 > vision 20, so a tower cannot even see another ruin). So the tower must be an *aggregator*
+> of what passing soldiers report, and stage 2 asks whether enough soldiers pass through tower range
+> carrying a bearing worth relaying — **≥ 3 distinct reporters per tower per 100 rounds**, else the
+> shared map is stale on arrival.
+
+**Cost of this iteration: zero games. Two directions closed on measurement, one re-opened on it.**
