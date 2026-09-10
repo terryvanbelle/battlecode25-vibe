@@ -20063,3 +20063,78 @@ regression is the priority — but the thing to read first is his **`CLOSED.md`*
 closed-directions ledger with re-open conditions tells me which local mechanisms are already priced,
 and rule 0 is explicit that **a verdict does not transfer**: anything I take needs my own
 pre-registration, gate and census, and my log must say what I took and from where.
+
+## Read bob's `CLOSED.md` while the census runs — what I took, and from where (rule 0 requires this)
+
+65 lines, 33 numbered directions, every one with a price and a **RE-OPEN** condition. Rule 0 is
+explicit that **a verdict does not transfer**, so nothing below is adopted as a result; what transfers
+is *sizing*, *engine arithmetic I can re-verify*, and *knowing which local mechanism is already
+priced*. Four things bear directly on work I have done or was about to do.
+
+### 1. His #32 independently sizes the direction I demoted — and agrees
+
+> *"infer unseen ruins from map SYMMETRY... only 31.5% of bob's own-side unmarked ruins had their
+> mirror marked = 0.53 ruins/game, 19% of the completion gap at the CEILING ≈ 2 wins/50. Robust to
+> the proxy: at DOUBLE the measured reach it is still ~4 wins. NOT inert — it works, it is too
+> small."*
+
+**I demoted symmetry inference at 17% of the unclaimed-ruin supply, by a completely different route
+(classifying ruins by alice's paint in the 5x5).** He sized it at 19% of his completion gap. **Two
+lineages, two architectures, two unrelated measurements, the same answer: real but too small.** That
+is the strongest possible corroboration of a demotion, and it costs me nothing to have.
+
+### 2. His #22 CORRECTS an engine claim I made yesterday — and it sharpens my own conclusion
+
+I wrote that low paint scales a soldier's cooldowns toward x2 and creates a vicious cycle, then
+argued readiness still is not the binding guard. His arithmetic is sharper:
+
+> *"for a SOLDIER (base 10) the taxed value tops out at **19 < 20** and one decrement always clears
+> it — exactly zero rounds lost at any paint level where a soldier can still attack."*
+
+A soldier needs 5 paint to attack, so the relevant floor is X≈3, giving `10 + round(10·94/100) = 19`,
+and `19 − 10 = 9 < 10` is ready next turn. **A starving soldier loses ZERO action rounds.** My
+conclusion (targets bind, not readiness) was right; my arithmetic was pessimistic and is now
+corrected. **I will re-verify this against the jar myself before it enters my `RULES.md`** — an
+engine fact from another lineage's log is still a digest, and my own digest was wrong about the
+clumping tax yesterday.
+
+### 3. His #19 corroborates my splasher-geometry finding exactly
+
+> *"redundant repainting... **0 of 2,377** classified repaints, bob AND alice, every stratum."*
+
+I found the same thing from the other end: my 6,488 same-shade repaints were **SPLASHER 6,488,
+SOLDIER 0** — an area weapon's footprint, not a decision. He measured zero *soldier* redundant
+repaints across both bots. Same conclusion, independent instrument.
+
+### 4. His #25/#27 is my iteration 54 lever A — and he got the OPPOSITE sign
+
+This is the one that matters most, and it is the one rule 0 warns about hardest.
+
+| | bob (#25, de-clumping movement) | me (iteration 54 lever A, informed heading) |
+|---|---|---|
+| result | **+6, +5, +6** out of 50, never negative | **−125.7 paint actions**, −1.2 towers, rejected |
+| mechanism check | confirmed every time, crowd/unit-round −26% to −48% | confirmed — it fired |
+| **the payer he named** | *"units alive, fed and standing where there is nothing to paint"* | **exactly the failure I diagnosed** |
+
+**We found the same payer and got opposite signs, and the difference looks like DOSE SHAPE.** His is
+a **weight** on crowd versus directness, saturating at 3–5 on ranks 0..4 — a tie-break that nudges.
+**Mine was an argmax**: take the cheapest-terrain sector outright, which walked soldiers onto ally
+paint wholesale. Same family, same identified cost, and I applied it at a dose he never tested and
+would presumably also have lost at.
+
+> **This does not un-reject my lever A**, and I am not treating +6/50 on another architecture as
+> evidence about mine. What it changes is the *hypothesis*: my arm may have failed on **dose shape**
+> rather than on the family being wrong. That is a re-open condition I can state and test —
+> **a weighted tie-break, not an argmax** — and it is now written down as one rather than acted on.
+
+### And the structural agreement is the part I did not expect
+
+His closing section: *"Every mechanism tried since iteration 43 has shuffled a fixed pool between
+pockets... bob issues ~59,460 paint to units per game and converts ~22,477 into paint actions —
+about **38%**."*
+
+**I measured my soldiers at 50.6% tank-to-ground conversion and concluded the deficit is a fixed
+paint budget that no local mechanism enlarges.** He reached the same structural conclusion, from a
+different bot, with a different metric, on the same night. Two lineages independently arriving at
+"the missing capability is not a better local policy" is worth more than either arrival alone —
+and it is the same conclusion my concentration finding reached from the coordination side.
