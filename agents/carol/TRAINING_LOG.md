@@ -22483,3 +22483,53 @@ spending at 200. That is a bounded change to CHANGE 1 only; CHANGES 2 and 3 stay
 **Recorded for the next session so it starts from the diagnosis, not from the code**: stage A's
 threshold is >= 90 splashers/1,000r measured on a common window; the control is 43 per 700 rounds on
 leavemealone; and the failure to fix is a fallback that spends at 200 what must accumulate to 300.
+
+## The coupling enumeration — three found, two of them for FREE before building
+
+Enumerated every reader of the state each change touches, **from source**:
+
+| change | constant | readers found | coupling |
+|---|---|---|---|
+| 1 | `SPLASH_FLOOR` | gate is `want != SPLASHER` | **gated soldiers AND moppers** — found in session 1 by failure |
+| 3 | **`explore`** | **7 refs, THREE writers outside `newExploreTarget`** | **line 563 in `runSoldier` overwrote my forward target with `nearestVisibleEmpty()` — the NEAREST empty tile, which on a forward unit lies BEHIND it.** CHANGE 3 was silently defeated |
+| 1 | `cheapest` in the pin-escape | hardcoded `SOLDIER.moneyCost` | mis-specified once splashers are primary |
+
+**The `explore` coupling is exactly the second one I would otherwise have lost session 2 to**, and it
+cost one grep. Three fixes applied: the hold-for-splasher scheduler, a guard so a frontier target is
+only accepted if it is not backward relative to the anchor, and `cheapest` corrected.
+
+## STAGE A after the fixes — still FAILS, and the diagnosis is now stronger than "execution"
+
+Common window r500 (both games still running), `leavemealone` vs `carol_iter44`:
+
+| arm | +splashers | +soldiers | ratio | splashes | coverage |
+|---|---|---|---|---|---|
+| `carol_iter45` (control) | **30** | 6 | **0.2 : 1** | **182** | 428m |
+| `carol_r2` v2 | 19 | 31 | 1.6 : 1 | 82 | **661m** |
+
+FIX 1 moved the mix from **5.2:1 to 1.6:1** — directionally right. **But stage A still fails: 38
+splashers per 1,000 rounds against a threshold of 90**, and stage C fails at 164 against 430.
+
+> **CHANGE 1's PREMISE IS REFUTED, not merely mis-implemented.** I specified it as *"the gates cap
+> splasher production at 29% of the income ceiling — remove them"*. The measurement says the
+> opposite: **`SPLASH_FLOOR` is what makes carol splasher-primary at all.** By gating a 250-chip
+> soldier at 2,250 chips it suppresses the soldier fallback, and the incumbent reaches **0.2:1**
+> with it where my splasher-first spawn reaches 1.6:1 without it. **The gate does not cap splasher
+> production; it protects it.**
+
+**And carol_r2 keeps winning the probe games fast (r522, coverage 702) — which I again decline to
+read as encouragement**, for the same reason as session 1: the coverage is produced by 31 soldiers
+painting, i.e. by the soldier-primary architecture settled at −5.71 sd, not by the mechanism I
+registered.
+
+## Where the budget stands, and the session-2 plan
+
+**Session 1 of 2 used. Stage A not passing.** The pair remains **untested**, because CHANGE 1 has
+never been correctly implemented — first it inverted the mix by deletion, now its premise is refuted.
+
+**Session 2 implements CHANGE 1 in the direction the measurement actually indicates**: not removing
+`SPLASH_FLOOR` but **raising** it. Its dose ladder was only ever explored *downward* — 2000
+(incumbent), 1400 -> 21/50, 0 -> 11/50 — and every step down was worse, monotonically. **The upward
+direction has never been tested**, and it is the direction that suppresses the soldier fallback
+further. If stage A does not pass on that, the budget is spent and I abort and report per the
+registered condition.

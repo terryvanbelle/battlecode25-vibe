@@ -60,7 +60,10 @@ public class RobotPlayer {
      * measurement-neutral -- it shifts the replay hash, so a dose pair must share one tag if
      * doctrine #3's byte-identity check is to work on raw hashes.
      */
-    static final String BUILD = "r2";
+    static final String BUILD = "r2b";
+    /** FIX 1: soldiers permitted between splashers before a tower must hold. */
+    static final int SOLDIER_QUOTA = 2;
+    static int soldiersSinceSplasher = 0;
 
     // ---- Iteration 34: fewer MONEY towers, because paint binds and chips do not -------------
     // towerTypeFor makes a ruin a money tower when k % MONEY_MOD == 0, so MONEY_MOD sets the
@@ -380,7 +383,8 @@ public class RobotPlayer {
         // round 69 with 1350 banked -- and its guard cannot reach it. This supersedes that
         // guard on new evidence rather than reverting it: the zero-income case it covers still
         // trips stagnantTurns, and this adds the pinned-but-earning case it cannot see.
-        int cheapest = UnitType.SOLDIER.moneyCost;
+        // FIX 3: with splashers primary the pin detector's 'cheapest' was mis-specified.
+        int cheapest = UnitType.SPLASHER.moneyCost;
         boolean pinned = chips >= CHIP_RESERVE && chips < CHIP_RESERVE + cheapest;
         pinnedTurns = pinned ? pinnedTurns + 1 : 0;
         boolean freed = stagnantTurns >= STAGNANT_ROUNDS || pinnedTurns >= STAGNANT_ROUNDS;
@@ -439,11 +443,26 @@ public class RobotPlayer {
                    && chips >= reserve + UnitType.MOPPER.moneyCost) {
             want = UnitType.MOPPER;   // a money tower's stash never regenerates; spend it or lose it
         }
+        // FIX 1 (session 2): the hold-for-splasher scheduler. Session 1 removed SPLASH_FLOOR,
+        // which had been gating soldiers at 2,250 chips -- so the 200-paint soldier fallback
+        // consumed every stash before it could reach a splasher's 300, inverting the mix 13x to
+        // 5.2:1. After SOLDIER_QUOTA soldiers this tower builds NOTHING but a splasher, so the
+        // stash accumulates instead of being raided. Reused from iteration 69, whose own gain
+        // ceilings at +7 -- its role HERE is to prevent a race, not to deliver a gain, and that
+        // prior verdict travels with it in neither direction.
+        if (want == UnitType.SOLDIER && soldiersSinceSplasher >= SOLDIER_QUOTA) {
+            want = (tp >= UnitType.SPLASHER.paintCost
+                    && chips >= reserve + UnitType.SPLASHER.moneyCost) ? UnitType.SPLASHER : null;
+        }
         boolean afford = want != null;
         if (afford) {
             Direction dir = DIRS[rng.nextInt(8)];
             MapLocation loc = rc.getLocation().add(dir);
-            if (rc.canBuildRobot(want, loc)) rc.buildRobot(want, loc);
+            if (rc.canBuildRobot(want, loc)) {
+                rc.buildRobot(want, loc);
+                if (want == UnitType.SPLASHER) soldiersSinceSplasher = 0;
+                else if (want == UnitType.SOLDIER) soldiersSinceSplasher++;
+            }
         }
         // Team-level econ trace (towers see chips + tower count; paint is per-tower).
         return "T r=" + rc.getRoundNum() + " chips=" + chips + " tw=" + rc.getNumberTowers()
@@ -527,9 +546,18 @@ public class RobotPlayer {
                     // soldiers are idle because nothing is visible either, this cannot help and
                     // the counter says so in one replay rather than one full run.
                     if (foe == 0) {
+                        // FIX 2 (session 2): `explore` has three writers outside
+                        // newExploreTarget, and THIS one silently defeated CHANGE 3 -- it
+                        // overwrote the forward target with the NEAREST visible empty tile,
+                        // which on a forward unit lies BEHIND it, in carol's own half. Found by
+                        // enumerating every reader of the touched state from source rather than
+                        // by losing a second session to it. Only accept a frontier target that
+                        // is not backward relative to the spawn anchor.
                         MapLocation f = nearestVisibleEmpty();
-                        if (f != null) { explore = f; exploreAge = 0; state += " frontFound"; }
-                        else state += " frontNone";
+                        if (f != null && (anchor == null
+                                || f.distanceSquaredTo(anchor) >= me.distanceSquaredTo(anchor))) {
+                            explore = f; exploreAge = 0; state += " frontFound";
+                        } else state += " frontNone";
                     }
                     state += (foe > 0 ? " IDLE-ENEMY" : " IDLE-ALLY") + ally + "/" + foe;
                 }
