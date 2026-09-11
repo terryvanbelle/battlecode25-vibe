@@ -15,12 +15,17 @@ run=$(for d in $(ls -1t gauntlet 2>/dev/null); do
         [ -f "gauntlet/$d/summary.txt" ] || { echo "$d"; break; }
       done)
 prog=""
-if [ -n "$run" ] && [ -f "gauntlet/$run/results.txt" ]; then
+# Show elapsed time always, and 0 games explicitly. A blank count on a run that
+# has not yet written results.txt looks identical to a stalled reader, and cost
+# two false investigations.
+age=""
+[ -n "$run" ] && age=" ($(( ($(date +%s) - $(stat -c %Y "gauntlet/$run" 2>/dev/null || date +%s)) / 60 ))m in)"
+if [ -n "$run" ]; then
   # results.txt holds TWO lines per game (RESULT + REASON), so a raw line count
   # reads ~2.7x high -- it showed "414 games" for a 150-game run. Count RESULT
   # lines only. results.csv does not exist until collation, so it cannot be used
   # for a run that is still playing.
-  done_n=$(grep -c '^RESULT ' "gauntlet/$run/results.txt" 2>/dev/null || true)
+  done_n=$(grep -c '^RESULT ' "gauntlet/$run/results.txt" 2>/dev/null || true); done_n=${done_n:-0}
   # Total = maps x 2 sides x opponents. runner.sh is not kept in the run
   # directory, and summary.txt does not exist until collation, so derive it from
   # maps.txt (the only file present while a run is live).
@@ -36,7 +41,7 @@ waiting=$(ps -eo args | grep -c '[t]ools/head-to-head.sh darla' || true)
 q=$(grep -cvE '^\s*(#|$)' progress/pending-arms.txt 2>/dev/null || true)
 
 if [ "${g:-0}" -gt 0 ]; then
-  echo "RUNNING: ${prog:-$run} | ${g:-0} gauntlet(s) live, ${waiting:-0} head-to-head(s) queued behind, ${q:-0} arms pending"
+  echo "RUNNING: ${prog:-$run}${age} | ${g:-0} gauntlet(s) live, ${waiting:-0} head-to-head(s) queued behind, ${q:-0} arms pending"
 else
   # A queued head-to-head polls every 60s, so a handover between runs shows as a
   # brief no-gauntlet window. That is WAITING, not IDLE -- work exists and will
