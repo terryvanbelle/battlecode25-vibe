@@ -38,5 +38,13 @@ q=$(grep -cvE '^\s*(#|$)' progress/pending-arms.txt 2>/dev/null || true)
 if [ "${g:-0}" -gt 0 ]; then
   echo "RUNNING: ${prog:-$run} | ${g:-0} gauntlet(s) live, ${waiting:-0} head-to-head(s) queued behind, ${q:-0} arms pending"
 else
-  echo "IDLE: nothing running. ${waiting:-0} head-to-head(s) waiting, ${q:-0} arms pending"
+  # A queued head-to-head polls every 60s, so a handover between runs shows as a
+  # brief no-gauntlet window. That is WAITING, not IDLE -- work exists and will
+  # start on its own. Only report IDLE when there is genuinely nothing to run,
+  # because the heartbeat treats IDLE as a failure to fix.
+  if [ "${waiting:-0}" -gt 0 ] || [ "${q:-0}" -gt 0 ]; then
+    echo "WAITING: between runs. ${waiting:-0} head-to-head(s) queued, ${q:-0} arms pending -- starts within 60s"
+  else
+    echo "IDLE: nothing running, nothing queued -- the VM has no work"
+  fi
 fi
