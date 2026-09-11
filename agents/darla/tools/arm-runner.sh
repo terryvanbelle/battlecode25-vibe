@@ -73,8 +73,14 @@ while true; do
 
   echo "$(date -uIs) ARM START $arm ($have/144 games so far)"
   for r in $SAMPLES; do
+  # 9>&- closes the LOCK fd in the child. `exec 9>lockfile` is not
+  # close-on-exec, so every gauntlet this daemon spawns inherits the fd and
+  # keeps the flock alive after the daemon itself is gone. On 2026-09-11 a
+  # killed filler could not be restarted -- "already running; exiting" -- for
+  # as long as its orphaned gauntlet kept running, because the lock was held
+  # by a process that had no idea it held it.
     BOT="$arm" OPPONENTS="carol bob alice" MAXJOBS=2 \
-      MAPS="$(cat gauntlet/$r/maps.txt)" ../../tools/gauntlet.sh \
+      MAPS="$(cat gauntlet/$r/maps.txt)" ../../tools/gauntlet.sh 9>&- \
       || echo "$(date -uIs) ARM ERROR $arm -- gauntlet failed on sample $r"
   done
   # Only retire an arm that actually PRODUCED games. The first version removed it

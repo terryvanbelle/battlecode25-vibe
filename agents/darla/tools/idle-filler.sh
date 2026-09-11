@@ -36,8 +36,14 @@ while true; do
   fi
 
   echo "$(date -uIs) FILLER START -- queue empty, running a fresh-sample baseline gauntlet"
+  # 9>&- closes the LOCK fd in the child. `exec 9>lockfile` is not
+  # close-on-exec, so every gauntlet this daemon spawns inherits the fd and
+  # keeps the flock alive after the daemon itself is gone. On 2026-09-11 a
+  # killed filler could not be restarted -- "already running; exiting" -- for
+  # as long as its orphaned gauntlet kept running, because the lock was held
+  # by a process that had no idea it held it.
   NMAPS=25 BOT=darla OPPONENTS="carol bob alice" MAXJOBS=2 \
-    ../../tools/gauntlet.sh || { echo "$(date -uIs) FILLER ERROR -- gauntlet failed"; sleep 300; continue; }
+    ../../tools/gauntlet.sh 9>&- || { echo "$(date -uIs) FILLER ERROR -- gauntlet failed"; sleep 300; continue; }
 
   run=$(ls -1t gauntlet | head -1)
   "$VENV" ../../tools/track_vs_old_bots.py "gauntlet/$run" >/dev/null 2>&1 \
