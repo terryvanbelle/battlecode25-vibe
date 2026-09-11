@@ -2212,3 +2212,27 @@ is chosen from at most 13 candidates within r²≤4, and the tower term (+100, o
 range, the candidates differ mostly in *how many* tiles they cover rather than in
 the enemy/empty mix, so both weightings pick the same centre. `darla52` at 3:1 is
 running to see whether a larger move resolves anything.
+
+## Iteration 52 — enemy:empty 3:1: null. The scoring-weight axis is closed.
+
+72/150 (48.0%), z = −0.49.
+
+| enemy : empty | result |
+|---|---|
+| **3 : 2 (inherited)** | baseline |
+| 4 : 2 (2:1) | 74/150 — null |
+| 6 : 2 (3:1) | 72/150 — null |
+
+Doubling and tripling the relative value of enemy ground both change nothing,
+which confirms the reading from `darla51`: **the ratio almost never decides which
+centre is chosen.** The tower term dominates when a tower is in range, and
+elsewhere the candidates differ in how many tiles they cover rather than in their
+composition. The scorer's weights are not a lever on this design, however
+reasonable the coverage argument for changing them was.
+
+**Worth noting as a pattern:** this is the fourth axis tonight where a
+well-argued, mechanism-grounded prediction produced a flat null — alongside the
+`MONEY_MOD` chip-surplus argument, the `CHIP_RESERVE` idle-chips argument, and
+the refill-logistics argument from the HOME-turn census. Each was a sound reading
+of a real measurement, and each turned out to describe something the decision
+procedure never actually consults.
