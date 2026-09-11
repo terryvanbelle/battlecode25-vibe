@@ -2103,3 +2103,19 @@ unit turns spent commuting and read it as waste to be recovered. It is not
 recoverable slack: the inherited trigger is already close to the point where
 cutting it further gains nothing and loosening it collapses the bot. The
 commuting is the price of a paint economy, not a defect in it.
+
+## Iteration 46 — `SPLASH_FLOOR` 1700: null, and the axis is fully mapped on the accepted build
+
+68/150 (45.3%), z = −0.94.
+
+| `SPLASH_FLOOR` on the accepted build | result |
+|---|---|
+| 1400 | 71/150 — null (−0.65) |
+| 1700 | 68/150 — null (−0.94) |
+| **2000 (inherited)** | baseline |
+| 2600 | 58/150 — **−2.78 sd** |
+
+Flat across [1400, 2000], falling above it. Combined with the pre-accept ladder,
+where 1400 cost 26 games at 75% soldier, this axis has gone from **steep on both
+sides to flat below and sloped above** — the clearest single demonstration that a
+gate's shape is a property of the build, not of the game. Mapped and closed.
