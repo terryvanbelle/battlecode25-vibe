@@ -746,3 +746,65 @@ a +2 selected there is exactly the number that does not survive new ground. The
 comparison is like-for-like because the baseline's own fresh-sample score is
 already measured: **97/150 (64.7%)** on run `20260911-041301`. So `darla11` has
 to beat ~97/150, not 89/144.
+
+## Iteration 12 RESULT — `darla12` (splasher paint floor 300): **REJECT**, −15, exactly as registered
+
+74/144 (51.4%). carol 24/48, bob 27/48, alice 23/48.
+
+**The registered risk is what happened, and the mechanism read confirms it rather
+than the theory.** Build events on DefaultHuge:
+
+| round | soldiers built | splashers built | towers | coverage |
+|---|---|---|---|---|
+| 600 | **0** | 36 | 5 | 240 |
+| 1200 | **1** | 34 | 3 | 257 |
+| 1534 | **1** | 19 | 4 | 248 |
+
+The floor **did** protect splasher paint — splashers were built steadily. It also
+built **essentially zero soldiers all game**, and only soldiers call
+`workOnRuin`, so the tower count collapsed to 3–5 against the baseline's 15–25
+and coverage never left ~250. A 300 floor requires a tower to hold 500 before a
+soldier may be built, against an observed ~54. That is the `darla5` error
+repeated at the resource one over, in the place I said it might be.
+
+**Soldiers have a dual role, and that is the finding.** They are poor *painters*
+— 1.8% of their turns paint a tile — but they are the **only** unit that converts
+a ruin into a tower, and towers are the entire paint economy. Any rule that
+prices soldiers purely as painters will delete them and take the economy with it.
+That resolves the apparent contradiction between `darla5` (more soldiers, −57)
+and `darla12` (no soldiers, −15): **soldier count has an interior optimum, and
+carol's constants are sitting on it.**
+
+## Standing conclusion after twelve arms
+
+| axis | tested | verdict |
+|---|---|---|
+| `SPLASH_FLOOR` | 0, 1400, **2000**, 2600 | interior optimum at the inherited value |
+| moppers | none, better nav, **incumbent** | bracketed both sides, incumbent best |
+| `SPLASH_MIN_SCORE` | 4, **8** | incumbent |
+| soldier navigation | 2 mechanisms, both fired | both −10 |
+| `SPLASHER_IN_20` | 15%, 40%, 70% | U-shaped; +2 at 70% is inside noise |
+| splasher paint floor | 300, 150 pending | 300 deletes the economy |
+
+**Every constant axis reachable in this build is at a local optimum, and the
+optimum is the value carol shipped.** Twelve single-mechanism arms, 1,700+
+matched games, and the best measured result is still the inherited build. Darla's
+one real gain over the lineages remains the *combination* she started from —
+carol's economy plus the siege carol built and never adopted, worth about +12
+points against carol herself.
+
+**Two operational facts learned the hard way:**
+
+1. **Replays expire.** `driver-prune.sh` deletes `.bc25` blobs, `losses/`
+   included, once a run is old enough. The baseline runs' replays are already
+   gone, so the soldier-turn census above cannot be re-run on them. **A mechanism
+   census has to be taken while the run is fresh**, not queued for later.
+2. **Upgrades are not the gap.** On a rich map darla performs 24 paint-tower
+   upgrades against 1 money-tower, alice the reverse (23 money, 13 paint). Given
+   per-tower paint is the binding resource, darla's split is the correct one and
+   is already happening — so the paint shortage is a *flow* limit (25 towers at
+   ~10/turn against a splasher's 300), not an unspent-chips failure.
+
+**Queued**: `darla14` at 55% splasher share, to fill the gap between 40% (−11)
+and 70% (+2). If 55% lands near the baseline, the U was noise and the axis is
+flat; if it dips, the dip is real and mechanical.

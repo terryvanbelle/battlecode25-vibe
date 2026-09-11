@@ -14,3 +14,4 @@ darla10|SPLASHER_IN_20|8|splasher share 15% to 40%
 darla11|SPLASHER_IN_20|14|splasher share 15% to 70%
 darla12|SPLASH_PAINT_FLOOR|300|splasher paint floor 300
 darla13|SPLASH_PAINT_FLOOR|150|splasher paint floor 150
+darla14|SPLASHER_IN_20|11|splasher share 55%
