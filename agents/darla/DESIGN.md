@@ -1921,3 +1921,10 @@ attractor that tells splashers where to go — production and positioning, not
 gating. The gates were all at carol's values because carol had already tuned them;
 the positioning mechanism was hers too, built as a tower-killing weapon, and its
 real value is somewhere she never looked.
+
+## Iteration 36 — `CHIP_RESERVE` 1200 → 600: null
+
+76/150 (50.7%), z = +0.16 against the accepted build. An axis untouched in 34
+arms, motivated by chips sitting $27k–46k idle — and halving the reserve does
+nothing. `darla38` (2400) is queued to close the bracket rather than leave one
+side probed.
