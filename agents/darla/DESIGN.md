@@ -2156,3 +2156,11 @@ one consistent with all five data points.
 
 **Positioning: CLOSED, and correctly this time.** The requirement is a *stable
 target*, not a good one. The map supplies exactly one: a tower.
+
+## Iteration 48 — `TOWER_BONUS` 20 on the accepted build: null
+
+70/150 (46.7%), z = −0.82. At 15% splashers this dose cost 6 games; at 70% it is
+indistinguishable. So the attractor's *threshold* has softened even as its
+*presence* has become far more valuable (removing it entirely costs 99–51). Both
+facts fit the persistence reading: what matters is that a stable landmark wins
+the argmax often enough to hold a heading, not by how much it wins.
