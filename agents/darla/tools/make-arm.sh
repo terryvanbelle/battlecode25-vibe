@@ -15,6 +15,12 @@
 #   2. the diff against the baseline must be NON-EMPTY;
 #   3. the intended change must be present.
 # Any failure removes the directory, so a broken arm can never reach the queue.
+#
+# The BUILD rewrite matches ANY current value, not the literal "darla1". It was
+# pinned to "darla1" and would have silently stopped rewriting the moment the
+# baseline was promoted to "darla-i1" -- the check on line 30 would then have
+# caught it, but as a confusing failure rather than a no-op, and every arm built
+# on the accepted baseline would have refused to build.
 set -euo pipefail
 NAME="${1:?usage: make-arm.sh <name> <sed-expr> <expected>}"
 SED="${2:?}"; EXPECT="${3:?}"
@@ -23,7 +29,7 @@ SRC=src/darla/RobotPlayer.java
 DST="src/$NAME/RobotPlayer.java"
 
 rm -rf "src/$NAME"; cp -r src/darla "src/$NAME"
-sed -i "s/^package darla;/package $NAME;/; s/BUILD = \"darla1\"/BUILD = \"$NAME\"/; $SED" "$DST"
+sed -i "s/^package darla;/package $NAME;/; s/BUILD = \"[^\"]*\"/BUILD = \"$NAME\"/; $SED" "$DST"
 
 fail () { echo "!! $NAME: $1"; rm -rf "src/$NAME"; exit 1; }
 grep -qx "package $NAME;" "$DST"        || fail "package line was not rewritten"
