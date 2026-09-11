@@ -1937,3 +1937,29 @@ accepted 14 in the middle of a plateau rather than on a peak. Consistent with th
 pre-accept ladder, which was flat in [8, 22] — the difference being that the
 accept established 14 is better than 8 by a real margin, so the plateau has
 moved rather than merely been re-confirmed.
+
+## Iteration 38 — `CHIP_RESERVE` 2400: **−9.31 sd**, and the same shape for the third time
+
+| `CHIP_RESERVE` | result |
+|---|---|
+| 600 | 76/150 — null |
+| **1200 (inherited)** | accepted baseline |
+| 2400 | **18/150 (12.0%) — z = −9.31** |
+
+A one-sided cliff, identical in shape to `MONEY_MOD`: lowering it does nothing,
+raising it is catastrophic. The mechanism is the one this file opens with — the
+reserve gates *every* build, and at 2400 it sits above the level the treasury
+normally holds (~1,400), so production nearly stops.
+
+**That is the third time tonight the same error shape has produced the session's
+worst results**: `darla5` (chip floor to 0, −57), `darla12` (splasher paint floor
+300 against ~54 held, −15), and now this. Every one is *a constant set above the
+level its resource normally holds* — the exact error `DESIGN.md` was written to
+avoid, quoted from alice on the first page.
+
+The useful form of the lesson is that the failure is **not symmetric**. Every
+gate axis measured tonight — `MONEY_MOD`, `CHIP_RESERVE`, `SPLASH_PAINT_FLOOR` —
+is flat or mildly negative below the inherited value and catastrophic above it.
+Gates that are too loose waste a little; gates that are too tight stop the economy
+outright. When probing an unknown gate, **probe downward first**: it is the cheap
+direction to be wrong in.
