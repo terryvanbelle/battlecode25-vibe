@@ -23,3 +23,4 @@ darla18|TOWER_BONUS|200|siege tower bonus doubled
 darla19|TOWER_BONUS|50|siege tower bonus halved
 darla20|positioning|-|splashers head for enemy paint when no tower in vision
 darla21|TOWER_BONUS|20|attractor below the paint ceiling
+darla22|positioning|-|splashers head for enemy-paint centroid

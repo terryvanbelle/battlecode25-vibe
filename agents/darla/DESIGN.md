@@ -1196,3 +1196,50 @@ paint can genuinely outvote a tower. This tests something new and specific:
 whether a *blended* rule — prefer towers only when nearby paint is poor — beats
 the current always-tower rule. That is a real design question; 50 / 100 / 200
 never were.
+
+## Iteration 20 RESULT — `darla20` (splashers head for nearest enemy paint): **−38 (−6.33 sd)**, the worst arm yet
+
+51/144 (35.4%). carol 6/48, bob 25/48, alice 20/48. 142 of 144 game rows differ
+from the baseline, so the mechanism unquestionably fired — this is a refutation,
+not a dud build.
+
+**My registered prediction was wrong.** I argued the heading would be worthless
+for soldiers (which it was, `darla9` −10) and useful for splashers because a
+splasher can overwrite enemy paint. It is far worse for splashers.
+
+**The census says precisely why, and it is not the reason I would have guessed:**
+
+| splasher tag | count |
+|---|---|
+| **`lowScore lure`** | **240 of 328** |
+| `HOME` (dry) | ~30 |
+| `cd lure` | 3 |
+| fired | **0** |
+
+Median paint held: 99, against an attack cost of 50. So the splashers are
+**fuelled, ready, on target and refusing to fire** — the best centre scores under
+`SPLASH_MIN_SCORE = 8`, every turn, for the whole window.
+
+**The nearest enemy tile is a lone frontier tile.** A splash centred there covers
+one or two enemy tiles at +3 each and never reaches 8. The splasher walks to it,
+finds nothing worth 50 paint, holds fire, and repeats — permanently parked on the
+frontier doing nothing.
+
+**So the tower attractor was never about towers.** A tower sits inside a *mass*
+of enemy paint, and mass is what makes a splash worth firing. `darla17` proved
+the attractor is worth 17 games; this proves what it is a proxy for. **Nearest is
+a proxy for proximity, which is worthless. The tower was a proxy for density,
+which is the thing.**
+
+**And I re-made a documented mistake.** DESIGN.md's own opening records carol's
+rule — *a persistent heading beats a nearest-target rule, because a nearest rule
+points a forward unit backwards.* I quoted it in the founding document and then
+built a nearest-target rule anyway, twice (`darla9`, `darla20`), for a combined
+−48 games.
+
+**Queued: `darla22`, the same mechanism aimed at density instead of proximity** —
+head for the **centroid of all visible enemy paint**. O(n) over vision, no memory,
+and it points at the middle of the enemy's mass rather than at its nearest edge.
+If density is the right reading, this should behave like the tower attractor
+without its range limit; if it also loses, positioning genuinely does not
+generalise beyond an actual tower and the axis closes.
