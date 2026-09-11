@@ -2119,3 +2119,40 @@ Flat across [1400, 2000], falling above it. Combined with the pre-accept ladder,
 where 1400 cost 26 games at 75% soldier, this axis has gone from **steep on both
 sides to flat below and sloped above** — the clearest single demonstration that a
 gate's shape is a property of the build, not of the game. Mapped and closed.
+
+## Iteration 47 — the dispersed landmark is the WORST arm of the session: **−10.78 sd**
+
+9/150 (6.0%). The baseline wins **141–9**.
+
+**I predicted this would behave like the tower attractor and it behaved worse than
+anything else I have built.** The full positioning record:
+
+| heading, when no tower is visible | result |
+|---|---|
+| **none — wander at random (inherited)** | **baseline** |
+| nearest enemy tile | −38 games (screen, 15% splashers) |
+| enemy-paint centroid | −22 games (screen) / **−7.84 sd** (paired, 70% splashers) |
+| **ID-indexed enemy tile (dispersed)** | **−10.78 sd** |
+
+**So dispersion was the wrong explanation, and the right one was in DESIGN.md's
+first page all along.** carol's rule: *a persistent heading beats a nearest-target
+rule*. A tower is a **fixed landmark** — it sits in the same square for the whole
+game, so a splasher that locks onto one keeps the same heading for many turns. Every
+heading I have built targets **paint**, which moves every time anybody paints, so
+the target is recomputed into a different place each turn and the unit oscillates.
+
+The ID-indexed version is the extreme case and that is why it is the worst: the
+index is taken over a *set that changes every turn*, so `id % k` selects a
+completely different tile whenever `k` changes. It is the least persistent
+heading possible — noise dressed as a policy.
+
+**Three explanations, three refutations, and the pattern is worth naming.** I
+explained the attractor as tower-killing (refuted: no tower ever dies), then as
+proximity-to-enemy-ground (refuted: nearest and centroid both lose), then as
+dispersion (refuted here). Each explanation was built to fit the results I had,
+and each predicted a new mechanism that failed. **The one explanation I never
+tested is the one the founding document already contained** — and it is the only
+one consistent with all five data points.
+
+**Positioning: CLOSED, and correctly this time.** The requirement is a *stable
+target*, not a good one. The map supplies exactly one: a tower.
