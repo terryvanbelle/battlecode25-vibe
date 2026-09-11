@@ -1822,3 +1822,42 @@ more of its output depends on terrain and on where the opponent's paint happens
 to mass. It also means the screening floor for any future work on this build is
 **wider** than the 5.5 points measured before the accept, which is one more reason
 the paired head-to-head is now the only screen worth using.
+
+## Fixing the idleness, at the class level rather than the instance
+
+The owner observed that I had been stopping and idling. Measured over the last
+eight hours: **10 commits, mean gap 44 minutes**, with gaps of 86, 66 and 123
+minutes, against a 10–15 minute cadence earlier in the session. The VM was busy
+throughout; the idleness was mine.
+
+**Two causes, and I had been patching instances of the first.**
+
+1. **The watcher went blind.** Every watcher I built named the logs it watched,
+   and each went stale the moment the system grew a producer. The monitor tailed
+   `arm-runner` and `idle-filler`, then I moved every important measurement into
+   `head-to-head.sh` and never added it — two results sat unread for 73 minutes.
+   **And my fix was the same bug**: `tail -F /tmp/darla-h2h-*.log` expands the glob
+   once at startup, so the next head-to-head log would have been missed too.
+
+2. **I gated on single results.** One or two experiments in flight, then waiting.
+   With runs taking ~13 minutes and a VM that holds seven concurrent games, that
+   leaves most of the wall-clock spent waiting on something I could have queued
+   four of.
+
+**Three layers, each covering the failure of the one above:**
+
+- **`tools/watch-state.sh`** replaces log-tailing entirely. It scans for *run
+  directories with a `summary.txt`* and reports any it has not reported before.
+  It cannot go blind to a new producer, because every producer ends by writing a
+  summary — the artefact is the signal, not the log. It also emits `IDLE` when
+  nothing is queued, running, or waiting.
+- **A 17-minute cron backstop** that wakes me to check for unread results and an
+  idle VM even if the watcher dies completely. Session-only, expires in 7 days.
+- **Queue depth ≥ 3**, so draining the pipeline takes an hour rather than one
+  turn.
+
+**Queued now** (five deep): `darla33` `MONEY_MOD` 8, `darla34` threshold 20,
+`darla35` `TOWER_BONUS` 0 — the positioning control re-run on a build that is now
+70% splashers, where it should matter *more* than the −17 it was worth at 15% —
+`darla36` `CHIP_RESERVE` 600, an axis untouched in 34 arms that gates every
+build while chips sit $27k–46k idle, and `darla37` threshold 10.
