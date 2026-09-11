@@ -2043,3 +2043,29 @@ The tower attractor is the first kind. Every heading I have built — nearest en
 tile, centroid, at both mix levels — is the second. **Positioning: CLOSED**, with
 the distinction that makes the tower attractor work now stated explicitly rather
 than inferred.
+
+## Iteration 42 — `PAINT_FLOOR` 300: exactly 75/150, and the bracket closes asymmetrically the *other* way
+
+| `PAINT_FLOOR` | result |
+|---|---|
+| 100 | 61/150 — **−2.29 sd** |
+| **200 (inherited)** | accepted baseline |
+| 300 | **75/150 — exactly null** |
+
+An exact 75/75 in a head-to-head is the signature of two identical bots, so I
+checked: **67 of 75 maps split 1–1 by side** (what identical play produces), and
+**8 genuinely diverge** and happen to cancel. So 300 is a real change with a net
+effect of precisely zero, not a no-op.
+
+**Mechanically it is a switch that is already off.** `PAINT_FLOOR` decides whether
+moppers can be afforded. At 200 they essentially never are (one built per game);
+raising to 300 blocks a unit that was already blocked, and only perturbs the
+handful of maps rich enough for the gate to bind at all. Lowering to 100 lets them
+back in, and that costs 14 games.
+
+**Note the asymmetry runs opposite to the other gates.** `CHIP_RESERVE` and
+`MONEY_MOD` are flat below and catastrophic above. `PAINT_FLOOR` is flat *above*
+and costly *below*. The common rule is not about direction at all: **a gate is
+flat on the side where it is already saturated, and bites on the side where it
+starts admitting something.** That is a better statement than the "probe
+downward" heuristic I wrote two hours ago and had to qualify one hour ago.
