@@ -1983,3 +1983,32 @@ only unit that converts ruins into towers. Earlier I established moppers were
 The asymmetry survives — −2.29 sd here against −9.31 sd for `CHIP_RESERVE`
 upward — but "downward is cheap" was too strong on three data points. The honest
 version: **gates fail worse upward than downward, and neither direction is free.**
+
+## Iteration 40 — `STAGNANT_ROUNDS` 10 → 4: null
+
+70/150 (46.7%), z = −0.82 against the accepted build. How fast a pinned treasury
+frees its reserve does not matter at this mix. Untouched in 39 arms, now measured
+and closed.
+
+## Re-testing positioning mechanisms on a build where splashers are the army
+
+Three queued, and the first is the interesting one.
+
+**`darla41` re-runs `darla22`'s centroid heading.** That lost 22 games when
+splashers were **15%** of the army; they are now **70%**, and this build is more
+sensitive to positioning than to anything else measured — removing the tower
+attractor costs **99–51**. The old verdict was measured on a bot whose splashers
+were a minority side-show, which is exactly the condition under which
+`SPLASH_FLOOR`'s verdict also turned out not to survive the new mix.
+
+The prediction, registered: if positioning dominates this build, a heading that
+covers the *tower-free* case should now help rather than hurt, because 70% of the
+army spends its idle turns wandering at random. If it loses again by a similar
+margin, then dispersion genuinely beats direction regardless of how many
+splashers there are, and the positioning axis closes for good.
+
+**`darla42`** (`PAINT_FLOOR` 300) completes the bracket around the inherited 200,
+now that 100 is known to cost 14 games. **`darla43`** reaches 30% soldier via the
+splasher route, where `darla31` reached it via the mopper route and scored −1.80 —
+same target, different lever, which tests whether that result was about the
+soldier share or about the moppers.
