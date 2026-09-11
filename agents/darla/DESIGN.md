@@ -1155,3 +1155,44 @@ points, so this is worth taking seriously only if it moves by more than the −1
 **Mechanism check first, as always**: the build tags `lure` when it takes the new
 heading and `roam` when it falls through. If `lure` is rare, no tower-free
 splasher-turns exist and the arm is untested rather than refuted.
+
+## Iteration 19 RESULT — and the arms were NO-OPS, provably, which I could have known statically
+
+`darla19` (attractor 50/30): **89/144, +0.** Completing the ladder:
+
+| tower bonus | result |
+|---|---|
+| 0 | 72/144 — **−17** |
+| 50/30 | 89/144 — +0 |
+| 100/60 | 89/144 — inherited |
+| 200/120 | 89/144 — +0 |
+
+**Then I checked whether these were merely equal in score or equal in play.**
+Comparing per-game rows against the baseline on the identical pinned sample:
+
+    darla19 vs baseline: 0 differing game rows
+    darla18 vs baseline: 0 differing game rows
+
+**Byte-identical games** — every map, every side, same winner, same round count.
+`darla18` and `darla19` are not "ties", they are the baseline. 288 games bought
+zero information.
+
+**And it was determinable by reading the scorer.** The paint terms are +3 per
+enemy tile within r²≤2 of the centre (9 such tiles) and +2 per empty tile in
+r²≤4 (4 more), so the **maximum achievable paint score is 9x3 + 4x2 = 35.** Any
+tower bonus above 35 wins the argmax outright whenever a tower is in range, and
+changing it cannot alter which centre is chosen. 50, 100 and 200 are *all* above
+35, so all three were guaranteed no-ops before a single game was played.
+
+**The practice this earns, stated so it is not just an apology**: before queueing
+a dose, check whether the term can change the decision it feeds. A constant that
+already dominates its competitors has no dose-response — it has a threshold, and
+the only informative doses are near that threshold. This is the cheap static
+analogue of the mechanism check I already do on results, moved to before the run.
+
+**Queued: `darla21` at 20/12 — the first dose on this axis that is not a
+guaranteed no-op**, because 20 sits *below* the 35-point paint ceiling and so
+paint can genuinely outvote a tower. This tests something new and specific:
+whether a *blended* rule — prefer towers only when nearby paint is poor — beats
+the current always-tower rule. That is a real design question; 50 / 100 / 200
+never were.
