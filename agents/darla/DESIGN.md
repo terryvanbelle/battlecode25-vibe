@@ -2191,3 +2191,10 @@ towers. There was never a gap for a second mechanism to fill.
 **Positioning is now closed on evidence rather than on exhaustion**: one mechanism,
 worth 99–51, working for a stated reason, with the four alternatives refuted and
 the fifth shown to have nothing to do.
+
+## Iteration 50 — `SPLASHER_IN_20` 15: null
+
+79/150 (52.7%), z = +0.65. One notch off the accepted 14, and unresolvable — as
+expected from the bimodal ladder, whose second mode was a plateau rather than a
+peak. The accepted value is a good place on that plateau, not a tuned optimum,
+and one notch either way is beneath this instrument.
