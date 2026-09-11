@@ -1,4 +1,4 @@
-package darla;
+package darla_iter0;
 
 import battlecode.common.*;
 
@@ -60,7 +60,7 @@ public class RobotPlayer {
      * measurement-neutral -- it shifts the replay hash, so a dose pair must share one tag if
      * doctrine #3's byte-identity check is to work on raw hashes.
      */
-    static final String BUILD = "darla-i1";
+    static final String BUILD = "darla_iter0";
 
     // ---- Iteration 34: fewer MONEY towers, because paint binds and chips do not -------------
     // towerTypeFor makes a ruin a money tower when k % MONEY_MOD == 0, so MONEY_MOD sets the
@@ -110,7 +110,7 @@ public class RobotPlayer {
      * Dose: 0 (zero arm) / 3 (15%) / 6 (30%, iteration 4's untested value). The real cost is
      * paint, not chips -- a splasher is 300 paint against a soldier's 200 -- so start low.
      */
-    static final int SPLASHER_IN_20 = 14;   // ACCEPTED iteration 1: 97-53 head-to-head vs darla_iter0 (+3.59 sd), 32 swept to 10.
+    static final int SPLASHER_IN_20 = 3;
     // Iteration 21: mopper share BELOW the incumbent 5. Run 20260907-142542 measured the dose
     // curve against a common dose-0 opponent on identical maps: dose 2 beats dose 0 by 29-11
     // (72.5%), dose 5 beats dose 0 by 26-14 (65.0%). So the curve is CONCAVE with an interior
@@ -121,7 +121,7 @@ public class RobotPlayer {
     static final int MOPPER_IN_20 = 2;
 
     /** Minimum splash score worth spending 50 paint on. Named so it can be a dose. */
-    static final int SPLASH_MIN_SCORE = 14;   // ACCEPTED iteration 1, jointly with SPLASHER_IN_20 above. Neither is established alone.
+    static final int SPLASH_MIN_SCORE = 8;
 
     /** Iteration 12: see TRAINING_LOG.md. Gate is computed per level, never a constant --
      *  a fixed CHIP_RESERVE+2500 would let a lv2->lv3 upgrade (5,000) strand the treasury

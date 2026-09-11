@@ -1612,3 +1612,48 @@ to distrust the +4.
 Both head-to-heads are now running or queued — `darla28` vs `darla` on all 75
 maps both sides, and `darla11` vs `darla` behind it. Null 75/150, accept at
 >= 86/150, as registered before any of these numbers existed.
+
+# ITERATION 1 — ACCEPTED. The first improvement in twenty-eight arms.
+
+**Head-to-head, `darla28` vs the shipped baseline, all 75 maps, both sides:**
+
+| | |
+|---|---|
+| result | **97–53 (64.7%)** |
+| pre-registered null | 75/150 |
+| pre-registered gate | **>= 86/150** |
+| z | **+3.59 sd** |
+| **swept maps** (won from BOTH sides, immune to spawn) | **32 win / 10 loss** |
+
+The identity holds — wins − losses = 2 × (swept − swept-against): 97 − 53 = 44 =
+2 × (32 − 10) — so the margin is carried by maps won from both sides, not by
+spawn luck.
+
+**The change**: `SPLASHER_IN_20` 3 → 14 (splasher share 15% → 70%) and
+`SPLASH_MIN_SCORE` 8 → 14, jointly. **Neither constant is established alone**;
+this was registered as a combination arm and is accepted as one.
+
+**Why the screens could not see it, which is the methodological result.** Both
+constants screened at +2 and the pair at +4, all inside a 6.7-point floor. On
+that evidence I wrote — correctly, given the instrument — that the leans were
+probably noise, and I said so twice before the head-to-head ran. The screens were
+not wrong; **they were the wrong instrument.** A 3-opponent gauntlet makes
+candidate-vs-baseline a difference of differences across two independently
+sampled map sets. A direct match plays both builds on the same 75 maps, so map
+difficulty cancels instead of compounding, and a +4-on-144 lean resolves into
++22-on-150.
+
+**The lesson is about instrument design, not about being more optimistic.** I ran
+twenty-seven arms through a screen that could only ever see damage. The moment I
+built an instrument matched to the question — "does this one change help?" rather
+than "how does this build fare against three opponents?" — the answer was
+immediate and unambiguous. **The bottleneck was never the VM or the ideas; it was
+measuring the wrong difference.**
+
+**Bookkeeping**: `src/darla_iter0` is the frozen pre-acceptance baseline, kept so
+every result above stays interpretable and so attribution runs have a fixed
+reference. `src/darla` is now the accepted build, `BUILD = "darla-i1"`.
+
+**Owed next, in order**: attribution (each constant alone against
+`darla_iter0`, since the accept is joint), then the benchmark against `v3` — in
+that order, because the benchmark measures what ships and must never choose it.
