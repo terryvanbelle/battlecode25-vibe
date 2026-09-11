@@ -581,3 +581,55 @@ looks exactly like "still running".
 an ablation: `darla1` is carol's economy **plus** the siege, carol is in the
 opponent pool frozen, and darla1 beats carol **30/48 (62.5%)**. The siege is the
 only difference between them, so it is worth roughly +12 points, measured.
+
+## Iterations 8 and 9 RESULT — both navigation arms REJECT, and the replay names the real lever
+
+| arm | change | vs carol | vs bob | vs alice | overall |
+|---|---|---|---|---|---|
+| `darla8` | frontier guard removed | 20/48 | 30/48 | 29/48 | **79/144 (54.9%)** −10 |
+| `darla9` | idle soldiers head for enemy paint | 24/48 | 28/48 | 27/48 | **79/144 (54.9%)** −10 |
+
+**The mechanism fired — this is not an untested arm.** As registered, the counter
+was read before the score. On DefaultHuge, rounds 600–630:
+
+| | darla1 | `darla8` |
+|---|---|---|
+| turns reaching the frontier branch | 187 | **591** |
+| `frontFound` | 2 | **41** |
+| dry, commuting home | 17.8% | **28.0%** |
+
+The guard removal did exactly what it was designed to do. It is the fourth
+"mechanism confirmed, value nil-or-negative" result in this project.
+
+**And the same replay contains the finding that matters.** darla8 vs carol on
+DefaultHuge, at round 2000:
+
+| | darla8 | carol |
+|---|---|---|
+| towers | **19** | 4 |
+| soldiers | **64** | **0** |
+| splashers | 0 | 7 |
+| chips | **$27,300 unspent** | $1,560 |
+| **coverage** | **263, falling from 456** | **691, rising** |
+
+**Darla wins the tower race 19–4, fields 64 soldiers against zero, and loses the
+coverage race to seven splashers.** That is the *second* registered refutation
+branch from the original thesis, hit exactly: *"Darla wins the ground race and
+still loses."*
+
+**Why, mechanically.** The spawn mix is a roll: `SPLASHER_IN_20 = 3` (15%),
+mopper 2, soldier the remaining 75%. `SPLASH_FLOOR` only forces splashers while
+chips are *scarce* — it blocks non-splashers below a threshold. At $27,300 the
+floor never binds, so the realized mix relaxes to the **intended** 75% soldier,
+and 75% soldier is the wrong army. Six or seven splashers painting up to 13 tiles
+per action out-paint 64 soldiers painting one.
+
+**So the axis I have been on was the wrong one the whole time.** Every arm so far
+moved when soldiers may be built. The lever is **how many splashers are built at
+all**, and `SPLASHER_IN_20` has never been touched — it sits at carol's 3.
+
+**Queued**: `darla10` (splasher share 15% → 40%) and `darla11` (15% → 70%).
+Registered prediction: if the reading above is right, both beat 89/144 and the
+curve is *increasing* in splasher share, opposite in sign to every dose ladder so
+far. If both lose, the mix is not the lever either and the coverage gap is coming
+from somewhere I have not yet measured.

@@ -10,3 +10,5 @@ darla3|moppers|-|mopper navigation (alice i7)
 darla7|SPLASH_MIN_SCORE|4|splash threshold 8 to 4
 darla8|frontier|-|frontier branch unguarded
 darla9|frontier|-|idle soldiers head for enemy paint
+darla10|SPLASHER_IN_20|8|splasher share 15% to 40%
+darla11|SPLASHER_IN_20|14|splasher share 15% to 70%
