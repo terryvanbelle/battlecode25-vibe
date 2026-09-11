@@ -30,6 +30,17 @@ while true; do
   # See the note in arm-runner.sh: match the re-exec name, never the original.
   inflight=$(pgrep -fc '\.reexec-gauntlet\.sh' 2>/dev/null || true)
 
+  # YIELD TO REAL MEASUREMENTS. The filler is the LOWEST priority job here, but it
+  # restarts the instant a run finishes, so the gap head-to-head.sh polls for never
+  # opens. That starved both attribution head-to-heads for seventy minutes on
+  # 2026-09-11: alive, polling every 60s, never once seeing an idle VM. A filler
+  # that crowds out the measurement it exists to protect is worse than an idle VM.
+  waiting=$(pgrep -fc 'head-to-head\.sh|replicate\.sh' 2>/dev/null || true)
+  if [ "${waiting:-0}" -gt 0 ]; then
+    sleep 60
+    continue
+  fi
+
   if [ "$pending" -gt 0 ] || [ "$inflight" -gt 0 ]; then
     sleep 120                      # real work is happening; stay out of the way
     continue
