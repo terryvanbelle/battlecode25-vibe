@@ -1798,3 +1798,27 @@ and so were never really measured:
 - `darla33`: `MONEY_MOD` 8 — screened at −2 on the old baseline.
 - `darla34`: `SPLASH_MIN_SCORE` 20 — refining the accepted 14 upward, now that 14
   is known to be a real effect rather than the noise I twice called it.
+
+## The accept, consolidated on 3,150 games of absolute strength
+
+The idle filler has now produced twenty-one fresh random 25-map samples against
+the three frozen lineages, six before the accept and fifteen after:
+
+| | n | pooled | run-to-run sd |
+|---|---|---|---|
+| pre-accept | 6 | **568/900 — 63.1%** | 2.75 pts |
+| post-accept | 15 | **1549/2250 — 68.8%** | 4.79 pts |
+| difference | | **+5.7 points** | SE 1.67, **t = 3.41** |
+
+**Three instruments, three designs, one answer:** the paired head-to-head at
++3.59 sd, the absolute-strength series at t = 3.41 over 3,150 games, and the
+benchmark against `v3` moving 34.0% → 42.0%. The accept is not an artefact of the
+instrument that found it.
+
+**One detail worth keeping.** The post-accept run-to-run sd is **4.79 points
+against the pre-accept 2.75** — the accepted build is noticeably *more variable*
+across map samples, not just better on average. That fits a splasher-heavy army:
+more of its output depends on terrain and on where the opponent's paint happens
+to mass. It also means the screening floor for any future work on this build is
+**wider** than the 5.5 points measured before the accept, which is one more reason
+the paired head-to-head is now the only screen worth using.
