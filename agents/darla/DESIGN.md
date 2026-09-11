@@ -1333,3 +1333,67 @@ rendezvous rather than at the idea.
 **Read against the measured floor.** This instrument cannot resolve under ~5
 points, so only a move on the scale of the real results (−17, −22, −38) counts
 either way. A +3 is noise.
+
+## Iteration 23 — `darla23` (mopper paint mule): **UNTESTED**, and it corrects two earlier closures
+
+88/144, −1. Then the mechanism check, read before any verdict: **`mu=0/0` — not a
+single transfer.** And the reason is not rendezvous:
+
+**There are no moppers.** A full game, build events by round 2000:
+
+| | built |
+|---|---|
+| soldiers | **217** |
+| splashers | 24 |
+| **moppers** | **1** |
+
+`mop0` alive at every sample point. `MOPPER_IN_20 = 2` asks for 10% of production
+and delivers roughly one mopper per game.
+
+**Cause, from carol's own accepted iteration 36.** `PAINT_FLOOR = 200` blocks any
+unit cheaper than a soldier unless the tower keeps 200 paint after the build — so
+a mopper (100 paint) needs its tower to hold **300**, against an observed ~54.
+The floor was built to stop moppers crowding soldiers out, and it does that by
+preventing moppers almost entirely.
+
+**So the mule arm is `gate-unimplementable`, not refuted.** The carrier unit does
+not exist, and it cannot be made to exist without deleting the floor — which
+re-creates the 60–75% mopper share carol fixed. Recorded as unavailable rather
+than as a failed idea.
+
+### The correction this forces, which matters more than the arm
+
+**I closed the "mopper axis" earlier, bracketed on both sides. That closure was
+wrong, and so was one of its two data points.**
+
+- **`darla3`** (alice's mopper navigation, dead tie) improved the navigation of a
+  unit that appears **once per game**. That is not a tie, it is **untested** — the
+  exact trap I have quoted at myself repeatedly.
+- **`darla2`** (`MOPPER_IN_20 = 0`, −5) never tested moppers at all. Removing the
+  mopper rolls hands those 2-in-20 rolls to **soldiers**, so it silently raised
+  soldier share from 75% to 85%. It was a soldier-share arm wearing a mopper
+  label — and its −5 is consistent with the bimodal `SPLASHER_IN_20` ladder found
+  later, not with anything about moppers.
+
+**Corrected closure: moppers are `structurally-unavailable` in this economy.**
+Nothing has been measured about the unit. What was measured is a spawn-roll
+reallocation and a no-op.
+
+**The general lesson, and it is not the one I already had.** I check that a
+*mechanism* fires. I did not check that the *unit the mechanism acts on exists*.
+A population census is as necessary as a mechanism census, and it is cheaper —
+`+mop` was sitting in every aggregate line I had already dumped, and I read past
+it a dozen times.
+
+## Registration — iteration 24/25, the tower mix (`MONEY_MOD`)
+
+The one axis that targets the measured binding resource and has never been
+touched. `MONEY_MOD = 4` makes 1 ruin in 4 a money tower.
+
+**Motivation is direct**: chips pile to **$27,000–$46,000 unspent** while
+per-tower paint sits at ~54 against a splasher's 300 cost. The team is drowning
+in the resource it does not need and starved of the one it does.
+
+`darla24` = 8 (fewer money towers), `darla25` = 2 (more), read as a ladder so the
+inherited 4 is bracketed. Read against the measured floor: only a move on the
+−17/−22/−38 scale counts.
