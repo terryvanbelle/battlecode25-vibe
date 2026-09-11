@@ -1397,3 +1397,44 @@ in the resource it does not need and starved of the one it does.
 `darla24` = 8 (fewer money towers), `darla25` = 2 (more), read as a ladder so the
 inherited 4 is bracketed. Read against the measured floor: only a move on the
 −17/−22/−38 scale counts.
+
+## Iteration 24 — `darla24` (`MONEY_MOD` 4 → 8, fewer money towers): −2, inside the floor
+
+87/144 (60.4%). carol 25/48, bob 33/48, alice 29/48. −0.33 sd — indistinguishable.
+
+**This is a surprise worth recording.** The motivation was as direct as any this
+session: chips pile to **$27,000–46,000 unspent** while per-tower paint sits at
+~54 against a splasher's 300 cost. Halving money-tower production should convert
+a useless surplus into the binding resource, and it does **nothing measurable**.
+
+Two readings, and `darla25` (`MONEY_MOD` 2, more money towers) will separate them:
+either tower *type* matters far less than tower *count* — each tower is also a
+spawn point and a paint stash regardless of kind — or the paint bottleneck is not
+total income but the per-tower stash dynamics that `darla12` already ran into.
+
+## A better instrument for the one candidate that has ever looked positive
+
+`darla11` (70% splasher) is the only arm in twenty-five to lean positive twice:
++2 on the pinned pair, and 99/150 on a fresh sample against a baseline that
+scored 97, 94 and 101 on its own fresh samples. Both leans are inside the ~5-point
+floor, so neither settles anything.
+
+**The screens are a difference of differences.** A 3-opponent gauntlet asks how
+each build fares against carol/bob/alice, and the candidate-versus-baseline
+question is then the difference between those two answers — which is why the
+floor is so high. Playing the candidate **directly against the baseline** measures
+the marginal change once instead of twice, across all 75 maps instead of a 12-map
+sample.
+
+`tools/head-to-head.sh darla11` is queued behind the arm queue: 150 games,
+`darla11` vs `darla`, both sides of every map in the pool.
+
+**This is not the self-play blindness carol's doctrine 17 warns about.** That rule
+is about measuring a *capability* against an opponent that never exercises it.
+The question here is narrower and self-play answers it exactly: the two builds
+differ by one constant, so a direct match measures that constant and nothing else.
+
+**Pre-registered**: 75/150 is the null. Accept `darla11` as a genuine improvement
+only at **>= 86/150 (57.3%)**, which is 2 sd on a 150-game head-to-head. Anything
+between is another way of saying "the same", and I will record it as such rather
+than reach for the third significant figure.
