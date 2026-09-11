@@ -1504,3 +1504,41 @@ precise about.** Fresh-sample runs vary because the *maps* vary; a direct
 head-to-head plays the candidate and the baseline against each other on the same
 75 maps, so map difficulty cancels rather than adding noise. The registered
 `>= 86/150` gate is a binomial 2 sd on paired games and stands as written.
+
+## Iteration 26 RESULT — `darla26` (splash threshold 8 → 14): +2, inside the floor
+
+| `SPLASH_MIN_SCORE` | arm | result |
+|---|---|---|
+| 4 | `darla7` | 78/144 — −11 (−1.83 sd) |
+| 8 | `darla` | 89/144 — inherited |
+| 14 | `darla26` | **91/144 — +2 (+0.33 sd)** |
+| 22 | `darla27` | running |
+
+The direction the diagnosis predicted — fire less often on better targets — is
+the direction that leans positive, and by exactly the same +2 as `darla11`. Both
+are inside the floor; neither is a result on its own.
+
+## Registration — iteration 28, the COMBINATION, and why this is not fishing
+
+**Two arms out of twenty-six lean positive, both by +2, and they are independent
+changes**: `darla11` raises splasher *share* (SPLASHER_IN_20 3 → 14), `darla26`
+raises the splash *threshold* (8 → 14). One decides how many splashers exist, the
+other decides when a splasher spends 50 paint. Nothing in the code couples them.
+
+**`darla28` sets both.** I am registering the reasoning before the result because
+combining candidates after seeing their scores is exactly how noise gets promoted:
+
+1. **This is a combination arm, declared as one.** It is not a single-mechanism
+   test and will never be reported as one. If it wins, the credit is joint and
+   neither constant is established alone.
+2. **The prior is weak and I am saying so now.** Two +2s at +0.33 sd each are
+   consistent with pure noise. If they are real and additive the combination is
+   ~+4, which is *still* inside the 6.7-point 2 sd floor of the screening
+   instrument — so **the screen cannot settle this and is not being asked to.**
+3. **The powered instrument decides it.** `tools/head-to-head.sh darla28` plays
+   the combination directly against the shipped baseline on all 75 maps, both
+   sides, where map difficulty cancels instead of adding noise. Gate as
+   registered for `darla11`: null 75/150, **accept only at >= 86/150**.
+4. **The falsifier**: if the combination lands near 75/150 in the head-to-head,
+   both +2s were noise, and the correct reading of this whole session is that the
+   inherited build is unimprovable by any constant in it.

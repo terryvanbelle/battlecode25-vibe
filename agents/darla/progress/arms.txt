@@ -29,3 +29,4 @@ darla24|MONEY_MOD|8|1 money tower in 8
 darla25|MONEY_MOD|2|1 money tower in 2
 darla26|SPLASH_MIN_SCORE|14|splash threshold 14
 darla27|SPLASH_MIN_SCORE|22|splash threshold 22
+darla28|combination|-|70% splasher + splash threshold 14
