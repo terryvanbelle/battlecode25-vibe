@@ -1928,3 +1928,12 @@ real value is somewhere she never looked.
 arms, motivated by chips sitting $27k–46k idle — and halving the reserve does
 nothing. `darla38` (2400) is queued to close the bracket rather than leave one
 side probed.
+
+## Iteration 37 — `SPLASH_MIN_SCORE` 14 → 10: null
+
+74/150 (49.3%), z = −0.08 against the accepted build. With `darla34` (20) also
+null, the threshold is **flat in [10, 20]** on the accepted build, with the
+accepted 14 in the middle of a plateau rather than on a peak. Consistent with the
+pre-accept ladder, which was flat in [8, 22] — the difference being that the
+accept established 14 is better than 8 by a real margin, so the plateau has
+moved rather than merely been re-confirmed.
