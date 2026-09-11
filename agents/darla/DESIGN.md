@@ -633,3 +633,32 @@ Registered prediction: if the reading above is right, both beat 89/144 and the
 curve is *increasing* in splasher share, opposite in sign to every dose ladder so
 far. If both lose, the mix is not the lever either and the coverage gap is coming
 from somewhere I have not yet measured.
+
+## Instrument check, produced by the idle filler rather than planned
+
+The filler's standing job — a fresh random 25-map sample of the shipped baseline
+against the three frozen lineages — landed as run `20260911-041301`, and it
+answers a question I had been assuming rather than testing: **how much of the
+matched-pair signal is map-sample luck?**
+
+| | pinned samples (144 games) | fresh 25-map sample (150 games) |
+|---|---|---|
+| overall | 89/144 — **61.8%** | 97/150 — **64.7%** |
+| vs carol | 62.5% | 62.0% |
+| vs bob | 62.5% | **72.0%** |
+| vs alice | 60.4% | 60.0% |
+
+**The aggregate replicates**: 61.8% against 64.7% on disjoint map sets, a 2.9-point
+gap against a binomial sd of ~4.2 points at this n. So map-sample variance is not
+swamping the instrument, and the nine rejections measured on the pinned samples
+stand — a −10 or −26 game margin is not an artefact of which twelve maps were
+drawn.
+
+**Two of the three legs replicate almost exactly** (carol 62.5 → 62.0, alice
+60.4 → 60.0). **bob's moves 9.5 points**, which at n=48 is 1.3 sd — inside noise,
+but it is the concrete reason not to read a single opponent leg as a result. I
+have been saying that in registrations; this measures it.
+
+Neither of these numbers is a new capability. The point is that the filler was
+designed as "never waste the VM" and its first output was a control I would not
+have scheduled, because I did not notice I was assuming it.
