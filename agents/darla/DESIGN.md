@@ -2069,3 +2069,10 @@ and costly *below*. The common rule is not about direction at all: **a gate is
 flat on the side where it is already saturated, and bites on the side where it
 starts admitting something.** That is a better statement than the "probe
 downward" heuristic I wrote two hours ago and had to qualify one hour ago.
+
+## Iteration 44 — `REFILL_LOW` 50 → 25: null
+
+70/150 (46.7%), z = −0.82. The refill trigger — how empty a unit gets before it
+walks back to a tower — was untouched in 43 arms and motivated by HOME turns
+being 17–28% of a unit's budget on the old build. Halving it does nothing
+measurable. `darla45` (100) is queued to close the bracket.
