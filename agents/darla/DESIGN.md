@@ -542,3 +542,42 @@ than the guard.
 
 **Gate**: accept if > 89/144 with no leg below 50%; reject if <= 89/144 with the
 mechanism firing.
+
+## Standing arrangement so the machine is never idle (2026-09-11, user requirement)
+
+Three pieces, in order of how much they depend on a session being awake.
+
+**1. `tools/arm-runner.sh` — the work queue.** Drains
+`progress/pending-arms.txt`, one package per line, each run on BOTH pinned
+samples so every result is a matched pair against the 89/144 baseline. Adding a
+line starts a gauntlet with no session involved. It holds a flock (a second
+launch is a no-op), is setsid-detached (survives session death), and skips any
+arm that already has 144 collated games rather than paying twice for the same
+measurement.
+
+**2. `tools/idle-filler.sh` — the guarantee.** The runner's failure mode is that
+it *waits* when the queue empties, so if the last arm lands while nobody is
+awake the machine sits idle. The filler removes that dependency: whenever the
+queue is empty and no gauntlet is in flight, it runs a **fresh random 25-map
+sample of the shipped baseline against the three frozen lineages** and records it
+into `progress/vs_old_bots_history.csv`.
+
+That job is chosen so it is never wasted and always safe to run unattended:
+fresh random maps each time (so it is not an overfitting surface — the pinned
+samples are for matched pairs, this is for absolute strength), frozen opponents
+(so a moving line is real change rather than a moving instrument), and it extends
+the one time series in this workspace that currently has a single date on it. It
+never touches `src/`, never commits, and cannot change what plays anywhere.
+
+**3. A persistent monitor** on both logs, filtered to `ARM COMPLETE`,
+`ARM ERROR`, `ARM SKIP`, `QUEUE IDLE`, `FILLER COMPLETE`, `FILLER ERROR`,
+`FILLER WARN` — so a finished arm wakes the session immediately instead of
+waiting to be noticed. The filter deliberately covers the failure signatures too:
+a monitor that watches only for success is silent through a crash, and silence
+looks exactly like "still running".
+
+**One thing already answered without an arm.** DESIGN.md asserted the siege
+"costs nothing observable". That was untested when written, but it does not need
+an ablation: `darla1` is carol's economy **plus** the siege, carol is in the
+opponent pool frozen, and darla1 beats carol **30/48 (62.5%)**. The siege is the
+only difference between them, so it is worth roughly +12 points, measured.
