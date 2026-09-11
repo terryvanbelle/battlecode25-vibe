@@ -1,0 +1,4 @@
+# Process changes -- how darla EVALUATES, not individual accepts.
+# <commit>|<label>
+4335c3c|rebased on carol+siege; baseline 89/144 on two pinned 12-map samples
+5aad791|from-scratch economy abandoned after 10 versions (7 defects, kept as scratch)

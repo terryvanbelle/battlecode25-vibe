@@ -1,0 +1,10 @@
+# Darla's arms. <package>|<axis>|<dose>|<label>
+# dose is numeric where the arm is a point on a dose axis, else "-".
+# Used by tools/plot_arms.py; keep it updated in the same commit as a new arm.
+darla|SPLASH_FLOOR|2000|baseline (carol economy + siege)
+darla5|SPLASH_FLOOR|0|floor 0
+darla4|SPLASH_FLOOR|1400|floor 1400
+darla6|SPLASH_FLOOR|2600|floor 2600
+darla2|moppers|-|moppers removed
+darla3|moppers|-|mopper navigation (alice i7)
+darla7|SPLASH_MIN_SCORE|4|splash threshold 8 to 4

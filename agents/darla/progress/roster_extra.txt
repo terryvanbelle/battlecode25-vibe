@@ -1,0 +1,11 @@
+# Darla's fixed yardsticks. Frozen copies live in src/, so they never change --
+# which is the whole property that makes a rising line absolute progress rather
+# than a moving-target artifact.
+#
+# Darla's situation differs from the other three lineages': she has no snapshot
+# roster of her own yet (no iteration has been accepted), and her reference
+# points are the three retired lineages instead. Per the user's standing rule,
+# alice/bob/carol may be played against DARLA but never against each other.
+alice
+bob
+carol

@@ -470,3 +470,41 @@ metric.
 **Mopper axis: CLOSED.** Bracketed on both sides — 0 moppers is −5, better
 moppers is −2, incumbent is the best of the three. Re-opening requires a build
 whose army is soldier-primary, which this design is not.
+
+## Iterations 5 and 6 RESULT — `SPLASH_FLOOR` has an INTERIOR OPTIMUM, and the axis is closed
+
+| arm | `SPLASH_FLOOR` | overall |
+|---|---|---|
+| `darla5` | 0 | 32/144 (22.2%) |
+| `darla4` | 1400 | 63/144 (43.8%) |
+| **`darla1`** | **2000 (inherited)** | **89/144 (61.8%)** |
+| `darla6` | 2600 | 81/144 (56.2%) |
+
+**The curve rises to 2000 and falls past it.** So the response is not monotone
+after all — it has an interior optimum, and carol's inherited constant is sitting
+on it. Her bracket (0 / 1400 / 2000) found the right value without ever testing
+above it; I tested above it, and above is worse by 8 games.
+
+**`SPLASH_FLOOR`: CLOSED, bracketed on both sides.** 0 (−57), 1400 (−26),
+2600 (−8), incumbent 2000 best of four doses across 576 games. Re-opening
+requires a different *army composition*, not a different dose — the constant
+prices soldiers against splashers, so it can only move if what those units are
+worth changes.
+
+## Iteration 7 RESULT — `darla7` (`SPLASH_MIN_SCORE` 8 → 4): **REJECT**, −11
+
+78/144 (54.2%). Splashers firing at half the previous score threshold is worse by
+11 games, −1.8 sd. The `lowScore` census that motivated it (34 of 142 splasher
+decisions withholding fire) measured a real behaviour and priced it wrong: a
+splash below the threshold is not free coverage, it is 50 paint spent for few
+tiles, and paint is the binding resource for a splasher-primary army. **The
+threshold is doing the same job as `SPLASH_FLOOR` one level down** — protecting a
+scarce resource from a cheap-looking use — which is the third time this design
+has punished me for reading a withheld action as a wasted one.
+
+**Standing after seven arms and 1,008 matched games: the inherited build is still
+the best thing measured.** Every axis I have opened — moppers (both directions),
+`SPLASH_FLOOR` (both directions), splash threshold — has closed at or below the
+value carol shipped. That is worth stating plainly rather than burying: Darla's
+gain over the lineages came from *combining* carol's economy with her unadopted
+siege, and none of my seven subsequent single-constant changes has improved on it.

@@ -1,0 +1,7 @@
+date,current_snapshot,opponent,wins,total,win_pct,source
+2026-09-10T21:37:03+00:00,pre-iter0,alice,13,24,54.2,roster-run
+2026-09-10T21:37:03+00:00,pre-iter0,bob,14,24,58.3,roster-run
+2026-09-10T21:37:03+00:00,pre-iter0,carol,14,24,58.3,roster-run
+2026-09-10T21:39:19+00:00,pre-iter0,alice,16,24,66.7,roster-run
+2026-09-10T21:39:19+00:00,pre-iter0,bob,16,24,66.7,roster-run
+2026-09-10T21:39:19+00:00,pre-iter0,carol,16,24,66.7,roster-run
