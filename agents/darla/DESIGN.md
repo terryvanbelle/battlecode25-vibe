@@ -2012,3 +2012,34 @@ now that 100 is known to cost 14 games. **`darla43`** reaches 30% soldier via th
 splasher route, where `darla31` reached it via the mopper route and scored −1.80 —
 same target, different lever, which tests whether that result was about the
 soldier share or about the moppers.
+
+## Iteration 41 — the centroid heading is MUCH worse at 70% splashers: **−7.84 sd**
+
+27/150 (18.0%) against the accepted build. The baseline wins **123–27**.
+
+**My registered prediction was wrong, and not marginally.** I argued that because
+this build is more sensitive to positioning than to anything else measured
+(removing the tower attractor costs 99–51), a heading covering the tower-free
+case should now *help*. Instead the same mechanism that cost 22 games when
+splashers were 15% of the army costs far more now that they are 70%.
+
+**The registered falsifier fires, and the direction sharpens it.** I wrote: *"if
+it loses again by a similar margin, dispersion genuinely beats direction
+regardless of how many splashers there are."* It lost by a **much larger** margin,
+which says something stronger than the falsifier anticipated — **the more
+splashers you have, the more damage concentrating them does.** That is
+mechanically right and I should have predicted it: a centroid pulls every
+splasher that can see the same enemy mass to the same place, so the overlap
+penalty scales with the number of units doing the overlapping.
+
+**Positioning splits cleanly into two things, and only one of them is good.**
+
+| | effect |
+|---|---|
+| **dispersed landmark** — each splasher locks onto whichever enemy tower *it* can see | **worth 99–51** |
+| **shared heading** — every splasher computes the same target from the same vision | **−7.84 sd** |
+
+The tower attractor is the first kind. Every heading I have built — nearest enemy
+tile, centroid, at both mix levels — is the second. **Positioning: CLOSED**, with
+the distinction that makes the tower attractor work now stated explicitly rather
+than inferred.
