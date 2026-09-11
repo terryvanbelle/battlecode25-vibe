@@ -1243,3 +1243,34 @@ and it points at the middle of the enemy's mass rather than at its nearest edge.
 If density is the right reading, this should behave like the tower attractor
 without its range limit; if it also loses, positioning genuinely does not
 generalise beyond an actual tower and the axis closes.
+
+## Iteration 21 RESULT — `darla21` (attractor 20/12): −6. The axis is now COMPLETE and closed.
+
+| tower bonus | result | play differs from baseline? |
+|---|---|---|
+| 0 | 72/144 — **−17 (−2.83 sd)** | yes |
+| 20/12 | 83/144 — **−6 (−1.00 sd)** | yes, 104 rows |
+| 50/30 | 89/144 — +0 | **no, 0 rows** |
+| 100/60 | 89/144 — inherited | — |
+| 200/120 | 89/144 — +0 | **no, 0 rows** |
+
+**The static prediction held exactly.** 20 sits below the 35-point paint ceiling,
+so it could change the argmax — and it did, in 104 of 144 games. 50 and above
+cannot, and did not, in any game. The scorer's arithmetic predicted which doses
+were capable of doing anything, before any of them ran.
+
+**And the design question it was built to ask has a clean answer: do not blend.**
+A partially-dominant attractor (20) is *worse* than a fully-dominant one, and
+better than none — the response rises monotonically to the saturation threshold
+and is flat above it. "Prefer a tower only when nearby paint is poor" loses 6
+games to "always prefer the tower".
+
+That fits the density reading `darla20` produced: the tower marks where enemy
+paint is *massed*, and local paint score is a poor substitute because it is
+computed over 13 tiles while the mass extends far past them. Letting a small
+local score outvote the tower trades a good long-range signal for a noisy
+short-range one.
+
+**`TOWER_BONUS`: CLOSED.** Five doses, fully characterised, inherited value on the
+optimal plateau. Any value ≳35 is equivalent; below that it degrades smoothly to
+−17 at zero.
