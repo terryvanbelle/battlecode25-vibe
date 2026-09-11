@@ -987,3 +987,50 @@ have looked like a finding and been entirely a build error.
 *rising* from 55% to 70%, so the upper edge is the untested direction. It is
 bounded: `darla12` established that driving soldiers to zero deletes the economy,
 so 80% is probed and 90%+ is not.
+
+## Iteration 15 RESULT — `darla15` (siege hits paint towers first): **exact tie**, 89/144
+
+carol 29/48, bob 30/48, alice 30/48, against the baseline's 30/30/29. Not −1 or
++1 in any meaningful sense: the same bot.
+
+**An exact tie is a finding when it is this exact**, and the replay says why.
+Tower counts through a full 1,886-round game, `darla15` vs alice on DefaultHuge:
+
+| round | alice towers | darla towers |
+|---|---|---|
+| 500 | 23 | 23 |
+| 1000 | 24 | 24 |
+| 1500 | 25 | 24 |
+| 1886 | 25 | 24 |
+
+**Monotone increasing on both sides. No tower is destroyed by either team, in the
+entire game.** The siege's target *priority* cannot matter when the siege never
+completes a kill — which is why inverting it changed nothing, and it is a
+stronger version of the earlier observation that enemy tower counts "rise".
+
+**So what is the siege worth, given darla1 beats carol by ~12 points and the
+siege is the only difference between them?** It cannot be tower removal. The
+remaining candidate is **positioning**: the firing-ring movement holds splashers
+at r²=10–16 of enemy towers, which is deep in contested territory, and splashers
+paint wherever they stand. The value is plausibly that the siege walks the
+coverage engine to the right part of the map, and the tower-killing rationale it
+was built on is incidental.
+
+**That reframes the design.** DESIGN.md's thesis was "tower removal is the lever",
+refuted on the win condition at 96.5% coverage. This is the second, sharper
+refutation: tower removal does not merely fail to win games, **it does not
+happen at all**.
+
+**Queued: `darla17`, the discriminating experiment.** The splash scorer adds
++100/+60 for a tower inside the blast. If no tower ever dies, that bonus diverts
+AoE onto 1,000-HP targets that absorb it harmlessly, instead of onto paint. So:
+**keep the firing-ring movement, remove the tower bonus from splash scoring.**
+
+- If `darla17` ≥ baseline, the siege's value is **positioning**, the tower-kill
+  scoring was a tax, and the mechanism should be renamed and rebuilt around
+  contested ground.
+- If `darla17` < baseline, the tower bonus is doing something real that tower
+  *counts* do not reveal — most likely suppressing tower attacks by keeping them
+  damaged, or drawing enemy units to defend.
+
+Either way it separates the two explanations, which no result so far has.
