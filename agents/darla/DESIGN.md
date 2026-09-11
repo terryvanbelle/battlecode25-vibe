@@ -1477,3 +1477,30 @@ the static check applied **before** queueing this time, which is the practice th
 288 wasted no-op games bought.
 
 Read against the floor: only a move past ~5 points counts.
+
+## The floor widens with a fourth baseline point — and it matters
+
+The idle filler's fourth fresh-sample run of the shipped baseline came back
+**89/150 (59.3%)**, the lowest yet.
+
+| baseline, fresh random 25-map samples |
+|---|
+| 97/150 (64.7%), 94/150 (62.7%), 101/150 (67.3%), **89/150 (59.3%)** |
+| pooled **381/600 (63.5%)** |
+| run-to-run sd **3.37 points** (was 2.34 on three points) |
+| **2 sd floor: 6.7 points**, range 59.3–67.3 |
+
+**The estimate moved 44% when a fourth point arrived**, which is itself the
+lesson: three points is not enough to pin a variance, and I stated a floor from
+three of them an hour ago as though it were settled. The floor is **wider** than
+I said, not narrower — nearly 7 points at 2 sd on a 150-game fresh sample.
+
+`darla11`'s 66.0% sits comfortably inside a 59.3–67.3 range. Every apparent gain
+this session is smaller than the baseline's disagreement with itself, by a
+margin that has grown rather than shrunk with more data.
+
+**This does not weaken the head-to-head gate, and the difference is worth being
+precise about.** Fresh-sample runs vary because the *maps* vary; a direct
+head-to-head plays the candidate and the baseline against each other on the same
+75 maps, so map difficulty cancels rather than adding noise. The registered
+`>= 86/150` gate is a binomial 2 sd on paired games and stands as written.
