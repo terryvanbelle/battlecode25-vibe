@@ -69,7 +69,17 @@ prune_dir () {   # <parent-of-run-dirs> <how-many-to-keep> <label>
   done
 }
 
-for a in alice bob carol; do prune_dir "$R/agents/$a/gauntlet" "$KEEP" "$a"; done
+# DERIVED, never hardcoded. This line read `for a in alice bob carol` until
+# 2026-09-11, a list written before darla existed -- so darla's gauntlet was
+# NEVER pruned. It grew to 4,343 replay blobs and 5.0G, filled the VM's 20G
+# disk, and three arms died on ENOSPC while this script reported "0G free
+# before, 0G free after" and looked like it was working. A hardcoded roster
+# in a cleanup job fails silently and gets worse every day.
+for g in "$R"/agents/*/gauntlet; do
+  [ -d "$g" ] || continue
+  a=$(basename "$(dirname "$g")")
+  prune_dir "$g" "$KEEP" "$a"
+done
 prune_dir "$R/arena/tournaments" "$KEEP_T" "tournaments"
 
 # Stale runner scripts in the SHARED HOME. Until 2026-09-09 every gauntlet,
