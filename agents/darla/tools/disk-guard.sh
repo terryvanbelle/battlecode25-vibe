@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+# Keep the driver's root filesystem from filling while the arm queue runs.
+#
+# WHY THIS EXISTS: the "never idle" arrangement (arm-runner + idle-filler) turns
+# gauntlet runs over far faster than the project used to, and each run writes its
+# lost games to gauntlet/<run>/losses/*.bc25 -- roughly 40-70MB a run. The hourly
+# bc25-driver-prune timer keeps the newest 2 runs per workspace and never touches
+# a file under an hour old, which was sized for a slower loop. At the current rate
+# the disk reached 100% and a git commit failed with ENOSPC mid-session.
+#
+# This runs the SAME sanctioned tool, just more often and with tighter knobs, and
+# only when space is actually short. It never deletes anything the tool would not:
+# gauntlet and matches replay blobs only, never agents/*/replays/ (which is
+# curated and git-TRACKED -- 34 replays live there as committed evidence).
+#
+# It does NOT touch /Users/terryvanbelle/projects/vibe_bc26, which holds 18G of
+# the archived BC26 project's replays and is the actual reason the disk is full.
+# That is another project's recorded results; deleting it is the owner's call and
+# has been put to them.
+set -uo pipefail
+cd /home/terryvanbelle/projects/vibe/2025
+
+exec 9>/tmp/darla-disk-guard.lock
+flock -n 9 || exit 0
+
+LOW_MB="${LOW_MB:-2000}"      # act below this much free
+while true; do
+  free_mb=$(df -Pm / | awk 'NR==2 {print $4}')
+  if [ "${free_mb:-0}" -lt "$LOW_MB" ]; then
+    echo "$(date -uIs) DISK LOW ${free_mb}MB free -- pruning"
+    KEEP_RUNS=1 MIN_AGE_MIN=20 timeout 300 tools/driver-prune.sh 2>&1 | tail -2
+    echo "$(date -uIs) DISK after prune: $(df -Pm / | awk 'NR==2 {print $4}')MB free"
+    # Still short after pruning everything we own: say so loudly rather than
+    # silently letting the next gauntlet die on ENOSPC.
+    now=$(df -Pm / | awk 'NR==2 {print $4}')
+    [ "$now" -lt 400 ] && echo "$(date -uIs) DISK CRITICAL ${now}MB free after pruning our own replays -- the 18G under projects/vibe_bc26 is the remaining cause and needs the owner's decision"
+  fi
+  sleep 600
+done

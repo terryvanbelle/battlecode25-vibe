@@ -808,3 +808,50 @@ points against carol herself.
 **Queued**: `darla14` at 55% splasher share, to fill the gap between 40% (−11)
 and 70% (+2). If 55% lands near the baseline, the U was noise and the axis is
 flat; if it dips, the dip is real and mechanical.
+
+## Iteration 13 RESULT — `darla13` (splasher paint floor 150): **REJECT**, −8. Axis closed.
+
+| splasher paint floor | result |
+|---|---|
+| none (inherited) | 89/144 (61.8%) |
+| 150 | 81/144 (56.2%) — **−8** |
+| 300 | 74/144 (51.4%) — **−15** |
+
+**Monotone decreasing, so this is a bracket and not a near-miss.** The milder
+dose was carried precisely so that a loss at 300 could not be explained away as
+"the right idea at the wrong level", and 150 loses too, proportionately. The
+paint-queueing theory is **refuted**: protecting splasher paint does not help at
+any dose, because the paint it protects is taken from the unit that builds the
+economy. **CLOSED.**
+
+## Disk: the run queue nearly killed itself, and the cause is not this project
+
+The driver's root filesystem hit **100% (6.6M free)** and a `git commit` failed
+with ENOSPC mid-session. Cause, measured:
+
+| | size |
+|---|---|
+| `/Users/terryvanbelle/projects/vibe_bc26/gauntlet` | **18G** |
+| this entire project | 2.1G |
+| our gauntlet replays specifically | 1.25G |
+
+The 18G is the **archived BC26 project's** replay data on a 30G disk. It is
+another project's recorded results, so deleting it is the owner's decision and
+has been put to them; nothing here touches it.
+
+What was done instead, all within this project:
+- ran the sanctioned `driver-prune.sh` at `KEEP_RUNS=1 MIN_AGE_MIN=20`,
+  reclaiming **704M** (950M free, 97%);
+- verified first that the 34 **git-tracked** replays live in `agents/*/replays/`,
+  which the prune tool never touches — only `gauntlet/` and `matches/` blobs go;
+- added `tools/disk-guard.sh`, a detached loop that runs the same tool whenever
+  free space drops below 2GB, and shouts `DISK CRITICAL` if pruning everything we
+  own still leaves under 400MB.
+
+**Why a guard rather than a one-off prune**: the "never idle" arrangement turns
+runs over several times an hour, each writing 40–70MB of lost games. The hourly
+`bc25-driver-prune` timer keeps two runs per workspace and spares anything under
+an hour old — sized for a much slower loop. Without the guard the queue would
+have filled the disk again within the hour and every subsequent gauntlet would
+have died on ENOSPC, which is the same outcome as being idle, arrived at less
+visibly.
