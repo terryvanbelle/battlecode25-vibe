@@ -508,3 +508,37 @@ the best thing measured.** Every axis I have opened — moppers (both directions
 value carol shipped. That is worth stating plainly rather than burying: Darla's
 gain over the lineages came from *combining* carol's economy with her unadopted
 siege, and none of my seven subsequent single-constant changes has improved on it.
+
+## Registration — iteration 8, the unreachable frontier branch (`darla8`)
+
+Written before any game. Baseline `darla1` = 89/144.
+
+**The defect is structural, not a dose.** The frontier-seeking branch is guarded
+by `if (foe == 0)` — it only runs when there is *no* enemy paint within r²=9. The
+census says 53.2% of soldier-turns are IDLE-ENEMY, i.e. exactly the turns where
+`foe > 0`. So on the majority of idle turns the soldier never looks for anywhere
+better to be, and keeps whatever stale heading it had while standing on ground it
+cannot use. `darla8` removes the guard.
+
+**Why this arm is a different shape from the seven that failed.** Every previous
+arm moved a constant that prices one unit against another, and each one closed at
+or below carol's shipped value. This one **spends nothing** — no build, no attack,
+no extra paint. It redirects a move that already happens. That is the
+"capability preserved at zero marginal cost" profile, which is the shape of every
+mechanism that has ever been accepted in this project (alice's iteration 7 mopper
+navigation, carol's iteration 12 navigation result).
+
+**My prior is still that it loses.** Seven of seven arms have been rejected, and
+three times now I have read a withheld or blocked action as a wasted one and been
+wrong. Registering that here so the result is read against an honest expectation
+rather than a hopeful one.
+
+**Mechanism check, read before the win rate**: `frontFound` / `frontNone` in the
+indicator string. In darla1 the branch reached 187 turns and found a target twice.
+darla8 must reach materially more turns; if `frontFound` stays near zero, the
+branch is being reached and there is genuinely no visible empty ground, which
+makes the arm **untested** rather than refuted and points at vision range rather
+than the guard.
+
+**Gate**: accept if > 89/144 with no leg below 50%; reject if <= 89/144 with the
+mechanism firing.

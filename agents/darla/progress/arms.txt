@@ -8,3 +8,4 @@ darla6|SPLASH_FLOOR|2600|floor 2600
 darla2|moppers|-|moppers removed
 darla3|moppers|-|mopper navigation (alice i7)
 darla7|SPLASH_MIN_SCORE|4|splash threshold 8 to 4
+darla8|frontier|-|frontier branch unguarded
