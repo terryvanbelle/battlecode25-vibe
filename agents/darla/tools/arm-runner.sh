@@ -62,7 +62,14 @@ while true; do
   # the warning exists to catch a second session forking the ledger, and a
   # standing runner should never be the thing that trips it. Checked here,
   # before ARM START, so the runner's own child can never match.
-  while pgrep -f 'tools/gauntlet.sh' > /dev/null; do sleep 60; done
+  # Detect an in-flight gauntlet by its RE-EXEC name, not by 'tools/gauntlet.sh'.
+  # gauntlet.sh copies itself to tools/.reexec-gauntlet.sh.<pid> and exec's that
+  # (so editing the original cannot corrupt a run in flight), which means the
+  # original path never appears in any running process's cmdline and a pgrep for
+  # it silently matches NOTHING. This checker was written that way first and was
+  # blind: the runner and the filler both launched into a gauntlet that was
+  # already going, and the workspace-concurrency warning fired.
+  while pgrep -f '\.reexec-gauntlet\.sh' > /dev/null; do sleep 60; done
 
   echo "$(date -uIs) ARM START $arm ($have/144 games so far)"
   for r in $SAMPLES; do
