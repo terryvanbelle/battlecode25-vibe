@@ -1274,3 +1274,62 @@ short-range one.
 **`TOWER_BONUS`: CLOSED.** Five doses, fully characterised, inherited value on the
 optimal plateau. Any value ≳35 is equivalent; below that it degrades smoothly to
 −17 at zero.
+
+## Iteration 22 RESULT — `darla22` (enemy-paint centroid): **−22 (−3.67 sd)**. Positioning is tower-specific. CLOSED.
+
+| heading when no tower is visible | result |
+|---|---|
+| **wander at random (inherited)** | **89/144** |
+| centroid of visible enemy paint | 67/144 — **−22** |
+| nearest enemy paint | 51/144 — **−38** |
+
+Both directed headings lose badly, and **random wandering beats both.** The
+density reading was better than the proximity one (−22 against −38), so the
+diagnosis of `darla20` was right as far as it went — and it still does not
+rescue the mechanism.
+
+**Why random wins, and it is not a paradox.** Coverage is an area-covering
+problem. A directed heading *concentrates* splashers: nearby units see similar
+vision, compute similar targets, and converge, so their blast radii overlap and
+the same tiles get painted repeatedly while the rest of the map is left alone.
+Random wandering disperses them, and dispersion is what covers area.
+
+**The tower attractor escapes this because towers are themselves dispersed.**
+There are twenty-odd of them scattered across the map, each splasher locks onto
+whichever it can see, and the fleet spreads out *while* pointing at valuable
+ground. A centroid is a single point; every splasher that can see the same mass
+walks to the same place.
+
+**So the mechanism is not "head toward enemy paint" at all. It is "lock onto a
+dispersed landmark inside enemy territory", and the tower is the only such
+landmark the map provides.** Positioning: CLOSED, tower-specific, five arms.
+
+## Registration — iteration 23, the mopper as a paint mule (`darla23`)
+
+Three measurements meet, and an engine rule makes exactly one thing possible.
+
+1. **Splashers run dry and walk home.** Paint, not chips, is the binding resource
+   late: tower paint sits near 54 each against a splasher's 300 cost, and every
+   HOME turn is a turn not painting.
+2. **Moppers are nearly worthless as they stand.** Removing them entirely cost 5
+   games; giving them alice's accepted navigation was a dead tie. They are 10% of
+   production doing almost nothing.
+3. **[E, carol's verified RULES.md] only moppers may transfer paint robot→robot.**
+   I first wanted idle *soldiers* to mule — they hold median 150 paint and paint
+   on 1.8% of turns — and the engine forbids it outright: "giving to a non-tower
+   ally only as a mopper". Checked before building, which is the first time this
+   session that a static check killed an arm before it cost any games.
+
+So the near-useless unit is the **only** unit that can carry paint to the unit
+that runs out of it. `darla23` has moppers hand paint to any adjacent splasher
+with room for 50 or more, keeping 20 for themselves.
+
+**Mechanism check, read before the score**: the build carries `mu=<trips>/<paint>`
+in its indicator. Transfer range is a hardcoded r²≤2 for every unit type, so the
+mopper must physically touch the splasher — if `mu` is near zero, moppers and
+splashers simply never stand adjacent, and the arm is **untested**, pointing at
+rendezvous rather than at the idea.
+
+**Read against the measured floor.** This instrument cannot resolve under ~5
+points, so only a move on the scale of the real results (−17, −22, −38) counts
+either way. A +3 is noise.
