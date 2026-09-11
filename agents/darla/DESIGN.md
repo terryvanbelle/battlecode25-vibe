@@ -1589,3 +1589,26 @@ Plus five mechanism arms (two navigations, two positionings, one logistics), all
 rejected or unimplementable. **The inherited build is the best measured thing in
 27 arms and ~3,900 matched games**, and for each axis I can now say *why* rather
 than only *that*.
+
+## Iteration 28 — the combination screens at +4, exactly as predicted, and settles nothing
+
+| arm | change | result | legs (carol / bob / alice) |
+|---|---|---|---|
+| `darla11` | splasher share 70% | 91/144 — +2 | 31 / 32 / 28 |
+| `darla26` | splash threshold 14 | 91/144 — +2 | 31 / 31 / 29 |
+| **`darla28`** | **both** | **93/144 — +4 (+0.67 sd)** | **33 / 35 / 25** |
+
+**The two +2s added to +4**, which is what independent effects do — and also what
+three independent noise draws do. +0.67 sd is inside the screening floor, exactly
+as the registration said it would be, so **the screen is not being asked to
+settle this and has not.**
+
+One detail worth flagging rather than smoothing over: the combination's gain is
+carried by carol (+3) and bob (+5) while **alice drops 4**. A real economic
+improvement would not be expected to reverse sign against one of three
+independent opponents; a noise draw would do exactly this. It is one more reason
+to distrust the +4.
+
+Both head-to-heads are now running or queued — `darla28` vs `darla` on all 75
+maps both sides, and `darla11` vs `darla` behind it. Null 75/150, accept at
+>= 86/150, as registered before any of these numbers existed.

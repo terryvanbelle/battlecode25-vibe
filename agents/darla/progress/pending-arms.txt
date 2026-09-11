@@ -2,4 +2,3 @@
 # One package name per line. Adding a line starts a 144-game matched pair
 # against the darla1 baseline with no session involved; the runner skips any
 # arm that already has 144 collated games.
-darla28
