@@ -1686,3 +1686,38 @@ was actually being asked.**
 A milestone marker is recorded at the accept commit, so the step the shipped
 build takes in `vs_old_bots.png` from here on reads as the acceptance rather than
 as drift.
+
+## Attribution — both constants contribute, and they are roughly additive
+
+Each constant alone, head-to-head against the frozen `darla_iter0`, all 75 maps
+both sides:
+
+| build | change | result | z vs null |
+|---|---|---|---|
+| `darla11` | splasher share only | **91/150 (60.7%)** | +2.61 sd |
+| `darla26` | splash threshold only | **86/150 (57.3%)** | +1.80 sd |
+| **`darla28`** | **both** | **97/150 (64.7%)** | **+3.59 sd** |
+
+**Both are real.** `darla11` clears the pre-registered >= 86/150 gate outright;
+`darla26` lands exactly on it. And the joint build beats either alone, by +6 and
++11 games, which is what two partially-independent effects look like: +16 and +11
+over the null separately, +22 together — additive with some overlap, not
+redundant and not synergistic.
+
+**This retires a call I made twice.** I wrote that `darla26`'s +2 screen was
+"noise" because its neighbours at thresholds 8 and 22 were both exactly 0, and
+that the flat ladder undercut it. The ladder *was* flat within the screen's
+resolution — that reading was correct about the instrument — but the conclusion
+drawn from it was wrong. **A flat curve measured with a blunt instrument is not a
+flat curve.** The same 5.5-point floor that hid the effect also flattened the
+ladder I used to argue it away.
+
+**So the accepted iteration is properly attributed**: splasher share carries
+about two-thirds of the gain, the splash threshold about one-third, and both
+belong in the build. Neither would have survived on screen evidence alone.
+
+**What this session actually established**, stated plainly: carol's constants
+were not at a local optimum after all. They looked that way for twenty-seven arms
+because every one of those arms was judged by an instrument whose floor was
+larger than the effects being measured. The bot did not change when the answer
+changed — the measurement did.
