@@ -1063,3 +1063,45 @@ every axis with three or more measured points, reading the shipped baseline's
 position on each axis from `progress/baseline-doses.txt` so the inherited value
 appears as a point rather than only as a line. Three ladders are drawn today
 (`SPLASHER_IN_20`, `SPLASH_FLOOR`, `SPLASH_PAINT_FLOOR`).
+
+## The instrument's resolution, measured — and what it means for every gate here
+
+The idle filler has now produced **three independent fresh-sample baseline runs**,
+which is enough to stop assuming the noise floor and measure it.
+
+| baseline, fresh random 25-map sample | |
+|---|---|
+| `20260911-041301` | 97/150 (64.7%) |
+| `20260911-052326` | 94/150 (62.7%) |
+| `20260911-063718` | 101/150 (67.3%) |
+| **pooled** | **292/450 (64.9%)** |
+
+**Observed run-to-run sd: 2.34 points. Range: 62.7–67.3.** (The binomial estimate
+at n=150 is 4.08 points, so binomial is a conservative upper bound here, as it
+should be.)
+
+**`darla11`'s replication was 99/150 = 66.0% — inside the baseline's own range.**
+That settles it properly: the +2 on the pinned pair and the +3.5 on a fresh
+sample are both smaller than the baseline's disagreement with itself. `darla11`
+is **not an improvement**, and I now have the measurement to say so rather than
+the intuition.
+
+**The strategic consequence is uncomfortable and worth stating plainly.** A
+150-game fresh sample cannot resolve anything under about **5 points** (2 sd).
+Every result this project has produced falls into two classes:
+
+- **big and obvious** — `darla5` −57, `darla12` −15, `darla17` −17. All real, all
+  far outside the floor, and all *losses*.
+- **inside the floor** — every candidate that looked like a gain: +2, +3, +0.7.
+  None of them survives contact with the instrument.
+
+So the honest position after seventeen arms is not "nothing works", it is:
+**this instrument can only see damage, not improvement, at the sizes I have been
+producing.** Detecting a real +3% would need on the order of a thousand games per
+arm, which at current throughput is hours per candidate rather than minutes.
+
+That reframes what remaining effort is worth spending. Chasing +2s with 144-game
+screens is measuring noise. The two things that are worth doing are (a) changes
+large enough to clear the floor — which historically have been *mechanisms*, not
+constants, and (b) making the instrument cheaper or sharper, because right now it
+is the binding constraint on learning rather than the VM.
