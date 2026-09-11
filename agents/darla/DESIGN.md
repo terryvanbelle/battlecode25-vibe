@@ -1763,3 +1763,38 @@ to 20%, bracketed by two routes to the same variable:
 
 Soldier share 30% / 20% (accepted) / 10%. Both head-to-head against the accepted
 build. Null 75/150, gate >= 86/150 as before.
+
+## Soldier share on the accepted baseline — a plateau, and an hour lost to a blind monitor
+
+Paired head-to-head against the accepted build, bracketing its 20% soldier share
+by two independent routes:
+
+| arm | mix (spl/mop/sold) | result | |
+|---|---|---|---|
+| `darla31` | 70 / 0 / **30** | 64/150 (42.7%) | z = −1.80, indistinguishable |
+| **`darla`** | 70 / 10 / **20** | — | accepted baseline |
+| `darla32` | 80 / 10 / **10** | 75/150 (50.0%) | z = **+0.00**, dead level |
+
+Both directions are inside the gate, so the accepted 20% sits on a **plateau**
+rather than a peak — and `darla32`'s exact 75/150 is as clean a null as this
+instrument produces. No improvement on this axis.
+
+**Both results finished at 16:33 and 16:46 and sat unread until 17:49.** The
+monitor was watching `darla-arm-runner.log` and `darla-idle-filler.log` — the two
+logs that existed when I armed it — and **not** `darla-h2h-*.log`, which I created
+later and then moved every important measurement into. The VM kept working; I did
+not. An hour of wall-clock was lost to a notification path that quietly stopped
+covering the thing it mattered most for.
+
+Fixed: the monitor now tails every queue log, including head-to-heads,
+replications and the disk guard's `DISK CRITICAL`. **The lesson is the same one
+the `vm-prune` roster bug taught eight hours ago** — a watcher with a hardcoded
+list of what to watch degrades silently every time the system grows, and reports
+nothing rather than reporting a gap.
+
+**Queued next**, both targeting verdicts that were *inside* the discredited floor
+and so were never really measured:
+
+- `darla33`: `MONEY_MOD` 8 — screened at −2 on the old baseline.
+- `darla34`: `SPLASH_MIN_SCORE` 20 — refining the accepted 14 upward, now that 14
+  is known to be a real effect rather than the noise I twice called it.
