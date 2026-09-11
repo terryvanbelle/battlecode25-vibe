@@ -2076,3 +2076,30 @@ downward" heuristic I wrote two hours ago and had to qualify one hour ago.
 walks back to a tower — was untouched in 43 arms and motivated by HOME turns
 being 17–28% of a unit's budget on the old build. Halving it does nothing
 measurable. `darla45` (100) is queued to close the bracket.
+
+## Iteration 45 — `REFILL_LOW` 100: **−6.37 sd**. Commuting is expensive, and the inherited value already knows it.
+
+| `REFILL_LOW` | result |
+|---|---|
+| 25 | 70/150 — null (−0.82) |
+| **50 (inherited)** | accepted baseline |
+| 100 | **36/150 (24.0%) — z = −6.37** |
+
+Raising the trigger means a unit turns for home at 100 paint instead of 50, so a
+far larger share of the army is commuting at any moment instead of painting. It
+costs 39 games — the largest effect from any logistics constant, and the third
+largest of the session behind the positioning attractor and `CHIP_RESERVE`.
+
+**It fits the corrected gate rule exactly.** Flat on the saturated side (at 25 the
+trigger already almost never fires), sharply negative on the side where it starts
+admitting something (at 100 it admits a flood of refill trips). That rule has now
+predicted the shape of `PAINT_FLOOR`, `CHIP_RESERVE`, `MONEY_MOD` and
+`REFILL_LOW` — four gates, two in each direction — which is the first
+generalisation this session that has held up on out-of-sample axes rather than
+being fitted to the ones that produced it.
+
+**And it settles the HOME-turn diagnosis from this morning.** I measured 17–28% of
+unit turns spent commuting and read it as waste to be recovered. It is not
+recoverable slack: the inherited trigger is already close to the point where
+cutting it further gains nothing and loosening it collapses the bot. The
+commuting is the price of a paint economy, not a defect in it.
