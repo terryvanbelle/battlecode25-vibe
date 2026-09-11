@@ -662,3 +662,48 @@ have been saying that in registrations; this measures it.
 Neither of these numbers is a new capability. The point is that the filler was
 designed as "never waste the VM" and its first output was a control I would not
 have scheduled, because I did not notice I was assuming it.
+
+## Iteration 10 RESULT — `darla10` (splasher share 15% → 40%): **REJECT**, −11
+
+78/144 (54.2%). carol 26/48, bob 30/48, alice 22/48. My registered prediction was
+that this curve *rises*. It fell, and that makes ten arms rejected out of ten.
+
+**But the mechanism read says the arm did not test what I aimed it at.** Build
+events on DefaultHuge:
+
+| round | soldiers built | splashers built | splashers alive | coverage |
+|---|---|---|---|---|
+| ~600 | 32 | **67** | 23 | 552 |
+| ~1200 | 227 | 52 | 7 | 423 |
+| ~2000 | 113 | **0** | **0** | 284 |
+
+The raised roll worked *early* — 67 splashers against 32 soldiers in the opening.
+Then splasher production **falls to zero** while chips sit at $28,850. Tower paint
+at that point is 1,361 across 25 towers: **~54 per tower, against a splasher's 300
+paint cost.** The roll asks for a splasher and the tower cannot pay, every time.
+
+**So the binding resource in the late game is per-tower paint, not chips or the
+roll** — and the reason the tower never accumulates 300 is a dynamic carol already
+documented one unit lower down. Her `PAINT_FLOOR` exists because a MOPPER (100)
+crosses its paint line before a SOLDIER (200) can, resetting the stash, so the
+expensive unit is never afforded: *"the cheap unit does not merely get built more
+often — it PREVENTS the expensive one from ever being afforded."*
+
+**Exactly that runs one level further up, and nothing guards it.** SOLDIER (200)
+crosses before SPLASHER (300). carol's floor protects soldier from mopper; no
+floor protects splasher from soldier.
+
+**Queued**: `darla12` (splasher paint floor 300) and `darla13` (150), the exact
+analogue of `PAINT_FLOOR` one unit up.
+
+**Registered risk, because this is the shape that has burned me twice.** A floor
+of 300 requires a tower to hold 500 before it may build a soldier, against an
+observed ~54. That is "a constant set above the level its resource normally
+holds" — the error DESIGN.md opens with, and the error that made `darla5` a
+57-game loss. The counter-argument is that ~54 is an *equilibrium of the current
+rule* rather than a capacity limit (tower paint caps at 1,000 and accrues 5–10 a
+turn), so the floor changes the level it is measured against. That argument is
+exactly the one carol corrected me on once before, so `darla13` at 150 is carried
+as the milder dose and **the pair is read as a ladder, not as two chances at a
+win.** If both lose, the reading above is wrong and per-tower paint is a capacity
+ceiling rather than a queueing artefact.
