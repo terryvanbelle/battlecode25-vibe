@@ -2198,3 +2198,17 @@ the fifth shown to have nothing to do.
 expected from the bimodal ladder, whose second mode was a plateau rather than a
 peak. The accepted value is a good place on that plateau, not a tuned optimum,
 and one notch either way is beneath this instrument.
+
+## Iteration 51 — splash scoring weights, enemy:empty 3:2 → 2:1: null
+
+74/150 (49.3%), z = −0.08. The argument was that against a coverage win condition
+an enemy tile is worth two points (one gained, one denied) and an empty tile one,
+so the inherited 3:2 underprices enemy ground. The bot disagrees: repricing to
+the "correct" ratio changes nothing measurable.
+
+**The likely reason is that the ratio rarely decides anything.** A splash centre
+is chosen from at most 13 candidates within r²≤4, and the tower term (+100, or
++20 and still null) dominates whenever a tower is in range. Where no tower is in
+range, the candidates differ mostly in *how many* tiles they cover rather than in
+the enemy/empty mix, so both weightings pick the same centre. `darla52` at 3:1 is
+running to see whether a larger move resolves anything.
