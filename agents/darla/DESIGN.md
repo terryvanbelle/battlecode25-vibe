@@ -1721,3 +1721,45 @@ were not at a local optimum after all. They looked that way for twenty-seven arm
 because every one of those arms was judged by an instrument whose floor was
 larger than the effects being measured. The bot did not change when the answer
 changed — the measurement did.
+
+## `SPLASH_FLOOR` re-tested on the accepted baseline — the axis CHANGED SHAPE
+
+Paired head-to-head against the accepted build, 75 maps both sides, against the
+old screen verdicts measured on the pre-accept baseline (75% soldier):
+
+| floor | old screen (75% soldier) | new paired H2H (20% soldier) |
+|---|---|---|
+| 1400 | 63/144 — **−26 (−4.33 sd)** | 71/150 — **−0.65 sd, indistinguishable** |
+| 2000 | inherited, best | **accepted baseline** |
+| 2600 | 81/144 — −8 (−1.33 sd) | 58/150 — **−2.78 sd, clearly worse** |
+
+**The two doses swapped places.** Lowering the floor was catastrophic at 75%
+soldier and is now free; raising it was mild at 75% soldier and now costs
+clearly. That is a real interaction, not an instrument artefact — the −26 on 144
+games was far outside the screen's floor, so it was a genuine effect that has
+genuinely gone away.
+
+**The mechanism is straightforward once stated.** `SPLASH_FLOOR` blocks
+non-splasher builds. At 75% soldier it was holding back a flood, so removing it
+drowned the economy. At 20% soldier there is no flood to hold back — so the lower
+bound stops mattering, while the upper bound now bites the few soldiers the bot
+still needs to convert ruins into towers.
+
+**No improvement: 2000 is still best.** But the *reason* it is best has changed
+completely, and the old closure — "interior optimum" — was true of a bot that no
+longer exists.
+
+**The general point, which applies to every axis closed before the accept:** a
+closure is a statement about a build, not about the game. Changing the unit mix
+invalidated one closure outright. The others are now suspect by the same
+argument, and re-testing them on the accepted baseline with the paired instrument
+is the cheapest real work available.
+
+**Queued on exactly that basis** — soldier share, which the accept cut from 75%
+to 20%, bracketed by two routes to the same variable:
+
+- `darla31`: `MOPPER_IN_20` 2 → 0, mix 70/0/**30** (mopper rolls to soldiers)
+- `darla32`: `SPLASHER_IN_20` 14 → 16, mix 80/10/**10**
+
+Soldier share 30% / 20% (accepted) / 10%. Both head-to-head against the accepted
+build. Null 75/150, gate >= 86/150 as before.
