@@ -1542,3 +1542,50 @@ combining candidates after seeing their scores is exactly how noise gets promote
 4. **The falsifier**: if the combination lands near 75/150 in the head-to-head,
    both +2s were noise, and the correct reading of this whole session is that the
    inherited build is unimprovable by any constant in it.
+
+## Iteration 27 RESULT — the splash threshold is FLAT above 8, and that undercuts `darla26`'s lean
+
+| `SPLASH_MIN_SCORE` | result | play differs from baseline? |
+|---|---|---|
+| 4 | 78/144 — **−11 (−1.83 sd)** | yes |
+| **8** | 89/144 — inherited | — |
+| 14 | 91/144 — +2 (+0.33 sd) | yes, 142 rows |
+| 22 | **89/144 — +0** | yes, **136 rows** |
+
+**Threshold 22 changes 136 of 144 games and lands on exactly the baseline score.**
+Two substantially different behaviours, identical outcome — which is the strongest
+possible statement that this axis is **flat above 8**, with a cliff below it.
+
+**So `darla26`'s +2 sits between two neighbours that are both exactly 0.** A
+genuine optimum at 14 would leave some trace at 22; there is none. The honest
+reading is that the +2 is noise, and I am recording that **before** the
+combination arm returns rather than after.
+
+**Consequence for `darla28`, stated now.** I registered the combination on the
+premise that two independent +2s might be real and additive. One of the two now
+looks like noise on the shape of its own ladder, so **the prior is weaker than
+when I registered it**, and my expectation for the head-to-head is a result near
+the 75/150 null. The gate does not move — it was pre-registered at >= 86/150 and
+stays there — but the prediction attached to it is now explicitly pessimistic.
+
+**`SPLASH_MIN_SCORE`: CLOSED.** Four doses, flat in [8, 22], cliff at 4, inherited
+value on the plateau.
+
+### Where twenty-seven arms leave the design
+
+Every constant in the splasher path is now bracketed on both sides, and every one
+sits at or on the plateau containing carol's value:
+
+| axis | doses | verdict |
+|---|---|---|
+| `SPLASH_FLOOR` | 0, 1400, 2000, 2600 | interior optimum at inherited |
+| `SPLASHER_IN_20` | 15/40/55/70/80% | bimodal, inherited is one of two optima |
+| `SPLASH_PAINT_FLOOR` | 0, 150, 300 | monotone worse |
+| `TOWER_BONUS` | 0, 20, 50, 100, 200 | switch; inherited on the plateau |
+| `MONEY_MOD` | 2, 4, 8 | one-sided cliff; inherited on the edge |
+| `SPLASH_MIN_SCORE` | 4, 8, 14, 22 | flat above 8; inherited on the plateau |
+
+Plus five mechanism arms (two navigations, two positionings, one logistics), all
+rejected or unimplementable. **The inherited build is the best measured thing in
+27 arms and ~3,900 matched games**, and for each axis I can now say *why* rather
+than only *that*.
