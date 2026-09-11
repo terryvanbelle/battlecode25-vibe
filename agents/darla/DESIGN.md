@@ -1963,3 +1963,23 @@ is flat or mildly negative below the inherited value and catastrophic above it.
 Gates that are too loose waste a little; gates that are too tight stop the economy
 outright. When probing an unknown gate, **probe downward first**: it is the cheap
 direction to be wrong in.
+
+## Iteration 39 — `PAINT_FLOOR` 200 → 100: −2.29 sd, and it qualifies the gate lesson
+
+61/150 (40.7%) against the accepted build. A **downward** probe that cost 14
+games, which is the direction I had just called "the cheap direction to be wrong
+in".
+
+**The mechanism confirms carol's, and closes the mopper question causally.**
+`PAINT_FLOOR = 200` exists to stop a mopper (100 paint) crossing its build line
+before a soldier (200) can. At 100 the mopper is affordable again, so moppers get
+built and crowd out soldiers — and soldiers are now only 20% of the rolls and the
+only unit that converts ruins into towers. Earlier I established moppers were
+*structurally absent* by observation (one built per game). This establishes it
+**causally**: open the gate and they come back, and it costs games.
+
+**The qualification, stated because I overreached.** I wrote that gate axes are
+"flat or mildly negative below the inherited value and catastrophic above it".
+The asymmetry survives — −2.29 sd here against −9.31 sd for `CHIP_RESERVE`
+upward — but "downward is cheap" was too strong on three data points. The honest
+version: **gates fail worse upward than downward, and neither direction is free.**
