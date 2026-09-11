@@ -23,12 +23,23 @@ cd /home/terryvanbelle/projects/vibe/2025
 exec 9>/tmp/darla-disk-guard.lock
 flock -n 9 || exit 0
 
-LOW_MB="${LOW_MB:-2000}"      # act below this much free
+LOW_MB="${LOW_MB:-1200}"      # act below this much free
 while true; do
   free_mb=$(df -Pm / | awk 'NR==2 {print $4}')
   if [ "${free_mb:-0}" -lt "$LOW_MB" ]; then
     echo "$(date -uIs) DISK LOW ${free_mb}MB free -- pruning"
-    KEEP_RUNS=1 MIN_AGE_MIN=20 timeout 300 tools/driver-prune.sh 2>&1 | tail -2
+    # TWO STAGE. The first version pruned at KEEP_RUNS=1 MIN_AGE_MIN=20 on every
+    # pass, and since free space is permanently under LOW_MB (the 18G of archived
+    # BC26 replays sees to that) it ran every 10 minutes and destroyed replays
+    # almost as fast as they were written. It deleted the darla15 control replay
+    # six minutes before that control was needed to interpret darla17, and the
+    # comparison had to be regenerated. Replays are the only mechanism evidence
+    # this project has; prune them as a last resort, not as a routine.
+    KEEP_RUNS=2 MIN_AGE_MIN=45 timeout 300 tools/driver-prune.sh 2>&1 | tail -2
+    if [ "$(df -Pm / | awk 'NR==2 {print $4}')" -lt 500 ]; then
+      echo "$(date -uIs) DISK still tight after gentle prune -- escalating"
+      KEEP_RUNS=1 MIN_AGE_MIN=20 timeout 300 tools/driver-prune.sh 2>&1 | tail -2
+    fi
     echo "$(date -uIs) DISK after prune: $(df -Pm / | awk 'NR==2 {print $4}')MB free"
     # Still short after pruning everything we own: say so loudly rather than
     # silently letting the next gauntlet die on ENOSPC.

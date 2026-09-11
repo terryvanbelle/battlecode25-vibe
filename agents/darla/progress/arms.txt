@@ -18,3 +18,6 @@ darla14|SPLASHER_IN_20|11|splasher share 55%
 darla15|siege|-|siege targets paint towers first
 darla16|SPLASHER_IN_20|16|splasher share 80%
 darla17|siege|-|siege movement kept, tower splash bonus removed
+darla17|TOWER_BONUS|0|siege tower bonus removed
+darla18|TOWER_BONUS|200|siege tower bonus doubled
+darla19|TOWER_BONUS|50|siege tower bonus halved
