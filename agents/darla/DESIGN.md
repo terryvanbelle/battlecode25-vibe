@@ -1105,3 +1105,53 @@ screens is measuring noise. The two things that are worth doing are (a) changes
 large enough to clear the floor — which historically have been *mechanisms*, not
 constants, and (b) making the instrument cheaper or sharper, because right now it
 is the binding constraint on learning rather than the VM.
+
+## Iteration 18 RESULT — `darla18` (attractor doubled): **exact tie**, 89/144. The attractor is a SWITCH, not a dial.
+
+| tower bonus | arm | result |
+|---|---|---|
+| 0 | `darla17` | 72/144 — **−17 (−2.83 sd)** |
+| 100/60 | `darla` | 89/144 — inherited |
+| 200/120 | `darla18` | 89/144 — **+0, exactly** |
+
+Doubling the attractor changes **nothing**, to the game. That is mechanically
+right rather than surprising: the paint terms in the splash scorer are small
+integers, so a +100 tower term already dominates any centre comparison the moment
+a tower is in range. Beyond the threshold where it wins, its size is irrelevant.
+
+**So the axis is binary: having the attractor is worth 17 games, its magnitude is
+worth nothing.** `darla19` at 50/30 is running to find where the switch flips —
+almost certainly still "on", which would put the threshold below 50.
+
+**This is the useful shape of the finding.** A parameter that looks like a dial
+and behaves like a switch has one bit of information in it, and I have now spent
+three arms extracting that bit. It is also the clearest possible sign that
+further dose work on this axis is worthless.
+
+## Registration — iteration 20, generalise the attractor (`darla20`)
+
+The one mechanism measured to pay in this design is **positioning**, and it
+currently has a hard range limit: `siege` is only non-null when an enemy tower is
+in vision (r²=20). With no tower in sight the splasher calls
+`moveExploring(null)` and **wanders at random — no heading at all.**
+
+`darla20` gives it one: when no tower is visible, head for the **nearest enemy
+paint in vision**. Enemy paint is the same signal the tower bonus is a proxy for
+— "the opponent's ground is over there" — without the range limit.
+
+**Why this is not `darla9` again.** `darla9` gave soldiers exactly this heading
+and lost 10 games. The difference is capability, and it is a real prediction
+rather than an excuse: **a soldier cannot overwrite enemy paint** (53.2% of
+soldier-turns are IDLE-ENEMY for precisely that reason), so walking one toward
+enemy paint walks it toward ground it can do nothing with. A splasher's AoE
+overwrites enemy paint directly. The same heading should therefore be worthless
+for soldiers and useful for splashers — and if `darla20` also loses, that
+prediction is wrong and positioning does not generalise beyond towers.
+
+**Read against the measured floor**: the instrument cannot resolve under ~5
+points, so this is worth taking seriously only if it moves by more than the −17
+/ +0 scale already seen. A +2 here means nothing.
+
+**Mechanism check first, as always**: the build tags `lure` when it takes the new
+heading and `roam` when it falls through. If `lure` is rare, no tower-free
+splasher-turns exist and the arm is untested rather than refuted.

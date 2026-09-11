@@ -21,3 +21,4 @@ darla17|siege|-|siege movement kept, tower splash bonus removed
 darla17|TOWER_BONUS|0|siege tower bonus removed
 darla18|TOWER_BONUS|200|siege tower bonus doubled
 darla19|TOWER_BONUS|50|siege tower bonus halved
+darla20|positioning|-|splashers head for enemy paint when no tower in vision
