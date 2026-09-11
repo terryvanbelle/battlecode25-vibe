@@ -707,3 +707,42 @@ exactly the one carol corrected me on once before, so `darla13` at 150 is carrie
 as the milder dose and **the pair is read as a ladder, not as two chances at a
 win.** If both lose, the reading above is wrong and per-tower paint is a capacity
 ceiling rather than a queueing artefact.
+
+## Iteration 11 RESULT — `darla11` (splasher share 70%): +2, and that is NOT an accept
+
+91/144 (63.2%). carol 31/48, bob 32/48, alice 28/48 — all three legs above 50%,
+and 91 > 89, so it passes the letter of its gate. **I am not accepting it.**
+
++2 at n=144 is **0.33 sd**. Doctrine: distrust any delta under the noise floor
+regardless of how good the story is, and the story here is good, which is exactly
+when that rule earns its keep. carol's iteration 10 died on this same point.
+
+**The ladder is U-shaped, which is the interesting part:**
+
+| `SPLASHER_IN_20` | share | result |
+|---|---|---|
+| 3 | 15% | 89/144 (baseline) |
+| 8 | 40% | **78/144 (−11)** |
+| 14 | 70% | 91/144 (+2) |
+
+A smooth axis should not dip in the middle. Two readings:
+
+1. **The axis is flat and 78 is a fluctuation** (−1.8 sd). Then splasher share
+   does not matter and my whole mechanism story is wrong.
+2. **The dip is real and mechanical**, and it is the same paint-queueing effect
+   `darla12`/`darla13` were built for: at 40%, soldier builds are frequent enough
+   to keep tower paint below a splasher's 300 cost, but splasher rolls are too few
+   to compensate — the worst of both. At 70%, soldiers are rare enough that towers
+   actually accumulate to 300, so the splashers that are rolled can be paid for.
+
+Reading 2 predicts that `darla12`/`darla13` (which protect splasher paint
+directly) make the *low* splasher shares work, and it is testable rather than
+decorative.
+
+**Queued: an independent replication of `darla11` on a FRESH random 25-map
+sample** (`tools/replicate.sh`), waiting behind the pending arms so it never
+competes with them. The pinned pair is the ground `darla11` was screened on, and
+a +2 selected there is exactly the number that does not survive new ground. The
+comparison is like-for-like because the baseline's own fresh-sample score is
+already measured: **97/150 (64.7%)** on run `20260911-041301`. So `darla11` has
+to beat ~97/150, not 89/144.
