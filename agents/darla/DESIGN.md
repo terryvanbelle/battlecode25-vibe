@@ -1861,3 +1861,41 @@ throughout; the idleness was mine.
 70% splashers, where it should matter *more* than the −17 it was worth at 15% —
 `darla36` `CHIP_RESERVE` 600, an axis untouched in 34 arms that gates every
 build while chips sit $27k–46k idle, and `darla37` threshold 10.
+
+## Two more axes re-tested on the accepted build — both null
+
+Paired head-to-head, 75 maps both sides, null 75/150:
+
+| arm | change | result | |
+|---|---|---|---|
+| `darla33` | `MONEY_MOD` 8 | 73/150 (48.7%) | z = −0.33, indistinguishable |
+| `darla34` | `SPLASH_MIN_SCORE` 20 | 77/150 (51.3%) | z = +0.33, indistinguishable |
+
+Both were screened at −2 and +0 on the old baseline — inside the floor, so never
+really measured. Now measured with the powered instrument: genuinely null. The
+old verdicts were right, for the wrong reason.
+
+**Not every re-test finds something**, and that is worth recording explicitly. The
+`SPLASH_FLOOR` re-test found the axis had changed shape; these two found nothing.
+Re-testing a closure made with a blunt instrument is worth doing and is not
+guaranteed to pay.
+
+## Making "waiting" visible
+
+The owner's observation, which was correct: from their side, waiting on a run and
+doing nothing look identical. Two things now distinguish them:
+
+- **`tools/status-line.sh`** prints one line — which build is playing, how many
+  games in, how many head-to-heads are queued behind, how many arms pending.
+- **A 9-minute heartbeat** that prints exactly that line and nothing else while
+  work is progressing, and treats `IDLE` as a failure to fix rather than a state
+  to report.
+
+**And one false alarm of my own, recorded because the reasoning was wrong.** I saw
+the filler take the VM while three head-to-heads were queued and assumed the yield
+fix had failed a fourth time. The timestamps say otherwise: the filler started at
+19:09:07 when only `darla33`/`darla34` existed and both had finished; I launched
+`darla35`–`37` at 19:25–19:27, sixteen minutes later. The yield was working. After
+three genuine instances of the same bug class I had started assuming the fourth,
+which is its own failure mode — the check took two minutes and would have been
+worth it either way.
