@@ -1899,3 +1899,25 @@ fix had failed a fourth time. The timestamps say otherwise: the filler started a
 three genuine instances of the same bug class I had started assuming the fourth,
 which is its own failure mode — the check took two minutes and would have been
 worth it either way.
+
+## Iteration 35 RESULT — the positioning attractor is worth MORE on the new build, as predicted
+
+`darla35` (`TOWER_BONUS` 0) against the accepted build, paired, 75 maps both
+sides: **51/150 (34.0%), z = −3.92.** The baseline beats it **99–51**, about 2:1.
+
+**This was a registered prediction, not a re-run.** When the accept changed the
+army from 15% splashers to 70%, I wrote that the positioning attractor should
+matter *more* than the −17 games it was worth before, because it is the mechanism
+that walks splashers onto enemy ground and there are now four times as many of
+them. It is the **largest single-constant effect measured in 35 arms** — larger
+than `SPLASH_FLOOR` at 0 (−57 on a 144-game screen) once instrument scale is
+accounted for, and far larger than anything on the axes I spent the night
+closing.
+
+**Which makes the design read differently in hindsight.** Twenty-seven arms were
+spent asking *how much of each unit to build* and *when to allow a build*. The
+two things that have actually moved this bot are the splasher share and the
+attractor that tells splashers where to go — production and positioning, not
+gating. The gates were all at carol's values because carol had already tuned them;
+the positioning mechanism was hers too, built as a tower-killing weapon, and its
+real value is somewhere she never looked.
