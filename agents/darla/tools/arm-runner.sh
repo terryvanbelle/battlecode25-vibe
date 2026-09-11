@@ -77,6 +77,17 @@ while true; do
       MAPS="$(cat gauntlet/$r/maps.txt)" ../../tools/gauntlet.sh \
       || echo "$(date -uIs) ARM ERROR $arm -- gauntlet failed on sample $r"
   done
-  echo "$(date -uIs) ARM COMPLETE $arm -- $(played "$arm")/144 games collated"
-  sed -i "0,/^\s*$arm\s*$/{/^\s*$arm\s*$/d}" "$PENDING"
+  # Only retire an arm that actually PRODUCED games. The first version removed it
+  # from the queue unconditionally, so when the VM filled up and every gauntlet
+  # died on ENOSPC in under a second, the runner spun through the entire queue in
+  # four seconds marking each arm "COMPLETE -- 0/144 games collated". A failure
+  # must not look like a result, and must not consume the work item.
+  have_now=$(played "$arm")
+  if [ "$have_now" -ge 144 ]; then
+    echo "$(date -uIs) ARM COMPLETE $arm -- $have_now/144 games collated"
+    sed -i "0,/^\s*$arm\s*$/{/^\s*$arm\s*$/d}" "$PENDING"
+  else
+    echo "$(date -uIs) ARM INCOMPLETE $arm -- only $have_now/144; LEAVING IT QUEUED and backing off 5m"
+    sleep 300
+  fi
 done

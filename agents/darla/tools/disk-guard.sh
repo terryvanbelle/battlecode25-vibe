@@ -18,7 +18,8 @@
 # That is another project's recorded results; deleting it is the owner's call and
 # has been put to them.
 set -uo pipefail
-cd /home/terryvanbelle/projects/vibe/2025
+REPO=/home/terryvanbelle/projects/vibe/2025
+cd "$REPO"
 
 exec 9>/tmp/darla-disk-guard.lock
 flock -n 9 || exit 0
@@ -41,6 +42,12 @@ while true; do
       KEEP_RUNS=1 MIN_AGE_MIN=20 timeout 300 tools/driver-prune.sh 2>&1 | tail -2
     fi
     echo "$(date -uIs) DISK after prune: $(df -Pm / | awk 'NR==2 {print $4}')MB free"
+    # THE VM HAS ITS OWN, SMALLER DISK (20G against the driver's 30G) and it fills
+    # FIRST: every gauntlet writes ALL of its replays there while only the losses
+    # are pulled down. On 2026-09-11 it hit 100% and three arms died on ENOSPC
+    # inside four seconds. A driver-side prune does nothing for that, so prune both.
+    KEEP=3 GRACE_H=2 timeout 300 "$REPO/tools/vm-prune.sh" >/dev/null 2>&1 || true
+
     # Still short after pruning everything we own: say so loudly rather than
     # silently letting the next gauntlet die on ENOSPC.
     now=$(df -Pm / | awk 'NR==2 {print $4}')
