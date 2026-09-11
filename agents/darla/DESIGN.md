@@ -2164,3 +2164,30 @@ indistinguishable. So the attractor's *threshold* has softened even as its
 *presence* has become far more valuable (removing it entirely costs 99–51). Both
 facts fit the persistence reading: what matters is that a stable landmark wins
 the argmax often enough to hold a heading, not by how much it wins.
+
+## Iteration 49 — remembering the landmark: null, and **untested**, for a reason that confirms the explanation
+
+74/150 (49.3%), z = −0.08 — the **first positioning arm in five that is not
+harmful**. But the mechanism check comes first, and it says the arm never ran:
+
+| | |
+|---|---|
+| splasher turns sampled | 93 |
+| `ring` (a tower in vision) | 31 |
+| **`recall` (walking to a remembered tower)** | **0** |
+
+**The recall branch never fires**, because it requires a splasher to be more than
+r²=20 from *any* visible enemy tower while remembering one — and towers are dense
+(20–50 per map, both teams building all game). A splasher is essentially never out
+of sight of one.
+
+So this is `gate-unimplementable` rather than refuted: there is no range gap to
+extend the landmark across. **And that is itself the confirmation.** The attractor
+works because a tower is stable *and* almost always visible; the reason no
+paint-targeted heading could substitute is not that paint is a worse signal in
+principle, but that the stable-and-visible combination is already saturated by
+towers. There was never a gap for a second mechanism to fill.
+
+**Positioning is now closed on evidence rather than on exhaustion**: one mechanism,
+worth 99–51, working for a stated reason, with the four alternatives refuted and
+the fifth shown to have nothing to do.
