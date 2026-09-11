@@ -28,8 +28,8 @@ source "$HERE/benchmark-collate.sh"
 BOTS="${BOTS:-alice bob carol}"
 BENCH="${BENCH:-TSPAARKHS v3}"      # staged on the VM under ~/bc25-benchmarks/bench/src
 MAXJOBS="${MAXJOBS:-3}"
-GLOBAL_CAP="${GLOBAL_CAP:-5}"
-HARD_CAP="${HARD_CAP:-7}"
+GLOBAL_CAP="${GLOBAL_CAP:-7}"
+HARD_CAP="${HARD_CAP:-8}"
 if [ -z "${MAPS:-}" ]; then
   MAPS="$(tr '\n' ' ' < "$REPO_ROOT/tools/bc25-maps.txt")"
 fi

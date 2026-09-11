@@ -38,8 +38,8 @@ source "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
 BOTS="${BOTS:-alice bob carol}"
 MAXJOBS="${MAXJOBS:-4}"
-GLOBAL_CAP="${GLOBAL_CAP:-5}"   # BC25 games in flight across ALL agents+tournament
-HARD_CAP="${HARD_CAP:-7}"       # machine-wide ceiling, counts the BC26 project too
+GLOBAL_CAP="${GLOBAL_CAP:-7}"   # BC25 games in flight across ALL runners on the VM
+HARD_CAP="${HARD_CAP:-8}"       # machine-wide ceiling (BC26 archived 2026-09; see below)
 # A full-list run is 75 maps x 3 pairs x 2 sides = 450 games; under contention
 # with the agents' gauntlets it can hit the poll deadline below. Play the
 # default list in RANDOM order so a truncated run is an unbiased sample of the

@@ -517,7 +517,16 @@ check whether the thing you queued behind the run actually launched.
 
 ## Shared-resource rules (hard)
 
-`battlecode-dev` also serves a **live BC26 project**, plus your two sibling
+`battlecode-dev` **no longer serves the BC26 project** -- it was archived and the
+user confirmed it on 2026-09-11; a full scan of the VM that day found no BC26
+process, no process with a CWD under a BC26 tree, and only this project's own
+games running. The tree is still on disk at `~/battlecode26-vibe`, dormant.
+The concurrency caps were raised accordingly (`GLOBAL_CAP` 5 -> 7, `HARD_CAP`
+7 -> 8): the gap between them existed purely as a reservation for BC26's
+un-semaphored games, and holding capacity for a neighbour that no longer runs
+is pure throughput loss on an 8-core box. **Everything else about the shared-VM
+rules stands unchanged** -- never kill another project's processes, never stop
+the VM. `battlecode-dev` still serves your two sibling
 agents. Therefore:
 
 - Never `pkill`/`kill` anything on battlecode-dev; never stop either VM.

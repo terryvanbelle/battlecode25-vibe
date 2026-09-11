@@ -66,8 +66,8 @@ BOT="${BOT:-$default_bot}"
 OPPONENTS="${OPPONENTS:-examplefuncsplayer}"
 MAXJOBS="${MAXJOBS:-3}"          # this run's concurrent games
 NMAPS="${NMAPS:-25}"            # size of the random map sample when MAPS is unset
-GLOBAL_CAP="${GLOBAL_CAP:-5}"   # BC25 games in flight across ALL agents+tournament
-HARD_CAP="${HARD_CAP:-7}"       # machine-wide ceiling, counts the BC26 project too
+GLOBAL_CAP="${GLOBAL_CAP:-7}"   # BC25 games in flight across ALL runners on the VM
+HARD_CAP="${HARD_CAP:-8}"       # machine-wide ceiling (BC26 archived 2026-09; see below)
 
 SAMPLED=0
 if [ -z "${MAPS:-}" ]; then
