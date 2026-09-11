@@ -7,7 +7,7 @@ darla4|SPLASH_FLOOR|1400|floor 1400
 darla6|SPLASH_FLOOR|2600|floor 2600
 darla2|moppers|-|moppers removed
 darla3|moppers|-|mopper navigation (alice i7)
-darla7|SPLASH_MIN_SCORE|4|splash threshold 8 to 4
+darla7|SPLASH_MIN_SCORE|4|splash threshold 4
 darla8|frontier|-|frontier branch unguarded
 darla9|frontier|-|idle soldiers head for enemy paint
 darla10|SPLASHER_IN_20|8|splasher share 15% to 40%
@@ -27,3 +27,5 @@ darla22|positioning|-|splashers head for enemy-paint centroid
 darla23|logistics|-|moppers mule paint to splashers
 darla24|MONEY_MOD|8|1 money tower in 8
 darla25|MONEY_MOD|2|1 money tower in 2
+darla26|SPLASH_MIN_SCORE|14|splash threshold 14
+darla27|SPLASH_MIN_SCORE|22|splash threshold 22

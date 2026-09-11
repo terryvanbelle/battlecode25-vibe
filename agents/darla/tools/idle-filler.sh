@@ -26,9 +26,9 @@ exec 9>/tmp/darla-idle-filler.lock
 flock -n 9 || { echo "$(date -uIs) filler already running; exiting"; exit 0; }
 
 while true; do
-  pending=$(grep -cvE '^\s*(#|$)' progress/pending-arms.txt 2>/dev/null || echo 0)
+  pending=$(grep -cvE '^\s*(#|$)' progress/pending-arms.txt 2>/dev/null || true)
   # See the note in arm-runner.sh: match the re-exec name, never the original.
-  inflight=$(pgrep -fc '\.reexec-gauntlet\.sh' 2>/dev/null || echo 0)
+  inflight=$(pgrep -fc '\.reexec-gauntlet\.sh' 2>/dev/null || true)
 
   if [ "$pending" -gt 0 ] || [ "$inflight" -gt 0 ]; then
     sleep 120                      # real work is happening; stay out of the way

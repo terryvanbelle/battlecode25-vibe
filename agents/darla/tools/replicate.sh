@@ -17,7 +17,7 @@ cd /home/terryvanbelle/projects/vibe/2025/agents/darla
 # Wait for the arm queue to drain AND for any gauntlet to finish, so this never
 # competes with the screening runs. Matches the RE-EXEC name: gauntlet.sh runs
 # from a private copy and the original path never appears in a process listing.
-while [ "$(grep -cvE '^\s*(#|$)' progress/pending-arms.txt 2>/dev/null || echo 0)" -gt 0 ] \
+while [ "$(grep -cvE '^\s*(#|$)' progress/pending-arms.txt 2>/dev/null || true)" -gt 0 ] \
    || pgrep -f '\.reexec-gauntlet\.sh' > /dev/null; do sleep 60; done
 
 echo "$(date -uIs) REPLICATE START $ARM -- fresh random 25-map sample"

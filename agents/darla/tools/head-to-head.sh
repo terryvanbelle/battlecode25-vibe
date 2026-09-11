@@ -16,7 +16,7 @@
 set -uo pipefail
 ARM="${1:?usage: head-to-head.sh <package>}"
 cd /home/terryvanbelle/projects/vibe/2025/agents/darla
-while [ "$(grep -cvE '^\s*(#|$)' progress/pending-arms.txt 2>/dev/null || echo 0)" -gt 0 ] \
+while [ "$(grep -cvE '^\s*(#|$)' progress/pending-arms.txt 2>/dev/null || true)" -gt 0 ] \
    || pgrep -f '\.reexec-gauntlet\.sh' > /dev/null; do sleep 60; done
 echo "$(date -uIs) H2H START $ARM vs darla -- all 75 maps, both sides"
 MAPS="$(tr '\n' ' ' < ../../tools/bc25-maps.txt)" BOT="$ARM" OPPONENTS="darla" MAXJOBS=2 \

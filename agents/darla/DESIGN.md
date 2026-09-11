@@ -1438,3 +1438,42 @@ differ by one constant, so a direct match measures that constant and nothing els
 only at **>= 86/150 (57.3%)**, which is 2 sd on a 150-game head-to-head. Anything
 between is another way of saying "the same", and I will record it as such rather
 than reach for the third significant figure.
+
+## Iteration 25 RESULT — `MONEY_MOD` is a one-sided cliff, and it resolves the paint question
+
+| money towers | arm | result |
+|---|---|---|
+| 1 in 2 | `darla25` | 59/144 (41.0%) — **−30 (−5.00 sd)** |
+| **1 in 4** | `darla` | 89/144 — inherited |
+| 1 in 8 | `darla24` | 87/144 — −2 (−0.33 sd) |
+
+**Asymmetric, and that asymmetry is the finding.** Building *more* money towers
+is catastrophic; building *fewer* does nothing. Paint income is binding
+**downward** — cut it and the bot dies — and **saturated upward** — add more and
+nothing happens.
+
+**So paint is the binding resource, but total paint income is not the
+constraint.** That looks contradictory and is not: the team already produces more
+paint than it can route. What limits spending is the **per-tower stash and the
+spend gates** — a splasher needs 300 paint *in one tower*, and `SPLASH_FLOOR`,
+`PAINT_FLOOR` and the build rolls decide who gets it. Adding a fourth paint tower
+adds income to a system that is already gate-limited, not income-limited.
+
+That is consistent with everything measured tonight: `darla12` (reserve paint for
+splashers) killed the economy, `darla5` (open the chip gate) killed it harder,
+and every gate sits at carol's value. **`MONEY_MOD`: CLOSED**, inherited value on
+the edge of a plateau with a cliff on the other side.
+
+## Registration — iterations 26/27, the splash threshold upward
+
+`SPLASH_MIN_SCORE = 8` is the last untouched gate in the splasher path. Only
+**downward** has been tested: `darla7` at 4 lost 11 games. Upward is unmeasured,
+and it is the direction the evidence points — paint is precious and gate-limited,
+so firing *less often on better targets* is the change that fits the diagnosis.
+
+`darla26` = 14, `darla27` = 22. The scorer's ceiling is 35 (9 enemy tiles at +3
+plus 4 empty at +2), so 22 is strict but reachable and 35 would be an off-switch —
+the static check applied **before** queueing this time, which is the practice the
+288 wasted no-op games bought.
+
+Read against the floor: only a move past ~5 points counts.
