@@ -25,6 +25,10 @@ fi
 while true; do
   for d in gauntlet/*/; do
     [ -f "$d/summary.txt" ] || continue
+    # Wait for the overall line. summary.txt appears before collation finishes
+    # writing it, so reporting on the file's existence alone announces a result
+    # with no score -- which happened for 20260911-214415.
+    grep -q '^overall' "$d/summary.txt" || continue
     run=$(basename "$d")
     grep -qx "$run" "$SEEN" && continue
     bot=$(sed -n 's/^bot=//p' "$d/bot.txt" 2>/dev/null)
