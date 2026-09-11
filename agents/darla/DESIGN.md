@@ -855,3 +855,43 @@ an hour old — sized for a much slower loop. Without the guard the queue would
 have filled the disk again within the hour and every subsequent gauntlet would
 have died on ENOSPC, which is the same outcome as being idle, arrived at less
 visibly.
+
+## Iteration 14 — **VOID**, not a result. A build that never ran.
+
+`darla14` returned **0/144**, every game lost to "destroyed all of the enemy
+team's units". That is not a score, it is a bot that never loaded.
+
+**Cause**: `src/darla14/RobotPlayer.java` was a **byte-identical copy of the
+baseline**. The `sed` that should have set `SPLASHER_IN_20 = 11` matched nothing,
+so the file kept `package darla;`; the classes compiled into package `darla`, the
+engine looked for `darla14.RobotPlayer`, found nothing, and forfeited 144 games.
+
+**Why the existing check did not catch it, which is the part worth keeping.** I
+verify each arm with `javac ... && echo COMPILE_OK`, and it printed `COMPILE_OK`
+— because it compiled *the baseline* under a new directory name. A compile step
+cannot detect that a file was not edited. The real signal was that my
+verification `grep` printed **nothing**, and I read the `COMPILE_OK` on the next
+line as success. **A verification whose failure mode is silence is not a
+verification.**
+
+**Fixed structurally, not by intending to be careful**: `tools/make-arm.sh` now
+builds every arm and refuses to leave it on disk unless
+
+1. the package line actually names the arm,
+2. the `BUILD` constant actually names the arm,
+3. the intended change is present, and
+4. the diff against the baseline below the package line is non-empty.
+
+Any failure deletes the directory, so a broken arm cannot reach the queue. The
+guard was tested against a deliberately non-matching `sed` and correctly refused.
+The compile check now also lists the output directory, so the package landing in
+the wrong place is visible.
+
+**The two void runs are quarantined**, `bot=` rewritten to `darla14VOID` with a
+`VOID.md` beside each, so `plot_arms.py` cannot aggregate them. The evidence is
+kept; the number is excluded. **`darla14` has been rebuilt correctly and requeued**
+— the 55% question is still open and still unmeasured.
+
+**What made it visible was the result being impossible.** A one-constant change
+cannot lose 144 of 144. Worth holding onto as a check: a result far outside what
+the mechanism could produce is a bug report about the harness, not a finding.
