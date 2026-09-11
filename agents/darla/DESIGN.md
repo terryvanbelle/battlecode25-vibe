@@ -1657,3 +1657,32 @@ reference. `src/darla` is now the accepted build, `BUILD = "darla-i1"`.
 **Owed next, in order**: attribution (each constant alone against
 `darla_iter0`, since the accept is joint), then the benchmark against `v3` — in
 that order, because the benchmark measures what ships and must never choose it.
+
+## The floor, settled on six points — and the accept clears it either way
+
+The idle filler produced six independent fresh-sample runs of the **pre-acceptance**
+baseline before the promotion landed (each confirmed pre-accept by its recorded
+commit and a clean tree):
+
+| | |
+|---|---|
+| samples | 97, 94, 101, 89, 92, 95 — all /150 |
+| pooled | **568/900 (63.1%)** |
+| run-to-run sd | **2.75 points** (2.34 on 3 points, 3.37 on 4) |
+| **2 sd floor** | **5.5 points**, range 59.3–67.3 |
+
+The estimate has now stopped swinging: 2.34 → 3.37 → 2.75 as points arrived, and
+a settled floor of about **5.5 points on a 150-game fresh sample**. That is the
+number to hold, and it retires the two earlier ones I quoted with more confidence
+than three or four points could support.
+
+**It also frames what the accept was worth.** In screening terms the combination
+was +4 on 144 — under this floor, correctly judged as noise. In head-to-head terms
+it is +22 on 150, **+3.59 sd**, against a floor that does not apply because map
+difficulty cancels in a paired match. **Same change, same bot, two instruments,
+opposite verdicts — and the paired one is the one that answers the question that
+was actually being asked.**
+
+A milestone marker is recorded at the accept commit, so the step the shipped
+build takes in `vs_old_bots.png` from here on reads as the acceptance rather than
+as drift.

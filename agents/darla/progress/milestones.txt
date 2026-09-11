@@ -2,3 +2,4 @@
 # <commit>|<label>
 4335c3c|rebased on carol+siege; baseline 89/144 on two pinned 12-map samples
 5aad791|from-scratch economy abandoned after 10 versions (7 defects, kept as scratch)
+8dc8f37|ITERATION 1 ACCEPTED (splasher share 70%, splash threshold 14) -- the shipped build changes here, so any step in the lines below this point is the accept, not drift
