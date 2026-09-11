@@ -948,3 +948,42 @@ assumed.
 **Gate**: accept if > 89/144 on the pinned pair AND the fresh-sample replication
 clears the baseline's 95.5/150 mean by more than its own 0.49 sd spread. Two
 hurdles deliberately, because `darla11` has just shown what a single +2 is worth.
+
+## Iteration 14 (rebuilt) RESULT — the dip is REAL, and the axis is bimodal
+
+| `SPLASHER_IN_20` | splasher share | soldier share | result | |
+|---|---|---|---|---|
+| 3 | 15% | 75% | 89/144 (61.8%) | baseline |
+| 8 | 40% | 50% | 78/144 (54.2%) | **−11 (−1.83 sd)** |
+| 11 | 55% | 35% | 81/144 (56.2%) | **−8 (−1.33 sd)** |
+| 14 | 70% | 20% | 91/144 (63.2%) | +2 (+0.33 sd) |
+
+**Two adjacent interior points, both negative, independently measured.** Pooled,
+40% and 55% together are **−19 over 288 games, −2.24 sd** — well past the noise
+floor, and far more credible than the single −11 that I nearly wrote off as a
+fluctuation when `darla11` came back positive.
+
+**So the axis is bimodal, not flat and not single-peaked.** Two workable regimes
+with a bad valley between them:
+
+- **soldier-heavy (15%)** — soldiers claim ruins, towers accumulate, the economy
+  compounds; the inherited setting;
+- **splasher-heavy (70%)** — few enough soldiers that towers actually reach a
+  splasher's 300 paint, and splashers take ground far faster than soldiers;
+- **the middle (40–55%)** — enough soldiers to keep tower paint below 300, too
+  few splasher rolls to compensate. The worst of both, which is exactly the
+  mechanism `darla10`'s build-event census pointed at.
+
+This is the first axis in Darla's work that is not simply "carol's value is
+best". carol's 15% is one of two optima rather than the only one, and the
+alternative is at least its equal.
+
+**Note what the void nearly cost.** The broken `darla14` returned 0/144 and, had
+I aggregated it, would have drawn this ladder as a cliff at 55% — an artefact
+with a tidy story available (*"too few soldiers, economy collapses"*) that would
+have looked like a finding and been entirely a build error.
+
+**Queued**: `darla16` at 80% splasher (10% soldier, 10% mopper) — the ladder is
+*rising* from 55% to 70%, so the upper edge is the untested direction. It is
+bounded: `darla12` established that driving soldiers to zero deletes the economy,
+so 80% is probed and 90%+ is not.

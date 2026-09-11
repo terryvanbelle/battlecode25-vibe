@@ -16,3 +16,4 @@ darla12|SPLASH_PAINT_FLOOR|300|splasher paint floor 300
 darla13|SPLASH_PAINT_FLOOR|150|splasher paint floor 150
 darla14|SPLASHER_IN_20|11|splasher share 55%
 darla15|siege|-|siege targets paint towers first
+darla16|SPLASHER_IN_20|16|splasher share 80%
