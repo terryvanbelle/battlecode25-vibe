@@ -152,46 +152,42 @@ def arm_ladder(arms, tot, out):
     print(f"wrote {out} ({len(rows)} arms)")
 
 
-def dose(arms, tot, out):
-    pts = sorted(((m["dose"], p) for p, m in arms.items()
-                  if m["axis"] == "SPLASH_FLOOR" and p in tot))
-    if len(pts) < 2:
-        print("not enough SPLASH_FLOOR points yet")
-        return
+def dose(tot, pts, axis, out):
+    """One dose axis. `pts` is [(dose, package)], already including the baseline."""
     xs = [d for d, _ in pts]
     ws = [tot[p][0] for _, p in pts]
     ns = [tot[p][1] for _, p in pts]
     ys = [w / n * 100 for w, n in zip(ws, ns)]
     errs = [sd(n) / n * 100 for n in ns]
+    base_w, base_n = tot["darla"][0], tot["darla"][1]
+    base_pct = base_w / base_n * 100
 
-    fig, ax = plt.subplots(figsize=(9.2, 5.6))
+    fig, ax = plt.subplots(figsize=(9.6, 5.8))
+    ax.axhspan(base_pct - sd(base_n) / base_n * 100,
+               base_pct + sd(base_n) / base_n * 100,
+               color=TIE_C, alpha=0.16, lw=0,
+               label="±1 sd of the baseline")
+    ax.axhline(base_pct, color=MUTED, lw=1, ls="--", zorder=1)
     ax.errorbar(xs, ys, yerr=errs, marker="o", ms=8, lw=2.2, capsize=5,
                 color=BASE_C, mfc="white", mew=2, zorder=3)
-    ax.axhline(50, color=MUTED, lw=1, ls=":", zorder=1)
-    for x, y, w, n in zip(xs, ys, ws, ns):
-        ax.annotate(f"{w}/{n}\n{y:.1f}%", (x, y), textcoords="offset points",
-                    xytext=(0, 15), ha="center", fontsize=9, color=INK)
-    inc = 2000
-    if inc in xs:
-        ax.annotate("inherited value\n(best measured)", (inc, ys[xs.index(inc)]),
-                    textcoords="offset points", xytext=(-14, -46), ha="right",
-                    fontsize=8.5, color=MUTED)
-    ax.set_xlabel("SPLASH_FLOOR  (chips that must remain after a non-splasher build)")
-    ax.set_ylabel(f"win rate over {ns[0]} matched games (%)")
-    peak = max(range(len(xs)), key=lambda i: ys[i])
-    ax.set_title("Darla — the SPLASH_FLOOR dose response\n"
-                 f"an INTERIOR OPTIMUM at the inherited {xs[peak]}: the curve "
-                 "rises to it and falls past it.\ncarol bracketed 0/1400/2000 "
-                 "in self-play; the untested direction was up, and it is worse.",
-                 fontsize=11, loc="left", color=INK, pad=11)
+    for x, y, w, n, p in zip(xs, ys, ws, ns, [q for _, q in pts]):
+        lab = f"{w}/{n}\n{y:.1f}%" + ("\n(inherited)" if p == "darla" else "")
+        ax.annotate(lab, (x, y), textcoords="offset points",
+                    xytext=(0, 14 if y >= base_pct else -34), ha="center",
+                    fontsize=8.5, color=INK)
+    ax.set_xlabel(axis)
+    ax.set_ylabel(f"win rate over {base_n} matched games (%)")
+    ax.set_title(f"Darla — the {axis} dose response",
+                 fontsize=12, loc="left", color=INK, pad=11)
     ax.grid(color=GRID, lw=0.7)
     ax.set_axisbelow(True)
-    for s in ("top", "right"):
-        ax.spines[s].set_visible(False)
-    for s in ("left", "bottom"):
-        ax.spines[s].set_color(GRID)
+    for sp in ("top", "right"):
+        ax.spines[sp].set_visible(False)
+    for sp in ("left", "bottom"):
+        ax.spines[sp].set_color(GRID)
     ax.tick_params(colors=MUTED)
     ax.set_ylim(0, 100)
+    ax.legend(loc="lower right", fontsize=8.5, frameon=False)
     fig.tight_layout()
     fig.savefig(out, dpi=150)
     print(f"wrote {out} ({len(pts)} doses)")
@@ -203,4 +199,20 @@ if __name__ == "__main__":
     if "darla" not in t:
         sys.exit("no baseline runs found")
     arm_ladder(a, t, WS / "progress" / "arm_ladder.png")
-    dose(a, t, WS / "progress" / "splash_floor_dose.png")
+    base_doses = {}
+    bd = WS / "progress" / "baseline-doses.txt"
+    if bd.is_file():
+        for line in bd.read_text().splitlines():
+            line = line.split("#", 1)[0].strip()
+            if "|" in line:
+                ax, d = line.split("|"); base_doses[ax.strip()] = int(d)
+    axes = sorted({m["axis"] for m in a.values() if m["dose"] is not None})
+    for ax in axes:
+        pts = sorted((m["dose"], p) for p, m in a.items()
+                     if m["axis"] == ax and m["dose"] is not None and p in t)
+        if ax in base_doses and "darla" in t:
+            pts = sorted(set(pts) | {(base_doses[ax], "darla")})
+        if len(pts) < 3:
+            continue
+        out = WS / "progress" / f"dose_{ax.lower()}.png"
+        dose(t, pts, ax, out)

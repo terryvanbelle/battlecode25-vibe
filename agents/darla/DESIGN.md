@@ -1034,3 +1034,32 @@ AoE onto 1,000-HP targets that absorb it harmlessly, instead of onto paint. So:
   damaged, or drawing enemy units to defend.
 
 Either way it separates the two explanations, which no result so far has.
+
+## Iteration 16 RESULT — `darla16` (80% splasher): −3. The axis is fully mapped and CLOSED.
+
+| splasher / soldier | arm | result | |
+|---|---|---|---|
+| 15% / 75% | `darla` | 89/144 (61.8%) | inherited |
+| 40% / 50% | `darla10` | 78/144 | −11 (−1.83 sd) |
+| 55% / 35% | `darla14` | 81/144 | −8 (−1.33 sd) |
+| **70% / 20%** | `darla11` | **91/144** | +2 (+0.33 sd) |
+| 80% / 10% | `darla16` | 86/144 | −3 (−0.50 sd) |
+
+**Five doses, 720 matched games, and the second mode turns over.** 70% is the
+peak of the splasher-heavy regime and 80% falls back — so the upper edge is not
+an unexplored slope, it is a summit already passed.
+
+**The axis is bimodal with two statistically indistinguishable optima** (89 and
+91, 0.33 sd apart) separated by a real valley (40% and 55% pooled: −19 over 288
+games, −2.24 sd). **CLOSED**: no setting beats the inherited value by anything
+this instrument can resolve, and both ends now turn over.
+
+The honest summary is that carol's 15% is *one of two* equally good answers, not
+the unique one — a finding about the shape of the problem rather than an
+improvement to the bot.
+
+**Charting generalised**: `tools/plot_arms.py` now draws a dose-response for
+every axis with three or more measured points, reading the shipped baseline's
+position on each axis from `progress/baseline-doses.txt` so the inherited value
+appears as a point rather than only as a line. Three ladders are drawn today
+(`SPLASHER_IN_20`, `SPLASH_FLOOR`, `SPLASH_PAINT_FLOOR`).
