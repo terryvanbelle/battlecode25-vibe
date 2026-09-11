@@ -41,7 +41,7 @@ waiting=$(ps -eo args | grep -c '[t]ools/head-to-head.sh darla' || true)
 q=$(grep -cvE '^\s*(#|$)' progress/pending-arms.txt 2>/dev/null || true)
 
 if [ "${g:-0}" -gt 0 ]; then
-  echo "RUNNING: ${prog:-$run}${age} | ${g:-0} gauntlet(s) live, ${waiting:-0} head-to-head(s) queued behind, ${q:-0} arms pending"
+  echo "RUNNING: ${prog:-$run}${age} | ${g:-0} gauntlet(s) live, ${waiting:-0} head-to-head(s) in queue (incl. live), ${q:-0} arms pending"
 else
   # A queued head-to-head polls every 60s, so a handover between runs shows as a
   # brief no-gauntlet window. That is WAITING, not IDLE -- work exists and will
