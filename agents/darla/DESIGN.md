@@ -402,3 +402,71 @@ attack on the largest single line in this table.
 `SPLASH_FLOOR` first (regime A is most maps, and it is total), then unblocking
 IDLE-ENEMY (53.2% where soldiers exist), then IDLE-ALLY navigation (24.1%, and
 the existing frontier search is measurably broken at 2/187).
+
+## Iterations 2 and 3 RESULT — the `SPLASH_FLOOR` re-open is REFUTED, and I was confidently wrong
+
+Six runs, 432 games, all on the two pinned samples darla1 played.
+
+| arm | `SPLASH_FLOOR` | vs carol | vs bob | vs alice | overall |
+|---|---|---|---|---|---|
+| `darla5` | 0 | 10/48 | 12/48 | 10/48 | **32/144 (22.2%)** |
+| `darla4` | 1400 | 17/48 | 25/48 | 21/48 | **63/144 (43.8%)** |
+| `darla1` | 2000 | 30/48 | 30/48 | 29/48 | **89/144 (61.8%)** |
+
+**Monotone in the floor, and uniform across three independent lineages.** My
+registered refutation condition was: *"the dose is negative against all three
+legs, or flat against all three. Either kills it… if the effect is uniform across
+three independent lineages then the axis is simply flat and carol's closure
+generalises beyond self-play."* It is negative on all three, by −26 and −57
+games. **carol's closure generalises. The re-open was wrong**, and her doctrine-17
+caveat — which I used as the licence to re-open — did not need to be the reason
+her result held.
+
+**Two things I got wrong, and they are different mistakes.**
+
+*The sign.* I predicted lowering the floor would help against alice and bob
+because they convert ruins and reach 14–16 towers. It hurt against them by 9 and
+5 games. Soldiers are not a cheaper route to their strategy; they are a worse use
+of the same chips.
+
+*The prediction that `darla4` "may not fire".* I argued from the $1,350–$1,420
+treasury that floor 1400 would be a near-null. It moved 26 games. The arithmetic
+was right and the inference was wrong: a treasury *median* below a gate does not
+mean the gate never opens, because income spikes and the reserve-freeing guard
+both cross it — and every crossing spends. A gate is not a wall.
+
+**And I misread my own census, which is the more useful error.** I measured that
+only 1.8% of soldier-turns paint a tile and 53.2% are blocked by enemy paint, and
+concluded *unblock the soldiers*. The simpler reading was available and correct:
+**soldiers are a poor painting unit, and the bot is right to build splashers
+instead.** carol's own comment says so in numbers I had already read — a splasher
+paints 2.4–4.7x more tiles per unit of build-paint and costs ~4x less per tile in
+chips. The banked 9,716 paint on Leaf is not a resource the bot fails to convert;
+it is a resource the bot has no better use for, and forcing the conversion costs
+57 games.
+
+**What the result actually establishes**, which is worth more than the hypothesis
+was: `SPLASH_FLOOR` is load-bearing and the dose response is steep and monotone
+over [0, 2000]. **The untested direction is up**, and carol never tested it — her
+bracket was 0 / 1400 / 2000 with 2000 as the incumbent. `darla6` = 2600 is queued
+to find whether 2000 is an interior optimum or a floor on an unexplored slope.
+
+## Iteration 4 RESULT — `darla3` (mopper navigation): REJECT, a dead tie
+
+`darla3` 87/144 (60.4%) against darla1's 89/144. −2 games, −0.33 sd. Gate was
+accept if > 89; **rejected**, but this is a tie, not a regression: carol 30/48,
+bob 29/48, alice 28/48 against darla1's 30/30/29.
+
+Taken with `darla2` (moppers removed, −5), the unit's whole contribution is small
+and flat: removing them costs a little, and alice's accepted navigation fix — worth
+87% in her bot — transfers as **nothing** here. The difference is that alice's
+moppers supported a soldier-primary army that needs enemy paint cleared ahead of
+it; Darla's splashers overwrite enemy paint themselves, so the mopper's output is
+already covered. That is a *superseded* mechanism after all — but superseded by
+the splasher's AoE rather than by the production-efficiency argument finding #2
+made, which the darla2 falsifier had already shown to be a statement about a
+metric.
+
+**Mopper axis: CLOSED.** Bracketed on both sides — 0 moppers is −5, better
+moppers is −2, incumbent is the best of the three. Re-opening requires a build
+whose army is soldier-primary, which this design is not.
