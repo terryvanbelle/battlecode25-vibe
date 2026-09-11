@@ -895,3 +895,56 @@ kept; the number is excluded. **`darla14` has been rebuilt correctly and requeue
 **What made it visible was the result being impossible.** A one-constant change
 cannot lose 144 of 144. Worth holding onto as a check: a result far outside what
 the mechanism could produce is a bug report about the harness, not a finding.
+
+## `darla11` replication — two independent looks, both small, neither decisive
+
+`tools/replicate.sh` ran `darla11` on a **fresh random 25-map sample**, ground it
+was never screened on, and the idle filler independently added a second baseline
+point on another fresh sample. So the comparison is now like-for-like on both
+sides:
+
+| build | pinned pair | fresh sample A | fresh sample B |
+|---|---|---|---|
+| baseline `darla1` | 89/144 (61.8%) | **97/150 (64.7%)** | **94/150 (62.7%)** |
+| `darla11` (70% splasher) | 91/144 (+2) | **99/150 (66.0%)** | — |
+
+**The baseline's own two fresh samples differ by 3 games** (97 vs 94, 0.49 sd).
+That is the run-to-run noise of this instrument, measured rather than assumed —
+and `darla11` is **+3.5 games over the baseline's mean of 95.5**, which is 0.57 sd
+and *the same size as the baseline's disagreement with itself*.
+
+Pooled over everything either build has played: `darla11` 190/294 (64.6%) against
+the baseline's 280/438 (63.9%). **+0.7 points.**
+
+**Verdict: not accepted, and not rejected either — indistinguishable.** Two
+independent looks both lean positive, which is weakly encouraging and nothing
+more. I am recording it that way rather than banking a +2 as a win, because a
+0.5 sd effect is exactly what this instrument cannot resolve, and because the
+honest description of a 0.7-point difference is "the same".
+
+**And I will not settle it on the benchmark.** Running `darla11` against `v3` and
+picking whichever scores higher would be tuning against the yardstick — the one
+thing the benchmark rule exists to prevent. The benchmark measures what ships; it
+does not choose it. Whatever wins on lineage evidence gets benchmarked, in that
+order.
+
+## Registration — iteration 15, siege target priority (`darla15`)
+
+The siege currently ranks **money towers above paint towers**, from carol's
+finding #5: killing the last money tower freezes the victim's production
+permanently (1,887 frozen rounds measured).
+
+**But the win condition is coverage in 96.5% of games, and the census says
+per-tower PAINT is the binding resource** — for both sides. A paint tower is what
+feeds the opponent's splashers, and splashers are what win the coverage race:
+carol took 691 coverage off seven splashers while darla held 19 towers and 64
+soldiers. Killing money slows their *economy*; killing paint slows the units that
+actually take ground.
+
+One line: `rank = (moneyPerTurn > 0) ? 1 : 2`, inverting the priority. Built
+through `tools/make-arm.sh`, so the change is verified present rather than
+assumed.
+
+**Gate**: accept if > 89/144 on the pinned pair AND the fresh-sample replication
+clears the baseline's 95.5/150 mean by more than its own 0.49 sd spread. Two
+hurdles deliberately, because `darla11` has just shown what a single +2 is worth.
