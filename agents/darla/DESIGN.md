@@ -3352,3 +3352,58 @@ computed once; every later arm compares against it for free.
 Queued: the baseline reference, then `darla75` on the same ground. `darla75` stays
 **undecided** until then — the 4/4 sweep is too suggestive to reject and far too
 thin to accept.
+
+## Iteration 77 — don't queue at a dry tower: **+12 games**, the largest move since iteration 1
+
+**87/150 (58.0%)**, +1.96 sd on the paired instrument.
+
+| | |
+|---|---|
+| maps playing 1–1 | 49 |
+| maps diverging | **26** |
+| swept 2–0 by `darla77` | **19** |
+| swept 2–0 by the baseline | **7** |
+
+Given divergence the direction is the informative quantity, and 19–7 is p ≈ 0.014.
+This is not the 4-discordant-map situation `darla75` was stuck in: the mechanism
+fires on a third of the pool.
+
+**`Oasis` — the map the diagnosis came from — was swept 2–0**, both sides. That
+was the registered prediction: it is the map where `S HOME` was 144 of 183
+soldier-turns and where our own paint towers sat at `tp = 0, 5, 10`.
+
+**The falsifier was checked first and came back clean.** Both builds play in the
+same replay, so their counters are directly comparable on identical ground
+(`AlarmClock` botA, round 300):
+
+| | worst `rt` (latches) | worst `ht` (turns commuting) |
+|---|---|---|
+| baseline | **5** | **138** |
+| `darla77` | **2** | **49** |
+
+The registered refutation was "`rt` climbs sharply while `ht` falls" — a soldier
+thrashing between latch and unlatch. The opposite happened: **both** fell.
+Unlatching at a dry tower does not send robots back for more, it stops them
+queueing in the first place, and the commute time they were burning goes back
+into painting. (These are different robot populations, not matched robots, so
+this is a population comparison — but the direction is unambiguous and the
+falsifier required `rt` to rise.)
+
+**Mechanism, stated in full, because the three arms before it were each one level
+too shallow:**
+
+- `darla71`–`74`: the symmetry answer had no branch to act on. Wrong layer.
+- `darla76`: the refill target was the wrong *tower type*. Real, but worth +1.
+- `darla77`: the refill target had **no paint to give**, and the bot waited
+  anyway, because the unlatch condition asks about the robot's paint rather than
+  the tower's ability to supply it.
+
+A soldier's attack costs 5 paint. A soldier latched at 60 paint beside a tower
+holding 5 has twelve painted tiles available to it and spends the turn walking
+instead. That is the whole change.
+
+**Not accepted yet.** `darla65` went +2.5 sd at n=11 and evaporated to +0.57 at
+n=18; one head-to-head is one draw. `tools/paired-roster.sh darla77` queued —
+450 games against all three lineages on all 75 maps, which is the instrument
+built two entries ago for exactly this decision. The baseline's 450-game
+reference is queued ahead of it.
