@@ -3263,3 +3263,61 @@ returns byte-identical games and cannot corroborate anything. `tools/replicate.s
 darla75` queued behind `darla76` — a fresh random 25-map sample against all three
 lineages, ground the candidate was not selected on, which is the only instrument
 here with genuine run-to-run variance.
+
+## Iteration 76 — the type error is real, worth nothing, and NOT the cause of `S HOME`
+
+76/150 (50.7%). **17 maps diverge, 9 swept by `darla76` and 8 by the baseline** —
+a coin flip, +1 game.
+
+So the bug I diagnosed is real: on 17 of 75 maps a dry robot's nearest remembered
+tower was a **money** tower at least once, and preferring a paint tower changed
+play. It just does not matter to the outcome.
+
+**The registered falsifier fired, and it is the useful part of this run.**
+`Oasis` and `TheBest` — the two map-sides where `S HOME` was 63–79% of
+soldier-turns, the whole reason I built this — **both played 1–1 identical**. The
+paint-tower preference never changed a single decision there. So the stranded
+soldiers on those maps were already walking to paint towers, and tower *type* is
+not what strands them.
+
+**What does, read off the same replay:** our own paint towers' `tp=` at round 300
+on `Oasis` were `0, 5, 10, 55, 60, 65, 100, 110, 120, 125, 130`. Several are
+nearly dry, and the unlatch condition is *half capacity* — 100 for a soldier:
+
+```java
+static boolean walkHomeIfDry(int cap) {
+    if (paint >= cap / 2) { refilling = false; return false; }   // needs 100
+...
+static void refillIfPossible() {
+    int want = Math.min(cap - rc.getPaint(), ally.paintAmount);  // tower holds 5
+```
+
+A soldier arrives at a paint tower holding 5, takes 5, is still far below 100,
+**stays latched, and spends the rest of the game commuting to a tower that cannot
+fill it.** `rt=1, ht=416` is a supply failure, not a routing failure. The
+diagnosis was one level too shallow: I fixed *which* tower, and the problem is
+that the tower is empty.
+
+This also reframes `darla76` itself — the reason preferring paint towers is worth
+nothing is that on the maps where refill actually binds, the paint towers are dry
+too, so there was never a better tower to prefer.
+
+**`darla77` registered.** `refillIfPossible()` is called immediately before
+`walkHomeIfDry` for all three unit types (lines 494, 727, 761), so a robot still
+below half capacity while standing within transfer range of its target tower has
+*already* taken everything that tower had. One line:
+
+```java
+if (rc.getLocation().distanceSquaredTo(home) <= 2) { refilling = false; return false; }
+```
+
+r² ≤ 2 is exactly `refillIfPossible`'s own scan radius, so the two agree by
+construction. No constant changed; the latch threshold and `cap / 2` both stay.
+The claim is only that **queueing at a dry tower is strictly worse than acting
+with what you hold** — a soldier's attack costs 5 paint, so even 20 paint buys
+four painted tiles, against zero for waiting.
+
+Registered falsifier: if `rt` (latch count) climbs sharply while `ht` falls, the
+arm has traded one stuck soldier for a thrashing one — latch at 50, unlatch at a
+dry tower, paint down to 50, re-latch — and that is a refutation, not a win, even
+if the score moves.
