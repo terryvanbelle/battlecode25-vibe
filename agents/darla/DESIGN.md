@@ -2795,3 +2795,47 @@ time, and the only route left, since the head-to-head instrument is exhausted at
 if it decays toward zero, it joins the night's other +1s and the accepted build
 stands unchallenged. Either outcome is a decision rather than an open question,
 which is the thing this candidate currently lacks.
+
+# `darla65` — REJECTED on the pre-registered bar. 18 samples, 2,700 games.
+
+| | |
+|---|---|
+| fresh samples (n=18) | 110 103 105 104 110 90 105 107 109 113 120 100 91 98 102 114 97 95 |
+| pooled | **1873/2700 = 69.37%** |
+| baseline series | 68.80% (15 samples) |
+| **difference** | **+0.57 points, SE 1.77, t = 0.32** |
+| pre-registered bar | 2.0 sd |
+
+**Rejected.** And the shape of the decay is the part worth keeping: the estimate
+ran **+1.5 (n=4) → +0.3 (n=6) → +1.6 (n=10) → +2.5 (n=11) → +0.8 (n=15) → +0.57
+(n=18)**. At four samples it looked like a +1.5-point improvement worth shipping;
+at eighteen it is +0.57 with a standard error three times its size.
+
+**The head-to-head said +1.14 and the 2,700-game series says +0.32.** Both
+measured the same build against the same opponents. The head-to-head is a single
+draw of one 150-game instrument, and a single draw at +1.14 is what a zero effect
+produces about one time in eight. **The instrument was not wrong; reading one
+draw of it as an effect was.**
+
+**What this closes.** `darla65` was the strongest unadopted candidate this project
+produced: positive on two instruments, passing the carol check that killed the
+previous lead, firing at measured volume. All of that was true and none of it
+survived 2,700 games. The accepted build stands.
+
+## Standing at 65 arms
+
+**No change has beaten the accepted build since it was adopted.** What the session
+produced instead is a map of why: every constant bracketed on both sides, every
+engine mechanic tried including the first use of communication in this project,
+positioning closed on a stated mechanism, the large-map weakness measured and its
+one candidate fix shown to be a trade, the expansion spiral diagnosed and its
+trigger shown to be unavailable.
+
+The shipped build remains **42.0% against `v3`** (from carol's 24.7%), with
+absolute strength stable across 33 fresh samples.
+
+**And the methodological result is the one I would carry forward**: the only
+accept tonight came from an instrument built to match the question (paired, same
+maps), and every subsequent lead died on the instrument that could see what it
+cost. Both halves of that matter — the first found a real effect the screens
+could not, and the second killed four candidates the screens would have shipped.
