@@ -2640,3 +2640,33 @@ by a signal the engine does not provide.
 
 The shipped build stands at **42.0% against `v3`** — from carol's 24.7% best —
 and its own absolute strength has been stable across 21 fresh samples.
+
+## Iteration 64 — the local ruin signal is a provable NO-OP, because towers cannot see other ruins
+
+75/150 exactly, **all 75 maps splitting 1–1** — behaviourally identical to the
+baseline. The condition never fires, and the arithmetic says why:
+
+| | |
+|---|---|
+| tower vision radius | √20 = **4.5 tiles** |
+| median spacing between ruins | **9.4 tiles** (min 6.8, max 14.7 across 75 maps) |
+
+**A tower occupies a ruin and the next one is roughly twice its vision away.** So
+"can this tower see an unclaimed ruin?" is almost always *no*, whatever the state
+of the game. The signal I reached for is real and locally computable and simply
+**out of range**.
+
+**This was checkable in one line before running it**, from two numbers already in
+the repo — `VISION_RADIUS_SQUARED` and the ruin counts in
+`tools/mapdata/ruin_parity.txt`. It is the fourth guaranteed-identical comparison
+I have launched tonight, and the second where the check was arithmetic rather than
+judgement.
+
+**Expansion insurance: CLOSED for real now**, and the closure is sharper than the
+earlier "unimplementable". Three triggers tried: team tower count (fires all
+opening, −6.54 sd), stall detection (cannot distinguish stalled from complete,
+−4.58 sd), local ruin sighting (out of range, no-op). The spiral is real; the
+engine gives towers neither the range nor the team-wide state to detect it, and
+the one remaining route — inter-robot communication — is a capability no lineage
+in this project has ever used and a far larger undertaking than a spawn-rule
+tweak.
