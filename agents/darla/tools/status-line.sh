@@ -5,6 +5,7 @@
 # "waiting" and "doing nothing" look identical. This makes the difference visible
 # without them having to ask.
 set -uo pipefail
+source "$(dirname "${BASH_SOURCE[0]}")/jobs.sh"
 cd /home/terryvanbelle/projects/vibe/2025/agents/darla
 
 # The LIVE run is the newest one with no summary.txt: a summary is written at
@@ -42,7 +43,7 @@ g=$(pgrep -fc '\.reexec-gauntlet\.sh' 2>/dev/null || true)
 # line under-reported the queue until it was noticed by hand -- the same
 # 'watcher does not know about a new producer' shape as the monitor and
 # vm-prune bugs. Match the shared suffix instead.
-waiting=$(ps -eo args | grep -cE '[h]ead-to-head\.sh|[r]eplicate\.sh|[d]arla-largemap\.sh' || true)
+waiting=$(ps -eo args | grep -cE "$EVAL_JOB_RE" || true)
 q=$(grep -cvE '^\s*(#|$)' progress/pending-arms.txt 2>/dev/null || true)
 
 if [ "${g:-0}" -gt 0 ]; then

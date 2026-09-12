@@ -18,6 +18,7 @@
 #   * it extends a time series that currently has ONE date on it.
 # It never touches src/, never commits, and cannot change what plays anywhere.
 set -uo pipefail
+source "$(dirname "${BASH_SOURCE[0]}")/jobs.sh"
 WS=/home/terryvanbelle/projects/vibe/2025/agents/darla
 VENV=/home/terryvanbelle/projects/vibe/2025/tools/.venv/bin/python3
 cd "$WS"
@@ -39,7 +40,7 @@ while true; do
   # darla-largemap.sh was added it was starved exactly as the head-to-heads had
   # been -- the fourth time tonight a hardcoded list of job types went stale as
   # the system grew. The suffix is the contract: any evaluation script.
-  waiting=$(pgrep -fc 'head-to-head\.sh|replicate\.sh|darla-largemap\.sh' 2>/dev/null || true)
+  waiting=$(pgrep -fc "$EVAL_JOB_RE" 2>/dev/null || true)
   if [ "${waiting:-0}" -gt 0 ]; then
     sleep 60
     continue

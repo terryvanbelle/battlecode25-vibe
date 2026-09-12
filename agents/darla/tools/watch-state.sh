@@ -13,6 +13,7 @@
 # before. A new kind of producer is covered automatically, because every producer
 # ends by writing a summary.
 set -uo pipefail
+source "$(dirname "${BASH_SOURCE[0]}")/jobs.sh"
 cd /home/terryvanbelle/projects/vibe/2025/agents/darla
 SEEN=/tmp/darla-seen-runs.txt
 touch "$SEEN"
@@ -40,7 +41,7 @@ while true; do
 
   q=$(grep -cvE '^\s*(#|$)' progress/pending-arms.txt 2>/dev/null || true)
   g=$(pgrep -fc '\.reexec-gauntlet\.sh' 2>/dev/null || true)
-  h=$(pgrep -fc 'head-to-head\.sh|replicate\.sh' 2>/dev/null || true)
+  h=$(pgrep -fc "$EVAL_JOB_RE" 2>/dev/null || true)
   if [ "${q:-0}" -eq 0 ] && [ "${g:-0}" -eq 0 ] && [ "${h:-0}" -eq 0 ]; then
     echo "IDLE  nothing queued, nothing running, nothing waiting -- the VM has no work"
     sleep 300
