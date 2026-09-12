@@ -3420,3 +3420,23 @@ instrument gap: **the same build, changing nothing, moved 16 games** — larger
 than `darla77`'s entire +12 head-to-head effect. Any conclusion drawn from a
 single fresh sample about an effect of that size is noise. The 450-game paired
 runs are queued for exactly this reason.
+
+### `darla75` on the 450-game paired instrument: 309/450 (68.7%) — reference still pending
+
+First run of `tools/paired-roster.sh`. Per opponent:
+
+| opponent | won | win% |
+|---|---|---|
+| alice | 94/150 | 62.7% |
+| bob | 110/150 | 73.3% |
+| carol | 105/150 | 70.0% |
+
+**This number decides nothing on its own.** The instrument's whole point is
+pairing on (opponent, map, side), and the baseline's own 450-game run — the
+reference every key is paired against — has not run yet: all three paired jobs
+wait on the same lock and `darla75` then `darla77` won the race ahead of it.
+Comparing 68.7% here against the baseline's fresh-sample mean of 68.0% would be
+comparing all 75 maps to a random 25 of them, which is exactly the
+apples-to-oranges the paired design exists to avoid.
+
+`darla75` remains **undecided**; the comparison is one run away.
