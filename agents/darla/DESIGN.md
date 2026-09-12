@@ -3407,3 +3407,16 @@ n=18; one head-to-head is one draw. `tools/paired-roster.sh darla77` queued —
 450 games against all three lineages on all 75 maps, which is the instrument
 built two entries ago for exactly this decision. The baseline's 450-game
 reference is queued ahead of it.
+
+### Baseline fresh sample 38: 86/150 — and it sharpens the point above
+
+An unchanged baseline scored **86/150 (57.3%)** on run `20260912-170047`,
+**−2.08 sd** and the second-lowest of its 38 samples. Updated distribution:
+**mean 102.0, sd 7.71** (was 102.5 / 7.34), which moves `darla75`'s replication
+to +0.13 sd.
+
+Worth recording because it is the cleanest possible demonstration of the
+instrument gap: **the same build, changing nothing, moved 16 games** — larger
+than `darla77`'s entire +12 head-to-head effect. Any conclusion drawn from a
+single fresh sample about an effect of that size is noise. The 450-game paired
+runs are queued for exactly this reason.
