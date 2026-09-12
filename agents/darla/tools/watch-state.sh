@@ -43,7 +43,17 @@ while true; do
   g=$(pgrep -fc '\.reexec-gauntlet\.sh' 2>/dev/null || true)
   h=$(pgrep -fc "$EVAL_JOB_RE" 2>/dev/null || true)
   if [ "${q:-0}" -eq 0 ] && [ "${g:-0}" -eq 0 ] && [ "${h:-0}" -eq 0 ]; then
-    echo "IDLE  nothing queued, nothing running, nothing waiting -- the VM has no work"
+    # Only a HANDOVER-free idle counts. A queued job polls every 60s, so the gap
+    # between runs briefly looks idle and produced two false alarms; the status
+    # line already distinguishes these and the watcher -- the thing that actually
+    # wakes the session -- must too.
+    sleep 75
+    q2=$(grep -cvE '^\s*(#|$)' progress/pending-arms.txt 2>/dev/null || true)
+    g2=$(pgrep -fc '\.reexec-gauntlet\.sh' 2>/dev/null || true)
+    h2=$(pgrep -fc "$EVAL_JOB_RE" 2>/dev/null || true)
+    if [ "${q2:-0}" -eq 0 ] && [ "${g2:-0}" -eq 0 ] && [ "${h2:-0}" -eq 0 ]; then
+      echo "IDLE  nothing queued, nothing running, nothing waiting -- the VM has no work"
+    fi
     sleep 300
   fi
   sleep 60

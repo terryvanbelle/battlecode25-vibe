@@ -2459,3 +2459,22 @@ extends below the 1,600-tile cutoff.
 The baseline's medium-band run returned **40/48, identical to `darla56`'s**, which
 confirms the no-op diagnosis empirically rather than by reading the code alone.
 It is also the control `darla59` needs, so the wasted run is not wasted twice.
+
+## Iteration 59 — the map-size rule on medium maps: null
+
+`darla59` (threshold moved to 1,200, so medium maps get the large-map treatment)
+scored **41/48 against the baseline's 40/48** on the same 48 games. Paired: 37
+identical outcomes, 6 won only by `darla59`, 5 only by the baseline —
+**McNemar z = +0.30 on 11 discordant games.**
+
+So the treatment that leans positive on large maps does **nothing** on medium
+ones, which is a cleaner boundary than the size split alone suggested: the effect
+is specific to genuinely large maps rather than scaling smoothly with area. With
+only 11 discordant games the medium band is also nearly exhausted as an
+instrument — 37 of 48 games are identical whatever the rule says.
+
+**Where that leaves the large-map question.** The only real evidence remains the
+large-band pair: +7 games, z = +1.12, 39 discordant. The large band is fully
+consumed and the medium band says the effect does not extend downward, so there
+is no cheap way to add power to this axis. It stays an open lead, honestly
+labelled as one, rather than a result.
