@@ -2409,3 +2409,35 @@ that could have caught this: the screen plays alice and bob.
 The second is noisier per game and is the only one that can answer the question I
 now have. `darla56` re-run against alice and bob on large maps is the correct
 test, and it is queued.
+
+## The large-map test, measured with the right instrument: +4.7 points, z = +1.12 — promising, not proven
+
+`darla56` (50% splashers on large maps) against alice and bob, on the 37 large
+maps, both sides — with the **baseline run on exactly the same 148 games**:
+
+| | large-map score |
+|---|---|
+| accepted baseline | 69/148 — 46.6% |
+| **`darla56`** | **76/148 — 51.4%** |
+| paired difference | **+7 games, +4.7 points** |
+
+Because the engine is deterministic and both runs used the same pinned maps,
+opponents and sides, the comparison is **paired game-for-game**: 109 of 148 games
+had identical outcomes, and of the 39 that differed, `darla56` won 23 and the
+baseline 16. **McNemar z = +1.12** — the right direction, not yet significant.
+
+**Two things this settles regardless of significance.**
+
+1. **The earlier null was an instrument artefact, as diagnosed.** The same arm
+   measured head-to-head against the accepted build scored exactly 75/150 — dead
+   level — because that instrument plays a carol-shaped opponent, and carol shows
+   no size effect at all. Against the opponents that *do* exercise the weakness,
+   the same code leans positive. The prediction that the null was uninformative
+   rather than negative is confirmed.
+2. **109 identical games out of 148** is itself informative: the mix change only
+   alters about a quarter of large-map games, which bounds how much any
+   mix-based fix can possibly be worth.
+
+**Next**: this needs more power, not another idea. The cheapest way to get it is
+more large maps games of the same pair — the discordant count is what carries the
+signal, and 39 discordant games is a small sample of the thing being measured.
