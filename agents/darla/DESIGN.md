@@ -2335,3 +2335,29 @@ scored 48.2% there, worse than the current 56.4%. More splashers helped large
 maps too, just less. So the weakness is not "too few soldiers for a big map"; it
 is something about large maps that neither mix addresses, and the next arm has to
 find out what rather than assume.
+
+## Iteration 56 — the map-size-adaptive mix: null, and the split confirms the arm did exactly what it should
+
+75/150 overall, and splitting by the axis the arm keys on:
+
+| | result | identical-play maps |
+|---|---|---|
+| small (<1600 tiles) | 38/76 — 50.0% | **38 of 38** |
+| large (≥1600) | 37/74 — 50.0% | 21 of 37 |
+
+**The mechanism is verified by construction.** On small maps the arm is the
+baseline by definition, and all 38 split 1–1 — exactly the identical-play
+signature. On large maps, where it switches to 50% splashers, **16 of 37 maps
+diverge** and the result is still dead level.
+
+So fewer splashers on large maps is **neither better nor worse**, which together
+with `darla57`'s mis-specification leaves the upper side to `darla58`. The
+large-map weakness is real (56.4% against 82.3%) and the mix is not the lever
+for it — the same conclusion the pooled pre/post table already implied, now
+tested directly rather than inferred.
+
+**Worth noting what this arm demonstrates methodologically**: keying a rule on
+map geometry is legal, symmetric, and costs nothing — both teams and every robot
+compute the same value from the same map, so no communication or side-asymmetry
+is introduced. That makes map-conditioned policy a usable tool for any future
+regime split, even though this particular split found nothing.
