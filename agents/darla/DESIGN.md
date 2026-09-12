@@ -2604,3 +2604,39 @@ frozen".
 count has not increased for 150 rounds. That is inert in a healthy opening,
 because a healthy opening is adding towers continuously, and fires exactly in the
 state the contrast census identified.
+
+## Iteration 63 — stall-triggered insurance also fails, and the line CLOSES on an unavailable signal
+
+40/150 (26.7%), against `darla62`'s 35/150. Both attempts are catastrophic, and
+they fail for the same underlying reason.
+
+**"Expansion has stalled" and "expansion is complete" are the same observation.**
+When every reachable ruin has been claimed, the team's tower count plateaus
+permanently — which is the *healthy* end state of a won game, and is
+indistinguishable from the death spiral by tower count alone. Once the rule
+latches it never releases, so the whole late game is built with soldiers only,
+which deletes the splasher production that the accepted build depends on. That is
+why 150-round stall detection scores about the same as the cruder threshold.
+
+**The signal that would separate them is "are there unclaimed ruins left?", and
+the bot cannot cheaply have it.** A robot senses ruins within its own vision;
+there is no team-wide count, and building one would need communication, which
+this design has never used and which would have to be symmetric and agreed across
+every tower. Per-robot vision cannot distinguish "no ruins near me" from "no ruins
+anywhere".
+
+**Expansion insurance: CLOSED, `gate-unimplementable`.** The diagnosis behind it
+stands — the contrast census showing 6 frozen towers against alice's 25 is real,
+and the death spiral is a genuine failure mode. What does not exist is a trigger
+the engine lets this design compute.
+
+### Where 63 arms leave the build
+
+**Nothing has beaten the accepted build since it was adopted.** Thirty-plus arms
+against it: every constant bracketed, every engine mechanic tried, positioning
+closed on a stated mechanism, the one lead (large-map mix) shown to be a trade
+rather than a gain, and the one genuine diagnosis (the expansion spiral) blocked
+by a signal the engine does not provide.
+
+The shipped build stands at **42.0% against `v3`** — from carol's 24.7% best —
+and its own absolute strength has been stable across 21 fresh samples.
