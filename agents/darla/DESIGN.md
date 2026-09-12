@@ -2478,3 +2478,27 @@ large-band pair: +7 games, z = +1.12, 39 discordant. The large band is fully
 consumed and the medium band says the effect does not extend downward, so there
 is no cheap way to add power to this axis. It stays an open lead, honestly
 labelled as one, rather than a result.
+
+## Iteration 60 — the large-map dose curve turns over
+
+Large band (37 maps, alice + bob, both sides, 148 games), each paired against the
+baseline's own run on the identical games:
+
+| large-map mix | arm | score | paired (arm / base) | z |
+|---|---|---|---|---|
+| 70% spl / 20% sold (baseline) | — | 69/148 | — | — |
+| **50% spl / 40% sold** | `darla56` | **76/148** | 23 / 16 | **+1.12** |
+| 30% spl / 60% sold | `darla60` | 66/148 | 19 / 22 | −0.47 |
+
+**So the lead has a shape, not just a sign.** Pushing the large-map mix further
+toward soldiers past 50% gives the gain back — 30% splasher is slightly *worse*
+than doing nothing. That makes `darla56`'s +1.12 more interesting than a lone
+positive would be: it sits at an interior point with a turnover on the far side,
+which is what a real optimum looks like and what pure noise usually does not
+produce.
+
+It remains under the significance line. `darla61` (40% spl / 50% sold) is running
+and sits between the two measured points; if the curve is real it should land
+between +1.12 and −0.47, and if it lands outside that range the shape was noise.
+That is a genuine out-of-sample prediction on an axis that costs nothing extra to
+test, rather than another arm chosen because it was available.
