@@ -3690,3 +3690,19 @@ a bot with no moppers is the right bot. That is an army-composition question
 touching an accepted iteration, and it needs its own measurement — not a
 follow-on to a hand-off that never fired. `darla80`, already queued, is on the
 other live thread (`RESEARCH.md` §5, movement).
+
+### Promotion test: **87/150 exactly**, as determinism required
+
+`src/darla` (`darla-i2`) against the frozen `src/darla_iter1`: **87/150** — the
+same number, not merely a similar one, as `darla77` against `darla` before the
+promotion. The engine is deterministic, so identical code on identical maps must
+return identical games; any other value would have meant the promotion edit was
+not what I thought it was.
+
+That is the second independent confirmation, after `darla78` reproduced
+`darla77`'s exact 41–22 of 63 discordant pairs against the `i1` reference from a
+build compiled after the promotion. `src/darla_i1`, kept only until this test
+finished, is removed; `src/darla_iter1` is the canonical freeze.
+
+A cheap habit worth keeping: **on a deterministic engine, a promotion has an
+exact expected value, so it can be checked rather than trusted.**
