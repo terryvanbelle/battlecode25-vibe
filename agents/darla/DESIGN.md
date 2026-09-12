@@ -2267,3 +2267,23 @@ makes impossible.
 a paired head-to-head is worth two seconds of checking, because it distinguishes
 "genuinely neutral" from "never ran" at no cost. Compare `darla42`, which also
 scored exactly 75/150 but diverged on 8 maps — same number, different fact.
+
+## Iteration 55 — defense towers: null (−0.98 sd). The last unused engine mechanic is closed.
+
+69/150 (46.0%). Routing roughly one ruin in seven to a `LEVEL_ONE_DEFENSE_TOWER`
+— a unit type **no lineage in this project has ever built** — costs nothing
+measurable and gains nothing.
+
+That is the expected answer for a coherent reason: a defense tower produces
+neither paint nor chips, and this game is decided by paint coverage in 96.5% of
+matches. Trading one producing tower in seven for a stronger gun buys defence of
+something that is never attacked — **no tower dies in these matchups at all**. The
+result is null rather than negative because one ruin in seven is a small enough
+share of the economy for the loss to sit under the floor.
+
+**With this, every mechanic the engine offers has been tried by this lineage**:
+resource patterns (closed by alice), defense towers (here), robot-to-robot paint
+transfer (unimplementable — only moppers may, and moppers are structurally
+absent), tower upgrades (already in use), and the full unit roster. There is no
+remaining unused capability to reach for; further gains have to come from using
+the existing ones better.
