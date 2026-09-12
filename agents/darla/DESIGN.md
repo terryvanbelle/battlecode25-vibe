@@ -2952,3 +2952,33 @@ That leaves `BAN_CAP` and `SEEN_CAP` as the last two never-varied constants, and
 both are capacities rather than thresholds — so by the rule `darla69` just earned,
 they get an instrumented check for whether the cap is ever reached *before* any
 150-game run is spent on them.
+
+## Iteration 71 — symmetry inference fires, and is null (−0.49 sd)
+
+72/150 (48.0%). **The mechanism now runs**: 17 of 75 maps diverge from the
+baseline, and the counter reads `sy=0/3` to `sy=0/4` — soldiers take the
+symmetry heading a handful of times per game.
+
+**But the first number is the informative one: eliminations are ZERO.** No
+candidate symmetry is ever ruled out, because ruling one out requires *seeing*
+the mirrored location, which sits across the map. So the arm is not running the
+derivation `RESEARCH.md` describes at all — it is running an un-eliminated
+**guess** at the rotational mirror. The limitation I registered before the run is
+what actually happened.
+
+**So this does not test the idea.** It tests "send idle soldiers toward the
+180°-rotated image of a friendly tower", which is a fixed guess that is right on
+rotational maps and wrong on the other two. Against that, −0.49 sd is about what
+a coin-flip heading should score.
+
+**What a real test needs**, stated so the next attempt does not repeat this:
+elimination must use evidence a robot *actually gathers*, not a location it must
+travel to. The candidates differ in where they map **nearby terrain**, so the
+check should compare observed walls against each candidate's prediction for tiles
+already in vision — every wall seen constrains every candidate immediately, with
+no travel. That is the version `RESEARCH.md` means by "eliminate them as terrain
+is observed", and I implemented the one check that needs a journey instead.
+
+**Recorded as `untested`, not refuted** — and the third arm tonight where the
+mechanism fired but on a degraded version of the intended signal (`darla49` out
+of range, `darla64` out of range, this one un-eliminated).
