@@ -2441,3 +2441,17 @@ baseline 16. **McNemar z = +1.12** — the right direction, not yet significant.
 **Next**: this needs more power, not another idea. The cheapest way to get it is
 more large maps games of the same pair — the discordant count is what carries the
 signal, and 39 discordant games is a small sample of the thing being measured.
+
+### Determinism, demonstrated rather than asserted
+
+The accidental repeat of `darla56`'s large-map run returned **76/148 — identical
+to `20260912-021951`**, as it had to: same build, same 37 pinned maps, same
+opponents, deterministic engine. I had written this lesson three hours earlier
+about the benchmark and then queued two repeat runs anyway while saying the
+result "needs more power".
+
+**Repetition is never power here.** On a fixed map list the only sources of new
+information are a different build, different opponents, or different maps. The
+large band (37 maps, 148 games) is fully consumed; the medium band (12 maps, 48
+games) is the untouched ground, and it doubles as a test of whether the effect
+extends below the 1,600-tile cutoff.
