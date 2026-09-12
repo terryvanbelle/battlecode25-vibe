@@ -3231,3 +3231,35 @@ reported "6 changed line(s)" where 4 were intended, which is what made me look.
 The rebuild addresses the three lines **by line number**, which is exact here
 because no edit changes the line count. The arm-builder's diff count earned its
 keep a second time.
+
+## Iteration 75 — soonest-lapsing eviction: +4, and every diverging map swept
+
+79/150 (52.7%). On its own that is +0.65 sd and unremarkable. The map-level
+breakdown is not:
+
+| | |
+|---|---|
+| maps playing 1–1 (identical) | **71 of 75** |
+| maps diverging | **4** |
+| of those, won 2–0 by `darla75` | **4 of 4** |
+
+So the saturated path is as rare as the `bp` census said — the eviction policy
+changes nothing whatever on 71 maps — and on every map where it changes anything
+at all, the new policy wins **both sides**. Given divergence, direction is the
+informative quantity, and 4/4 one-sided is p ≈ 0.06. Suggestive, not decided, on
+n = 4 maps.
+
+**One registered prediction was wrong and is recorded as such.** I predicted the
+gain would concentrate on ruin-dense maps, since that is where `bp` reaches 9.
+The four diverging maps have **20, 20, 18, 16** ruins — `Dominoes`,
+`DefaultLarge`, `Barcode`, `AlarmClock`. `Leaf` (52), `DefaultHuge` (49) and
+`DonkeyKong` (46), the three maps the census actually caught saturating, all
+played 1–1. So saturation is necessary but plainly not sufficient: it matters
+where the *discarded* ban was about to be needed again, which is a property of
+ruin layout and soldier routing, not of ruin count.
+
+**Not accepted.** The engine is deterministic, so re-running this head-to-head
+returns byte-identical games and cannot corroborate anything. `tools/replicate.sh
+darla75` queued behind `darla76` — a fresh random 25-map sample against all three
+lineages, ground the candidate was not selected on, which is the only instrument
+here with genuine run-to-run variance.
