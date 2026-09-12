@@ -3321,3 +3321,34 @@ Registered falsifier: if `rt` (latch count) climbs sharply while `ht` falls, the
 arm has traded one stuck soldier for a thrashing one — latch at 50, unlatch at a
 dry tower, paint down to 50, re-latch — and that is a refutation, not a win, even
 if the score moves.
+
+## `darla75` replication — and the discovery that neither instrument can decide it
+
+Fresh random 25-map sample against all three lineages: **103/150 (68.7%)**.
+Against the shipped build's own 37 fresh samples — mean **102.5/150**, sd
+**7.34** — that is **+0.07 sd**.
+
+**That is not evidence that `darla75` does nothing.** It is an instrument that
+cannot see the effect in question. The two instruments in use have a gap between
+them that this arm fell straight into:
+
+| instrument | pairing | what limits it | verdict on `darla75` |
+|---|---|---|---|
+| head-to-head, 150 games | exact, on (map, side) | **discordant maps** — only 4 of 75 diverge | 4/4 swept, p ≈ 0.06 |
+| `replicate.sh`, 150 games | none; fresh 25-map sample | sd 7.34 ⇒ 2-sd floor ≈ **15 games** | +0.07 sd |
+
+A change that fires on a rare code path diverges on a handful of maps, so the
+paired instrument runs out of discordant pairs, and determinism forbids simply
+re-running it. Meanwhile the unpaired instrument's floor is four times the effect
+size. **Every future small-effect arm hits this same wall**, so the fix belongs in
+the instrument, not in this arm.
+
+**`tools/paired-roster.sh`** — the candidate against all three lineages on all 75
+maps, both sides: **450 games**, paired on **(opponent, map, side)** instead of
+(map, side). Same exact pairing, three times the keys, so roughly three times the
+discordant pairs. The baseline's own 450-game run is the shared reference and is
+computed once; every later arm compares against it for free.
+
+Queued: the baseline reference, then `darla75` on the same ground. `darla75` stays
+**undecided** until then — the 4/4 sweep is too suggestive to reject and far too
+thin to accept.
