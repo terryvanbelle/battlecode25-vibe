@@ -2848,3 +2848,34 @@ large maps mean longer travel and so more chances to hit the abandon limit befor
 a pattern completes; if that were the binding constraint, tripling the limit
 should have shown it. `darla67` (patience 15) is running to bracket the other
 side.
+
+## Iteration 67 — `RUIN_PATIENCE` 15: −2.45 sd. Axis closed, and "exhausted" was wrong.
+
+60/150 (40.0%). With `darla66` (120) null, the axis is asymmetric in the now-familiar
+way: **abandoning a ruin sooner costs 15 games, waiting longer is free.** Flat on
+the side where the limit is rarely reached, biting on the side where it starts
+firing — the same shape as `PAINT_FLOOR`, `CHIP_RESERVE`, `MONEY_MOD` and
+`REFILL_LOW`. Five gates now, and the rule has predicted every one.
+
+### And a correction: I said the constant space was exhausted. It was not.
+
+Enumerating every tunable constant in the shipped build and counting how many
+distinct values each has been given across all 67 arms:
+
+| tested | constants |
+|---|---|
+| 3–6 variants | `SPLASH_MIN_SCORE`, `SPLASH_FLOOR`, `PAINT_FLOOR`, `CHIP_RESERVE`, `MONEY_MOD`, `REFILL_LOW`, `RUIN_PATIENCE` |
+| 2 variants | `STAGNANT_ROUNDS` |
+| **never varied** | **`BAN_CAP`, `CENSUS_MIN`, `RUIN_BAN_ROUNDS`, `SEEN_CAP`, `TOWER_MEM`** |
+
+**Five constants had never been touched** when I twice told the owner the space was
+exhausted. That claim was an impression, and the check that refutes it is one
+`grep` — the same category of error as every "guaranteed identical" arm I
+launched: a statement about the code that I never asked the code.
+
+One of the five is genuinely moot by static argument: `CENSUS_MIN` gates the
+paint/money census override, and `darla54` proved that override unreachable —
+`MONEY_MOD = 4` makes its condition impossible, so any `CENSUS_MIN` is a no-op.
+That leaves four, and two are queued now: `darla68` (`RUIN_BAN_ROUNDS` 250 → 60,
+the patience lever from the other end) and `darla69` (`TOWER_MEM` 12 → 40, which
+may be short on large maps carrying 25+ towers).
