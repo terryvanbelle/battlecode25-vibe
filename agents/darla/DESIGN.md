@@ -3525,3 +3525,32 @@ to `darla-i1`.
 (`darla-i2`) against the frozen `src/darla_i1` must return **exactly 87/150** —
 byte-identical to `darla77` vs `darla`, because the code is byte-identical. Any
 other number means the promotion edit is not what I think it is.
+
+### Bookkeeping after the accept: the two builds' samples must not pool
+
+The first fresh sample of `darla-i2` landed immediately — `20260912-192736`,
+**100/150 (66.7%)**, alice 66.0 / bob 72.0 / carol 62.0. Against `darla-i1`'s 38
+samples (mean 102.0, sd 7.71) that is −0.26 sd, which as established says nothing
+either way about a +19/450 effect; it is recorded, not interpreted.
+
+The trap it exposed is real. Every row in `vs_old_bots_history.csv` carried the
+label `darla_iter0+cand` — "something after iteration 0, not yet accepted" —
+which was correct for all 38 `i1` samples and would have been silently applied to
+every `i2` sample too, pooling two different builds into one distribution and
+inflating the sd that every future accept decision is measured against.
+
+Two corrections:
+
+1. **The freeze is named `src/darla_iter1`**, not `darla_i1`. `iterN` is the
+   convention the tracker's `resolve_cand` already understands, and the rest of
+   the project uses. (`src/darla_i1` stays on disk only until the in-flight
+   promotion test, launched against that name, finishes.)
+2. The new sample is recorded as **`darla_iter1+cand`**, so `i1` and `i2` samples
+   are separable from here on.
+
+`tools/track_vs_old_bots.py --all` is **not** the way to do this, and the attempt
+is worth recording: it backfilled every arm's screening run into a file that had
+only ever held baseline roster runs — 140 rows to 431 — and relabelled the `i2`
+sample as `darla_iter1`, since `resolve_cand` cannot tell which `+cand` rows
+predate an accept and which follow it. Reverted with `git checkout`. The file is
+curated, not derived.

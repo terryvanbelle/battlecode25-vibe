@@ -12,8 +12,20 @@ cd /home/terryvanbelle/projects/vibe/2025/agents/darla
 # collation, so its absence means still playing. `ls -t | head -1` was wrong --
 # collation rewrites mtimes, so a just-finished run looks newest and the line
 # named darla33 (long finished) while darla35 was actually playing.
-run=$(for d in $(ls -1t gauntlet 2>/dev/null); do
-        [ -f "gauntlet/$d/summary.txt" ] || { echo "$d"; break; }
+# 2026-09-12: mtime order was still wrong in the other direction. Five run dirs
+# from the 09-11 outage have no summary.txt and no results.txt -- they are 0-game
+# orphans -- and whenever the genuinely live run had not yet written results.txt,
+# this loop fell through to one of them and reported "darla25 0 games (2111m in)",
+# a 35-hour-old ghost. Directory names ARE timestamps, so sort by NAME, which no
+# amount of collation can rewrite, and skip a dir that has neither summary nor
+# results and is older than 15 minutes: that combination is only ever an orphan.
+run=$(now=$(date +%s); for d in $(ls -1 gauntlet 2>/dev/null | sort -r); do
+        [ -f "gauntlet/$d/summary.txt" ] && continue
+        if [ ! -f "gauntlet/$d/results.txt" ]; then
+          m=$(stat -c %Y "gauntlet/$d" 2>/dev/null || echo 0)
+          [ $(( now - m )) -gt 900 ] && continue
+        fi
+        echo "$d"; break
       done)
 prog=""
 # Show elapsed time always, and 0 games explicitly. A blank count on a run that
