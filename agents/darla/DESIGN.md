@@ -3440,3 +3440,38 @@ comparing all 75 maps to a random 25 of them, which is exactly the
 apples-to-oranges the paired design exists to avoid.
 
 `darla75` remains **undecided**; the comparison is one run away.
+
+## `darla77` on the 450-game paired instrument: 326/450 (72.4%), and the instrument earns its keep
+
+Per opponent:
+
+| opponent | won | win% |
+|---|---|---|
+| alice | 100/150 | 66.7% |
+| bob | 113/150 | 75.3% |
+| carol | 113/150 | 75.3% |
+
+`darla75` ran the identical instrument (same 75 maps, same three lineages, same
+sides), so those two runs are **paired on all 450 keys** without needing the
+baseline reference. McNemar on (opponent, map, side):
+
+| | |
+|---|---|
+| shared keys | **450** |
+| `darla77` wins where `darla75` loses | **39** |
+| `darla75` wins where `darla77` loses | **22** |
+| discordant pairs | **61** |
+| χ² | **4.74** (z = 2.18, p ≈ 0.029) |
+
+**61 discordant pairs, against 4 in `darla75`'s head-to-head.** That is the whole
+argument for building `paired-roster.sh`: fifteen times the usable evidence from
+three times the games, because the pairing is preserved while the keys multiply.
+The old choice was an exact instrument with nothing to measure or a noisy one with
+a floor four times the effect size.
+
+`darla77` is now ahead of `darla75` at z = 2.18 and ahead of the **baseline** by
++12 games (z ≈ 1.96) on the head-to-head. Two instruments, two references, same
+direction. The baseline's own 450-game reference is the one remaining run and
+gives `darla77` a direct 450-key comparison — that is the acceptance decision,
+and it is deliberately the last thing standing between this arm and the shipped
+build.
