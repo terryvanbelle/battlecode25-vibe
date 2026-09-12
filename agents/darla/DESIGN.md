@@ -2695,3 +2695,32 @@ be checked against the opponent it was not designed for, **before** any decision
 fires whenever a soldier finds an unclaimed ruin, which happens in every game
 against every opponent. Its per-opponent split is therefore a real test rather
 than a formality, and it is the next thing to run.
+
+## `darla65` passes the check that killed `darla56`
+
+Against **carol** on large maps — the opponent and regime where the previous lead
+turned out to be a trade — paired on the same 74 games:
+
+| | vs carol, large maps | z |
+|---|---|---|
+| `darla56` (the killed lead) | **−5 games** | −1.00 |
+| **`darla65`** | **−1 game** | **−0.30** |
+
+`darla65` costs essentially nothing against the same-economy opponent, where
+`darla56` gave back everything it gained. That is the difference between a rule
+that redistributes wins and one that adds them — and it is exactly the property I
+argued for when the trade finding landed: **prefer a change that helps uniformly
+over one that trades, independently of measured net.**
+
+**Current standing for `darla65`:**
+
+| measurement | result |
+|---|---|
+| head-to-head vs the accepted build (all maps) | 82/150, **z = +1.14** |
+| vs carol, large maps | −1 game, z = −0.30 |
+| mechanism | soldiers sent 36, towers heard 100 — live at volume |
+
+Still under the significance bar, and I am not accepting on +1.14. But unlike
+every previous lead tonight it has now survived the check designed to kill it,
+and the remaining question is power rather than direction. `darla65` against
+alice and bob on large maps is running.
