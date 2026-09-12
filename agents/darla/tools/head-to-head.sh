@@ -22,10 +22,19 @@ ARM="${1:?usage: head-to-head.sh <package> [reference]}"
 # baseline and is the right reference for anything comparing against it.
 REF="${2:-darla_iter0}"
 cd /home/terryvanbelle/projects/vibe/2025/agents/darla
+
+# Serialize evaluation drivers. The wait-loop below is check-then-act: two drivers
+# can both observe "no gauntlet running" in the same second, and on 2026-09-12 that
+# put a 450-game paired run and a 150-game head-to-head into ONE output directory --
+# the paired run collated the other's games as its own and lost all 450 of its own.
+# They also share one VM workspace, so concurrency risks more than directory names.
+# Hold a lock for the whole run; 201>&- keeps the gauntlet child from inheriting it.
+exec 201>/tmp/darla-eval-driver.lock
+flock 201
 while [ "$(grep -cvE '^\s*(#|$)' progress/pending-arms.txt 2>/dev/null || true)" -gt 0 ] \
    || pgrep -f '\.reexec-gauntlet\.sh' > /dev/null; do sleep 60; done
 echo "$(date -uIs) H2H START $ARM vs $REF -- all 75 maps, both sides"
 MAPS="$(tr '\n' ' ' < ../../tools/bc25-maps.txt)" BOT="$ARM" OPPONENTS="$REF" MAXJOBS=2 \
-  ../../tools/gauntlet.sh || { echo "$(date -uIs) H2H ERROR $ARM"; exit 1; }
+  ../../tools/gauntlet.sh 201>&- || { echo "$(date -uIs) H2H ERROR $ARM"; exit 1; }
 run=$(ls -1t gauntlet | head -1)
 echo "$(date -uIs) H2H COMPLETE $ARM $run -- $(grep -E '^overall' gauntlet/$run/summary.txt)"

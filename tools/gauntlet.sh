@@ -84,6 +84,18 @@ fi
 MAPS="$(printf '%s ' $MAPS)"
 
 RUN_ID="$(date +%Y%m%d-%H%M%S)"
+# 2026-09-12: two drivers that started in the SAME SECOND got the same RUN_ID and
+# the same output directory. darla82's head-to-head and a 450-game paired run both
+# wrote to gauntlet/20260912-214531; the paired run then collated the other run's
+# 150 games and reported them as its own result, and its own 450 games were lost.
+# Timestamps to the second are not unique under a queue that releases several jobs
+# at once. Claim the directory atomically instead: mkdir without -p fails if it
+# already exists, so the loser takes the next id rather than sharing.
+while ! mkdir "$WS_DIR/gauntlet/$RUN_ID" 2>/dev/null; do
+  RUN_ID="$(date +%Y%m%d-%H%M%S)-$$"
+  [ -d "$WS_DIR/gauntlet/$RUN_ID" ] || break
+  sleep 1
+done
 OUT="$WS_DIR/gauntlet/$RUN_ID"
 mkdir -p "$OUT/losses"
 NGAMES=$(( $(echo "$OPPONENTS" | wc -w) * $(echo "$MAPS" | wc -w) * 2 ))

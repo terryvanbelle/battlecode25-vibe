@@ -14,6 +14,15 @@ set -uo pipefail
 ARM="${1:?usage: replicate.sh <package>}"
 cd /home/terryvanbelle/projects/vibe/2025/agents/darla
 
+# Serialize evaluation drivers. The wait-loop below is check-then-act: two drivers
+# can both observe "no gauntlet running" in the same second, and on 2026-09-12 that
+# put a 450-game paired run and a 150-game head-to-head into ONE output directory --
+# the paired run collated the other's games as its own and lost all 450 of its own.
+# They also share one VM workspace, so concurrency risks more than directory names.
+# Hold a lock for the whole run; 201>&- keeps the gauntlet child from inheriting it.
+exec 201>/tmp/darla-eval-driver.lock
+flock 201
+
 # Wait for the arm queue to drain AND for any gauntlet to finish, so this never
 # competes with the screening runs. Matches the RE-EXEC name: gauntlet.sh runs
 # from a private copy and the original path never appears in a process listing.
@@ -21,7 +30,7 @@ while [ "$(grep -cvE '^\s*(#|$)' progress/pending-arms.txt 2>/dev/null || true)"
    || pgrep -f '\.reexec-gauntlet\.sh' > /dev/null; do sleep 60; done
 
 echo "$(date -uIs) REPLICATE START $ARM -- fresh random 25-map sample"
-NMAPS=25 BOT="$ARM" OPPONENTS="carol bob alice" MAXJOBS=2 ../../tools/gauntlet.sh \
+NMAPS=25 BOT="$ARM" OPPONENTS="carol bob alice" MAXJOBS=2 ../../tools/gauntlet.sh 201>&- \
   || { echo "$(date -uIs) REPLICATE ERROR $ARM"; exit 1; }
 run=$(ls -1t gauntlet | head -1)
 echo "$(date -uIs) REPLICATE COMPLETE $ARM $run -- $(grep -E '^overall' gauntlet/$run/summary.txt)"

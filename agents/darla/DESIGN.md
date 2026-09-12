@@ -3849,3 +3849,65 @@ Worth stating plainly: `RESEARCH.md` §5 is the strongest regularity in the dige
 the failure it predicts is **real and measured** here at 21.6% and 27.8%, and the
 textbook fix for it still lost 14 games on the first attempt. The measurement that
 a problem exists is not a warrant that a named solution fits.
+
+## Iteration 84 — the ESCAPE HATCH wins: **+13 games**, and `mv` falls exactly as predicted
+
+**88/150 (58.7%)**, the best head-to-head in this lineage, and a **27-game swing**
+from `darla82`'s −14 on what is nominally the same idea.
+
+The registered falsifier — readable this time, because the arm carries the counter
+— is satisfied on both maps, with `ov=0`:
+
+| map | baseline (`darla80`) | `darla84` | change |
+|---|---|---|---|
+| `Bread` botB | 21.6% | **16.1%** | −5.5 pts, −25% relative |
+| `Portal` botB | 27.8% | **18.7%** | −9.1 pts, −33% relative |
+
+Score up, the counter for the intended mechanism down, overruns zero. That is the
+first arm in this lineage where all three agree.
+
+**What separates +13 from −14 is one word in `RESEARCH.md` §5.** The digest says
+bug navigation is *"the fallback"* and item 2 is *"a stack ... to escape concave
+obstacles"* — an **escape hatch bolted onto greedy movement**, not a replacement
+for it. `darla82` replaced the whole fallback, so a robot committed to
+wall-following the moment any step was blocked, and walked the long way around
+obstacles a single ±45° dodge would have cleared. `darla84` keeps the original
+fallback untouched and engages the hug **only on a turn after the measured stuck
+condition fired for the same target** — the trigger is `darla80`'s counter, so the
+escape fires on exactly the shape it was measured on, and nowhere else.
+
+Reading the digest correctly mattered more than implementing it well: both arms
+implement wall-following competently, and only one is the thing §5 describes.
+
+## Infrastructure — two runs wrote to ONE directory, and the reference run was lost
+
+While the above ran, `tools/paired-roster.sh darla` — the 450-game `i2` reference
+— reported `61/150` and named run `20260912-214531`, which is **`darla82`'s
+head-to-head**. Both drivers started at `21:45:31`, both passed the
+"is a gauntlet running?" check in the same second, both took `RUN_ID` from
+`date +%Y%m%d-%H%M%S`, and the paired run collated the other run's 150 games as
+its own. Its own 450 games are gone.
+
+`darla82`'s own directory holds exactly 150 games, all against `darla`, on 75
+maps, which is a clean head-to-head — so its −14 is probably untouched. *Probably*
+is not good enough when the two runs also share one VM workspace, so **`darla82`
+is re-queued** rather than trusted.
+
+Two fixes, at different layers, because either alone leaves a hole:
+
+1. **`tools/gauntlet.sh` claims its directory atomically** — `mkdir` without `-p`
+   fails if the directory exists, so a loser takes a new id instead of sharing.
+   Timestamps to the second are not unique under a queue that releases several
+   jobs at once.
+2. **The three drivers hold a real lock** (`flock` on a shared file) for the whole
+   run, with `201>&-` so the gauntlet child does not inherit it. The wait-loop
+   they used was check-then-act, which is exactly the race that fired.
+
+This is the eighth instance of the shared-infrastructure class in this lineage,
+and the first where the damage was **silent**: nothing failed, a driver simply
+reported another run's result as its own. A wrong number that arrives calmly is
+worse than a crash, and the atomic `mkdir` is the fix that would have turned it
+into one.
+
+Re-queued: the lost `i2` 450-game reference, `darla84`'s 450-game decision, and
+`darla82`'s head-to-head.
