@@ -2762,3 +2762,36 @@ check, it is positive overall, and its regime profile is the opposite of what I
 predicted — which means the reasoning that produced it was wrong even though the
 arm works. That is worth separating clearly: **the arm is a candidate; the
 diagnosis behind it is refuted.**
+
+## `darla65` — the verdict: a persistent small positive the instruments cannot resolve
+
+Two independent instruments, both leaning the same way and neither sufficient:
+
+| instrument | result |
+|---|---|
+| head-to-head vs the accepted build, all 75 maps | 82/150 — **z = +1.14** |
+| four fresh 25-map samples vs the three lineages | 422/600 = **70.3%** vs the baseline series' 68.8% — **t = +0.95** |
+| vs carol, large maps (the check that killed `darla56`) | −1 game, z = −0.30 |
+| **combined across the two independent instruments** | **z ≈ 1.48** |
+
+**Not accepted.** The bar is 2 sd and this is 1.48, and the session has already
+shown twice what happens to a lead in this range: `darla56` was +1.12 and turned
+out to be a trade; `darla26` was +2 on a screen and was flat on a ladder. A
+persistent lean at +1.5 points is exactly what both of those looked like before
+the decisive check.
+
+**What is different, and worth stating:** `darla65` is the only candidate tonight
+to lean positive on *two independent instruments*, pass the carol check that
+killed the previous lead, and fire at measured volume (36 sent / 100 heard). It
+is the strongest unadopted candidate this project has produced.
+
+**The cost of deciding it** is now arithmetic rather than judgement: at an effect
+of +1.5 points and the measured variances, **~18 fresh samples** would reach 2 sd,
+against the 4 in hand. That is about 2,100 more games — roughly four hours of VM
+time, and the only route left, since the head-to-head instrument is exhausted at
+150 games and repeats are byte-identical.
+
+**Queued: 14 more fresh samples.** If the lean holds it clears the bar and ships;
+if it decays toward zero, it joins the night's other +1s and the accepted build
+stands unchallenged. Either outcome is a decision rather than an open question,
+which is the thing this candidate currently lacks.
