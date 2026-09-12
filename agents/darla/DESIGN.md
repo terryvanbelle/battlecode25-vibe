@@ -2236,3 +2236,17 @@ well-argued, mechanism-grounded prediction produced a flat null — alongside th
 the refill-logistics argument from the HOME-turn census. Each was a sound reading
 of a real measurement, and each turned out to describe something the decision
 procedure never actually consults.
+
+## Iteration 53 — soldiers stop plinking towers: null (−0.98 sd)
+
+69/150 (46.0%). The argument was clean — a soldier does 50 damage to a 1,000+ HP
+tower, **no tower ever dies**, so the action is spent on a target that never
+falls, and soldiers are now scarce enough for each wasted turn to matter. Removing
+it changes nothing measurable.
+
+The reason is the size of the thing being recovered: tower attacks were 1.3% of
+soldier turns, soldiers are 20% of the army, so the action being eliminated is
+about **0.3% of all unit-turns**. Correctly identified as waste and far too small
+to see — which is a useful calibration for the rest of this file. Several
+mechanisms I have called "clearly wasteful" from a census are of this order, and
+this measures what that order is worth: nothing this instrument can resolve.
