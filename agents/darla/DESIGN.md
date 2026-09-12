@@ -2287,3 +2287,21 @@ transfer (unimplementable — only moppers may, and moppers are structurally
 absent), tower upgrades (already in use), and the full unit roster. There is no
 remaining unused capability to reach for; further gains have to come from using
 the existing ones better.
+
+## The confirming benchmark was a no-op, and that is a fact about the instrument
+
+Run `20260912-0011`: **63/150 (42.0%), swept 23, swept-against 35** — byte-identical
+to run `20260911-1112`. Of course it is. The engine is deterministic, the
+benchmark plays a fixed list of all 75 maps from both sides, and the build had not
+changed. Re-running it **cannot** produce a different answer.
+
+So the benchmark has no run-to-run variance to average out, and a second run buys
+nothing: 300 games spent re-deriving a number already in hand. The uncertainty in
+"42.0% against v3" is not sampling noise at all — it is entirely *map-selection*
+uncertainty, and the map list is fixed, so within this instrument the figure is
+exact and within any other instrument it is unmeasured.
+
+This also applies retroactively to the lineage gauntlets: the pinned-sample screens
+were exactly reproducible for the same reason, which is why matched pairs on them
+were trustworthy, and why the *fresh random* samples were the only source of
+genuine variance. I had both facts separately and had not put them together.
