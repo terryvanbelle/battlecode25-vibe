@@ -3773,3 +3773,49 @@ cluttered maps and absent on open ones** — a flat improvement across all 75 wo
 be evidence the mechanism is not what I think it is. Registered falsifier: `mv`
 must **fall** on `Bread` and `Portal` in `darla82`'s own replays; a score that
 moves while `mv` does not is a different effect wearing this one's clothes.
+
+## Iteration 81 — the paint floor is VINDICATED: removing it costs 22 games
+
+**53/150 (35.3%)**, −22 against the shipped build. The largest loss in this
+lineage since the mis-specified `darla57`.
+
+The registered falsifier did **not** fire, which makes the result readable. With
+the gate off, moppers appear immediately — spawn census on `MoneyTower`, rounds
+1–800, arm on T1 and the shipped build on T2:
+
+| | SOLDIER | SPLASHER | MOPPER |
+|---|---|---|---|
+| `darla81` (floor off) | 8 | 9 | **25** |
+| `darla-i2` (floor on) | 9 | 31 | **0** |
+
+So `darla79`'s diagnosis was exactly right — `PAINT_FLOOR` is what suppresses
+moppers — and the open question it left, *whether a bot with no moppers is the
+right bot*, now has an emphatic answer: **yes.**
+
+Unshackled, the mopper does not supplement the army, it **becomes** it: 25 of 42
+robots, crowding splashers from 31 down to 9 and soldiers from 9 to 8. A mopper
+costs 100 paint against a soldier's 200 and a splasher's 300, so whenever paint
+is the binding resource — which iteration 2 established is most of the time — the
+cheapest unit wins every roll it is offered. The floor is not a preference for
+splashers; it is the only thing stopping a cheap unit from eating the treasury.
+
+And the cost lands exactly where iteration 30's comment predicted it would, five
+months of arms ago: *"ONLY soldiers call workOnRuin, so every displaced soldier
+is a ruin not claimed."*
+
+**Three closures fall out of this one run:**
+
+1. `PAINT_FLOOR` — **re-confirmed** under iteration 2's economy, by ablation
+   rather than by inheritance. Accepted gates can now be re-tested this way.
+2. The mopper line (`darla78`, `darla79`) — upgraded from `structurally-
+   unavailable` to **deliberately and correctly unavailable**. There is no ferry
+   to build, and the reason is not an oversight.
+3. `MOPPER_IN_20 = 2` — never varied, and now never needs to be. Its realized
+   value is ~0 by design, and the one experiment that raises it loses 22 games.
+
+A note on method, since this is the second accepted iteration to be re-examined:
+re-opening `PAINT_FLOOR` was right *because the economy it reads had changed*,
+not because it was old. The ablation cost one arm and converted an assumption
+into a measurement. The result happens to be "you were right the first time",
+which is the outcome that makes the check worth running — an ablation you only
+run when you expect it to win is not a check.
