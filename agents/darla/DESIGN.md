@@ -2455,3 +2455,7 @@ information are a different build, different opponents, or different maps. The
 large band (37 maps, 148 games) is fully consumed; the medium band (12 maps, 48
 games) is the untouched ground, and it doubles as a test of whether the effect
 extends below the 1,600-tile cutoff.
+
+The baseline's medium-band run returned **40/48, identical to `darla56`'s**, which
+confirms the no-op diagnosis empirically rather than by reading the code alone.
+It is also the control `darla59` needs, so the wasted run is not wasted twice.
