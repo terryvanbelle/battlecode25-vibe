@@ -2908,3 +2908,23 @@ a **guess**, not a derivation, though still a stable one. The `sy=` counter will
 show which regime the arm is actually in: non-zero eliminations mean the
 inference resolved; zero with non-zero uses means it is running on the default
 candidate.
+
+## Iteration 69 — `TOWER_MEM` 12 → 40: provable NO-OP
+
+75/150 exactly, all 75 maps splitting 1–1. The buffer holds remembered allied
+tower locations for refill navigation, and raising its capacity changes nothing
+because **it never fills**: a robot only ever records towers it has personally
+seen, and `towerN` reaching 12 within one robot's lifetime does not happen at
+this vision range. Raising the cap of a buffer that never reaches its cap is
+inert by construction.
+
+**Determinable statically, again** — the fourth no-op tonight and the third whose
+refutation needed only the code plus one number I already had. The pattern across
+all of them is identical: **I varied a limit without first asking whether the
+limit binds.** `SPLASH_MIN_SCORE` at 50+, `PAINT_FLOOR` at 300, `CENSUS_MIN`,
+`TOWER_MEM` — every one a bound that was never being hit.
+
+That is now a checkable rule rather than an observation: **before varying a
+capacity or threshold, measure how often the current value is actually reached.**
+Each of these four cost a 150-game run to learn what an instrumented counter or a
+back-of-envelope would have said for nothing.
