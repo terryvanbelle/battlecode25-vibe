@@ -2250,3 +2250,20 @@ about **0.3% of all unit-turns**. Correctly identified as waste and far too smal
 to see — which is a useful calibration for the rest of this file. Several
 mechanisms I have called "clearly wasteful" from a census are of this order, and
 this measures what that order is worth: nothing this instrument can resolve.
+
+## Iteration 54 — the paint/money census override is a provable NO-OP
+
+75/150 exactly, and **all 75 maps split 1–1 by side** — the signature of two
+behaviourally identical bots. Disabling the override changes not one game.
+
+The override re-routes a ruin to a paint tower when a local census finds paint
+towers outnumbered more than 2:1. It never fires, because `MONEY_MOD = 4` already
+builds three paint towers for every money tower, so `seenPaint * 2 < seenMoney`
+is unreachable by construction. A guard conditioned on a ratio its own lattice
+makes impossible.
+
+**This is the second provable no-op found by checking the 1–1 split** (after the
+`TOWER_BONUS` saturation doses), and both were free to detect: an exact 75/150 in
+a paired head-to-head is worth two seconds of checking, because it distinguishes
+"genuinely neutral" from "never ran" at no cost. Compare `darla42`, which also
+scored exactly 75/150 but diverged on 8 maps — same number, different fact.
