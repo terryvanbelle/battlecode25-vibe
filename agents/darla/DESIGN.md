@@ -3958,3 +3958,22 @@ write-up and commit in the same command were lost, and the blast radius was luck
 rather than design. `pkill -f` on a string that appears in the invoking command is
 self-matching by construction. Use the PID, or `pgrep` first and read what comes
 back — never a pattern that describes the command you are typing.
+
+### The `darla-i2` 450-game reference: 326/450 (72.4%)
+
+Re-run after the directory collision destroyed the first attempt. Per opponent:
+
+| opponent | won | win% |
+|---|---|---|
+| alice | 100/150 | 66.7% |
+| bob | 113/150 | 75.3% |
+| carol | 113/150 | 75.3% |
+
+**326/450 exactly** — the same number `darla77` and `darla78` returned on this
+instrument, which is the third determinism check to pass since the accept and the
+one that matters most: `darla-i2` is the reference every future arm is paired
+against, and it is now known to be the build the accept measured, not a
+lookalike.
+
+Against the `i1` reference (307/450), the accepted iteration stands at **+19 games
+on 450 paired keys**. `darla84`'s 450-game run is queued against this.
