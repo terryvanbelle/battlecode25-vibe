@@ -2535,3 +2535,47 @@ interpolated prediction, and the per-opponent split.
 effect but the evidence that there *is* one — and the honest label is a
 well-characterised lead whose instrument is exhausted: 37 large maps is all the
 map pool contains, and every dose costs a full pass over them.
+
+# The large-map lead is a TRADE, not a gain — and the pre-ship check caught it
+
+`darla56` on large maps, paired against the baseline on identical games, now
+against **all three** opponents:
+
+| opponent | paired result | z |
+|---|---|---|
+| alice | **+5 games** | +1.29 |
+| bob | **+2 games** | +0.41 |
+| **carol** | **−5 games** | **−1.00** |
+| **net over 222 games** | **+2** | ~0 |
+
+**The rule does not make the bot better. It moves wins from one opponent to
+another.** Against the two soldier-heavy lineages it gains; against the
+same-economy opponent it loses almost exactly as much. Across a full field it
+nets nothing.
+
+**This is why the check existed, and it is the one arm tonight that would have
+shipped on the evidence available before it.** Every earlier reading pointed the
+right way — a 26-point size gap, a monotone dose curve, an out-of-sample
+prediction that held, consistent signs against both tested opponents. All of it
+was true and none of it was sufficient, because **every one of those
+measurements excluded the opponent the change hurts.** I chose alice and bob
+deliberately, for the good reason that they exercise the weakness — and in doing
+so built an instrument that could only see the upside.
+
+**The generalisable form**: when a change is motivated by a weakness against a
+*subset* of opponents, the natural instrument is that subset, and that instrument
+is blind to what the change costs elsewhere. The pre-ship run against the
+excluded opponent is not a formality; here it converted a +7 into a +2 and a
+decision to ship into a decision not to.
+
+**Verdict: `darla56` is NOT adopted.** The shipped build stays at a uniform 70%
+splasher share. The large-map weakness (56.4% against 82.3%) is real, measured,
+and **remains unsolved** — the mix is not its cause, and three doses plus two map
+bands have not found what is.
+
+**And a caution for whatever comes next**: `v3` is a fourth opponent whose economy
+nobody here may inspect. A change that redistributes performance across opponent
+types is exactly the kind whose effect on `v3` is unpredictable — and the
+benchmark may not be used to choose between builds, so there is no way to find
+out before shipping. That asymmetry argues for preferring changes that help
+uniformly over changes that trade, independently of their measured net.
