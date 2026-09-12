@@ -3554,3 +3554,45 @@ only ever held baseline roster runs — 140 rows to 431 — and relabelled the `
 sample as `darla_iter1`, since `resolve_cand` cannot tell which `+cand` rows
 predate an accept and which follow it. Reverted with `git checkout`. The file is
 curated, not derived.
+
+## Iteration 78 — the mopper paint ferry fired ZERO times: untested, not refuted
+
+73/150 (48.7%), **71 of 75 maps identical**, `ov=0`. Its registered falsifier said
+a zero `give` count means untested, and that is exactly what happened: **0 give
+events** across every replay window sampled.
+
+The replay says why, and it is not subtle. On `Flower`, of 54 mopper turns:
+
+| mopper state | turns |
+|---|---|
+| `M HOME` | **23** |
+| bare `M` (explore) | 24 |
+| `M mop` | 6 |
+| `M swing` | 1 |
+
+**The mopper is itself commuting for paint on 43% of its turns**, and
+`walkHomeIfDry` returns before the hand-off code is ever reached. A unit that is
+short of paint cannot be the one distributing it. On two other maps sampled there
+were no mopper turns in the window at all.
+
+So the placement is wrong, and possibly the whole shape is: the arm waits for a
+mopper to *happen* to stand within r² ≤ 2 of a dry soldier, which is a coincidence
+nobody arranged.
+
+**`darla79` registered — instrumentation only, no action.** The rule earned at
+`darla74` is to measure how often a branch is reached before improving what it
+decides, and I skipped it for `darla78`. Two counters, emitted as `gv=<opp>/<blocked>`:
+
+- `gvOpp` — mopper turns with an ally at or below `REFILL_LOW` within transfer
+  range while the mopper holds a surplus. The opportunity rate.
+- `gvBlocked` — how many of those the mopper was itself latched for refill, and
+  so returned before any hand-off could happen.
+
+Play must be **byte-identical** — the only additions are two counters, one
+`senseNearbyRobots(2)` and a string concatenation — so a 1–1 split on all 75 maps
+is a built-in check that the instrumentation is inert. `ov` must also stay 0.
+
+The decision it feeds: if `gvOpp` is near zero, the ferry needs moppers to *seek*
+dry soldiers rather than pass them, which is a targeting change in
+`moveExploring`; if `gvOpp` is healthy but `gvBlocked` accounts for most of it,
+the fix is just ordering the hand-off before the mopper's own refill latch.
