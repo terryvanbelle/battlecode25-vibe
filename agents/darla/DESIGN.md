@@ -2724,3 +2724,41 @@ Still under the significance bar, and I am not accepting on +1.14. But unlike
 every previous lead tonight it has now survived the check designed to kill it,
 and the remaining question is power rather than direction. `darla65` against
 alice and bob on large maps is running.
+
+## `darla65`'s gain is real but NOT where the diagnosis said it would be
+
+Two measurements, both paired:
+
+| regime | result | z |
+|---|---|---|
+| vs alice + bob, **large maps** | 68/148 (−1 game) | **−0.23** |
+| vs carol, large maps | 50/74 (−1 game) | −0.30 |
+
+**On large maps — the regime the arm was built for — it does nothing at all.**
+Yet its head-to-head against the accepted build was +7. Splitting that by map size
+shows where the gain actually lives:
+
+| map size | darla65 vs accepted build |
+|---|---|
+| small (<1200) | 30/52 — **57.7%** |
+| medium (1200–1599) | 16/24 — **66.7%** |
+| **large (≥1600)** | **36/74 — 48.6%** |
+
+**The mechanism helps on small and medium maps and is inert on large ones — the
+exact opposite of its motivation.** I built it to break the expansion death
+spiral, which I measured on large maps; it does not touch that, and instead
+improves the regime that was already this build's strongest.
+
+**A coherent explanation, offered as a hypothesis rather than a finding.** On
+small maps ruins are close together, so a soldier standing at one is frequently
+within r²=20 of a tower *and* connected by ally paint — the two preconditions for
+a message. On large maps the same soldier is usually out of range of any tower, so
+the channel rarely closes. That is testable: the `ms=` counters should show a far
+lower sent-to-heard ratio on large maps, and it would explain both halves of this
+result with one fact about geometry.
+
+**Status: still a lead, now a better-characterised one.** It survives the carol
+check, it is positive overall, and its regime profile is the opposite of what I
+predicted — which means the reasoning that produced it was wrong even though the
+arm works. That is worth separating clearly: **the arm is a candidate; the
+diagnosis behind it is refuted.**
