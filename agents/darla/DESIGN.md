@@ -2670,3 +2670,28 @@ engine gives towers neither the range nor the team-wide state to detect it, and
 the one remaining route — inter-robot communication — is a capability no lineage
 in this project has ever used and a far larger undertaking than a spawn-rule
 tweak.
+
+## Iteration 65 RESULT — communication works, and it is the first positive arm since the accept
+
+**82/150 (54.7%), z = +1.14.**
+
+**Mechanism check, read first as registered:** `ms=<sent>/<heard>`, sampled across
+robots in one game — soldiers reach **36 messages sent**, towers reach **100
+messages heard**. Both halves of the channel are live. (The first sample I looked
+at showed `36/0` and I nearly called it half-broken; those are per-robot counters
+and a *soldier* never reads, so a soldier's heard-count is 0 by construction. The
+tower side had to be read separately.)
+
+So this is a real mechanism firing at volume, not a no-op — the first thing to
+establish after four arms on this question that turned out to be no-ops or
+mis-specified.
+
+**Where it sits.** +7 games, +1.14 sd, is the same size as the `darla56` large-map
+lead was before the carol check killed it. That is a warning, not an endorsement:
+the lesson from `darla56` is that an arm motivated by one opponent's weakness must
+be checked against the opponent it was not designed for, **before** any decision.
+
+`darla65` differs in one respect that matters — it is not opponent-targeted. It
+fires whenever a soldier finds an unclaimed ruin, which happens in every game
+against every opponent. Its per-opponent split is therefore a real test rather
+than a formality, and it is the next thing to run.
