@@ -2502,3 +2502,36 @@ and sits between the two measured points; if the curve is real it should land
 between +1.12 and −0.47, and if it lands outside that range the shape was noise.
 That is a genuine out-of-sample prediction on an axis that costs nothing extra to
 test, rather than another arm chosen because it was available.
+
+## Iteration 61 — the registered prediction HOLDS, and the large-map curve is coherent
+
+| large-map mix | score | discordant | z |
+|---|---|---|---|
+| 70/20 (baseline) | 69/148 | — | control |
+| **50% spl / 40% sold** | **76/148** | 39 | **+1.12** |
+| 40% spl / 50% sold | 69/148 | 38 | **+0.00** |
+| 30% spl / 60% sold | 66/148 | 41 | −0.47 |
+
+**`darla61` was predicted before it ran to land between +1.12 and −0.47. It landed
+at +0.00**, and the four points form a monotone curve with a peak near 50%
+splasher. That is an out-of-sample confirmation of the *shape*, which no single
+point could provide — and it is the reason to treat this lead differently from
+the dozen nulls tonight, none of which had a predicted structure to confirm.
+
+**Robustness, split by opponent** (free, from data already collected):
+
+| | baseline → arm | discordant | z |
+|---|---|---|---|
+| vs alice | 29/74 → 34/74 | 15 | +1.29 |
+| vs bob | 40/74 → 42/74 | 24 | +0.41 |
+
+Same sign against both, larger against alice — which is the opponent with the
+bigger size gap (42.4% vs bob's 54.1%), so the effect is largest where the
+weakness is worst. Three independent consistencies: the dose curve, the
+interpolated prediction, and the per-opponent split.
+
+**It still does not clear the bar, and I am not accepting it.** The best point is
++7 games at +1.12 sd. What has improved is not the evidence for the size of the
+effect but the evidence that there *is* one — and the honest label is a
+well-characterised lead whose instrument is exhausted: 37 large maps is all the
+map pool contains, and every dose costs a full pass over them.
