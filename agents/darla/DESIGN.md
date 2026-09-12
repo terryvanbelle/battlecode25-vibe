@@ -3636,3 +3636,57 @@ Timing is deliberate. Iteration 2 removed the supply stall that was consuming
 63–79% of soldier turns on some maps; if movement is what wastes soldier turns
 now, this is where it shows up first, and if `mv` is near zero then §5 is closed
 for this bot the same way §6 was — by measurement rather than by four arms.
+
+## Iteration 79 — the mopper ferry is dead by construction: **this bot has no moppers**
+
+75/150 with **all 75 maps splitting 1–1**, which is the built-in proof that the
+instrumentation is inert. `ov=0`. And the counter it was built for reads
+**`gv=0/0` everywhere** — not a low opportunity rate, *zero*, including the
+`gvBlocked` term.
+
+The spawn census says why, and it is not about placement at all:
+
+| replay, rounds 1–800 | SOLDIER | SPLASHER | MOPPER |
+|---|---|---|---|
+| `Portal` botB | 16 | 15 | **0** |
+| second map | 24 | 29 | **0** |
+
+**Zero moppers in 84 robot spawns.** The unit does not exist in this army, so no
+placement of a hand-off could ever have fired, and `darla78`'s zero `give` count
+was never about where the code sat.
+
+The mechanism is an interaction between two things already in the notebook, and
+neither is a bug:
+
+```java
+int roll = rng.nextInt(20);                       // MOPPER_IN_20 = 2, so 10% of rolls
+...
+final int PAINT_FLOOR = 200;                      // iteration 30, ACCEPTED
+if (afford && want.paintCost < UnitType.SOLDIER.paintCost
+        && rc.getPaint() - want.paintCost < PAINT_FLOOR) afford = false;
+```
+
+Paint costs are **MOPPER 100, SOLDIER 200, SPLASHER 300**. The floor's condition
+`want.paintCost < SOLDIER.paintCost` selects **exactly the mopper** — a splasher
+at 300 is never gated by it — so a mopper is only ever built by a tower holding
+≥ 300 paint. Iteration 2 established what tower paint actually looks like on the
+maps where it matters: `tp = 0, 5, 10, 55, 60`. The 10% mopper roll almost always
+dies at that gate.
+
+Iteration 30 introduced the floor deliberately, to stop cheap units draining the
+treasury away from splashers, and it was accepted on measured evidence. It did
+what it was built to do. The unintended consequence — that it also removes the
+only unit in the game that can mop enemy paint or transfer paint robot-to-robot —
+was never measured, because nothing had ever needed a mopper before.
+
+**`darla78` and `darla79` are closed `structurally-unavailable`**, the same
+verdict `RESEARCH.md` §6 got, and for the same kind of reason: the mechanism is
+real, the engine supports it, and this bot has nothing to run it with. Closing it
+cost two arms, one of which was pure instrumentation — against `darla71`–`74`,
+which cost four before I thought to measure.
+
+**The open question this leaves is worth stating and not answering here**: whether
+a bot with no moppers is the right bot. That is an army-composition question
+touching an accepted iteration, and it needs its own measurement — not a
+follow-on to a hand-off that never fired. `darla80`, already queued, is on the
+other live thread (`RESEARCH.md` §5, movement).
