@@ -2579,3 +2579,28 @@ types is exactly the kind whose effect on `v3` is unpredictable — and the
 benchmark may not be used to choose between builds, so there is no way to find
 out before shipping. That asymmetry argues for preferring changes that help
 uniformly over changes that trade, independently of their measured net.
+
+## Iteration 62 — expansion insurance: **−6.54 sd**, because "only in the failure state" was wrong
+
+35/150 (23.3%). The rule forces a soldier on every build while the team holds
+fewer than 8 towers — and **every game starts at 2 towers**, so it fires through
+the entire opening of every match, not only in stalled ones.
+
+**I could have checked this before running it, from a census I had already
+taken.** DefaultHuge, the game I used to *motivate* the arm: 7 towers at round
+300, 21 by round 600. So a healthy game sits below the threshold for roughly the
+first 300 rounds — nearly half of a 700-round match — and `darla62` spends all of
+it building soldiers only. That deletes the splasher opening the entire accepted
+build rests on, which is worth 99–51 when removed at the attractor and is worth
+about the same here.
+
+**The flaw is in the trigger, not the idea.** "Fewer than 8 towers" is a proxy for
+*early*, not for *stalled*. The death spiral is defined by expansion having
+**stopped** — `DonkeyKong` sat at 6 towers from round 300 to round 590 — and a
+count threshold cannot distinguish "6 towers and climbing" from "6 towers and
+frozen".
+
+**`darla63` uses the actual signal**: force soldiers only when the team's tower
+count has not increased for 150 rounds. That is inert in a healthy opening,
+because a healthy opening is adding towers continuously, and fires exactly in the
+state the contrast census identified.
