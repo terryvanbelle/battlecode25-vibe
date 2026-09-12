@@ -3596,3 +3596,43 @@ The decision it feeds: if `gvOpp` is near zero, the ferry needs moppers to *seek
 dry soldiers rather than pass them, which is a targeting change in
 `moveExploring`; if `gvOpp` is healthy but `gvBlocked` accounts for most of it,
 the fix is just ordering the hand-off before the mopper's own refill latch.
+
+### `darla78` on 450 paired keys: provably inert, and it verifies the promotion for free
+
+326/450 — the same total as `darla77`. Paired on identical keys:
+
+| comparison | discordant | split | z |
+|---|---|---|---|
+| `darla78` vs `darla77` | **4** | 2–2 | **+0.00** |
+| `darla78` vs baseline `i1` | 63 | 41–22 | +2.39 |
+
+Four discordant pairs out of 450, split evenly. The mopper hand-off is **inert**,
+exactly as its zero `give` count said — closed as `untested`, with `darla79`
+already queued to find out whether the opportunity even exists.
+
+**The second row is the useful accident.** `darla78` was built from `src/darla`
+*after* the promotion edit, and against the same reference it reproduces
+`darla77`'s numbers **exactly** — 41–22 of 63 discordant, not merely a similar
+total. Since the ferry contributes nothing, that is a 450-key proof that
+`src/darla` (`darla-i2`) carries `darla77`'s behaviour and the promotion edit is
+what I believe it is. The queued `darla-i2` vs `darla_iter1` head-to-head is now
+belt-and-braces rather than the only check.
+
+## `darla80` registered — instrumentation for `RESEARCH.md` §5, before building it
+
+§5 is the most consistent finding in the whole digest: every year, teams start
+with textbook pathfinding, blow the bytecode budget, and converge on bug
+navigation plus a bounded escape for the concave obstacles greedy movement
+actually sticks on. `stepToward` here is memoryless greedy — target direction,
+then ±45°, then ±90°, with the left/right tie broken on robot ID — and has **no
+stuck detection of any kind**.
+
+Rather than build that on the strength of a document, `darla80` counts the
+failure first: consecutive calls toward the **same** target where the distance did
+not fall, emitted as `mv=<stuck>/<tries>`. Instrumentation only; play must be
+byte-identical, so a 1–1 split on all 75 maps is the check that it is inert.
+
+Timing is deliberate. Iteration 2 removed the supply stall that was consuming
+63–79% of soldier turns on some maps; if movement is what wastes soldier turns
+now, this is where it shows up first, and if `mv` is near zero then §5 is closed
+for this bot the same way §6 was — by measurement rather than by four arms.
