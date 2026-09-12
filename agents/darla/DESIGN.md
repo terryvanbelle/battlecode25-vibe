@@ -3819,3 +3819,33 @@ not because it was old. The ablation cost one arm and converted an assumption
 into a measurement. The result happens to be "you were right the first time",
 which is the outcome that makes the check worth running — an ablation you only
 run when you expect it to win is not a check.
+
+## Iteration 82 — bug navigation LOSES 14 games, and I could not read its falsifier
+
+**61/150 (40.7%)**, −14. And the falsifier I registered — *"`mv` must fall on
+`Bread` and `Portal` in `darla82`'s own replays"* — **could not be checked**,
+because `darla82` was built from `src/darla`, and the `mv` counter exists only in
+`darla80`. I registered a test the arm was incapable of reporting.
+
+That is a build-discipline error of the same family as `darla14`, and cheaper only
+by luck: a falsifier that cannot be evaluated is not a falsifier. The rule it
+earns: **when an arm's registered check reads a counter, the arm must contain the
+counter.** Instrumentation and the change it measures belong in the same build.
+
+**`darla83` queued** — byte-identical to `darla82` plus `darla80`'s `mv` counters,
+nothing else — so the −14 can be attributed. Two readings are possible and they
+call for opposite next steps:
+
+- **`mv` falls and the score still drops.** Then the implementation works and the
+  premise is wrong: fewer wasted moves is not the same as a better bot. The
+  oscillation `darla80` measured would be doing something useful — most likely
+  keeping robots close to the work while a target is unreachable, where committed
+  wall-following walks them a long way around to a place they did not need to be.
+- **`mv` does not fall.** Then the hug is broken — the most likely fault being
+  that the post-move rotation back toward the wall is one step wrong, so robots
+  orbit obstacles instead of clearing them — and §5 is still untested.
+
+Worth stating plainly: `RESEARCH.md` §5 is the strongest regularity in the digest,
+the failure it predicts is **real and measured** here at 21.6% and 27.8%, and the
+textbook fix for it still lost 14 games on the first attempt. The measurement that
+a problem exists is not a warrant that a named solution fits.
