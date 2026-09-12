@@ -2879,3 +2879,32 @@ paint/money census override, and `darla54` proved that override unreachable —
 That leaves four, and two are queued now: `darla68` (`RUIN_BAN_ROUNDS` 250 → 60,
 the patience lever from the other end) and `darla69` (`TOWER_MEM` 12 → 40, which
 may be short on large maps carrying 25+ towers).
+
+## Iteration 70 RESULT — the symmetry arm was a NO-OP: statics are per-robot
+
+75/150 exactly, **all 75 maps splitting 1–1**, and the mechanism counter reads
+**`sy=0/0`** — not one candidate eliminated, not one heading taken.
+
+**The cause is an engine fact I had already tripped over tonight.** Static fields
+in this engine are **per robot**, not per team. `darla70` set `myStart` only on a
+tower:
+
+    if (myStart == null && rc.getType().isTowerType()) myStart = rc.getLocation();
+
+so every *soldier* kept `myStart == null`, `enemyBase()` returned null, and the
+entire inference never ran. I hit exactly this two arms ago reading `darla65`'s
+`ms=36/0` and concluding the channel was half-broken, when soldiers simply never
+execute the tower's counter. **Having diagnosed it once did not stop me writing
+it again**, in the very next mechanism.
+
+**`darla71` fixes the reference rather than the derivation.** Any *allied tower*
+serves: it stands on a ruin, so its mirror holds a ruin, and the elimination
+argument is unchanged. A soldier takes the first allied tower it sees.
+
+**One honest limitation, registered now.** Eliminating candidates requires *seeing*
+a mirrored location, which sits across the map. On large maps that may never
+happen, so `enemyBase()` will often return the rotational mirror un-eliminated —
+a **guess**, not a derivation, though still a stable one. The `sy=` counter will
+show which regime the arm is actually in: non-zero eliminations mean the
+inference resolved; zero with non-zero uses means it is running on the default
+candidate.
