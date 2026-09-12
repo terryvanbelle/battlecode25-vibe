@@ -105,8 +105,8 @@ public class RobotPlayer {
         // Two bounds make it nearly free: stop entirely once one candidate survives --
         // the answer cannot change -- and only sweep every 5th round, since terrain does
         // not move and a robot sees the same tiles for many turns anyway.
-        int live = (symRot ? 1 : 0) + (symHorz ? 1 : 0) + (symVert ? 1 : 0);
-        if (live <= 1) return;
+        int liveCount = (symRot ? 1 : 0) + (symHorz ? 1 : 0) + (symVert ? 1 : 0);
+        if (liveCount <= 1) return;
         if (rc.getRoundNum() % 5 != 0) return;
         MapInfo[] seen = rc.senseNearbyMapInfos(-1);
         for (MapInfo t : seen) {
