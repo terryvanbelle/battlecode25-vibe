@@ -3706,3 +3706,29 @@ finished, is removed; `src/darla_iter1` is the canonical freeze.
 
 A cheap habit worth keeping: **on a deterministic engine, a promotion has an
 exact expected value, so it can be checked rather than trusted.**
+
+## `darla81` registered — ablate iteration 30's paint floor, under iteration 2's economy
+
+`darla79` established that the floor's condition
+`want.paintCost < UnitType.SOLDIER.paintCost` can only ever select the **mopper**
+(100 vs a soldier's 200; a splasher at 300 passes freely), and that the army
+therefore contains no moppers at all. So disabling the condition *is* the
+mopper-vs-no-mopper experiment — there is no separate dose to choose, which is
+why this is an ablation rather than a constant sweep.
+
+**Why re-open an accepted iteration.** Iteration 30 measured the floor when 50–95%
+of splasher rolls were dying at the chips gate, and it was right then. Iteration 2
+has since changed the very quantity the floor keys on: robots no longer idle at
+dry towers, so the paint a tower holds when it rolls a unit is not the paint it
+held in iteration 30's measurements. **An accepted gate deserves re-testing when
+the economy it reads has moved**, and this is the first time in this lineage that
+condition has been met.
+
+Registered falsifier: if mopper spawns stay near zero with the gate off, the floor
+was not what suppressed them and the diagnosis in `darla79` is wrong — check the
+spawn census before reading the score.
+
+Also queued: **`paired-roster.sh darla`** — the 450-game reference for `darla-i2`.
+The existing reference is `i1`, and every arm from here is built on `i2`, so
+without this each new arm would be paired against a build two changes behind and
+every comparison would silently carry iteration 2's +19.
