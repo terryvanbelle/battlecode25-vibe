@@ -2361,3 +2361,51 @@ map geometry is legal, symmetric, and costs nothing — both teams and every rob
 compute the same value from the same map, so no communication or side-asymmetry
 is introduced. That makes map-conditioned policy a usable tool for any future
 regime split, even though this particular split found nothing.
+
+## Iteration 58 — the adaptive mix is null in both directions; the axis is closed
+
+69/150 (46.0%), z = −0.98, against `darla56`'s 75/150 at the other extreme. So on
+large maps, 50% splashers, 70% (the accepted value) and 80% are all equivalent.
+**The unit mix is not the lever for the large-map weakness**, tested from both
+sides rather than inferred. Closed.
+
+# The large-map weakness is OPPONENT-SPECIFIC — and my instrument cannot see it
+
+Post-accept win rate, split by opponent *and* map size:
+
+| opponent | small maps | large maps | gap |
+|---|---|---|---|
+| **carol** | 71.5% (586) | **72.5%** (564) | **−1.0** |
+| **bob** | 90.1% (586) | **54.1%** (564) | **36.0** |
+| **alice** | 84.3% (586) | **42.4%** (564) | **41.9** |
+
+**Against carol there is no size effect at all.** The entire large-map weakness is
+against bob and alice. That makes mechanistic sense: Darla *is* carol's economy,
+so against carol the matchup is symmetric and map size scales both sides equally.
+alice and bob run soldier-heavy, ruin-converting economies that scale with the
+number of ruins — and large maps here carry 38–49 of them.
+
+## The methodological consequence, which is serious
+
+**`darla56` and `darla58` were measured head-to-head against the accepted build —
+that is, against a carol-shaped opponent, the one opponent with no size effect to
+fix.** A paired self-play match cannot detect an improvement that only matters
+against a *different* economy. Both came back null, and that null is
+uninformative rather than negative.
+
+This is carol's doctrine 17 exactly — *an even instrument cannot measure a
+capability against an opponent that never exercises it* — and I walked into it
+while holding the quote. Worse, I built the head-to-head instrument *because* the
+3-opponent screen was too noisy, and in doing so traded away the only property
+that could have caught this: the screen plays alice and bob.
+
+**So the instrument choice is not "paired is better".** It is:
+
+| question | instrument |
+|---|---|
+| does this change help *in general*? | paired head-to-head vs the accepted build |
+| does this change help *against a specific economy*? | 3-opponent screen, split by opponent |
+
+The second is noisier per game and is the only one that can answer the question I
+now have. `darla56` re-run against alice and bob on large maps is the correct
+test, and it is queued.
