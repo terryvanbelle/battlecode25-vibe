@@ -1,4 +1,4 @@
-package darla;
+package darla_i1;
 
 import battlecode.common.*;
 
@@ -60,7 +60,7 @@ public class RobotPlayer {
      * measurement-neutral -- it shifts the replay hash, so a dose pair must share one tag if
      * doctrine #3's byte-identity check is to work on raw hashes.
      */
-    static final String BUILD = "darla-i2";
+    static final String BUILD = "darla_i1";
 
     // ---- Iteration 34: fewer MONEY towers, because paint binds and chips do not -------------
     // towerTypeFor makes a ruin a money tower when k % MONEY_MOD == 0, so MONEY_MOD sets the
@@ -332,7 +332,7 @@ public class RobotPlayer {
         if (!refilling && paint > REFILL_LOW) return false;
         if (!refilling) { refilling = true; refillTrips++; }
         MapLocation home = nearestRememberedTower();
-        if (home == null) { refilling = false; return false; } if (rc.getLocation().distanceSquaredTo(home) <= 2) { refilling = false; return false; } // ACCEPTED iteration 2: refillIfPossible() runs immediately before this every turn, so a robot still below half capacity while standing within transfer range of its target tower has already taken everything that tower had. Queueing at a dry tower is strictly worse than acting with what we hold -- a soldier attack costs 5 paint. 326/450 vs 307/450 baseline on the paired roster instrument, McNemar 41-22 of 63 discordant, z=+2.39; +12 games head-to-head with rt and ht BOTH falling (5/138 -> 2/49), so it is not thrashing.
+        if (home == null) { refilling = false; return false; }
         homeTurns++;
         if (rc.isMovementReady()) stepToward(home);
         return true;

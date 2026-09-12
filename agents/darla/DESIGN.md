@@ -3475,3 +3475,53 @@ direction. The baseline's own 450-game reference is the one remaining run and
 gives `darla77` a direct 450-key comparison — that is the acceptance decision,
 and it is deliberately the last thing standing between this arm and the shipped
 build.
+
+# ITERATION 2 ACCEPTED — don't queue at a dry tower
+
+The baseline's own 450-game reference landed at **307/450 (68.2%)**, which makes
+all three runs paired on the same (opponent, map, side) keys:
+
+| comparison | total | discordant | split | χ² | z |
+|---|---|---|---|---|---|
+| **`darla77` vs baseline** | **326 vs 307** | **63** | **41–22** | **5.73** | **+2.39** |
+| `darla77` vs `darla75` | 326 vs 309 | 61 | 39–22 | 4.74 | +2.18 |
+| `darla75` vs baseline | 309 vs 307 | **2** | 2–0 | 2.00 | +1.41 |
+
+**`darla77` is accepted.** +19 games over the baseline on 450 paired keys,
+z = +2.39, agreeing with the head-to-head's +12 (z ≈ 1.96) on a different
+reference set, with the mechanism confirmed by counters (`rt`/`ht` both falling,
+5/138 → 2/49) and the registered falsifier checked and clean before the score was
+read. `src/darla` now carries it as `darla-i2`; the outgoing build is frozen at
+`src/darla_i1`.
+
+**`darla75` is closed, `measured-and-small`, and its story is a warning.** Two
+discordant pairs in 450 keys. Against real opponents the saturated-ban path
+essentially never changes an outcome — the eviction policy is correct, and
+correctness is not the same as mattering. Its head-to-head looked like p ≈ 0.06
+because all four of its diverging maps swept, and four maps is simply not enough
+ground to stand on. Had I accepted on that, I would have shipped a no-op and
+spent the next arms measuring against a moved baseline.
+
+**What actually produced iteration 2**, in order, because none of it came from
+choosing a promising constant:
+
+1. Reading `RESEARCH.md` §6 and failing at it four times.
+2. Counting soldier `state` tokens in one replay to find out why — which showed
+   the symmetry branch was reached <1% of the time, and incidentally that
+   `S HOME` was 63–79%.
+3. Following `S HOME` to `rt=1, ht=416` — a soldier latched for refill once and
+   commuting for 416 straight turns.
+4. Fixing the wrong cause first (`darla76`, tower *type*, +1 and null) and
+   letting its registered falsifier point at the right one: the towers are dry.
+5. Building the instrument that could actually decide the result.
+
+The shipped bar is unchanged and still met: ≥50% against each lineage
+(alice 62.7%, bob 73.3%, carol 70.0% for the new build's arm run) and at least as
+good against the benchmark as any previous agent — the latter needs a fresh
+benchmark now that the build has moved, since the standing 42.0% vs `v3` belongs
+to `darla-i1`.
+
+**Promotion test queued.** The engine is deterministic, so `src/darla`
+(`darla-i2`) against the frozen `src/darla_i1` must return **exactly 87/150** —
+byte-identical to `darla77` vs `darla`, because the code is byte-identical. Any
+other number means the promotion edit is not what I think it is.
