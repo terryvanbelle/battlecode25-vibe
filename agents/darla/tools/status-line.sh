@@ -37,7 +37,12 @@ if [ -n "$run" ]; then
 fi
 
 g=$(pgrep -fc '\.reexec-gauntlet\.sh' 2>/dev/null || true)
-waiting=$(ps -eo args | grep -c '[t]ools/head-to-head.sh darla' || true)
+# Count EVERY evaluation job, not a hardcoded list of one. New job types have
+# been added twice (replicate.sh, then darla-largemap.sh) and each time this
+# line under-reported the queue until it was noticed by hand -- the same
+# 'watcher does not know about a new producer' shape as the monitor and
+# vm-prune bugs. Match the shared suffix instead.
+waiting=$(ps -eo args | grep -cE '[h]ead-to-head\.sh|[r]eplicate\.sh|[d]arla-largemap\.sh' || true)
 q=$(grep -cvE '^\s*(#|$)' progress/pending-arms.txt 2>/dev/null || true)
 
 if [ "${g:-0}" -gt 0 ]; then
