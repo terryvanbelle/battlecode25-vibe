@@ -3732,3 +3732,44 @@ Also queued: **`paired-roster.sh darla`** — the 450-game reference for `darla-
 The existing reference is `i1`, and every arm from here is built on `i2`, so
 without this each new arm would be paired against a build two changes behind and
 every comparison would silently carry iteration 2's +19.
+
+## Iteration 80 — the §5 failure is REAL and measured: 21.6% and 27.8% of moves get nowhere
+
+75/150 with **all 75 maps splitting 1–1** (instrumentation inert, as required) and
+`ov=0`. The counter it exists for, over 40 rounds, counting only consecutive calls
+toward the **same** target:
+
+| map | robots | moves that failed to reduce distance |
+|---|---|---|
+| `Bread` botB | 258 | **6328 / 29256 = 21.6%** |
+| `Portal` botB | 50 | **667 / 2395 = 27.8%** |
+| `Fossil` botB | 81 | **0 / 5134 = 0.0%** |
+
+This is the first §5 evidence in this lineage that is not borrowed from a
+document. On two of three maps **more than a fifth of movement attempts make no
+progress toward the thing the robot is walking to**; on the third, none do.
+
+The 0.0% is as informative as the 21.6%. It rules out the obvious confounds: if
+movement cooldown or a turn spent unable to act were being miscounted as stuck,
+`Fossil` would show a large rate too, since cooldowns do not care about terrain.
+A clean zero on an open map and a fifth on a cluttered one is the signature of
+**terrain**, which is exactly what §5 says greedy movement fails on.
+
+And the mechanism is visible in the code without further measurement.
+`stepToward` tries the target direction, then ±45°, then ±90°, and **keeps no
+memory between turns**. Stepping sideways past an obstacle un-blocks the direct
+direction, so the next turn it steps back, and a robot in a concave pocket
+oscillates there indefinitely. The ±45/±90 fallback is not a bug-navigation
+algorithm; it is a single-turn dodge re-run from scratch every turn.
+
+**`darla82` to build: bounded bug navigation.** Follow the obstacle boundary by
+continuing to rotate consistently from the *last direction actually moved* rather
+than re-scanning from the target direction each turn, and drop the state the
+moment the direct path clears. Per-robot turn preference stays tied to robot ID,
+as the current tie-break already is, so play symmetry is preserved.
+
+Registered prediction, from the table: the gain should be **concentrated on
+cluttered maps and absent on open ones** — a flat improvement across all 75 would
+be evidence the mechanism is not what I think it is. Registered falsifier: `mv`
+must **fall** on `Bread` and `Portal` in `darla82`'s own replays; a score that
+moves while `mv` does not is a different effect wearing this one's clothes.
