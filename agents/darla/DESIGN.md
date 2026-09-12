@@ -3911,3 +3911,50 @@ into one.
 
 Re-queued: the lost `i2` 450-game reference, `darla84`'s 450-game decision, and
 `darla82`'s head-to-head.
+
+## Iteration 83 — the metric I built to guide this work is a PROXY, and optimising it directly lost
+
+**61/150 — identical to `darla82`**, which is the expected result for a build that
+adds only inert counters, and which incidentally **retires the contamination
+doubt**: `darla82`'s −14 reproduces exactly, so the directory collision did not
+touch it. Its re-run was cancelled as redundant.
+
+Now the falsifier `darla82` could not report, on `Portal`:
+
+| build | stuck moves | head-to-head |
+|---|---|---|
+| baseline `darla-i2` | 27.8% | — |
+| `darla84` escape hatch | 18.7% | **+13** |
+| `darla83` full replacement | **15.6%** | **−14** |
+
+**The arm that reduces wasted movement the most is the arm that loses.** Committed
+wall-following is the better pathfinder by the only movement metric available, and
+it is 27 games worse as a bot.
+
+The mechanism is not mysterious once the numbers are side by side. Getting unstuck
+is not the goal; *being where the work is* is. Wall-following commits a robot to
+travel the full boundary of an obstacle, which reliably ends the oscillation and
+reliably deposits the robot somewhere it had no reason to be. Greedy oscillation
+wastes turns but wastes them **next to the ruin it was painting**, and the escape
+hatch buys the exits without paying for the tours.
+
+**This is Goodhart's law with numbers attached, inside my own notebook**, and it
+is the most transferable thing in this session. `darla80`'s counter was built to
+decide whether §5's failure was real — a job it did well, at 21.6% and 27.8%
+against a clean 0.0% on open terrain. The error would have been to then treat
+`mv` as the objective. The counter is a **trigger** and a **falsifier**, never a
+target: `darla84` uses it to decide *when* to escape and to confirm afterwards
+that the escape happened, and that is the whole of its proper use.
+
+Registered for every instrumented arm from here: **a counter that guided a change
+may not also score it.** The score is the score.
+
+### A self-inflicted near-miss worth one paragraph
+
+Cancelling the redundant re-run with `pkill -f 'head-to-head.sh darla82 darla'`
+killed **my own shell**, because the pattern matched the command line running the
+`pkill`. The intended driver did die and the three live drivers survived, but the
+write-up and commit in the same command were lost, and the blast radius was luck
+rather than design. `pkill -f` on a string that appears in the invoking command is
+self-matching by construction. Use the PID, or `pgrep` first and read what comes
+back — never a pattern that describes the command you are typing.
