@@ -2928,3 +2928,27 @@ That is now a checkable rule rather than an observation: **before varying a
 capacity or threshold, measure how often the current value is actually reached.**
 Each of these four cost a 150-game run to learn what an instrumented counter or a
 back-of-envelope would have said for nothing.
+
+## Iteration 68 — `RUIN_BAN_ROUNDS` 250 → 60: −1.31 sd
+
+67/150 (44.7%). Shortening how long an abandoned ruin stays banned makes the bot
+worse, not better. Together with `RUIN_PATIENCE` this completes a coherent
+picture of the ruin-abandonment machinery:
+
+| change | direction | result |
+|---|---|---|
+| `RUIN_PATIENCE` 15 (give up sooner) | more abandonment | **−2.45 sd** |
+| `RUIN_PATIENCE` 120 (persist longer) | less abandonment | null |
+| **`RUIN_BAN_ROUNDS` 60 (retry sooner)** | **more retrying** | **−1.31 sd** |
+
+**Both directions of "revisit ruins more" lose, and both directions of "leave
+them alone" are free.** A soldier that returns to a ruin it already failed on is
+a soldier not painting, and the inherited values are on the safe side of both
+levers. Consistent with the saturated-side rule, and consistent with the deeper
+finding that soldiers are poor painters whose value is ruin *conversion* — so
+anything that makes them re-attempt failures costs their only productive output.
+
+That leaves `BAN_CAP` and `SEEN_CAP` as the last two never-varied constants, and
+both are capacities rather than thresholds — so by the rule `darla69` just earned,
+they get an instrumented check for whether the cap is ever reached *before* any
+150-game run is spent on them.
