@@ -2839,3 +2839,12 @@ accept tonight came from an instrument built to match the question (paired, same
 maps), and every subsequent lead died on the instrument that could see what it
 cost. Both halves of that matter — the first found a real effect the screens
 could not, and the second killed four candidates the screens would have shipped.
+
+## Iteration 66 — `RUIN_PATIENCE` 40 → 120: null
+
+77/150 (51.3%), z = +0.33. Letting a soldier persist three times as long on a
+ruin before abandoning it changes nothing measurable. The motivation was that
+large maps mean longer travel and so more chances to hit the abandon limit before
+a pattern completes; if that were the binding constraint, tripling the limit
+should have shown it. `darla67` (patience 15) is running to bracket the other
+side.
