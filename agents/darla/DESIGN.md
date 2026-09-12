@@ -2982,3 +2982,91 @@ is observed", and I implemented the one check that needs a journey instead.
 **Recorded as `untested`, not refuted** — and the third arm tonight where the
 mechanism fired but on a degraded version of the intended signal (`darla49` out
 of range, `darla64` out of range, this one un-eliminated).
+
+## Iterations 72 and 73 — terrain-in-vision elimination works, and both arms are VOID on bytecode
+
+`darla71` above said what a real test needed: eliminate candidates from terrain
+**already in vision**, so no robot has to travel to the mirrored start. Both of
+the next two arms implemented exactly that, and neither produced a readable
+score.
+
+| arm | change | result | counters |
+|---|---|---|---|
+| `darla72` | full vision sweep × 3 candidates, every turn | 61/150 | `sy=1/0`, `sy=2/0` — **eliminations happen** |
+| `darla73` | same, bounded: stop at 1 survivor, sweep every 5th round | 66/150 | `sy=0/…`–`sy=1/…`, **`ov` up to 8** |
+
+**The inference is correct and the cost is the whole story.** `darla72` overran
+at `ov=3`; `darla73` bounded the cost two ways and still overran at `ov=4`–`8` on
+`Barcode` around round 400. `senseNearbyMapInfos(-1)` is ~69 tiles, and for each
+one a live candidate costs a `canSenseLocation` plus a `senseMapInfo` — the
+every-5th-round gate divides the *frequency* but not the per-invocation spike,
+and it is the spike that overruns. By the rule registered at `darla8`, an arm
+whose robots miss turns is void regardless of its score, so neither 61/150 nor
+66/150 is evidence about symmetry inference.
+
+**The finding that actually closes this line is not about cost.** Reading
+`darla73`'s consumer:
+
+```java
+if (foe == 0) {
+    MapLocation f = nearestVisibleEmpty();
+    if (f != null) { explore = f; ... }        // almost always taken
+    else { MapLocation eb = enemyBase(); ... } // the symmetry heading
+}
+```
+
+The symmetry answer is consumed in **one place, as the fallback of a fallback** —
+only when no enemy is visible *and* no empty tile is visible. And when
+eliminations are zero, `enemyBase()` returns the first live candidate, which is
+always `symRot`. So on `Barcode`, where `sy=0/3`, every single use of the
+"inferred" answer was an **un-eliminated rotational guess** — the same fixed
+heading `darla71` was scored on, arrived at by 69 tiles of sensing per robot.
+
+So three arms have been spent building a derivation whose answer reaches at most
+a narrow fallback branch, and I have never once measured whether that branch
+matters. That is the `darla70` mistake in a new costume: `darla70` built a
+mechanism nothing could read because statics are per-robot; this built one whose
+reader is a third-choice branch.
+
+**`darla74` registered, and it deliberately contains no inference at all.** It
+replaces the one line the baseline uses to give up:
+
+```java
+else state += " frontNone";                          // baseline
+else { explore = <180° rotation of my own location>; // darla74
+       exploreAge = 0; state += " symTgt"; }
+```
+
+Two subtractions, no sensing, so `ov` is structurally 0 — and no symmetry state,
+so the result is attributable to the **consumer** and nothing else: *does an
+enemy-side heading beat giving up, on the turns where the bot currently gives
+up?* If it is null, §6 of `RESEARCH.md` is closed for this bot — not because
+inference is impossible but because there is nothing here to inform. If it moves,
+then and only then is a cheap inference worth a fourth arm, and the target to
+refine toward is the mirrored **start**, not the mirrored current location.
+
+Registered before the run: the baseline's own `frontNone` counter says how often
+this branch is even reached, so a null result is interpretable either way.
+
+## `SEEN_CAP` is a provable NO-OP, settled from map data without a run
+
+`SEEN_CAP` and `BAN_CAP` were the last two never-varied constants, and the rule
+`darla69` earned says a capacity gets an instrumented reached-check before any
+150-game run is spent on it. `SEEN_CAP` needs no instrumentation at all:
+
+| | |
+|---|---|
+| `SEEN_CAP` | **64** |
+| `seenLoc` holds | one entry per **distinct ally tower** seen |
+| ally towers ≤ towers ≤ | **ruins on the map** |
+| max ruins on any official map | **52** (`Leaf`; then `DefaultHuge` 49, `DonkeyKong` 46) |
+| median | 16 |
+
+A robot cannot record a 64th distinct ally tower on a map that has 52 ruins, so
+`seenN >= SEEN_CAP` never fires and every value from 53 up is byte-identical.
+**Raising `SEEN_CAP` is guaranteed to change nothing**; only a cut below 52 could
+alter play, and then only on the three or four densest maps.
+
+That is the fifth provable no-op in this lineage and the third settled by
+arithmetic over numbers already in the repo (`darla64` tower vision vs ruin
+spacing, the `CENSUS_MIN` override, this). The cheap check keeps paying.
