@@ -3070,3 +3070,51 @@ alter play, and then only on the three or four densest maps.
 That is the fifth provable no-op in this lineage and the third settled by
 arithmetic over numbers already in the repo (`darla64` tower vision vs ruin
 spacing, the `CENSUS_MIN` override, this). The cheap check keeps paying.
+
+## `BAN_CAP` is the first capacity the reached-check says IS saturated
+
+Same rule, opposite answer. `BAN_CAP = 8` bounds how many abandoned ruins one
+robot remembers, and the shipped build **already instruments it** — `banPeak`,
+emitted as `bp=` in every indicator string, was added when the table grew from
+effectively 1 slot, precisely to show whether more than one was needed. So this
+check cost no arm and no games, only a replay census.
+
+`banPeak` records `live + 1`, and `live` counts slots that are neither the key
+being written nor lapsed. It therefore reaches **9 exactly when all 8 slots hold
+live, non-matching bans** — the saturation signature, since the write must then
+evict a ban that has not expired.
+
+Census on `20260912-150525`, a clean baseline run, full games:
+
+| replay | max `bp` |
+|---|---|
+| `alice__DonkeyKong__botB` | **9 — saturated** |
+| `carol__DonkeyKong__botA` | **9 — saturated** |
+| `bob__DonkeyKong__botA` | 6 |
+| `alice__DonkeyKong__botA` | 5 |
+| `alice__Oasis__botA` / `botB` | 3 / 2 |
+
+`DonkeyKong` has 46 ruins; `Oasis` is ordinary and never comes close. So the cap
+binds where the arithmetic says it should — on the ruin-dense maps — and not
+elsewhere. This is the **first** of the capacity checks to come back positive;
+`TOWER_MEM`, `CENSUS_MIN`, the tower vision signal and `SEEN_CAP` all came back
+unreachable.
+
+**But the interesting defect is not the size, it is the eviction policy.** When
+the table is full the victim is `banNext`, a ring cursor, so the bot can evict the
+ban it created last turn while keeping one that lapses two turns from now — the
+memory it throws away is chosen by an unrelated counter.
+
+**`darla75` registered:** on the saturated path only, evict the slot whose ban
+**lapses soonest** instead of the ring slot. It is one line inside a loop that is
+already walking all 8 entries, it runs only when `slot < 0`, and it leaves
+`BAN_CAP` at 8 — so this is a policy change, not a dose, and any effect is
+attributable to *which* memory is discarded rather than to how much is kept.
+
+Registered before the run: this can only act on the turns where `bp` reaches 9,
+which the census puts on the ruin-dense end of the pool and nowhere else — so a
+small overall number with the gain concentrated on large, ruin-dense maps is the
+predicted shape, and a flat result across all 75 maps would mean the saturated
+path is too rare to matter at all. If `darla75` is null, `BAN_CAP` is closed as
+measured-and-small and every constant in this bot has been varied or proved
+unreachable.
