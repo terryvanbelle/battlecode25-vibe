@@ -40,6 +40,11 @@ while true; do
   # darla-largemap.sh was added it was starved exactly as the head-to-heads had
   # been -- the fourth time tonight a hardcoded list of job types went stale as
   # the system grew. The suffix is the contract: any evaluation script.
+  # RE-SOURCE every loop. jobs.sh is read once at startup, so a daemon started
+  # before a new job type was added never learns about it -- which starved the
+  # head-to-heads once and the fresh-sample runs again. Centralising the pattern
+  # fixed WHERE it is defined; this fixes WHEN it is read.
+  source "$(dirname "${BASH_SOURCE[0]}")/jobs.sh"
   waiting=$(pgrep -fc "$EVAL_JOB_RE" 2>/dev/null || true)
   if [ "${waiting:-0}" -gt 0 ]; then
     sleep 60
