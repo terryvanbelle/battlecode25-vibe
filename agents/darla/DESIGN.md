@@ -3118,3 +3118,116 @@ predicted shape, and a flat result across all 75 maps would mean the saturated
 path is too rare to matter at all. If `darla75` is null, `BAN_CAP` is closed as
 measured-and-small and every constant in this bot has been varied or proved
 unreachable.
+
+## Iteration 74 — RESEARCH.md §6 is CLOSED for this bot, and the reason is the branch, not the inference
+
+73/150 (48.7%), **63 of 75 maps splitting 1–1** and 12 diverging. A −2-game null
+on a change that fires on one map in six.
+
+And the number that explains it was available from a single replay, before the
+run. Counting soldier `state` tokens on the baseline over a 60-round window:
+
+| map / side | `frontFound` | `frontNone` | `S HOME` | share of soldier-turns reaching `frontNone` |
+|---|---|---|---|---|
+| `DonkeyKong` botB | 43 | **1** | 48 | 0.8% |
+| `Oasis` botA | 11 | **0** | 144 | 0% |
+| `TheBest` botA | 19 | 4 | 116 | 2.2% |
+| `TheBest` botB | 185 | **100** | 20 | 33% |
+
+`enemyBase()` is consumed only when no enemy *and* no empty tile is visible, and
+on three of four map-sides a soldier essentially always has a visible empty tile
+to walk to. So the symmetry answer had almost no turns on which to act — and on
+the one side where it did (`TheBest` botB, 33%), an enemy-side heading is worth
+nothing measurable.
+
+**Four arms — 71, 72, 73, 74 — closed by measuring the consumer once.** The
+progression is worth stating plainly because the failure was mine, not the idea's:
+
+| arm | what I tested | why it could not answer |
+|---|---|---|
+| 71 | mirrored-start check | needs travel; eliminations 0 |
+| 72 | terrain-in-vision | works, but `ov=3` — VOID |
+| 73 | same, cost-bounded | still `ov=4`–`8` — VOID |
+| 74 | the consumer alone, no inference | **null, and the branch is <1% of turns** |
+
+`darla69` earned the rule "before varying a capacity, measure how often the
+current value is reached". The general form, which I should have applied at
+`darla71` and have now paid four arms for, is: **before improving what a branch
+decides, measure how often that branch is reached.** It is the same one-replay
+check, and it costs nothing.
+
+Registered closure: **§6 `structurally-unavailable`** for this architecture — not
+refuted. Inferring symmetry works (`darla72` proved the derivation fires); this
+bot simply has nowhere to spend the answer, because its soldiers are never short
+of a nearer thing to walk toward. A bot that *did* spend it — coordinated early
+rushes, tower-siting on the enemy half — would be a different bot.
+
+## The same census found a much larger target: `S HOME` is 63–79% of soldier-turns
+
+The column I went looking past is the one that matters. On `Oasis` botA, 144 of
+183 soldier-turns are `S HOME` — walking to a tower to refill. On `TheBest` botA,
+116 of 183. This is the single largest block of soldier time in the bot and it
+has never been examined.
+
+It is not commuting cost. The refill counters say what it actually is:
+
+| | `rt` (latches) | `ht` (turns latched) |
+|---|---|---|
+| `Oasis` botA, one soldier | **6** | **398 → 408** (rising 1/round) |
+| `TheBest` botA, one soldier | **1** | **406 → 416** (rising 1/round) |
+
+A soldier that has latched **once** and spent **416 consecutive turns** in the
+HOME state never arrived. `walkHomeIfDry` latches below `REFILL_LOW` and unlatches
+only at half capacity, so a soldier that cannot refill is latched for the rest of
+the game — and every one of those turns is spent walking instead of painting.
+
+**The root cause is three lines apart in the source, and it is a type error, not a
+tuning error:**
+
+```java
+static void rememberTowers() { ...
+    if (!t.type.isTowerType()) continue;     // EVERY ally tower, money ones too
+    int key = (l.x << 6) | l.y;              // type is thrown away here
+static MapLocation nearestRememberedTower() { ...
+    int d = me.distanceSquaredTo(l);         // nearest of ANY type
+static void refillIfPossible() { ...
+    int want = Math.min(cap - rc.getPaint(), ally.paintAmount);   // money tower: 0
+```
+
+A dry soldier walks to the nearest remembered tower. If that is a **money** tower
+— `tp=0` in every indicator I have read — then `want = min(deficit, 0) = 0`, no
+paint transfers, the soldier never reaches half capacity, stays latched, and
+burns every remaining turn of the game commuting to a tower that cannot help it.
+`rt=1, ht=416` is that failure written down.
+
+No lineage in this project has ever tested tower *type* at refill time: `grep`
+across `agents/*/src/*/*.java` finds `LEVEL_ONE_PAINT_TOWER` only in
+build-decision and pattern-completion code.
+
+**`darla76` registered** — the type is free at the moment of observation, so
+record it and prefer it:
+
+```java
+int key = (l.x << 6) | l.y | (t.type.getBaseType() == UnitType.LEVEL_ONE_PAINT_TOWER ? 4096 : 0);
+MapLocation l = new MapLocation((towerMem[i] >> 6) & 63, towerMem[i] & 63);  // mask the new bit
+int d = me.distanceSquaredTo(l); if ((towerMem[i] & 4096) != 0) d -= 100000;
+```
+
+One spare bit in a key that had six free, one mask on the decode, one subtraction
+that makes any paint tower beat any money tower while distance still orders
+within a class. `BAN_CAP`-style capacity untouched; no constant changed.
+
+Registered prediction: this should be largest exactly where `S HOME` dominates —
+`Oasis`, `TheBest` — and near-null on maps where soldiers already reach a paint
+tower. Falsifier: if `ht/rt` stays high in `darla76`'s own replays, the stuck
+soldiers are not at money towers and the diagnosis is wrong.
+
+**Building it also caught a near-miss of the `darla14` class.** The first attempt
+used pattern-matched `sed`, and `int key = (l.x << 6) | l.y;` and
+`int d = me.distanceSquaredTo(l);` each appear **twice** in the file — the second
+`key` site is the `seenLoc` tower census and the second `d` site is the
+paint-target scan, neither of which has a `towerMem` in scope. `make-arm.sh`
+reported "6 changed line(s)" where 4 were intended, which is what made me look.
+The rebuild addresses the three lines **by line number**, which is exact here
+because no edit changes the line count. The arm-builder's diff count earned its
+keep a second time.
