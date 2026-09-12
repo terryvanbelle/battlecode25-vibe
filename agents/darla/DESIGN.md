@@ -2305,3 +2305,33 @@ This also applies retroactively to the lineage gauntlets: the pinned-sample scre
 were exactly reproducible for the same reason, which is why matched pairs on them
 were trustworthy, and why the *fresh random* samples were the only source of
 genuine variance. I had both facts separately and had not put them together.
+
+## The accepted build has a large-map weakness, and the accept created most of it
+
+Pooling every fresh-sample run of the shipped build against the three lineages,
+split by map area (small = under 1,600 tiles, the median):
+
+| | small maps | large maps | gap |
+|---|---|---|---|
+| pre-accept | 56.9% (766 games) | 48.2% (620 games) | 8.7 pts |
+| **post-accept** | **82.3%** (1,602 games) | **56.4%** (1,548 games) | **25.9 pts** |
+| accept's gain | **+25.4** | **+8.2** | |
+
+**The accept is worth three times as much on small maps as on large ones**, and
+the disparity it created is now the single largest structured weakness in the
+build — bigger than any constant effect measured tonight.
+
+**It also corrects the census that prompted this.** I regenerated a lost game on
+`gridworld` (31x31, 20% walls) and found 4 towers, 30 tower paint and $16,970
+idle — and read it as "the splasher mix fails on small walled maps". Exactly
+wrong: small maps are where this build is strongest at 82.3%. `gridworld` is a
+loss *within* the bot's best regime, and generalising from one regenerated replay
+would have sent the next several arms in precisely the wrong direction. The
+pooled split took two minutes and pointed the opposite way.
+
+**Note what does *not* follow.** The obvious fix — fewer splashers on large maps —
+is contradicted by the same table: the pre-accept build *was* soldier-heavy and
+scored 48.2% there, worse than the current 56.4%. More splashers helped large
+maps too, just less. So the weakness is not "too few soldiers for a big map"; it
+is something about large maps that neither mix addresses, and the next arm has to
+find out what rather than assume.
