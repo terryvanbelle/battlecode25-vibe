@@ -4207,3 +4207,45 @@ Next step is a code read of both idle branches before any arm, per the rule
 could do instead, before changing what it decides. Both of these are
 opponent-independent waste — the bot spending its own turns — which is the class
 the `v3` benchmark suggests is worth preferring.
+
+### The `darla-i3` 450-game reference: 341/450 (75.8%)
+
+Matches `darla84` exactly, as it must — fifth determinism check since the accepts.
+This is the reference every future arm is paired against.
+
+## `darla86` — iteration 14's frontier-seeking has been switched off on 45% of turns since it shipped
+
+The census said `IDLE-ENEMY` is now the largest soldier block at **45%**. The code
+says why it is untouched:
+
+```java
+if (foe == 0) {                       // <-- the gate
+    MapLocation f = nearestVisibleEmpty();
+    if (f != null) { explore = f; exploreAge = 0; state += " frontFound"; }
+    else state += " frontNone";
+}
+```
+
+`foe` counts **enemy-painted tiles in r² ≤ 9**. Iteration 14 built frontier-seeking
+for the `IDLE-ALLY` case and gated it on `foe == 0`, so a soldier that has *any*
+enemy paint in its action radius never even asks whether paintable ground is
+visible. That gate makes `frontFound` structurally unreachable on the largest
+block of soldier turns in the bot — and it explains the census oddity I noted
+earlier without understanding it: `frontFound` was 14 turns against
+`IDLE-ENEMY`'s 149.
+
+`darla86` removes the gate. The enemy paint is not what stops the soldier moving;
+it is what stops it *painting*, and heading for paintable ground is exactly the
+right response to that.
+
+This also makes better sense of `darla74`. That arm added a fallback *inside* this
+same block and measured `frontNone` at under 1% — because it could only ever see
+the `foe == 0` turns. The branch was not rare; it was **gated**.
+
+Registered checks, in order, before the score:
+1. **`ov` must stay 0.** `nearestVisibleEmpty()` is a vision scan and now runs on
+   ~45% more soldier turns. This is the single most likely way for the arm to
+   void, and it has voided two arms already this session.
+2. `frontFound` must rise sharply and `IDLE-ENEMY` fall; if `frontFound` barely
+   moves, then soldiers with enemy paint in reach also have no empty tile in
+   vision, and the gate was harmless.
