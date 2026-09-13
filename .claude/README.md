@@ -29,6 +29,15 @@ hard to undo (`sudo`, `rm -rf`, `kill`/`pkill`, `git push --force`,
 `git reset --hard`, deleting or stopping the VM). `kill`/`pkill` earned its place:
 a `pkill -f` pattern once matched the shell that was running it.
 
+**On `rm -rf` specifically.** It stays in `ask`, with no narrowing exception. The
+one routine step that needed it -- freezing `src/darla` as `src/darla_iter<N>`
+during an accept -- now happens inside `tools/accept-iteration.sh`, which a
+`Bash(tools/*)` allow already covers. Owner's call, 2026-09-13, and the right one:
+an allow rule would have applied to every future command matching the pattern,
+while the script removes the need for one and refuses to overwrite an existing
+snapshot into the bargain. Prefer moving a dangerous step inside a checked script
+over widening a permission to admit it.
+
 **`allow` — the work.** `git`, `gcloud compute ssh` and the read-only `gcloud`
 queries, this repo's own scripts, and the ordinary text-processing commands that
 make up a replay census. Generous on purpose: a prompt on `awk` teaches nobody

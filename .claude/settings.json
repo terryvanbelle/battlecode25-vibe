@@ -76,9 +76,7 @@
       "Bash(ps *)",
       "Bash(df *)",
       "Bash(du *)",
-      "Bash(timeout *)",
-      "Bash(rm -rf src/darla_iter*)",
-      "Bash(rm -rf agents/darla/src/darla_iter*)"
+      "Bash(timeout *)"
     ]
   }
 }
