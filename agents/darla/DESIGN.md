@@ -5290,3 +5290,44 @@ easier** than the other two and produced only 32 discordant pairs for `darla86`.
 It is a thin vote. If it comes back positive, the combination clears the bar on
 three independent opponent sets; if it comes back flat, `darla96` is a
 one-roster effect and closes as `measured-and-small`.
+
+# ITERATION 4 ACCEPTED — money towers only when chips are actually spare (`darla96`)
+
+The third opponent set broke the tie decisively:
+
+| opponent set | `darla96` vs `darla-i3` | discordant | z |
+|---|---|---|---|
+| standard (finals) | 343 vs 341 | 32 | +0.35 |
+| widened (`iter39`/`18`/`44`) | 353 vs 338 | 33 | **+2.61** |
+| third generation (`iter25`/`11`/`30`) | **395 vs 383** | 20 | **+2.68** |
+| **combined, three disjoint sets** | **1,091 vs 1,062** | **85** | **+3.26** |
+
+**+3.26 is the strongest result this lineage has produced** — above `darla84`'s
++3.03 and `darla77`'s +2.39 — over **1,350 paired games against six distinct
+opponents**. Two sets strongly positive, one flat, none negative.
+
+The change is one line, and it is the payoff from two nulls. `darla95` proved
+chips do not bind (releasing the reserve properly: `z = 0.00`). `darla94` measured
+that spawning is blocked on **tower paint** 423–435 times per tower. Together
+those say a fixed 1-in-4 money share is buying chips the bot cannot spend with
+paint towers it desperately needs — so the money tower is now built **only when
+the treasury already covers the reserve plus our most expensive robot**. The
+threshold is derived from existing constants; no dose was swept.
+
+`src/darla` is `darla-i4`; the outgoing build is frozen at `src/darla_iter3`.
+
+**The correction that made this possible.** An hour before this, I wrote that
+`darla96` was null and "the chip side is closed" — on one roster, before the
+second reported. Had I stopped there, the strongest change in the lineage would
+have been filed as a dead end. The habit that saved it was queueing both rosters
+by default for a change, not the judgement I applied to the first number.
+
+**Mechanism verification deferred, deliberately and once.** The `ma`/`mf`
+counters sit on the older census-override path and do not cover the new branch —
+an instrumentation gap I noted when building the arm. The accept rests on 85
+discordant keys (a no-op splits 1–1 everywhere, as `darla79`, `darla87`, `darla93`
+and `darla94` all did), not on a counter. The promotion test plays `i4` against
+`i3` on all 75 maps and is exactly the controlled comparison needed, so the tower
+mix census comes from its replays.
+
+Registered: promotion test must return **exactly 78/150**.

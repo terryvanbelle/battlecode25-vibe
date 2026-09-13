@@ -1,4 +1,4 @@
-package darla;
+package darla_iter3;
 
 import battlecode.common.*;
 
@@ -60,7 +60,7 @@ public class RobotPlayer {
      * measurement-neutral -- it shifts the replay hash, so a dose pair must share one tag if
      * doctrine #3's byte-identity check is to work on raw hashes.
      */
-    static final String BUILD = "darla-i4";
+    static final String BUILD = "darla_iter3";
 
     // ---- Iteration 34: fewer MONEY towers, because paint binds and chips do not -------------
     // towerTypeFor makes a ruin a money tower when k % MONEY_MOD == 0, so MONEY_MOD sets the
@@ -675,7 +675,6 @@ public class RobotPlayer {
             mixFlip++;
             return UnitType.LEVEL_ONE_PAINT_TOWER;
         }
-        if (rc.getChips() >= CHIP_RESERVE + UnitType.SPLASHER.moneyCost) { mixFlip++; return UnitType.LEVEL_ONE_PAINT_TOWER; } // ACCEPTED iteration 4 (was darla96): build the money tower only when chips are ACTUALLY scarce. darla95 released the chip reserve properly -- pf went from 0 to 34-48 per tower -- and moved the roster by 19-19 of 38 discordant, z=0.00, so chips demonstrably do not bind. darla94 measured the other half: spawning is blocked on TOWER PAINT 423-435 times per tower on small maps. A fixed 1-in-4 money share therefore spends a paint tower to buy chips the bot cannot spend. The threshold is derived from existing constants -- the reserve plus our most expensive robot -- not a new dose, and chips are symmetric across a mirrored map so the play-symmetry property iteration 34 protects is preserved.
         return UnitType.LEVEL_ONE_MONEY_TOWER;
     }
 
