@@ -4272,3 +4272,41 @@ directory that caused the bug, because `grep -c` on an empty file **prints `0` a
 exits 1**, so `$(grep -c ... || echo 0)` evaluates to `"0\n0"`, which is not `0`.
 That exact quirk is already recorded in this notebook from an earlier fix, and I
 wrote it again anyway.
+
+## Iteration 86 — the `foe == 0` gate is LOAD-BEARING, not an oversight
+
+**69/150 (46.0%)**, −6. `ov = 0`, so the arm is valid and the score is readable.
+
+Both registered checks were run before the score, and the first two lines of the
+result are the mechanism doing exactly what I said it would:
+
+| soldier state | i3 baseline | `darla86` |
+|---|---|---|
+| `IDLE-ENEMY` | **149** | **absent from the top five** |
+| `frontFound` | 14 | **33** |
+| `frontNone` | 0 | **28** |
+
+`frontNone` going 0 → 28 is the cleanest possible proof that the gate was
+suppressing the question, not that the question was rare: those are 28 turns on
+which the old build never even asked whether paintable ground was visible.
+`IDLE-ENEMY` is gone as a category, replaced by soldiers that now head somewhere.
+
+**And it loses.** So the gate is not an oversight from iteration 14 — it is doing
+work, and removing it costs six games.
+
+I do not yet have a clean mechanism for *why*, and I would rather say that than
+invent one. A same-game controlled read (`Crab`, both builds in one replay) shows
+the baseline ahead on the two things that matter — `pnt` 53 vs 41 and
+`frontFound` 42 vs 33 — which says `darla86`'s soldiers end up doing **less**, not
+more, despite asking the frontier question more often. The likely shape is that a
+soldier with enemy paint in reach is somewhere *contested and worth holding*, and
+sending it off toward clean ground concedes that square; but one map is not
+enough to assert it, and the 450-key paired run is queued.
+
+**The honest reading of this arm and `darla74` together.** `darla74` measured this
+branch at under 1% and I called §6 structurally-unavailable partly on that basis.
+`darla86` now shows the branch was gated, not rare — so that reasoning was wrong
+even though the conclusion survived (ungating it does not help either; it hurts).
+A wrong route to a right answer is still worth correcting in the notebook, because
+the next arm that reasons from "this branch is rarely reached" needs to know the
+difference between *rare* and *suppressed*.
