@@ -76,7 +76,8 @@
       "Bash(ps *)",
       "Bash(df *)",
       "Bash(du *)",
-      "Bash(timeout *)"
+      "Bash(timeout *)",
+      "Bash(rm -rf src/tmp*)"
     ]
   }
 }
