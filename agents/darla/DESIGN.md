@@ -5561,3 +5561,44 @@ comment about counting refills, not that I had counted any. Rebuilt with
 `EXPECT='pullTotal += want'`, which is the load-bearing edit. **Point an arm
 builder's check at the change, never at the prose describing it** — the same
 lesson `darla82` taught with an unreadable falsifier, in a new place.
+
+## Iteration 98 — the paint block is a PRODUCTION problem after all: refills take 4–11%
+
+75/150, all 75 maps 1–1, `ov = 0`. Summed properly — refill drain across every
+robot, spawn spend across every tower:
+
+| map | drained by refills | spent on spawns | refill share |
+|---|---|---|---|
+| `Flower` | 1,205 | 10,200 | **11%** |
+| `Mirage` | 650 | 15,900 | **4%** |
+
+**Refills are not the leak.** Robots walking up to top off take roughly a tenth of
+what towers spend building robots, so the spawn block is *not* self-inflicted by
+our own refill traffic, and the "leaking bucket" hypothesis is refuted. Tower
+paint is genuinely a **production** constraint: the tower cannot make it fast
+enough, and nothing is stealing it.
+
+That is a negative result and a useful one — it closes the consumption side of the
+ledger and leaves production as the only place a paint-supply arm can act.
+Iteration 4 already acted there (more paint towers) and bought `TheBest`'s
+314 → 58. The remaining production levers are the paint tower's own rate
+(`paintPerTurn`, fixed by the engine), its level (upgrades, which iteration 35
+measured as barely affordable at 2,500 against a p99 treasury of 2,600), and the
+number of paint towers (iteration 4, now shipped).
+
+**So the large-map expansion loop is bounded by an engine rate, not by a policy
+mistake.** That is worth saying plainly after five arms in this line: `darla94`
+found the constraint, `darla95` and `darla96` tested the two ways to spend around
+it — one null, one accepted — `darla97` showed iteration 4 genuinely moved it, and
+`darla98` now shows the remaining block is production the bot cannot increase by
+choosing differently. The next real gain here would need a different shape
+entirely, not another tuning of who gets the paint.
+
+**A methodological note on getting this number right.** My first reading compared
+per-robot *maxima* and made refills look enormous (1,319 against 5,200 — a 25%
+share). That was wrong twice over: refill drain is counted per robot and spawn
+spend per tower, so maxima are not comparable, and the first parse misread
+`id2(T2,PAINT_TOWER)` as unit type `T2` and classified every tower as a robot.
+Summing per-entity, with the type read correctly, moved the answer from "refills
+are a quarter of consumption" to "refills are a tenth". Both errors flattered the
+hypothesis I was testing.
