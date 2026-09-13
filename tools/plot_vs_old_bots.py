@@ -92,12 +92,51 @@ def main():
             ax.annotate("single measurement", pts[0][:2], textcoords="offset points",
                         xytext=(6, 6), fontsize=7, color=color)
 
+    # ---- the roster average -------------------------------------------------
+    # One number per run for "how is the bot doing overall", which the per-opponent
+    # lines cannot show: they cross, and which one is on top changes with the
+    # opponent rather than with the bot. Only dates where EVERY tracked opponent
+    # was measured are averaged -- a date missing an opponent would move this line
+    # by changing the composition rather than the strength, which is exactly the
+    # artifact the whole chart exists to avoid.
+    by_date = defaultdict(list)
+    for opp, pts in by_opp.items():
+        for dt, pct, wins, total, source in pts:
+            by_date[dt].append((opp, pct, wins, total, source))
+    full = {dt: v for dt, v in by_date.items() if len(v) == len(order)}
+    skipped = len(by_date) - len(full)
+    if len(full) >= 2:
+        avg_dates = sorted(full)
+        # Games-weighted, so the line stays correct if a run ever measures
+        # different numbers of games per opponent. With equal totals -- the
+        # normal case -- this is identical to the mean of the three win rates.
+        avg_pcts = [100.0 * sum(x[2] for x in full[dt]) / max(1, sum(x[3] for x in full[dt]))
+                    for dt in avg_dates]
+        ax.plot(avg_dates, avg_pcts, linestyle="--", linewidth=2.8, color="black",
+                alpha=0.85, zorder=4,
+                label=f"AVERAGE of all {len(order)}  (n={sum(x[3] for x in full[avg_dates[-1]])})")
+        solid_avg = [(d, p) for d, p in zip(avg_dates, avg_pcts)
+                     if all(x[4] != "backfill" for x in full[d])]
+        hollow_avg = [(d, p) for d, p in zip(avg_dates, avg_pcts)
+                      if any(x[4] == "backfill" for x in full[d])]
+        if solid_avg:
+            ax.scatter([d for d, _ in solid_avg], [p for _, p in solid_avg],
+                       s=30, color="black", zorder=5)
+        if hollow_avg:
+            ax.scatter([d for d, _ in hollow_avg], [p for _, p in hollow_avg],
+                       s=30, facecolors="white", edgecolors="black",
+                       linewidths=1.4, zorder=5)
+        if skipped:
+            print(f"  average line: {len(full)} complete runs plotted, "
+                  f"{skipped} skipped for missing an opponent")
+
     ax.axhline(50, color="gray", linestyle=":", linewidth=1, alpha=0.7)
     ax.annotate("even", (0.002, 50), xycoords=("axes fraction", "data"),
                 fontsize=7.5, color="gray", va="bottom")
     ax.set_title(
         f"Win % vs. a fixed roster of old snapshots — {agent} (Battlecode 2025)\n"
-        "absolute-strength yardstick: frozen opponents, so a rising line is real progress",
+        "absolute-strength yardstick: frozen opponents, so a rising line is real progress\n"
+        "dashed black = average across the whole roster",
         fontsize=12)
     ax.set_xlabel(f"Date of gauntlet run ({pl.pacific_label()})")
     ax.set_ylabel("Win % against that frozen opponent")
