@@ -4763,3 +4763,34 @@ opponent set before it earns an arm.
 The widened roster is still queued and will be recorded, but it cannot change this
 conclusion: the prediction was registered against the standard roster and has been
 answered there.
+
+### `darla92` final: +3 and +3, combined z = +0.64 — consistent with the closure
+
+| instrument | result | discordant | z |
+|---|---|---|---|
+| screen (self-play) | 82/150 | 21 maps | +7 games |
+| standard roster | 344 vs 341 | 41 | +0.47 |
+| widened roster | 341 vs 338 | 47 | +0.44 |
+| **combined rosters** | — | **88** | **+0.64** |
+
+The two rosters agree for once — both +3 games — which is what a genuinely tiny
+real effect looks like, as opposed to the sign-flipping the earlier variants
+produced. It changes nothing about the verdict: **+0.64 is a null**, and the gate
+line stays closed at `measured-and-small`.
+
+Final standing of the four gate variants across both rosters:
+
+| arm | gate | combined z |
+|---|---|---|
+| `darla86` | none | **+1.70** |
+| `darla92` | `foe == 0 \|\| foe > ally` | +0.64 |
+| `darla91` | `ally >= foe` | −0.16 |
+| baseline | `foe == 0` | — |
+
+`darla86`, the crudest of the three changes — just delete the gate — remains the
+best of them, and the two arms I built by reasoning carefully about *when* the
+branch should fire are both worse than it. Six hundred games of careful
+conditioning produced less than the one-word version, because the thing I was
+conditioning on was slice noise.
+
+`darla86`'s third-generation run is queued and is the last word on this line.
