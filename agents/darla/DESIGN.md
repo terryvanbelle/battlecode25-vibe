@@ -5522,3 +5522,42 @@ sample against `i1`'s 38. The idle filler produces exactly those samples, and wi
 no well-motivated arm in hand, letting it run is a better use of the VM than
 inventing one. `Brat`'s reversal also wants more than a single window before it
 earns an arm.
+
+### The wider census kills the map-size story — and `darla98` asks a question nobody has asked
+
+Six maps spanning the size range, `i4` build, `sb=<chips>/<paint>/<spawned>`:
+
+| map | area | chips | **paint** | spawned |
+|---|---|---|---|---|
+| `Justice` 21×20 | 420 | 60 | **449** | 1 |
+| `Bunny` 44×30 | 1,320 | 227 | 263 | 20 |
+| `DefaultLarge` 50×30 | 1,500 | 234 | 213 | 4 |
+| `Flower` 45×41 | 1,845 | 97 | **408** | 5 |
+| `Restart` 55×55 | 3,025 | 191 | **306** | 13 |
+
+**`Justice` is the smallest map sampled and is paint-blocked 449 to 60.** So
+`Brat`'s chip-blocked reversal does not generalise, and the "make it conditional
+on map size" idea it suggested is dead before it cost an arm. Paint is the
+dominant blocker across the whole range.
+
+**Which raises the question every arm in this line has skipped.** Tower paint is
+still the constraint after iteration 4 — so more paint is still the lever — but
+`darla94`, `darla95`, `darla96` and `darla97` all treated that as a **production**
+problem and none of them measured **consumption**. A tower accrues 5 paint/turn
+against a 1,000 cap and spends it two ways: building robots, and handing it to
+robots that walk up and refill. Iteration 2 stopped those robots stalling at dry
+towers; it did not make them take less.
+
+`darla98` counts both: `pp=<drained by refills>/<spent on spawns>`, the first
+counted robot-side where the transfer happens, the second tower-side. If refills
+dwarf spawns, the spawn block is **self-inflicted**, and every "build more paint
+towers" follow-up is pouring water into a leaking bucket.
+
+**A near-miss in building it, worth recording.** The first build silently dropped
+one of its three edits — I addressed the `transferPaint` line by number and the
+line had moved. `make-arm.sh` passed it anyway, because the `EXPECT` string I gave
+it was the *comment* rather than the code. The guard checked that I had written a
+comment about counting refills, not that I had counted any. Rebuilt with
+`EXPECT='pullTotal += want'`, which is the load-bearing edit. **Point an arm
+builder's check at the change, never at the prose describing it** — the same
+lesson `darla82` taught with an unreadable falsifier, in a new place.
