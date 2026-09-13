@@ -4467,3 +4467,44 @@ by *win count* rather than by opponent, so it reported alice −12 and carol +18
 Joining on the opponent name gives −1 and +7. The wrong version told a much more
 dramatic story, which is precisely why it was worth checking: `join` on a key,
 never `paste` on two sorts.
+
+## Iteration 88 — **7/150**, and it is not a void: walking splashers onto enemy paint is fatal
+
+**7/150 (4.7%)**, the worst result in this lineage. The first check was the one I
+registered — bytecode — and it clears cleanly:
+
+| | |
+|---|---|
+| `ov` across 180 samples | **0** |
+| peak bytecode | 8,138 of 17,500 |
+
+So the arm ran properly and genuinely lost 143 games. Mean game length fell from
+**1,035 rounds to 836**, with **43 of 150 games ending before round 500** against
+the baseline's 19 — the army is dying, not merely losing on points.
+
+**The mechanism, and it is an engine fact I already had written down.** A robot
+standing on enemy paint loses paint every turn. I sent splashers — the **300-paint
+unit**, the most expensive thing this bot builds — to walk to *the nearest enemy
+paint tile*, which is both the place that drains them and the place nearest the
+enemy's towers. They arrive, stand in it, drain, and die.
+
+**The target was wrong in a way the scorer already knew.** A splasher does not
+want to be **on** enemy paint; it wants to be **near** it. Its own scoring code
+says so: the splash centre may sit at r² ≤ 4 from the splasher and converts enemy
+tiles within r² ≤ 2 of that centre — so the useful standing position is *within
+splash reach of* a cluster, deliberately short of it. The comment three lines
+above my edit even spells out the geometry: *"a splasher can strike from distance
+4 while a paint/money tower answers only to r² = 9"*. I read that comment while
+writing the arm and still sent the unit to the cluster itself.
+
+**What survives.** `darla87`'s measurement is untouched and still says the
+`lowScore` block is positional — mean best score 7.1 against a threshold of 14.
+What is refuted is one specific target, the worst available one. The repositioning
+idea deserves one more attempt with the target the geometry implies: a tile from
+which the *best scoring centre* is in range, never the cluster itself, and never
+inside r² ≤ 9 of a live enemy tower — the same standoff the `siege` branch already
+implements a few lines below for exactly this reason.
+
+That variant is worth building precisely because this one failed so loudly: −68
+games is a mechanism working hard in the wrong direction, which is far more
+informative than a null.
