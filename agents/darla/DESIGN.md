@@ -4522,3 +4522,43 @@ the 450-game run then spent forty confirming it. Both were queued at the same ti
 before either result existed. For an arm whose registered risk was bytecode — a
 failure mode that shows up in the first ten games — **the paired run should be
 queued after the screen reports, not alongside it.**
+
+## Iteration 89 — the standoff works and the arm still dies: splasher repositioning is CLOSED
+
+**10/150 (6.7%)**, `ov = 0`. The correction did exactly what it was designed to do:
+
+| | `darla-i3` | `darla88` (onto the paint) | `darla89` (two tiles short) |
+|---|---|---|---|
+| mean game length | 1,035 | 836 | **903** |
+| games ending before r500 | 19/150 | 43/150 | **25/150** |
+| `P SPLASH` in the sample window | — | 1 | **8** |
+| `P lowScore` | — | 46 | **23** |
+
+Standing off the cluster halved the early annihilations and multiplied the actual
+splashes eightfold. **And the bot still loses 140 of 150.** So the diagnosis
+"splashers are dying on enemy paint" was right and incomplete — fixing it exposed
+the larger cost underneath.
+
+**The leading explanation, which both arms share:** this bot wins by **coverage**
+— that was established empirically at 96.5% early in the lineage — and the
+splasher is its area-painting engine. Sending splashers toward enemy paint, at any
+standoff, removes the bot's biggest painters from the expansion race and puts them
+on contested ground where each tile is fought over twice. The idle `lowScore` time
+is not waste; it is **where the splasher has to be standing for the paint it does
+lay to count.**
+
+**Registered closure: splasher repositioning toward enemy paint is `refuted`**, in
+two variants, −68 and −65 games, with the second one's mechanism demonstrably
+working. `darla87`'s measurement stands and is not withdrawn: the `lowScore` block
+is real, it is positional, and 21% of splasher turns still produce nothing. What is
+now known is that **the position it wants is not closer to the enemy.**
+
+Falsifier for anyone who reopens this: compare painted-tile counts, not deaths. If
+`darla89` lays *more* total paint than `darla-i3` and still loses, coverage is not
+the mechanism and something else is.
+
+**Method note.** I built `darla89` because `darla88` failed for a reason I could
+name precisely. That was right — a refutation with a clean mechanism earns one
+follow-up — but the follow-up should have carried a **coverage counter**, not just
+the geometry fix. I corrected the cause I had diagnosed and left myself unable to
+measure the cause I had not.
