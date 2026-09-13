@@ -5,12 +5,6 @@
       "WebSearch",
       "WebFetch",
       "Bash(sudo *)",
-      "Bash(rm -rf *)",
-      "Bash(gcloud compute instances delete *)",
-      "Bash(gcloud compute instances stop *)",
-      "Bash(gcloud compute disks delete *)",
-      "Bash(git push --force*)",
-      "Bash(git reset --hard*)",
       "Bash(curl *)",
       "Bash(wget *)",
       "Bash(nc *)",
@@ -75,10 +69,14 @@
       "Bash(df *)",
       "Bash(du *)",
       "Bash(timeout *)",
-      "Bash(rm -rf src/tmp*)",
-      "Bash(rm -rf src/darla[0-9]*)",
       "Bash(kill *)",
-      "Bash(pkill *)"
+      "Bash(pkill *)",
+      "Bash(rm -rf *)",
+      "Bash(gcloud compute instances delete *)",
+      "Bash(gcloud compute instances stop *)",
+      "Bash(gcloud compute disks delete *)",
+      "Bash(git push --force*)",
+      "Bash(git reset --hard*)"
     ]
   }
 }
