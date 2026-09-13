@@ -5726,9 +5726,12 @@ The guard is now hardened: `EXPECT` must match a line that is **not** a comment.
 It immediately started refusing builds whose edits were in fact correct, for a
 reason I could not pin down in several attempts — so `darla101` was assembled by
 hand with the same four checks applied explicitly (package, `BUILD`, bypass
-present on a code line, non-empty diff). **The hardened guard needs debugging
-before it is trusted**; until then it is a tripwire that also trips on the truth,
-which is worse than no tripwire. Recorded rather than quietly reverted.
+present on a code line, non-empty diff). **Correction, an hour later: the guard was right and I was wrong.** Run in
+isolation against the hand-built `darla101` with the same GNU grep the script
+uses, both checks pass. So the guard was reporting the truth — one `sed` command
+genuinely was not applying inside `make-arm.sh` — and I blamed the tool that had
+just caught a real defect. The sed quirk itself is still unexplained and is the
+thing to chase; the check stays.
 
 ### `darla100`: 75/150, all 75 maps 1–1 — the tooling bug confirmed by experiment
 
