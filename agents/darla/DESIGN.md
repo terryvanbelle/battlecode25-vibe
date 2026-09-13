@@ -5640,3 +5640,47 @@ replays**, not reading a sibling lineage's source. Their behaviour is measurable
 from the replays already on disk: when their soldiers claim ruins, what their
 tower mix looks like, how their spawn cadence differs. That census is the next
 piece of work, and it needs no VM time.
+
+## The death spiral traced end to end — and `darla99`, a demand-driven mopper
+
+Ban counters from the games `i4` lost, one soldier's cumulative totals:
+
+| map | `dn` deny-bans | `bs` ruins skipped as banned | `bp` peak live bans |
+|---|---|---|---|
+| `Flower` | 3 | **40** | 4 |
+| `Mirage` | 7 | **37–41** | 7 |
+
+**A single soldier walks away from about forty ruin opportunities per game because
+they are banned**, and the bans are `dn` — *deny* bans, meaning enemy paint is
+sitting on the tower pattern.
+
+That closes the loop, and every link is already in this notebook:
+
+1. Enemy paint lands on a ruin's pattern.
+2. **Soldiers cannot overwrite enemy paint** — established long ago; only moppers can.
+3. So the ruin is deny-banned and skipped, ~40 times a game.
+4. Fewer ruins claimed → fewer towers → less tower paint.
+5. Less tower paint → spawning blocked (`darla94`: 423–435 times per tower).
+6. Fewer soldiers → fewer ruins claimed. Back to 3.
+
+**And we have no moppers at all** (`darla79`: zero in 84 spawns), because iteration
+30's `PAINT_FLOOR` gates exactly the mopper — and `darla81` measured removing that
+floor at **−22 games**.
+
+**But `darla81` removed the floor altogether and got 25 moppers in 42 robots — a
+flood.** `darla99` is the opposite: a mopper **only when this tower can see enemy
+paint**, which is the only situation the unit exists for. Towers run at ~450 of
+20,000 bytecode, so the vision sweep is free where it would have been fatal in a
+robot.
+
+This is iteration 4's shape applied one resource over — replace a fixed share with
+a demand test the actor can evaluate locally — and iteration 4 is the strongest
+result in the lineage.
+
+Registered before the run:
+- **`ov` must stay 0** for towers (the sweep is new, though the headroom is 40×).
+- Mopper spawns must rise from `darla79`'s **zero** but stay far from `darla81`'s
+  60%. If they are still zero, the trigger never fires and the arm is untested; if
+  they approach a flood, this is `darla81` again and the score will say so.
+- Its trigger reads the **opponent's** paint, so per the standing rule the roster
+  runs decide and the head-to-head is a screen.
