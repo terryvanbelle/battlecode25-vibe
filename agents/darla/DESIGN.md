@@ -4015,3 +4015,34 @@ concave pocket, so the one-shot version under-escapes.
 It sits deliberately between the two known points, which is the only part of this
 space still unmeasured: trigger and persistence are separate knobs and only their
 corners have been tested.
+
+### The registered shape prediction holds — and `Fossil` is the clincher
+
+Wall fraction on the 25 maps where `darla84` and the baseline diverged (15 had a
+replay available to read a header from):
+
+| | n | mean wall fraction |
+|---|---|---|
+| `darla84` swept 2–0 | 11 | **11.32%** |
+| baseline swept 2–0 | 4 | **9.00%** |
+
+The extremes carry more than the means at this n:
+
+- **`maze`, 19.8% walls — the most cluttered map in the set — swept by `darla84`.**
+- **`Fossil`, 3.6% walls — the least cluttered — swept by the baseline.**
+
+`Fossil` is the map `darla80` independently measured at **0.0% stuck moves**, on
+an instrument that knew nothing about walls. So the one map where the mechanism
+provably has nothing to do is also the map where adding it is a slight liability,
+and the wall-fraction proxy and the stuck-rate counter agree without having been
+fitted to each other.
+
+That is the prediction I registered before the run: *concentrated on cluttered
+maps, absent on open ones, and a flat gain would be evidence against the
+mechanism.* It is not flat.
+
+**Accept held one more run.** `darla85` — same trigger, persistent hug — is in
+flight and is a direct variant of this arm. Promoting `darla84` now would force
+`darla85` to be re-measured against a baseline that already contains its rival,
+and I would be choosing between them on instruments that are no longer comparable.
+Thirteen minutes is a cheap price for keeping the comparison clean.
