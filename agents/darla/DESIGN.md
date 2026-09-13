@@ -4951,3 +4951,32 @@ Registered: this should act on large maps and be near-null on small ones, since
 that is where the chip block lives. `pin=` must reach 10 and `pf=` (pin-frees)
 must become non-zero — if they do not, the decay is still too slow and the arm is
 untested rather than refuted.
+
+## Iteration 95 — the valve opens, and the treasury was not the wall
+
+76/150 (+1), **62 of 75 maps identical**. The registered check is satisfied
+emphatically: pin-frees per tower go from **`pf=0`** in the baseline to
+**`pf=34`–`48`**, with `pin=` reaching 9 where it never passed 2 before. The
+detector that had never once fired now fires dozens of times a game, on exactly
+the large maps `darla94` said were chip-blocked.
+
+**And the score does not move.** So this is a null, not an untested arm — the
+distinction `darla78` and `darla71` were recorded under, and the reason the check
+was registered before the run.
+
+What it tells us is worth more than the +1. `darla94` measured the spawn decision
+blocked on chips 397–544 times per tower on large maps, and I read that as *the
+reserve is the wall*. Releasing the reserve — properly, verifiably, dozens of
+times per game — buys **one game in a hundred and fifty**. So the chips were
+blocked, the block was real, and **removing it changes almost nothing**, which
+means the chips were not what the expansion was waiting for. On large maps the
+bot is short of something the treasury cannot buy: soldiers in the right place,
+with paint, to walk to a ruin and paint a pattern.
+
+That reading is consistent with everything else this session found — iteration 2's
+paint stalls, `darla94`'s paint-blocked small maps, and the coverage win condition
+— and it says the large-map problem is a **logistics** problem, not a budget one.
+
+The 450-key roster run is queued: this is an opponent-independent change (its
+trigger reads only our own treasury), the class where the screen and the rosters
+have agreed all session, so the roster is corroboration rather than arbitration.
