@@ -4586,3 +4586,21 @@ change requires two conditions at once, multiply them.** `P HOME` at 46% looked
 like a large surface; the surface that actually mattered was `P HOME ∧
 score ≥ 14`, which nothing in the census measured and which one line of reasoning
 would have bounded at a few percent.
+
+### Fresh-sample history across the three builds
+
+| build | samples | mean /150 |
+|---|---|---|
+| `darla-i1` | 38 | **102.0** (sd 7.71) |
+| `darla-i2` | 3 | **109.0** |
+| `darla-i3` | 3 | **120.7** (123, 122, 117) |
+
+The instrument that could not resolve a single +15 shows the **cumulative** +34
+plainly: `i3`'s three samples all sit above `i1`'s mean by more than 2 sd, and
+none of them overlaps `i1`'s. That is what a blunt instrument is for — it cannot
+adjudicate one iteration, and it is the right tool for asking whether a session's
+worth of them added up.
+
+Both accepted iterations are opponent-independent changes, which is also the class
+that survived the `v3` benchmark's verdict on the roster. The roster gain is real
+and it compounds; what it does not do is transfer.
