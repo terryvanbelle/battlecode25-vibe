@@ -5602,3 +5602,41 @@ spend per tower, so maxima are not comparable, and the first parse misread
 Summing per-entity, with the type read correctly, moved the answer from "refills
 are a quarter of consumption" to "refills are a tenth". Both errors flattered the
 hypothesis I was testing.
+
+# The expansion loop is a POLICY problem after all — `darla98`'s conclusion was too strong
+
+An hour ago I wrote that the remaining paint block is "production the bot cannot
+increase by choosing differently". Early-game tower timing, from games `i4`
+**lost**, says otherwise:
+
+| map | our towers | their towers |
+|---|---|---|
+| `Flower` | **1** (r96) | 3 (r168, 488, 567) |
+| `Mirage` | **2** (r286, r531) | 6 (r80, 323, 453, 476, 500, 521) |
+| `Portal` | **2** (r27, r69) | 5 (r72, 171, 682, 691, 812) |
+
+**We build one or two towers and stop. The opponent keeps building.** On `Portal`
+we were *faster off the line* — towers at rounds 27 and 69 against their 72 — and
+still finished 2 to 5. The failure is not a slow start; it is a **stall**.
+
+And the correction matters: alice, bob and carol run on the same engine, with the
+same `paintPerTurn`, the same 1,000 cap, the same upgrade prices. They reach five
+and six towers under constraints I described as an engine bound. **A limit that
+the opponent routinely exceeds is not a limit — it is a policy difference**, and I
+reached the opposite conclusion because I only ever measured our own side.
+
+That is the third time today measuring one side produced a wrong reading: the
+symmetry consumer looked rare when it was gated, the carol swing looked like a
+mechanism when it was slice noise, and now an engine bound turns out to be a
+choice somebody else makes differently.
+
+**Caveat, stated up front:** these are the games we lost — the only replays
+retained — so this is the failure mode, not the average case. It is the right
+sample for asking *why we lose*, and the wrong one for asking how we usually do.
+
+**Next step, and the channel matters.** The question is what the opponents do
+differently, and this project's sanctioned way to learn that is **tournament
+replays**, not reading a sibling lineage's source. Their behaviour is measurable
+from the replays already on disk: when their soldiers claim ruins, what their
+tower mix looks like, how their spawn cadence differs. That census is the next
+piece of work, and it needs no VM time.
