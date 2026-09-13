@@ -4116,3 +4116,10 @@ line 6). Every head-to-head, every 450-game paired run and all replays are
 local-only by design — replays are large — which means any conclusion that is not
 written into this file is visible to nobody but me. That raises the stakes on the
 write-ups rather than lowering them.
+
+### Iteration 3 promotion test: **88/150 exactly**
+
+`darla-i3` against the frozen `src/darla_iter2` returned the exact value
+`darla84` returned against `darla-i2` before the promotion. Fourth determinism
+check to pass, and the accept's step 3 is now closed. Steps 4 and 5 — the v3
+benchmark and the push — are done.
