@@ -4079,3 +4079,40 @@ work.
 
 The standing bar is met on the lineages. **A fresh benchmark against `v3` is now
 two iterations overdue** — the recorded 42.0% belongs to `darla-i1`.
+
+## Standing rule (owner, 2026-09-13): **benchmark against `v3` on every accept**
+
+The owner found the benchmark two accepted iterations stale — the committed
+**42.0% vs `v3`** still belonged to `darla-i1` while `i2` and `i3` had both
+landed. That is the number this lineage's bar is actually written against
+("at least as good against the benchmark as any previous agent"), so a
+head-to-head gain that never reaches it is not yet demonstrated progress.
+
+**From now on, an accept is not finished until all five are done:**
+
+1. the outgoing build is frozen as `src/darla_iterN`;
+2. `src/darla` carries the new `BUILD` constant;
+3. the promotion test is queued — deterministic, so it has an *exact* expected value;
+4. **`BOTS=darla BENCH=v3 tools/benchmark.sh` is launched**, detached, never blocking the arm queue;
+5. everything is **pushed**.
+
+Launched for `darla-i3` as `benchmarks/20260913-0058`.
+
+### And the failure that prompted the question
+
+The owner asked where to find the latest versions, "not seeing these later
+versions checked into GitHub anymore". They were right, and it was not the
+naming: **31 commits were unpushed**, covering both accepted iterations, every
+arm from `darla72` on, and this entire notebook. I had committed diligently after
+every single arm and pushed none of it.
+
+Committing is not delivering. Unpushed work and no work look identical from the
+other side of the repository — the same shape as the idling problem the owner
+raised earlier in this session, where waiting on a run and doing nothing were
+indistinguishable from their seat. Pushed at `b15df8c..73c82a0`.
+
+Worth recording alongside: **`agents/darla/gauntlet/**` is gitignored** (`.gitignore`
+line 6). Every head-to-head, every 450-game paired run and all replays are
+local-only by design — replays are large — which means any conclusion that is not
+written into this file is visible to nobody but me. That raises the stakes on the
+write-ups rather than lowering them.
