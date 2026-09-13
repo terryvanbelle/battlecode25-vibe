@@ -7,7 +7,6 @@
       "Bash(sudo *)",
       "Bash(rm -rf *)",
       "Bash(pkill *)",
-      "Bash(kill *)",
       "Bash(gcloud compute instances delete *)",
       "Bash(gcloud compute instances stop *)",
       "Bash(gcloud compute disks delete *)",
@@ -78,7 +77,8 @@
       "Bash(du *)",
       "Bash(timeout *)",
       "Bash(rm -rf src/tmp*)",
-      "Bash(rm -rf src/darla[0-9]*)"
+      "Bash(rm -rf src/darla[0-9]*)",
+      "Bash(kill *)"
     ]
   }
 }

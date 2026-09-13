@@ -38,6 +38,17 @@ while the script removes the need for one and refuses to overwrite an existing
 snapshot into the bargain. Prefer moving a dangerous step inside a checked script
 over widening a permission to admit it.
 
+**`kill` is allowed; `pkill` is not.** Owner's call, 2026-09-13, after approving a
+kill of two duplicate run drivers. The split is deliberate: `kill <pid>` acts on
+one process whose identity I verified immediately beforehand, while `pkill -f`
+takes a *pattern* whose matches cannot be seen in advance — and it has already
+misfired once today, matching the very shell that invoked it and killing the
+command mid-write. Same intent, different blast radius.
+
+Note this rule governs only local driver processes. Killing anything on
+`battlecode-dev` would go through `gcloud compute ssh`, which is a separate
+standing prohibition and not something a `Bash(kill *)` rule can authorise.
+
 **`allow` — the work.** `git`, `gcloud compute ssh` and the read-only `gcloud`
 queries, this repo's own scripts, and the ordinary text-processing commands that
 make up a replay census. Generous on purpose: a prompt on `awk` teaches nobody
