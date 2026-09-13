@@ -4902,3 +4902,52 @@ attempt on it — including several of mine — guessed at the binding constrain
 inert instrumentation on the one decision that converts a fat treasury into
 robots. Iterations 2 and 3 changed the paint economy this decision reads, which is
 the same justification that made the `PAINT_FLOOR` ablation worth running.
+
+## Iteration 94 — the large-map spawn constraint, read at last
+
+75/150, all 75 maps 1–1, `ov = 0`. Per tower, cumulative to the sample round —
+`sb=<blocked on chips>/<blocked on tower paint>/<spawned>`:
+
+| map | size | chips-blocked | paint-blocked | **spawned** |
+|---|---|---|---|---|
+| `DefaultSmall` | 20×20 | 221 | 257 | **32** |
+| `Brat` | 29×29 | 78 | 423 | **9** |
+| `Bunny` | 44×30 | 74 | 435 | **1** |
+| `shell` | 40×40 | 228 | 581 | **1** |
+| `TheBest` | 60×60 | 397 | 314 | **1** |
+| `DefaultHuge` | 59×59 | 544 | 227 | **14** |
+
+Two things fall out, and the second is the arm.
+
+**A tower spawns once or twice per game on a large map, and thirty-two times on a
+small one.** That is the large-map weakness expressed in the one decision that
+turns a treasury into robots, and it is the first time this lineage has measured
+it rather than inferred it.
+
+**The blocker inverts with map size.** Small maps are **paint**-blocked (423, 435
+against 74, 78 on chips). Large maps are **chip**-blocked (397, 544 against 314,
+227). So the constraint that binds on `DefaultSmall` is not the one that binds on
+`TheBest`, and any single fix aimed at "expansion" was always going to work on one
+half of the pool and idle on the other.
+
+## `darla95` — the reserve's release valve is real and has never opened
+
+The chip block is the reserve, and the bot **already has a release for exactly
+this**: `pinned = chips >= CHIP_RESERVE && chips < CHIP_RESERVE + 250`, freed after
+`STAGNANT_ROUNDS = 10`. Iteration 6 built it for the treasury-pinned-forever case.
+
+It never fires. The indicator reads **`pin=1`, `pin=2`** — never near 10 — because
+the counter **resets to zero** the moment chips leave a 250-wide window, and a
+treasury that is still earning crosses that window constantly. The detector
+requires ten *consecutive* pinned rounds from a quantity that cannot stay still
+for ten rounds.
+
+`darla95` decays instead of resetting: `pinnedTurns - 1` on an unpinned round
+rather than `0`. Intermittent pinning then accumulates, which is what pinning
+actually looks like in an earning treasury. **No constant changes** — not
+`CHIP_RESERVE`, not `STAGNANT_ROUNDS`; only the shape of the detector.
+
+Registered: this should act on large maps and be near-null on small ones, since
+that is where the chip block lives. `pin=` must reach 10 and `pf=` (pin-frees)
+must become non-zero — if they do not, the decay is still too slow and the arm is
+untested rather than refuted.
