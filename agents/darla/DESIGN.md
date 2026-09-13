@@ -4659,3 +4659,39 @@ class requires. But the standard roster already makes the useful point, and it i
 one I would not have got from a single aggregate number: **+4 on the screen, −5 on
 the roster, and an 18-game swing hiding inside a 5-game total.** Aggregates are
 where opposite effects go to cancel.
+
+### `darla91` final: null across two rosters, and the carol swing does not replicate
+
+| instrument | result | discordant | z |
+|---|---|---|---|
+| screen (self-play) | 79/150 | 24 maps | **+4 games** |
+| standard roster | 336 vs 341 | 65 | **−0.62** |
+| widened roster | **341 vs 338** | 55 | **+0.40** |
+| combined rosters | — | 120 | **≈ −0.16** |
+
+**Verdict: null.** Three instruments, three signs, none of them significant.
+
+And the widened roster does something more useful than confirm the null — it
+**fails to reproduce the swing my whole hypothesis rested on**:
+
+| | standard roster | widened roster |
+|---|---|---|
+| carol, `darla86` → `darla91` | **+9 → −9** | — |
+| carol, `darla91` vs `i3` | **−9** | **+3** |
+
+The 18-game carol swing that looked like a clean mechanism on the standard roster
+comes back as **+3** against `carol_iter44`. So "the earning turns are the ones
+where `foe > ally`" is a story fitted to one opponent build, and the second
+generation of the same lineage does not tell it.
+
+**`darla92` is already queued and is now a much better-posed experiment than when
+I registered it**, because its registered prediction — *beat `darla86`'s +11, or
+the ally/foe framing is the wrong cut* — is exactly the claim the widened roster
+has just put in doubt. I will read it against that prediction rather than quietly
+lowering the bar to whatever it returns.
+
+The broader lesson is one this session keeps paying for in different currencies:
+**a per-opponent decomposition is a hypothesis generator, not evidence.** It told
+me where to look, I built an arm on it, and the arm is null because the pattern
+was not stable across two builds of the same opponent. One roster produces stories;
+two rosters test them.
