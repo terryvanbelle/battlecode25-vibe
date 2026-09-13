@@ -1,10 +1,9 @@
 {
   "permissions": {
-    "deny": [
-      "WebFetch",
-      "WebSearch"
-    ],
+    "deny": [],
     "ask": [
+      "WebSearch",
+      "WebFetch",
       "Bash(sudo *)",
       "Bash(rm -rf *)",
       "Bash(pkill *)",

@@ -7,13 +7,21 @@ alongside the work it governs. The owner's rule, 2026-09-13:
 
 ## The three lists
 
-**`deny` — `WebFetch`, `WebSearch`.** Tool-level denials, so they are airtight in
-a way no Bash rule is. They also enforce a standing project rule *by
-construction*: this lineage must never read 2025-contest post-mortems or the
-source of the benchmark bots, and a web search is the one thing that could put
-either in front of me by accident. Nothing in this project's normal work needs
-the web — the only outbound traffic is `git` to GitHub and `gcloud`/`ssh` to
-`battlecode-dev`.
+**`deny` — empty.** `WebFetch` and `WebSearch` started here and were moved to
+`ask` on the owner's instruction the same day: *"There are occasions when I'll
+want you to do this."* A hard deny would have made those occasions impossible
+without editing config first, which is the wrong trade for a tool that is
+occasionally the right answer.
+
+What the deny had been buying is worth stating, because moving it to `ask` moves
+the burden rather than removing it: this lineage must never read 2025-contest
+post-mortems or the source of the benchmark bots, and a web search is the one
+thing that could surface either **by accident** — a search for Battlecode
+pathfinding does not know which year's write-up it is returning. Under `ask` that
+rule is enforced by judgment and by the owner seeing the query in the prompt,
+not by construction. So: web access here is opt-in per use, the query should be
+narrow enough that the owner can see what it would return, and a result that
+turns out to be 2025 material gets closed unread and reported.
 
 **`ask` — the unusual.** Three groups: reaching the network another way (`curl`,
 `wget`, `nc`, `scp`), installing software (`pip`, `npm`, `apt`), and anything
