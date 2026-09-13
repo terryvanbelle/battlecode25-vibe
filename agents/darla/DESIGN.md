@@ -4562,3 +4562,27 @@ name precisely. That was right — a refutation with a clean mechanism earns one
 follow-up — but the follow-up should have carried a **coverage counter**, not just
 the geometry fix. I corrected the cause I had diagnosed and left myself unable to
 measure the cause I had not.
+
+## Iteration 90 — the free action is real and almost never available: 71/150, 69 maps identical
+
+−4 games, and **69 of 75 maps play 1–1**. The change is sound — a splasher walking
+home has already spent its move, so its action is free — and the opportunity it
+unlocks turns out to be **rare**: only six maps diverge at all.
+
+The arithmetic was available before the run and I did not do it. To fire, a
+splasher must be simultaneously (a) latched for refill, so between `REFILL_LOW`
+and half capacity, and (b) looking at a target scoring ≥ `SPLASH_MIN_SCORE`. The
+census already said `SPLASH` fires on **4%** of all splasher turns, when the unit
+is *fully* fuelled and free to move; requiring that same 14-point target during
+the narrow, low-paint window of a refill trip is a conjunction of two uncommon
+conditions, not one.
+
+**Recorded `measured-and-small`.** A free action nobody can take is worth nothing,
+and 6 divergent maps cannot support any conclusion beyond that.
+
+The rule this earns is the `darla74` rule with one more word: *before improving
+what a branch decides, measure how often the branch is reached* — **and where the
+change requires two conditions at once, multiply them.** `P HOME` at 46% looked
+like a large surface; the surface that actually mattered was `P HOME ∧
+score ≥ 14`, which nothing in the census measured and which one line of reasoning
+would have bounded at a few percent.
