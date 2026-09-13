@@ -5790,3 +5790,35 @@ and it retires a stale-baseline hazard — every roster reference on disk was `i
 so an arm measured on the widened set would have been compared against a build two
 accepts behind. Against the `i3` widened reference (338/450) the shipped build now
 stands at **+15 games** on that opponent set.
+
+### `darla-i4` third-generation reference: 395/450 — all three references now current
+
+Identical to `darla96`'s, as required. Eighth determinism check. The shipped build
+now has a reference on every opponent set:
+
+| opponent set | `i3` | **`i4`** |
+|---|---|---|
+| standard (finals) | 341/450 | **343/450** |
+| widened (`iter39`/`18`/`44`) | 338/450 | **353/450** |
+| third generation (`iter25`/`11`/`30`) | 383/450 | **395/450** |
+
+Any future arm is now measured against a current baseline on all three, which was
+not true an hour ago.
+
+### On the empty arm queue, stated rather than filled
+
+The measured surfaces are closed: the `foe == 0` gate (four arms, `measured-and-
+small`), splasher repositioning (refuted twice), the chip reserve (`z = 0.00`),
+the money share (accepted as iteration 4), paint production (engine-bounded),
+paint consumption (refills are 4–11%, not the leak), ruin crowding (~3% of soldier
+turns, sign unknown), and moppers (a four-point monotone dose-response, all
+negative). Coverage painting picks the nearest empty tile in action radius, which
+is already the locally efficient choice for tiles-per-turn.
+
+I have no arm in hand whose expected value justifies 45 minutes of VM time, and
+the owner's audit says what the VM should be doing instead: **the held-out
+fresh-sample instrument is the one uncontaminated by selection, and `i4` has two
+samples against `i1`'s 38.** The idle filler produces exactly those. Leaving it to
+run is the deliberate choice, not an idle queue — and inventing an arm to fill the
+queue would spend the instrument the audit says is scarce on evidence the audit
+says is weak.
