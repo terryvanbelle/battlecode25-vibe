@@ -5781,3 +5781,12 @@ ban is too eager. That is a question about `banRuin`, costs no new unit, and is
 untested. Registered, not queued — `darla75` already showed the ban table's
 eviction policy is worth nothing, so the next arm on bans needs a sharper
 hypothesis than "ban less".
+
+### `darla-i4` reference on the widened roster: 353/450 — identical to `darla96`'s
+
+As it must be: `i4` *is* `darla96` promoted, so on the same opponents and maps the
+engine returns the same games. Seventh determinism check since the accepts began,
+and it retires a stale-baseline hazard — every roster reference on disk was `i3`'s,
+so an arm measured on the widened set would have been compared against a build two
+accepts behind. Against the `i3` widened reference (338/450) the shipped build now
+stands at **+15 games** on that opponent set.
