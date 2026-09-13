@@ -4508,3 +4508,17 @@ implements a few lines below for exactly this reason.
 That variant is worth building precisely because this one failed so loudly: −68
 games is a mechanism working hard in the wrong direction, which is far more
 informative than a null.
+
+### `darla88` on 450 roster keys: 82/450 (18.2%) — confirmed, and the screen did its job
+
+Against the `i3` reference's 341/450. The head-to-head had already said 7/150, so
+this adds no new conclusion — it adds a **calibration**: the arm scores 4.7% in
+self-play and 18.2% against the three retired lineages, because its own baseline
+is simply a stronger opponent than they are. A catastrophe reads as more
+catastrophic in the mirror.
+
+Worth one line of process: the 150-game screen caught this in thirteen minutes and
+the 450-game run then spent forty confirming it. Both were queued at the same time,
+before either result existed. For an arm whose registered risk was bytecode — a
+failure mode that shows up in the first ten games — **the paired run should be
+queued after the screen reports, not alongside it.**
