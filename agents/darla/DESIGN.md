@@ -5426,3 +5426,44 @@ pre-registered rather than read off the first few draws. That is much slower:
 resolving +5 games/150 at sd 7.4 needs roughly 35 samples per side. Which is
 itself the reason the paired instrument got used for the decision in the first
 place, and why the exposure exists.
+
+### Iteration 4 promotion test: **78/150 exactly**, and the deferred mechanism check
+
+`darla-i4` against the frozen `src/darla_iter3` returned the registered value —
+the sixth determinism check to pass since the accepts began.
+
+Its replays are the controlled comparison the accept deferred: same maps, same
+opponents, the two builds facing each other. Towers completed across six maps:
+
+| | MONEY | PAINT | paint share |
+|---|---|---|---|
+| `i3` | 9 | 18 | **67%** |
+| `i4` | 1 | 6 | **86%** |
+
+**The mechanism is confirmed in the intended direction** — the money share falls
+from a third to a seventh, which is what "build a money tower only when chips are
+actually spare" should do.
+
+One caveat I will not paper over: only **losing** replays are retained, so this
+sample is drawn from the games `i4` lost. That is why its absolute tower count
+(7) is so far below `i3`'s (27) — a losing side builds fewer towers, and the gap
+is selection, not a real collapse in expansion. The *share* is the comparison
+that survives the bias; the *count* is not, and I am not reading anything into it.
+
+## `darla97` queued — did the constraint move, or only shift?
+
+`darla94` measured the spawn decision on `i3`: blocked on chips 397–544 times per
+tower on large maps, on **tower paint** 423–435 on small ones, with a tower
+spawning once or twice a game on a large map against 32 on a small one.
+
+Iteration 4 then changed the tower mix, and the tower mix is precisely the input
+that paint block reads. So the question is not "what next" — it is whether the
+thing I just shipped moved the constraint or merely relocated it. `darla97` is
+`darla94`'s counters on the `i4` build: same instrument, new bot, inert (must
+split 1–1 on all 75 maps).
+
+Registered: if `sbPaint` has fallen on small maps, iteration 4 relieved the real
+block and more of the same is worth trying. If it has not — if the paint block is
+unchanged and only the money share moved — then iteration 4's +3.26 came from
+something other than the mechanism I claimed for it, and the write-up above needs
+revisiting rather than extending.
