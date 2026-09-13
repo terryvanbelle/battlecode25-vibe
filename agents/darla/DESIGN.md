@@ -5729,3 +5729,15 @@ hand with the same four checks applied explicitly (package, `BUILD`, bypass
 present on a code line, non-empty diff). **The hardened guard needs debugging
 before it is trusted**; until then it is a tripwire that also trips on the truth,
 which is worse than no tripwire. Recorded rather than quietly reverted.
+
+### `darla100`: 75/150, all 75 maps 1–1 — the tooling bug confirmed by experiment
+
+Exactly the inert signature, which is the independent confirmation that its floor
+edit silently missed: `moppableWork` was computed every tower-turn and never read.
+The build spent bytecode to reach no decision.
+
+Two things this pins down. The dropped edit was diagnosed from the source before
+this run finished, and the run agrees — so the diagnosis is right and
+`make-arm.sh`'s `EXPECT` check really did pass a half-applied arm. And it cost a
+full 150-game slot to learn something a `grep` had already shown, which is the
+argument for fixing the guard rather than working around it.
