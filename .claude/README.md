@@ -38,16 +38,19 @@ while the script removes the need for one and refuses to overwrite an existing
 snapshot into the bargain. Prefer moving a dangerous step inside a checked script
 over widening a permission to admit it.
 
-**`kill` is allowed; `pkill` is not.** Owner's call, 2026-09-13, after approving a
-kill of two duplicate run drivers. The split is deliberate: `kill <pid>` acts on
-one process whose identity I verified immediately beforehand, while `pkill -f`
-takes a *pattern* whose matches cannot be seen in advance — and it has already
-misfired once today, matching the very shell that invoked it and killing the
-command mid-write. Same intent, different blast radius.
+**`kill` and `pkill` are both allowed.** Owner's call, 2026-09-13. I had kept
+`pkill` gated on the argument that `kill <pid>` acts on one verified process while
+`pkill -f` takes a pattern whose matches cannot be seen in advance; the owner
+overrode that, and it is their call to make.
 
-Note this rule governs only local driver processes. Killing anything on
-`battlecode-dev` would go through `gcloud compute ssh`, which is a separate
-standing prohibition and not something a `Bash(kill *)` rule can authorise.
+The risk does not disappear because the prompt did, so the discipline moves into
+how the command is written: **`pgrep -fa` first, read what comes back, then act** —
+and never a pattern that also describes the command being typed, which is how a
+`pkill -f` killed the shell invoking it earlier that day.
+
+Note this governs only local driver processes. Killing anything on
+`battlecode-dev` goes through `gcloud compute ssh` and remains under the standing
+never-kill-on-the-shared-VM rule, which no permission rule here relaxes.
 
 **`allow` — the work.** `git`, `gcloud compute ssh` and the read-only `gcloud`
 queries, this repo's own scripts, and the ordinary text-processing commands that
