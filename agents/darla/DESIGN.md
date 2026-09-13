@@ -4172,3 +4172,38 @@ consequences are narrower:
    own robots — over anything shaped around what alice, bob or carol happen to
    do. Both accepted iterations were of the first kind, which is the reason to
    expect anything from them at all.
+
+## Where the turns go on `darla-i3` — the census that sets up the next arm
+
+Same instrument that found iteration 2 (soldier/splasher `state` tokens, one
+replay, 60 rounds), re-run on the accepted build:
+
+| soldier state | turns | | splasher state | turns |
+|---|---|---|---|---|
+| **`IDLE-ENEMY`** | **149 (45%)** | | **`HOME`** | **475 (46%)** |
+| `ruin` | 66 | | `lowScore` | 211 (21%) |
+| `HOME` | 60 (18%) | | `cd` (cooldown) | 207 (20%) |
+| `pnt` | 28 | | `noTgt` | 58 |
+| `frontFound` | 14 | | **`SPLASH`** | **42 (4%)** |
+
+**Iteration 2 is visible in this table.** Soldier `HOME` was 63–79% of turns on
+the maps that motivated it; it is now **18%**. The commute block that dominated
+soldier time is gone.
+
+What replaced it as the largest soldier block is **`IDLE-ENEMY`, 45%** — a
+soldier that reached the idle branch with an enemy in sight. That is now the
+single biggest pool of soldier turns in the bot and it has never been examined.
+
+On the splasher side the refill counters say the trips are **short but constant**:
+`rt=7–9` latches in 60 rounds with `ht=12–14`, so **~2 turns per trip, roughly
+every 7 rounds**. Not the stall iteration 2 fixed — a treadmill. A splasher
+spends 50 paint per splash against a capacity that buys a handful, so it is
+structurally a commuter. The more striking number beside it is that splashers
+**act on 4% of their turns** while 21% are `lowScore` — holding paint and an
+action with nothing scoring above threshold.
+
+Next step is a code read of both idle branches before any arm, per the rule
+`darla74` earned: measure how often a branch is reached *and* establish what it
+could do instead, before changing what it decides. Both of these are
+opponent-independent waste — the bot spending its own turns — which is the class
+the `v3` benchmark suggests is worth preferring.
