@@ -4794,3 +4794,26 @@ conditioning produced less than the one-word version, because the thing I was
 conditioning on was slice noise.
 
 `darla86`'s third-generation run is queued and is the last word on this line.
+
+### Third-generation reference for `darla-i3`: 383/450 (85.1%) — a weaker opponent set
+
+Against `alice_iter25`, `bob_iter11`, `carol_iter30`. Compare the three references:
+
+| opponent set | `darla-i3` |
+|---|---|
+| standard (finals) | 341/450 — 75.8% |
+| widened (`iter39`/`iter18`/`iter44`) | 338/450 — 75.1% |
+| **third generation (`iter25`/`iter11`/`iter30`)** | **383/450 — 85.1%** |
+
+**This set is materially easier**, by about ten points. That was not the intent —
+the first widened roster was chosen to match the finals in difficulty and did, and
+I picked this generation without checking. It still adds 450 genuinely independent
+paired keys, and McNemar on discordant pairs is not invalidated by an easier
+opponent; what it costs is **power**, since an easier opponent produces fewer
+discordant pairs to measure with.
+
+Registered before `darla86`'s run lands: if this set yields materially fewer than
+the ~50 discordant keys the other two produced, its contribution to the combined
+z should be read as correspondingly weaker — and the honest reading of a
+three-roster combination is then closer to "two good rosters and a thin third"
+than to "three equal votes".
