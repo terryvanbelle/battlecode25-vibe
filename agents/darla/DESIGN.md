@@ -4695,3 +4695,24 @@ The broader lesson is one this session keeps paying for in different currencies:
 me where to look, I built an arm on it, and the arm is null because the pattern
 was not stable across two builds of the same opponent. One roster produces stories;
 two rosters test them.
+
+## Iteration 92 screen: 82/150 (+7), the best of the three gate variants
+
+| arm | gate | screen |
+|---|---|---|
+| `darla86` | none (`true`) | −6 |
+| `darla91` | `ally >= foe` | +4 |
+| **`darla92`** | **`foe == 0 || foe > ally`** | **+7** |
+
+The ordering is what the decomposition predicted, on the one instrument the
+decomposition was *not* fitted to. That is worth something — but the screen is
+self-play, and this arm's trigger reads the opponent's paint, so it remains a
+screen. Both rosters queued, 900 games over six opponents.
+
+Reading it against the prediction I registered, unchanged: **beat `darla86`'s +11
+on the standard roster, or the `ally`/`foe` framing is the wrong cut.** The
+widened roster's failure to reproduce the carol swing already argues for the
+second. If `darla92` lands between `darla91`'s −5 and `darla86`'s +11 rather than
+above it, the honest conclusion is that all three arms are sampling the same
+small, unstable effect and the gate simply is not the lever I have been treating
+it as for four arms.
