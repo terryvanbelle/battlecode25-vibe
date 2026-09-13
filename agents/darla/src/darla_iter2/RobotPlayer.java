@@ -1,4 +1,4 @@
-package darla;
+package darla_iter2;
 
 import battlecode.common.*;
 
@@ -60,7 +60,7 @@ public class RobotPlayer {
      * measurement-neutral -- it shifts the replay hash, so a dose pair must share one tag if
      * doctrine #3's byte-identity check is to work on raw hashes.
      */
-    static final String BUILD = "darla-i3";
+    static final String BUILD = "darla_iter2";
 
     // ---- Iteration 34: fewer MONEY towers, because paint binds and chips do not -------------
     // towerTypeFor makes a ruin a money tower when k % MONEY_MOD == 0, so MONEY_MOD sets the
@@ -261,7 +261,7 @@ public class RobotPlayer {
             + " ov=" + bcOverruns + " nm=" + bcNearMisses
             + " ma=" + mixAsk + " mf=" + mixFlip
             + " sp=" + seenPaint + " sm=" + seenMoney
-            + " rt=" + refillTrips + " ht=" + homeTurns + " dn=" + denyBans + " pb=" + patienceBans + " bs=" + banSkips + " bp=" + banPeak + " mv=" + mvStuck + "/" + mvTry
+            + " rt=" + refillTrips + " ht=" + homeTurns + " dn=" + denyBans + " pb=" + patienceBans + " bs=" + banSkips + " bp=" + banPeak
             + " | " + state);
         Clock.yield();
     }
@@ -292,16 +292,6 @@ public class RobotPlayer {
     static int towerN = 0;
     static boolean refilling = false;
     static int refillTrips = 0, homeTurns = 0;
-    // ACCEPTED iteration 3 (was darla84). RESEARCH.md §5 item 2 -- keep greedy, add a
-    // bounded escape for the shape greedy actually sticks on. darla82 replaced the whole
-    // fallback with wall-following and lost 14 games, plausibly by committing robots to
-    // walk around obstacles a single +-45 dodge would have cleared. Here the hug engages
-    // ONLY on a turn after the measured stuck condition fired for this same target.
-    static int mvTry = 0, mvStuck = 0, mvLastD = -1;
-    static boolean stuckLast = false;
-    static MapLocation mvLastTo = null;
-    static Direction bugDir = null;
-    static MapLocation bugTo = null;
 
     /** Record every distinct ally tower this robot has ever seen. */
     static void rememberTowers() throws GameActionException {
@@ -926,11 +916,9 @@ public class RobotPlayer {
 
     /** Greedy step toward `to`, trying the direct direction then widening rotations. */
     static boolean stepToward(MapLocation to) throws GameActionException {
-        { int d0 = rc.getLocation().distanceSquaredTo(to); stuckLast = false; if (to.equals(mvLastTo)) { mvTry++; if (d0 >= mvLastD) { mvStuck++; stuckLast = true; } } mvLastTo = to; mvLastD = d0; }
         Direction d = rc.getLocation().directionTo(to);
         if (d == Direction.CENTER) return false;
-        if (rc.canMove(d)) { rc.move(d); bugDir = null; bugTo = to; return true; }
-        if (stuckLast) { boolean lf = (rc.getID() & 1) == 0; if (bugDir == null || !to.equals(bugTo)) bugDir = d; bugTo = to; for (int i = 0; i < 8; i++) { bugDir = lf ? bugDir.rotateLeft() : bugDir.rotateRight(); if (rc.canMove(bugDir)) { rc.move(bugDir); bugDir = lf ? bugDir.rotateRight() : bugDir.rotateLeft(); return true; } } }
+        if (rc.canMove(d)) { rc.move(d); return true; }
         Direction l = d.rotateLeft(), r = d.rotateRight();
         // Break the left/right tie on robot ID rather than a fixed compass preference,
         // so obstacle-skirting is not correlated with team identity (play-symmetry).

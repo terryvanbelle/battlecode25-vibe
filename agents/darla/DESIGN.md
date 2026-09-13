@@ -4046,3 +4046,36 @@ flight and is a direct variant of this arm. Promoting `darla84` now would force
 `darla85` to be re-measured against a baseline that already contains its rival,
 and I would be choosing between them on instruments that are no longer comparable.
 Thirteen minutes is a cheap price for keeping the comparison clean.
+
+# ITERATION 3 ACCEPTED — the escape hatch (`darla84`)
+
+`darla85` returned **89/150** against `darla84`'s 88/150, and head-to-head on
+their shared keys they are **19–18 of 37 discordant, z = +0.16**. Persistence
+changes play on a quarter of the pool and changes nothing about outcomes, so the
+two are one result, not two, and the simpler condition wins the tie.
+
+`darla84` is promoted. The evidence, all registered before the numbers were read:
+
+| check | result |
+|---|---|
+| head-to-head vs `i2` | 88/150, **19–6** on 25 discordant maps, z = **+2.60** |
+| 450-key paired roster | 341/450 vs 326, **47–32** of 79, z = **+1.69** |
+| combined (disjoint opponents) | Stouffer **z ≈ +3.03** |
+| mechanism (`mv` stuck rate) | Bread 21.6 → **16.1%**, Portal 27.8 → **18.7%** |
+| bytecode | `ov = 0` |
+| registered shape prediction | cluttered maps 11.32% walls swept vs 9.00% — **not flat** |
+| per-lineage bar | alice 74.0%, bob 79.3%, carol 74.0% — all ≥ 50% |
+
+`src/darla` is now `darla-i3`; the outgoing build is frozen at `src/darla_iter2`.
+Promotion test queued: `darla-i3` vs `darla_iter2` must return **exactly 88/150**.
+
+**Two accepted iterations in one session, and neither came from a constant.**
+Iteration 2 came from counting soldier state tokens in one replay; iteration 3
+came from a counter built to decide whether a documented failure was real, then
+used as a *trigger* rather than a target. The three arms that sit between them —
+the mopper ferry, its instrumentation, and the paint-floor ablation — all returned
+null or negative and all closed a line permanently, which is the other half of the
+work.
+
+The standing bar is met on the lineages. **A fresh benchmark against `v3` is now
+two iterations overdue** — the recorded 42.0% belongs to `darla-i1`.
