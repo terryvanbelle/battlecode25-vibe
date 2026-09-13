@@ -10,7 +10,7 @@
 # exists on disk that the pattern does not match -- so the next unregistered job
 # type is caught by the next script that sources this file, not by a wrong status
 # line hours later.
-EVAL_JOB_RE='head-to-head\.sh|replicate\.sh|paired-roster\.sh|darla-largemap\.sh|darla-band\.sh|darla-vs\.sh|darla-fresh\.sh'
+EVAL_JOB_RE='widen\.sh|head-to-head\.sh|replicate\.sh|paired-roster\.sh|darla-largemap\.sh|darla-band\.sh|darla-vs\.sh|darla-fresh\.sh'
 
 # Self-check: every executable driver in tools/ that launches a gauntlet must be
 # matched. Prints to stderr and does not exit, so a stale pattern degrades to a
