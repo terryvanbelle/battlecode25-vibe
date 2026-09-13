@@ -4123,3 +4123,52 @@ write-ups rather than lowering them.
 `darla84` returned against `darla-i2` before the promotion. Fourth determinism
 check to pass, and the accept's step 3 is now closed. Steps 4 and 5 — the v3
 benchmark and the push — are done.
+
+# The v3 benchmark after two accepted iterations: **43.3%, and that is the story**
+
+`benchmarks/20260913-0058`, `darla-i3` against `v3`, 150 games, scores only:
+
+| build | vs `v3` | swept by darla | swept against darla |
+|---|---|---|---|
+| `darla-i1` (`20260912-0011`) | 63/150 — **42.0%** | 23 | 35 |
+| `darla-i3` (`20260913-0058`) | 65/150 — **43.3%** | 19 | **29** |
+
+Both runs are deterministic, so these are exact. Paired on (map, side):
+**15–13 of 28 discordant, z = +0.38.**
+
+**Two accepted iterations worth +19 and +15 games against the lineage roster
+produced no measurable movement against `v3`.** That is the single most important
+number in this session, and it would not exist without the owner's rule.
+
+What it does *not* mean: the iterations are not fake. Both were measured on 450
+paired keys against three opponents, both had their mechanism confirmed by a
+counter, and iteration 3's registered shape prediction held. Against alice, bob
+and carol they are real.
+
+What it does mean: **the roster is not a proxy for a finalist bot.** Alice, Bob
+and Carol are retired builds from this project's own family — they share darla's
+ancestry, its assumptions, and very likely its blind spots. A change that fixes
+something only a lineage-mate punishes, or exploits something only a lineage-mate
+does, has no reason to transfer to a bot built by a different team on different
+premises. Two iterations of evidence now say it does not.
+
+The one real signal is in the last column: **35 → 29 maps where `v3` took both
+sides.** Six fewer decisive losses, with total wins flat, is the shape of a bot
+that has become harder to beat outright without becoming better at winning —
+consistent with iteration 2 (stop stalling at dry towers) and iteration 3 (stop
+oscillating in pockets) removing *failures* rather than adding *strength*.
+
+**What follows from this, and what does not.** `v3` is a yardstick and must never
+become a selection instrument — no reading its code, no studying its games, no
+adding it to a roster. So the answer is not to tune against it. The honest
+consequences are narrower:
+
+1. **Report the benchmark on every accept** (now the standing rule), because the
+   roster number alone can drift away from the number that matters.
+2. Treat "+N games against the roster" as *evidence a change works*, never as
+   *evidence the bot is stronger* — those turned out to be different claims.
+3. When choosing what to work on next, prefer changes whose mechanism is
+   **opponent-independent** — the bot wasting its own turns, its own paint, its
+   own robots — over anything shaped around what alice, bob or carol happen to
+   do. Both accepted iterations were of the first kind, which is the reason to
+   expect anything from them at all.
