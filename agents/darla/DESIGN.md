@@ -4411,3 +4411,16 @@ shape that lost for soldiers, and its trigger was also the opponent's paint, whi
 puts it in the class where self-play misleads. So when it is built it goes
 straight to `widen.sh` and the roster-paired run, with the head-to-head as a screen
 only.
+
+### The widened-roster reference for `darla-i3`: 338/450 (75.1%)
+
+Against `alice_iter39`, `bob_iter18`, `carol_iter44` — and the number that matters
+is how close it is to the standard roster's **341/450 (75.8%)**. The second
+opponent set is of **comparable difficulty**, which is exactly what makes it a
+second opinion rather than an easier exam. A widened roster that darla beat 90% of
+the time would have added keys without adding information.
+
+`darla86` runs next on the same ground. Its two existing instruments disagree in
+sign, and determinism forbids re-running either, so these 450 keys against
+opponents neither build has been measured on are the only evidence left that can
+break the tie.
