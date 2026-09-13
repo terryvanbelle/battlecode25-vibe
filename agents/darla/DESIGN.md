@@ -4249,3 +4249,26 @@ Registered checks, in order, before the score:
 2. `frontFound` must rise sharply and `IDLE-ENEMY` fall; if `frontFound` barely
    moves, then soldiers with enemy paint in reach also have no empty tile in
    vision, and the gate was harmless.
+
+### status-line's ghost run, take two: skip by WRITE FRESHNESS, not by file existence
+
+`darla 0 games (3230m in)` — a 54-hour-old directory reported as live, again. The
+previous fix skipped a stale directory only when `results.txt` was **absent**, and
+`gauntlet/20260910-200447` is an abandoned run with an **empty** `results.txt`, so
+it walked straight through the check whenever the genuinely live run had not yet
+created its own directory.
+
+The signal that actually separates "still playing" from "abandoned" is the
+**newest write in the directory**: a live run touches `results.txt` continuously,
+including a 450-game one that will not write `summary.txt` for forty minutes. Now
+checked against `max(mtime(dir), mtime(results.txt))`.
+
+Five 0-game orphans from the 09-11 outage moved to `gauntlet/.orphans/` so they
+cannot be selected at all — belt as well as braces, since this is the second fix
+to the same symptom.
+
+A small recurrence worth noting: the quarantine loop initially missed the very
+directory that caused the bug, because `grep -c` on an empty file **prints `0` and
+exits 1**, so `$(grep -c ... || echo 0)` evaluates to `"0\n0"`, which is not `0`.
+That exact quirk is already recorded in this notebook from an earlier fix, and I
+wrote it again anyway.

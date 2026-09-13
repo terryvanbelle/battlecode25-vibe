@@ -21,10 +21,19 @@ cd /home/terryvanbelle/projects/vibe/2025/agents/darla
 # results and is older than 15 minutes: that combination is only ever an orphan.
 run=$(now=$(date +%s); for d in $(ls -1 gauntlet 2>/dev/null | sort -r); do
         [ -f "gauntlet/$d/summary.txt" ] && continue
-        if [ ! -f "gauntlet/$d/results.txt" ]; then
-          m=$(stat -c %Y "gauntlet/$d" 2>/dev/null || echo 0)
-          [ $(( now - m )) -gt 900 ] && continue
-        fi
+        # Skip orphans by WRITE FRESHNESS, not by whether results.txt exists. The
+        # first version of this check skipped a dir only when results.txt was
+        # absent, and gauntlet/20260910-200447 -- an abandoned run with an EMPTY
+        # results.txt -- sailed through it and was reported as "darla 0 games
+        # (3230m in)", a 54-hour-old ghost, whenever the genuinely live run had
+        # not yet created its directory. A live run touches results.txt
+        # continuously, including a 450-game one that will not write summary.txt
+        # for 40 minutes, so the newest write in the directory is the signal that
+        # separates "still playing" from "abandoned".
+        m=$(stat -c %Y "gauntlet/$d" 2>/dev/null || echo 0)
+        r=$(stat -c %Y "gauntlet/$d/results.txt" 2>/dev/null || echo 0)
+        [ "$r" -gt "$m" ] && m="$r"
+        [ $(( now - m )) -gt 900 ] && continue
         echo "$d"; break
       done)
 prog=""
