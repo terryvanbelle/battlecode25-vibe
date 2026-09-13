@@ -4856,3 +4856,49 @@ four instrument runs), about 4,000 games, and no accept. What it bought:
 
 A null that is this thoroughly measured is a real result. It is also the point at
 which to stop: the branch has had its chance.
+
+## Iteration 93 — ruin crowding measured, and closed without an arm
+
+75/150, **all 75 maps 1–1**, `ov = 0`. Crowding on ruin-work turns, where another
+ally robot is already within r² ≤ 8 of the same ruin:
+
+| map | ruin-work turns | crowded |
+|---|---|---|
+| `BatSignal` (10 ruins) | 27 | **3.7%** |
+| `DefaultHuge` (49 ruins) | 89 | **13.5%** |
+| `Fossil` (open, 3.6% walls) | 84 | **21.4%** |
+
+Not rare — but **closed anyway, on two grounds I would rather state than bury.**
+
+First, the surface. Ruin work is ~20% of soldier turns and crowding is ~15% of
+those, so the addressable slice is **~3% of soldier turns** — the same order as
+`darla90`'s free action, which moved six maps out of seventy-five. The
+multiply-the-conditions rule that `darla90` earned applies before an arm, not
+after.
+
+Second, and more important: **the measurement does not establish waste.** Two
+soldiers on one ruin paint the tower pattern in half the turns. Co-location is
+evidence of co-location; calling it redundancy assumes the second soldier adds
+nothing, and nothing here shows that. An anti-crowding arm could easily slow tower
+completion — the exact quantity the coverage race turns on.
+
+What would settle it: compare the **round at which a ruin's pattern completes**
+with one worker against two. That is a replay-side measurement on data already on
+disk, and it is the prerequisite for any arm here.
+
+## `darla94` registered — read the large-map constraint instead of guessing at it
+
+The loss pattern is sharp. Of the maps where `darla-i3` is swept 0–2 by **two or
+more** of the standard roster, **seven of seven are large** (≥ 40×40), against a
+pool that is 49% large — p ≈ 0.007.
+
+And on `TheBest` (60×60, 44 ruins) the tower count goes **4 → 6 → 10 across 1,400
+rounds** while chips run **3,620 → 1,370**. Expansion there is emphatically **not
+chip-limited**; the treasury is fat while the map goes unclaimed.
+
+The large-map weakness is the oldest open item in this lineage, and every previous
+attempt on it — including several of mine — guessed at the binding constraint.
+`darla94` reads it: `sb=<blocked-on-chips>/<blocked-on-tower-paint>/<spawned>`,
+inert instrumentation on the one decision that converts a fat treasury into
+robots. Iterations 2 and 3 changed the paint economy this decision reads, which is
+the same justification that made the `PAINT_FLOOR` ablation worth running.
