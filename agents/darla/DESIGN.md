@@ -4980,3 +4980,28 @@ paint stalls, `darla94`'s paint-blocked small maps, and the coverage win conditi
 The 450-key roster run is queued: this is an opponent-independent change (its
 trigger reads only our own treasury), the class where the screen and the rosters
 have agreed all session, so the roster is corroboration rather than arbitration.
+
+### `darla95` on 450 roster keys: **19–19 of 38, z = +0.00** — closed
+
+341/450 against the `i3` reference's 341/450. Not "about the same" — the same
+number, with the discordant pairs splitting exactly evenly.
+
+That closes the chip-reserve line as cleanly as it can be closed. The valve was
+broken (`pf=0` for the life of the bot), the fix works (`pf=34`–`48` per tower,
+`pin=` reaching 9), the mechanism fires on precisely the large maps `darla94`
+identified as chip-blocked — and across 450 paired games against three opponents
+it is worth **nothing at all**.
+
+**Recorded closure: `CHIP_RESERVE`'s release valve is `measured-and-small`, and
+the large-map weakness is not a budget problem.** `darla94` showed a tower spawns
+once or twice a game there against 32 times on a small map; `darla95` shows that
+handing that tower its reserve back does not change the outcome. What large maps
+are short of is not money — it is soldiers arriving at ruins with paint, which is
+the same logistics constraint iteration 2 attacked from the supply side.
+
+Worth noting what this pair of arms cost and returned: `darla94` (inert) and
+`darla95` (a one-line change), two 150-game screens and one 450-game run, to
+convert "the treasury looks stuck on large maps" from a plausible story into a
+measured dead end. That is cheap for a negative result on the oldest open item in
+the lineage, and it rules out an entire class of follow-ups — every arm that would
+have adjusted `CHIP_RESERVE`, its release, or the spawn affordability test.
