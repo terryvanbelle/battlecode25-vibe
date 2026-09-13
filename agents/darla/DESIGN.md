@@ -4627,3 +4627,35 @@ Registered before those land: if `darla91` is positive on both rosters, the hone
 comparison is against `darla86`'s combined **z = +1.70**, not against zero — the
 question is whether conditioning the gate beats removing it, and `darla86` is the
 build to beat.
+
+## Iteration 91 on the standard roster: −5 games, and the per-opponent split says exactly why
+
+336/450 against the `i3` reference's 341. **30–35 of 65 discordant, z = −0.62.**
+
+Set beside `darla86`, which removed the gate entirely:
+
+| opponent | `darla86` (no gate) | `darla91` (`ally >= foe`) |
+|---|---|---|
+| alice | −5 | **−5** |
+| bob | +7 | **+9** |
+| carol | **+9** | **−9** |
+
+**The condition destroyed the carol gain and kept the alice loss.** An 18-game
+swing on carol alone, from the single change of gating the branch on `ally >= foe`.
+
+So my reading of `darla86`'s split was **wrong in a specific way**. I reasoned:
+*alice punishes a soldier that leaves contested ground, therefore do not leave when
+contested.* The correct reading was the opposite one, and carol was telling me so:
+the +9 against carol came **precisely from the turns where `foe > ally`** — from
+leaving ground the enemy already dominates. My condition gated off the only part
+of the behaviour that was earning anything.
+
+The alice loss is untouched by the condition (−5 both times), which means alice's
+punishment is *not* about contested ground at all — it is something else in
+`darla86` I have not identified, and gating on local paint balance cannot reach it.
+
+**Held for the widen run**, which is queued and is the second opinion this arm's
+class requires. But the standard roster already makes the useful point, and it is
+one I would not have got from a single aggregate number: **+4 on the screen, −5 on
+the roster, and an 18-game swing hiding inside a 5-game total.** Aggregates are
+where opposite effects go to cancel.
