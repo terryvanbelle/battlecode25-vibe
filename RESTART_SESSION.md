@@ -30,9 +30,18 @@ gcloud auth login
 gcloud config set project tvanbelle-vibecode
 ```
 
-Plain SSH also works if you have the key already: the driver's external IP is
-`8.229.158.190`. `gcloud compute ssh` is preferred because it manages the key for
-you and survives an IP change.
+Plain SSH also works if you already have the key, but look the address up rather
+than keeping it written down — it is ephemeral and changes when the instance is
+recreated:
+
+```bash
+gcloud compute instances describe claude-driver \
+  --zone us-west1-b --project tvanbelle-vibecode \
+  --format='value(networkInterfaces[0].accessConfigs[0].natIP)'
+```
+
+`gcloud compute ssh` is preferred anyway: it manages the key for you and survives
+an address change.
 
 To confirm you are on the right machine:
 
