@@ -5377,3 +5377,52 @@ after the first benchmark: prefer changes whose mechanism is **opponent-
 independent** — the bot wasting its own turns, paint or robots. Iteration 4 was of
 that kind and still did not transfer, which sharpens the rule rather than refuting
 it: opponent-independence is necessary and not sufficient.
+
+# The acceptance criteria have an overfitting exposure — owner's audit, 2026-09-13
+
+The owner looked at the old-bots chart and said progress looked flat since noon
+the previous day, and asked whether the acceptance criteria were right. Checking
+rather than defending:
+
+| build | n | mean /150 | sd |
+|---|---|---|---|
+| `i1` | 38 | **102.0** | 7.71 |
+| `i2` | 3 | 109.0 | 7.94 |
+| `i3` | 13 | **111.2** | 7.38 |
+| `i4` | 1 | 111.0 | — |
+
+**`i3` − `i1` = +9.2 games/150, t = +3.84.** Real. But the paired instrument
+predicted **~+15** cumulative. **The held-out estimate is ~60% of the in-pool
+one**, and that ratio is the signature of mild evaluation-set overfitting.
+
+The owner's read was also right in detail: `i3`'s first six samples average 115.5
+and its last seven 107.6. I quoted "i3 mean 120.7" off the early draws and was
+too confident. Iteration 4's expected contribution is ~+3 games/150 against sd
+7.4, so a flat chart since yesterday is what you would see **even if i4 is real**
+— which makes flatness neither confirmation nor refutation.
+
+**Three weaknesses, stated plainly:**
+
+1. **The 450-game paired run is a census, not a sample.** The engine is
+   deterministic and those games enumerate the *entire* 75-map × 3-opponent ×
+   2-side space. There is no sampling noise, so the McNemar z is a randomization
+   null — defensible, but it measures the effect **on that fixed pool**.
+2. **Every arm is screened and accepted on that same pool**, ~23 of them this
+   session. That is textbook evaluation-set overfitting, and the 60% ratio above
+   is what it looks like from outside.
+3. **Multiple comparisons.** At the z ≈ 2.4 bar (p ≈ 0.017), ~23 arms gives about
+   0.4 expected false accepts. `darla77` sat exactly on that boundary; `darla84`
+   (p = 0.002) and `darla96` (p = 0.001) are far safer.
+
+**Owner's decision: leave things as they are for now.** No re-examination of the
+three accepted iterations, no change to the criteria. Recorded here because the
+finding outlives the decision, and because the next person to read a +3.26 in
+this notebook should know what it is and is not.
+
+**If it is revisited, the fix is not a higher z.** It is requiring the *held-out*
+instrument — fresh random 25-map samples, the one not contaminated by selection —
+to confirm before an accept, with the number of samples and the threshold
+pre-registered rather than read off the first few draws. That is much slower:
+resolving +5 games/150 at sd 7.4 needs roughly 35 samples per side. Which is
+itself the reason the paired instrument got used for the decision in the first
+place, and why the exposure exists.
