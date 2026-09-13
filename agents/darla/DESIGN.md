@@ -4716,3 +4716,50 @@ second. If `darla92` lands between `darla91`'s −5 and `darla86`'s +11 rather t
 above it, the honest conclusion is that all three arms are sampling the same
 small, unstable effect and the gate simply is not the lever I have been treating
 it as for four arms.
+
+# The gate line is CLOSED — and the per-opponent slices were noise all along
+
+`darla92` on the standard roster: **344/450, 22–19 of 41 discordant, z = +0.47.**
+The prediction I registered was *beat `darla86`'s +11, or the `ally`/`foe` framing
+is the wrong cut.* **It did not.** So the framing is the wrong cut, and I am
+taking the second branch of my own prediction rather than rewriting the bar.
+
+Four arms on one gate, with their per-opponent slices side by side:
+
+| arm | gate | alice | bob | carol | total |
+|---|---|---|---|---|---|
+| `darla86` | none | −5 | +7 | **+9** | +11 |
+| `darla91` | `ally >= foe` | −5 | +9 | **−9** | −5 |
+| `darla92` | `foe == 0 \|\| foe > ally` | −1 | +5 | **−1** | +3 |
+
+**Carol reads +9, −9, −1 across three arms that differ only in when one branch
+fires.** There is no mechanism that produces that sequence. There is, however, a
+very ordinary explanation.
+
+**The arithmetic I should have done four arms ago.** A per-opponent slice of a
+450-game run is 150 games with roughly 15–20 discordant pairs, so the standard
+deviation of its win-difference is about **√17 ≈ 4 games**. A ±9 swing is barely
+2 sd. Across three arms × three opponents I was reading **nine slices**, and the
+most extreme of nine draws sitting near 2 sd is exactly what noise looks like — it
+is not evidence of anything.
+
+So the "legible pattern" I built `darla91` on (*alice punishes leaving contested
+ground, carol rewards it*) was a story fitted to two slices of a single run, and
+`darla92` is the third arm to price the lesson.
+
+**Closure: the `foe == 0` gate is `measured-and-small`, in all four of its forms.**
+The best of them, `darla86`, is +1.70 combined across two rosters and under the
+bar. No variant of *when* to seek the frontier is worth an accept, and I have now
+spent four arms establishing that the differences between the variants are
+smaller than the noise in the slices I used to choose between them.
+
+**Rule registered, with a number this time:** a per-opponent slice carries sd ≈ 4
+games; **do not build an arm on a slice difference under ~8 games**, and never on
+the most extreme slice of several without counting how many were looked at. The
+aggregate McNemar over all 450 keys is the statistic; the slices are for
+generating hypotheses, and a hypothesis needs its own run against a *different*
+opponent set before it earns an arm.
+
+The widened roster is still queued and will be recorded, but it cannot change this
+conclusion: the prediction was registered against the standard roster and has been
+answered there.
