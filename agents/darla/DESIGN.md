@@ -3977,3 +3977,41 @@ lookalike.
 
 Against the `i1` reference (307/450), the accepted iteration stands at **+19 games
 on 450 paired keys**. `darla84`'s 450-game run is queued against this.
+
+## `darla84` on 450 paired keys: **+15 games**, and two instruments agree
+
+| instrument | opponents | result | discordant | split | z |
+|---|---|---|---|---|---|
+| head-to-head, 150 games | `darla-i2` itself | **88/150** | 25 maps | **19–6** | **+2.60** |
+| paired roster, 450 games | alice, bob, carol | **341/450** vs 326 | 79 keys | **47–32** | **+1.69** |
+
+The two share their maps but have **entirely disjoint opponents**, which is the
+dominant source of variation, so they are close to independent evidence. Combined
+by Stouffer: **z ≈ +3.03**.
+
+Per opponent on the 450: alice 74.0%, bob 79.3%, carol 74.0% — up from 72.4%
+overall, and above the ≥50%-per-lineage bar by a wide margin on all three.
+
+Note the paired instrument is the *weaker* of the two here (z = +1.69 alone, which
+this lineage has been burned by before — `darla65` at +2.5 sd evaporated). It is
+the agreement across two references plus the confirmed mechanism (`mv` down
+21.6→16.1 and 27.8→18.7, `ov=0`) that carries this, not any single number.
+
+**Holding the accept until the registered shape prediction is tested.** I
+registered that the gain should be *concentrated on cluttered maps and absent on
+open ones*, and that a flat gain across all 75 would be evidence the mechanism is
+not what I think it is. A wall-fraction scan of the 25 discordant maps is running.
+Accepting before checking a prediction I wrote down myself would make the
+prediction decorative.
+
+## `darla85` queued — persist the hug while engaged
+
+`darla82` hugs always (−14). `darla84` hugs for a single turn after the trigger
+(+13). `darla85` keeps `darla84`'s measured trigger but **persists while engaged**,
+clearing only when a direct move succeeds. The hypothesis is that one sidestep can
+look like progress and drop the state before a robot is actually out of a deep
+concave pocket, so the one-shot version under-escapes.
+
+It sits deliberately between the two known points, which is the only part of this
+space still unmeasured: trigger and persistence are separate knobs and only their
+corners have been tested.
