@@ -5224,3 +5224,39 @@ cannot spend, which `darla95` established by showing that handing a tower its
 reserve back is worth exactly zero. If `darla96` is null too, then the money share
 is not what the large-map expansion is short of either, and the constraint is
 narrowed again rather than the hypothesis merely failing.
+
+### `darla96` on the standard roster: 343/450, **17–15 of 32, z = +0.35** — null
+
+Per opponent: alice −1, bob 0, carol +3. Nothing anywhere. The widened roster is
+still running and will be recorded, but it will not rescue a +2-game result on 32
+discordant pairs.
+
+**This is the third arm in a row to say the same thing, and together they narrow
+the large-map problem properly:**
+
+| arm | what it changed | roster result |
+|---|---|---|
+| `darla94` | nothing (instrumentation) | spawns 1–2 per tower on large maps vs 32 on small |
+| `darla95` | released the chip reserve (`pf` 0 → 34–48) | 19–19 of 38, **z = 0.00** |
+| `darla96` | money towers only when chips are spare | 17–15 of 32, **z = +0.35** |
+
+Chips are not the constraint — releasing them does nothing. The money/paint share
+is not the constraint either — shifting it does nothing. What `darla94` actually
+measured is that spawning on large maps is blocked on **tower paint**, 423–435
+times per tower, and both of my follow-ups went after the *chip* side of that
+sentence because it was the easier half to change.
+
+**The remaining hypothesis, stated so the next arm has to earn it:** tower paint
+is produced by paint towers and consumed by spawning and refills. On a large map
+the bot has few towers early (4 at round 300 on `TheBest`, against 44 ruins), so
+paint income is low, so it cannot spawn the soldiers that would claim more ruins,
+which is a loop that closes on itself — the "expansion death spiral" named much
+earlier in this notebook and never actually broken. Nothing in `darla94`–`96`
+touched the loop; they adjusted what the bot does with money it already cannot
+spend.
+
+Breaking that loop means getting more paint *income* early, and the only lever
+that does it without spending paint is **which ruins get claimed first** — near
+ones compound faster because soldiers reach them sooner. That is untested and is
+the honest next arm; `MONEY_MOD`, `CHIP_RESERVE` and the spawn affordability test
+are now all measured dead ends and should not be revisited.
