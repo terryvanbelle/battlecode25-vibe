@@ -25002,3 +25002,76 @@ iteration 15b's registered re-open condition says exactly why the n is the probl
 > **Direction 1's registered re-open condition IS direction 2.** They are not alternatives and not an
 > ordering I get to choose: my own ledger forbids re-opening tower offence on a self-play run, and
 > the only instrument that would license it is the stress archetype. **Nothing spent on direction 1.**
+
+# ============ STRESS ARCHETYPE `alice_forward` — REGISTERED BEFORE BUILDING ============
+
+Per METHODS §30: a degeneracy measured in my own replays, kill arithmetic verified from the engine,
+a **fork of my strongest build** rather than a minimal bot, coupling accepted because an instrument
+needs difficulty rather than attribution.
+
+## The degeneracy, all three legs measured on my own trace
+
+1. **Alice cannot concentrate units on a target.** 1.01 soldiers in range of an enemy tower on 99.6%
+   of opportunities; pattern completion needs a 4.5-soldier relay and gets **2.41**.
+2. **Alice's soldiers never target towers at all** — SOLDIER **0%** of alice's tower damage. So a
+   tower planted inside alice's half **cannot be removed by the units standing around it.**
+3. **Alice is sight-bound** — **71.98%** of action-capable turns see no workable ground. Ground taken
+   in front of alice is ground alice never gets a target on.
+
+**Kill arithmetic verified from the engine [E], not assumed:** tower damage is permanent — no
+restoration path in `addHealth`, `upgradeTower` carries the deficit forward, towers sit outside
+`processEndOfTurn`. A soldier deals 50 to a tower; my own win sample converts at **~25 hits/kill**.
+**A forward tower survives unless the defender concentrates, and alice cannot.**
+
+## Mechanism — one idea, applied at two sites
+
+Fork of HEAD. Each robot records its birth location as `home` and reflects it through the map centre
+to get `enemyRef`. Then (a) among visible unclaimed ruins prefer the one nearest **`enemyRef`** rather
+than nearest **me**, and (b) bias `wander` toward `enemyRef` instead of a random heading.
+**Result: towers get built on alice's half** — which is simultaneously the difficulty and the contact.
+
+## THE TWO BANDS — both must pass to license direction 1's re-open
+
+**Band A — DIFFICULTY.** `net swept = archetype wins − 25 maps`, 25 maps / 50 games vs HEAD.
+
+> **PASS ≥ +4** (the screen bar) — a genuinely harder instrument.
+> **FAIL ≤ −4** — weaker than alice; useless as stress.
+> **Between: comparable strength.** Usable as a peer rung, **NOT** as a stress archetype.
+
+**Band B — CONTACT.** Rate of alice-soldier-turns with an **enemy tower inside the soldier's own
+action radius**, per soldier-turn — measured in the **same batch** against an `alice` vs `alice`
+self-play baseline on the **same maps**, so no cross-sample term enters.
+
+> **PASS ≥ 10x baseline.** My ledger quotes ~20x more contact vs `bob` in the tournament; I register
+> **half** of it so I am not demanding a target I have never measured.
+> **FAIL < 3x.** Between: inconclusive.
+
+**Falsifier, registered so it cannot be reinterpreted later:** *an archetype that passes A but fails B
+leaves direction 1 exactly where it is.* A difficulty win is **not** a licence to re-open tower
+offence — 15b's condition is about **contact**, and only Band B speaks to it.
+
+## Manipulation check — did the mechanism actually fire?
+
+Mean distance of the archetype's towers from **its own** starting tower, against alice's same figure:
+
+> **≥ 1.3x ⇒ fired.  < 1.1x ⇒ the mechanism did not fire and the whole test is VOID**, whatever the
+> two bands say. Registered now because a forward-expansion archetype that expands normally would
+> produce a difficulty number I could mistake for a mechanism.
+
+### AMENDMENT to the manipulation check — made BEFORE any band result, with its reason
+
+The registered form ("mean distance of the archetype's towers from **its own starting tower**") is not
+computable from what the replay gives me: `ReplayDump` prints tower SPAWN actions but the **initial**
+towers are not spawn actions, so neither team's home appears. Recovering home would need a
+per-map symmetry assumption (`MatchHeader` carries `symmetry=`), and **an assumption imported into a
+manipulation check is exactly where I would not notice it.**
+
+Replaced with an assumption-free statistic over the same mechanism — **tower-cloud separation**:
+
+> per game, `sep = | mean(T1 tower positions) − mean(T2 tower positions) |` (Euclidean), compared
+> against an **`alice` vs `alice` self-play baseline on the same maps**. Forward expansion pulls the
+> archetype's cloud toward the opponent's, so `sep` must **FALL**.
+> **≥20% fall ⇒ the mechanism fired.  <5% fall ⇒ VOID**, whatever the bands say.
+
+Amended before results, computable from data already on disk, and the direction of the predicted
+effect is fixed here in writing.

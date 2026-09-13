@@ -27,3 +27,7 @@ bc25-benchmarks/
 **/TSPAARKHS/
 **/SPAARK/
 **/quals_current_submission/
+
+# Python bytecode caches
+__pycache__/
+*.pyc

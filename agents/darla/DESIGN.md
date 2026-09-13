@@ -5005,3 +5005,198 @@ convert "the treasury looks stuck on large maps" from a plausible story into a
 measured dead end. That is cheap for a negative result on the oldest open item in
 the lineage, and it rules out an entire class of follow-ups — every arm that would
 have adjusted `CHIP_RESERVE`, its release, or the spawn affordability test.
+
+# ============================================================================
+# RECOVERED CONTENT — written 2026-09-12 15:06 to the WRONG PATH
+# ============================================================================
+
+The six sections below were appended to `/DESIGN.md` at the **repo root**
+instead of `agents/darla/DESIGN.md`, because a `cat >> DESIGN.md` ran with the
+working directory at the root rather than in the workspace. They sat there
+untracked — never committed, never pushed — until a "do you have anything to
+commit?" check on 2026-09-13 turned them up.
+
+They are restored here **at the end, out of chronological order**, rather than
+spliced back into the iteration sequence. Splicing would have produced a
+notebook that looks like it was always right; this way the record shows what
+actually happened, which is the same standard every arm in this file is held to.
+
+They cover iterations 57, 65, 70 and 72 plus two cross-cutting findings, and
+none of them is duplicated elsewhere in this file — each heading was checked.
+
+**The lesson, which is about tooling and not about writing:** an append is
+silent when it lands in the wrong place. It creates a file rather than failing.
+Every other write in this project is guarded — `make-arm.sh` refuses to leave a
+broken arm on disk, `gauntlet.sh` now claims its run directory atomically — and
+the lab notebook, the one artifact that cannot be regenerated from a rerun, had
+no guard at all.
+
+
+## Iteration 57 — MIS-SPECIFIED. `SPLASHER_IN_20 = 18` leaves **zero soldiers**.
+
+47/150 (31.3%), z = −4.58 — and it measures nothing about splasher share on large
+maps. The mix is `splasher / mopper / soldier = SPLASHER_IN_20 : 2 : (18 −
+SPLASHER_IN_20)`, so:
+
+| dose | splasher | mopper | **soldier** |
+|---|---|---|---|
+| 10 | 50% | 10% | 40% |
+| 14 (accepted) | 70% | 10% | 20% |
+| 16 | 80% | 10% | 10% |
+| **18** | **90%** | 10% | **0%** |
+
+At 18 the build has **no soldiers at all** on large maps, which is the cliff
+`darla12` already established (no soldiers → no ruins → no towers → no economy).
+The −4.58 sd is that known cliff, not information about the question I was asking.
+
+**The check that would have caught it is one I already invented and did not
+apply.** After the 288 wasted no-op games I wrote: *before queueing a dose, check
+whether the term can change the decision it feeds.* The same discipline extends
+one step — **check that the dose leaves a viable configuration**, not just a
+different one. A dose that zeroes a unit type is testing that unit's absence,
+whatever axis it is nominally on.
+
+`darla58` re-runs the upper side at 16 (10% soldier), which is the largest
+splasher share that still builds an economy.
+
+## A test of mine that could not have measured anything, caught after it ran
+
+`darla56` on the medium band (1200–1599 tiles) scored **40/48**. That number is
+uninterpretable, because **`darla56` switches at 1,600 tiles** — on every map in
+the medium band it takes the `SMALL` branch and is byte-identical to the
+baseline. I chose the medium band because it was untouched ground, and did not
+check that the arm under test actually *behaves differently* there.
+
+This is the same class as `darla57` (a dose that zeroed a unit type) and the
+repeat runs (a re-run that could not differ): **three separate times tonight I
+have launched a comparison whose two sides were guaranteed to be the same.** The
+check is one line of reasoning — *does the treatment differ from the control on
+the games being played?* — and it belongs before every launch, not after.
+
+`darla59` is the version that answers the question: the same rule with the
+threshold moved to 1,200, so medium maps get the large-map treatment. The
+baseline's medium-band run is already queued and is the correct control for it.
+
+## The large-map weakness is an EXPANSION DEATH SPIRAL, not a mix problem
+
+Contrast census, two large maps against alice, one won and one lost:
+
+| | darla towers | alice towers | darla soldiers |
+|---|---|---|---|
+| **DefaultHuge (win)** | 7 → **23** | 13 → 10 | 3 → 19 |
+| **DonkeyKong (loss)** | 6 → **6, frozen** | 25 → 25 | 4 → **1** |
+
+The losing shape is a **spiral**: soldiers collapse to one, only soldiers claim
+ruins, so no new towers, so no paint income, so no soldiers. Once expansion
+stalls this build never recovers — `died22 starved22` by round 590 while alice
+compounded to 25 towers.
+
+**This is why the mix arms all failed.** They changed the *ratio* of units built,
+which does nothing when the problem is that the team is too poor to build
+anything. `darla56` moved production toward soldiers globally and traded wins
+between opponents; the spiral needs a rule that fires **only when expansion has
+already stalled**.
+
+**`darla62` — expansion insurance**: while the team holds fewer than 8 towers,
+every build is a soldier regardless of the roll. `getNumberTowers()` is team-wide
+and identical for every tower, so they agree without communicating. In a healthy
+game the threshold is passed in the opening and never seen again; in a stalled
+one it forces the only unit that can restart the economy.
+
+**This is deliberately the shape the `darla56` trade argued for** — a rule that
+helps in the failure state and is inert otherwise, rather than one that
+redistributes performance between opponents. If it works it should gain on large
+maps *without* costing anything against carol, and that is the registered
+prediction: **gains against alice and bob, no loss against carol.** If it trades
+like `darla56` did, the spiral reading is wrong.
+
+## Iteration 65 — the first use of COMMUNICATION in this project
+
+Closing `darla64` I wrote that the only remaining route to the expansion signal
+was inter-robot communication, "a capability no lineage in this project has ever
+used and a far larger undertaking than a spawn-rule tweak". The second half of
+that was an excuse, not a finding — the mechanism is about fifteen lines.
+
+**The problem, restated precisely.** A tower cannot see an unclaimed ruin: vision
+is 4.5 tiles against a 9.4-tile median ruin spacing. A **soldier standing at a
+ruin can**. [E, carol's RULES.md] a robot may message a tower within r²=20 along
+an ally-paint path, one message per turn; towers read a 5-round buffer.
+
+**`darla65`**: a soldier that has found an unclaimed ruin sends `1` to any allied
+tower in range; a tower that has heard that message builds a soldier instead of
+rolling. The signal now has the right range *and* releases by itself — once the
+ruin is claimed, `nearestEmptyRuin` stops returning it and the reports stop,
+which is exactly the property the tower-count triggers lacked.
+
+**Mechanism check first, as always**: the build carries `ms=<sent>/<heard>`. If
+`sent` is near zero the paint-path precondition is failing; if `heard` is near
+zero the range or the buffer is. Either way the arm would be **untested** rather
+than refuted — and given that three of the last four arms on this question turned
+out to be no-ops, that check is the first thing I will read.
+
+# Iteration 70 — SYMMETRY INFERENCE, from `reference/RESEARCH.md`
+
+The owner pointed me at `reference/RESEARCH.md`, a cross-year post-mortem digest I
+had not read. **Item 2 on its own "when stuck" list is this exact arm**: *check
+whether symmetry inference exists in your bot — it is standard everywhere else,
+needs no communication, and is exact rather than heuristic.*
+
+**It does not exist here.** Every occurrence of "symmetry" in the shipped build is
+a *play-symmetry constraint* — making sure both teams behave identically so no
+result is an artefact of team identity. Not one line infers the map's symmetry to
+locate anything. Sixty-nine arms and nobody checked.
+
+**The derivation.** Every BC map is rotational, horizontal or vertical symmetric
+for fairness, so our starting tower's mirror must hold a ruin. `darla70` keeps all
+three candidates live from round 1 and eliminates any whose mirrored location it
+can see and which holds no ruin. Once one survives, the enemy base is known
+exactly — no communication, no heuristic.
+
+**Why this is the right heading to try, given tonight's results.** The session
+established two things that point straight at it:
+
+- positioning needs a **stable** target — the tower attractor is worth **99–51**
+  precisely because a tower never moves;
+- every **nearest-target** heading has lost badly: `darla9` −10, `darla20` −38,
+  `darla41` −10.78 sd.
+
+The enemy base is the most stable landmark on the map *and* is known before any
+enemy is seen. It is the one heading type never tried, and it fills the measured
+gap: **IDLE-ALLY is 24% of soldier turns, and the frontier search finds a target
+2 times in 187.**
+
+**Mechanism check, read before the score**: `sy=<eliminated>/<used>`. Candidates
+eliminated should be 1–2 per game (three candidates, one true), and `used` counts
+turns where a soldier actually took the symmetry heading. If `used` is near zero
+the arm is untested; if `eliminated` stays 0 the mirrors are never coming into
+vision and the inference never resolves.
+
+## Iteration 72 — terrain elimination WORKS, and the arm is VOID on bytecode
+
+61/150 (40.7%), and both mechanism counters matter:
+
+| | |
+|---|---|
+| **eliminations** | **`sy=1/0`, `sy=2/0`** — candidates are being ruled out, per robot, per game |
+| **bytecode overruns** | **`ov=3`** |
+
+**The inference finally works** — terrain-in-vision elimination does what
+`RESEARCH.md` describes, where `darla71`'s mirrored-start check never fired once.
+
+**And the arm is void, by a rule I registered at `darla8`**: *`ov=` must stay at 0;
+a non-zero overrun count voids the arm regardless of the score, because a robot
+that misses its turn is a different bot, not a worse one.* A full vision sweep
+with three candidates and a `senseMapInfo` per mirror, every turn, costs more
+bytecode than a robot has. The −2.29 sd is robots skipping turns, not a verdict
+on symmetry inference.
+
+**`darla73` bounds the cost two ways**, both exact rather than approximate:
+stop sweeping once a single candidate survives — the answer cannot change — and
+sweep only every 5th round, since terrain does not move and a robot sees the same
+tiles for many consecutive turns. The inference is unchanged; only its schedule is.
+
+**Worth noting what saved this from being recorded as a refutation**: the
+overrun counter was added to this build long before tonight, for exactly this
+purpose, and the rule about it was written 60 arms ago. Without either, 61/150
+would have read as "symmetry inference does not help" — a wrong conclusion about
+an idea that has still never had a fair test.
