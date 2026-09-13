@@ -4817,3 +4817,42 @@ the ~50 discordant keys the other two produced, its contribution to the combined
 z should be read as correspondingly weaker — and the honest reading of a
 three-roster combination is then closer to "two good rosters and a thin third"
 than to "three equal votes".
+
+# `darla86` CLOSED on 1,350 paired keys: combined z = +1.18, `measured-and-small`
+
+| opponent set | `darla86` vs `darla-i3` | discordant | z |
+|---|---|---|---|
+| standard (finals) | 352 vs 341 | 47 | **+1.60** |
+| widened (`iter39`/`18`/`44`) | 344 vs 338 | 56 | **+0.80** |
+| third generation (`iter25`/`11`/`30`) | **381 vs 383** | **32** | **−0.35** |
+| **combined, three disjoint sets** | — | **135** | **+1.18** |
+
+And the third set behaved exactly as registered before it ran: **32 discordant
+pairs against the other two sets' 47 and 56**, because it is ten points easier and
+an easier opponent leaves fewer games close enough to flip. The prediction that it
+would be a thin vote was right, and it is a thin vote that points the other way.
+
+**Verdict: closed, `measured-and-small`.** 1,350 paired keys across six distinct
+opponents put this change at roughly **+5 games in 450**, with a combined z of
++1.18 — well inside what noise produces and far below the +2.39 and +3.03 that the
+two accepted iterations cleared. The single-line gate removal is not worth
+shipping, and the question of *when* a soldier should seek the frontier is now
+answered with 2,700 games behind it: **not by any rule I can find in the local
+paint balance.**
+
+**What the whole gate episode cost and bought.** Seven arms (`86`, `91`, `92` plus
+four instrument runs), about 4,000 games, and no accept. What it bought:
+
+- the standing rule that **opponent-triggered changes are decided by rosters, not
+  by self-play** — which came out of `darla86` inverting between the two, and
+  which now governs every arm of this class;
+- **two extra opponent generations** in the instrument, which will outlive this
+  question;
+- the **slice-noise number** (sd ≈ 4 games per per-opponent slice) that stopped the
+  line, and that I should have computed before `darla91` rather than after
+  `darla92`;
+- and a clean demonstration that the crudest version of a change can beat the two
+  carefully conditioned versions built to improve on it.
+
+A null that is this thoroughly measured is a real result. It is also the point at
+which to stop: the branch has had its chance.
