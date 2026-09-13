@@ -5467,3 +5467,58 @@ block and more of the same is worth trying. If it has not — if the paint block
 unchanged and only the money share moved — then iteration 4's +3.26 came from
 something other than the mechanism I claimed for it, and the write-up above needs
 revisiting rather than extending.
+
+## Iteration 97 — the constraint MOVED: iteration 4's mechanism is confirmed on the counter that defined it
+
+75/150, all 75 maps 1–1, `ov = 0`. `darla94`'s counters re-run on the `i4` build,
+`sb=<chips>/<paint>/<spawned>`:
+
+| map | `i3` (`darla94`) | `i4` (`darla97`) |
+|---|---|---|
+| `TheBest` 60×60 | 397 / **314** / **1** | 321 / **58** / **34** |
+| `shell` 40×40 | 228 / **581** / 1 | 167 / **342** / 1 |
+| `Brat` 29×29 | 78 / 423 / **9** | 135 / 311 / **1** |
+| `DefaultSmall` 20×20 | 221 / 257 / 32 | **identical** |
+
+**On `TheBest` the paint block collapsed 314 → 58 and spawning went 1 → 34.**
+That is the registered prediction confirmed on the exact counter that motivated
+iteration 4, on the exact map that motivated `darla94`. `shell` moved the same
+way but less (581 → 342) and still spawns once.
+
+**And `Brat` went the other way: spawns 9 → 1, with the chips block rising
+78 → 135.** That is the trade stated honestly — iteration 4 buys paint with money,
+and on a small map where chips bind, less money income means less spawning. The
+roster gain was +3.26 net, so the trade pays overall; it does not pay everywhere.
+
+Caveat on all of it: one robot, one replay, one 10-round window per map, and the
+`i3` figures came from different games. The 314 → 58 and 1 → 34 shifts are far too
+large to be sampling, but the `Brat` reversal is a single sample and is **not yet
+a fact**.
+
+### The arm I did not build, because the notebook stopped me
+
+The obvious reading of "342 paint-blocked turns on `shell`" is: when the tower
+cannot afford the rolled unit's paint, spawn a **cheaper** one instead — turning
+blocked turns into robots. I had the edit half-written.
+
+Iteration 36's comment, four lines above the code I was about to change, explains
+why that is exactly wrong. Tower paint accrues at 5/turn against a 1000 cap; a
+mopper costs 100 and a soldier 200, so from a dry tower the 100 line is crossed at
+turn ~20 and every mopper roll then resets the stash to zero. Reaching 200 needs
+~40 consecutive mopper-free turns: `0.9^40 = 1.5%`. **The cheap unit does not
+merely get built more often — it prevents the expensive one from ever being
+afforded.** `PAINT_FLOOR` exists to stop precisely that, and `darla81` measured
+removing it at **−22 games**.
+
+So "fall back to something cheaper" is the pathology under a friendlier name. The
+notebook paid for itself again — that is twice today, after the tower-upgrade idea
+that iteration 35 had already closed.
+
+### What the VM does next, and why it is not an arm
+
+The overfitting audit above says the held-out instrument — fresh random 25-map
+samples — is the one not contaminated by selection, and that `i4` has **one**
+sample against `i1`'s 38. The idle filler produces exactly those samples, and with
+no well-motivated arm in hand, letting it run is a better use of the VM than
+inventing one. `Brat`'s reversal also wants more than a single window before it
+earns an arm.
