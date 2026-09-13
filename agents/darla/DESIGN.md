@@ -4370,3 +4370,44 @@ no reason to guess.
 
 Had I not gone looking for `darla86`'s paired number, the recorded result for this
 arm would have been a fresh-sample score from a different build entirely.
+
+## Iteration 87 — the splasher's 21% `lowScore` block is a POSITION problem, not a threshold problem
+
+75/150 with **all 75 maps splitting 1–1** and `ov = 0` — the instrumentation is
+inert, as required. The counter it was built for, over 2,824 `lowScore`
+splasher-turns:
+
+| | |
+|---|---|
+| mean best available splash score | **7.1** |
+| **maximum** best score seen | **12** |
+| `SPLASH_MIN_SCORE` | **14** |
+
+The maximum being 12 is tautological — these are by definition the turns where the
+best score fell short of 14. The **distribution** is the finding: the best target
+is typically **half** the threshold, not bunched just under it.
+
+**That rules out the threshold as the binding constraint.** If `lowScore` turns
+clustered at 12–13, the splasher would be standing next to work it just misses and
+`SPLASH_MIN_SCORE` would be worth re-opening. At a mean of 7.1 it is not missing
+work — **there is no work where it is standing.** Nudging the threshold down would
+either capture almost nothing (at 13) or fire constantly at half the value density
+(at 7), and in either case would be a constant sweep answering a question the
+distribution has already closed.
+
+So the splasher's largest addressable block is **positional**: 21% of its turns are
+spent holding a loaded weapon in an empty field, while `SPLASH` fires on 4%.
+
+**What this costs to know: one inert arm and no guesses.** `bestScore` was already
+being computed on every one of those turns; recording its distribution took two
+additions and a `max`, no extra scan, and no bytecode risk. The alternative — a
+dose sweep of `SPLASH_MIN_SCORE` — would have cost several 150-game runs to reach
+a worse-supported version of the same conclusion.
+
+**Registered as the next hypothesis, not yet built:** a `lowScore` splasher should
+move toward the densest enemy paint in *vision* rather than continuing its current
+exploration. `darla86` is a caution here — "go toward better ground" is exactly the
+shape that lost for soldiers, and its trigger was also the opponent's paint, which
+puts it in the class where self-play misleads. So when it is built it goes
+straight to `widen.sh` and the roster-paired run, with the head-to-head as a screen
+only.
