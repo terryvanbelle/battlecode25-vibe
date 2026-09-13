@@ -5741,3 +5741,40 @@ this run finished, and the run agrees — so the diagnosis is right and
 `make-arm.sh`'s `EXPECT` check really did pass a half-applied arm. And it cost a
 full 150-game slot to learn something a `grep` had already shown, which is the
 argument for fixing the guard rather than working around it.
+
+## Iteration 101 — the mopper line is CLOSED: a dose-response across three arms
+
+**60/150 (40.0%)**, `ov = 0`. Realized mix on the sampled map: **14 moppers, 22
+splashers, 9 soldiers** — 31% moppers, not the ≤10% I predicted. The `MOPPER_IN_20`
+roll caps how often a mopper is *rolled*, but relaxing `PAINT_FLOOR` for those
+rolls means they now *succeed* where they used to die, and the cheap unit still
+crowds the expensive ones. Iteration 36's arithmetic — a mopper resets the tower's
+stash and starves the 200-paint soldier — applies to a 10% roll too.
+
+Three arms now sit on the same axis, and they line up:
+
+| arm | mopper share | result |
+|---|---|---|
+| shipped (`PAINT_FLOOR` on) | **0%** | baseline |
+| `darla101` (floor relaxed for mopper rolls) | **31%** | **−15** |
+| `darla81` (floor removed) | 60% | **−22** |
+| `darla99` (mopper forced on enemy paint) | 79% | **−53** |
+
+**Monotone: every mopper this bot builds costs it games, and the cost grows with
+the share.** That is as clean a dose-response as this lineage has produced, and it
+closes the mopper question for good — not by one refutation but by four points on
+a curve.
+
+**So the death spiral's diagnosis stands and its treatment does not.** Enemy paint
+does deny-ban ruins (`bs=37–41` per soldier), soldiers cannot clear it, and the
+mopper is the only unit that can — but building moppers costs more than the ruins
+they unlock are worth, at every share tested. The binding constraint is real and
+the obvious lever is a trap.
+
+What is left, if this is ever reopened: **do not build moppers — avoid needing
+them.** The ban is what stalls expansion, so the question becomes whether a ruin
+whose pattern is partly enemy-painted must be abandoned at all, or whether the
+ban is too eager. That is a question about `banRuin`, costs no new unit, and is
+untested. Registered, not queued — `darla75` already showed the ban table's
+eviction policy is worth nothing, so the next arm on bans needs a sharper
+hypothesis than "ban less".
