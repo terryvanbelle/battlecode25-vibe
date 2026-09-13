@@ -5200,3 +5200,27 @@ overrun counter was added to this build long before tonight, for exactly this
 purpose, and the rule about it was written 60 arms ago. Without either, 61/150
 would have read as "symmetry inference does not help" — a wrong conclusion about
 an idea that has still never had a fair test.
+
+## Iteration 96 screen — demand-driven money towers: 78/150 (+3)
+
+54 of 75 maps identical, 12–9 on the diverging ones. The mechanism fires: 21 maps
+change, which is what a tower-type rule should touch.
+
+The sampled `ma=0 mf=0` is not evidence of a no-op — those counters sit on the
+**census override** path inside `towerTypeFor`, which only runs for ruins where
+`k % MONEY_MOD == 0`, and the robot sampled had not reached one. The new test sits
+after that override and has no counter of its own. **That is an instrumentation
+gap I should have closed when building the arm**, and it is the same lesson
+`darla82` paid for — *when an arm's check reads a counter, the arm must contain
+the counter*. The map-divergence count is standing in for it here.
+
+Both rosters queued. The trigger reads only our own treasury, so this is the
+opponent-independent class where screen and roster have agreed all session — the
+rosters are corroboration, not arbitration.
+
+Registered before they land: the prediction is **not** "money towers are bad". It
+is narrower — that the *fixed* 1-in-4 share spends paint towers on chips the bot
+cannot spend, which `darla95` established by showing that handing a tower its
+reserve back is worth exactly zero. If `darla96` is null too, then the money share
+is not what the large-map expansion is short of either, and the constraint is
+narrowed again rather than the hypothesis merely failing.
