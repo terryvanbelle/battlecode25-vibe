@@ -34,7 +34,14 @@ sed -i "s/^package darla;/package $NAME;/; s/BUILD = \"[^\"]*\"/BUILD = \"$NAME\
 fail () { echo "!! $NAME: $1"; rm -rf "src/$NAME"; exit 1; }
 grep -qx "package $NAME;" "$DST"        || fail "package line was not rewritten"
 grep -q "BUILD = \"$NAME\""  "$DST"     || fail "BUILD constant was not rewritten"
-grep -q "$EXPECT"            "$DST"     || fail "intended change absent: expected '$EXPECT'"
+# The EXPECT check must match CODE, not the comment describing it. Twice now an
+# arm was built where one sed command silently matched nothing -- a line number had
+# moved -- and this check passed anyway because the string given was prose from the
+# comment the other command had inserted. darla100 computed a flag it then never
+# used. So: the match must occur on a line that is not a comment.
+grep -q "$EXPECT" "$DST" || fail "intended change absent: expected '$EXPECT'"
+grep -v '^[[:space:]]*//' "$DST" | grep -q "$EXPECT" \
+  || fail "'$EXPECT' appears ONLY in a comment -- point the check at the code it describes"
 n=$(diff <(tail -n +2 "$SRC") <(tail -n +2 "$DST") | grep -c '^[<>]' || true)
 [ "$n" -ge 2 ] || fail "diff against baseline is empty below the package line"
 

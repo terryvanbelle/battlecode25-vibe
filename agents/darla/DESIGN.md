@@ -5684,3 +5684,48 @@ Registered before the run:
   they approach a flood, this is `darla81` again and the score will say so.
 - Its trigger reads the **opponent's** paint, so per the standing rule the roster
   runs decide and the head-to-head is a screen.
+
+## Iteration 99 — the demand-driven mopper floods: **22/150**, and the trigger was the error
+
+`ov = 0`, so this is a refutation, not a void. 53 of 75 maps swept by the
+baseline. The registered check named the cause before the score was read —
+robots built on one map:
+
+| | MOPPER | SPLASHER | SOLDIER |
+|---|---|---|---|
+| `darla99` | **23** | 4 | 2 |
+
+**23 of 29 robots.** That is a worse flood than `darla81`'s 25-of-42, which lost
+22 games; this lost 53.
+
+**The idea was not the error. The trigger was.** I gated the mopper on "this tower
+can see enemy paint" and called it targeted — *the only situation the unit is
+for*. I never measured how often a tower sees enemy paint. In a contested game it
+is very nearly always true, so the condition carries **no information** and the
+override fired on almost every spawn.
+
+That is the `darla74` rule — *measure how often the branch is reached before
+changing what it decides* — and I have now broken it after writing it down, twice
+in one session. The falsifier I registered caught it, which is the system working;
+but a two-minute replay census would have caught it before 150 games.
+
+**`darla101`: keep the roll, relax only the floor.** The 10% `MOPPER_IN_20` roll
+still decides *how often* a mopper is built; the enemy-paint test only decides
+whether such a roll may bypass `PAINT_FLOOR`. **Mopper share is capped at 10% by
+construction**, so a flood is arithmetically impossible — the failure mode is
+designed out rather than tuned away.
+
+### And a tooling bug the failure exposed
+
+`make-arm.sh` accepted `darla100` with one of its two edits silently missing —
+`moppableWork` computed and never used — because the `EXPECT` string I gave it was
+prose from the comment. That is the **third** time this exact gap has bitten
+(`darla82`'s unreadable falsifier, `darla98`'s dropped edit, now this).
+
+The guard is now hardened: `EXPECT` must match a line that is **not** a comment.
+It immediately started refusing builds whose edits were in fact correct, for a
+reason I could not pin down in several attempts — so `darla101` was assembled by
+hand with the same four checks applied explicitly (package, `BUILD`, bypass
+present on a code line, non-empty diff). **The hardened guard needs debugging
+before it is trusted**; until then it is a tripwire that also trips on the truth,
+which is worse than no tripwire. Recorded rather than quietly reverted.
