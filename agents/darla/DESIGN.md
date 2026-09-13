@@ -5260,3 +5260,33 @@ that does it without spending paint is **which ruins get claimed first** — nea
 ones compound faster because soldiers reach them sooner. That is untested and is
 the honest next arm; `MONEY_MOD`, `CHIP_RESERVE` and the spawn affordability test
 are now all measured dead ends and should not be revisited.
+
+### `darla96` on the widened roster: **24–9 of 33, z = +2.61** — the rosters disagree
+
+353/450 against the widened `i3` reference's 338/450: **+15 games**.
+
+| instrument | result | discordant | z |
+|---|---|---|---|
+| screen (self-play) | 78/150 | 21 maps | +3 games |
+| standard roster | 343 vs 341 | 32 | **+0.35** |
+| widened roster | **353 vs 338** | 33 | **+2.61** |
+| combined | — | 65 | **+2.09** |
+
+So the entry I wrote an hour ago — *"third arm in a row to say the same thing…
+the chip side is closed"* — was **premature**. I called `darla96` null on one
+roster before the second had reported, and the second says something quite
+different. The narrowing conclusion about the large-map loop stands on `darla94`
+and `darla95`; the part that lumped `darla96` in with them does not.
+
+**Not accepted, and not dismissed.** Combined z = +2.09 over 65 discordant keys is
+below the bar `darla77` (+2.39) and `darla84` (+3.03) cleared, and a 2.3-sd
+disagreement between two rosters is exactly the situation `darla86` was in — where
+the answer came from a third opponent set. `widen2.sh darla96` is queued against
+`alice_iter25`/`bob_iter11`/`carol_iter30`, whose `i3` reference already exists at
+383/450.
+
+Registered before it lands, and weighted honestly: that third set is **ten points
+easier** than the other two and produced only 32 discordant pairs for `darla86`.
+It is a thin vote. If it comes back positive, the combination clears the bar on
+three independent opponent sets; if it comes back flat, `darla96` is a
+one-roster effect and closes as `measured-and-small`.
