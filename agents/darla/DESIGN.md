@@ -4424,3 +4424,46 @@ the time would have added keys without adding information.
 sign, and determinism forbids re-running either, so these 450 keys against
 opponents neither build has been measured on are the only evidence left that can
 break the tie.
+
+# `darla86` resolved on the widened roster: real, positive, and **under the bar**
+
+| instrument | opponents | result | discordant | z |
+|---|---|---|---|---|
+| head-to-head | `darla-i3` itself | 69/150 | 32 maps, 13–19 | **negative** |
+| paired roster | alice, bob, carol | 352 vs 341 | 47, 29–18 | **+1.60** |
+| **widened roster** | `alice_iter39`, `bob_iter18`, `carol_iter44` | **344 vs 338** | 56, 31–25 | **+0.80** |
+| **combined rosters** (disjoint opponent sets) | six real opponents | — | 103 | **+1.70** |
+
+Per opponent, and this is the part worth keeping:
+
+| | standard roster | widened roster |
+|---|---|---|
+| alice | **−5** | **−1** |
+| bob | +7 | 0 |
+| carol | +9 | **+7** |
+
+**The arm loses to alice and beats carol, in both generations of each.** That is
+not noise arranging itself twice; something about how alice contests paint
+punishes a soldier that leaves contested ground, and something about carol
+rewards it. A single roster would have shown me one of those two facts and let me
+call it the whole story.
+
+**Verdict: not accepted.** Combined z = +1.70 over 103 discordant keys is below
+the bar `darla77` (+2.39) and `darla84` (Stouffer +3.03) cleared, and this lineage
+has watched a +2.5 sd result evaporate (`darla65`). A one-line gate removal that
+is worth roughly six games against some opponents and minus five against others is
+**measured-and-small**, and shipping it would move the baseline under every later
+arm for no reliable gain.
+
+**What the widened roster bought.** Without it, `darla86` was one instrument at
++1.60 against one at a negative sign, and I had no way to tell whether the
+positive was the signal or the noise. With it: positive but small, consistent
+across six opponents in a legible pattern, and decided. The instrument was built
+two hours ago for exactly this and earned its cost on its first use.
+
+**A near-miss in reading it.** My first per-opponent table was wrong — I built it
+with `paste` over two independently sorted lists, and the second list was sorted
+by *win count* rather than by opponent, so it reported alice −12 and carol +18.
+Joining on the opponent name gives −1 and +7. The wrong version told a much more
+dramatic story, which is precisely why it was worth checking: `join` on a key,
+never `paste` on two sorts.
