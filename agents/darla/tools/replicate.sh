@@ -30,7 +30,13 @@ while [ "$(grep -cvE '^\s*(#|$)' progress/pending-arms.txt 2>/dev/null || true)"
    || pgrep -f '\.reexec-gauntlet\.sh' > /dev/null; do sleep 60; done
 
 echo "$(date -uIs) REPLICATE START $ARM -- fresh random 25-map sample"
-NMAPS=25 BOT="$ARM" OPPONENTS="carol bob alice" MAXJOBS=2 ../../tools/gauntlet.sh 201>&- \
+NMAPS=25 BOT="$ARM" OPPONENTS="carol bob alice" MAXJOBS=2 ../../tools/gauntlet.sh 201>&- | tee /tmp/darla-run-$$.out \
   || { echo "$(date -uIs) REPLICATE ERROR $ARM"; exit 1; }
-run=$(ls -1t gauntlet | head -1)
+# Identify the run from the GAUNTLET'S OWN output, never from `ls -1t`. Collation
+# rewrites mtimes, so the newest directory is whichever run finished last -- not
+# ours. On 2026-09-13 this made paired-roster.sh report "123/150" for darla86 by
+# reading an idle-filler run that collated while ours was still playing; the real
+# result, 352/450, sat in the directory the gauntlet had already named on stdout.
+run=$(sed -n 's/^gauntlet \([0-9-]*\) .*/\1/p' /tmp/darla-run-$$.out | head -1)
+rm -f /tmp/darla-run-$$.out
 echo "$(date -uIs) REPLICATE COMPLETE $ARM $run -- $(grep -E '^overall' gauntlet/$run/summary.txt)"

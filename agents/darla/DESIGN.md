@@ -4310,3 +4310,63 @@ even though the conclusion survived (ungating it does not help either; it hurts)
 A wrong route to a right answer is still worth correcting in the notebook, because
 the next arm that reasons from "this branch is rarely reached" needs to know the
 difference between *rare* and *suppressed*.
+
+# `darla86` — the two instruments DISAGREE IN SIGN, and that is the finding
+
+| instrument | opponents | result | discordant | split | z |
+|---|---|---|---|---|---|
+| head-to-head, 150 games | `darla-i3` itself | 69/150 | 32 maps | 13–19 | **−6 games** |
+| paired roster, 450 games | alice, bob, carol | **352/450** vs 341 | 47 keys | **29–18** | **+1.60** |
+
+Per opponent: alice 70.7% (down), bob 84.0% (**up**), carol 80.0% (**up**).
+
+The arm I wrote up two entries ago as *rejected, −6* wins by **+11 games** on the
+larger instrument, against the three opponents the project's bar is actually
+defined on. Nothing about the build changed; only what it played.
+
+**Why this arm in particular can invert.** Its trigger is literally the opponent's
+paint — `foe > 0`, enemy-painted tiles in the action radius. The head-to-head
+plays it against **its own baseline**, a bot that paints in precisely the same
+pattern it does, so the contest becomes a mirror-match referendum on who yields
+contested ground to whom. Alice, Bob and Carol paint differently, contest
+differently, and expand differently, and against all three the change is worth
+something.
+
+This is carol's **doctrine 17** arriving from the other direction. Her version:
+*an even instrument cannot measure a capability against an opponent that never
+exercises it.* The corollary this arm demonstrates: **an opponent that exercises a
+capability the same way you do cannot measure it either** — self-play does not
+neutralise an opponent-dependent trigger, it standardises it, which is a
+different bias and not a smaller one.
+
+**Registered as a standing rule.** For a change whose trigger reads the
+**opponent's** state — their paint, their robots, their towers — the head-to-head
+is a **screen, not a verdict**, and the roster-paired run decides. For a change
+whose trigger reads only **our own** state — our paint, our turns, our movement —
+the two agree, and both accepted iterations this session are of that kind
+(iteration 2's trigger is our own paint level at our own tower; iteration 3's is
+our own failure to make progress).
+
+**`darla86` is NOT accepted, and NOT rejected.** z = +1.60 on the deciding
+instrument is below the bar `darla77` and `darla84` cleared, and I will not accept
+an arm on one instrument while another says the opposite sign, however well I can
+explain the difference. Its status is **undecided**, and the write-up two entries
+above — which called it rejected — is corrected here rather than edited, because
+the sequence is the point: I rejected it on the biased instrument before the
+unbiased one had run.
+
+## Infrastructure: the drivers were identifying their own runs by `ls -1t`
+
+`paired-roster.sh` reported `darla86` as **123/150**. That is an idle-filler run
+that collated while ours was still playing: collation rewrites mtimes, so
+`ls -1t gauntlet | head -1` returns whichever run finished **last**, not ours. The
+real 450-game result was sitting in `20260913-020839` the whole time, in the
+directory the gauntlet had already printed on stdout at launch.
+
+This is the same mtime-ordering fallacy `status-line.sh` was fixed for twice, in a
+third place. All three drivers now parse the run id from **the gauntlet's own
+announcement** rather than inferring it — the run tells you its name, so there is
+no reason to guess.
+
+Had I not gone looking for `darla86`'s paired number, the recorded result for this
+arm would have been a fresh-sample score from a different build entirely.
