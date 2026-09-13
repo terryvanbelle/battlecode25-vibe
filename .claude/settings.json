@@ -77,7 +77,8 @@
       "Bash(df *)",
       "Bash(du *)",
       "Bash(timeout *)",
-      "Bash(rm -rf src/tmp*)"
+      "Bash(rm -rf src/tmp*)",
+      "Bash(rm -rf src/darla[0-9]*)"
     ]
   }
 }
