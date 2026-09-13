@@ -4604,3 +4604,26 @@ worth of them added up.
 Both accepted iterations are opponent-independent changes, which is also the class
 that survived the `v3` benchmark's verdict on the roster. The roster gain is real
 and it compounds; what it does not do is transfer.
+
+## Iteration 91 — the conditional gate flips the screen's sign: 79/150 (+4)
+
+`darla86` removed the gate entirely and scored **−6** on this same screen.
+`darla91` keeps it exactly where the enemy holds more nearby paint than we do and
+scores **+4**. Same branch, same instrument, opposite sign, and the only
+difference is `ally >= foe` in place of `foe == 0`.
+
+That is what the per-opponent split predicted. `darla86` lost to both alice builds
+and won against both carol builds; a soldier that leaves contested ground is
+punished exactly where the ground is genuinely contested, which is what the
+condition now tests before leaving.
+
+**The screen is not the verdict** — this arm's trigger reads the opponent's paint,
+which is the class where self-play misleads, established at `darla86`. Both roster
+runs are queued: `paired-roster.sh` against alice/bob/carol and `widen.sh` against
+the three mid-lineage snapshots, 900 games over six opponents. Queued **after** the
+screen reported rather than alongside it, per the lesson `darla88` paid for.
+
+Registered before those land: if `darla91` is positive on both rosters, the honest
+comparison is against `darla86`'s combined **z = +1.70**, not against zero — the
+question is whether conditioning the gate beats removing it, and `darla86` is the
+build to beat.
