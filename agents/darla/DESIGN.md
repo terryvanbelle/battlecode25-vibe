@@ -5331,3 +5331,49 @@ and `darla94` all did), not on a counter. The promotion test plays `i4` against
 mix census comes from its replays.
 
 Registered: promotion test must return **exactly 78/150**.
+
+### The `v3` benchmark after iteration 4: 64/150 (42.7%) — and the pattern is now three-for-three
+
+`benchmarks/20260913-1716`, launched on the accept per the standing rule.
+
+| build | vs `v3` | swept by darla | swept against darla |
+|---|---|---|---|
+| `darla-i1` | 63/150 — 42.0% | 23 | 35 |
+| `darla-i3` | 65/150 — 43.3% | 19 | **29** |
+| `darla-i4` | **64/150 — 42.7%** | 21 | **32** |
+
+Paired on (map, side), `i4` against `i3`: **4–5 of 9 discordant, z = −0.33.**
+
+**Iteration 4 is the strongest roster result this lineage has ever produced —
++3.26 over 1,350 paired games against six opponents — and against `v3` it is worth
+minus one game.** It also gave back roughly half of `i3`'s one durable benchmark
+gain: maps where `v3` took both sides went 35 → 29 → 32.
+
+Only **nine** discordant pairs across 150 games, against 85 on the rosters. The
+change barely alters how a game against `v3` unfolds at all.
+
+Three accepted iterations, three of the same answer. The roster and the benchmark
+are measuring different things, and the gap is not noise — it is consistent in
+direction and in size:
+
+| | roster gain | `v3` gain |
+|---|---|---|
+| iteration 2 | +19 / 450 | — |
+| iteration 3 | +15 / 450 | — |
+| iterations 2+3 together | — | +2 / 150, z = +0.38 |
+| iteration 4 | +29 / 1350 | −1 / 150, z = −0.33 |
+
+**What I take from it, and what I do not.** I do not take "the iterations are
+fake": each was measured on paired keys with a mechanism and a falsifier, and
+against alice, bob and carol they are real and they compound (fresh samples: i1
+102.0 → i3 115.5). I do take that **alice, bob and carol share darla's ancestry,
+and therefore its blind spots** — a change that exploits what a lineage-mate does,
+or repairs what only a lineage-mate punishes, has no reason to transfer to a bot
+built on different premises.
+
+`v3` stays a yardstick and must never become a selection instrument, so the
+response is not to tune toward it. The response is the one already registered
+after the first benchmark: prefer changes whose mechanism is **opponent-
+independent** — the bot wasting its own turns, paint or robots. Iteration 4 was of
+that kind and still did not transfer, which sharpens the rule rather than refuting
+it: opponent-independence is necessary and not sufficient.
