@@ -8310,3 +8310,33 @@ and returns the opening to expansion.
    This is the engine's own tower count in the aggregates.
 3. **Engine-reported active SRPs > 0 in ≥ 8 of 12** (`darla122`: 9) — the gate must
    not kill the mechanism it is protecting.
+
+## Owner, 19:0x: "ensure that you don't stall on ideas any more" — acknowledged
+
+Standing rule from here: **at least three items queued at all times**, every arm
+with a registered falsifier, and the same-day-rebuild rule is retired — it was
+protecting against re-reading data, and the falsifier discipline already does that.
+
+## What an idle soldier sees (free, from the `v3` dump)
+
+`darla110`'s indicators carry `IDLE-ALLY<n>/<foe>` — the tile census the soldier
+already does when it finds nothing to paint. 54,057 soldier turns; 28,583 of them
+(52.9%) are censused idle turns.
+
+| on an idle soldier turn | |
+|---|---|
+| enemy tiles in action radius (r² 9) | **0 on 100.0% of turns** — median 0, p90 0 |
+| ally tiles in action radius | median **22 of 29**, p10 18, p90 24 |
+| frontier target already found (`frontFound`) | **20,814 (72.8%)** |
+| no frontier in vision (`frontNone`) | 7,769 (27.2%) |
+
+So an idle soldier is never at the front. It is standing deep inside our own paint
+— three-quarters of its action radius already ours, no enemy tile in reach — and
+on nearly three turns in four it has **already computed a frontier target** and is
+idle anyway. Iteration 14 (frontier-seeking) solved the *knowing* half. The
+*reaching* half is where the 67% idle goes.
+
+That pins the next pre-measurement to one question: **what happens between
+`frontFound` and painting?** Either the target is a single tile that is painted
+and immediately replaced (a treadmill), or the soldier is not reaching it. The
+code decides which; read next.
