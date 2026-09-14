@@ -6135,3 +6135,41 @@ Registered before the run:
   better against `v3` while keeping most of the roster gain, the bundling
   diagnosis is right. If it is also −7, then early soldiers cost `v3` games for
   some reason other than lost coverage, and the diagnosis is wrong.
+
+# `darla102` FINAL — **not accepted**, exactly as pre-registered
+
+| instrument | result | discordant | z |
+|---|---|---|---|
+| standard roster | 358/450 (+15) | 87 | +1.61 |
+| widened roster | 374/450 (+21) | 89 | +2.23 |
+| third generation | 399/450 (+4) | 42 | +0.62 |
+| **combined rosters** | — | **218** | **+2.57** |
+| **`v3`** | 57/150 (**−7**) | 43 | **−1.07** |
+
+The roster combination reaches **+2.57** — above `darla77`'s +2.39, the lowest bar
+this lineage has ever accepted on. Under criterion 1 alone this is an accept.
+
+**It is not accepted**, on the recommendation recorded before the third run
+landed, so the decision cannot have been fitted to it. Three reasons, unchanged:
+
+1. **It regresses the instrument it was built for.** 43 discordant pairs against
+   `v3`, in a run that produced only 9 for the last accepted iteration. Not
+   significant; not absent either.
+2. **The gain is concentrated where the bot has relatives.** +21 and +15 against
+   builds of this project's own lineages, +4 against the oldest generation, −7
+   against the one foreign opponent. Under the contest framing — the target is
+   opponents never seen — that profile reads as fitting the family.
+3. **It bundles two changes and only one is wanted.** It buys the opening
+   (`shell`: r266 → r30, ahead of `v3`) and pays 100 rounds of splasher coverage.
+   `darla103`, already running, buys the same opening with a window that closes
+   itself.
+
+**What `darla102` established, which outlives the arm:**
+
+- The opening deficit is **real, large, and fixable** — 232 rounds on `shell`.
+- Fixing it **does not beat `v3`**, so the deficit was a symptom. The headline I
+  wrote earlier — *the race is lost in the first hundred rounds* — is retracted.
+- The roster **likes** early towers (+2.57 over 218 keys), so the opening does
+  matter; what it does not do is close the gap to a stranger.
+- And the criteria's second clause did real work on its first use. Criterion 1
+  alone would have shipped this.
