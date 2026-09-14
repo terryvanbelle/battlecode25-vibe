@@ -7673,3 +7673,60 @@ So the team-wide predicate did coordinate — 58,403 tower turns, chips visibly 
 — and the treasury still did not reach 2500 often enough to matter. The upgrade is
 not reachable at this income, full stop, and iteration 35 had already removed the
 only slack in the gate.
+
+### `darla118` roster screen: **68/150 (45.3%)** — near-neutral, already refuted on mechanism.
+
+---
+
+## Paint efficiency against `v3`, measured (12 games, free from the coverage dumps)
+
+*(First pass reported "us 0 paint actions", which was a regex matching `srp0`
+rather than `acts[p…]`. Corrected below.)*
+
+| | us | `v3` |
+|---|---|---|
+| paint actions | 35,776 | **46,171** |
+| **unpaint actions** | **5** | **4,497** |
+| final coverage | 3,654 | **6,406** |
+| **paint actions per coverage point** | **9.79** | **7.21** |
+
+`v3` spends 29% more paint actions and converts them 26% more efficiently. Both
+halves are against us.
+
+The per-game split is the useful part: in the four games we **win**, our ratio is
+**3.5-7.8**; in the eight we lose it is **9.6-37.3**. Efficiency tracks outcome
+cleanly — but that is not licence to target it, because coverage is the
+denominator, so "improve paint-per-coverage" is partly circular. The `darla113`
+rule applies: a ratio that contains the win condition is not automatically a lever.
+
+**The non-circular number here is the unpaint column: 4,497 against 5.** Removing
+an enemy tile decrements their coverage directly and hands us the square. It is the
+single largest untouched asymmetry in the game, and `darla117` closed the only
+route to it — moppers — because every path through the spawn gates runs into
+`SPLASH_FLOOR`, which `darla113` measured at −84 roster games.
+
+That is where the day ends: the biggest measured asymmetry is real, and the only
+known route to it is blocked by a gate that is load-bearing. Recorded as the
+standing open problem rather than dressed up as a next arm.
+
+## Day summary — 2026-09-14
+
+Thirteen arms, thirteen closures, no accepted iteration. `i5` still ships at
+**46.0%** on `v3`.
+
+**Permanently closed today:** tower survival (defense towers measured worthless;
+routing structurally impossible at 0.27 soldiers per damaged tower-turn), splasher
+repositioning in four variants, the `SPLASH_FLOOR` relaxation, the mopper route,
+and tower upgrades.
+
+**Three method rules earned, all from my own errors:**
+1. A quantity must be shown **causal** for coverage, not merely correlated with it
+   (`darla113`: towers +50%, coverage down, both instruments worse).
+2. A falsifier must be pinned to an **already-measured** quantity, not a round
+   number chosen by eye (`darla108`, `darla109`).
+3. A falsifier must be a quantity the intervention **cannot satisfy by doing
+   nothing** (`darla119`: the bank lowered dry-tower turns by not building).
+
+**One tooling bug fixed:** `make-arm.sh`'s comment guard failed *because* its match
+succeeded — `grep -q` closing the pipe under `pipefail`. I had previously recorded
+that guard as sound after watching an identical rerun pass.
