@@ -6804,3 +6804,32 @@ branch that never lifts) and the arm closes without a 150-game run.
 **Interaction note.** `darla108` derives the tower type from the marks with a
 two-way `alt`. If both are accepted, that `alt` must become three-way or it will
 silently ignore a stalled defense pattern.
+
+### `darla109` probe: 10 defense towers built, in **7 of 12** games. Falsifier fails.
+
+| | |
+|---|---|
+| `defAsk` (branch reached, soldier-turns) | **2,902** |
+| `defBuilt` (defense towers completed) | **10** |
+| games with ≥1 defense tower | **7 of 12** — registered bar was 8 |
+| games won vs `carol` | **9/12**, against 12/12 for `i5` and 11/12 for `darla108` |
+| `AlarmClock`, both sides | `defAsk = 0` — no ruin on that map is inside the threshold |
+
+Second registered number missed in a row, and the pattern is mine rather than the
+bots': I am setting these thresholds by eye. `darla108`'s was wrong in its units;
+this one was a guess at a rate I had no way to predict. The methods note is that a
+falsifier should be pinned to something already measured — `ac >= 1 per stalled
+ruin`, `defBuilt > 0 where defAsk > 0` — not to a round number.
+
+The probe is genuinely ambiguous rather than negative. It rules out the
+`darla103`/`darla104` failure decisively: the branch is reached 2,902 times and
+does produce towers, so this is not a condition that never lifts. It cannot rule
+the idea in or out, because **the instrument is blind to the mechanism** — no
+tower on either side dies against the roster, so a defense tower there is pure
+cost with no possible benefit, and 9/12 against `carol` is that cost showing up
+exactly where it was predicted to.
+
+**Hard stop, registered now.** `darla109` gets **one** 150-game `v3` benchmark. If
+it does not beat `i5`'s **46.0%**, it closes — no roster run, no widened roster,
+no re-reading of this probe. I have advanced past two failed bars already and that
+is the limit.
