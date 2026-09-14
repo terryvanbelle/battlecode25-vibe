@@ -6213,3 +6213,9 @@ exactly what silently broke `darla100`. The guard has been right every time; the
 corruption is in my long `\n`-laden sed replacements. **Rule: keep the in-code
 comment to one line and put the reasoning in this file**, which is where it
 belongs anyway. Every arm built that way today has applied cleanly.
+
+`darla103` on `v3`: **40/150 (26.7%)** against `i4`'s 64/150 — −24 games, matching
+the screen's −22. Recorded per criterion 3 (both numbers in every write-up), and
+it confirms rather than adds: an army of 19 soldiers and no splashers loses to
+everyone. No roster run was spent on it; the queued one was cancelled once the
+spawn census showed zero splashers.

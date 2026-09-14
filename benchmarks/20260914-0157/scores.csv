@@ -1,0 +1,5 @@
+agent,benchmark,map,agent_side,winner_side,rounds,agent_result
+darla102,v3,shell,A,B,532,loss
+darla102,v3,shell,B,A,952,loss
+darla102,v3,Oasis,B,A,646,loss
+darla102,v3,Oasis,A,A,1725,win
