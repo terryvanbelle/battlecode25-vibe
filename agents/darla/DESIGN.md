@@ -6924,3 +6924,48 @@ aimed at tower survival or tower production, and the roster cannot see tower
 deaths at all while `v3` puts us within one game of parity either way. The census
 recorded above points somewhere else entirely: 70% of robot-turns are splashers
 acting on 1.9% of them.
+
+---
+
+## Correction: `make-arm.sh`'s comment guard has a race, and I blamed the arms for it
+
+Earlier in this session I recorded that the hardened `EXPECT` guard "was right
+every time". **That is wrong and is corrected here.** The guard was:
+
+```bash
+grep -v '^[[:space:]]*//' "$DST" | grep -q "$EXPECT" || fail "... appears ONLY in a comment"
+```
+
+`make-arm.sh` runs under `set -o pipefail`. `grep -q` exits the instant it
+matches, which closes the pipe; `grep -v` is still writing, takes `SIGPIPE`, and
+exits 141 — so `pipefail` fails the pipeline **because the match succeeded**. The
+earlier in the file the match sits, the more reliably it misfires: `darla110`'s
+match is at line 355 and failed every attempt; `darla108`'s was at line 720 and
+failed once, then passed on an identical rerun. I saw that identical rerun pass
+and moved on without diagnosing it, which is how a flaky guard got recorded as a
+sound one.
+
+Replaced with a single `awk` pass — no pipeline to race, and `index()` treats
+`EXPECT` as an exact substring rather than a regex.
+
+The original rule this guard enforces is unchanged and still earned: **one-line
+comments in code, reasoning in DESIGN.md**, because a multi-line comment insert
+glues the final code line onto a `//` line.
+
+### `darla110` — the `darla74` pre-measurement for routing
+
+Registered before it runs. A tower that lost health since its last turn counts the
+allied robots within `MESSAGE_RADIUS_SQUARED = 20` — `ns=<soldiers>/<all allies>`
+— and `dm=` counts the damaged turns. This measures precisely the quantity the
+routing arm depends on: **if a threatened tower has nobody to call, routing cannot
+work**, and that is `darla106`'s failure repeated for the third time.
+
+It must run against **`v3`**, not the roster: `e=0` on every roster tower
+indicator says our towers there never even see an enemy. Scores-only benchmarking
+cannot carry indicator strings, so this goes through `benchmark-replay.sh` under
+the owner's replay grant.
+
+**Decision rule, registered now.** If soldiers-per-damaged-tower-turn is **below
+1 on average**, routing is refuted before it is built and tower survival closes
+entirely — both routes dead, and the lineage moves to the splasher census. At 1 or
+above, the arm is worth building.

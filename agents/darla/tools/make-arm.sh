@@ -40,7 +40,14 @@ grep -q "BUILD = \"$NAME\""  "$DST"     || fail "BUILD constant was not rewritte
 # comment the other command had inserted. darla100 computed a flag it then never
 # used. So: the match must occur on a line that is not a comment.
 grep -q "$EXPECT" "$DST" || fail "intended change absent: expected '$EXPECT'"
-grep -v '^[[:space:]]*//' "$DST" | grep -q "$EXPECT" \
+# Not `grep -v ... | grep -q ...`: under `set -o pipefail` that races. grep -q exits
+# the moment it matches, closing the pipe; grep -v then takes SIGPIPE and exits 141,
+# and pipefail fails the whole pipeline even though the match SUCCEEDED. The earlier
+# in the file the match sits, the more reliably it misfires -- darla110's match is at
+# line 355 and failed every time, darla108's at line 720 and failed once in two. One
+# awk pass has no pipeline and uses index(), so EXPECT is an exact substring and not
+# a regex that can surprise us.
+awk -v pat="$EXPECT" '!/^[[:space:]]*\/\// && index($0, pat) { found = 1 } END { exit found ? 0 : 1 }' "$DST" \
   || fail "'$EXPECT' appears ONLY in a comment -- point the check at the code it describes"
 n=$(diff <(tail -n +2 "$SRC") <(tail -n +2 "$DST") | grep -c '^[<>]' || true)
 [ "$n" -ge 2 ] || fail "diff against baseline is empty below the package line"
