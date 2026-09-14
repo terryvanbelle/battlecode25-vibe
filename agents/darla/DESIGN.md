@@ -8610,3 +8610,17 @@ a concave obstacle runs the lunge-and-rotate oscillation diagnosed under
 unchanged. **Decision rule:** if stuck steps are a majority of homebound steps, a
 give-up-when-stuck rule for refuelling is built next; if they are a minority, the
 tail is genuine distance and the lever is tower choice, not navigation.
+
+### Ops note, 20:0x UTC: the driver reaped two background waits for memory
+
+`claude-driver` is an e2-small (2 GB). Two `until`-loop waits for screen results
+were killed "because the system is running low on memory"; `free -m` a minute
+later showed 1,266 MB available and swap at 96 MB, so it was a transient spike.
+All four run drivers (idle filler, two head-to-heads, the benchmark) survived —
+they are `setsid`-detached and the reaper chose the cheapest processes.
+
+The steady consumer is the session itself: `claude --continue` at **434 MB RSS
+after 29 hours**, and it only grows. Consequences: (1) background waits are not a
+reliable wake signal on this driver — the 10-minute heartbeat is; (2) a `--continue`
+restart (`RESTART_SESSION.md` §6) reclaims the memory whenever the owner finds it
+convenient, and nothing in flight depends on the session being alive.
