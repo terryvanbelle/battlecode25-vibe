@@ -5904,3 +5904,42 @@ Registered before the run, and this one is unusual:
   and the accept criteria would need a conversation, because this lineage's bar
   has always been the roster and the roster is exactly the instrument that cannot
   see this.
+
+# ACCEPTANCE CRITERIA CHANGED — `v3` now counts (owner, 2026-09-14)
+
+The owner has ruled that improvements against `v3` may count toward accepting an
+iteration. Written down because it changes what this lineage optimises for, and
+because two consequences are not obvious.
+
+**The criteria from here:**
+
+1. An iteration may be accepted on **either** instrument — the roster (450 or
+   1,350 paired keys) or `v3` (150 paired keys, McNemar on `(map, side)`).
+2. It must not **significantly regress** the other. A change that buys `v3` games
+   by throwing roster games away is a trade, not progress, and the trade has to be
+   visible before it is made.
+3. Both numbers go in the write-up either way. No accept is reported on one
+   instrument while the other is left unmeasured.
+
+**Consequence one: `v3` stops being an unbiased yardstick.** Its whole value until
+now was that nothing was ever tuned against it, so "42.0% vs `v3`" estimated the
+distance to a finalist bot honestly. The moment it selects between iterations,
+that estimate inherits exactly the selection bias the owner's own audit found in
+the roster — where the held-out fresh samples came in at ~60% of the in-pool
+figure. Expect the same discount here, and expect it to grow with the number of
+arms judged on it.
+
+**Consequence two: `v3` is a single opponent on 75 maps.** The roster has six
+opponents across three generations and still overfits. One opponent overfits
+faster. The fresh-sample series stays the only instrument contaminated by
+nothing, and it remains the tiebreak when the other two disagree.
+
+**What this does not change:** `v3`'s source is still unread, the bots still live
+only on the VM, and `tools/benchmark.sh` still writes no replays. The grant
+extended to replays and now to scoring; it has never extended to the code.
+
+**Immediate effect.** `darla102` was registered an hour ago with the prediction
+that it would be *neutral or negative on the roster and better against `v3`* —
+which under the old criteria would have made it unacceptable by construction. It
+is now exactly the kind of arm the criteria can accept, and it will get a `v3`
+benchmark alongside its roster runs rather than instead of them.
