@@ -8581,3 +8581,32 @@ turns 20.9% → 13.2%, abandonments 120 → 58). Its screen is queued behind
 `darla124`'s and is the live decision on the SRP line. If it clears 75 it goes to
 the paired roster and the full `v3` benchmark; if not, the line has had its three
 variants and closes with a measured cost curve attached.
+
+## Refuel trips, measured (free, from the `v3` dump): the median is 2 turns and the tail is the cost
+
+Consecutive `HOME` turns per robot, 12 `v3` games:
+
+| unit | trips | turns per trip p10 / median / p90 / max | total HOME turns |
+|---|---|---|---|
+| SOLDIER | 810 | 1 / **2** / 16 / **91** | 4,986 |
+| SPLASHER | 1,522 | 1 / **2** / 24 / **205** | 12,016 |
+
+Most trips are a step or two — the unit is already beside a tower. But 810 trips
+at a median of 2 account for ~1,600 of the soldiers' 4,986 HOME turns, and 1,522
+at 2 for ~3,000 of the splashers' 12,016: **about three-quarters of all refuel time
+is in the p90+ tail.** And a 205-turn trip on a map at most 60 wide is not a long
+walk; a straight line is under 60 turns. It is a unit that cannot get there.
+
+The code says why that is possible: `walkHomeIfDry` moves with a bare
+`stepToward(home)` (line 347). `moveExploring` has stuck detection and re-targets
+after six stuck turns; the homebound path has none, so a refuelling unit that hits
+a concave obstacle runs the lunge-and-rotate oscillation diagnosed under
+`darla124` with nothing to break it — until it dies or the wall ends.
+
+### `darla128` — probe: how much of the HOME tail is stuck-time? (registered)
+
+`i5` plus two counters in `walkHomeIfDry`: `hSteps++` per homebound step and
+`hStuck++` when `stepToward` reports the step did not close distance. Behaviour
+unchanged. **Decision rule:** if stuck steps are a majority of homebound steps, a
+give-up-when-stuck rule for refuelling is built next; if they are a minority, the
+tail is genuine distance and the lever is tower choice, not navigation.
