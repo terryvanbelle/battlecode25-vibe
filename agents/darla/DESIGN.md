@@ -5863,3 +5863,44 @@ measurement, and the replays to make it are on disk.
 Recorded with the caveat that three maps is three maps — but `v3` opens at r22,
 r30 and r34 across them, and we open at r36, r47 and r266, so the pattern is not
 resting on one game.
+
+## What `v3` does in the opening, and `darla102`
+
+Robots built by round 40 on `shell`:
+
+| | soldiers | splashers |
+|---|---|---|
+| **`darla-i4`** | **1** | **4** |
+| **`v3`** | **6** | **1** |
+
+Exactly inverted. And the asymmetry is not cosmetic: **only soldiers call
+`workOnRuin`**, so `v3` spends its opening building the unit that makes towers and
+we spend ours building the unit that cannot. Paint actions in rounds 1–40 tell the
+same story from the other side — our splashers paint 175 times and our soldiers
+25; `v3`'s soldiers paint 72 and its splashers 39.
+
+**The cause is iteration 1.** `SPLASHER_IN_20 = 14` makes 70% of rolls splashers,
+and it was accepted at **+3.59 sd** against the roster — one of the largest results
+in this lineage. It is also, on this evidence, why we reach our first tower at
+round 266 while `v3` reaches its at 34.
+
+That is the transfer problem in a single line, and it is no longer a mystery:
+**a change can be strongly right against opponents that share your opening and
+strongly wrong against one that does not.** Alice, Bob and Carol are this
+project's own lineages; they open splasher-heavy because darla's ancestors did.
+Measuring against them cannot see this, and 1,350 paired games did not.
+
+**`darla102`: soldiers only for the first 100 rounds.** The threshold is read off
+the measurement rather than swept — `v3`'s first five towers land at r22–r203 and
+our deficit is fully established by r100. The rest of the game is untouched, so
+this tests the *opening* specifically and leaves iteration 1's mid-game mix alone.
+
+Registered before the run, and this one is unusual:
+- Against the **roster** I expect this to be **neutral or negative** — those
+  opponents are the ones iteration 1's mix was tuned against, and nothing here
+  improves play against them.
+- Against **`v3`** I expect the first tower to arrive far earlier than r266.
+- **If it helps `v3` and hurts the roster, that is the finding, not a failure** —
+  and the accept criteria would need a conversation, because this lineage's bar
+  has always been the roster and the roster is exactly the instrument that cannot
+  see this.
