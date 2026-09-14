@@ -7057,3 +7057,66 @@ problem actually is, and it is not the tower code. **It is that the army never
 leaves home.** That is the next thing to measure: where our robots actually stand
 relative to the map, and what `moveExploring` does with a splasher that has
 nothing to splash.
+
+---
+
+## What actually beats us: `v3` ends with 2-3x our towers
+
+From the same 12 `v3` replays, final-round aggregates. **Correction to my first
+pass at this table:** I keyed "us" to `T1` and got 6 of 12, which contradicted the
+benchmark's 4 of 12. `team1` flips by side; re-keyed off each file's own
+`GameHeader`, it reproduces the benchmark exactly.
+
+| game | end | our cov | v3 cov | our towers | v3 towers | our moppers | v3 moppers |
+|---|---|---|---|---|---|---|---|
+| Oasis A | 1481 | 265 | **701** | 6 | 13 | 0 | 15 |
+| Oasis B | 626 | 122 | **703** | 3 | 15 | 0 | 16 |
+| TheBest A | 717 | 171 | **699** | 11 | 23 | 0 | 18 |
+| TheBest B | 692 | 160 | **700** | 8 | 24 | 0 | 9 |
+| Thirds A | 786 | 97 | **702** | 3 | 8 | 0 | 16 |
+| Thirds B | 597 | **700** | 109 | 11 | 1 | 0 | 4 |
+| giver A | 518 | **700** | 100 | 8 | 2 | 0 | 1 |
+| giver B | 427 | 120 | **703** | 2 | 14 | 0 | 6 |
+| maze A | 2000 | **422** | 339 | 4 | 6 | 0 | 4 |
+| maze B | 2000 | **477** | 249 | 6 | 4 | 0 | 4 |
+| shell A | 532 | 203 | **699** | 4 | 14 | 0 | 8 |
+| shell B | 655 | 217 | **702** | 4 | 14 | 0 | 3 |
+
+Coverage and outcome agree in all twelve. **Tower count and coverage agree in all
+twelve too.** Eight of the losses end before round 800 on the coverage rule, with
+`v3` holding 8-24 towers against our 2-11.
+
+So the four tower arms closed today were aimed at the wrong end of the game. We do
+not lose because our towers die. **We lose because we never build enough of them**,
+and the games are over by round 600 before tower combat could matter.
+
+### The mechanism is already written down in our own source
+
+`runTower`'s spawn gate, with the comment that has been sitting there since
+iteration 30:
+
+> with reserve = `CHIP_RESERVE` = 1200, a SPLASHER needs `chips >= 1600` (it is
+> exempt from the floor), while a SOLDIER needs `chips >= 2250` and a MOPPER
+> `>= 2300`. The CHEAPER unit is gated HIGHER [...] which is why the realized mix
+> is ~95% splasher / ~5% soldier, and why only 2-3 soldiers are built per game.
+> Soldiers are the only unit that calls `workOnRuin`, so **this constant is also
+> the lineage's ruin-conversion throttle.**
+
+Every link is independently confirmed today: soldiers are 29% of robot-turns and
+the only unit that builds towers; splashers are 70% and splash on 2.4% of turns
+against `v3`; tower count decides all twelve games. `SPLASH_FLOOR` was introduced
+to stop cheap units crowding out splashers, and it does that by throttling the
+only unit that expands.
+
+**This is not an argument for retuning `SPLASH_FLOOR`** — that is a constant, and
+the owner's standing instruction is to work on structure. The structural claim is
+that **a fixed chip level is the wrong shape for this gate**. Iteration 4 is the
+precedent: money towers stopped being a fixed 1-in-4 share and became demand-driven
+off state the bot already had, and that was worth z=+3.26. The same move applies
+here — the floor should yield when tower growth has stalled, which the tower can
+already see via `getNumberTowers()`, exactly as iteration 5 does for the opening.
+
+`darla112` is the `darla74` pre-measurement, registered before any arm: **how often
+is a SOLDIER roll killed by `SPLASH_FLOOR` specifically**, as opposed to by the
+chip reserve, the paint floor, or `canBuildRobot`? If the floor is not where
+soldier rolls die, the whole chain above is wrong and nothing gets built.
