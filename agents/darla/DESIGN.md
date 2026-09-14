@@ -8248,3 +8248,29 @@ below is the number that condition needs. I am not building it today: this
 lineage has now closed `darla121` and `darla122` on the same idea, and a third
 attempt in one session on the strength of one flipped map is the pattern the
 `darla115`→`darla116` pair already paid for.
+
+### The number the re-open condition needed: the expansion race is over by ~r100
+
+From the existing dumps, no new games. `i5`'s samples are every 100 rounds, so
+"100" reads as "by round 100".
+
+| | median round |
+|---|---|
+| `i5` reaches its 3rd tower | **≤ 100** (12 of 12 maps) |
+| `i5` reaches its 4th tower | ≤ 100 (8 of 12; 200 on 3; never on 1) |
+| `v3` reaches its 4th tower | ≤ 100 (9 of 12) |
+| `darla122`'s first pattern **activates** | **117** (n = 9) |
+| `darla122` reaches a 3rd tower | r30-82 on 7 maps, **never on 5** |
+
+So the per-tower income lands, at best, just after the round by which both sides
+have already built most of the towers they will ever have — and the five maps
+where `darla122` never built a third tower are the five where soldiers were parked
+from the opening. The window an SRP has to matter is the window it currently
+spends closing.
+
+Iteration 5 already encodes this exact boundary: *soldiers until the third tower,
+bounded by r100*, accepted at combined +2.75. **An SRP builder gated on
+`getNumberTowers() >= 3` is not a new constant — it is iteration 5's own accepted
+condition, reused as the point after which a soldier may hold.** That is the
+concrete form of the re-open condition, and it is registered here for the next
+session rather than built in this one.
