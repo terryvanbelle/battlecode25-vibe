@@ -6743,3 +6743,30 @@ closes as `measured-and-small` exactly as `darla106` did.
 
 **Promotion test if the probe passes:** 150-game screen against shipped `i5`,
 then the paired roster and the widened roster, then `v3`.
+
+### `darla108` probe: `ac = 7`. The falsifier as written **fails**.
+
+| | `i5` (`darla107` probe) | `darla108` |
+|---|---|---|
+| alt-completions (`ac`) | — | **7** |
+| ruins abandoned to patience (`pb`) | **21** | **15** |
+| games won vs `carol` (12) | 12 | 11 |
+
+I registered `ac >= 10` and got 7. That threshold was **wrong in its units**, and
+the error is mine rather than the data's: `fx = 252` counted stalled *turns*, and
+I carried that number across to a counter that increments once per *ruin*. The
+per-game `ac` is at most 1, in 7 of 12 games — one blocked ruin sitting blocked
+for dozens of turns is what produced the 252.
+
+So the mechanism is real: **7 towers get built that `i5` never builds**, and six
+fewer ruins are abandoned to `RUIN_PATIENCE`. But re-reading the same data against
+a threshold I moved after seeing it is precisely the `darla98` failure, so the
+registered falsifier stands as failed and the claim goes to an independent
+instrument instead.
+
+**Registered before the screen runs:** 7 ruins per 12 games is ~0.6 extra towers
+per game. If that is worth anything the 150-game screen against `i5` should land
+**52-57%** (+6 to +21 games of 150). At or below 50% the extra towers do not pay
+for themselves and `darla108` closes as `measured-and-small` — a correctness fix
+whose correctness does not matter — with the bug itself left documented above so
+the next arm that touches `towerTypeFor` knows the marks are the authority.
