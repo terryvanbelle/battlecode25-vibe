@@ -6896,3 +6896,31 @@ our towers take damage against `v3`, how many of our soldiers are within r² 20?
 If the answer is near zero this is `darla106` again and no arm should be built.
 That measurement needs `v3` replays, which `tools/benchmark-replay.sh` can now
 produce.
+
+### `darla108` screen vs `i5`: **75/150 = 50.0%**. Closed.
+
+Registered before the run: 52-57% to carry, at or below 50% to close. It landed
+exactly on the floor — 75-75, the most precisely null result this lineage has
+produced.
+
+`darla108` closes as **measured-and-small**, and the phrasing registered with the
+prediction turns out to be the right description: *a correctness fix whose
+correctness does not matter.* The bug is real and the fix works — 7 towers built
+that `i5` never builds, patience bans 21→15 — and it converts into exactly zero
+games. Seven extra towers per twelve games is 0.6 per game, arriving late at a
+ruin that had already been contested for dozens of turns, and that is evidently
+not worth a game.
+
+**The bug stays documented and unfixed.** That is deliberate: the two lines cost
+nothing and are strictly additive, but shipping a change with a measured zero
+effect adds a thing that must be reasoned about forever in exchange for nothing.
+The write-up above stands so the next arm that touches `towerTypeFor` knows the
+marks are the authority and does not have to rediscover it.
+
+**Three arms today, three closures** — `darla106` (tower defence permission),
+`darla109` (defense towers), `darla108` (pattern stall). All three measured a real
+mechanism and all three found it worth nothing. The common thread is that each was
+aimed at tower survival or tower production, and the roster cannot see tower
+deaths at all while `v3` puts us within one game of parity either way. The census
+recorded above points somewhere else entirely: 70% of robot-turns are splashers
+acting on 1.9% of them.
