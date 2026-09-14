@@ -1,0 +1,1 @@
+darla121 5a94813 darla121: opportunistic SRP construction, marked only where a soldier already stands

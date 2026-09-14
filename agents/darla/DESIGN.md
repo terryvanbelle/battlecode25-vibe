@@ -7882,3 +7882,40 @@ is ~0, the pattern cannot be finished under contest and this closes.
 **Registered risk:** payback is ~117 rounds and eight of twelve `v3` games end
 before r800, so even a working SRP pays off in only part of the pool. This is
 expected to be small if it works at all.
+
+### `darla121` refuted: 453 marks, **14** completions, and the map prediction was inverted
+
+| map | marks | completions | | map | marks | completions |
+|---|---|---|---|---|---|---|
+| Oasis A | 94 | 2 | | **maze A** | 26 | **5** |
+| Oasis B | 34 | **0** | | **maze B** | 29 | **2** |
+| giver A | 62 | 1 | | TheBest B | 27 | 2 |
+| giver B | 43 | 1 | | TheBest A | 14 | 1 |
+| shell A | 44 | **0** | | Thirds A | 19 | **0** |
+| shell B | 24 | **0** | | Thirds B | 37 | **0** |
+| **total** | **453** | **14** | | 12-map score | 2/12 | (`i5` 4/12) |
+
+The falsifier required completions in **8 of 12** games; it is 7. It also required
+them on the high-availability maps rather than `maze` — and **`maze` produced half
+of all completions (7 of 14) from 55 of 453 marks**, while `Oasis`, with 41.6%
+markable ground and 128 marks, produced two. The prediction was not merely missed,
+it was inverted.
+
+**So the constraint is not ground, it is soldier persistence.** `maze` is where
+soldiers survive longest and wander least — enclosed corridors keep them within
+`r² 8` of their own mark until the 5x5 is painted. On open maps the soldier marks,
+takes one step toward something else, exceeds the radius, and the mark is
+abandoned. `darla120` measured the wrong quantity: it asked *where can a pattern be
+marked*, when the binding question was *where will a soldier still be in twenty
+turns*.
+
+**The cost is real and one-directional.** 453 marks at `MARK_PATTERN_PAINT_COST`
+= 25 is **11,325 paint** spent, of which 97% bought nothing — paint being the
+resource this bot is measured to be starved of on 52.8% of tower turns.
+
+**Closed.** A dedicated SRP-builder that parks a soldier until the pattern is done
+is the obvious next variant, and I am not building it: that is a fourth
+rebuild-a-refuted-arm today, it parks a soldier — the only unit that builds towers,
+and tower count decides games — and the payback is ~117 rounds against games that
+end at r427-786. The measurement stands for whoever picks it up: **SRPs are
+buildable; what is missing is a unit that stays still.**
