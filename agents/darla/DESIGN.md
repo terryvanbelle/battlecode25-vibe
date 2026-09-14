@@ -8923,3 +8923,12 @@ not have.
    `darla113` measured that tower count is not coverage.
 No `v3` clause on the probe beyond recording it; the ladder handles `v3` if the
 screen passes.
+
+### `darla133` full `v3` benchmark: **71/150 (47.3%)**, swept 25 / 29. Ladder clause passes.
+
+Against `i5`'s 69/150 on the same 75 maps × 2 sides (a census, not a sample — see
+the determinism correction above): **+2 map-sides**, swept 25 against `i5`'s 24.
+The registered clause was "≥ 69, no regression against the target opponent", and
+it passes. It is not a `v3` *gain* of any size worth claiming; it is the absence
+of the regression that every prior arm today showed on this instrument. The
+paired roster (450, running) is the decider.
