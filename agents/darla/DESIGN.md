@@ -7841,3 +7841,44 @@ and it varies by map by two orders of magnitude.
 That is an argument for an **opportunistic** rule rather than a search: mark when
 the tile you are already standing on works, never walk to find one. A soldier that
 hunts for SRP ground on `maze` would spend the whole game hunting.
+
+### `darla121` — opportunistic SRP construction
+
+```java
+MapLocation me0 = rc.getLocation();
+if (rc.canCompleteResourcePattern(me0)) { ...complete, wherever you are... }
+else if (ruin == null) {
+    if (srp == null && rc.senseNearbyRuins(8).length == 0 && rc.canMarkResourcePattern(me0)) { rc.markResourcePattern(me0); srp = me0; }
+    if (srp != null && me0.distanceSquaredTo(srp) > 8) srp = null;      // wandered off, forget it
+    if (srp != null) { ...complete if possible, else paint ONE mismatched marked tile... }
+}
+```
+
+Four design choices, each from something measured rather than guessed:
+
+1. **Mark only where you already stand** — `darla120` found markable ground varies
+   from 0.2% (`maze`) to 41.6% (`Oasis`) of soldier turns. A soldier that *searches*
+   for SRP ground would spend an entire `maze` game searching. No walking.
+2. **Never when a ruin is in reach** — guarded twice, by `ruin == null` and by
+   `senseNearbyRuins(8).length == 0`. Tower patterns and resource patterns compete
+   for tiles, and tower count decides games; an SRP that breaks a tower under
+   construction is a strictly bad trade.
+3. **Any soldier completes any finished pattern it is standing on**, not just the
+   one that marked it. Statics are per-robot, so the marker frequently dies or
+   wanders; without this the marks would sit finished and unclaimed. This is the
+   `darla107` stall lesson applied before it costs anything: *the ground is the
+   authority, not a robot's memory.*
+4. **One tile per turn, and no separate action budget** — the paint step reuses
+   `rc.attack`, so if the SRP block acts, the existing generic paint block sees
+   `isActionReady() == false` and skips itself. No new action, no new movement.
+
+**Falsifier, pinned to `darla120`'s numbers and to a quantity this arm cannot
+satisfy by doing nothing** (the `darla119` rule): `srpDone` must be **> 0 in at
+least 8 of 12 games**, and the games it fires in must be the high-availability maps
+(`Oasis`, `giver`) rather than `maze`. Completions are the only thing that pays;
+marks that never complete are pure paint loss. If `srpMark` is large and `srpDone`
+is ~0, the pattern cannot be finished under contest and this closes.
+
+**Registered risk:** payback is ~117 rounds and eight of twelve `v3` games end
+before r800, so even a working SRP pays off in only part of the pool. This is
+expected to be small if it works at all.
