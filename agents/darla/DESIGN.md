@@ -6219,3 +6219,33 @@ the screen's −22. Recorded per criterion 3 (both numbers in every write-up), a
 it confirms rather than adds: an army of 19 soldiers and no splashers loses to
 everyone. No roster run was spent on it; the queued one was cancelled once the
 spawn census showed zero splashers.
+
+## Iteration 104 — **81/150 (+6)**, and the gate still never lifts where it matters
+
+Better than `darla103`'s −22, worse than `darla102`'s +9. But the mechanism check
+on a lost map shows **8 soldiers and zero splashers again**: correcting `<= 4` to
+`<= 2` did not fix the structural problem, it only made it rarer.
+
+**The flaw is inherent to the shape, not to the number.** The gate says *stay in
+soldier mode until expansion begins*. On the maps where expansion never begins —
+which are precisely the maps being lost — it never lifts. A condition keyed on
+success cannot be a bound on the attempt to achieve it, at any threshold.
+
+That is worth stating as a general lesson, because it is not about towers:
+**a self-limiting condition must be limited by something that happens whether or
+not the change works.** Rounds pass regardless. Tower counts do not.
+
+**`darla105`: bounded by both.**
+
+```java
+if (rc.getRoundNum() < 100 && rc.getNumberTowers() <= 2 && want != UnitType.SOLDIER)
+```
+
+It ends when *either* bound is reached — early if the third tower arrives (on
+`shell`, `darla102` got there at r30, so typically far inside 100 rounds), and
+unconditionally at r100 on the maps where it never does. `darla102` showed the
+r100 bound is survivable; `darla104` showed the tower bound alone is not.
+
+Registered: the spawn census must show **splashers on every map sampled**,
+including a lost one. That is the check both predecessors failed, and it is
+cheaper to run than the 150 games that followed it.
