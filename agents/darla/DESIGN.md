@@ -8897,3 +8897,29 @@ on the same instrument with McNemar z > 2; full `v3` benchmark must be
 the ladder is **absolute splashes per game** on the 12 `v3` replays already on
 disk, `darla133` vs `i5`, which reads ~250 vs ~239. If the paired roster does not
 clear, the 88 was a screen fluke and this closes with everything else.
+
+### `darla134`: **21.6%** of idle soldier turns have a remembered unclaimed ruin. Arm justified.
+
+No-op check passes (4/12, 227,523 lines = `i5`). 119 soldiers, 35,772 idle turns;
+on 7,720 of them the soldier's own memory holds at least one ruin it saw empty and
+never claimed. The list is short — one ruin on 20% of turns, two on 11% — so this
+is not a search, it is remembering one or two places.
+
+### `darla135` — on `frontNone`, explore toward the nearest remembered ruin (registered before launch)
+
+`darla134`'s memory, plus one branch: where the idle soldier finds **no frontier
+in vision** (`frontNone`, 27% of idle turns), set `explore` to the nearest
+remembered unclaimed ruin instead of falling through to a random far square.
+`frontFound` turns are untouched — iteration 14's accepted behaviour is not
+displaced, and a soldier that can see paintable ground still paints it. This uses
+turns that currently produce nothing, which is the cost structure `darla113` did
+not have.
+
+**Falsifier — every clause names its counter, per the rule from `darla133`:**
+1. `ruin=` share of soldier turns (working a ruin) must rise above `i5`'s **5.4%**
+   — the state token, already in every indicator.
+2. `frontNone` share must fall below `i5`'s **14.4%** — the branch this replaces.
+3. Roster screen **≥ 75/150** — the guard; more ruin work is a tower count, and
+   `darla113` measured that tower count is not coverage.
+No `v3` clause on the probe beyond recording it; the ladder handles `v3` if the
+screen passes.
