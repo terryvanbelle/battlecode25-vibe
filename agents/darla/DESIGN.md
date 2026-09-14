@@ -9094,3 +9094,27 @@ the `xr=`/`xd=` counters that read it.
 3. acceptance: McNemar **z > 2** against `i5` on either the paired roster or the
    `v3` census, per the owner's rule; the roster-sample screen (`roster-screen.sh`)
    is the first gate, with `i5`'s reference run in progress.
+
+### `darla137` 12-map probe: both mechanism clauses pass, decisively
+
+| counter | `i5` | `darla133` | `darla137` | clause |
+|---|---|---|---|---|
+| splasher mean target distance (`xd`) | 40.7 | 36.7 | **24.1** | < 36.7 — **passes** |
+| splashes per game (`SPLASH` count ÷ 12) | 239 | 256 | **322** | > 256 — **passes** |
+| `SPLASH` share of splasher turns | 2.4% | 2.1% | **2.7%** | (the clause `darla133` failed) |
+| splasher arrived / stuck / aged | 31 / 23 / 45% | 30 / 16 / 54% | **64 / 15 / 21%** | |
+| `noTgt` | 18.8% | 23.4% | **17.6%** | |
+| soldier arrived / aged | 85 / 5% | 73 / 18% | 81 / 8% | |
+| 12-map `v3` score | 4/12 | 5/12 | 4/12 | |
+
+Widening the trigger from "the tile underfoot is non-ally" to "enemy paint in
+vision" fires it where it was designed to fire: splasher treks halve, arrival
+doubles, timeouts drop by three-fifths, and the splasher fires more both in
+absolute count and per turn. This is the first arm of the session whose
+registered mechanism occurred as registered. The 12-map score is flat at 4/12,
+which on twelve games is one map-side and is not the instrument.
+
+Acceptance is now the owner's rule — McNemar z > 2 on either the paired roster
+or the `v3` census — and both are launched or queued: the full `v3` census now,
+the roster-sample screen behind `i5`'s reference run, and the 450 paired roster
+if the screen holds.
