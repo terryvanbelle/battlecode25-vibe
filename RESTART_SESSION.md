@@ -79,7 +79,7 @@ A restart is safe for the games and destructive for the loop. Check both.
 
 ```bash
 # Evaluation drivers -- these are setsid-detached and SURVIVE a restart
-pgrep -fa 'head-to-head.sh|paired-roster.sh|widen|replicate.sh' | grep -v 'bash -c'
+pgrep -fa 'head-to-head.sh|paired-roster.sh|roster-screen.sh|widen|replicate.sh' | grep -v 'bash -c'
 
 # Games actually playing on the VM right now
 pgrep -fc '\.reexec-gauntlet\.sh'
