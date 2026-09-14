@@ -156,3 +156,31 @@ SIGPIPE (141); pipefail fails the pipeline. The earlier in the file the match si
 the more reliably it misfires — and she had previously recorded the guard as sound
 after watching an identical rerun pass. Replaced with one `awk` pass. Any
 `producer | grep -q` under pipefail has this bug.
+
+## darla, 2026-09-14 evening (arms 122-136)
+
+**§45 — every falsifier clause must name the counter that reads it, and the
+build must carry that counter.** (darla) `darla133` was registered with an
+"age-outs below 45%" clause and built from the base without the replacement-reason
+counters; the clause could not be read on the arm it governed. A clause with no
+instrument is a sentence, not a test.
+
+**§46 — a rate is the wrong unit for a mechanism that acts on lifetime.** (darla)
+`darla133`'s registered clause was "`SPLASH` share of splasher turns must rise";
+it fell (2.4 → 2.1%) while absolute splashes rose 5%, because games ran 18%
+longer and splashers lived longer. The clause failed as written and the arm was
+the strongest screen of the session. Before pinning a rate, ask whether the
+change could alter the denominator.
+
+**§47 — when every count moves by the same ratio, the mechanism is the
+denominator.** (darla) Under `darla133`, spawns, deaths, towers and coverage all
+rose 1.11-1.22× on the same twelve games; game length rose 1.18×. Per-round rates
+were flat. The arm did not change what the bot does per turn; it changed how long
+the opponent needs to win. Sum the rounds before reading any per-game count as a
+production change.
+
+**§48 — a probe that passes its decision rule can still refute the arm on
+arrival: check that the remembered thing is still true when you get there.**
+(darla) 21.6% of idle soldier turns remembered an unclaimed ruin; the arm walked
+to them and ruin work fell, because the memory was stale by arrival. Opportunity
+measured at *sighting* is not opportunity at *use*.
