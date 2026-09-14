@@ -9072,3 +9072,25 @@ likely to survive the map pool, which is what the owner's framing asks for.
 **`darla133` under this rule:** roster z = **−1.08** (30 vs 39), `v3` z =
 **+0.32** (20 vs 18). Not significant on either. It stays closed, on the
 owner's rule rather than my ladder clause, which is the better reason.
+
+### `darla135` roster screen: 72/150 (48.0%), swept 8 / 11 — guard number for the record; already closed on clause 1.
+
+### `darla137` — near targets whenever enemy paint is in vision (registered before launch)
+
+`darla133` moves `v3` (+2, z +0.32) by keeping splashers in contested ground, but
+its trigger — the tile underfoot is non-ally — fires rarely, because a splasher
+mostly stands on our own paint even at the front. `darla137` keeps the mechanism
+and widens the trigger to **any enemy paint in vision**: at the front, keep the
+near sample; deep in our own paint, keep the far one. Still no steering — the
+four samples stay uniform — and flicker in the trigger is harmless here because
+the target is replaced at d² ≤ 8 regardless. Built on `darla136`, so it carries
+the `xr=`/`xd=` counters that read it.
+
+**Falsifier, counters named:**
+1. splasher mean target distance at selection (`xd=`) must fall below
+   `darla133`'s **36.7** — the trigger must actually fire more;
+2. absolute splashes per game (`SPLASH` token count ÷ games) must exceed
+   `darla133`'s ~250 — a rate is the wrong unit (§46);
+3. acceptance: McNemar **z > 2** against `i5` on either the paired roster or the
+   `v3` census, per the owner's rule; the roster-sample screen (`roster-screen.sh`)
+   is the first gate, with `i5`'s reference run in progress.
