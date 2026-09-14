@@ -8054,3 +8054,86 @@ MULTI_AGENT.md says is the only real verification anyway.
 **To restart:** `RESTART_SESSION.md`. The step most often forgotten is §7 —
 re-arm the `/loop 10m` Darla heartbeat, or the session sits idle between messages
 and nothing queues work.
+
+---
+
+## Correction: the SRP bonus is **per tower**, not per team — my payback math was off by 6-8×
+
+The owner opened alice's and carol's workspaces today (recorded in
+MULTI_AGENT.md). All three retired digests say the SRP bonus is paid to *every*
+tower. Per the standing rule, that is not verification — so, from the pinned jar:
+
+```
+battlecode.world.InternalRobot.processBeginningOfRound():
+  19: getfield  UnitType.paintPerTurn
+  22: ifeq 48
+  30: getfield  UnitType.paintPerTurn
+  41: invokevirtual GameWorld.extraResourcesFromPatterns(Team)
+  44: iadd
+  45: invokevirtual addPaint(I)                 <- THIS robot's stash
+  52: getfield  UnitType.moneyPerTurn
+  55: ifeq 91
+  84: invokevirtual GameWorld.extraResourcesFromPatterns(Team)
+  87: iadd
+  88: invokevirtual TeamInfo.addMoney(Team,I)
+battlecode.world.GameWorld.extraResourcesFromPatterns(Team):
+   2: invokevirtual getNumResourcePatterns(Team)
+   5: iconst_3
+   6: imul
+   7: ireturn
+```
+
+`processBeginningOfRound` runs once per robot. So with **S** active patterns,
+**every paint tower gains +3S paint per round and every money tower adds +3S chips
+per round.** I wrote "+3 chips/turn, 200 chips, ~117 rounds to break even". With
+the six to eight towers we typically hold, one SRP is worth **+18 to +24 paint per
+round team-wide** — the equivalent of three or four extra level-one paint towers'
+income — into the resource measured to be dry on 52.8% of tower turns. The chip
+side pays back in ~30 turns after the 50-round delay, not 67.
+
+This changes the `darla121` closure's *premise*, not its finding. The finding —
+453 marks, 14 completions, persistence is the constraint — stands exactly. What
+changes is what a completion is worth, by an order of magnitude, and therefore
+whether a soldier parked for ~25 turns to finish one is a good trade. It is.
+
+Two more facts from the digests, now jar-verified or engine-consistent, that
+shape the arm: **SRPs are fragile** — integrity is re-checked every round and any
+enemy paint inside the 5x5 de-activates it, with a 50-round re-arm — so they must
+sit where enemy paint does not reach; and tower-pattern marks and SRP marks compete
+for tiles (`darla121` already guarded that with `senseNearbyRuins(8)`).
+
+### And the unpaint route is now closed on the jar, not by assumption
+
+`SPLASHER_ATTACK_ENEMY_PAINT_RADIUS_SQUARED = 2`. Enemy paint is removed by a
+mopper's attack (r² 2) or overwritten by the r² 2 core of a splash. Nothing else.
+The 4,497-vs-5 asymmetry has exactly the two routes already known: moppers (closed,
+`darla117`) and splash rate (closed, four variants). Standing open problem,
+properly closed as *no third route exists*.
+
+### `darla122` — a soldier that commits to the pattern it marks (registered before build)
+
+Re-opened on a changed premise, not a rebuilt mechanism: `darla121` was closed
+when a completion was priced at +3/turn; it is priced at +3/turn *per tower*.
+
+Design, each choice from a measurement:
+1. **Mark only in safe territory** — no enemy paint anywhere in vision — because
+   one enemy mop inside the 5x5 costs 50 rounds (fragility, engine-verified).
+2. **Stay** — while committed, the soldier's movement target is the pattern, not
+   the explore target. `darla121` measured persistence as the binding constraint
+   (`maze`, where soldiers cannot wander, produced half of all completions).
+3. **Bounded by an event and by the existing `RUIN_PATIENCE`** — quit if any
+   pattern tile turns enemy, or after `RUIN_PATIENCE` turns. No new constant.
+4. **Any soldier completes any finished pattern it stands on** (kept from `darla121`).
+5. Never within r² 8 of a ruin (kept).
+
+**Falsifier, pinned to measured numbers and to a quantity the arm cannot produce
+by inaction:** the engine's own `srp` count in the per-round aggregates — which no
+indicator of ours can fake — must be **> 0 in at least 8 of 12** probe games, and
+completions must exceed `darla121`'s **14** with a completion rate above **25% of
+marks** (it was 3%). Tower dry-turns are *not* the falsifier: parked soldiers stop
+walking home to refill, which lowers tower paint spend by inaction (`darla119`'s
+lesson).
+
+**Registered risk:** a parked soldier is not claiming ruins, and soldiers are the
+only unit that does. The roster screen is the guard; if it fires, this closes
+regardless of the `v3` number.
