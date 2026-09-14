@@ -6066,3 +6066,38 @@ for. The widened roster is queued and will be recorded either way.
 *neutral-or-negative on the roster, better against `v3`* and got the exact
 opposite on both. Registering it is what makes that legible; it would otherwise
 be very easy to remember this as a half-success.
+
+### `darla102` on the widened roster: **+21 games, z = +2.23** — combined z = +2.71
+
+| instrument | result | discordant | z |
+|---|---|---|---|
+| standard roster | 358/450 (+15) | 87 | +1.61 |
+| **widened roster** | **374/450 (+21)** | 89 | **+2.23** |
+| combined (disjoint sets) | — | 176 | **+2.71** |
+| `v3` benchmark | 57/150 (−7) | 43 | **−1.07** |
+
+So the arm is **strongly positive on 176 discordant roster keys and negative on
+the instrument it was designed for**. The third-generation run is queued and will
+decide whether the roster side clears the bar.
+
+**This is the case the new criteria were written for, and it is worth being
+careful about.** Criterion 2 says an accept must not *significantly* regress the
+other instrument. `z = −1.07` is not significant by any usual standard — but it is
+43 discordant pairs pointing one way, in a 150-game instrument that only produced
+9 discordant pairs for the last accepted iteration. The `v3` regression is small
+in significance and large in resolution, and treating "not significant" as "not
+there" is exactly how a trade gets made without anyone deciding to make it.
+
+**And the contest framing argues against accepting it.** The owner's point is that
+the real target is opponents never seen before. This arm's gain is concentrated on
+the roster — six builds of this project's own three lineages — while the one
+genuinely foreign opponent says it is worse. If a change helps against relatives
+and hurts against a stranger, the contest reading is that it is fitting the
+family, not improving the bot.
+
+My recommendation, recorded before the third run lands so it cannot be fitted to
+the result: **do not accept `darla102` even if the combined roster z clears the
+bar**, and instead treat the roster gain as evidence that the opening *matters* —
+just not in the way this arm captures it. A version that buys the early towers
+*without* surrendering 100 rounds of splasher coverage would be a different arm
+and a better one; this one bundles two changes and only one of them is wanted.
