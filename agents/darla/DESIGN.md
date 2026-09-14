@@ -8764,3 +8764,25 @@ Three corrections to my own record, in order:
 
 `darla129`'s screen is the registered decider for the navigation line and reports
 below; on the mechanism it is already negative for the unit that matters.
+
+### `darla129` roster screen: **71/150 (47.3%)**, swept 20 / 24. Navigation closes as registered.
+
+| build | change | roster | swept W / L | 12-map `v3` |
+|---|---|---|---|---|
+| `darla124` | Bug2 leave condition | 65/150 | 17 / 27 | 3/12 |
+| `darla129` | + follow terrain only | **71/150** | **20 / 24** | 3/12 (`darla130`) |
+| bar | | ≥ 75 and swept-loss < 27 | | |
+
+The terrain gate is worth +6 games and three fewer swept losses — the
+transient-blocker diagnosis was right — and `darla129` swept-wins 20 maps, the
+most of any arm this session. It is four short of the bar, so the line closes on
+its registered letter, and the mechanism read explains why it could not clear it:
+soldiers already arrive 85% of the time under `i5`, so the only unit with room to
+gain is the splasher, and for the splasher wall-following turns a cross-map trek
+into a longer cross-map trek (age-outs 45% → 69%).
+
+**Re-open condition, and it is not a navigation change:** the splasher's
+exploration *policy* — `newExploreTarget` keeping the farthest of four random
+squares — is the measured defect (45% of splasher targets never reached). Any
+re-open should change what a splasher walks toward, not how it steps. `darla132`
+(below) measures how far those targets are.
