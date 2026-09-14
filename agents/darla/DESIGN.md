@@ -6833,3 +6833,46 @@ exactly where it was predicted to.
 it does not beat `i5`'s **46.0%**, it closes — no roster run, no widened roster,
 no re-reading of this probe. I have advanced past two failed bars already and that
 is the limit.
+
+---
+
+## Free census from the `darla107` dump: what the army actually does
+
+The probe dump carries every robot's state label for all 2,000 rounds of 12
+games, so this cost nothing extra to compute. 380,000 robot-turns.
+
+| role | turns | share of all robot-turns |
+|---|---|---|
+| SPLASHER | 209,820 | **70%** |
+| SOLDIER | 86,520 | 29% |
+| MOPPER | 283 | 0.1% |
+
+**Splashers splash on 1.9% of their turns.**
+
+| splasher state | share |
+|---|---|
+| `lowScore` (candidate found, below threshold) | 35.6% |
+| `noTgt` (no candidate at all) | 28.6% |
+| `HOME` (walking back to refill) | 23.5% |
+| `cd` (cooldown) | 9.2% |
+| **`SPLASH`** | **1.9%** |
+| `noPaint` | 1.2% |
+
+Soldiers are no busier: `pnt` is 3.8% of soldier turns, `frontFound` 19.1%,
+`frontNone` 16.1%, `HOME` 18.8%.
+
+Two things are worth keeping from this. First, **the army is 70% splashers by
+turn count and they act on one turn in fifty** — whatever else is true, the unit
+that dominates the bot's entire compute and paint budget is idle 98% of the time.
+Second, **HOME is 23.5% of splasher turns and 18.8% of soldier turns**: about a
+fifth of the whole army's life is spent walking back for paint.
+
+The mopper line is the already-closed `MOPPER_IN_20` arithmetic no-op — 0.1% of
+turns against a 10% spawn roll — and is not reopened here. `transferPaint` *is*
+implemented (line 863), so the mechanism that would cut the HOME tax exists and
+has nobody to run it. That is a consequence of the closed finding, not a new one.
+
+No arm is built from this yet. It is registered as measurement so that the next
+arm touching unit mix or logistics starts from a number instead of an intuition —
+which is the failure `darla99`, `darla106` and both of today's mis-set falsifiers
+have in common.
