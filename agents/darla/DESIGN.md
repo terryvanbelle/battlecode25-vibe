@@ -7176,3 +7176,41 @@ roster rewards coverage — `darla89` closed splasher-displacing work at **-65
 games**. So the roster is the guard here and may well go negative. `v3` is the
 instrument, for the reason the coverage table gives: `v3` wins by out-expanding us
 2-3x and the games end by round 600.
+
+### `darla113` 12-map probe: towers **5.8 → 8.7**, score 4/12 → 3/12
+
+Same six maps, both sides, against `v3`. Final-round aggregates, re-keyed off each
+file's `GameHeader`.
+
+| map/side | end | `i5` towers | `darla113` towers | `i5` cov | `darla113` cov | `v3` towers |
+|---|---|---|---|---|---|---|
+| Oasis A | 818 | 6 | **10** | 265 | 268 | 14 |
+| Oasis B | 618 | 3 | **9** | 122 | 219 | 15 |
+| TheBest A | 527 | 11 | 7 | 171 | 132 | 25 |
+| TheBest B | 532 | 8 | 5 | 160 | 106 | 25 |
+| Thirds A | 434 | 3 | **13** | 97 | **702** | 1 |
+| Thirds B | 762 | 11 | 13 | 700 | 700 | 2 |
+| giver A | 900 | 8 | **17** | 700 | 702 | 4 |
+| giver B | 476 | 2 | **7** | 120 | 187 | 18 |
+| maze A | 1259 | 4 | 6 | 422 | 249 | 20 |
+| maze B | 1498 | 6 | 4 | 477 | 152 | 20 |
+| shell A | 581 | 4 | **7** | 203 | 259 | 14 |
+| shell B | 669 | 4 | **6** | 217 | 236 | 13 |
+| **mean** | | **5.8** | **8.7** | | | |
+
+**The tower half of the falsifier passes.** Mean final towers rise 50%, the range
+moves from 2-11 to 4-17, and `Thirds` botA converts outright — 3 towers and 97
+coverage become 13 towers and a 702-coverage win.
+
+**The score half does not.** 3 of 12 against `i5`'s 4 of 12, on a sample where one
+game is 8 points. `maze` is the specific regression: `i5` took both sides to the
+round-2000 coverage tiebreak and won; `darla113` loses both earlier, and `v3` ends
+those games with 20 towers rather than 6 — so the games ran longer for *both*
+sides and `v3` used the time better.
+
+This does not decide anything, and I am not going to read a 12-game score as if it
+did — that is the mistake the `darla109` hard stop was written to prevent. The
+mechanism is confirmed and the outcome is unmeasured. The **150-game `v3`
+benchmark** is the instrument that settles it, against `i5`'s **46.0%**, and the
+150-game roster screen already running is the guard for the `darla89` risk
+registered before the run.
