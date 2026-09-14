@@ -7234,3 +7234,53 @@ What is already established either way: the exemption does what it was built to 
 `darla74` measurement chain that got here is intact — 1.2% of soldier rolls build,
 42.1% die at the floor, `v3` out-expands us 2-3x — and none of that is withdrawn.
 What is refuted is *this* way of spending it.
+
+### `darla113` on `v3`: **56/150 = 37.3%** against `i5`'s 46.0%. Closed, and it takes my reasoning with it.
+
+| instrument | `i5` | `darla113` |
+|---|---|---|
+| roster screen (mirror) | — | **33/150 (22.0%)** |
+| `v3` benchmark, 150 games | **69/150 (46.0%)** | **56/150 (37.3%)** |
+| mean final towers vs `v3` | 5.8 | **8.7** |
+
+The mechanism worked and the bot got worse on **both** instruments. More towers,
+fewer wins, −13 games against the opponent the whole chain was built to beat.
+
+**What is refuted is my inference, not the measurements.** Two ticks ago I wrote
+that tower count and coverage "agree in all twelve" games and treated that as
+licence to raise tower count. That was a correlation in a table where both numbers
+are downstream of a third thing, and `darla113` is the experiment that separates
+them: it raised towers 50% and coverage *fell* — `maze` A 422→249, `TheBest` A
+171→132, `maze` B 477→152. **Coverage decides the game; tower count does not.** A
+soldier that claims a ruin is not painting while it does so, and the splashers it
+displaced were the painting engine.
+
+This is the same error in a new place. `darla109` and `darla110` were closed
+because the roster is blind to tower deaths; here I read a `v3` table correctly and
+then drew a causal arrow it did not support. The measurement discipline held — the
+falsifier was registered, the guard was registered, both fired — but the discipline
+that picks *which* quantity to move is what failed, twice in one session.
+
+**Registered, so the next arm cannot repeat it:** before moving any quantity X,
+state what makes X *causal* for coverage rather than merely correlated with it.
+`darla112`'s chain was sound up to "soldiers build towers" and then jumped to
+"therefore more towers win". It does not follow and is now measured not to.
+
+**The direction is closed.** Not a gentler version, not a smaller exemption —
+`SPLASH_FLOOR` is doing a job, the job is protecting coverage, and coverage is the
+win condition. The iteration-30 comment was right all along and I spent an
+afternoon confirming it the expensive way.
+
+### Where this actually points: the splasher's 2.4%
+
+The one quantity now known to be causal for coverage is **splasher productivity**,
+and it is 2.4% against `v3` with `lowScore` at 41.5%. `darla88`/`darla89` closed
+moving splashers *toward enemy paint* at −68 and −65 games. They did not test
+moving them toward **neutral unpainted ground**, which is a different target with
+the opposite risk profile: it is uncontested, it is exactly what coverage counts,
+and it keeps splashers out of the fights that killed `darla88`.
+
+`darla114` is the pre-measurement, registered before any arm: **when a splasher
+reports `lowScore` or `noTgt`, how far is the nearest unpainted passable tile?** If
+the answer is "adjacent", distance is not the constraint and the idea dies without
+a run — the same way `darla111` died this morning.
