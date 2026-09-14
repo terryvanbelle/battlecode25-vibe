@@ -6542,3 +6542,39 @@ barely attempt at 18 attacks all game). The mopper lesson says not to copy `v3`
 because `v3` does it. But "a quarter of what we build is taken from us, and we
 take nothing back" is our own number, measured on our own side, and it does not
 depend on imitating anything.
+
+## `darla106` — defend a tower under siege
+
+The soldier's attack branch, as shipped:
+
+```java
+for (RobotInfo e : enemies) {
+    if (e.type.isTowerType() && rc.canAttack(e.location)) { rc.attack(e.location); ... }
+}
+```
+
+**Soldiers attack towers and nothing else.** An enemy soldier standing next to our
+paint tower, hitting it for 50 a turn, is not a target — so the tower fights alone
+at −20 and −10 and loses. That is the r327 sequence exactly, and it is why 106
+attacks land on our towers while we answer with 18.
+
+`darla106` adds one branch: **if I am near one of my remembered towers and an
+enemy robot is in my action radius, attack it.**
+
+The trigger is deliberately narrow, because `darla99` taught what a broad one
+costs. "Enemy robot in range" alone would be common and would turn every soldier
+into a skirmisher, trading paint for fights — the `darla102` failure in another
+costume. Requiring proximity to one of *our own* towers (r² ≤ 16, from `towerMem`,
+which needs no sensing) restricts it to the situation the replay actually shows:
+a tower being ground down with our robots standing next to it doing nothing.
+
+Registered before the run:
+- `" def"` must appear in soldier state strings, and **not on most turns** — if it
+  is common, the trigger is too broad and this is `darla99` again.
+- The `v3` check is the one that matters: **do we still lose three towers?** The
+  roster cannot answer it, since no tower dies there — which also means the roster
+  can at best show this arm as neutral, and a roster regression would be the real
+  warning.
+- This is the first arm in the lineage aimed at a mechanism the roster is
+  structurally blind to, so `v3` is the instrument and the roster is the guard
+  against collateral damage.
