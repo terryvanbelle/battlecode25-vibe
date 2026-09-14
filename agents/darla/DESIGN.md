@@ -8178,3 +8178,40 @@ them near towers) or the games are shorter. The diagnostic below separates those
 The roster screen (`darla122` vs `i5`, 150 games) is the registered guard and is
 running. If it fires, this closes on cost regardless of `v3`; if it holds, the
 question becomes activation, and that is a design question rather than a refutation.
+
+### `darla122` diagnostic: not fragility — the parked soldier stops finding ruins
+
+Per-game, same twelve games, `i5` against `darla122` (aggregates are per round
+inside the dump window, so "active" is rounds with the engine's own `srp > 0`):
+
+| map | end `i5`→`122` | towers `i5`→`122` | coverage `i5`→`122` | SRP active rounds |
+|---|---|---|---|---|
+| Oasis A | 1481 → **398** | 6 → **2** | 265 → 45 | 0 |
+| TheBest A | 717 → **438** | 11 → **4** | 171 → 74 | 0 |
+| TheBest B | 692 → **398** | 8 → **2** | 160 → 56 | 7 |
+| giver A | 518 → 444 | 8 → **2** | **700** → 91 | 69 |
+| shell A | 532 → 502 | 4 → 3 | 203 → 136 | 0 |
+| **Thirds A** | 786 → **1440** | 3 → **6** | 97 → **702** | **615** |
+| Thirds B | 597 → 597 | 11 → 7 | 700 → 702 | 469 |
+| maze A/B | 2000 → 2000 | 4/6 → 3/3 | 422/477 → 387/207 | ~1900 |
+
+So the three "completed but never active" maps are not patterns being broken —
+**the game is over before the 50-round activation elapses.** Towers collapse to
+the two starting ones, coverage collapses with them, and `v3` takes the coverage
+win around r400. That is the risk registered before the run, verbatim: *a parked
+soldier is not claiming ruins, and soldiers are the only unit that does.* The
+`ruin == null` gate checks only ruins already in vision, and a soldier holding
+position sees the same empty patch of map every turn.
+
+And the counter-case is just as sharp: **when a pattern activates early, the game
+flips.** Thirds A is a loss at r786 with 3 towers under `i5` and a 702-coverage
+win at r1440 with 6 towers under `darla122`, with an SRP paying for 615 rounds.
+Thirds B holds its win with 469 active rounds. The per-tower income is real and
+it is decisive *when it arrives before the expansion race is lost.*
+
+This is therefore a **priority** defect, not a mechanism one, and I am recording
+that distinction rather than acting on it: the roster screen is the registered
+guard and it has not reported. If it fires, `darla122` closes on cost as written.
+The design question it leaves — an SRP builder that never pre-empts expansion —
+is registered here as the only re-open condition, so that nobody, including me,
+rebuilds this on the strength of Thirds A alone.
