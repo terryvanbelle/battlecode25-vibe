@@ -6578,3 +6578,19 @@ Registered before the run:
 - This is the first arm in the lineage aimed at a mechanism the roster is
   structurally blind to, so `v3` is the instrument and the roster is the guard
   against collateral damage.
+
+### `darla106` screen: 71/150 (−4), and the screen is the wrong instrument by construction
+
+**Zero tower deaths in the self-play game** — which is exactly what was registered:
+no tower dies in a darla-vs-darla match, so the screen cannot show a
+tower-defence benefit. The −4 is the collateral cost (soldiers occasionally
+spending an action on a robot instead of paint) with none of the upside visible.
+
+This is the first time the lineage has run an arm whose benefit is **invisible to
+the instrument that screens it**. Worth stating as a general point: a screen that
+cannot express the mechanism reports only the cost, and reading its number as
+"the arm is bad" would be a category error.
+
+The `v3` benchmark is running, and a replay capture on `TheBest` and `shell` is
+queued to check the two registered conditions directly: that `" def"` fires but is
+rare, and — the real question — **whether we still lose three towers**.
