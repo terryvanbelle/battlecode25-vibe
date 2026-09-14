@@ -8958,3 +8958,34 @@ selection (`xd=`), behaviour identical to `darla133`. Reads whether the
 ground-conditioned radius shortens splasher treks and raises arrival — the
 mechanism I can measure — before the ladder decides promotion. No clause to pass;
 it explains, and `accept-iteration.sh` needs the explanation.
+
+### `darla136`: `darla133` does not win the way I designed it to
+
+Probe is faithful — 5/12, same as `darla133`. Like-for-like against `i5`'s
+counters (`darla132`), 12 `v3` games:
+
+| | `i5` | `darla133` |
+|---|---|---|
+| splasher targets: mean distance | 40.7 | 36.7 |
+| splasher arrived / stuck / aged | 31% / 23% / 45% | 30% / **16%** / 54% |
+| soldier arrived / stuck / aged | 85% / 9% / 5% | 73% / 9% / 18% |
+| **robots** (soldiers / splashers) | 103 / 489 | **134 / 562** |
+| splasher turns | 119,291 | **143,191** |
+| `HOME` share | 25.2% | **22.9%** |
+| `SPLASH` share | 2.4% | 2.1% |
+
+The designed mechanism — shorter treks, more arrivals — did not happen. The near
+branch fires only when the splasher stands on non-ally paint, and a splasher
+mostly does not (`noTgt`/`lowScore` are own-territory states), so the far sample
+still dominates and arrival is flat. What moved instead: **30% more soldiers and
+15% more splashers over the same twelve games**, a third fewer stuck episodes, and
+fewer refuel trips. More units alive, for longer, is the whole difference — and
+whether that is more spawns (tower paint freed up?) or fewer deaths (fewer units
+wedged under enemy towers?) the indicators cannot say. The per-round aggregates
+can (`+sold`, `died`, `starved` per team), and that read follows.
+
+**Consequence for promotion, registered now:** if the paired roster clears,
+`darla133` is accepted with its mechanism recorded as *unidentified* — "more
+units, path unknown" — and the causal path becomes the first registered question
+of the next session, not a footnote. An accepted iteration whose mechanism is
+wrong in the notebook is worse than one whose mechanism is honestly blank.
