@@ -7639,3 +7639,37 @@ refuted arm with "I built it wrong, here is the right version" — `darla115` �
 **upgrades well above 23** and **dry tower turns below 52.8%** on the 12-map probe.
 If it does not, **the tower-upgrade direction closes entirely** — no fourth
 variant, no gentler window — and I stop proposing rebuilds of refuted arms today.
+
+### `darla119`: dry turns **43.9%**, upgrades **21**. Hard stop fires; upgrades closed.
+
+| | `i5` | `darla118` | `darla119` |
+|---|---|---|---|
+| `UPG` performed | 19 | 23 | **21** |
+| dry tower turns (< 200) | 52.8% | 55.6% | **43.9%** |
+| median tower paint | 187 | 169 | **240** |
+| lv3 tower turns | 967 | 244 | **0** |
+| 12-map score vs `v3` | 4/12 | 3/12 | 3/12 |
+
+The registered stop required upgrades **well above 23** *and* dry turns below
+52.8%. Upgrades came in at 21 — indistinguishable from `i5`'s 19 — so the stop
+fires and **the tower-upgrade direction closes entirely**, as registered. No fourth
+variant.
+
+**And the half that passed is contaminated, which is the lesson worth keeping.**
+Dry turns fell from 52.8% to 43.9% and median tower paint rose 187 → 240. That
+looks like the mechanism working. It is not: the bank works by **not building**, and
+a tower that does not build does not spend its paint. The intervention lowers the
+metric directly, without any upgrade occurring — and we know no upgrade occurred,
+because `UPG` did not move and lv3 tower turns went to **zero**.
+
+I chose "dry tower turns" as the falsifier because it was one step from the
+mechanism. It was one step in the *wrong* direction: a proxy an intervention can
+satisfy by doing nothing is not evidence. The rule to carry forward, alongside the
+`darla113` causality rule: **a falsifier must be a quantity the intervention cannot
+move except through the mechanism it claims.** `UPG` was that quantity all along
+and it is flat.
+
+So the team-wide predicate did coordinate — 58,403 tower turns, chips visibly held
+— and the treasury still did not reach 2500 often enough to matter. The upgrade is
+not reachable at this income, full stop, and iteration 35 had already removed the
+only slack in the gate.
