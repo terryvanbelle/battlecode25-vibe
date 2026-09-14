@@ -9126,3 +9126,23 @@ sides. carol **42/50**, bob **44/50**, alice **40/50**. This is the run every ar
 pairs against on the gate until the next acceptance, when the promoted build
 re-runs it. An arm's screen result is read as McNemar on the 150 shared
 (opponent, map, side) keys, not as a raw total.
+
+### `darla137` full `v3` census: **63/150 (42.0%)**, McNemar z = **−1.00**. Not accepted on `v3`; a regression.
+
+| | `i5` | `darla137` |
+|---|---|---|
+| `v3` census, 150 paired keys | **69** | 63 |
+| discordant | i5-only **21** | darla137-only 15 |
+| McNemar z | | **−1.00** (accept if > +2) |
+| swept | 24 / 30 | 17 / 29 |
+
+The mechanism fired exactly as registered — splasher treks halved, arrival
+doubled, splashes per game +26% — and the target opponent beat it by six more
+map-sides. That is `darla113`'s shape on the `v3` side: the designed quantity
+moved and the outcome fell. Splashers that stay at the front and fire more are
+splashers that stay where `v3`'s towers and moppers are; more contact with `v3`
+is more losing to `v3`. It also reframes `darla133`'s +2: the trigger that fired
+*rarely* was the one that did not hurt.
+
+The roster-sample screen is the other acceptance instrument under the owner's
+rule and is read below as McNemar against `i5`'s reference run.
