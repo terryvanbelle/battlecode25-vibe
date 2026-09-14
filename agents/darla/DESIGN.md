@@ -8624,3 +8624,30 @@ after 29 hours**, and it only grows. Consequences: (1) background waits are not 
 reliable wake signal on this driver — the 10-minute heartbeat is; (2) a `--continue`
 restart (`RESTART_SESSION.md` §6) reclaims the memory whenever the owner finds it
 convenient, and nothing in flight depends on the session being alive.
+
+### `darla128`: homebound steps stuck **24%**. Decision rule says the tail is distance; give-up arm not built.
+
+No-op check: 4/12 with exactly `i5`'s 227,523 indicator lines — the counters
+changed nothing.
+
+| unit | homebound steps | not closer | |
+|---|---|---|---|
+| SOLDIER | 5,090 | 1,211 | **23.8%** |
+| SPLASHER | 14,578 | 3,609 | **24.8%** |
+
+The registered rule was: majority stuck → build a give-up-when-stuck refuel rule;
+minority → the tail is genuine distance and the lever is tower choice. It is a
+quarter. **Not built.**
+
+Two things worth keeping. First, homebound navigation is *better* than exploring
+navigation — 24% stuck against 43.6% on repeated targets generally — because a
+tower is a fixed, known, unmoving target; the oscillation diagnosed under
+`darla124` bites hardest on frontier tiles that get swapped every few turns.
+Second, "the lever is tower choice" runs into a wall of its own:
+`nearestRememberedTower()` already knows every tower this robot has ever seen
+(`censusTowers` records them), so a unit with a 90-turn walk home is one that has
+genuinely never been near any other tower. The remedies are all closed or
+constant-shaped — moppers ferrying paint (`darla117`), a distance-keyed refill
+threshold (a constant), or acting on empty (iteration 2 already does the version
+that pays). **Refuel logistics closes on its pre-measurement**, for the cost of one
+12-game probe rather than a 150-game arm.
