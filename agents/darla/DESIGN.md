@@ -7017,3 +7017,43 @@ built, and the question it must answer is:
 is within sensing range and how far the nearest one is. **Registered rule:** if
 fewer than 5% of idle splasher turns have an enemy tower in range, a siege arm is
 `darla106` a fourth time and is not built.
+
+### `darla111` refuted without being built — and the siege archetype already exists
+
+Before building anything I re-read the splasher. **The siege archetype is already
+implemented**: `foes` are sensed once, enemy towers are ranked (money first,
+"killing the last one freezes the enemy treasury outright"), and movement has a
+full approach / ring / backoff controller that closes to the `r² 10..16` band
+where a splasher out-ranges a tower's `r² 9`. My earlier census missed it because
+it read only the first tag token and `approach`/`ring`/`backoff` are appended
+after it. That is a censoring bug in my measurement, not in the bot.
+
+Re-measured from the same `v3` dump, 119,291 splasher turns:
+
+| splasher turn | share |
+|---|---|
+| `lowScore` | 41.5% |
+| `HOME` | 25.2% |
+| `noTgt` | 18.8% |
+| `cd` | 10.5% |
+| **`SPLASH`** | **2.4%** |
+| `noPaint` | 1.6% |
+| **any siege movement** (`approach`+`ring`+`backoff`) | **1.2%** |
+
+The registered rule was 5%. It is **1.2%**, so `darla111` is refuted and not
+built — and it would have been redundant anyway.
+
+**This is the finding of the session.** The reason `v3`'s towers never die is not
+that we cannot hurt them and not that we lack the code to try. It is that **our
+splashers are within sensing range of an enemy tower on one turn in eighty**. The
+siege controller is correct and almost never gets to run. 70% of our robot-turns
+belong to a unit that spends 60% of its life scoring paint targets it rejects, in
+territory where no enemy tower exists.
+
+Four arms today, four refutations — `darla106`, `darla108`, `darla109`, `darla110`
+— plus `darla111` refuted before it was built. Every one of them was aimed at
+towers: defending ours, or reaching theirs. The measurements agree on where the
+problem actually is, and it is not the tower code. **It is that the army never
+leaves home.** That is the next thing to measure: where our robots actually stand
+relative to the map, and what `moveExploring` does with a splasher that has
+nothing to splash.
