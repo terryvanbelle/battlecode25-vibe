@@ -7505,3 +7505,40 @@ which gate kills each one — reserve, `SPLASH_FLOOR`, `PAINT_FLOOR`, or
 
 **Kill condition:** if `PAINT_FLOOR` is *not* where mopper rolls die, the diagnosis
 above is wrong and no mopper arm gets built.
+
+### `darla115` roster screen: **45/150 (30.0%)** — consistent with its refutation.
+
+### `darla117`: my mopper diagnosis was wrong. **`PAINT_FLOOR` is not the gate.**
+
+5,372 `MOPPER` rolls across 12 `v3` games.
+
+| mopper roll dies at | count | share of all rolls |
+|---|---|---|
+| chip reserve | 3,444 | **64.1%** |
+| `SPLASH_FLOOR` | 1,678 | **31.2%** |
+| `PAINT_FLOOR` | 248 | **4.6%** |
+| `canBuildRobot` | 0 | 0.0% |
+| **built** | **2** | **0.04%** |
+
+The kill condition registered before the run was: *if `PAINT_FLOOR` is not where
+mopper rolls die, the diagnosis is wrong and no mopper arm gets built.* By share of
+rolls it is third of three, behind two chip gates that between them take **95.3%**.
+**The condition fires and the arm is not built.**
+
+For the record, and explicitly *not* used to rescue it: `PAINT_FLOOR` is nearly
+absolute for the rolls that actually reach it — 248 of ~250, or 99.2%. That is a
+real property and it is the reason moppers are *exactly* zero rather than merely
+rare. But it is a conditional rate on a stream two earlier gates have already
+reduced by 95%, and reading it as "the gate" would be the `darla108` units error a
+third time. I am recording the number and honouring the condition as written.
+
+**And the thing it points at is already refuted.** Relaxing the mopper's chip gates
+means relaxing `SPLASH_FLOOR` — the same gate `darla113` relaxed for soldiers, for
+−84 games on the roster and −13 on `v3`. The mopper direction requires the move
+that has already been measured as the most damaging change of the day.
+
+**Closed.** The observation that opened it stands and is worth keeping: `v3`
+unpaints ~138 of our tiles per sample window and we unpaint zero, ever. That is a
+genuine asymmetry in the win condition. What is now known is that it cannot be
+reached through the spawn gates, because every route through them runs into
+`SPLASH_FLOOR`, and `SPLASH_FLOOR` is load-bearing.

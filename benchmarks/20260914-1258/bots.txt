@@ -1,0 +1,1 @@
+darla117 07a4b69 darla117: v3 unpaints ~138 of our tiles per window and we never mop at all
