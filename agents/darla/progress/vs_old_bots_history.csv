@@ -321,3 +321,6 @@ date,current_snapshot,opponent,wins,total,win_pct,source
 2026-09-14T13:11:28+00:00,darla_iter4+cand,alice,38,50,76.0,roster-run
 2026-09-14T13:11:28+00:00,darla_iter4+cand,bob,42,50,84.0,roster-run
 2026-09-14T13:11:28+00:00,darla_iter4+cand,carol,39,50,78.0,roster-run
+2026-09-14T13:42:34+00:00,darla_iter4+cand,alice,39,50,78.0,roster-run
+2026-09-14T13:42:34+00:00,darla_iter4+cand,bob,42,50,84.0,roster-run
+2026-09-14T13:42:34+00:00,darla_iter4+cand,carol,39,50,78.0,roster-run

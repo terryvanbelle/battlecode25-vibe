@@ -7730,3 +7730,30 @@ and tower upgrades.
 **One tooling bug fixed:** `make-arm.sh`'s comment guard failed *because* its match
 succeeded — `grep -q` closing the pipe under `pipefail`. I had previously recorded
 that guard as sound after watching an identical rerun pass.
+
+---
+
+## `i5` roster re-measurement: **362/450 (80.4%)**, every lineage clear of the bar
+
+Run `20260914-135643`, the full paired roster, shipped `i5`.
+
+| opponent | score | swept-win | swept-loss | split by side |
+|---|---|---|---|---|
+| carol | **125/150 (83%)** | 54/75 | 4 | 17 |
+| bob | **121/150 (81%)** | 53/75 | 7 | 15 |
+| alice | **116/150 (77%)** | 52/75 | 11 | 12 |
+| **overall** | **362/450 (80.4%)** | | | |
+
+The standing bar is ≥50% against **each** lineage; the worst is alice at 77%, and
+the swept columns say it is not a spawn-side artefact — `i5` wins from both sides
+on 52-54 of 75 maps against every opponent.
+
+This was run because the day produced thirteen closures and no acceptance, and a
+day of that shape is exactly when an unnoticed regression would hide. There is
+none: `i5` is where it was, on the roster and at 46.0% on `v3`.
+
+Worth stating plainly alongside the `v3` work: **we beat the retired lineages four
+games in five and lose to `v3` more often than we win.** The roster is not a weak
+instrument — it has resolved every accepted iteration this lineage has — but it has
+stopped being the binding one, and today's measurements say why: it cannot see
+tower deaths, and no tower on either side dies in it.
