@@ -8391,3 +8391,32 @@ counts as stuck, so it cannot be met by inaction:**
    navigation, and this closes on the probe.
 3. Roster screen ≥ 75/150 (standing bar) — navigation touches every unit's every
    move, so the guard matters more than usual.
+
+### `darla123` 12-map probe: clauses 2 and 3 pass, score 2/12, and the yield line is dead
+
+| registered clause | bar | measured |
+|---|---|---|
+| maps never reaching a 3rd tower | 0 (`darla122`: 5) | **0** — third tower at r22-82 on all 12 |
+| engine-active SRPs > 0 | ≥ 8 of 12 (`darla122`: 9) | **11 of 12** |
+| roster screen | ≥ 75/150 | *queued* |
+| 12-map `v3` score | — | **2/12** (`i5` 4/12, `darla122` 2/12) |
+
+The `getNumberTowers() >= 3` gate did precisely what iteration 5's boundary
+promised: every game now builds its third tower on `i5`'s schedule, and the
+patterns still activate — 121 completions at 47.1% of marks, active in 11 games.
+
+**But the re-open condition was only half met.** `SRPyield` — "never hold while a
+ruin is reachable" — fired **3 times in 27,649 soldier turns**. A holding soldier
+does not move, so it never brings a new ruin into vision; the line is correct and
+unreachable. The cost therefore did not shrink, it moved: `SRPhold` 20.9% +
+`SRPpnt` 9.1% of soldier turns, against 23.0% + 9.4% for `darla122`. Final tower
+counts on the lost maps are still 1-5 against `i5`'s 6-11 (`TheBest` A: 11 → **1**),
+soldier turns are still half of `i5`'s, and where the income *does* land it does
+not convert — `giver` A had a pattern active for 330 rounds and 8 towers, and
+finished at 212 coverage where `i5` finished at 700, because the soldiers that
+would have painted it were the ones holding.
+
+The per-pattern cost floor is the real number: 25 tiles at one per turn, and
+`SRPquit` (113) is nearly equal to `SRPdone` (121), so half the attempts exhaust
+`RUIN_PATIENCE` at 40 turns. One soldier per pattern is ~40 soldier-turns per
+completion. That is the trade the roster screen prices; it is still the decider.
