@@ -6629,3 +6629,41 @@ because the replay capture exited with *"another benchmark run is already going"
 `benchmark.sh` guards against concurrent runs and the `v3` benchmark held the slot.
 Re-queued. The 16-discordant-pair figure is strong enough to carry the conclusion
 on its own, but the counter is the direct evidence and it should be in the record.
+
+### `darla106` counter read: **3 fires in 1,949 soldier turns**, and the towers still die
+
+| | |
+|---|---|
+| `" def"` fires | **3** |
+| soldier turns | **1,949** |
+| trigger rate | **0.15%** |
+| our towers lost | **3** — unchanged from `i5` |
+
+The diagnosis is confirmed directly rather than inferred from the discordant
+count. A soldier is within range of both one of our towers and an enemy robot
+three times in an entire game. **The permission was never the constraint;
+presence was.**
+
+`darla106` is closed as `measured-and-small`. The pair it forms with `darla99` is
+the lasting part: same failure mode, opposite ends of the dial — a trigger that is
+nearly always true floods the army, a trigger that is almost never true does
+nothing, and neither was measured before the arm was built. The `darla74` rule
+covers both and I have now paid for it twice in one session.
+
+**Where tower survival goes next.** Two routes remain and both are real work:
+
+1. **Routing** — send a soldier back to a threatened tower. Requires knowing a
+   tower is threatened (towers can message robots: `MESSAGE_RADIUS_SQUARED = 20`,
+   ≤ 1 msg/robot/turn, and the tower *does* know it is being hit) and paying the
+   travel. `darla88`/`darla89` are the warning about sending units toward the
+   enemy.
+2. **Defense towers** — the option this lineage closed on the premise that towers
+   never die, which is now known false against `v3`.
+
+Route 2 has a subtlety worth registering before anyone builds it: **tower type is
+chosen while the pattern is being painted**, so the choice must be *stable* for a
+given ruin. A demand test like "an enemy robot is visible" flickers turn to turn,
+different soldiers would disagree, and the pattern would never complete — the
+failure would look like a build bug rather than a bad idea. `MONEY_MOD` is keyed
+on the ruin's own coordinates precisely because that is invariant and every
+soldier agrees; any defense-tower rule needs the same property.

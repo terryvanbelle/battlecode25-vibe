@@ -1,0 +1,3 @@
+agent,benchmark,map,agent_side,winner_side,rounds,agent_result
+darla106,v3,TheBest,A,B,723,loss
+darla106,v3,TheBest,B,A,709,loss
