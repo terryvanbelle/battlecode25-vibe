@@ -6667,3 +6667,79 @@ different soldiers would disagree, and the pattern would never complete — the
 failure would look like a build bug rather than a bad idea. `MONEY_MOD` is keyed
 on the ruin's own coordinates precisely because that is invariant and every
 soldier agrees; any defense-tower rule needs the same property.
+
+---
+
+## The stability warning was about a bug that is already shipping
+
+Checking how `towerTypeFor` feeds the pattern — the last step before building a
+defense-tower arm — turned up the same failure in the **current build**.
+
+```java
+static void workOnRuin(MapLocation ruin) throws GameActionException {
+    UnitType kind = towerTypeFor(ruin);          // re-evaluated EVERY turn
+    if (rc.canMarkTowerPattern(kind, ruin)
+            && rc.senseMapInfo(ruin.add(Direction.NORTH)).getMark() == PaintType.EMPTY) {
+        rc.markTowerPattern(kind, ruin);         // laid ONCE, then never again
+    }
+    ...
+    if (rc.canCompleteTowerPattern(kind, ruin)) { ... }   // needs TODAY's kind
+```
+
+The marks are laid once and are permanent. Completion is checked against a `kind`
+recomputed from scratch every turn. `towerTypeFor` has two branches that are not
+stable:
+
+- iteration 4's chip test, `rc.getChips() >= CHIP_RESERVE + SPLASHER.moneyCost`
+  — the treasury crosses 1500 in both directions all game;
+- the paint/money census, `seenPaint * 2 < seenMoney` — which is **per robot**, so
+  two soldiers at the same ruin can disagree in the same turn.
+
+So a ruin can be marked MONEY, painted to completion as MONEY, and then never
+complete because the soldier standing on it now wants PAINT. The pattern is
+finished and the tower is never built. `RUIN_PATIENCE` eventually bans the ruin,
+and the failure is invisible — it looks like slow expansion, not a stalled build.
+
+### `darla107` — probe, registered before it ran
+
+Counts, per soldier, turns where the pattern is complete for the *other* type but
+not the current one (`fx`), and where completed towers sit relative to map centre
+(`cp=total/c8/c6/c4`, for the defense-tower share question). 12 games vs `carol`
+on `Thirds TheBest Dominoes maze AlarmClock giver`, summed over per-entity maxima.
+
+| | |
+|---|---|
+| stalled soldier-turns (`fx`) | **252** |
+| tower completions (`cp`) | **62** |
+| ruins abandoned to patience (`pb`) | **21** |
+
+Per game the stalls are lumpy — 136 on `giver` botA, 46 on `Thirds` botB, 0 on
+five of the twelve — which is what a treasury crossing a threshold at an awkward
+moment should look like, not a uniform tax.
+
+**Centre-distance share, for the defense-tower question later:** of 62
+completions, 12 sit within `|2x-(w-1)| + |2y-(h-1)| <= (w+h)/4` of centre, 19
+within `/3`, 33 within `/2`. A centre-keyed defense rule at the tightest
+threshold would therefore label ~19% of towers — close to the 14% `v3` builds.
+That key is invariant under both map symmetries, so it satisfies the stability
+property registered above. Held for after `darla108`.
+
+### `darla108` — honour the marks that are on the ground
+
+```java
+UnitType alt = (kind == UnitType.LEVEL_ONE_MONEY_TOWER) ? UnitType.LEVEL_ONE_PAINT_TOWER : UnitType.LEVEL_ONE_MONEY_TOWER;
+if (rc.canCompleteTowerPattern(alt, ruin) && !rc.canCompleteTowerPattern(kind, ruin)) { rc.completeTowerPattern(alt, ruin); altDone++; return; }
+```
+
+Two lines, purely additive, and it cannot fire unless a tower would otherwise not
+be built at all. It does not try to make `towerTypeFor` stable — it makes the
+*ground* the authority, which is the only thing every soldier already agrees on.
+
+**Falsifier, registered before the probe is read.** `ac` (alt-completions, summed
+per-entity maxima over the same 12 games) must be **≥ 10**, and total completions
+must exceed `darla107`'s **62**. If `ac` is near zero the 252 stalls were
+transient states that resolved on their own, the fix is a no-op, and `darla108`
+closes as `measured-and-small` exactly as `darla106` did.
+
+**Promotion test if the probe passes:** 150-game screen against shipped `i5`,
+then the paired roster and the widened roster, then `v3`.
