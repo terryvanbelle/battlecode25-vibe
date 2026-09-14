@@ -7542,3 +7542,55 @@ unpaints ~138 of our tiles per sample window and we unpaint zero, ever. That is 
 genuine asymmetry in the win condition. What is now known is that it cannot be
 reached through the spawn gates, because every route through them runs into
 `SPLASH_FLOOR`, and `SPLASH_FLOOR` is load-bearing.
+
+---
+
+## Tower paint is the binding resource against `v3`, and upgrades are unreachable
+
+Free from the `darla110` dump — 54,065 tower turns vs `v3`, no new games.
+
+| | |
+|---|---|
+| tower turns with paint **< 200** (cannot afford a soldier) | **52.8%** |
+| median tower paint | **187** |
+| tower turns at the 1000 cap | 4.1% |
+| tower turns wanting an upgrade and unable to pay (`upgPoor`) | **73.4%** |
+| level mix (turns) | lv1 24,219 / lv2 28,879 / lv3 967 |
+
+`darla94` measured tower paint as the production block against the roster; it holds
+against `v3`, and harder. A tower is dry more than half the time, and the cure for
+that is the upgrade — a level-two paint tower makes **10/turn instead of 5** and
+caps at 2000 instead of 1000 — which it cannot afford on 73.4% of its turns.
+
+Iteration 35 already removed the `CHIP_RESERVE` term from that gate, so the gate is
+now the bare `chips >= 2500` and there is no slack left in it. The treasury does
+not reach 2500 because **splashers drain it 400 at a time** on the way up, and a
+splasher is exempt from `SPLASH_FLOOR`. `v3` sits on $3,000-6,280 and upgrades; we
+sit on ~$1,290 with dry towers.
+
+### `darla118` — hold the last splasher when one is all that stands between us and an upgrade
+
+```java
+upg = (chips < need) ? " upgPoor" : " upgNo";
+if (chips < need && chips + UnitType.SPLASHER.moneyCost >= need) { bank = true; upg = " BANK"; }
+...
+if (afford && !bank) { ...build... }
+```
+
+The bank arms **only** in the window `[need - 400, need)` — within one splasher of
+the upgrade — and only on an upgradeable paint tower. No new constant: the window
+is the upgrade's own cost minus the unit's own cost, derived the same way as
+accepted iteration 4's threshold.
+
+**It self-limits on an event independent of its own success** (`darla104`'s rule):
+chip income continues at ~30/turn from money towers whatever this tower does, so
+the bank clears in at most ~13 turns and cannot deadlock. It is also the *opposite*
+trade from `darla113`: that one bought more soldiers by displacing splashers
+permanently; this defers **one** splasher to buy a permanent doubling of the paint
+income that every unit is blocked on.
+
+**Falsifier, pinned to the number above and one step from the mechanism.** Dry
+tower turns must fall from **52.8%**, and `lv=1` turns must fall relative to `lv=2`.
+If towers are no less dry, banking did not convert into upgrades and this closes.
+The roster screen is the guard — withholding splashers is the move `darla89` and
+`darla113` both punished, and if the guard fires this closes regardless of `v3`.
