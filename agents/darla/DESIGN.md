@@ -7120,3 +7120,59 @@ already see via `getNumberTowers()`, exactly as iteration 5 does for the opening
 is a SOLDIER roll killed by `SPLASH_FLOOR` specifically**, as opposed to by the
 chip reserve, the paint floor, or `canBuildRobot`? If the floor is not where
 soldier rolls die, the whole chain above is wrong and nothing gets built.
+
+### `darla112` on `v3`: **1.2% of SOLDIER rolls ever produce a soldier**
+
+11,593 soldier rolls across the 12 `v3` games, tower indicators, per-entity maxima.
+
+| soldier roll dies at | count | share |
+|---|---|---|
+| chip reserve (`chips < 1450`) | 5,940 | **51.2%** |
+| `SPLASH_FLOOR` (`chips - 250 < 2000`) | 4,877 | **42.1%** |
+| `canBuildRobot` (no free tile, no paint) | 639 | 5.5% |
+| **actually built** | **137** | **1.2%** |
+| unaccounted | 0 | — |
+
+137 soldiers in twelve games — about eleven per game, for a unit that is the only
+one able to convert a ruin into a tower. The pre-measurement asked whether
+`SPLASH_FLOOR` is where soldier rolls die; it is the second-largest gate and the
+only one that is *backwards*. The arithmetic, now with counts behind it: between
+1,600 and 2,250 chips a **splasher builds and a soldier cannot**, because the
+splasher is exempt from the floor and the cheaper unit is not.
+
+### `darla113` — the floor yields while expansion is stalled
+
+```java
+static int lastTw = Integer.MAX_VALUE;
+boolean expandStall = (want == UnitType.SOLDIER && rc.getNumberTowers() <= lastTw);
+if (afford && !expandStall && want != UnitType.SPLASHER && chips - want.moneyCost < SPLASH_FLOOR) afford = false;
+...
+if (rc.canBuildRobot(want, loc)) { rc.buildRobot(want, loc); if (want == UnitType.SOLDIER) lastTw = rc.getNumberTowers(); }
+```
+
+No new constant. `SPLASH_FLOOR` keeps its value and its job; it simply stops
+applying to soldiers while the tower count has not grown since this tower last
+built one. Iteration 4's shape exactly — a fixed share replaced by a demand test
+built from state the bot already holds.
+
+**It self-limits on an event that is not the change's own success**, which is the
+`darla104` rule: the exemption ends when **a new tower appears**, and a new tower
+can be built by any soldier from any tower, not only by the ones this exemption
+produced. `lastTw` starts at `Integer.MAX_VALUE` so the exemption is on from round
+1 — the opening is exactly when we are behind, and iteration 5 already established
+that soldiers-before-the-third-tower is worth having.
+
+**Falsifier, pinned to measured quantities this time** rather than to a round
+number I guessed — the mistake made twice today. `darla112` measured 1.2% of
+soldier rolls built and 42.1% killed by the floor. If the exemption works, soldiers
+built must rise to **at least 5% of rolls** (the floor's share cannot be reclaimed
+in full, since the reserve gate still takes 51.2% first), and final tower count
+against `v3` must exceed the 2-11 band recorded in the coverage table. If soldiers
+built stays below 5%, the floor was not the binding gate and this closes.
+
+**The risk it runs, stated before the run.** `SPLASH_FLOOR` exists because
+splashers paint 2.4-4.7x more tiles per unit of build paint than soldiers, and the
+roster rewards coverage — `darla89` closed splasher-displacing work at **-65
+games**. So the roster is the guard here and may well go negative. `v3` is the
+instrument, for the reason the coverage table gives: `v3` wins by out-expanding us
+2-3x and the games end by round 600.
