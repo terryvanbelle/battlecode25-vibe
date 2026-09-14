@@ -5943,3 +5943,44 @@ that it would be *neutral or negative on the roster and better against `v3`* —
 which under the old criteria would have made it unacceptable by construction. It
 is now exactly the kind of arm the criteria can accept, and it will get a `v3`
 benchmark alongside its roster runs rather than instead of them.
+
+# WHAT THIS PROJECT IS FOR (owner, 2026-09-14)
+
+This is practice for an actual Battlecode contest, where the bot plays scrimmages
+against **various opponents** as well as games against old versions of itself. The
+simulation cannot be complete; the aim is to get as close as the available pieces
+allow.
+
+**The opponent set, re-read in that light:**
+
+| | role | use |
+|---|---|---|
+| alice, bob, carol (3 generations, 6 builds) | *old versions of yourself* | the roster instrument |
+| **`v3`** | **a realistic scrimmage opponent** — we are near parity at ~43%, so it is the kind of bot the contest is about beating | selection, as of today |
+| `TSPAARKHS` | too strong (we win 0–0.7%) | **not a target.** An opponent seen at the end of a contest, if ever; tuning toward it is overfitting to a regime that will not occur |
+
+**What changes in practice:**
+
+1. **`TSPAARKHS` is never a selection instrument**, and time is not spent chasing
+   it. Its score is recorded because the benchmark run produces it, and read as
+   context only.
+2. **`v3` is the right difficulty to optimise against**, which is what makes the
+   owner's criteria change coherent rather than merely permissive.
+3. **The real target is generalisation, not any one opponent.** A contest supplies
+   opponents this bot has never seen, so the property that matters is whether a
+   change works *against bots whose behaviour was not used to choose it*. That is
+   the distinction this session has been tracking under a different name all
+   along: the two accepted iterations with opponent-**independent** triggers held
+   up, and every opponent-**dependent** arm — the four gate variants — failed to
+   replicate across opponent sets. The contest framing says that was not an
+   accident of instrumentation. It is the thing itself.
+4. **Opponent diversity beats depth on any one opponent.** `widen.sh` and
+   `widen2.sh` were built to break ties; under this framing they are closer to the
+   real evaluation than the standard roster is, because three generations plus
+   `v3` is four distinct styles rather than one bot measured four times.
+
+**And it raises the stakes on the opening finding.** Reaching a first tower at
+round 266 when `v3` reaches one at 34 is not a `v3`-specific weakness. **Any**
+opponent that opens at a normal pace beats that, which makes it the most
+contest-relevant defect found so far — and the least dependent on who is across
+the board.
