@@ -9167,3 +9167,53 @@ splasher that survives is the one that paints where `v3` is not.
 That inverts the question the next arm should ask: not "how do we engage more"
 but "how do we detect that the opponent punishes contact, and paint elsewhere".
 `darla133`'s +18% game length is the only measured instance of that working.
+
+## A pressure detector, measured (free, from existing dumps)
+
+| | games with a tower loss | first loss, median round | p25 |
+|---|---|---|---|
+| `i5` vs `v3` (12 games) | **7 of 12** | ~500 (100-round samples) | ~300 |
+| `darla122` vs `v3` (per-round) | **6 of 12** | **194** | 153 |
+| any build vs the roster | **0** — no tower on either side ever dies | — | — |
+
+`rc.getNumberTowers()` falling below the maximum a robot has seen is a global,
+constant-free signal that the opponent punishes contact, readable by every unit
+without a message, firing by round ~200 in half the `v3` games and never on the
+roster. That is precisely the discriminator the last eight arms lacked: they
+changed splasher behaviour for every opponent, and the change that helps on the
+roster (engage) is the one that loses on `v3` (contact).
+
+**Registered as the opening question of the next session, with one constraint
+from today:** any response to the detector must *reduce* contact with the
+opponent, not increase it — five arms this session increased it and all five
+lost on `v3`. The response is not designed here; the `darla74` rule says
+measure it first, and the honest measurement is *where* splashers die against
+`v3` (near enemy towers, or in the open), which needs positions from the replay
+action log, not indicators.
+
+---
+
+# RESUME POINT — 2026-09-14 23:0x UTC, end of session
+
+**Shipped build:** `src/darla`, `darla-i5`, unchanged all day. `v3` 69/150; paired
+roster 362/450 (`20260914-135643`); roster-sample gate reference **126/150**
+(`20260914-222402`, pinned maps in `tools/roster-screen-maps.txt`).
+
+**Acceptance rule (owner, 22:30):** McNemar z > 2 on either the 450 paired roster
+or the 150 `v3` census; ≥50% per lineage floor unchanged. First gate:
+`tools/roster-screen.sh`, not self-play (self-play disagreed in sign with the
+roster twice today).
+
+**In flight:** only `tools/idle-filler.sh` (PID 2029625). Cap: two active run
+drivers (owner, 20:1x). Session RSS ~430 MB on a 2 GB driver; owner plans a
+`--continue` restart.
+
+**Today:** 31 arms (`darla106`–`darla137`), 31 closures, 0 accepted. Permanent:
+tower survival (both routes), splasher engagement (five variants, dose-response
+the wrong way), `SPLASH_FLOOR`, moppers, upgrades, SRPs (three variants, cost
+curve attached), navigation (soldiers already arrive 85%), refuel logistics,
+remembered ruins (stale by arrival), exploration radius. Eight method rules
+queued in `.methods-queue/pending.md` (§39–§48).
+
+**Open:** the pressure detector above. **Standing:** `v3` unpaints 4,497 tiles
+per 12 games to our 5 (mopper-only, gated); `v3` holds 2-3× our towers by r600.
