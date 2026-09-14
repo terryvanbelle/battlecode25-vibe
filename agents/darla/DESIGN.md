@@ -8482,3 +8482,22 @@ needs a "reached the target within N turns" counter before it is built.
 
 `darla124` is **closed** on its registered clause. Its roster screen stays queued
 as the guard number for the record.
+
+### `darla127` / `darla126` — arrival-rate probe pair (registered before build)
+
+`darla124` closed on a per-step metric that a correct detour cannot pass. Before
+the navigation line is declared dead, measure the quantity that actually matters,
+**like-for-like**:
+
+- `darla127` = `i5` + arrival counters only. Behaviour identical to `i5`.
+- `darla126` = `darla124` (Bug2 leave condition) + the same counters.
+
+The counter: each time `stepToward` is given a *new* target, `mvTargets++`; the
+first turn the robot is within d² 2 of that target, `mvArrive++`. Arrival rate =
+`mvArrive / mvTargets`, per-entity maxima summed, by unit type.
+
+**Falsifier:** `darla126`'s arrival rate must exceed `darla127`'s for **both**
+soldiers and splashers on the same 12 maps. If it does not, navigation closes for
+good — the per-step metric and the arrival metric will have agreed. **No-op
+check:** `darla127` must score exactly `i5`'s 4/12 on these maps; the counters
+touch no game state, so anything else means the probe itself is broken.
