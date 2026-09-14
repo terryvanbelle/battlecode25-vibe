@@ -8786,3 +8786,44 @@ exploration *policy* — `newExploreTarget` keeping the farthest of four random
 squares — is the measured defect (45% of splasher targets never reached). Any
 re-open should change what a splasher walks toward, not how it steps. `darla132`
 (below) measures how far those targets are.
+
+### `darla132`: explore targets are ~41 tiles away, and arrival sends you back
+
+`i5` + counters, 4/12, byte-identical indicator count. Probe maps are 40x40 to 60x60.
+
+| unit | targets picked | mean distance at selection | arrived | stuck | aged out |
+|---|---|---|---|---|---|
+| SOLDIER | 759 | **41.5 tiles** | 85% | 9% | 5% |
+| SPLASHER | 1,276 | **40.7 tiles** | 31% | 23% | **45%** |
+
+`newExploreTarget` keeps the farthest of four uniform samples, so the target is
+two-thirds of the map away; and `moveExploring` replaces it at d² ≤ 8 with the
+next farthest-of-four *from there* — which is, on average, back the way it came.
+The exploration policy is a shuttle. Soldiers are rescued from it by the frontier
+override (`explore = nearestVisibleEmpty()` whenever paintable ground is in
+sight); splashers have no equivalent, so 69% of their treks end in a stuck or a
+timeout and the rest end in a U-turn.
+
+### `darla133` — explore radius conditioned on the ground you stand on (registered before launch)
+
+```java
+boolean far = true; try { far = rc.senseMapInfo(me).getPaint().isAlly(); } catch (GameActionException e) {}
+if (far ? d > bestD : (bestD < 0 || d < bestD)) { bestD = d; best = c; }   // farthest from home paint, nearest otherwise
+```
+
+Standing on our own paint, keep the far sample — that is what the far target was
+for, leaving home. Standing on neutral or enemy paint, keep the near sample — stay
+in the ground where splashes score. Iteration 4's shape: a demand test on state
+the bot already has, no constant, one sense call per new target.
+
+**This is not one of the four closed repositioning variants.** Those steered a
+splasher *toward* something (enemy paint, a standoff, the nearest empty tile, the
+best-scoring centre). This steers toward nothing — the samples stay uniform random
+— it changes only which of four random points is kept, by the ground underfoot.
+
+**Falsifier, pinned and not satisfiable by inaction:** splasher `SPLASH` share
+must rise above `i5`'s **2.4%** (a splasher that stops moving fires no more) and
+splasher age-outs must fall below **45%**. Roster screen ≥ 75/150 is the guard. If
+`SPLASH` does not rise, being in scoring ground more often does not make it fire
+more often, and the splasher's idle time is `SPLASH_MIN_SCORE`'s, which is a
+constant and off the table.
