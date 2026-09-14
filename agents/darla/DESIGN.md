@@ -8704,3 +8704,30 @@ blocker. No constant, one sense call on the turn a step is blocked.
 **Falsifier, pinned to `darla124`'s split:** roster screen ≥ 75/150 *and* swept
 losses below `darla124`'s 27, with the ≥10%-walls subset holding at or above 50%.
 If the open-map losses do not shrink, the transient-blocker diagnosis is wrong.
+
+### `darla125` roster screen: **65/150 (43.3%)**. The SRP line closes after three variants.
+
+| variant | change | roster screen | swept W/L | 12-map `v3` |
+|---|---|---|---|---|
+| `darla122` | commit to the pattern | 55/150 | 3 / 23 | 2/12 |
+| `darla123` | + third-tower gate | **69/150** | 7 / 13 | 2/12 |
+| `darla125` | + hold on the centre | 65/150 | 3 / 13 | 4/12 |
+| bar | | **≥ 75** | | |
+
+`darla125` cut parked soldier turns by a third and doubled completions relative to
+`darla123`, and the roster priced it *lower* — 59 of 75 maps split by side, which
+is a bot that has become a coin flip everywhere plus 13 maps it now loses from both
+sides. The roster is a coverage race with no tower deaths and games decided by
+expansion speed; on that instrument every parked soldier turn is negative and the
+per-tower income arrives too late to matter. That is exactly the generalisation
+guard doing its job, and it has now said the same thing three times.
+
+**Permanent findings from the line:** the SRP bonus is per tower (jar-verified)
+and decisive when it lands early — `Thirds` A and `Oasis` A flipped outright — but
+no construction rule found today finishes a pattern without costing more expansion
+than the pattern repays on the roster. The measured cost curve above is the
+re-open condition: anything that reopens this must show parked cost below
+`darla125`'s 13.2% of soldier turns *and* a roster screen above 75, and it should
+start from the `TheBest` maps, where towers went 11 → 5.
+
+Closed.
