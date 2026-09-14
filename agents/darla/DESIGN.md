@@ -6336,3 +6336,30 @@ The widened roster decides whether it clears the bar. If it holds, the accept
 rests on: +19 roster games at z = +2.09, the best `v3` figure the project has
 recorded (46.0%), a mechanism confirmed on replays (first tower r266 → r30), and a
 registered check that passed after two predecessors failed it.
+
+### `darla105` widened roster: +14, z = +1.55 — combined rosters **+2.57**, `v3` **+0.82**
+
+**Every instrument positive.** Combined over rosters and `v3` (three disjoint
+opponent sets, 202 discordant keys): **z ≈ +2.58**.
+
+That clears `darla77`'s +2.39, the lowest bar this lineage has accepted on, and it
+does so without the trade that sank `darla102`.
+
+**Accept held for the third-generation run**, which is queued. Reasoning, recorded
+before it lands:
+
+- +2.57 sits at the *low* end of this lineage's accepted range (+2.39, +3.03,
+  +3.26), and +2.39 is the one I later flagged as sitting exactly on the
+  multiple-comparisons boundary.
+- The third set has **changed the answer twice**: it sank `darla86` (combined
+  +1.70 → closed) and it carried `darla96` over the bar (+2.09 → +3.26). It is
+  the cheapest thing that can still change this decision.
+- The owner's audit puts held-out effects at roughly 60% of in-pool ones, so a
+  borderline in-pool figure deserves the extra opponent set rather than the
+  benefit of the doubt.
+
+What would make it an accept: the third generation neutral or positive, leaving
+all four instruments pointing the same way. What would stop it: a third-generation
+regression, which would mean the gain is confined to the two opponent sets that
+have seen the most arms — the overfitting signature, in the place it would show up
+first.
