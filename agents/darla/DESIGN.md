@@ -7967,3 +7967,41 @@ point, but that is the smaller factor — but by **having units that act at all*
 Two censused measurements this session were wrong in the same direction because of
 the same first-token bug; both are corrected above, and the lesson is recorded:
 **a cumulative state string cannot be censused on its first token.**
+
+### The replication came back **byte-identical**, and my reason for running it was wrong
+
+`20260914-1537` scored `i5` at **69/150 (46.0%)** against `v3`, and every one of the
+150 per-game rows matches `20260914-0717` exactly — same winner, same side, same
+round count, on all 150.
+
+**That was predictable and I should have predicted it.** The engine is
+deterministic: same build, same maps, same opponent gives byte-identical games. It
+is written at the top of this notebook and I have relied on it ten times this
+session for determinism checks. A "second independent run" of a fixed build against
+a fixed opponent on a fixed map pool is not a second sample. It is the same
+measurement, re-executed.
+
+**So the ±4 error bar I wrote one tick ago does not exist**, and the correction runs
+deeper than the arithmetic. The 150 games are not a random sample from a
+superpopulation — they are a **census** of 75 maps × 2 sides. `i5` beats `v3` on
+exactly 69 of them. There is no sampling error in that number at all; it is known
+exactly.
+
+What *is* uncertain is something else entirely: **how much of that 69 transfers to
+maps and opponents outside the pool.** That is a generalisation question, and the
+only instrument this project has for it is the idle filler's fresh random 25-map
+samples. The owner's framing — that `v3` is a stand-in for a contest opponent and
+the real target is not overfitting to it — is exactly this distinction, and I
+restated it as a sampling-error problem, which it is not.
+
+**What this does and does not change about `darla109`.** I closed it at 46.7%
+against 46.0% calling one game "inside noise". The noise framing was wrong: on a
+fixed pool, 70 of 150 versus 69 of 150 is a real, exact, reproducible difference of
+one map-side. The closure still stands, on the better grounds: **a one-game edge on
+the 75-map pool we tune against is the definition of what does not generalise**,
+and the roster and the mechanism both said the arm bought nothing. Right answer,
+wrong reason, corrected here.
+
+Cost of the error: one benchmark run of otherwise-idle VM time. Its value was not
+zero — it is the eleventh determinism check and the first at full benchmark scale —
+but that is not why I ran it.
