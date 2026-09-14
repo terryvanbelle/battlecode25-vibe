@@ -8530,3 +8530,35 @@ r949 win at **701** with a pattern paying for 822 rounds — and `giver` A and
 `Thirds` B hold their wins. `TheBest` remains the loss on both sides, towers
 11 → 5 and 8 → 3, which is the parked-soldier cost still showing where the map has
 the most ruins to claim.
+
+### Arrival-rate pair: `darla127` 4/12 (= `i5`, no-op check passes), `darla126` 3/12. Navigation closes as registered.
+
+Both probes are provably behaviour-neutral: `darla127`'s dump has exactly `i5`'s
+227,523 indicator lines and `darla126`'s exactly `darla124`'s 214,745.
+
+| unit | `darla127` (i5 nav) arrivals/targets | `darla126` (Bug2) arrivals/targets | clause |
+|---|---|---|---|
+| SOLDIER | 176 / 7,002 = **2.5%** | 244 / 4,883 = **5.0%** | passes — doubled |
+| SPLASHER | 14 / 5,631 = 0.2% | 10 / 4,310 = 0.2% | **fails** — not higher |
+
+The registered clause required "both", so **navigation closes**. Two registered
+falsifiers, both failed on their letter.
+
+**And both metrics were mis-designed, which I am recording rather than using.**
+Sixty-eight targets per soldier-life says targets are replaced every few turns,
+and the code says why: `moveExploring` swaps `explore` for a new random point as
+soon as the robot is within **d² ≤ 8** of it — before my **d² ≤ 2** arrival test
+can ever fire. Per-step progress penalised the detour; arrival-at-2 measured a
+state the code forbids. The splasher clause was two counts at the floor and could
+not have passed or failed under any navigation.
+
+What did move, consistently, in every measurement that could move: soldiers
+stuck 43.6% → 40.9%, arrivals 2.5% → 5.0%, painting 9.2% → 12.8%, idle 67% → 58%.
+The `darla124` roster screen is still queued and is the number that prices it; it
+is recorded when it lands.
+
+**Correct metric, for a future re-open, drawn from the code's own definitions:**
+`moveExploring` replaces a target for exactly three reasons — proximity (`≤ 8`,
+i.e. *arrived*), `stuckTurns >= 6` (*failed*), `exploreAge > 120` (*timed out*).
+Count the three. That is the arrival rate the bot itself uses, and it is one
+counter per branch. Not built tonight; the line is closed on its registration.
