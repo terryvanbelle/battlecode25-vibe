@@ -9049,3 +9049,26 @@ the ladder, "beat `i5` on the roster with z > 2". I registered that clause and I
 am holding to it; but an arm that is +2 on the target opponent and −9 on retired
 opponents is a trade-off the bars do not currently rank, and whether the roster
 may regress when `v3` improves is the owner's call, not mine.
+
+## Acceptance rule, owner, 2026-09-14 ~22:30 UTC: a significant win on **either** instrument accepts
+
+**Rule as applied from here.** An arm is accepted if it beats the shipped build
+with McNemar **z > 2** on the discordant keys of *either*:
+- the paired roster — 450 keys, (opponent, map, side), three frozen lineages; or
+- the `v3` benchmark — 150 keys, (map, side).
+
+The ≥50%-per-lineage floor is unchanged (the owner did not remove it). The
+owner did not add a no-regression rule for the other instrument and I have not
+invented one; an arm that is significant on one and regresses the other is
+accepted, and the regression is recorded.
+
+**On "significance" against `v3`.** The 150 games are a deterministic census —
+there is no sampling error in 71/150 — so the McNemar test here is not a
+statement about repeat runs. It is the same statement it makes on the roster: the
+difference is carried by more discordant keys than a coin would give, i.e. it is
+*broad* across maps rather than concentrated on a few. That is the property most
+likely to survive the map pool, which is what the owner's framing asks for.
+
+**`darla133` under this rule:** roster z = **−1.08** (30 vs 39), `v3` z =
+**+0.32** (20 vs 18). Not significant on either. It stays closed, on the
+owner's rule rather than my ladder clause, which is the better reason.
