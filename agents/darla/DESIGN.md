@@ -8420,3 +8420,38 @@ The per-pattern cost floor is the real number: 25 tiles at one per turn, and
 `SRPquit` (113) is nearly equal to `SRPdone` (121), so half the attempts exhaust
 `RUIN_PATIENCE` at 40 turns. One soldier per pattern is ~40 soldier-turns per
 completion. That is the trade the roster screen prices; it is still the decider.
+
+### Mark-to-completion timing (free, from the `darla123` dump): the cost is the abandonments
+
+| | count | rounds mark→end | hold turns |
+|---|---|---|---|
+| completed by the marking soldier | **121** | p10 3, **median 12**, p90 20, max 33 | median **11**, p90 17 |
+| abandoned (`SRPquit`/`SRPfoe`) | **120** | **median 42**, p90 51 | — |
+| completions inside 40 rounds | 121 of 121 | | |
+
+So my "~40 soldier-turns per completion" was wrong: a completion costs about
+**eleven** hold turns, because the soldier marks where it already stands and most
+of the 5x5 is already our paint. `RUIN_PATIENCE` never binds a completion.
+
+The cost is the other half. 120 attempts — half of all marks — run the full
+timeout and die at ~42 rounds, and only 7 of them were disrupted by enemy paint.
+**They were not broken; they were unreachable.** The hold guard parks the soldier
+anywhere within d² ≤ 2 of the centre, but a soldier paints only within its action
+radius r² 9, and from an off-centre hold the pattern's far corner sits at d² up to
+18. The soldier stands still, `canAttack` is false for the tiles that are left, it
+paints nothing, and it waits 40 turns. Of 5,783 `SRPhold` turns, roughly 4,400 were
+spent on patterns that then timed out — that is the parked-soldier cost the roster
+screen prices, and three-quarters of it bought nothing.
+
+### `darla125` — hold at the centre, not near it (registered before launch)
+
+One character of the design, `<= 2` → `== 0`: the soldier keeps stepping until it
+stands **on** the centre tile, from which every pattern tile is within d² 8 ≤ 9.
+`moveExploring(srp)` already carries it there; `RUIN_PATIENCE` still bounds the
+case where the centre is occupied.
+
+**Falsifier, pinned to this table:** abandonments must fall below **60** (from
+120) and completions must not fall below **121**; hold turns per completion must
+stay at or under the median 11. Roster screen ≥ 75/150 remains the guard — this
+change *reduces* parked turns, so if the guard still fires, holding is
+unaffordable at any efficiency and the SRP line closes for good.
