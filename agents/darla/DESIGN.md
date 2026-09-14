@@ -6428,3 +6428,30 @@ benchmark is now the best in the project's history:
 Three iterations moved `v3` by +2, +2 and −1; this one moved it **+5** — more than
 the previous three combined, and the first to come from a change designed against
 evidence from `v3` games rather than inferred from roster play.
+
+### Iteration 5 promotion test: **87/150 exactly** — tenth determinism check
+
+`darla-i5` against the frozen `src/darla_iter4` returned the registered value, and
+all five accept steps are complete: frozen, promoted, promotion-tested,
+benchmarked, pushed.
+
+## Next: the same method, applied to the build that just shipped
+
+`v3` still sweeps **30 of 75 maps** against `i5` — down from 32, so the opening fix
+moved two maps out of the swept column and 5 games overall, but the bulk of the
+deficit is untouched.
+
+The method that produced iteration 5 was: take the maps `v3` sweeps, keep the
+replays, and look at what actually happens. That found the opening. It is now
+worth re-running **on the build where the opening is fixed**, because the next
+differentiator is by construction something else — `shell`, `TheBest` and
+`Restart` are queued for replay capture.
+
+Registered before looking: the opening should no longer be the story. If `i5`
+still reaches its first tower far later than `v3` on these maps, then iteration 5
+did not generalise beyond the three maps it was verified on, and that is the first
+thing to know. If the openings are now comparable and `v3` still wins, the
+difference has moved to the middle game — and this time the notebook has a
+mechanism-level record of what the middle game already refuses to yield (paint
+production engine-bounded, refills 4–11%, chips irrelevant, moppers negative at
+every share).
