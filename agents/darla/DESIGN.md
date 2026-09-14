@@ -8661,3 +8661,13 @@ depth stays "never empty", not "three" — the three-queued rule was about idlen
 and two is enough for that. Each driver holds a `gcloud compute ssh` session at
 100-150 MB, and this driver is a 2 GB e2-small carrying a 29-hour session; the
 watchdog kills were the cost of ignoring that.
+
+### `darla124` roster screen: **65/150 (43.3%)**, swept-win 17 / swept-loss 27
+
+Already closed on its probe clause; this is the guard number for the record. It
+is below the bar and it is also the **widest per-map split of the day** — 17 maps
+swept-won against `i5`, 27 swept-lost, only 31 split by side. `darla123` swept 7
+and lost 13; `darla122` swept 3 and lost 23. A navigation change that helps
+decisively on some maps and hurts decisively on others is a map-property effect,
+and the obvious property is wall density (maps carry up to 20% walls). Checked
+next, from the run's own per-map results and the map headers — no new games.
