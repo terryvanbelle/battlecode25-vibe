@@ -7284,3 +7284,69 @@ and it keeps splashers out of the fights that killed `darla88`.
 reports `lowScore` or `noTgt`, how far is the nearest unpainted passable tile?** If
 the answer is "adjacent", distance is not the constraint and the idea dies without
 a run — the same way `darla111` died this morning.
+
+### `darla114` on `v3`: an idle splasher usually cannot see unpainted ground at all
+
+71,967 idle splasher turns (`lowScore` or `noTgt`) across 12 `v3` games. Bytecode
+overruns from the added full-vision scan: **0**.
+
+| nearest unpainted passable tile | share of idle turns |
+|---|---|
+| **none visible anywhere** (r² 20) | **43.4%** |
+| adjacent, d² ≤ 2 | 8.0% |
+| d² 3..8 | 12.3% |
+| d² 9..20, edge of vision | 36.3% |
+
+The registered kill condition was "if the answer is adjacent, distance is not the
+constraint". It is adjacent on 8% of turns. On **79.7%** the splasher is either
+standing in fully-painted ground with nothing to paint in sight, or the nearest
+unpaintable-from-here tile is out at the edge of its vision.
+
+**Why this quantity is causal for coverage and not merely correlated** — the rule
+registered when `darla113` closed, applied before building anything: unpainted
+passable tiles *are* the thing coverage counts. A splasher that reaches one and
+fires increments the win condition directly. This is not an inference from a
+correlation in a table; it is the definition of the metric.
+
+### The actual defect: exploration is blind
+
+```java
+static void newExploreTarget() {
+    for (int i = 0; i < 4; i++) {        // sample a few, keep the farthest
+        MapLocation c = new MapLocation(rng.nextInt(w), rng.nextInt(h));
+        ...
+    }
+}
+```
+
+Four **uniformly random** map squares, keep the farthest, walk there. The bot has
+no frontier memory and no frontier *sense* — and, critically, an idle splasher that
+can see unpainted ground at d² 9..20 **throws that away** and walks toward a random
+point instead. That is 36.3% of idle turns discarding information already in hand.
+
+### `darla115` — steer an idle splasher at the frontier it can already see
+
+```java
+MapLocation frontier = null;
+// where the splasher gives up on a splash target:
+for (MapInfo t2 : rc.senseNearbyMapInfos(-1))
+    if (t2.getPaint() == PaintType.EMPTY && t2.isPassable()) { ... frontier = nearest ... }
+// and at the movement step, instead of moveExploring(null):
+moveExploring(frontier);
+```
+
+`moveExploring` already does `if (target != null && stepToward(target)) return;`,
+so a null frontier falls through to the existing random-explore path unchanged.
+This adds no constant and no new movement code — it supplies a target the function
+already accepts, from a scan the probe just proved costs no bytecode overruns.
+
+**Distinct from `darla88`/`darla89`, which are closed at −68 and −65.** Those moved
+splashers toward *enemy paint* — contested ground, where each tile is fought over
+twice and the splashers died. This moves them toward **EMPTY** ground, which no one
+holds. The registered falsifier from that closure — "compare painted-tile counts,
+not deaths" — is the right instrument here too.
+
+**Falsifier, pinned to `darla114`'s measured numbers.** Idle splasher turns must
+fall from 71,967, and the `SPLASH` rate must rise from **2.4%**. If splashers fire
+no more often than before, the frontier was reachable all along and steering at it
+changes nothing. Roster screen is the guard; `v3` is the instrument.
