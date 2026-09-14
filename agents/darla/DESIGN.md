@@ -8865,3 +8865,35 @@ turns** have a remembered unclaimed ruin, there is no opportunity and no arm is
 built; otherwise the arm is "when idle, explore toward the nearest remembered
 ruin" — using idle turns, displacing nothing, which is a different cost structure
 from `darla113`.
+
+### `darla133` roster screen: **88/150 (58.7%)**, swept 26 / 13. Clears the bar by 13. Ladder launched.
+
+| | `darla133` | bar / reference |
+|---|---|---|
+| roster screen vs `i5` | **88/150 (58.7%)** | ≥ 75; best today was `darla129` at 71 |
+| swept-win / swept-loss | **26 / 13** | `darla129`: 20 / 24 |
+| 12-map `v3` probe | 5/12 | `i5` 4/12 |
+| `SPLASH` share (registered mechanism clause) | 2.1% | required > 2.4% — **failed** |
+
+So the arm I wrote "closes on the mechanism" one entry ago is the strongest
+screen result of the session. I am handling that in the open rather than
+quietly re-reading the clause:
+
+- **The clause failed as written and stays failed.** `SPLASH` as a share of
+  splasher turns fell. What I can add without re-reading is a fact I did not
+  look at: splasher turns rose 119,291 → 143,191 on the same maps, so the
+  **absolute** splash count rose, 2,863 → ~3,007 (+5%), while the rate fell.
+  Games ran longer, splashers lived longer, and fired more in total. A rate was
+  the wrong unit for a mechanism whose effect is on lifetime, not tempo — the
+  same units error as `darla108`, caught the other way round.
+- **This is not `darla113`'s shape.** There, the mechanism moved and both
+  outcome instruments got worse. Here both outcome instruments improved and
+  the mechanism I predicted did not. That is "works for a reason I have not
+  identified", which the ladder is built to test and one screen is not.
+
+**Ladder, registered now.** Paired roster (450) must beat `i5`'s **362/450**
+on the same instrument with McNemar z > 2; full `v3` benchmark must be
+**≥ 69/150** (no regression against the target opponent); mechanism clause for
+the ladder is **absolute splashes per game** on the 12 `v3` replays already on
+disk, `darla133` vs `i5`, which reads ~250 vs ~239. If the paired roster does not
+clear, the 88 was a screen fluke and this closes with everything else.
