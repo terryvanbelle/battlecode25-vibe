@@ -6249,3 +6249,29 @@ r100 bound is survivable; `darla104` showed the tower bound alone is not.
 Registered: the spawn census must show **splashers on every map sampled**,
 including a lost one. That is the check both predecessors failed, and it is
 cheaper to run than the 150 games that followed it.
+
+## Iteration 105 — **87/150 (+12)**, and the window finally closes
+
+Best of the four opening arms: `darla102` +9, `darla103` −22, `darla104` +6,
+**`darla105` +12**.
+
+The registered check passes on every sampled **lost** map — the case its two
+predecessors failed:
+
+| map (all losses) | soldiers | splashers |
+|---|---|---|
+| `Bread` | 16 | **7** |
+| `Filter` | 8 | **5** |
+| `MoneyTower` | 16 | **30** |
+
+Splashers appear everywhere, and `MoneyTower` shows the window closing early and
+the normal mix resuming in full. Conjoining the two bounds did what neither did
+alone: the tower clause ends it early when expansion starts, the round clause ends
+it regardless when expansion does not.
+
+`v3` and both rosters are queued. **`v3` is the discriminator for the whole line**
+— `darla102` bought this same opening and paid 7 games there. If `darla105` keeps
+the roster gain and is neutral-or-better against `v3`, the bundling diagnosis is
+confirmed and the opening is worth having. If it is also negative on `v3`, then
+early soldiers cost `v3` games for a reason that has nothing to do with lost
+coverage, and four arms will have converged on the wrong explanation.
