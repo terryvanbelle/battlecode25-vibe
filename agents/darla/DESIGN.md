@@ -6101,3 +6101,37 @@ bar**, and instead treat the roster gain as evidence that the opening *matters* 
 just not in the way this arm captures it. A version that buys the early towers
 *without* surrendering 100 rounds of splasher coverage would be a different arm
 and a better one; this one bundles two changes and only one of them is wanted.
+
+## `darla103` — soldiers until expansion starts, not for a fixed 100 rounds
+
+`darla102` proved the opening is fixable and proved the fix costs more than it
+buys. The diagnosis of *why* is that it bundles two changes: it adds early
+ruin-claimers **and** removes 100 rounds of splasher coverage, and coverage is
+this bot's win condition. Only the first was wanted.
+
+`darla103` separates them with a condition that switches itself off:
+
+```java
+if (rc.getNumberTowers() <= 4 && want != UnitType.SOLDIER) want = UnitType.SOLDIER;
+```
+
+Both sides start with four towers, so `getNumberTowers() > 4` means **expansion has
+actually begun**. The override then ends on its own. The coverage cost is bounded
+by the thing it is buying rather than by a round number read off a chart — and on
+`shell` `darla102` reached its first new tower at r30, so the expected window is
+tens of rounds rather than a hundred.
+
+This is the same shape as iteration 4, the strongest result in the lineage:
+replace a fixed rule with a demand test the actor can evaluate locally. It is
+also the shape `darla99` got wrong by choosing a trigger that was nearly always
+true — so the check here is that the override must *end*, not merely fire.
+
+Registered before the run:
+- **The window must close.** If `mixFlip` keeps climbing late, `getNumberTowers()`
+  is not doing what I think and the arm is `darla102` with extra steps.
+- Roster: expect a gain, smaller than `darla102`'s +21, since the mechanism is
+  briefer.
+- **`v3` is the point.** `darla102` was −7 there. If `darla103` is neutral or
+  better against `v3` while keeping most of the roster gain, the bundling
+  diagnosis is right. If it is also −7, then early soldiers cost `v3` games for
+  some reason other than lost coverage, and the diagnosis is wrong.
