@@ -6173,3 +6173,43 @@ landed, so the decision cannot have been fitted to it. Three reasons, unchanged:
   matter; what it does not do is close the gap to a stranger.
 - And the criteria's second clause did real work on its first use. Criterion 1
   alone would have shipped this.
+
+## Iteration 103 — **53/150**. The "self-limiting" condition was self-reinforcing
+
+19 soldiers and **zero splashers** in a whole game. The override never switched
+off, and the reason is a plain factual error: I wrote
+`rc.getNumberTowers() <= 4` believing each side starts with four towers. **Each
+side starts with two.** The replay header lists four because it lists both teams,
+and I read the total as ours.
+
+`tw=2` at rounds 1, 21, 41, 61, 81, 101 — the count never left 2, so the condition
+stayed true forever. Worse than a wrong constant: **failing to expand is exactly
+what kept the override armed**, so the arm was self-reinforcing in precisely the
+situation it was built to fix. `darla102`'s crude 100-round window at least ended.
+
+The registered check — *"`mixFlip` must stop climbing, or this is `darla102` with
+extra steps"* — is what caught it, before the score was interpreted.
+
+`darla104` is the same idea with the fact corrected: `<= 2`, so the override ends
+when a **third** tower exists. On `shell` `darla102` reached its first new tower at
+r30, so the expected window is tens of rounds rather than a hundred or a whole
+game.
+
+### Two process failures in the same fifteen minutes, both recorded
+
+**1. `kill` matched my own shell — for the third time.** I ran
+`pgrep -f 'paired-roster.sh darla103'` inside a command whose own text contained
+that string, so `pgrep` returned my shell and the loop killed it. I wrote the rule
+against this in `.claude/README.md` an hour earlier — *never a pattern that also
+describes the command being typed* — and then embedded the pattern in the command.
+The fix that works: read the PID list in one call, then kill **literal PIDs** in a
+separate call whose text does not contain the pattern. That is what finally
+cancelled it, after verifying the target's only child was `sleep 60`.
+
+**2. The `make-arm.sh` mystery is solved.** Multi-line comment insertions
+sometimes glue the final **code** line onto a `//` line, so the statement really
+does end up inside a comment — which is exactly what the guard reports, and
+exactly what silently broke `darla100`. The guard has been right every time; the
+corruption is in my long `\n`-laden sed replacements. **Rule: keep the in-code
+comment to one line and put the reasoning in this file**, which is where it
+belongs anyway. Every arm built that way today has applied cleanly.
