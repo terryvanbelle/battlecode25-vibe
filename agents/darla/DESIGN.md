@@ -8932,3 +8932,29 @@ The registered clause was "≥ 69, no regression against the target opponent", a
 it passes. It is not a `v3` *gain* of any size worth claiming; it is the absence
 of the regression that every prior arm today showed on this instrument. The
 paired roster (450, running) is the decider.
+
+### `darla135` 12-map probe: `frontNone` 11.5% (passes), `ruin=` **5.1%** (fails). Closes on the mechanism.
+
+| clause | counter | bar | `darla135` |
+|---|---|---|---|
+| 1 | `ruin=` share of soldier turns | > 5.4% | **5.1%** — fails |
+| 2 | `frontNone` share | < 14.4% | **11.5%** — passes |
+| 3 | roster screen | ≥ 75 | queued, recorded for the curve |
+| — | 12-map `v3` | — | 4/12 (= `i5`) |
+
+The branch does what it says — 1,775 redirects, 3.4% of soldier turns now spent
+walking to a remembered ruin — and none of it converts into ruin work. The
+memory is stale by arrival: the list drops a ruin only when a *tower* is later
+sensed on it, so a ruin that another soldier is already painting, or that enemy
+paint has made uncompletable, stays remembered and gets walked to. Fixing that
+needs the ban logic to feed the memory, which is a fourth variant of a line that
+has now missed on its first clause; per the standing rule it closes here, with
+the probe cost only.
+
+### `darla136` — probe on `darla133`: why does it win? (registered)
+
+`darla133` + the replacement-reason counters (`xr=`) and target distance at
+selection (`xd=`), behaviour identical to `darla133`. Reads whether the
+ground-conditioned radius shortens splasher treks and raises arrival — the
+mechanism I can measure — before the ladder decides promotion. No clause to pass;
+it explains, and `accept-iteration.sh` needs the explanation.
