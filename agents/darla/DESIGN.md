@@ -6770,3 +6770,37 @@ per game. If that is worth anything the 150-game screen against `i5` should land
 for themselves and `darla108` closes as `measured-and-small` — a correctness fix
 whose correctness does not matter — with the bug itself left documented above so
 the next arm that touches `towerTypeFor` knows the marks are the authority.
+
+### `darla109` — defense towers on a centre key
+
+```java
+int dcx = Math.abs(2*ruin.x - (rc.getMapWidth()-1)) + Math.abs(2*ruin.y - (rc.getMapHeight()-1));
+if (dcx * 4 <= rc.getMapWidth() + rc.getMapHeight()) { defAsk++; return UnitType.LEVEL_ONE_DEFENSE_TOWER; }
+```
+
+Placed **first** in `towerTypeFor`, ahead of `MONEY_MOD` and ahead of both
+unstable branches, so the answer for a given ruin never changes: it reads only
+the ruin's coordinates and the map's dimensions. `|2x-(w-1)| + |2y-(h-1)|` is
+invariant under 180° rotation and under both reflections — the play-symmetry
+property iteration 34 protects is preserved, and every soldier at the ruin agrees.
+That is the stability requirement registered before `darla106` closed, and it is
+the whole reason this rule is geometric rather than a demand test.
+
+**Share measured before building** (`darla74` rule, the one `darla99` and
+`darla106` each violated): `darla107` counted 12 of 62 completions inside this
+threshold — **19%**, against the **14%** `v3` builds. The rate is in range, so
+the branch will neither flood nor fail to fire.
+
+**Falsifier, registered before the probe.** `defBuilt` must be **≥ 1 in at least
+8 of the 12 probe games**, and total completions must not fall below `darla107`'s
+62. A defense tower makes neither paint nor chips, so 19% of towers being defense
+is a real production cost, paid on every map — including the 75-map roster where
+**no tower on either side ever dies** and the purchase therefore buys nothing.
+Expect the roster to be flat-to-negative; `v3` is the instrument that can say yes,
+and the roster is the guard against collateral damage. If the probe shows
+`defBuilt` near zero the type is unreachable (a `darla103`/`darla104` repeat, a
+branch that never lifts) and the arm closes without a 150-game run.
+
+**Interaction note.** `darla108` derives the tower type from the marks with a
+two-way `alt`. If both are accepted, that `alt` must become three-way or it will
+silently ignore a stalled defense pattern.
