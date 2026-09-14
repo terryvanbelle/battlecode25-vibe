@@ -8562,3 +8562,22 @@ is recorded when it lands.
 i.e. *arrived*), `stuckTurns >= 6` (*failed*), `exploreAge > 120` (*timed out*).
 Count the three. That is the arrival rate the bot itself uses, and it is one
 counter per branch. Not built tonight; the line is closed on its registration.
+
+### `darla123` roster screen: **69/150 (46.0%)**. Clause 1 fails by six. Closed.
+
+| | `darla122` | `darla123` | bar |
+|---|---|---|---|
+| roster screen vs `i5` | 55/150 | **69/150** | ≥ 75 |
+| swept-win / swept-loss | 3 / 23 | **7 / 13** | |
+
+The third-tower gate is worth **+14 games** on the roster and cuts swept losses
+from 23 to 13 — iteration 5's boundary, reused, did exactly the work the timing
+measurement predicted. It is not enough: the standing ≥50% bar is 75 and this is
+69, so `darla123` closes on its registered clause.
+
+The residual cost is the one the probe already located — the parked soldier's
+turns *after* the third tower — and `darla125` attacks precisely that (parked
+turns 20.9% → 13.2%, abandonments 120 → 58). Its screen is queued behind
+`darla124`'s and is the live decision on the SRP line. If it clears 75 it goes to
+the paired roster and the full `v3` benchmark; if not, the line has had its three
+variants and closes with a measured cost curve attached.
