@@ -7403,3 +7403,58 @@ and the target now matches the test that gates firing. No constant changes.
 it can see and still does not fire more often, then `SPLASH_MIN_SCORE` is out of
 reach from anywhere reachable, the whole "splashers are positionally blocked"
 hypothesis is exhausted, and this line of work closes for good.
+
+### `darla116` refuted: **`SPLASH` 1.5%**. The positional hypothesis is closed.
+
+Three builds, one monotone dose-response, in the wrong direction:
+
+| splasher turn | `i5` | `darla115` (nearest empty) | `darla116` (best centre) |
+|---|---|---|---|
+| `noTgt` | 18.8% | 13.6% | **9.8%** |
+| `lowScore` | 41.5% | 55.6% | **59.6%** |
+| **`SPLASH`** | **2.4%** | 1.9% | **1.5%** |
+
+The better the steering gets at its stated job — `noTgt` nearly halves — the less
+the splasher fires. Both 12-map probes land at 1/12. The registered closure
+condition was "if the splasher moves toward the best centre it can see and still
+does not fire more often, the hypothesis is exhausted and this line closes for
+good." It is met.
+
+**And `darla116` could not have worked, for a reason visible in the code I had
+already read.** The candidate loop is
+
+```java
+for (MapLocation c : rc.getAllLocationsWithinRadiusSquared(me, 4)) {
+    if (!rc.canAttack(c)) continue;
+```
+
+so `best` is **already inside attack range**. The score depends on the tiles around
+that centre, not on our distance to it. Moving toward `best` cannot raise `best`'s
+score — it can only shuffle which centres are in range and stop the splasher
+going anywhere new. That is a no-op by construction for its stated purpose, the
+same failure class as the `SEEN_CAP` and `MOPPER_IN_20` closures, and I should
+have caught it from the loop header before building rather than after.
+
+**What all three builds actually confirm** is `darla89`'s closure, reached from the
+opposite direction: *the idle `lowScore` time is not waste; it is where the
+splasher has to be standing for the paint it does lay to count.* Three arms have
+now tried to spend that idle time — toward enemy paint (−68), toward enemy paint
+at a standoff (−65), toward nearby empty ground (1/12), toward the best local
+centre (1/12). **Splasher repositioning is closed in four variants.** Nothing
+should reopen it without a mechanism that changes what a splash is *worth*, not
+where it is thrown from.
+
+## Where the day stands
+
+Nine arms, nine closures, no accepted iteration. `i5` remains the shipped build at
+46.0% on `v3`. The closures are real work and several are permanent — tower
+survival on both routes, splasher repositioning in four variants, and the
+`SPLASH_FLOOR` direction with a measured counter-example — but none of it moved a
+score.
+
+Two failures are mine rather than the bot's and both are recorded above: reading a
+correlation in a `v3` table as licence to move tower count (`darla113`), and
+building `darla116` without re-reading the loop header that made it a no-op. The
+`darla74` measure-first rule caught three arms before they ran (`darla111`,
+`darla110`, and the defense-tower share check) and is the reason the day cost
+compute rather than credibility.
