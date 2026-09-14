@@ -8340,3 +8340,54 @@ That pins the next pre-measurement to one question: **what happens between
 `frontFound` and painting?** Either the target is a single tile that is painted
 and immediately replaced (a treadmill), or the soldier is not reaching it. The
 code decides which; read next.
+
+## The reaching half, measured: soldiers fail to get closer on 43.6% of steps
+
+Per-entity maxima of the `mv=stuck/try` counters already in every indicator,
+summed over the 12 `v3` games. A step is counted only when the target is the
+**same** as last turn's, and "stuck" means the distance to it did not shrink.
+
+| unit | robots | steps toward a repeated target | not closer | |
+|---|---|---|---|---|
+| SOLDIER | 103 | 32,905 | 14,348 | **43.6%** |
+| SPLASHER | 489 | 84,098 | 29,075 | **34.6%** |
+| MOPPER | 2 | 80 | 10 | 12.5% |
+
+So a soldier that has found its frontier tile (`frontFound`, 73% of idle turns)
+fails to close on it nearly every other step. That is the 67% idle.
+
+### Why, from the code: the bug-walk has no leave condition
+
+```java
+if (rc.canMove(d)) { rc.move(d); bugDir = null; bugTo = to; return true; }   // lunge whenever the line is open
+if (stuckLast) { ...rotate from bugDir until a legal move... }                 // follow ONLY on the turn after a stuck step
+```
+
+Iteration 3's escape hatch rotates *one* step around an obstacle. The next turn
+the direct direction is usually free again — the robot is beside the wall, not
+in it — so it steps straight, back into the concavity, is stuck, rotates one
+step, and repeats. Distance oscillates and never shrinks. That is exactly what a
+43.6% "not closer" rate on repeated targets looks like, and it is the classic
+failure Bug2 exists to fix: **once following an obstacle, keep following it until
+the direct line is open AND you are closer to the target than when you started
+following.** No constant; one extra int (`bugStartD`).
+
+### `darla124` — Bug2 leave condition, registered before launch
+
+```java
+boolean following = (bugDir != null && to.equals(bugTo));
+if (rc.canMove(d) && (!following || d0 < bugStartD)) { ...direct step; bugDir = null... }
+if (following || stuckLast) { if (!following) { bugDir = d; bugStartD = d0; } ...rotate... }
+```
+
+Plus `mvBlocked++` on the fully-blocked `return false`, so the same run says how
+much of "stuck" is *no legal move at all* (crowding) rather than bad navigation.
+
+**Falsifier, pinned to the numbers above; a robot that stands still or circles
+counts as stuck, so it cannot be met by inaction:**
+1. Soldier not-closer rate **< 43.6%** and splasher **< 34.6%** on the 12-map `v3`
+   probe. If they do not fall, the oscillation diagnosis is wrong.
+2. If `mvBlocked` is ≥ half of stuck steps, the constraint is crowding, not
+   navigation, and this closes on the probe.
+3. Roster screen ≥ 75/150 (standing bar) — navigation touches every unit's every
+   move, so the guard matters more than usual.
