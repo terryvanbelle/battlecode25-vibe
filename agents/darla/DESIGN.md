@@ -7757,3 +7757,56 @@ games in five and lose to `v3` more often than we win.** The roster is not a wea
 instrument — it has resolved every accepted iteration this lineage has — but it has
 stopped being the binding one, and today's measurements say why: it cannot see
 tower deaths, and no tower on either side dies in it.
+
+---
+
+## A whole game mechanic neither side uses: special resource patterns
+
+Every coverage dump this session carries `srp0` for **both** teams, in every
+window of every game. `v3` does not build them either.
+
+Constants re-derived from the pinned jar directly (`javap -constants
+battlecode.common.GameConstants`), not from any digest:
+
+| | |
+|---|---|
+| `PATTERN_SIZE` | 5 (a 5x5 pattern) |
+| `COMPLETE_RESOURCE_PATTERN_COST` | **200 chips** |
+| `EXTRA_RESOURCES_FROM_PATTERN` | **3 chips/turn** |
+| `RESOURCE_PATTERN_ACTIVE_DELAY` | **50 rounds** before it pays |
+| `RESOURCE_PATTERN_RADIUS_SQUARED` | 8 (mark/complete reach) |
+| `MARK_PATTERN_PAINT_COST` | 25 |
+
+Payback is 200/3 ≈ 67 paying turns, behind a 50-round delay: **~117 rounds to
+break even**, then +3/turn forever. Against `v3` our games end between r427 and
+r786, so an SRP completed before ~r300 pays for itself and then some; one
+completed at r500 does not.
+
+**Why this is worth a look when so much else closed today.** Chips are the gate
+that kills 51.2% of soldier rolls and 64.1% of mopper rolls — measured this
+session, not assumed — and base income is ~30/turn. One SRP is +10% income; three
+is +30%. It is the only lever found today that raises the binding resource without
+touching `SPLASH_FLOOR`, which is the gate every other route ran into.
+
+**The risk, registered up front:** `bob`'s workspace records that resource
+patterns and tower patterns **compete for the same tiles**, and a resource pattern
+laid over a ruin under construction breaks the tower. Since tower count and
+coverage both decide games, an SRP that displaces a tower pattern is a bad trade.
+Any arm must refuse to mark near a ruin.
+
+### `darla120` — is there anywhere to put one?
+
+```java
+srpAsk++;
+if (rc.canMarkResourcePattern(rc.getLocation())) srpOk++;
+if (rc.getChips() >= GameConstants.COMPLETE_RESOURCE_PATTERN_COST) srpChips++;
+```
+
+The engine answers the question directly, so the probe asks it rather than
+reimplementing the eligibility rules. Per soldier turn: is a 5x5 pattern markable
+right here, and could the team afford to complete one.
+
+**Kill condition, registered before the run.** If `srpOk` is under **2% of soldier
+turns**, there is nowhere to put a pattern without a search the bot cannot afford,
+and the direction closes without an arm — the same way `darla111` closed this
+morning.
