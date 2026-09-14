@@ -6969,3 +6969,51 @@ the owner's replay grant.
 1 on average**, routing is refuted before it is built and tower survival closes
 entirely — both routes dead, and the lineage moves to the splasher census. At 1 or
 above, the arm is worth building.
+
+### `darla110` on `v3`: **0.27 soldiers per damaged tower-turn.** Routing refuted.
+
+12 games against `v3`, tower indicators only, per-entity maxima.
+
+| | |
+|---|---|
+| our towers in the 12 games | **101** |
+| towers that took damage at least once | **42** (42%) |
+| damaged tower-turns (`dm`) | **662** |
+| **soldiers within r² 20 at those moments** | **0.27 per turn** |
+| any ally within r² 20 (towers included) | 0.84 per turn |
+
+The decision rule registered before the run was "below 1 on average and routing is
+refuted". It is 0.27, and the per-map table is worse than the average suggests:
+three of twelve games are flat **0.00**, and the one map that clears the bar,
+`maze` botA at 6.67, does so on **three damaged turns in the entire game**. The
+0.84 ally figure is mostly other towers, which cannot be routed anywhere.
+
+**A tower under attack is alone.** There is nobody within message range to call,
+so the message channel, the travel cost and the `darla88`/`darla89` risk are all
+moot. This is `darla106`'s failure a third time and it is refuted for two games'
+worth of compute instead of a 150-game run, which is the entire point of the
+`darla74` rule.
+
+**Tower survival is now closed on both routes** — defense towers measured and
+worth nothing (`darla109`), routing structurally impossible (`darla110`). The
+premise that opened it stands: our towers die against `v3` and v3's do not. We
+simply cannot fix it by defending them.
+
+The same run supplies the number that reframes the problem: **42 of our 101 towers
+take damage per 12 games against `v3`**, against `e=0` on every roster tower. The
+roster is not merely insensitive to tower combat — there is none.
+
+### `darla111` — pre-measurement before any siege arm
+
+The census says splashers are 70% of robot-turns and idle on 64% of them
+(`lowScore` 35.6% + `noTgt` 28.6%). Against `v3` we destroy essentially no enemy
+towers. An arm that points idle splashers at enemy towers therefore has both a
+free resource and a real gap — but the `darla74` rule applies before anything is
+built, and the question it must answer is:
+
+**when a splasher reports `noTgt`, is an enemy tower anywhere near it?**
+
+`darla111` counts, on splasher turns with no splash target, whether an enemy tower
+is within sensing range and how far the nearest one is. **Registered rule:** if
+fewer than 5% of idle splasher turns have an enemy tower in range, a siege arm is
+`darla106` a fourth time and is not built.
