@@ -6876,3 +6876,23 @@ No arm is built from this yet. It is registered as measurement so that the next
 arm touching unit mix or logistics starts from a number instead of an intuition —
 which is the failure `darla99`, `darla106` and both of today's mis-set falsifiers
 have in common.
+
+### `darla109` on `v3`: **70/150 = 46.7%** against `i5`'s 46.0%. Closed.
+
+One game of 150. The standard error on a 150-game benchmark is about 4 points, so
+46.7% and 46.0% are the same number. The hard stop registered before the run said
+"beat 46.0% or close"; a one-game difference is not beating, and the whole point
+of writing that stop down was to stop me re-reading a flat result as a win.
+
+`darla109` closes as **measured-and-small**. Defense towers are reachable, stable
+on a centre key, and built at 19% — the mechanism works exactly as designed and
+buys nothing measurable. Route 2 of tower survival is now closed on evidence
+rather than on the false premise it was closed on the first time.
+
+That leaves **routing** (route 1) as the only open route to tower survival: a
+tower that is being hit messages a soldier within `MESSAGE_RADIUS_SQUARED = 20`.
+Its `darla74` pre-measurement is specific and must come first — **at the rounds
+our towers take damage against `v3`, how many of our soldiers are within r² 20?**
+If the answer is near zero this is `darla106` again and no arm should be built.
+That measurement needs `v3` replays, which `tools/benchmark-replay.sh` can now
+produce.
