@@ -7214,3 +7214,23 @@ mechanism is confirmed and the outcome is unmeasured. The **150-game `v3`
 benchmark** is the instrument that settles it, against `i5`'s **46.0%**, and the
 150-game roster screen already running is the guard for the `darla89` risk
 registered before the run.
+
+### `darla113` roster screen: **33/150 (22.0%)**. The guard fired, hard.
+
+The risk registered before the run was that `SPLASH_FLOOR` protects the bot's
+painting engine and that displacing splashers cost `darla89` -65 games. This is
+-84 games, in the mirror. `darla88`'s calibration note applies — a catastrophe
+reads as more catastrophic in self-play than against the retired lineages — but
+not nearly enough to rescue this.
+
+The standing bar is that Darla must win **≥50% against each lineage**, so
+`darla113` cannot be accepted whatever the `v3` benchmark says. That result is
+still worth having, and the `v3` run is left to finish: the question it answers is
+not "ship this" but **"does out-expanding `v3` actually beat `v3`"**, and that
+determines whether the whole direction is worth a second, gentler arm or is dead.
+
+What is already established either way: the exemption does what it was built to do
+(towers 5.8 → 8.7), and it costs far too much to leave on unconditionally. The
+`darla74` measurement chain that got here is intact — 1.2% of soldier rolls build,
+42.1% die at the floor, `v3` out-expands us 2-3x — and none of that is withdrawn.
+What is refuted is *this* way of spending it.
