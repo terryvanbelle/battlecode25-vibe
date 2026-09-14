@@ -9146,3 +9146,24 @@ is more losing to `v3`. It also reframes `darla133`'s +2: the trigger that fired
 
 The roster-sample screen is the other acceptance instrument under the owner's
 rule and is read below as McNemar against `i5`'s reference run.
+
+### `darla137` roster-sample gate: **119/150**, McNemar z = **−1.46**. Closed on both instruments.
+
+| instrument | `i5` | `darla137` | z |
+|---|---|---|---|
+| roster-sample gate (150 keys) | **126** | 119 | **−1.46** (8 vs 15; alice 2 vs 9) |
+| `v3` census (150 keys) | **69** | 63 | **−1.00** (15 vs 21) |
+
+**The exploration-radius line closes with a dose-response.** `i5` keeps the far
+sample always; `darla133` keeps the near one on the rare turns a splasher stands
+on non-ally paint (`v3` +2, roster −9); `darla137` keeps it whenever enemy paint
+is in sight (`v3` −6, gate −7). The more the trigger fires, the worse, on both
+instruments. It is the fifth time this session that "make the splasher engage
+more" has lost — after enemy-paint steering (`darla88`/`89`), nearest-empty
+(`darla115`), best-centre (`darla116`) — and this time with the mechanism
+verified to have fired as designed. **Against `v3`, contact is loss.** The
+splasher that survives is the one that paints where `v3` is not.
+
+That inverts the question the next arm should ask: not "how do we engage more"
+but "how do we detect that the opponent punishes contact, and paint elsewhere".
+`darla133`'s +18% game length is the only measured instance of that working.
