@@ -6594,3 +6594,38 @@ cannot express the mechanism reports only the cost, and reading its number as
 The `v3` benchmark is running, and a replay capture on `TheBest` and `shell` is
 queued to check the two registered conditions directly: that `" def"` fires but is
 rare, and — the real question — **whether we still lose three towers**.
+
+## Iteration 106 — tower defence is a NULL, and the reason is that nobody is there
+
+| instrument | result | discordant | z |
+|---|---|---|---|
+| screen (self-play, blind to the mechanism) | 71/150 (−4) | — | — |
+| **`v3`** | **69/150 (46.0%)** — same total as `i5` | **16** | **+0.00** |
+
+**Sixteen discordant pairs.** `darla105` produced 37 against the same instrument
+and `darla102` produced 43. A change that barely alters the games it is aimed at
+is not being punished by `v3` — it is **hardly firing**.
+
+That is the opposite of `darla99`'s failure, and instructive as a pair: `darla99`
+chose a trigger that was nearly always true and flooded; `darla106` chose one so
+narrow it almost never fires. The trigger is *"I am within r² ≤ 16 of one of my
+remembered towers, and an enemy robot is in my action radius"* — and the replay
+evidence says our soldiers are **not near our towers** when those towers are being
+ground down. They are off painting, which is what the census has said all along:
+soldiers spend their turns at ruins, at the frontier, or walking.
+
+**So the defect is not that soldiers refuse to fight. It is that nothing is home.**
+A tower under siege is alone because the army is elsewhere, and adding a
+permission to fight changes nothing for robots that are not present.
+
+That reframes the fix and rules out the cheap version. Defending would require
+either **routing** a soldier back to a threatened tower — which costs travel, and
+`darla88`/`darla89` showed what sending units toward the enemy costs — or making
+the **tower itself** survive better, which is what `v3` does with defense towers
+and what this lineage closed on the false premise that towers never die.
+
+Recorded, and one small honest note: the `" def"` counter has still not been read,
+because the replay capture exited with *"another benchmark run is already going"* —
+`benchmark.sh` guards against concurrent runs and the `v3` benchmark held the slot.
+Re-queued. The 16-discordant-pair figure is strong enough to carry the conclusion
+on its own, but the counter is the direct evidence and it should be in the record.
