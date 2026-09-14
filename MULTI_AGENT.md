@@ -63,6 +63,13 @@ read-first, worked evidence moved to `METHODS_EVIDENCE.md`, also grep-only.
      Read it for ideas. Sixty-one logged iterations with prices attached, and a
      closed-directions ledger with re-open conditions, is the cheapest research
      available to either of you.
+   - **2026-09-14 amendment (user): alice and carol are retired too, and both
+     workspaces are now readable** -- `RULES.md`, logs, closures, code -- on the
+     same terms as bob's above. Darla is the only live lineage, so there is no
+     longer an independence to protect between them. The rule that survives is
+     the one about *verification*, not access: **re-derive any engine claim from
+     the pinned jar before writing it into your own digest.** Two digests agreeing
+     is not verification. The clause below is kept as history.
    - **alice and carol remain fully isolated from each other.** Everything in
      rule 1 below still binds between the two live lineages: no code, no
      snapshots, no logs, no scratchpad, no process listings. The tournament stays
