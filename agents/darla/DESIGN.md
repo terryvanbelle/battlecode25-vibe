@@ -8501,3 +8501,32 @@ soldiers and splashers on the same 12 maps. If it does not, navigation closes fo
 good — the per-step metric and the arrival metric will have agreed. **No-op
 check:** `darla127` must score exactly `i5`'s 4/12 on these maps; the counters
 touch no game state, so anything else means the probe itself is broken.
+
+### `darla125` 12-map probe: two clauses pass decisively, one misses by a turn, score back to 4/12
+
+| registered clause | bar | `darla123` | `darla125` |
+|---|---|---|---|
+| completions | ≥ 121 | 121 | **183** |
+| abandonments | < 60 | 120 | **58** |
+| hold turns per completion (median) | ≤ 11 | 11 | **12** — misses by one |
+| roster screen | ≥ 75/150 | *queued* | *queued* |
+| 12-map `v3` score | — | 2/12 | **4/12** (`i5` 4/12) |
+
+The centre-hold did what the reach arithmetic said it would: completion rate
+47% → **72%**, abandonments halved, and the parked cost fell by a third —
+`SRPhold` 20.9% → **13.2%** of soldier turns (4,202 against 5,783). The 58
+remaining abandonments still die at the 42-round timeout with `SRPfoe` at 3, so
+they are the genuinely unfinishable cases (centre occupied, tile blocked), not a
+second reach defect.
+
+Clause 3 misses by one turn — median 12 against 11 — and I am recording that as a
+miss, not rounding it. It is the least load-bearing of the three (it was written to
+catch a *regression* in per-pattern cost, and there is none in the total), but the
+bar was mine and it was not met. The registered guard is the roster screen, and
+that is what decides the arm.
+
+Per map: **Oasis A converts** — a r1481 loss at 265 coverage under `i5` becomes a
+r949 win at **701** with a pattern paying for 822 rounds — and `giver` A and
+`Thirds` B hold their wins. `TheBest` remains the loss on both sides, towers
+11 → 5 and 8 → 3, which is the parked-soldier cost still showing where the map has
+the most ruins to claim.
