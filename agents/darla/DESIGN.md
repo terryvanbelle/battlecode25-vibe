@@ -8989,3 +8989,29 @@ can (`+sold`, `died`, `starved` per team), and that read follows.
 units, path unknown" — and the causal path becomes the first registered question
 of the next session, not a footnote. An accepted iteration whose mechanism is
 wrong in the notebook is worse than one whose mechanism is honestly blank.
+
+### The extra robots are game length: `darla133`'s games run 18% longer
+
+Per-team aggregates summed over the same 12 `v3` games, `i5` vs `darla133`:
+
+| | `i5` | `darla133` | ratio |
+|---|---|---|---|
+| **game length, total rounds** | 11,031 | **13,072** | **1.18** |
+| spawned soldiers / splashers | 137 / 567 | 167 / 683 | 1.22 / 1.20 |
+| died / starved | 574 / 523 | 675 / 602 | 1.18 / 1.15 |
+| final towers | 70 | 83 | 1.19 |
+| final coverage | 3,654 | 4,073 | 1.11 |
+
+Every count moves with game length and the per-round rates do not. So the
+mechanism is not production and not survival per unit — it is that **`v3` takes
+longer to reach the coverage win**, or fails to, and everything downstream
+accumulates for longer. On the roster, where there are no tower deaths and the
+game *is* the coverage race, that shows up as the +13 at the screen.
+
+**Leading explanation, stated as such and not proven:** a splasher that reaches
+non-ally ground now keeps a *near* target and stays in it, instead of picking the
+farthest-of-four and shuttling home through our own paint; splashes therefore
+land where they contest coverage rather than on tiles already ours. The
+per-round `SPLASH` share fell (2.4 → 2.1%), so it is *where*, not *how often* —
+and "where" needs positions, which no counter today records. That is the
+registered first question for the next session if this promotes.
