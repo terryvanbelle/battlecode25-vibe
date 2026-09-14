@@ -7594,3 +7594,48 @@ tower turns must fall from **52.8%**, and `lv=1` turns must fall relative to `lv
 If towers are no less dry, banking did not convert into upgrades and this closes.
 The roster screen is the guard — withholding splashers is the move `darla89` and
 `darla113` both punished, and if the guard fires this closes regardless of `v3`.
+
+### `darla118` refuted: 767 banks bought **4** upgrades, and towers got drier
+
+| | `i5` | `darla118` |
+|---|---|---|
+| tower turns | 54,065 | 54,727 |
+| `BANK` armed | — | **767** |
+| `UPG` performed | **19** | **23** |
+| dry tower turns (paint < 200) | **52.8%** | **55.6%** |
+| median tower paint | 187 | 169 |
+
+*(First pass I compared against an `i5` count taken with a regex that omitted the
+`UPG` tag, which put upgrade turns in the "none" bucket. Re-counted with the same
+pattern on both builds, the honest comparison is 19 against 23.)*
+
+The registered falsifier required dry tower turns to fall. They **rose**, and 767
+banked builds converted into four extra upgrades. Refuted.
+
+**The reason is a property of the game I already knew and did not apply: chips are
+team-shared.** One tower withholding a splasher does not accumulate anything — it
+donates its 400 chips to every other tower, which spends them immediately. The
+iteration-30 comment says this outright about the splasher floor: *"Chips are
+team-shared, so every tower evaluates this identical predicate and they coordinate
+without communicating."* `darla118`'s predicate was **not** identical across towers
+— it armed only on upgradeable level-one paint towers, so money towers and
+level-two towers kept spending and the bank leaked out from under it.
+
+### `darla119` — the same bank, as a predicate every tower agrees on
+
+```java
+final int UPG_NEED = UnitType.LEVEL_TWO_PAINT_TOWER.moneyCost;
+boolean bank = chips < UPG_NEED && chips + UnitType.SPLASHER.moneyCost >= UPG_NEED;
+if (afford && !bank) { ...build... }
+```
+
+`chips` is the shared treasury, so **every tower computes the same answer in the
+same turn** and they stop spending together, without communicating — the exact
+coordination property iteration 30 relies on. Nothing else changes.
+
+**HARD STOP, registered now.** This is the third time today I have followed a
+refuted arm with "I built it wrong, here is the right version" — `darla115` →
+`darla116` failed that way, and both failed again. So: `darla119` must show
+**upgrades well above 23** and **dry tower turns below 52.8%** on the 12-map probe.
+If it does not, **the tower-upgrade direction closes entirely** — no fourth
+variant, no gentler window — and I stop proposing rebuilds of refuted arms today.
