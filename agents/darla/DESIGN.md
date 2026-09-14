@@ -8731,3 +8731,36 @@ re-open condition: anything that reopens this must show parked cost below
 start from the `TheBest` maps, where towers went 11 → 5.
 
 Closed.
+
+### Replacement-reason pair: soldiers arrive 85% under `i5`. Navigation was never the soldier problem.
+
+`darla131` (= `i5` + counters, 4/12, byte-identical indicator count) against
+`darla130` (= `darla129` + counters, 3/12). Every explore-target replacement,
+classified by the reason `moveExploring` itself uses:
+
+| unit | build | replacements | **arrived** (d² ≤ 8) | stuck (≥ 6) | **aged out** (> 120) |
+|---|---|---|---|---|---|
+| SOLDIER | `i5` | 571 | **85%** | 9% | 5% |
+| SOLDIER | `darla129` | 551 | 81% | 9% | 10% |
+| SPLASHER | `i5` | 794 | **31%** | 23% | **45%** |
+| SPLASHER | `darla129` | 902 | 19% | 12% | **69%** |
+
+Three corrections to my own record, in order:
+
+1. **Soldiers reach their frontier targets 85% of the time.** The "43.6% of steps
+   not closer" figure (`darla124`) and the "2.5% arrive" figure (`darla127`) were
+   both metric artefacts — the first penalises the detour a correct follower must
+   take, the second tests a state the code discards first. The code's own arrival
+   definition settles it: soldier navigation is fine, and `darla124`'s soldier
+   gains (paint 9.2 → 12.8%) came from somewhere other than reaching targets more
+   often — most likely from *changing which* targets got reached.
+2. **The splasher is the unit that does not arrive**, and terrain-gated Bug2
+   (`darla129`) makes it worse: age-outs 45% → 69%. Following a wall for 120 turns
+   toward a point on the far side of the map is not navigation, it is a tour.
+3. **The cause is the exploration policy, not the stepping.** `newExploreTarget`
+   samples four random map squares and keeps the **farthest**. That was written for
+   soldiers, who "cannot find the frontier with a local random walk", and it is
+   shared by splashers, who then spend most of their lives on treks that time out.
+
+`darla129`'s screen is the registered decider for the navigation line and reports
+below; on the mechanism it is already negative for the unit that matters.
