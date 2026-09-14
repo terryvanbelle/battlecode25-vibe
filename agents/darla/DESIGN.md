@@ -6500,3 +6500,45 @@ doses. *"`v3` builds defense towers"* is not a reason to build defense towers. T
 reason to act would be knowing **what kills our towers** — which robots, at what
 stage, and whether a defended tower would have survived. The replays to answer
 that are already on disk and cost no VM time.
+
+## What kills our towers — and the asymmetry nobody could see before
+
+Our three towers on `TheBest` die at rounds **327, 548, 562**. The mechanism at
+r327, in full:
+
+```
+round 326 id10514(T2,SOLDIER) DAMAGE id11156(T1,PAINT_TOWER) -50
+round 327 id11156(T1,PAINT_TOWER) DAMAGE id10514(T2,SOLDIER) -20
+round 327 id11156(T1,PAINT_TOWER) DAMAGE id10514(T2,SOLDIER) -10
+round 327 id10514(T2,SOLDIER) DAMAGE id11156(T1,PAINT_TOWER) -50
+```
+
+**A single `v3` soldier sieges the tower at −50 a hit while the tower answers for
+−20 and −10.** It is not a raid or a swarm; it is one robot grinding a tower down,
+and the tower loses the exchange.
+
+**The asymmetry over the whole game:**
+
+| | attacks on towers | damage dealt |
+|---|---|---|
+| `v3` → our towers | **106** | **5,500** |
+| us → `v3` towers | 18 | 1,250 |
+
+**`v3` attacks our towers nearly six times as often and deals four and a half
+times the damage.** It destroys three; we destroy none.
+
+This is a whole dimension of the game — tower combat — that this lineage has never
+worked on, and could not have known to: against the roster **no tower on either
+side ever dies**, so the entire axis reads as a no-op there. Every finding built
+on "towers are permanent" was true of the instrument and false of the opponent.
+
+It also reframes the expansion numbers above. We build 12 towers and finish with
+9; `v3` builds 21 and finishes with 21. Part of our "expansion stall" is not a
+failure to *build* — it is a failure to *keep*.
+
+**Two directions, and the order matters.** Defending (defense towers, or soldiers
+responding to a tower under attack) and attacking (sieging `v3`'s towers, which we
+barely attempt at 18 attacks all game). The mopper lesson says not to copy `v3`
+because `v3` does it. But "a quarter of what we build is taken from us, and we
+take nothing back" is our own number, measured on our own side, and it does not
+depend on imitating anything.
