@@ -8671,3 +8671,36 @@ and lost 13; `darla122` swept 3 and lost 23. A navigation change that helps
 decisively on some maps and hurts decisively on others is a map-property effect,
 and the obvious property is wall density (maps carry up to 20% walls). Checked
 next, from the run's own per-map results and the map headers — no new games.
+
+### Bug2's split tracks wall density — and the fix is structural
+
+`darla124`'s 150 screen games against the 75 map headers (walls %, area, ruins),
+no new games:
+
+| `darla124` vs `i5` | maps | mean walls | mean area | mean ruins |
+|---|---|---|---|---|
+| swept-win | 17 | **11.4%** | 1,540 | 19.4 |
+| split by side | 31 | 10.4% | 1,603 | 21.4 |
+| swept-loss | 27 | **8.6%** | 1,988 | 25.3 |
+
+Spearman(walls %, games won) = **+0.27** over 75 maps. Maps with walls ≥ 10%:
+**39/78 = 50%**; below 10%: **26/72 = 36%**. The leave condition helps where
+there is terrain to follow and hurts on big open maps — where the thing that
+blocked the direct step was almost certainly another robot, which will have moved
+by next turn, and the follower dutifully detours around a wall that is no longer
+there until it is "closer than when it started".
+
+That is not a threshold problem; it is that the code cannot tell a wall from a
+unit. The engine can: `senseMapInfo(next).isPassable()` is false for walls and
+ruins and true for a tile with a robot on it.
+
+### `darla129` — follow terrain, not traffic (registered; built, not yet launched under the two-driver cap)
+
+`darla124` with one condition added: enter following mode only if the tile in the
+direct direction is **impassable terrain** (off-map, wall, or ruin). A step blocked
+by a robot keeps the incumbent one-step rotate, which is right for a transient
+blocker. No constant, one sense call on the turn a step is blocked.
+
+**Falsifier, pinned to `darla124`'s split:** roster screen ≥ 75/150 *and* swept
+losses below `darla124`'s 27, with the ≥10%-walls subset holding at or above 50%.
+If the open-map losses do not shrink, the transient-blocker diagnosis is wrong.
