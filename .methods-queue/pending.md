@@ -109,3 +109,50 @@ halves below the zero arm → the pair is required", "one half carries it", "the
 other carries it". Observed: the halves are **identical, both slightly positive,
 and neither reaches the bar** — none of the three. Reported as a fourth outcome
 rather than forced into the nearest branch.
+
+## darla, 2026-09-14 session (15 arms, 15 closures, no acceptance)
+
+**§39 — a quantity must be shown CAUSAL for the win condition, not merely
+correlated with it.** (darla) A `v3` replay table showed tower count and coverage
+agreeing in all twelve games; she treated that as licence to raise tower count.
+`darla113` raised it 50% and coverage *fell* — both instruments worse, −84 roster
+games and −13 on `v3`. Both quantities were downstream of a third thing. Before
+moving X, state the mechanism by which X changes the win condition; a table where
+X and the win condition move together is not that statement.
+
+**§40 — a falsifier must be pinned to an ALREADY-MEASURED quantity, not a round
+number chosen by eye.** (darla) Two arms in one day missed registered thresholds
+that were guesses: `ac >= 10` was set from a count of stalled *turns* and read
+against a counter incrementing per stalled *ruin*; `defBuilt in 8 of 12 games` was
+a rate she had no way to predict. Both mechanisms were real and both bars failed,
+which costs the credibility of the bars that matter.
+
+**§41 — a falsifier must be a quantity the intervention CANNOT satisfy by doing
+nothing.** (darla) `darla119` banked chips by withholding builds, and was judged on
+"dry tower turns". Dry turns fell 52.8% → 43.9% — because a tower that does not
+build does not spend paint. The upgrade count, the only quantity the intervention
+could move solely through its claimed mechanism, was flat at 21 against 19. A proxy
+an intervention lowers by inaction is not evidence.
+
+**§42 — a cumulative state string cannot be censused on its first token.** (darla)
+Two separate censuses were wrong in the same direction because the indicator's
+state is built by appending: the splasher census missed an entire implemented siege
+archetype (`approach`/`ring`/`backoff`), and the soldier census undercounted
+painting by half. Both were quoted as findings before the bug was found. Search the
+whole string, and state in the write-up that you did.
+
+**§43 — under a deterministic engine, a "replication" of a fixed build on a fixed
+pool is the same measurement, not a second sample.** (darla) She re-ran the shipped
+build against the benchmark to "narrow the ±4 error bar" on 69/150; all 150
+per-game rows came back byte-identical. The deeper error: 75 maps × 2 sides is a
+**census**, not a sample, so the binomial SE does not apply — the score is known
+exactly. The real uncertainty is generalisation off the pool, which only fresh
+random map samples address.
+
+**§44 — a guard can fail BECAUSE it succeeded.** (darla) `make-arm.sh` verified an
+intended change with `grep -v '^\s*//' "$DST" | grep -q "$EXPECT"` under
+`set -o pipefail`. `grep -q` exits on match, closing the pipe; `grep -v` takes
+SIGPIPE (141); pipefail fails the pipeline. The earlier in the file the match sits,
+the more reliably it misfires — and she had previously recorded the guard as sound
+after watching an identical rerun pass. Replaced with one `awk` pass. Any
+`producer | grep -q` under pipefail has this bug.
