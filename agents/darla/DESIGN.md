@@ -7350,3 +7350,56 @@ not deaths" — is the right instrument here too.
 fall from 71,967, and the `SPLASH` rate must rise from **2.4%**. If splashers fire
 no more often than before, the frontier was reachable all along and steering at it
 changes nothing. Roster screen is the guard; `v3` is the instrument.
+
+### `darla115` refuted on its own mechanism check: `SPLASH` **2.4% → 1.9%**
+
+123,615 splasher turns vs `v3`, against `i5`'s 119,291.
+
+| splasher turn | `i5` | `darla115` |
+|---|---|---|
+| `lowScore` | 41.5% | **55.6%** |
+| `HOME` | 25.2% | 17.2% |
+| `noTgt` | 18.8% | **13.6%** |
+| `cd` | 10.5% | 9.7% |
+| **`SPLASH`** | **2.4%** | **1.9%** |
+
+The registered falsifier required idle turns to fall and the `SPLASH` rate to
+rise. Idle turns **rose** (60.3% → 69.2%) and `SPLASH` **fell**. Refuted, and the
+12-map score agrees emphatically at 1/12.
+
+**But the two halves move in opposite directions, and that is the finding.**
+`noTgt` fell by a quarter — steering does put splashers next to unpainted ground,
+exactly as designed. Every turn it rescued from `noTgt` landed in `lowScore`
+instead, and then some.
+
+The reason is a mismatch I built in myself. The splash score counts empty and
+enemy tiles within r² 4 **of a candidate centre** — it wants a *cluster*. I steered
+at the **nearest single empty tile**, which is typically an isolated gap in
+otherwise-painted ground. The splasher arrives, finds one empty tile and
+twenty-four painted ones, scores 2, and declines. I gave it a target its own
+scoring function was always going to reject.
+
+### `darla116` — steer at the best-scoring centre instead of the nearest empty tile
+
+```java
+tag = (best == null) ? " noTgt" : " lowScore";
+frontier = best;                       // the highest-scoring centre it already computed
+...
+moveExploring(frontier);
+```
+
+`best` is already computed every turn: it is the centre with the most empty and
+enemy tiles around it, and on `lowScore` turns it is non-null and merely below
+`SPLASH_MIN_SCORE`. `i5` computes it, uses it for nothing, and walks toward a
+uniformly random map square instead. **The bot's own objective function is
+available as a movement target and is being discarded** — on 41.5% of splasher
+turns in `i5`, and 55.6% in `darla115`.
+
+This is strictly smaller than `darla115`: no scan, no new sensing, three lines,
+and the target now matches the test that gates firing. No constant changes.
+
+**Falsifier, pinned as before.** `SPLASH` must rise above `i5`'s **2.4%** and
+`lowScore` must fall below **41.5%**. If the splasher moves toward the best centre
+it can see and still does not fire more often, then `SPLASH_MIN_SCORE` is out of
+reach from anywhere reachable, the whole "splashers are positionally blocked"
+hypothesis is exhausted, and this line of work closes for good.
