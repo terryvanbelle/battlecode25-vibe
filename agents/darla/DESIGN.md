@@ -8827,3 +8827,41 @@ splasher age-outs must fall below **45%**. Roster screen ≥ 75/150 is the guard
 `SPLASH` does not rise, being in scoring ground more often does not make it fire
 more often, and the splasher's idle time is `SPLASH_MIN_SCORE`'s, which is a
 constant and off the table.
+
+### `darla133` 12-map probe: score 5/12, `SPLASH` **2.1%**. Mechanism clause fails.
+
+| | `i5` | `darla133` |
+|---|---|---|
+| 12-map `v3` score | 4/12 | **5/12** |
+| `SPLASH` share of splasher turns | 2.4% | **2.1%** — bar was *above* 2.4 |
+| `noTgt` (nothing to splash in reach) | 18.8% | **23.4%** |
+| `lowScore` | 41.5% | 40.7% |
+
+The first arm today to score above `i5` on the probe, and its registered mechanism
+clause fails: splashers fire *less*, and sit in fully-painted ground *more*. The
+near sample does what I feared "nearest" would when I designed it — it keeps the
+splasher local, and local is home. One game on twelve does not outrank that.
+
+**Registration gap, mine:** the second clause (age-outs below 45%) cannot be read
+on this build — I built `darla133` from `i5` without the replacement-reason
+counters. A falsifier that cannot be measured on the arm it governs is not a
+falsifier. Rule added to the standing list: **every clause must name the counter
+that reads it, and the build must carry that counter.**
+
+The roster screen is running and is recorded for the curve, but per the
+registration — "if `SPLASH` does not rise, this closes" — `darla133` closes on
+the mechanism. With far (`i5`: shuttle) and near (`darla133`: stays home) both
+measured, the exploration-radius axis has no third setting that is not a constant.
+
+### `darla134` — probe: does an idle soldier *remember* an unclaimed ruin? (registered)
+
+Soldiers are idle 67% of the time, reach their explore targets 85% of the time,
+and claim a ruin on 5.4% of turns; `nearestEmptyRuin()` sees only ruins in vision,
+and a soldier that walked past an empty ruin on the way home has no memory of it.
+`darla134` = `i5` + a small remembered-empty-ruin list (keys, like `seenLoc`;
+dropped when a tower is later sensed on them) and one counter: idle turns on which
+the list is non-empty. **Decision rule:** if fewer than **10% of idle soldier
+turns** have a remembered unclaimed ruin, there is no opportunity and no arm is
+built; otherwise the arm is "when idle, explore toward the nearest remembered
+ruin" — using idle turns, displacing nothing, which is a different cost structure
+from `darla113`.
