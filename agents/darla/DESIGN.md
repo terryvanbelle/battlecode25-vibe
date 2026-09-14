@@ -6305,3 +6305,34 @@ What the criteria will ask: `darla102` was refused for gaining on the roster whi
 regressing `v3`. `darla105` must not be accepted on the mirror-image of that
 argument — a `v3` gain with a roster regression would be the same trade facing the
 other way, and the second clause applies symmetrically or it is not a rule.
+
+### `darla105` on the standard roster: **+19 games, z = +2.09**, positive on all three
+
+| opponent | delta |
+|---|---|
+| alice | +6 |
+| bob | +2 |
+| carol | +11 |
+
+51–32 of 83 discordant. **Positive against every opponent** — unlike `darla102`,
+whose gain was lopsided, and unlike the four gate variants, where per-opponent
+signs flipped run to run.
+
+Running scorecard, and both instruments now point the same way:
+
+| instrument | `darla105` vs `i4` | discordant | z |
+|---|---|---|---|
+| screen (self-play) | 87/150 (+12) | — | — |
+| standard roster | **362/450 (+19)** | 83 | **+2.09** |
+| **`v3`** | **69/150 (+5)** | 37 | **+0.82** |
+| widened roster | *running* | | |
+
+**This is the first arm in the session to be positive on the roster and `v3`
+simultaneously**, which is precisely what the criteria were rewritten to
+recognise and what `darla102` failed. No trade is being made in either direction,
+so the symmetry constraint I registered an hour ago does not bind.
+
+The widened roster decides whether it clears the bar. If it holds, the accept
+rests on: +19 roster games at z = +2.09, the best `v3` figure the project has
+recorded (46.0%), a mechanism confirmed on replays (first tower r266 → r30), and a
+registered check that passed after two predecessors failed it.
