@@ -6411,3 +6411,20 @@ roster could not see it, and 1,350 paired games did not.
 
 Remaining accept steps: promotion test (must return **exactly 87/150**), `v3`
 benchmark for the shipped build, and push.
+
+### `darla-i5` on `v3`: **69/150 (46.0%)** — identical to `darla105`'s, as required
+
+`i5` is `darla105` promoted, so the same maps and opponent return the same games.
+Ninth determinism check since the accepts began, and the shipped build's standing
+benchmark is now the best in the project's history:
+
+| build | vs `v3` | swept against darla |
+|---|---|---|
+| `i1` | 42.0% | 35 |
+| `i3` | 43.3% | 29 |
+| `i4` | 42.7% | 32 |
+| **`i5`** | **46.0%** | **30** |
+
+Three iterations moved `v3` by +2, +2 and −1; this one moved it **+5** — more than
+the previous three combined, and the first to come from a change designed against
+evidence from `v3` games rather than inferred from roster play.

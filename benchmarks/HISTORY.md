@@ -26,6 +26,7 @@ progress is what each lineage's frozen roster reports.
 | 20260914-0157 | — | — | — | — | — | — | — | — | 1/4 25.0% (-13.0) | — | — |
 | 20260914-0337 | — | — | — | — | — | — | — | — | — | 40/150 26.7% | — |
 | 20260914-0447 | — | — | — | — | — | — | — | — | — | — | 69/150 46.0% |
+| 20260914-0717 | — | — | — | — | — | — | — | 69/150 46.0% (+46.0) | — | — | — |
 
 ## Per-run detail
 
@@ -124,4 +125,10 @@ progress is what each lineage's frozen roster reports.
 | agent | benchmark | won | played | win% | swept | swept against | played build |
 |---|---|---|---|---|---|---|---|
 | darla105 | v3 | 69 | 150 | 46.0% | 24 | 30 | `d7b81a4` |
+
+### 20260914-0717
+
+| agent | benchmark | won | played | win% | swept | swept against | played build |
+|---|---|---|---|---|---|---|---|
+| darla | v3 | 69 | 150 | 46.0% | 24 | 30 | `6a8b72a` |
 
