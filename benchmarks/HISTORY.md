@@ -112,5 +112,5 @@ Current record: **alice 17.3%** (run 20260910-0149), **bob 4.7%** (run 20260908-
 
 ---
 
-29 run directories on disk. 33 complete scored result(s), of which 6 were unshipped candidates; 14 map-subset probe(s) excluded as too small to compare; 16 record(s) shown.
+30 run directories on disk. 33 complete scored result(s), of which 6 were unshipped candidates; 15 map-subset probe(s) excluded as too small to compare; 16 record(s) shown.
 

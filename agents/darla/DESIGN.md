@@ -7810,3 +7810,34 @@ right here, and could the team afford to complete one.
 turns**, there is nowhere to put a pattern without a search the bot cannot afford,
 and the direction closes without an arm — the same way `darla111` closed this
 morning.
+
+### `darla120`: an SRP is markable on **7.4%** of soldier turns. Kill condition cleared.
+
+54,057 soldier turns across 12 `v3` games, per-entity maxima.
+
+| | |
+|---|---|
+| `canMarkResourcePattern` true where the soldier stands | **4,008 (7.4%)** |
+| team holds the 200 chips to complete one | **53,465 (98.9%)** |
+
+Kill condition was under 2%. It is 7.4%, and the chips are never the problem —
+200 is a twelfth of what the reserve already holds back.
+
+**The per-map spread is the part that matters**, and the headline average hides it:
+
+| map | markable | | map | markable |
+|---|---|---|---|---|
+| Oasis A | **41.6%** | | giver B | 24.9% |
+| Oasis B | **34.6%** | | TheBest A | 10.0% |
+| giver A | 18.8% | | shell A | 4.3% |
+| Thirds B | 7.9% | | **maze A** | **0.5%** |
+| Thirds A | 6.3% | | **maze B** | **0.2%** |
+
+The two `maze` games contribute 34,845 of the 54,057 soldier turns — a map with
+almost no open 5x5 ground keeps soldiers alive and wandering, so it dominates the
+denominator while offering nowhere to build. Space, not chips, is the constraint,
+and it varies by map by two orders of magnitude.
+
+That is an argument for an **opportunistic** rule rather than a search: mark when
+the tile you are already standing on works, never walk to find one. A soldier that
+hunts for SRP ground on `maze` would spend the whole game hunting.
