@@ -9015,3 +9015,37 @@ land where they contest coverage rather than on tiles already ours. The
 per-round `SPLASH` share fell (2.4 → 2.1%), so it is *where*, not *how often* —
 and "where" needs positions, which no counter today records. That is the
 registered first question for the next session if this promotes.
+
+### `darla133` paired roster: **353/450 (78.4%)**, McNemar z = **−1.08**. Closed on its ladder.
+
+| | `i5` | `darla133` |
+|---|---|---|
+| paired roster (450, identical keys) | **362** | 353 |
+| discordant keys | i5-only **39** | darla133-only 30 |
+| McNemar z | | **−1.08** (bar > +2) |
+| per lineage | carol 125 / bob 121 / alice 116 | carol 121 / bob 122 / alice 110 |
+| self-play screen vs `i5` | — | **88/150** (+13 over the bar) |
+| full `v3` | 69 | 71 |
+
+Nine games below the incumbent on the instrument that decides, after thirteen
+above the bar on the screen. **The screen was the mirror.** A bot playing its own
+predecessor measures how it exploits that predecessor's specific habits — here,
+`i5`'s splashers shuttle home and `darla133`'s do not, and against each other that
+asymmetry is worth 26 swept maps. Against three frozen strangers it is worth
+nothing. This is `darla88`'s calibration note ("a catastrophe reads as more
+catastrophic in the mirror") with the sign flipped, and it happened twice today:
+`darla124`/`darla129` swept 17-20 maps in the mirror and lost on the roster too.
+
+**Instrument change, registered for tomorrow:** the first gate should be a
+**roster-sample screen** — 150 games as 50 per frozen lineage on a fresh random
+25-map sample — not self-play. Self-play stays as a cheap sanity check for
+catastrophe (it caught `darla88` in thirteen minutes), not as the gate.
+
+**A policy question for the owner, stated once and not decided by me.** Under the
+standing bars — ≥50% against each lineage (`darla133`: 81 / 81 / 73) and at least
+as good as any previous agent against the benchmark (71 ≥ 69, a deterministic
+census, not a sample) — `darla133` qualifies. It fails only the clause I added to
+the ladder, "beat `i5` on the roster with z > 2". I registered that clause and I
+am holding to it; but an arm that is +2 on the target opponent and −9 on retired
+opponents is a trade-off the bars do not currently rank, and whether the roster
+may regress when `v3` improves is the owner's call, not mine.
