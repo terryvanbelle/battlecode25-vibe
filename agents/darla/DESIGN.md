@@ -7919,3 +7919,18 @@ rebuild-a-refuted-arm today, it parks a soldier — the only unit that builds to
 and tower count decides games — and the payback is ~117 rounds against games that
 end at r427-786. The measurement stands for whoever picks it up: **SRPs are
 buildable; what is missing is a unit that stays still.**
+
+### `darla121` roster screen: **45/150 (30.0%)** — consistent with the refutation.
+
+## The `46.0%` figure every arm today was judged against has a ±4 point error bar
+
+Fifteen arms were accepted or rejected this session against `i5`'s **69/150** on
+`v3`. The standard error on a 150-game binomial at p≈0.46 is
+`sqrt(0.46*0.54/150)` ≈ **4.1 points**. `darla109` came in at 46.7% and I closed it
+as noise on exactly that reasoning — correctly — but it means the reference itself
+is only known to ±4, and several of today's arms landed inside that band.
+
+A second independent 150-game run of shipped `i5` against `v3` is queued. It costs
+nothing that is not already idle, and it narrows the number every future acceptance
+decision is measured against — which is worth more right now than a sixteenth arm
+built on a thin thread.
