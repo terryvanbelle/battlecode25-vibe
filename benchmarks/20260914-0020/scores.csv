@@ -1,0 +1,9 @@
+agent,benchmark,map,agent_side,winner_side,rounds,agent_result
+darla,v3,shell,B,A,522,loss
+darla,v3,Crab,A,B,658,loss
+darla,v3,shell,A,B,738,loss
+darla,v3,Crab,B,A,484,loss
+darla,v3,TheBest,A,B,482,loss
+darla,v3,TheBest,B,A,455,loss
+darla,v3,Oasis,A,B,607,loss
+darla,v3,Oasis,B,A,560,loss

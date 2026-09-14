@@ -5822,3 +5822,44 @@ samples against `i1`'s 38.** The idle filler produces exactly those. Leaving it 
 run is the deliberate choice, not an idle queue — and inventing an arm to fill the
 queue would spend the instrument the audit says is scarce on evidence the audit
 says is weak.
+
+# FIRST LOOK AT v3 — the race is lost in the first hundred rounds
+
+The owner granted permission on 2026-09-14 to examine game replays against `v3`.
+No such replay existed: `tools/benchmark.sh` omits `-Dbc.server.save-file` so that
+the old rule held *by construction*. `tools/benchmark-replay.sh` is a separate,
+opt-in copy that keeps them — `benchmark.sh` still writes nothing, so anyone
+reading it still finds a tool that cannot produce a `v3` replay. The grant covers
+**replays only**; `v3`'s source remains unread and lives only on the VM.
+
+Tower completions, `darla-i4` against `v3`, three maps `v3` sweeps:
+
+| map | `v3`'s first five towers | ours |
+|---|---|---|
+| `shell` 40×40 | r34, 64, 119, 148, 203 | **r266 — and that was our only one** |
+| `Crab` | r30, 42, 96, 128 | r47, 75, 95 |
+| `Oasis` | r22, 41, 59, 89, 130 | r36, 128 |
+
+**On `shell`, `v3` has five towers before we have one.** It finishes with ten to
+our one.
+
+This reframes everything the session has been doing. Every arm since `darla94` has
+worked on why expansion *stalls* — the paint block, the chip reserve, the money
+share, the mopper. All of that is about the middle game. **The race against `v3` is
+decided before round 100**, and on `shell` we are 232 rounds late to our first
+tower. No mid-game fix reaches a deficit that large.
+
+It also explains the session's central puzzle — why +19, +15 and +29 against the
+roster bought +2, +2 and −1 against `v3`. Alice, Bob and Carol are this project's
+own lineages and open at a similar pace, so a mid-game efficiency gain is worth
+real games against them. `v3` is already five towers ahead by the time those gains
+apply, and improving how well we play from behind does not change who is ahead.
+
+**The open question, and it is now a sharp one:** what is `v3` doing in rounds
+1–34 that we are not? Our first tower on `shell` lands at 266. Both sides start
+with the same towers, the same paint, and one soldier. That is the next
+measurement, and the replays to make it are on disk.
+
+Recorded with the caveat that three maps is three maps — but `v3` opens at r22,
+r30 and r34 across them, and we open at r36, r47 and r266, so the pattern is not
+resting on one game.
