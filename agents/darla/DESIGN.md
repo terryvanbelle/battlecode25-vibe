@@ -7458,3 +7458,50 @@ building `darla116` without re-reading the loop header that made it a no-op. The
 `darla74` measure-first rule caught three arms before they ran (`darla111`,
 `darla110`, and the defense-tower share check) and is the reason the day cost
 compute rather than credibility.
+
+---
+
+## The one thing `v3` does that we never do at all: it mops
+
+From the `v3` coverage dumps, per-round action counts, `acts[p u a s m]` =
+paint / unpaint / attack / splash / mop.
+
+| round window | us | `v3` |
+|---|---|---|
+| 100 | `p332 u0 a19 s7 m0` | `p338 u1 a6 s4 m0` |
+| 400 | `p732 u0 a13 s61 m0` | `p444 u80 a30 s28 m32` |
+| 600 | `p541 u0 a11 s42 m0` | `p362 u138 a31 s32 m64` |
+
+**Our unpaint count is zero in every window of every game.** `v3` removes ~138 of
+our tiles per sample window and mops 64 times. Coverage is the win condition, and
+`v3` attacks it directly while we have no answer and never take the tiles back.
+
+This is causal for coverage by the rule registered when `darla113` closed — not a
+correlation. Removing an enemy tile decrements their coverage and makes the square
+available to us; it is the win condition operated on directly.
+
+**Why we have no moppers, and why the existing closure does not cover this.**
+`MOPPER_IN_20 = 2` sets a 10% roll share, and moppers are 0.1% of robot-turns. The
+`PAINT_FLOOR` block reads:
+
+```java
+if (afford && want.paintCost < UnitType.SOLDIER.paintCost
+        && rc.getPaint() - want.paintCost < PAINT_FLOOR) afford = false;
+```
+
+`MOPPER.paintCost` is 100 and `SOLDIER.paintCost` is 200, so a mopper is the only
+unit the first clause selects, and it needs tower paint ≥ 300 to pass. That floor
+was added to stop cheap moppers starving soldiers — a real problem, measured on
+*carol*, where moppers were 60-75% of the mix. On this build it does not thin
+moppers, it **eliminates** them, and the earlier `MOPPER_IN_20` closure ("the mix
+is set by tower paint, not by `MOPPER_IN_20`") is exactly right and is the *reason*
+this happens, not a finding that it is fine.
+
+### `darla117` — where mopper rolls die
+
+Registered before any arm, and before reading any score: counts `MOPPER` rolls and
+which gate kills each one — reserve, `SPLASH_FLOOR`, `PAINT_FLOOR`, or
+`canBuildRobot`. `darla112` did exactly this for soldiers and found 1.2% built.
+
+**Kill condition:** if `PAINT_FLOOR` is *not* where mopper rolls die, the diagnosis
+above is wrong and no mopper arm gets built.
