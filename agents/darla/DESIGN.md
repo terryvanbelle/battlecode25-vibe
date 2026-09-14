@@ -6024,3 +6024,45 @@ earlier. Two readings, and they call for opposite conclusions:
 
 The roster runs are still queued and will be recorded, but under the new criteria
 this arm is already failing the instrument it was built for.
+
+# The opening deficit is FIXED — and fixing it makes us WORSE against `v3`
+
+`darla102`'s mechanism check, same maps, same opponent:
+
+| map | `i4` before | **`darla102` now** | `v3` |
+|---|---|---|---|
+| `shell` | us **r266** — our only tower | us **r30, r34, r59** | r34, r42, r74 |
+| `Oasis` | us r36, r128 | us **r22, r42, r54** | r27, r42, r61 |
+
+**On `shell` we go from 232 rounds behind to four rounds ahead**, and match `v3`
+tower for tower through the opening. On `Oasis` we now open first. The arm does
+exactly what it was designed to do, completely.
+
+**And it loses seven more games to `v3`** (57/150 against `i4`'s 64/150).
+
+So the headline I wrote a few hours ago — *"the race is lost in the first hundred
+rounds"* — is **wrong**, and this is the experiment that shows it. The opening
+deficit was real, it is fixable, and closing it does not win the games. Whatever
+`v3` does to beat us happens after its fifth tower, not before its first.
+
+That is worth more than the arm. The `r34`-versus-`r266` gap was the most
+striking number this project has produced, and it turned out to be a **symptom
+rather than a cause** — the kind of thing that is only distinguishable by fixing
+it and watching the score not move.
+
+**Full scorecard, under the new criteria:**
+
+| instrument | `darla102` vs `i4` | discordant | z |
+|---|---|---|---|
+| screen (self-play) | 84/150 (+9) | — | — |
+| standard roster | **358/450 (+15)** | 87 | **+1.61** |
+| `v3` benchmark | 57/150 (−7) | 43 | −1.07 |
+
+Not accepted: +1.61 is below the bar this lineage has held (`darla77` +2.39,
+`darla84` +3.03, `darla96` +3.26), and it regresses the instrument it was built
+for. The widened roster is queued and will be recorded either way.
+
+**And my prediction was wrong in both directions** — I registered
+*neutral-or-negative on the roster, better against `v3`* and got the exact
+opposite on both. Registering it is what makes that legible; it would otherwise
+be very easy to remember this as a half-success.

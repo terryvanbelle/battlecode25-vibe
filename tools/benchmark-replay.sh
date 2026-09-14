@@ -48,6 +48,7 @@ HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$HERE/lib.sh"
 source "$HERE/benchmark-collate.sh"
 
+AGENT="${AGENT:-darla}"
 BOTS="${BOTS:-alice bob carol}"
 BENCH="${BENCH:-TSPAARKHS v3}"      # staged on the VM under ~/bc25-benchmarks/bench/src
 MAXJOBS="${MAXJOBS:-3}"
@@ -68,8 +69,8 @@ trap 'rm -rf "$STAGE"; [ -s "$OUT/scores.csv" ] || rm -rf "$OUT"' EXIT
 
 STAGE=$(mktemp -d)
 for B in $BOTS; do
-  git -C "$REPO_ROOT" archive HEAD "agents/$B/src/$B" | tar -x -C "$STAGE" --strip-components=3
-  git -C "$REPO_ROOT" log -1 --format="$B %h %s" -- "agents/$B/src/$B"
+  git -C "$REPO_ROOT" archive HEAD "agents/$AGENT/src/$B" | tar -x -C "$STAGE" --strip-components=3
+  git -C "$REPO_ROOT" log -1 --format="$B %h %s" -- "agents/$AGENT/src/$B"
 done > "$OUT/bots.txt"
 
 NMAPS=$(echo "$MAPS" | wc -w)
