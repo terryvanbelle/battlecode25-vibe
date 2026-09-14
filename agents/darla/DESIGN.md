@@ -6275,3 +6275,33 @@ the roster gain and is neutral-or-better against `v3`, the bundling diagnosis is
 confirmed and the opening is worth having. If it is also negative on `v3`, then
 early soldiers cost `v3` games for a reason that has nothing to do with lost
 coverage, and four arms will have converged on the wrong explanation.
+
+### `darla105` on `v3`: **69/150 (46.0%)** — the best `v3` result this project has recorded
+
+| build | vs `v3` | | |
+|---|---|---|---|
+| `i1` | 63/150 — 42.0% | | |
+| `i3` | 65/150 — 43.3% | | |
+| `i4` (shipped) | 64/150 — 42.7% | | |
+| `darla102` (opening, no window close) | 57/150 — 38.0% | −7 | z = −1.07 |
+| **`darla105`** (same opening, window closes) | **69/150 — 46.0%** | **+5** | z = **+0.82** |
+
+**The bundling diagnosis is confirmed.** Two arms buy the same early towers; the
+one that also surrenders 100 rounds of splasher coverage loses 7 games to `v3`,
+and the one that gives the coverage back gains 5. A **12-game swing** attributable
+to the window closing, with the opening change held constant.
+
+That was the registered discriminator for the entire line, and it came down on the
+side that says the opening *is* worth having — provided it is bought rather than
+traded for.
+
+**z = +0.82 on 37 discordant pairs is not significant on its own.** It is the best
+`v3` figure the project has produced, and three earlier builds sat within a game
+and a half of each other (63, 64, 65) while this one is four clear of the best of
+them — but one 150-game instrument at +0.82 is not an accept. The roster runs are
+in flight and the decision waits for them.
+
+What the criteria will ask: `darla102` was refused for gaining on the roster while
+regressing `v3`. `darla105` must not be accepted on the mirror-image of that
+argument — a `v3` gain with a roster regression would be the same trade facing the
+other way, and the second clause applies symmetrically or it is not a rule.
