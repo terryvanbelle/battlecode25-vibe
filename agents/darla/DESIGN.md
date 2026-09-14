@@ -8455,3 +8455,30 @@ case where the centre is occupied.
 stay at or under the median 11. Roster screen ≥ 75/150 remains the guard — this
 change *reduces* parked turns, so if the guard still fires, holding is
 unaffordable at any efficiency and the SRP line closes for good.
+
+### `darla124` 12-map probe: soldiers 40.9%, splashers **41.5%**. Clause 1b fails. Closed.
+
+| registered clause | bar | measured |
+|---|---|---|
+| soldier not-closer rate | < 43.6% | **40.9%** — passes by 2.7 points |
+| splasher not-closer rate | < 34.6% | **41.5%** — fails by 6.9 points |
+| fully blocked share of stuck steps | closes if ≥ 50% | **1.8% / 2.0%** — crowding ruled out |
+| 12-map `v3` score | — | 3/12 (`i5` 4/12) |
+
+What moved on the soldier side is real and in the right direction: paint turns
+9.2% → **12.8%**, idle 67.0% → **58.4%**, `frontFound`-and-still-idle 38.5% →
+13.2%, ruin work 5.4% → 9.9%. The leave condition does get soldiers to their
+frontier more often.
+
+And it made splashers worse by seven points. The likeliest reason is one I should
+have anticipated when I wrote the falsifier: **correct wall-following moves away
+from the target on purpose.** A Bug2 follower hugging a wall records "not closer"
+on every step of the detour and then arrives; the incumbent lunge-and-rotate
+records fewer such steps and never arrives. The metric I registered counts the
+detour as failure. That does not rescue the arm — the clause is registered, it
+fails, and the score did not improve — but it is the lesson: **the falsifier for a
+navigation change is arrival, not per-step progress**, and the next navigation arm
+needs a "reached the target within N turns" counter before it is built.
+
+`darla124` is **closed** on its registered clause. Its roster screen stays queued
+as the guard number for the record.
