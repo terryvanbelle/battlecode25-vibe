@@ -5984,3 +5984,43 @@ round 266 when `v3` reaches one at 34 is not a `v3`-specific weakness. **Any**
 opponent that opens at a normal pace beats that, which makes it the most
 contest-relevant defect found so far — and the least dependent on who is across
 the board.
+
+## Iteration 102 — soldiers-first is WORSE against `v3`: my prediction was backwards
+
+| instrument | result | discordant | z |
+|---|---|---|---|
+| screen (self-play vs `i4`) | **84/150 (+9)** | — | — |
+| **`v3` benchmark** | **57/150 (38.0%)** vs `i4`'s 64/150 | 43 | **−1.07** |
+
+I registered this arm predicting *neutral-or-negative on the roster, better
+against `v3`*. **It is better on the screen and worse against `v3`** — wrong on the
+half that motivated it, and wrong in the direction that mattered.
+
+**43 discordant pairs**, against the 9 that separated `i4` from `i3`. The change
+alters games against `v3` substantially; it just alters them for the worse.
+
+**What I got wrong, and it is a reasoning error rather than a measurement one.**
+The evidence was solid: `v3` builds 6 soldiers to our 1 by round 40, and reaches
+its first tower at r34 against our r266. I inferred *therefore build soldiers
+early*. That treats the unit mix as the cause when it may only be a correlate —
+`v3`'s soldiers may reach ruins faster for reasons that have nothing to do with how
+many it has, and forcing our mix to match copies the visible symptom of its
+opening without the machinery that makes the opening work.
+
+It also removes something real: 100 rounds of no splashers is 100 rounds of far
+less area paint, and coverage is this bot's established win condition. I changed
+two things — more ruin-claimers *and* far less early coverage — and read only the
+first.
+
+**The mechanism check is running now.** `benchmark-replay.sh` on `shell`, `Crab`
+and `Oasis` with `darla102` will say whether the first tower actually arrived
+earlier. Two readings, and they call for opposite conclusions:
+- **First tower earlier and still losing** → the opening deficit is real but not
+  what decides the game, and the whole "race is lost before round 100" reading
+  needs revisiting.
+- **First tower no earlier** → forcing soldiers does not fix the opening at all,
+  the bottleneck is elsewhere (where those soldiers go, not how many there are),
+  and the finding survives while this arm does not.
+
+The roster runs are still queued and will be recorded, but under the new criteria
+this arm is already failing the instrument it was built for.
