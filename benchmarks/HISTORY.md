@@ -1,47 +1,55 @@
 # Benchmark history
 
-Every finalist-bot benchmark run, oldest first. Scores only — no replay of
-these games was ever written, so there is nothing here but the numbers.
+**Records only.** A row appears here when a lineage beat its own previous best
+against that benchmark over a COMPLETE run — every map, both sides,
+150 games. Runs that did not improve on the record are not listed, and
+neither are the small map-subset probes used to read indicator strings: a 1/12
+and a 56/150 are not the same measurement.
+
+Nothing is lost by the filtering. This file is regenerated from the
+`scores.csv` in each run directory, so any run can be recovered in full by
+reading its own directory under `benchmarks/`.
+
+Scores only — no replay of a benchmark game is ever written by `benchmark.sh`.
 
 **These are a yardstick, not a target.** A benchmark bot must never become a
-gauntlet or roster opponent. And read the win% in one direction only: while it
-sits near the floor the instrument has little room to show a *regression*, so it
-measures distance to a tournament-winning bot and nothing else. Absolute
-progress is what each lineage's frozen roster reports.
+gauntlet or roster opponent, and `TSPAARKHS` is never a selection instrument.
+Read the win% in one direction only: while it sits near the floor the
+instrument has little room to show a *regression*, so it measures distance to a
+tournament-winning bot and nothing else. Absolute progress is what each
+lineage's frozen roster reports.
 
-## Win rate over time
+## Records vs `TSPAARKHS`
 
-| run | alice vs TSPAARKHS | alice vs v3 | bob vs TSPAARKHS | bob vs v3 | carol vs TSPAARKHS | carol vs v3 | darla vs TSPAARKHS | darla vs v3 | darla102 vs v3 | darla103 vs v3 | darla105 vs v3 | darla106 vs v3 | darla109 vs v3 | darla110 vs v3 | darla112 vs v3 | darla113 vs v3 | darla114 vs v3 | darla115 vs v3 | darla116 vs v3 | darla117 vs v3 |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 20260908-0212 | 0/150 0.0% | 12/150 8.0% | 0/150 0.0% | 7/150 4.7% | 0/150 0.0% | 8/150 5.3% | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
-| 20260909-0133 | 0/150 0.0% (=) | 19/150 12.7% (+4.7) | 0/150 0.0% (=) | 7/150 4.7% (=) | 0/150 0.0% (=) | 31/150 20.7% (+15.3) | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
-| 20260910-0149 | 2/150 1.3% (+1.3) | 26/150 17.3% (+4.7) | 0/150 0.0% (=) | 7/150 4.7% (=) | 0/150 0.0% (=) | 37/150 24.7% (+4.0) | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
-| 20260910-2317 | — | — | — | — | — | — | 1/150 0.7% | 51/150 34.0% | — | — | — | — | — | — | — | — | — | — | — | — |
-| 20260911-1112 | — | — | — | — | — | — | 0/150 0.0% (-0.7) | 63/150 42.0% (+8.0) | — | — | — | — | — | — | — | — | — | — | — | — |
-| 20260912-0011 | — | — | — | — | — | — | 0/150 0.0% (=) | 63/150 42.0% (=) | — | — | — | — | — | — | — | — | — | — | — | — |
-| 20260913-0058 | — | — | — | — | — | — | — | 65/150 43.3% (+1.3) | — | — | — | — | — | — | — | — | — | — | — | — |
-| 20260913-1716 | — | — | — | — | — | — | — | 64/150 42.7% (-0.7) | — | — | — | — | — | — | — | — | — | — | — | — |
-| 20260914-0020 | — | — | — | — | — | — | — | 0/8 0.0% (-42.7) | — | — | — | — | — | — | — | — | — | — | — | — |
-| 20260914-0047 | — | — | — | — | — | — | — | — | 57/150 38.0% | — | — | — | — | — | — | — | — | — | — | — |
-| 20260914-0157 | — | — | — | — | — | — | — | — | 1/4 25.0% (-13.0) | — | — | — | — | — | — | — | — | — | — | — |
-| 20260914-0337 | — | — | — | — | — | — | — | — | — | 40/150 26.7% | — | — | — | — | — | — | — | — | — | — |
-| 20260914-0447 | — | — | — | — | — | — | — | — | — | — | 69/150 46.0% | — | — | — | — | — | — | — | — | — |
-| 20260914-0717 | — | — | — | — | — | — | — | 69/150 46.0% (+46.0) | — | — | — | — | — | — | — | — | — | — | — | — |
-| 20260914-0757 | — | — | — | — | — | — | — | 0/6 0.0% (-46.0) | — | — | — | — | — | — | — | — | — | — | — | — |
-| 20260914-0857 | — | — | — | — | — | — | — | — | — | — | — | 69/150 46.0% | — | — | — | — | — | — | — | — |
-| 20260914-0918 | — | — | — | — | — | — | — | — | — | — | — | 0/2 0.0% (-46.0) | — | — | — | — | — | — | — | — |
-| 20260914-1004 | — | — | — | — | — | — | — | — | — | — | — | — | 70/150 46.7% | — | — | — | — | — | — | — |
-| 20260914-1037 | — | — | — | — | — | — | — | 4/12 33.3% (+33.3) | — | — | — | — | — | — | — | — | — | — | — | — |
-| 20260914-1049 | — | — | — | — | — | — | — | — | — | — | — | — | — | 4/12 33.3% | — | — | — | — | — | — |
-| 20260914-1127 | — | — | — | — | — | — | — | — | — | — | — | — | — | — | 4/12 33.3% | — | — | — | — | — |
-| 20260914-1138 | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | 3/12 25.0% | — | — | — | — |
-| 20260914-1148 | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | 56/150 37.3% (+12.3) | — | — | — | — |
-| 20260914-1217 | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | 4/12 33.3% | — | — | — |
-| 20260914-1228 | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | 1/12 8.3% | — | — |
-| 20260914-1238 | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | 1/12 8.3% | — |
-| 20260914-1258 | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | 4/12 33.3% |
+| run | build | won | played | win% | previous record | gain |
+|---|---|---|---|---|---|---|
+| 20260908-0212 | `alice` | 0 | 150 | **0.0%** | — | first |
+| 20260908-0212 | `bob` | 0 | 150 | **0.0%** | — | first |
+| 20260908-0212 | `carol` | 0 | 150 | **0.0%** | — | first |
+| 20260910-0149 | `alice` | 2 | 150 | **1.3%** | 0.0% | +1.3 |
+| 20260910-2317 | `darla` | 1 | 150 | **0.7%** | — | first |
 
-## Per-run detail
+Current record: **alice 1.3%** (run 20260910-0149), **bob 0.0%** (run 20260908-0212), **carol 0.0%** (run 20260908-0212), **darla 0.7%** (run 20260910-2317).
+
+## Records vs `v3`
+
+| run | build | won | played | win% | previous record | gain |
+|---|---|---|---|---|---|---|
+| 20260908-0212 | `alice` | 12 | 150 | **8.0%** | — | first |
+| 20260908-0212 | `bob` | 7 | 150 | **4.7%** | — | first |
+| 20260908-0212 | `carol` | 8 | 150 | **5.3%** | — | first |
+| 20260909-0133 | `alice` | 19 | 150 | **12.7%** | 8.0% | +4.7 |
+| 20260909-0133 | `carol` | 31 | 150 | **20.7%** | 5.3% | +15.3 |
+| 20260910-0149 | `alice` | 26 | 150 | **17.3%** | 12.7% | +4.7 |
+| 20260910-0149 | `carol` | 37 | 150 | **24.7%** | 20.7% | +4.0 |
+| 20260910-2317 | `darla` | 51 | 150 | **34.0%** | — | first |
+| 20260911-1112 | `darla` | 63 | 150 | **42.0%** | 34.0% | +8.0 |
+| 20260913-0058 | `darla` | 65 | 150 | **43.3%** | 42.0% | +1.3 |
+| 20260914-0717 | `darla` | 69 | 150 | **46.0%** | 43.3% | +2.7 |
+
+Current record: **alice 17.3%** (run 20260910-0149), **bob 4.7%** (run 20260908-0212), **carol 24.7%** (run 20260910-0149), **darla 46.0%** (run 20260914-0717).
+
+## Per-run detail — record-setting runs only
 
 ### 20260908-0212
 
@@ -90,54 +98,11 @@ progress is what each lineage's frozen roster reports.
 | darla | TSPAARKHS | 0 | 150 | 0.0% | 0 | 75 | `8dc8f37` |
 | darla | v3 | 63 | 150 | 42.0% | 23 | 35 | `8dc8f37` |
 
-### 20260912-0011
-
-| agent | benchmark | won | played | win% | swept | swept against | played build |
-|---|---|---|---|---|---|---|---|
-| darla | TSPAARKHS | 0 | 150 | 0.0% | 0 | 75 | `8dc8f37` |
-| darla | v3 | 63 | 150 | 42.0% | 23 | 35 | `8dc8f37` |
-
 ### 20260913-0058
 
 | agent | benchmark | won | played | win% | swept | swept against | played build |
 |---|---|---|---|---|---|---|---|
 | darla | v3 | 65 | 150 | 43.3% | 19 | 29 | `bedb743` |
-
-### 20260913-1716
-
-| agent | benchmark | won | played | win% | swept | swept against | played build |
-|---|---|---|---|---|---|---|---|
-| darla | v3 | 64 | 150 | 42.7% | 21 | 32 | `f8262f7` |
-
-### 20260914-0020
-
-| agent | benchmark | won | played | win% | swept | swept against | played build |
-|---|---|---|---|---|---|---|---|
-| darla | v3 | 0 | 8 | 0.0% | 0 | 4 | `f8262f7` |
-
-### 20260914-0047
-
-| agent | benchmark | won | played | win% | swept | swept against | played build |
-|---|---|---|---|---|---|---|---|
-| darla102 | v3 | 57 | 150 | 38.0% | 15 | 33 | `50e0cda` |
-
-### 20260914-0157
-
-| agent | benchmark | won | played | win% | swept | swept against | played build |
-|---|---|---|---|---|---|---|---|
-| darla102 | v3 | 1 | 4 | 25.0% | 0 | 1 | `50e0cda` |
-
-### 20260914-0337
-
-| agent | benchmark | won | played | win% | swept | swept against | played build |
-|---|---|---|---|---|---|---|---|
-| darla103 | v3 | 40 | 150 | 26.7% | 9 | 44 | `b5a79be` |
-
-### 20260914-0447
-
-| agent | benchmark | won | played | win% | swept | swept against | played build |
-|---|---|---|---|---|---|---|---|
-| darla105 | v3 | 69 | 150 | 46.0% | 24 | 30 | `d7b81a4` |
 
 ### 20260914-0717
 
@@ -145,81 +110,7 @@ progress is what each lineage's frozen roster reports.
 |---|---|---|---|---|---|---|---|
 | darla | v3 | 69 | 150 | 46.0% | 24 | 30 | `6a8b72a` |
 
-### 20260914-0757
+---
 
-| agent | benchmark | won | played | win% | swept | swept against | played build |
-|---|---|---|---|---|---|---|---|
-| darla | v3 | 0 | 6 | 0.0% | 0 | 3 | `6a8b72a` |
-
-### 20260914-0857
-
-| agent | benchmark | won | played | win% | swept | swept against | played build |
-|---|---|---|---|---|---|---|---|
-| darla106 | v3 | 69 | 150 | 46.0% | 21 | 27 | `9186a5a` |
-
-### 20260914-0918
-
-| agent | benchmark | won | played | win% | swept | swept against | played build |
-|---|---|---|---|---|---|---|---|
-| darla106 | v3 | 0 | 2 | 0.0% | 0 | 1 | `9186a5a` |
-
-### 20260914-1004
-
-| agent | benchmark | won | played | win% | swept | swept against | played build |
-|---|---|---|---|---|---|---|---|
-| darla109 | v3 | 70 | 150 | 46.7% | 22 | 27 | `7fb0ff9` |
-
-### 20260914-1037
-
-| agent | benchmark | won | played | win% | swept | swept against | played build |
-|---|---|---|---|---|---|---|---|
-| darla | v3 | 4 | 12 | 33.3% | 1 | 3 | `6a8b72a` |
-
-### 20260914-1049
-
-| agent | benchmark | won | played | win% | swept | swept against | played build |
-|---|---|---|---|---|---|---|---|
-| darla110 | v3 | 4 | 12 | 33.3% | 1 | 3 | `f9d5436` |
-
-### 20260914-1127
-
-| agent | benchmark | won | played | win% | swept | swept against | played build |
-|---|---|---|---|---|---|---|---|
-| darla112 | v3 | 4 | 12 | 33.3% | 1 | 3 | `37bf5fb` |
-
-### 20260914-1138
-
-| agent | benchmark | won | played | win% | swept | swept against | played build |
-|---|---|---|---|---|---|---|---|
-| darla113 | v3 | 3 | 12 | 25.0% | 1 | 4 | `4e44aab` |
-
-### 20260914-1148
-
-| agent | benchmark | won | played | win% | swept | swept against | played build |
-|---|---|---|---|---|---|---|---|
-| darla113 | v3 | 56 | 150 | 37.3% | 16 | 35 | `4e44aab` |
-
-### 20260914-1217
-
-| agent | benchmark | won | played | win% | swept | swept against | played build |
-|---|---|---|---|---|---|---|---|
-| darla114 | v3 | 4 | 12 | 33.3% | 1 | 3 | `b41fd6d` |
-
-### 20260914-1228
-
-| agent | benchmark | won | played | win% | swept | swept against | played build |
-|---|---|---|---|---|---|---|---|
-| darla115 | v3 | 1 | 12 | 8.3% | 0 | 5 | `6167270` |
-
-### 20260914-1238
-
-| agent | benchmark | won | played | win% | swept | swept against | played build |
-|---|---|---|---|---|---|---|---|
-| darla116 | v3 | 1 | 12 | 8.3% | 0 | 5 | `62fe5a3` |
-
-### 20260914-1258
-
-| agent | benchmark | won | played | win% | swept | swept against | played build |
-|---|---|---|---|---|---|---|---|
-| darla117 | v3 | 4 | 12 | 33.3% | 1 | 3 | `07a4b69` |
+27 run directories on disk. 33 complete scored result(s), of which 6 were unshipped candidates; 12 map-subset probe(s) excluded as too small to compare; 16 record(s) shown.
 
