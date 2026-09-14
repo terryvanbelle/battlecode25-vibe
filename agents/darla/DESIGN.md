@@ -8215,3 +8215,36 @@ guard and it has not reported. If it fires, `darla122` closes on cost as written
 The design question it leaves — an SRP builder that never pre-empts expansion —
 is registered here as the only re-open condition, so that nobody, including me,
 rebuilds this on the strength of Thirds A alone.
+
+### `darla122` roster screen: **55/150 (36.7%)**. The guard fired. Closed on cost.
+
+| | |
+|---|---|
+| vs `i5`, 150 games | **55/150 (36.7%)** |
+| swept-win / swept-loss / split | 3 / **23** / 49 |
+| 12-map `v3` probe | 2/12 (`i5` 4/12) |
+
+Twenty-three maps lost from both sides against three won from both. The registered
+rule was "if the roster screen fires, this closes on cost regardless of `v3`", and
+it fires by 40 games. **Closed.**
+
+What is settled, in both directions:
+
+- **The mechanism is real and it is large.** 99 completions at 36.8% of marks, the
+  engine's own count active in 9 of 12 games, and `Thirds` A converted from a
+  r786 loss with 3 towers into a r1440 win with 6 towers and 702 coverage on the
+  strength of one pattern paying +3 per tower for 615 rounds. The per-tower income
+  is decisive when it arrives in time.
+- **The cost is exactly the registered risk and it dominates.** A soldier holding
+  position stops finding ruins; tower count stalls at the two starting towers on
+  eight of twelve maps; `v3` takes the coverage win around r400, fifty rounds
+  before the pattern would have activated. Soldiers are the only unit that expands,
+  and this spends a third of their turns (`SRPhold` 23%, `SRPpnt` 9%) not expanding.
+
+**Re-open condition, unchanged and now the only one:** an SRP builder that
+**never pre-empts expansion** — one that cannot hold while a ruin is reachable, and
+does not start until the expansion race is already won or lost. The measurement
+below is the number that condition needs. I am not building it today: this
+lineage has now closed `darla121` and `darla122` on the same idea, and a third
+attempt in one session on the strength of one flipped map is the pattern the
+`darla115`→`darla116` pair already paid for.
