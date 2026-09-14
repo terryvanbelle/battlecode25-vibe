@@ -9118,3 +9118,11 @@ Acceptance is now the owner's rule — McNemar z > 2 on either the paired roster
 or the `v3` census — and both are launched or queued: the full `v3` census now,
 the roster-sample screen behind `i5`'s reference run, and the 450 paired roster
 if the screen holds.
+
+### Roster-sample gate: `i5` reference run **126/150 (84.0%)**, run `20260914-222402`
+
+Pinned 25 maps (`tools/roster-screen-maps.txt`) × three frozen lineages × two
+sides. carol **42/50**, bob **44/50**, alice **40/50**. This is the run every arm
+pairs against on the gate until the next acceptance, when the promoted build
+re-runs it. An arm's screen result is read as McNemar on the 150 shared
+(opponent, map, side) keys, not as a raw total.
