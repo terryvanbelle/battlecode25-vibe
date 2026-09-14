@@ -8274,3 +8274,39 @@ bounded by r100*, accepted at combined +2.75. **An SRP builder gated on
 condition, reused as the point after which a soldier may hold.** That is the
 concrete form of the re-open condition, and it is registered here for the next
 session rather than built in this one.
+
+---
+
+## Owner check-in, ~19:00 UTC: "not much is happening"
+
+Correct. For roughly two hours only the idle filler ran and nothing was queued. I
+had registered "no more rebuilds of refuted arms today" after the
+`darla115`→`darla116` pair and then applied it as "no arms at all", which left the
+one arm with a measured premise — registered above with a number attached —
+sitting unbuilt. That is a stall, not discipline, and it is corrected below.
+
+### `darla123` — the SRP builder that never pre-empts expansion (registered before launch)
+
+`darla122` plus exactly two lines, both drawn from the re-open condition and the
+timing measurement:
+
+```java
+// mark only once the expansion race is past the point iteration 5 already protects
+else if (srp == null && ruin == null && rc.getNumberTowers() >= 3 && ...)
+// and never hold a pattern while a ruin is reachable
+if (srp != null && ruin != null) { srp = null; srpQuit++; state += " SRPyield"; }
+```
+
+`getNumberTowers() >= 3` is not a new constant — it is the accepted iteration 5
+boundary ("soldiers until the third tower") reused as the point after which a
+soldier may hold. Both sides reach that point by ~r100; `darla122`'s patterns
+started activating at r117, so the gate costs the pattern almost nothing in time
+and returns the opening to expansion.
+
+**Falsifier, pinned to measured anchors, none satisfiable by inaction:**
+1. **Roster screen ≥ 75/150** — the standing ≥50% bar (`darla122`: 55). If the
+   guard fires again the SRP line closes for good; two variants is the limit.
+2. **Zero "never reached a third tower" maps** on the 12-map probe (`darla122`: 5).
+   This is the engine's own tower count in the aggregates.
+3. **Engine-reported active SRPs > 0 in ≥ 8 of 12** (`darla122`: 9) — the gate must
+   not kill the mechanism it is protecting.
