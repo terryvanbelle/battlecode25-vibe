@@ -8005,3 +8005,52 @@ wrong reason, corrected here.
 Cost of the error: one benchmark run of otherwise-idle VM time. Its value was not
 zero — it is the eleventh determinism check and the first at full benchmark scale —
 but that is not why I ran it.
+
+---
+
+# RESUME POINT — 2026-09-14 15:5x UTC, handing off at a model switch
+
+Machine-checkable, per METHODS §18: run-ids and gates, not intentions.
+
+**Shipped build:** `src/darla`, `BUILD = "darla-i5"`, commit on `origin/main`.
+- `v3`: **69/150 (46.0%)**, runs `20260914-0717` and `20260914-1537` (byte-identical).
+- Roster: **362/450 (80.4%)** — carol 83%, bob 81%, alice 77% — run `20260914-135643`.
+- Frozen snapshots `src/darla_iter0` … `src/darla_iter4`. Next acceptance is `i6`,
+  via `tools/accept-iteration.sh`.
+
+**In flight:** nothing but `tools/idle-filler.sh` (PID 2029625, running since
+Sep 12). No head-to-head, no roster run, no benchmark, no pending arms.
+`progress/pending-arms.txt` is empty.
+
+**Closed permanently today** — do not reopen without the stated condition:
+| direction | status |
+|---|---|
+| tower survival, defense towers (`darla109`) | measured, worth nothing, 46.7% on `v3` |
+| tower survival, routing (`darla110`) | structurally impossible: 0.27 soldiers within r² 20 of a damaged tower |
+| pattern-stall fix (`darla108`) | correct, worth exactly 75/150 |
+| `SPLASH_FLOOR` relaxation (`darla113`) | −84 roster, −13 `v3`; "not a gentler version, not a smaller exemption" |
+| splasher repositioning (`darla88/89/115/116`) | four variants, monotone dose-response the wrong way |
+| moppers (`darla117`) | every route runs through `SPLASH_FLOOR` |
+| tower upgrades (`darla118/119`) | hard stop fired; upgrades flat at 21 vs 19 |
+| SRPs, opportunistic (`darla121`) | 453 marks → 14 completions; constraint is soldier persistence, not ground |
+
+**The standing open problem, unclaimed:** `v3` unpaints **4,497** of our tiles per
+12 games; we unpaint **5**. Coverage is the win condition and this is the largest
+untouched asymmetry in it. The only known route (moppers) is blocked by
+`SPLASH_FLOOR`, which is load-bearing. Nobody has found a second route.
+
+**Second open thread:** both unit types are idle ~2 turns in 3 (splashers act on
+2.4%, soldiers paint on 9.2%), and the army converts about one turn in ten into
+paint on the ground. `v3` lands 46,171 paint actions to our 35,776. Nothing has
+been tried against *idleness itself* as opposed to where idle units stand.
+
+**Awaiting the owner, not me:** whether `agents/alice/RULES.md` and
+`agents/carol/RULES.md` are readable now that all three lineages are retired.
+MULTI_AGENT.md rule 0 opens `agents/bob/` explicitly; the alice/carol clause was
+written while those two were live. I did not self-authorize. Engine facts this
+session were re-derived from the pinned jar via `tools/engine-javap.sh`, which
+MULTI_AGENT.md says is the only real verification anyway.
+
+**To restart:** `RESTART_SESSION.md`. The step most often forgotten is §7 —
+re-arm the `/loop 10m` Darla heartbeat, or the session sits idle between messages
+and nothing queues work.
