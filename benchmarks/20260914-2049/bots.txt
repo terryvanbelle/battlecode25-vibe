@@ -1,0 +1,1 @@
+darla133 519b7a8 darla133 source: explore radius by ground underfoot -- farthest sample on own paint, nearest otherwise

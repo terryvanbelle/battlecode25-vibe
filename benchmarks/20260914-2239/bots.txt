@@ -1,0 +1,1 @@
+darla137 492716d darla137 source: near explore targets whenever enemy paint is in vision, with the reason and distance counters

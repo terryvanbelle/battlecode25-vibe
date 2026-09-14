@@ -1,0 +1,1 @@
+darla124 7238dec darla124 source: Bug2 leave condition in stepToward, plus a fully-blocked counter
