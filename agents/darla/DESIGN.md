@@ -8651,3 +8651,13 @@ constant-shaped — moppers ferrying paint (`darla117`), a distance-keyed refill
 threshold (a constant), or acting on empty (iteration 2 already does the version
 that pays). **Refuel logistics closes on its pre-measurement**, for the cost of one
 12-game probe rather than a 150-game arm.
+
+### Owner, 20:1x: cap at two run drivers; `--continue` restart later
+
+Standing rule amended: **at most two run drivers actively playing at once**
+(a head-to-head, roster run, or benchmark each count; the idle filler counts only
+while it is actually playing, since it yields whenever anything is queued). Queue
+depth stays "never empty", not "three" — the three-queued rule was about idleness
+and two is enough for that. Each driver holds a `gcloud compute ssh` session at
+100-150 MB, and this driver is a 2 GB e2-small carrying a 29-hour session; the
+watchdog kills were the cost of ignoring that.
