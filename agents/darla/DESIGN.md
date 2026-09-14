@@ -6455,3 +6455,48 @@ difference has moved to the middle game — and this time the notebook has a
 mechanism-level record of what the middle game already refuses to yield (paint
 production engine-bounded, refills 4–11%, chips irrelevant, moppers negative at
 every share).
+
+# `v3` replays on `i5` — the opening fix generalises, and a closed assumption is FALSE
+
+**The opening fix holds beyond the maps it was verified on:**
+
+| map | us | `v3` |
+|---|---|---|
+| `shell` | r30, r34, r59 | r34, r42, r74 |
+| `TheBest` | r36, r55, r79, **r243** | r23, r43, r93, **r114** |
+
+On `shell` we are ahead through three towers. On `TheBest` we match to three by
+r79 — and then our **fourth** does not arrive until r243 against `v3`'s r114. The
+deficit has moved from the *first* tower to the *fourth*: it is now a **sustained
+expansion rate** problem, exactly as registered.
+
+**And the production gap is enormous.** Whole game, `TheBest`:
+
+| | towers built | robots built | robots lost | **towers lost** |
+|---|---|---|---|---|
+| us | 12 (11 paint, 1 money) | **37** | 33 | **3** |
+| `v3` | 21 (15 paint, 3 money, **3 defense**) | **187** | 91 | **0** |
+
+`v3` builds **five times** our robots off 1.75× our towers, and can absorb 91
+losses. We cannot.
+
+## The assumption that is false: **our towers die**
+
+This lineage established, and has relied on, *"no tower ever dies in these
+matchups"*. It was true — **against the roster**. Against `v3` we lose **three of
+the twelve towers we build** (2 paint, 1 money) and `v3` loses **none**.
+
+That single fact was load-bearing. It is why the defense-tower question was closed
+without an experiment: a tower that cannot die needs no defending. `v3` builds
+**three defense towers**, and it is the one that never loses a tower.
+
+**A quarter of the towers we manage to build, we then lose** — against an opponent
+that loses none. No roster game could ever have shown this, because in roster
+games the number is zero for both sides.
+
+**Next step is a measurement, not an arm.** The mopper line is the warning: `v3`
+builds 53 moppers and copying that cost us 22, 15 and 53 games at three different
+doses. *"`v3` builds defense towers"* is not a reason to build defense towers. The
+reason to act would be knowing **what kills our towers** — which robots, at what
+stage, and whether a defended tower would have survived. The replays to answer
+that are already on disk and cost no VM time.
