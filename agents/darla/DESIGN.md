@@ -8137,3 +8137,44 @@ lesson).
 **Registered risk:** a parked soldier is not claiming ruins, and soldiers are the
 only unit that does. The roster screen is the guard; if it fires, this closes
 regardless of the `v3` number.
+
+### `darla122` 12-map probe: falsifier **passes on every clause**; score 2/12
+
+| registered clause | bar | measured |
+|---|---|---|
+| completions | > 14 | **99** |
+| completion rate | > 25% of marks | **36.8%** (269 marks) |
+| engine-reported active SRPs > 0 | ≥ 8 of 12 games | **9 of 12** |
+
+The hold guard is the whole difference from `darla121`: `SRPhold` on **23.0%** of
+soldier turns, `SRPpnt` on 9.4%, and completions went from 14 to 99 on fewer marks.
+`SRPfoe` (a pattern tile turned enemy while building) fired 11 times; `SRPquit`
+(`RUIN_PATIENCE` exhausted) 142 times — so most abandonments are timeouts, not
+disruption, which says 40 turns is tight for a 25-tile pattern painted one tile
+per turn with cooldowns.
+
+**The score is 2/12 against `i5`'s 4/12 on the same maps**, and the falsifier
+passing while the score falls is the exact shape `darla113` had. Two things in the
+per-map table need explaining before the roster screen decides it:
+
+| map | marks | done | quit | engine max active |
+|---|---|---|---|---|
+| Oasis A | 31 | 11 | 17 | **0** |
+| TheBest A | 28 | 14 | 11 | **0** |
+| shell A | 13 | 4 | 9 | **0** |
+| Thirds B | 18 | 10 | 8 | 3 |
+| maze A | 31 | 10 | 21 | 2 |
+
+First: **completions are not activations.** Three maps show 11-14 completed
+patterns and never once report an active one. A pattern must survive 50 untouched
+rounds to activate and is re-checked every round after; these were broken before
+they paid. The "no enemy paint in vision at mark time" gate is a snapshot, and the
+front moves.
+
+Second: **soldier turns halved** — 27,853 against `i5`'s 54,057 on the same twelve
+games. Either soldiers die sooner (parked, in the open, with no ruin work to keep
+them near towers) or the games are shorter. The diagnostic below separates those.
+
+The roster screen (`darla122` vs `i5`, 150 games) is the registered guard and is
+running. If it fires, this closes on cost regardless of `v3`; if it holds, the
+question becomes activation, and that is a design question rather than a refutation.
