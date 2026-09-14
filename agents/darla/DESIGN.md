@@ -7934,3 +7934,36 @@ A second independent 150-game run of shipped `i5` against `v3` is queued. It cos
 nothing that is not already idle, and it narrows the number every future acceptance
 decision is measured against — which is worth more right now than a sixteenth arm
 built on a thin thread.
+
+## Correction: the soldier census was censored the same way the splasher one was
+
+My earlier census read only the **first token** of each state string. `pnt`, `slf`,
+`hitT` and `ruin=` are *appended* later in the turn, so they were systematically
+undercounted — the same censoring bug that hid the siege archetype from the
+splasher census. Re-counted by searching the whole state string, 54,057 soldier
+turns vs `v3`:
+
+| soldier token | share of turns |
+|---|---|
+| `IDLE` | **67.0%** |
+| `frontFound` | 38.5% |
+| `HOME` | 18.1% |
+| `frontNone` | 14.4% |
+| **`pnt`** (painted a nearby tile) | **7.3%** |
+| `ruin=` (working a ruin) | 5.4% |
+| `slf` (painted own tile) | 1.9% |
+| `hitT` (hit an enemy tower) | 0.2% |
+
+*(Tokens overlap — several can appear in one turn — so these do not sum to 100%.)*
+
+**A soldier paints on 9.2% of its turns** (`pnt` + `slf`) and works a ruin on 5.4%.
+It is idle on 67%. So the picture is not "splashers idle, soldiers busy": **both
+unit types are idle roughly two turns in three**, and the whole army converts about
+one turn in ten into paint on the ground.
+
+That reframes the paint-efficiency gap. `v3` lands 46,171 paint actions to our
+35,776 not by being more efficient per action — it is, at 7.21 vs 9.79 per coverage
+point, but that is the smaller factor — but by **having units that act at all**.
+Two censused measurements this session were wrong in the same direction because of
+the same first-token bug; both are corrected above, and the lesson is recorded:
+**a cumulative state string cannot be censused on its first token.**
