@@ -6363,3 +6363,51 @@ all four instruments pointing the same way. What would stop it: a third-generati
 regression, which would mean the gain is confined to the two opponent sets that
 have seen the most arms — the overfitting signature, in the place it would show up
 first.
+
+# ITERATION 5 ACCEPTED — soldiers until the third tower, bounded by round 100 (`darla105`)
+
+| instrument | `darla105` vs `i4` | discordant | z |
+|---|---|---|---|
+| standard roster | 362/450 (+19) | 83 | +2.09 |
+| widened roster | 367/450 (+14) | 82 | +1.55 |
+| third generation | 402/450 (+7) | 45 | +1.04 |
+| **combined rosters** | — | **210** | **+2.70** |
+| **`v3`** | **69/150 (+5) — 46.0%** | 37 | **+0.82** |
+| **all four instruments** | — | **247** | **+2.75** |
+
+**Positive on every instrument and every individual opponent** — six roster builds
+across three generations, plus `v3`. No trade in any direction, which is what
+`darla102` could not manage and what the criteria's second clause exists to catch.
+
+**The best `v3` figure this project has recorded: 46.0%**, against 42.0 / 43.3 /
+42.7 for `i1` / `i3` / `i4`.
+
+`src/darla` is `darla-i5`; the outgoing build is frozen at `src/darla_iter4`,
+promoted through `tools/accept-iteration.sh`, which printed the one-line
+behavioural diff as its own check.
+
+**What it took to get here, because the arm itself is one line:**
+
+| arm | condition | screen | outcome |
+|---|---|---|---|
+| `darla102` | `round < 100` | +9 | roster +2.57, **`v3` −7** — refused |
+| `darla103` | `towers <= 4` | −22 | 19 soldiers, **0 splashers** — factual error |
+| `darla104` | `towers <= 2` | +6 | still 0 splashers on lost maps |
+| **`darla105`** | **both, conjoined** | **+12** | **accepted** |
+
+Four arms on one idea, and each failure named the next one's fix. The lesson that
+generalises is `darla104`'s: **a self-limiting condition must be limited by
+something that happens whether or not the change works.** Rounds pass regardless;
+tower counts do not — which is why gating on "expansion has begun" never lifted on
+exactly the maps where expansion never began.
+
+**And the finding that outlives all of it:** the opening deficit was real (first
+tower r266 against `v3`'s r34), fixable, and *not* sufficient — `darla102` closed
+it completely and lost 7 games to `v3`. What made the difference was giving the
+coverage back. The opening is worth buying; it is not worth trading for.
+
+None of this was visible until the owner granted replay access to `v3` games. The
+roster could not see it, and 1,350 paired games did not.
+
+Remaining accept steps: promotion test (must return **exactly 87/150**), `v3`
+benchmark for the shipped build, and push.

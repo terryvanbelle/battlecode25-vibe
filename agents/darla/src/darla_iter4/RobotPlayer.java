@@ -1,4 +1,4 @@
-package darla;
+package darla_iter4;
 
 import battlecode.common.*;
 
@@ -60,7 +60,7 @@ public class RobotPlayer {
      * measurement-neutral -- it shifts the replay hash, so a dose pair must share one tag if
      * doctrine #3's byte-identity check is to work on raw hashes.
      */
-    static final String BUILD = "darla-i5";
+    static final String BUILD = "darla_iter4";
 
     // ---- Iteration 34: fewer MONEY towers, because paint binds and chips do not -------------
     // towerTypeFor makes a ruin a money tower when k % MONEY_MOD == 0, so MONEY_MOD sets the
@@ -427,8 +427,6 @@ public class RobotPlayer {
         UnitType want = (roll < SPLASHER_IN_20) ? UnitType.SPLASHER
                       : (roll < SPLASHER_IN_20 + MOPPER_IN_20) ? UnitType.MOPPER
                       : UnitType.SOLDIER;
-        // darla105: bounded by BOTH round and tower count. See DESIGN.md.
-        if (rc.getRoundNum() < 100 && rc.getNumberTowers() <= 2 && want != UnitType.SOLDIER) { want = UnitType.SOLDIER; mixFlip++; }
         // Iteration 30: SPLASHER FLOOR. Measured on four maps with a verified no-op decision
         // probe, 50-95% of splasher rolls die at the chips gate (1600 = CHIP_RESERVE + 400)
         // because cheaper units drain the shared treasury below it first, pinning the realized
