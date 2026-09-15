@@ -10274,3 +10274,39 @@ risk, and a zero on `ms=` closes it on the probe.
 **Falsifier:** as `darla155`'s — soldiers alive at r200/r300 > 2.9/2.1, money
 towers by r300 > 5, chips at r200 > 1,191, final towers ≥ 67, splashes ≥ 239 —
 decided on the 150-key `v3` census, z > 2.
+
+### `darla156` 12-map probe: the relay fires 2,107 times and builds 29 soldiers. Closed.
+
+| counter | `i5` | `darla156` | bar |
+|---|---|---|---|
+| messages sent (soldier → tower) | — | **2,107** | > 0 — the relay works |
+| ruin-driven soldiers built | — | **29** (2.4 a game) | |
+| soldiers r100 / r200 / r300 | 4.3 / 2.9 / 2.1 | 4.5 / 3.4 / 2.3 | > 2.9 / 2.1 — barely |
+| money towers by r300 | 5 | 7 | > 5 — passes |
+| chips at r200 | 1,191 | 1,209 | > 1,191 — barely |
+| final towers | 70 | **66** | ≥ 67 — fails |
+| coverage per 1,000 rounds | 331 | **322** | fails |
+| splashes per game | 239 | **228** | fails |
+| 12-map `v3` | 4/12 | 3/12 | |
+
+The signal reaches the tower seventy times for every soldier it produces. A
+soldier is within message range of a tower mostly at the moment it was spawned
+— and that is exactly when the tower has just paid 200 paint and cannot pay
+again. The opening lever is throttled by tower paint at the moment of demand;
+the relay was the right fix for the wrong gate. Closed.
+
+### `darla157` — the opening soldier does not pay the splash floor (registered before launch)
+
+At r100 the two sides have the same two towers, the same paint income and the
+same chips, and `v3` has ten units out to our six. The arithmetic: iteration 5
+forces a soldier while `round < 100 && towers ≤ 2`, and that forced soldier still
+pays `SPLASH_FLOOR` — it needs 2,250 chips, the opening treasury is 2,030, and
+every soldier built drops it back under, so the *team* gets one opening soldier
+per ~8 rounds. `darla157` exempts the opening soldier — and only it, inside
+iteration 5's own accepted bounds — from the floor. No new constant, no new
+window; the exemption ends when the third tower stands or round 100 passes.
+
+**Falsifier, counters named:** soldiers alive at r100 **> 4.3** toward `v3`'s
+8.4; money towers by r300 **> 5**; chips at r200 **> 1,191**; final towers
+**≥ 67**; splashes per game **≥ 239**; decided on the 150-key `v3` census,
+z > 2.
