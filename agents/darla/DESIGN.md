@@ -10782,3 +10782,23 @@ starved) — `v3` starves *more* units than we field, and does not care,
 because it spawns 175 per 1,000 rounds. Everything reduces to income and its
 compounding into towers between r300 and r600; that is where the next arms
 must move a number.
+
+### `darla164` 12-map probe: 296 marks, 192 completions, 1–2 alive — the soldier builder re-buys its patterns too
+
+Probe `20260915-0917` (4/12). Soldier turns: SRPhold 12.5%, SRPpnt 8.3%
+(21% of soldier turns on patterns; `darla125` measured 13.2%), HOME 19.3%.
+Per-robot counters summed: **296 marked, 192 completed, 93 quit**; engine
+SRPs alive 1.0 / 1.4 / 2.0 at r300 / 600 / 900. Towers 4.2 / 3.2 / 3.7
+against `darla160`'s 6.1 / 6.0 / 7.3; soldiers r300 4.3 (bar 4.6, failed).
+192 completions × 200 chips is 38,400 chips — 38 level-one towers across
+twelve games — for one or two patterns alive at any time. The same drain as
+`darla166`, at 85% of its size, through the soldier-only builder. So the SRP
+line's real failure was never parked soldiers alone: **patterns are laid,
+bought for 200 chips, broken and bought again**, and what breaks them behind
+our own front is our own paint — the splashers' 13-tile primary disks
+overwrite any secondary corner block they reach, and the pattern code then
+repairs and re-purchases. Neither `darla121`–`125` nor `darla164`–`166`
+ever protected a pattern from its own team. That is a bounded, mechanical
+defect with a measured signature (completions ≫ alive), not a strategic
+verdict on SRPs; the strategic verdict needs a build where completions ≈
+alive, which no arm has yet been.
