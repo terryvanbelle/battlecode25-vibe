@@ -10817,3 +10817,42 @@ completions exceed 3× alive; engine SRPs alive at r600 > 2.0; towers at
 r600 ≥ 6.0 (`darla160`; the re-purchase drain showed as 3.2); soldiers
 alive r300 ≥ 4.6. Census ≥ 75 or falsified as an *improvement*; accept on
 census or paired roster z > 2. Census launched now; probe after it.
+
+### `darla166` roster gate: 85/150, 8 vs 49 discordant vs `i5`, z = −5.43. Same catastrophe on the roster.
+
+Run `20260915-090548` (the remote gauntlet finished after the local driver
+was dequeued). The re-purchase drain is not a `v3`-specific loss: −41 on the
+gate, −36 on the census. Recorded for the record; the arm was closed on the
+probe above.
+
+### `darla167` full `v3` census: **43/150 (28.7%)** — 4 vs 30 against `darla165`, z = **−4.46**. The "fix" is a second catastrophe; diagnosis from the probe.
+
+Run `20260915-0923`. Against `i5` 11 vs 37 (z −3.75), against `darla160`
+5 vs 37 (z −4.94). Three clauses were added to `darla165`; one of them
+costs 26 map-sides, and the candidates are readable: the splash exclusion
+(`score = −1` on any centre whose footprint touches a secondary-marked
+tile) can silence a splasher entirely once patterns dot its home ground —
+the lowScore share of splasher turns will show it; or the mark-honouring
+soldier paint spends its single tile on secondary where a pattern was
+marked but never finished. The 12-map probe (`20260915-0947`) is running
+and reads both, plus the registered ratio completions ÷ alive. Not a
+strategic result; a mechanism defect in one of three lines.
+
+### `darla165` roster gate: 119/150, 14 vs 21 vs `i5`, z = −1.18. Closed on both instruments.
+
+Run `20260915-092821` (alice 41, bob 42, carol 36).
+
+### `darla168` — `SPLASH_MIN_SCORE` 14 → 10 (registered before launch)
+
+`darla160` + one constant. In the `darla160` probe a ready, fuelled splasher
+found no target worth 14 (seven empty tiles at 2 each) on 32.6% of its turns
+and no target at all on 25.5%: 58% of ready splasher turns are spent
+holding paint on ground already ours. The census is a race to 70% area
+decided by r600, so paint held in an idle unit is paint not on the map. 10
+admits five-empty-tile splashes (10 paint per tile against a soldier's 5).
+Iteration 1 fixed 14 jointly with `SPLASHER_IN_20`; this is the first dose
+on it since. **Counters (12-map probe):** SPLASH share of splasher turns
+> 3.0%, lowScore share < 32.6%, coverage per 1,000 rounds > 347; falsified
+if spawns per 1,000 rounds fall below 87 (paint spent on thin splashes
+starving the towers). Census ≥ 75 or falsified; accept on census or paired
+roster z > 2. Gate queued on the lock; census after `darla167`'s probe.
