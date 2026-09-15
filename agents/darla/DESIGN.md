@@ -10699,3 +10699,21 @@ arrives rather than by 25 single-tile attacks. Only when the splasher holds
 mean SRPs at r600 > `darla164`'s (to be read from its probe); soldiers
 alive r300 ≥ 4.6; census ≥ 75 or falsified; accept on census or paired
 roster z > 2. Census when a slot frees.
+
+### `darla165` full `v3` census: **69/150 (46.0%)** — 18 vs 18 against `i5`, z = 0.00; 10 vs 16 against `darla160`, z = −1.18. Falsified.
+
+Run `20260915-0827`. Against `darla164` (67): 6 vs 4, z +0.63 — marking only
+in sight of a tower gives back two of the eight map-sides the SRP builder
+cost, not the eight. The soldier-side SRP line now reads, on the census:
+`darla164` 67, `darla165` 69, base `darla160` 75. It closes on the census as
+it closed on the roster: no soldier-built pattern rule found so far repays
+its soldier turns. What remains open is the *other* builder (`darla166`,
+splash-laid patterns, census `20260915-0847` running) — a different
+mechanism, not a dose of this one.
+
+### `darla164` roster gate: 119/150, 12 vs 19 discordant vs `i5`, z = −1.26. Closed on both instruments.
+
+Run `20260915-082406` (alice 40, bob 44, carol 35). `darla164`'s 12-map
+probe is queued behind `darla166`'s census on the benchmark side (one run at
+a time there); it is read for the SRP-count baseline `darla166`'s falsifier
+needs, not for a decision.
