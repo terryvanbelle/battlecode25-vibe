@@ -10361,3 +10361,35 @@ two-dose arm on one axis. **Decided directly on the 150-key `v3` census and the
 roster-sample gate** — no 12-map probe, because that instrument over-reads
 mix changes and both halves' counters are already known to fire. Accept at
 z > 2 on either; the roster guard is the gate.
+
+### `darla154` roster-sample gate: 123/150, z = −0.73. Closed on both instruments.
+
+### `darla158` full `v3` census: **74/150 (49.3%)**, McNemar z = **+0.82**. The highest `v3` census of the project; not significant.
+
+| | `i5` | `darla151` | `darla158` |
+|---|---|---|---|
+| `v3` census, 150 paired keys | 69 | 72 | **74** |
+| discordant vs `i5` | — | 8 vs 5 | **21 vs 16** |
+| swept | 24 / 30 | 22 / 25 | **29** / 30 |
+| McNemar z | | +0.83 | **+0.82** |
+
+Five map-sides over the incumbent, twenty-nine maps swept, and the same z as
+`darla151` on nearly three times the discordant keys: the second economy
+component widens the effect without deepening it. The economy axis is now the
+only thing in fifty arms that has ever been positive on `v3`, three times
+running (+3, +3, +5), and every time at about z = +0.8. The roster-sample gate
+is playing; the 450 paired roster is launched behind it as the roster-side rung.
+
+### `darla159` — `darla158` + the reserve waived inside the opening (registered before launch)
+
+`darla157` measured the throttle: the opening treasury of 2,030 buys two
+floor-exempt soldiers before `CHIP_RESERVE + cost` = 1,450 stops the third,
+while `v3` spends down to 1,228 by r100 and has twice our soldiers. `darla153`
+measured that the reserve is load-bearing over the whole game (towers 70 → 45
+without it). Inside iteration 5's opening bounds — `round < 100 && towers ≤ 2`
+— no ruin completion has yet happened, so the reserve protects nothing there;
+`darla159` waives it exactly there and nowhere else. Third component on one
+axis, registered as such. **Counters:** soldiers alive at r100 **> 4.3**;
+towers at r200 **≥ 4.7** (`i5`) — the reserve's job in the opening, read
+directly; money towers by r300 **> 7**; decided on the census and the gate,
+z > 2 on either.
