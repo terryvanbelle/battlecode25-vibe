@@ -10664,3 +10664,38 @@ friendly tower) is the paired dose, census running — if it also lands under
 75 the SRP line closes on the census as it did on the roster, and the axis
 that remains is *why `v3` finishes patterns for free*, which the aggregates
 cannot say.
+
+### Jar facts for pattern construction (re-derived, `engine-javap.sh`)
+
+- `assertCanMarkResourcePattern` requires only `assertIsRobotType` — **any
+  robot type may mark**, not soldiers only; `assertCanCompleteResourcePattern`
+  has no type restriction at all (200 chips, not already complete).
+- `RobotControllerImpl.attack(loc, useSecondary)` passes the flag to
+  `soldierAttack`, `splasherAttack` and `mopperAttack` alike; in
+  `splasherAttack` every tile within the splash that is EMPTY or **already
+  ours** is set to the chosen colour, enemy tiles only within r² ≤ 2. A
+  splash therefore repaints our own territory in one colour, 13 tiles at once.
+- `RESOURCE_PATTERN = 28873275` decodes to secondary on the centre and the
+  twelve cells at d² ∈ {5, 8} (the four corner blocks), primary on the twelve
+  cells at d² ∈ {1, 2, 4} — exactly the r² ≤ 4 diamond minus the centre, which
+  is exactly a splash's footprint. Mark cost 25 paint, completion 200 chips,
+  bonus 3 per tower per turn after a 50-round delay.
+
+### `darla166` — splashers lay the marked pattern with area paint (registered before launch)
+
+`darla164` + `srpSplashTarget()` in `runSplasher`: a splasher that sees a
+marked pattern centre (a secondary-marked tile whose four orthogonal
+neighbours are marked primary) completes it if it can, else splashes
+secondary on the first corner cell whose block is not yet secondary, else
+splashes primary on the centre once all corners are laid (corners first,
+because a corner splash spills onto the diamond). Four corner splashes and
+one centre splash lay 24 of 25 tiles in five actions; the soldier that
+marked it paints the centre. The soldier-side rule is unchanged, so the
+parking cost the SRP line died of is now bounded by how fast a splasher
+arrives rather than by 25 single-tile attacks. Only when the splasher holds
+≥ 150 paint, and it walks to the target only when not sieging. Counters
+`ss=splashes/centres-seen` in the indicator; engine `srp` in the aggregates.
+**Falsifiers:** engine SRPs active by r600 in ≥ 8 of 12 probe games *and*
+mean SRPs at r600 > `darla164`'s (to be read from its probe); soldiers
+alive r300 ≥ 4.6; census ≥ 75 or falsified; accept on census or paired
+roster z > 2. Census when a slot frees.
