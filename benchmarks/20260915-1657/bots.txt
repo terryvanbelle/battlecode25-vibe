@@ -1,0 +1,1 @@
+darla187 faa94fb darla187: opening ends at r80 on i6 — the untested short side of the bound curve

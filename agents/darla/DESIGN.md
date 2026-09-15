@@ -11504,3 +11504,10 @@ ruins the enemy still holds? **Counters:** deny bans per twelve probe games
 (rising); tower builds r301–600 vs 40; census against `i6` (72) and
 `darla185` (76). Accept on census or paired roster z > 2. Gate queued
 behind `darla188`'s; census after `darla188`'s.
+
+### `darla187` (opening ends at r80) census **74/150** — 8 vs 6 against `i6`, z +0.53; gate 132/150, 5 vs 6, z −0.30. Flat; closed.
+
+Census `20260915-1657`, gate `20260915-165029` (alice 45, bob 47, carol
+40). The bound curve on this economy is 80 → 74, 100 → 72 (`i6`), 150 →
+66, 200 → 67: twenty rounds shorter moves fourteen keys and nets two. The
+opening bound is a plateau between 80 and 100; closed.
