@@ -9292,3 +9292,33 @@ paint (penalty 0). Demand test from existing state — iteration 4's shape.
 2. splashes per game **≥ 239** (`i5`) — survival must not be bought by staying home
    (`darla119`'s rule: a clause the arm cannot satisfy by inaction);
 3. acceptance: z > 2 on the roster-sample gate → paired roster, or on the `v3` census.
+
+### `darla139`: **95%** of remembered ruins have enemy paint on the pattern by arrival
+
+1,775 redirects, 749 arrivals (the rest re-targeted first). At arrival:
+
+| outcome | | |
+|---|---|---|
+| enemy paint on a pattern tile | **708** | **95%** |
+| clear | 20 | 3% |
+| ally soldier already there | 14 | 2% |
+| tower already standing | 7 | 1% |
+
+The memory is not stale by *time*; it is wrong at *sighting*. A ruin a soldier
+sees empty is, nineteen times in twenty, one it could never complete — enemy
+paint on the pattern is unfixable by a soldier (iteration 29) — and the memory
+records it anyway, then walks back to it. Decision rule, first branch: evict on
+sighting enemy paint, and never remember such a ruin in the first place.
+
+### `darla141` — remember only completable ruins (registered before launch)
+
+`darla139` with two lines: on sighting, skip a ruin if any tile of its pattern
+(r² 8) carries enemy paint; on each turn, drop any remembered ruin whose pattern
+is in vision and now carries enemy paint. Counters unchanged.
+
+**Falsifier:** `raFoe` share of arrivals **< 50%** (from 95%) — the eviction
+must work; `ruin=` share of soldier turns **> 5.4%** (`i5`) — it must convert;
+acceptance z > 2 on either instrument. **Registered ceiling:** if 95% of sighted
+ruins are enemy-contested, the memory after eviction may be nearly empty, and a
+clean pass on clause 1 with a flat clause 2 closes the line as "nothing left to
+remember".
