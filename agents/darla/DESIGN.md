@@ -9524,3 +9524,38 @@ and its falsifier is towers built per game (engine aggregate) and `ruin=` share.
 On the roster — no enemy paint pressure, no starvation to prevent — the arm is
 a coin flip against `i5`; on `v3` it is a regression. Closed, as the refuel
 line already was on `darla143`.
+
+### `darla144`: an enemy-painted unclaimed ruin is in a splasher's vision on **5.4%** of front turns. Bar cleared, unevenly.
+
+No-op check passes (4/12, 227,523 lines). 567 splashers, 89,229 turns at the
+front (`HOME` turns excluded by the early return).
+
+| map | share | map | share |
+|---|---|---|---|
+| giver B | **23.0%** | shell A | 8.8% |
+| giver A | 13.5% | Thirds B | 8.4% |
+| Oasis B | 13.2% | shell B | 6.2% |
+| TheBest A | 11.9% | **maze A / B** | **1.6% / 1.6%** |
+
+Ten of twelve map-sides sit at 6–23%; `maze` drags the mean to 5.4%. The
+patterns are fully painted — the maximum enemy tile count seen on one pattern is
+24 of 24 — so `v3` paints the whole 5×5, not a corner.
+
+### `darla145` — a ruin tile is worth a splash (registered before build)
+
+Two changes, no new dose. (1) In the splash scoring loop, mark a candidate centre
+whose r² 2 core covers an enemy tile that belongs to an unclaimed ruin's pattern;
+such a candidate is preferred over any non-ruin candidate and fires regardless of
+`SPLASH_MIN_SCORE` — the existing score still orders ruin candidates among
+themselves. (2) When such a ruin is in vision and there is no siege target, the
+explore target is the ruin, so the splasher walks into range; `moveExploring`
+already accepts a target, and `darla133` showed that walking toward something
+in vision is not the shuttle.
+
+**Falsifier, counters named:** `rzFire` (splashes taken on a ruin candidate)
+**≥ 1 per game**; final towers per 12 games (engine aggregate) **> 70** (`i5`);
+`ruin=` share of soldier turns **> 5.4%** — the unlocked ruin must be claimed;
+splashes per game **≥ 239**; acceptance z > 2 on either instrument. **Prior,
+stated:** every "engage more" arm tonight lost on `v3`; this one engages a ruin,
+not a unit, and adds a tower rather than trading painting for survival — that is
+the whole bet, and the tower count is the counter that reads it.
