@@ -9217,3 +9217,23 @@ queued in `.methods-queue/pending.md` (§39–§48).
 
 **Open:** the pressure detector above. **Standing:** `v3` unpaints 4,497 tiles
 per 12 games to our 5 (mopper-only, gated); `v3` holds 2-3× our towers by r600.
+
+## Owner, 01:1x UTC: no wrapping up — keep exploring while the VM has room. Acknowledged.
+
+### `darla138` — probe: where do our units die against `v3`? (registered before build)
+
+The pressure-detector question needs one number before any response is designed:
+**the share of splasher (and soldier) deaths that occur with an enemy tower within
+attack range (r² ≤ 9).** The siege controller already backs off at d² ≤ 9, so if
+deaths still happen there, units are entering tower range on the *other* paths —
+exploring toward a far target, or chasing a splash centre — and a contact-reducing
+response is "treat enemy tower range as impassable on those paths". If deaths are
+mostly in the open, the killer is `v3`'s mobile units and the response is different.
+
+Probe: `i5` + a per-turn flag in the state string, ` TR`, set when an enemy tower
+is within r² 9 of the unit. The read joins each robot's DIED event in the replay
+action log to its last indicator line. Behaviour unchanged.
+
+**Decision rule:** ≥ 50% of splasher deaths in tower range → the response is
+tower-range avoidance on the explore and splash paths, gated on the detector;
+< 50% → the response targets mobile units, and a second probe measures which.
