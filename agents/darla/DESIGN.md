@@ -11045,3 +11045,13 @@ build towers (17 in twelve probe games). The phase rule is not wrong, it is
 moot until the r301–600 build rate is fixed — which is `darla170`'s line.
 If `darla170`'s rung is accepted, this arm is worth re-running on top of it;
 on `darla160` it is closed.
+
+### `darla174` — `darla172`'s phase rule on the `darla170` base (registered before launch)
+
+`darla170` (1:3 exemption) + `round > 300 → paint tower`. `darla172` was
+moot on `darla160` because only 17 towers were built after r300; `darla170`
+builds 27 in the same window, so the rule now touches ten more decisions per
+twelve games. **Counters:** paint towers built r301–600 > `darla170`'s
+share; spawns per 1,000 rounds and coverage ≥ `darla170`'s (392). Census
+against `darla170` (80) is the reading; accept on census or paired roster
+z > 2. Gate queued behind `darla173`'s; census after `darla173`'s.
