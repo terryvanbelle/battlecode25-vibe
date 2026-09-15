@@ -10517,3 +10517,15 @@ as `darla151`'s +7 (z +1.35) and the census's +5 (z +0.82): the economy axis
 lifts both instruments by a handful of keys and neither clears z > 2.
 `darla160` (census 75) and `darla161` (`MONEY_MOD` 1) are the next rungs on
 the same axis; `darla160`'s gate and paired roster are running.
+
+### `darla161` full `v3` census: **64/150 (42.7%)** — 12 vs 23 discordant against `darla160`, z = **−1.86**. The money share has an optimum, and 1-in-2 is past it.
+
+Run `20260915-0655`. Against `i5` (69): 20 vs 25, z −0.75; against
+`darla160` (75): 12 vs 23, z −1.86. The dose curve on `MONEY_MOD` is now
+4 → 69, 2 → 75, 1 → 64: a money tower makes no paint (jar: 0 paint / 20
+chips a turn), so past the point where chips stop binding, each further money
+tower is a paint tower not built and the spawn rate falls on the paint side.
+`MONEY_MOD = 2` stays. Whether the drop shows as paint-bound tower-turns and
+fewer soldiers at r300 is read from the 12-map probe (`20260915-0717`, running)
+before the arm closes. The next rung on this axis is not a larger money share
+but *more towers of both kinds* — the ruin-conversion rate.
