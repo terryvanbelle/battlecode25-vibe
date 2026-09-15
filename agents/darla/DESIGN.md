@@ -10439,3 +10439,30 @@ because the discordant set widens with the effect: 42 keys now change hands,
 24 to 18. Under the owner's rule it is not accepted. The 450 paired roster is
 queued as the roster-side rung; the mechanism counters — soldiers at r100 in
 particular — are read from a 12-map probe, which the census does not carry.
+
+### `darla160` 12-map probe: the r100 soldier clause finally passes — 7.2 alive (bar > 4.3, `v3` 8.4)
+
+Same parse as the `i5` reference (`d110-cov.txt`), 12 map-sides, `v3` replays:
+
+| | `i5` | `darla160` | `v3` |
+|---|---|---|---|
+| soldiers alive r100 / r200 / r300 | 4.3 / 2.9 / 2.1 | **7.2 / 5.2 / 4.6** | 8.4 / 9.2 / 10.1 |
+| splashers alive r100 | 1.7 | 0.0 | 1.2 |
+| money towers spawned by r300 | 5 | **15** | 24 |
+| chips at r200 | 1191 | 1394 | — |
+| final towers (12 games) | 70 | **91** | — |
+| coverage / 1000 rounds | 331 | 347 | — |
+| unit spawns / 1000 rounds | 64.0 | **87.4** | 175 |
+| game length (rounds, 12 games) | 11031 | 11024 | — |
+
+Both registered counters pass: soldiers at r100 7.2 > 4.3 (the clause every
+earlier opening arm failed — `darla157` never moved it because the tower bound
+ended the forcing by r22–82) and money towers by r300 15 > 7. The floor
+exemption fired for 51 opening soldiers across the 12 games. Spawn rate is up
+37% and the tower count at game end up 30%, and yet the probe scores 3/12 —
+the same 3/12 as `i5` on these six maps — and the census 75/150 against 69.
+The opening is now closer to `v3`'s than to `i5`'s in every measured quantity
+and it buys six map-sides. The gap that remains is not the opening: from r100
+onward soldier count still falls (7.2 → 4.6) while `v3`'s rises (8.4 → 10.1),
+i.e. the mid-game replacement rate, which is the starvation line already
+closed three ways. Decision still waits on the gate and the paired roster.
