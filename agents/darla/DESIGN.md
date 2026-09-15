@@ -11487,3 +11487,11 @@ into one arm. If the keys add, the census reads ≈ 80 with z ≈ +2 against
 `darla181` (77) and `darla185` (76); gate against `i6` (133); accept on
 census or paired roster z > 2. Gate queued behind `darla187`'s; census
 after `darla187`'s.
+
+### `darla186` (exemption 1:2 on `i6`) census **72/150** — 10 vs 10 against `i6`, z 0.00; gate 131/150, 5 vs 7, z −0.58. Flat; closed.
+
+Census `20260915-1637`, gate `20260915-163200` (alice 43, bob 47, carol
+41). On the `darla160` economy 1:2 lost eight keys to 1:3 outright; on
+`i6` it is a wash — the ruin-unlock splash changes what the extra soldiers
+find, and the sharp 1:3 optimum is now a plateau. Neither direction is a
+rung. Closed.
