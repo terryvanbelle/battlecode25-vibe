@@ -11511,3 +11511,15 @@ Census `20260915-1657`, gate `20260915-165029` (alice 45, bob 47, carol
 40). The bound curve on this economy is 80 → 74, 100 → 72 (`i6`), 150 →
 66, 200 → 67: twenty rounds shorter moves fourteen keys and nets two. The
 opening bound is a plateau between 80 and 100; closed.
+
+### `darla190` — `REFILL_LOW` 50 → 30 on `i6` (registered before launch)
+
+A unit walks home to refuel at 50 paint; 30 keeps it on the map longer
+per trip. The refuel line closed on `i5` ("surviving is not painting"),
+but the `i6` economy spawns 70% more units and the census is a coverage
+race, so the trade — more painting per trip against more starvation on the
+way home — is re-priced. **Counters (12-map probe):** starved deaths per
+twelve games vs `i6`'s (650 on the `darla160` base); coverage / 1,000
+rounds vs 420; HOME share of unit turns below `i6`'s. Census against `i6`
+(72); falsified below it; accept on census or paired roster z > 2. Gate
+queued behind `darla189`'s; census after `darla189`'s.
