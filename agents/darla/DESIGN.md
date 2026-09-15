@@ -11211,3 +11211,27 @@ sample): the six probe maps are ruin-rich and mid-sized, and a rule about
 ruins reads well on them. The probe is for mechanism, the census for
 decision; nothing here changes `darla175`'s census verdict, and the paired
 roster (43/150 at this reading) remains its only path.
+
+### `darla178` (unlock splash without the walk) census **71/150** — 1 vs 10 against `darla170`, z = −2.71; 8 vs 9 against `darla175`. Falsified; the walk was not the cost.
+
+Census `20260915-1321` (against `i5` 20 vs 18, z +0.32). Removing the walk
+changes nothing against `darla175` (z −0.24) and still loses ten keys to
+`darla170`, so the census cost of `darla145`'s rule is the *preference*
+itself — a splasher spending its 50 paint to clear a ruin's pattern instead
+of on the best paint target — not the detour. Closed; its gate is dequeued.
+Sixth one-change neighbour of `darla170` to lose on the census; the roster
+half (`darla175`, 268/450 at this reading) is still the open question.
+
+### `darla179` — `SPLASHER_IN_20` 14 → 16 on `darla170` (registered before launch)
+
+`darla170` with the roll at 16/20 splasher, 2 mopper, 2 soldier (was 14 /
+2 / 4). After the opening a non-exempt soldier roll never passes the
+floor, so the soldier share of the roll matters for one thing only: how
+long the tower waits, once three splashers are built, for the roll that
+lets the exempt soldier through. `darla177` (no wait) lost five keys and
+`darla173` (1:4, same wait) lost nine, so the wait is part of the optimum;
+this halves the roll rate and doubles the expected wait — the other side of
+`darla177`. **Counters:** exempt soldiers per twelve probe games < 140;
+splashers built > 657; towers at r600 vs 6.8 (the cost, if the wait is too
+long). Census against `darla170` (80); accept on census or paired roster
+z > 2. Census launched; gate queued.
