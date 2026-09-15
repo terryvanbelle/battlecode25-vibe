@@ -11523,3 +11523,15 @@ twelve games vs `i6`'s (650 on the `darla160` base); coverage / 1,000
 rounds vs 420; HOME share of unit turns below `i6`'s. Census against `i6`
 (72); falsified below it; accept on census or paired roster z > 2. Gate
 queued behind `darla189`'s; census after `darla189`'s.
+
+### `darla188` (patience 80 + ban 50) census **75/150** — 10 vs 7 against `i6`, z +0.73; 5 vs 7 against `darla181`, 4 vs 5 against `darla185`. The two rungs do not add. Closed.
+
+Census `20260915-1717`, gate `20260915-171029` 134/150 (5 vs 4 vs `i6`,
+z +0.33; alice 45, bob 48, carol 41). Combined, the arm lands *below* each
+component: the keys the two changes win are not disjoint after all, and
+each disturbs the other's (a soldier that stays longer on a ruin and a
+ruin that is retried sooner are the same soldier-turns spent twice). The
+ruin-conversion line on `i6` — patience 80 (77), ban 50 (76), both (75) —
+is a set of shallow, overlapping rungs none of which reaches the bar;
+`darla189` (ban 25) is its last dose point, census running. After it the
+line closes.
