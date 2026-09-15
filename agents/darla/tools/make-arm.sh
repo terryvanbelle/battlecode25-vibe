@@ -39,7 +39,7 @@ grep -q "BUILD = \"$NAME\""  "$DST"     || fail "BUILD constant was not rewritte
 # moved -- and this check passed anyway because the string given was prose from the
 # comment the other command had inserted. darla100 computed a flag it then never
 # used. So: the match must occur on a line that is not a comment.
-grep -q "$EXPECT" "$DST" || fail "intended change absent: expected '$EXPECT'"
+grep -qF -- "$EXPECT" "$DST" || fail "intended change absent: expected '$EXPECT'"
 # Not `grep -v ... | grep -q ...`: under `set -o pipefail` that races. grep -q exits
 # the moment it matches, closing the pipe; grep -v then takes SIGPIPE and exits 141,
 # and pipefail fails the whole pipeline even though the match SUCCEEDED. The earlier

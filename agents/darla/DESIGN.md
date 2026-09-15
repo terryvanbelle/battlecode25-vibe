@@ -9915,3 +9915,20 @@ on nearly every ruin until the mix approaches 2:1 — `v3` sits at 58:37.
 per 12 games **≥ 19**; chips per window **> 1,291**; units alive per window
 **> 10.5**; splashes per game ≥ 239; roster gate z > −2 to proceed (iteration 4
 was +3.26 there); acceptance z > 2 on either instrument.
+
+### Tooling: `make-arm.sh`'s first `EXPECT` check was a regex; and a chain that did not stop
+
+`darla150`'s first build was rejected — "intended change absent" — because its
+`EXPECT`, `seenMoney * 2 < seenPaint`, contains `*`, and the guard's **first**
+check was still `grep -q "$EXPECT"`: a regex, in which `y *` means "y then any
+number of spaces". Yesterday's fix made the *second* check literal (`awk
+index()`) and left the first. Now `grep -qF`. Both checks are literal.
+
+The worse part was mine: the build, commit and launches were one `&&` chain
+broken by a `\`-continued heredoc, so when the build failed the push and both
+launches ran anyway — a benchmark staged a non-existent package (`tar: not a
+tar archive`) and a gate driver was queued for it. Rebuilt under an explicit
+`if build; then commit && launch; else report; fi`. Rule: **a launch never
+follows a heredoc in the same command list; gate it with `if`, not `&&`.** The
+queued gate driver is left in place — `roster-screen.sh` copies the source when
+it plays, and the source now exists.
