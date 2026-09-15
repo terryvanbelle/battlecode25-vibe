@@ -10717,3 +10717,16 @@ Run `20260915-082406` (alice 40, bob 44, carol 35). `darla164`'s 12-map
 probe is queued behind `darla166`'s census on the benchmark side (one run at
 a time there); it is read for the SRP-count baseline `darla166`'s falsifier
 needs, not for a decision.
+
+### `darla166` full `v3` census: **31/150 (20.7%)** — 3 vs 39 against `darla164`, z = **−5.55**. Catastrophe; diagnosis before closure.
+
+Run `20260915-0847`. Median game 583 rounds, only six losses under 300
+rounds, so this is not a forfeit or a crash at spawn — the bot plays and
+loses. Two candidate mechanisms, both readable from the 12-map probe
+(`20260915-0907`, running): splashers walking to marked patterns instead
+of holding the front (`SRPgo` share of splasher turns; the arm gave them a
+target whenever a centre was in vision and paint ≥ 150), or splashes spent
+laying patterns that never complete (`ss=` splashes against engine `srp`
+count). Either way the census answer is unambiguous; the probe is for the
+notebook, so the next builder — if any — starts from the measured failure
+rather than a guess. The moot gate is dequeued.
