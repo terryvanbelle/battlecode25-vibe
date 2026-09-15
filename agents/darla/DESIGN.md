@@ -10766,3 +10766,19 @@ with two construction rules and four variants on the census, and the cheap
 diagnosis this probe gives — *own splashes break own patterns* — applies to
 every splasher-heavy build of this lineage. **Closed.** The SRP bonus stays
 the one jar-verified income multiplier `v3` uses that we do not.
+
+### Correction: census games end on the 70% area rule at ~r600, not by elimination
+
+I wrote above that `v3` census games "end by elimination (< 2000 rounds)".
+Wrong label: `PAINT_PERCENT_TO_WIN = 70` (jar), and the `darla160` probe's
+final aggregates show every early end at coverage ≈ 700‰ for the winner —
+`v3` 700–704 in its nine wins, we 698–703 in our three. 99% of census games
+(154 of 156 non-draws across `i5` and `darla160`) end before r2000, median
+≈ r600: **the census is a race to 70% of the map, decided around round 600.**
+At the end `v3` holds 12–25 towers to our 2–11; the tower curve diverges
+after r300 (6.9 vs 6.1 at r300, 10.9 vs 6.0 at r600). Deaths are not the
+gap: we lost 746 units in the 12 games (650 starved), `v3` 1,355 (1,241
+starved) — `v3` starves *more* units than we field, and does not care,
+because it spawns 175 per 1,000 rounds. Everything reduces to income and its
+compounding into towers between r300 and r600; that is where the next arms
+must move a number.
