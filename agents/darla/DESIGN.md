@@ -9950,3 +9950,24 @@ and by then the ruins that mattered are paint towers. `v3` has 24 money towers
 by round 300; `darla150` has one more than `i5`. The treasury moves 2%. The
 lever is real and the timing is wrong: **the money towers have to be the early
 ones.** Closed on its clauses; the timing finding carries forward.
+
+### `darla151` — `MONEY_MOD` 4 → 2: the one dose in the chain, stated as such (registered before launch)
+
+`CENSUS_MIN = 3` and the census is per robot, so no soldier can flip a ruin by
+census until it has personally seen three towers — long after the ruins that
+decide the game. Before that, a ruin's type is the coordinate key alone:
+`k % MONEY_MOD == 0` → money, else paint, then iteration 4's "paint if chips ≥
+1,500". `darla149` showed the chip override is not the suppressor and `darla150`
+showed the census fires too late. What remains is the key's rate, and the key's
+rate is a constant. I am changing it, and saying so: **`MONEY_MOD = 2`** —
+alternate — is the only ratio with a structural reading (two resources, equal
+weight), the share moves from ≤25% to ≤50% against `v3`'s 37%, and iteration
+4's override stays exactly as accepted so that once the treasury *does* rise
+past 1,500 the mix self-regulates back toward paint, which is the demand
+behaviour that rule was built for and has never had the chance to show.
+
+**Falsifier, counters named:** money towers by r300 **≥ 12** (`i5` 5, `v3` 24);
+chips per window ≤ r600 **> 1,500** — the treasury must reach iteration 4's
+line, which is the counter that says the regulation engaged; units alive per
+window **> 10.5**; splashes per game **≥ 239**; roster gate z > −2 to proceed;
+acceptance z > 2 on either instrument.
