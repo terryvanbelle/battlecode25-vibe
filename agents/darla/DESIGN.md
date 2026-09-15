@@ -11367,3 +11367,9 @@ RESUME POINT (2026-09-15 15:1x UTC): shipped `darla-i6` (frozen `i5` as
 +1.67 vs `i6`; gate running), `darla182` (`MONEY_MOD` 3 on `i6`, census
 running, gate queued). Instruments and references as above; acceptance
 z > 2 on either the census (150 keys) or the paired roster (450 keys).
+
+### `darla182` (`MONEY_MOD` 3 on `i6`) census **66/150** — 13 vs 19 against `i6`, z = −1.06. Falsified.
+
+Census `20260915-1507`. The money-share curve on this economy is now
+4 → 69 (`i5`), 3 → 66 (on `i6`), 2 → 72/75/80 (`i6`, `darla160`, `darla170`),
+1 → 64. Two is the optimum from both sides. Closed; its gate dequeued.
