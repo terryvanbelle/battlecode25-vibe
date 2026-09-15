@@ -10595,3 +10595,26 @@ with `darla161`: `darla160` sits at a local optimum on both economy doses,
 money share (4/2/1 → 69/75/64) and opening length (100/200 → 75/67).
 `darla163` (bound 150) is the mid-point and its census is running; its probe
 is not needed unless it lands above 75.
+
+### `darla164` — `darla125`'s SRP builder on the `darla160` economy (registered before launch)
+
+Why reopen a closed line. The `v3` aggregates say the target opponent runs
+0.7 SRPs at r300 and 3.9 at r600 against our 0.0 ever, and the jar says each
+SRP adds 3 paint a turn to *every* paint tower and 3 chips to every money
+tower — on an L1 paint tower (5/turn) one SRP is +60% paint income, and the
+`darla160` probe put 73% of mid-game tower-turns paint-starved. The SRP line
+closed on the roster (`darla125` 65/150, parked soldier turns 13.2%); its
+re-open condition was written for the roster, before the owner allowed the
+census to accept on its own, and none of the three variants ever had a
+census — only 2/12, 2/12, 4/12 on the six probe maps, which over-read mix
+effects. The census on the accepted economy is the untaken measurement.
+
+Build: `darla160` + the `darla125` SRP block verbatim (mark where you stand,
+never with a ruin in reach, third-tower gate, hold on the centre, any soldier
+completes any finished pattern), ported by patch; 29 changed lines against
+`darla160`, indicator gains `srp=marked/done/quit`. **Counters:** engine
+`srp` count in the aggregates > 0 by r600 in ≥ 8 of 12 probe games
+(`darla122`: 9); soldiers alive r300 ≥ 4.6 (parked soldiers must not
+starve the count the opening just bought); final towers ≥ 91. Falsified if
+the census lands below 75. Accept on census or paired roster z > 2. Gate
+queued on the lock; census when a driver slot frees.
