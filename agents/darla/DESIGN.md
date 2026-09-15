@@ -9452,3 +9452,24 @@ constants, same threshold form (`REFILL_LOW` + cost), no new dose.
 **Falsifier:** soldier deaths in `HOME` state **< 92%** (`darla142`) and engine
 `starved` **< 487**; splashes per game ≥ 239; acceptance z > 2 on either
 instrument. Launched only after `darla142`'s ladder reports, per the cap.
+
+### `darla142` full `v3` census: **62/150 (41.3%)**, McNemar z = **−1.46**. Not accepted on `v3`.
+
+| | `i5` | `darla142` |
+|---|---|---|
+| `v3` census, 150 paired keys | **69** | 62 |
+| discordant | i5-only **15** | darla142-only 8 |
+| swept | 24 / 30 | 22 / 35 |
+
+Fewer starvations, longer games, and seven more map-sides lost. The third arm
+this session with that exact shape (`darla113`: more towers; `darla137`: more
+splashes; `darla142`: fewer starvations — each the designed quantity, each a
+`v3` regression). The common mechanism is now hard to miss: **every unit-turn
+spent surviving is a unit-turn not spent painting, and `v3` wins the coverage
+race before survival pays off.** A splasher that turns home 20 turns earlier
+paints 20 turns less at the front; on `v3`'s clock that is the game.
+
+The roster-sample gate is the other acceptance instrument and is read below.
+`darla143` (path-costed walk) is on its probe; its clauses are starvation
+clauses, and this result says starvation is not the lever on `v3`, so its
+read is expected to close the refuel line unless the gate says otherwise.
