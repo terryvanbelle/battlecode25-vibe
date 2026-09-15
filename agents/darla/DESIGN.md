@@ -11429,3 +11429,13 @@ Dose pair with `darla184` (100): the ban curve on `i6` reads 250 (`i6`) /
 100 / 50. Same counters as `darla184`; census against `i6` (72); accept on
 census or paired roster z > 2. Gate queued behind `darla184`'s; census
 after `darla184`'s.
+
+### `darla183` (`RUIN_PATIENCE` 120) census **76/150** — 6 vs 2 against `i6`, z +1.41; 0 vs 1 against `darla181`. The patience curve saturates at 80.
+
+Census `20260915-1537`; gate `20260915-153115` 132/150 (2 vs 3 vs `i6`).
+120 keeps every key 80 won but one and adds none: the rare events the
+probe counted (five patience bans in twelve games) are exhausted by 80.
+The curve on `i6` is 40 → 72, 80 → 77, 120 → 76. `darla181` remains the
+open rung of this line (z +1.67, under the bar); `darla183` is closed and
+its gate is already in. The deny-ban line (`darla184`, `darla185`) is the
+larger mechanism, census running.

@@ -1,0 +1,1 @@
+darla183 e41f5bf darla183: RUIN_PATIENCE 120 on i6 — third point of the patience curve
