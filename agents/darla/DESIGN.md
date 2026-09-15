@@ -9781,3 +9781,13 @@ Each moved one counter and lost another; none clears `i5` on the win condition.
 The standing asymmetry — `v3` unpaints 4,497 to our 5 — is not reachable with a
 mopper that starves, and every route to a mopper that does not starve runs
 through tower paint the soldiers need.
+
+### `darla145`'s census gain does not track ruin count
+
+Map-side gain vs `i5` on the 150-key census, summed by the map's ruin count:
+ruins ≤ 12: **+0** (12 maps); 13–22: **−3** (31); > 22: **+0** (32). Nine maps
+improved, eleven worsened, fifty-five unchanged. *(A rank correlation I computed
+alongside read +0.62 and is an artefact — my ranking broke fifty-five ties in
+ruin order; the bucket sums are the honest read.)* No ruin-count-conditioned
+refinement has a basis; the effect on `v3` is flat, full stop. The paired roster
+decides the arm.
