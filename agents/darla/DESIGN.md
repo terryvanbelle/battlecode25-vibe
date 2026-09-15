@@ -9594,3 +9594,51 @@ game, +7% towers, +6% coverage — does not move the 150-key census. Flat, with
 three more losses than wins among the discordant keys. The roster-sample gate
 is the other instrument and is read below; the timing measurement that follows
 asks whether the towers arrive too late to matter.
+
+### `darla145` timing: the towers arrive in the decisive window, and `v3` does not care
+
+895 ruin splashes over 12 games: round p10 235, median **533**, 60% before r600.
+Late — but the towers they unlock are not:
+
+| round | `i5` towers (12 games) | `darla145` towers |
+|---|---|---|
+| 100 | 47 | 47 |
+| 200 | 56 | 57 |
+| 300 | 62 | **73** (+18%) |
+| 400 | 63 | **79** (+25%) |
+| 500 | 60 | **75** |
+
+Eighteen to twenty-five percent more towers standing through r300–500 — inside
+the window where every `v3` loss is decided — and the 150-key census is 66
+against 69. **The tower lever is closed on `v3` by evidence, not by one arm:**
+`darla113` (soldiers forced, +50% towers, −13 on `v3`), the SRP line (`Thirds` A
+and `Oasis` A flipped but the line lost), and now `darla145` (towers +25% in the
+window, census flat). Three independent mechanisms, one answer: on `v3`, more of
+our towers is not more of our wins. What `v3` wins with is paint on the ground
+per round, and towers only matter as far as they produce painters that survive.
+
+### `darla146` — one mopper per soldier, per tower (registered before build; reopens the mopper gate on new evidence)
+
+The mopper route closed on 2026-09-14 because every path through the spawn gates
+ran into `SPLASH_FLOOR`. Two facts measured since change the case, and I am
+reopening it on them rather than on a hunch: (1) **91% of our deaths against
+`v3` are starvation, 78–91% of them walking home** — and a mopper is the only
+unit that refuels a robot in the field (`transferPaint` robot→robot, moppers
+only); (2) `v3` unpaints 4,497 of our tiles per twelve games to our 5, and mops
+64 times a window — the mopper is the unit that does it, and we field none
+(0.1% of robot-turns). The `PAINT_FLOOR` that stops them (99.2% of the mopper
+rolls that reach it die there) exists because carol's moppers flooded to 60–75%
+of the mix — the cheap unit resetting the stash so the soldier is never afforded.
+
+The structural form that cannot flood: **a tower may build at most one mopper
+per soldier it has built** — `mopperDue` set when a soldier is built, cleared
+when a mopper is — and only a due mopper is exempt from `PAINT_FLOOR`.
+`SPLASH_FLOOR` is untouched. Moppers are bounded above by soldiers by
+construction, so the carol failure is impossible, and no new constant enters.
+
+**Falsifier, counters named:** moppers built per 12 games (engine `+mop`
+aggregate) **≥ 24** (two a game; `v3` builds 1–18) and soldiers built **not below
+`i5`'s 137**; engine `starved` **< 523**; unpaint actions (`u` aggregate) **> 5**;
+splashes per game **≥ 239**; acceptance z > 2 on either instrument. If moppers
+are built and starvation does not fall, the refuel-in-the-field hypothesis is
+wrong and the gate closes again, this time on its own evidence.
