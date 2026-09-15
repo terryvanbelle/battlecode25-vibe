@@ -10164,3 +10164,5 @@ splashers built **≥ 500** (`i5` 567 — the floor's purpose must survive); spa
 per 1,000 rounds **> 64**; final towers **≥ 67**; coverage per 1,000 rounds
 **> 331** (same parse); splashes per game ≥ 239; acceptance z > 2 on either
 instrument.
+
+### `darla152` roster-sample gate: 129/150, z = +0.77 (9 vs 6) — record number; the arm closed on its coverage clause.
