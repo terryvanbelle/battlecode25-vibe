@@ -10544,3 +10544,28 @@ parse):** soldiers alive r200 **> 5.2** and r300 **> 4.6**; final towers
 **> 91**; splashers alive r200 recorded (the cost — every forced soldier is a
 splasher not built). Falsified if the census drops below 75 or the tower count
 does not rise. Accept on census or paired roster z > 2.
+
+### `darla161` 12-map probe: the money share buys nothing the paint side can spend. Closed.
+
+Same parse as the `darla160` probe (`20260915-0717`):
+
+| | `darla160` | `darla161` |
+|---|---|---|
+| probe score | 3/12 | 5/12 |
+| soldiers alive r100 / r200 / r300 | 7.2 / 5.2 / 4.6 | 7.6 / 5.8 / 5.2 |
+| money / paint towers by r300 | 15 / 41 | 21 / 27 |
+| chips r200 | 1394 | 1415 |
+| final towers | 91 | 92 |
+| spawns / 1000 rounds | 87.4 | 91.5 |
+| tower-turns r100–1500 paint < 300 | 73% | **82%** |
+| — chips < 1,600 with paint ≥ 300 | 26% | 17% |
+
+Every probe counter passes by a hair and the probe even scores 5/12 — while
+the census fell 75 → 64. This is the third time the six probe maps have
+over-read a mix change (§ census-vs-sample); the census decides. What the
+probe does say is the mechanism: money towers went 15 → 21 and paint towers
+41 → 27, and the share of paint-starved tower-turns rose from 73% to 82%. The
+treasury did not rise (1394 → 1415 at r200): the extra chips were spent, on
+towers that make no paint. `MONEY_MOD = 2` is the measured optimum of a
+three-point curve (4/2/1 → 69/75/64). **Closed**; the axis moves next through
+tower *count* (`darla162`, opening to r200, census running).
