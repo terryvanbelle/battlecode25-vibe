@@ -11477,3 +11477,13 @@ two keys a step it cannot reach the bar alone. Closed as a single-change
 rung; kept as a candidate component for a combined arm with `darla181`
 (patience 80, +5 on disjoint mechanism) once `darla186` and `darla187`
 have read.
+
+### `darla188` — `darla181` + `darla185`: patience 80 and ban 50 on `i6` (registered before launch)
+
+Two shallow, disjoint rungs (7 vs 2 and 8 vs 4 against `i6`, patience
+bans and deny bans being different events on different ruins) combined
+into one arm. If the keys add, the census reads ≈ 80 with z ≈ +2 against
+`i6`; if they overlap, ≈ 77. **Counters:** census against `i6` (72),
+`darla181` (77) and `darla185` (76); gate against `i6` (133); accept on
+census or paired roster z > 2. Gate queued behind `darla187`'s; census
+after `darla187`'s.
