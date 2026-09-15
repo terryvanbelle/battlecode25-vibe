@@ -11384,3 +11384,39 @@ which. **Counters:** tower builds r301–600 ≥ `darla181`'s (from its probe,
 `20260915-1527`); census against `i6` (72) and `darla181` (77). Accept on
 census or paired roster z > 2 against `i6`. Gate queued; census after
 `darla181`'s probe.
+
+### `darla181` gate 133/150 (1 vs 1 vs `i6`) and 12-map probe: the patience limit fires five times in twelve games — the census gain is real but the mechanism is rare
+
+Gate `20260915-151027`: byte-for-byte the `i6` gate but for one map-side
+each way. Probe `20260915-1527` (4/12) against `i6`'s (`darla175`,
+`20260915-1317`):
+
+| | `i6` | `darla181` |
+|---|---|---|
+| patience bans (soldier gave up after `RUIN_PATIENCE`) | **5** | **1** |
+| deny bans (enemy paint on the pattern at arrival) | 187 | 185 |
+| tower builds r301–600 | 40 | 40 |
+| towers r300 / r600 | 6.7 / 7.8 | 6.6 / 7.6 |
+| coverage / 1,000 rounds | 420 | 412 |
+
+The patience limit is not what stops our soldiers on ruins — the deny ban
+is, 37× more often — so doubling it changes four events in twelve games
+and moves nothing measurable. The census's 7 vs 2 is therefore a handful
+of maps where one soldier's extra forty turns finished one tower, which is
+consistent with a nine-key move and with the gate not moving at all.
+`darla183` (120) will fire even less; its census is running for the curve
+but the line's ceiling is visible. The number that *is* large is 187 deny
+bans per twelve games — fifteen a game — and `i6`'s unlock splash exists
+precisely to clear those patterns, after which the ruin stays banned for
+`RUIN_BAN_ROUNDS` = 250 rounds regardless. That is `darla184`.
+
+### `darla184` — `RUIN_BAN_ROUNDS` 250 → 100 on `i6` (registered before launch)
+
+A ruin denied for enemy paint on its pattern is banned for 250 rounds; on
+`i6` the splashers clear such patterns (`rzf` 620 in twelve games), so the
+ban outlives the reason for it by up to 250 rounds — nearly half the
+decisive window. 100 rounds lets the soldier come back once the front has
+moved. **Counters (12-map probe):** deny bans per twelve games (should
+*rise* — a denied ruin is retried), tower builds r301–600 > 40, towers at
+r600 > 7.8. Census against `i6` (72); accept on census or paired roster
+z > 2. Gate queued; census after `darla183`'s.
