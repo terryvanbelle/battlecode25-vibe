@@ -9721,3 +9721,5 @@ One number from the old census this pair never checked: `i5`'s moppers spend
 `darla146`'s moppers did the same, its 225 unpaints came from a sixth of their
 life, and the line's cost-benefit is not what the bracket says. Checked next,
 free, from `darla146`'s own dump and `REFILL_LOW`'s value.
+
+### `darla146` roster-sample gate: 124/150, z = −0.53 — record number for a closed line.
