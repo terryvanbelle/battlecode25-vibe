@@ -10508,3 +10508,12 @@ parse):** money towers by r300 **> 15**; final towers **> 91**; spawns per
 1,000 rounds **> 87.4**; soldiers alive r300 **> 4.6** (paint income falling
 would show here first — a money tower makes no paint). Accept on census or
 paired roster z > 2. Census first; probe on the free benchmark side.
+
+### `darla158` 450 paired roster: **370/450 (82.2%)**, 47 vs 39 discordant, z = **+0.86**. Not accepted.
+
+Reference `i5` 362/450 (`20260914-135643`), run `20260915-061157`. Per
+lineage: alice 116, bob 128, carol 126 — all above the 50% floor. Same shape
+as `darla151`'s +7 (z +1.35) and the census's +5 (z +0.82): the economy axis
+lifts both instruments by a handful of keys and neither clears z > 2.
+`darla160` (census 75) and `darla161` (`MONEY_MOD` 1) are the next rungs on
+the same axis; `darla160`'s gate and paired roster are running.
