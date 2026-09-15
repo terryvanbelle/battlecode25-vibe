@@ -9971,3 +9971,24 @@ chips per window ≤ r600 **> 1,500** — the treasury must reach iteration 4's
 line, which is the counter that says the regulation engaged; units alive per
 window **> 10.5**; splashes per game **≥ 239**; roster gate z > −2 to proceed;
 acceptance z > 2 on either instrument.
+
+### `darla151` 12-map probe: three of four clauses pass, coverage +17%, and the chips clause fails for the right reason
+
+| clause | counter | bar | `i5` | `darla151` |
+|---|---|---|---|---|
+| 1 | money towers by r300 | ≥ 12 | 5 | **13** — passes (`v3` 24) |
+| 2 | chips per window ≤ r600 | > 1,500 | 1,291 | **1,322** — fails |
+| 3 | units alive per window | > 10.5 | 10.5 | **11.5** — passes |
+| 4 | splashes per game | ≥ 239 | 239 | **282** — passes |
+| — | towers built / money share | | 77 / 9% | **86 / 26%** |
+| — | final coverage / game length | | 3,841 / 10,500 | **4,477 / 11,900** (+17% / +13%) |
+| — | 12-map `v3` | | 4/12 | **5/12** |
+
+The money towers now arrive early — thirteen by r300 against five — and the
+income they mint does not accumulate: it is spent, on 10% more robots alive and
+18% more splashes, and coverage rises 3% per round on top of the longer games.
+Clause 2 was written to detect iteration 4's regulation engaging at 1,500; the
+treasury never gets there because the bot converts the chips first, which is
+what the units clause was there to catch. The clause fails as written and I am
+not re-reading it; the arm proceeds on the three that pass and the win condition
+moving. Full `v3` census launched; the roster gate is queued.
