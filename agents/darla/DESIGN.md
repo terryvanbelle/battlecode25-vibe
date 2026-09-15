@@ -11099,3 +11099,43 @@ is the half it lacks (gate 123, z −0.56). **Counters:** `rzf` > 0 in ≥ 8
 of 12 probe games; towers at r600 ≥ 6.8; census against `darla170` (80) is
 the reading, paired roster the other. Accept on either at z > 2. Gate
 queued; census launched.
+
+### `darla170` 450 paired roster: **366/450 (81.3%)**, 44 vs 40 discordant, z = **+0.44**. Not accepted.
+
+Run `20260915-113338`, reference `i5` 362. Per lineage alice 117, bob 133,
+carol 116 — all above the floor. `darla170` now reads census 80 (z +1.60 vs
+`i5`), gate 123 (z −0.56), paired roster 366 (z +0.44): the best census of
+the lineage and a flat roster, neither at the owner's bar. `i5` stays
+shipped; `darla170` is the base for what follows.
+
+### `darla175` (ruin-unlock splash on `darla170`) census **72/150** — 3 vs 11 against `darla170`, z = −2.14. Falsified.
+
+Census `20260915-1218` (against `i5` 22 vs 19, z +0.47; against `darla160`
+8 vs 11, z −0.69). Fourth one-change neighbour of `darla170`, fourth loss of
+eight to eleven keys with one to three gains. The neighbours still lose
+disjoint keys (checked above for the first three), so this is a base whose
+every perturbation costs, not a fragile set. Its gate is live and finishes
+for the record.
+
+### `darla176` — `RUIN_PATIENCE` 40 → 80 on `darla170` (registered before launch)
+
+`darla170`'s exempt soldiers are the lineage's first post-opening soldiers;
+whether they convert ruins is bounded by how long a soldier stays on one
+(40 turns) before banning it. Doubling it tests the conversion side of the
+r301–600 tower rate (27 in twelve probe games against `v3`'s 53).
+**Counters:** tower builds r301–600 > 27; patience bans (`pb=`) per soldier
+below `darla170`'s; towers at r600 > 6.8. Census against `darla170` (80);
+accept on census or paired roster z > 2. Census launched; gate queued.
+
+### `darla177` — the due soldier is built when due, not when rolled (registered before launch)
+
+`darla170` + one line: once `splSince >= 3` (and the opening is over) the
+tower's next build *is* the soldier, instead of waiting for a 4-in-20
+soldier roll while splasher rolls keep passing the floor. The measured
+optimum at 1:3 is a rhythm of "three splashers, then a soldier when the
+dice allow"; the realized ratio is therefore looser than 1:3, and this arm
+makes it exact — which tests whether the peak is the ratio or the delay.
+**Counters:** exempt soldiers per twelve probe games > 140 (`darla170`);
+splashers built ≥ 85% of `darla170`'s 657; towers at r600 ≥ 6.8. Census
+against `darla170`; accept on census or paired roster z > 2. Gate queued
+behind `darla176`'s; census after `darla176`'s.
