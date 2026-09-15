@@ -10856,3 +10856,13 @@ on it since. **Counters (12-map probe):** SPLASH share of splasher turns
 if spawns per 1,000 rounds fall below 87 (paint spent on thin splashes
 starving the towers). Census ≥ 75 or falsified; accept on census or paired
 roster z > 2. Gate queued on the lock; census after `darla167`'s probe.
+
+### `darla169` — `SPLASH_MIN_SCORE` 14 → 18, the other half of the dose pair (registered before launch)
+
+`darla160` + one constant, so the curve on this threshold has three points
+(10 / 14 / 18) whichever way `darla168` goes. 18 demands nine empty tiles
+(or enemy tiles at 3) in the footprint — splashes only on nearly-empty
+ground, paint per tile at its best, splash rate lower. Same counters as
+`darla168` with the signs reversed: SPLASH share < 3.0% and coverage per
+1,000 rounds are the mechanism readings; census ≥ 75 or falsified; accept
+on census or paired roster z > 2. Gate queued behind `darla168`'s.
