@@ -9580,3 +9580,17 @@ more, towers rise, and coverage rises with games no longer — the first arm
 tonight whose designed quantity and the win condition moved together without a
 denominator behind it. Acceptance is the two instruments: full `v3` census
 launched now, roster-sample gate queued.
+
+### `darla145` full `v3` census: **66/150 (44.0%)**, McNemar z = **−0.60**. Not accepted on `v3`.
+
+| | `i5` | `darla145` |
+|---|---|---|
+| `v3` census, 150 paired keys | **69** | 66 |
+| discordant | i5-only 14 | darla145-only 11 |
+| swept | 24 / 30 | 22 / 31 |
+
+The mechanism that moved every counter on twelve maps — seventy ruin splashes a
+game, +7% towers, +6% coverage — does not move the 150-key census. Flat, with
+three more losses than wins among the discordant keys. The roster-sample gate
+is the other instrument and is read below; the timing measurement that follows
+asks whether the towers arrive too late to matter.
