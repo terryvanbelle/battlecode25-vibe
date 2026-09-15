@@ -10529,3 +10529,18 @@ tower is a paint tower not built and the spawn rate falls on the paint side.
 fewer soldiers at r300 is read from the 12-map probe (`20260915-0717`, running)
 before the arm closes. The next rung on this axis is not a larger money share
 but *more towers of both kinds* — the ruin-conversion rate.
+
+### `darla162` — the opening runs to r200 (registered before launch)
+
+`darla160` + both opening bounds 100 → 200 (forced soldier and its floor
+exemption). Why this and not a mid-game soldier trickle: after the opening a
+soldier needs 2,250 chips (`SPLASH_FLOOR`), which the `darla160` probe reached
+on **0%** of paint-rich tower-turns r100–1500, so post-opening soldiers are
+built only through the `freed` path (6% of turns). Soldiers are the only unit
+that converts ruins, and towers of both kinds are what the income-bound
+mid-game needs; `darla160`'s 7.2 soldiers at r100 decay to 5.2 by r200. The
+dose is the bound itself, no new constant. **Counters (12-map probe, same
+parse):** soldiers alive r200 **> 5.2** and r300 **> 4.6**; final towers
+**> 91**; splashers alive r200 recorded (the cost — every forced soldier is a
+splasher not built). Falsified if the census drops below 75 or the tower count
+does not rise. Accept on census or paired roster z > 2.
