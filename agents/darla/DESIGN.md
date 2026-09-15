@@ -11449,3 +11449,11 @@ base: 1:2. **Counters:** exempt soldiers per twelve probe games vs `i6`'s;
 tower builds r301–600 vs 40; census against `i6` (72) — falsified below it;
 accept on census or paired roster z > 2. Gate queued behind `darla185`'s;
 census after `darla185`'s.
+
+### `darla184` (`RUIN_BAN_ROUNDS` 100) census **74/150** — 6 vs 4 against `i6`, z +0.63; gate 131/150, 2 vs 4, z −0.82. Flat; closed.
+
+Census `20260915-1557`, gate `20260915-155029` (alice 45, bob 47, carol
+39). Ten census keys move and net +2; the ban's length is not what keeps
+a denied ruin unconverted — most likely the enemy paint is back by the
+time the ban lifts, at either length. `darla185` (50) completes the curve,
+census running.
