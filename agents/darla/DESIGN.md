@@ -9881,3 +9881,37 @@ below `v3`'s 37%.
 guard: iteration 4 was worth z = +3.26 on the roster, so the gate must hold
 **z > −2** there for the arm to proceed to the `v3` census; acceptance z > 2 on
 either instrument.
+
+### `darla149` 12-map probe: money towers 7 → **9**. Clause 1 fails; the suppression is not iteration 4's threshold.
+
+| | `i5` | `darla149` | bar |
+|---|---|---|---|
+| towers built / money / share | 77 / 7 / 9% | 73 / **9** / 12% | money ≥ 19 — **fails** |
+| money towers by r300 | 5 | 6 | |
+| chips per window | 1,291 | 1,314 | > 1,291 — passes, barely |
+| units alive per window | 10.5 | 11.2 | > 10.5 — passes |
+| splashes per game | 239 | 253 | ≥ 239 — passes |
+| 12-map `v3` | 4/12 | 4/12 | |
+
+With the paint override raised to a threshold the treasury never reaches, it
+effectively never fires — and the money share is still 12%. So the 9% was never
+iteration 4's doing. What remains between a ruin and a money tower is (a) the
+coordinate key, `k % MONEY_MOD == 0`, which admits at most a quarter of ruins and
+evidently fewer on these maps, and (b) the census override, which flips a
+money-keyed ruin to paint whenever paint towers are fewer than half the money
+towers — and has no mirror. `darla149` closes; the finding it was built on
+(`v3` 37%, us 9%) stands and the mechanism is now located.
+
+### `darla150` — the census override, made symmetric (registered before launch)
+
+`towerTypeFor` already says: *if paint towers are fewer than half the money
+towers, build paint.* `darla150` adds the mirror, with the same factor and the
+same `CENSUS_MIN`, placed before the coordinate key so it applies to every ruin:
+*if money towers are fewer than half the paint towers, build money.* No new
+constant; a one-sided rule becomes two-sided. From 91% paint, the mirror fires
+on nearly every ruin until the mix approaches 2:1 — `v3` sits at 58:37.
+
+**Falsifier, counters named (unchanged from `darla149`):** money towers built
+per 12 games **≥ 19**; chips per window **> 1,291**; units alive per window
+**> 10.5**; splashes per game ≥ 239; roster gate z > −2 to proceed (iteration 4
+was +3.26 there); acceptance z > 2 on either instrument.
