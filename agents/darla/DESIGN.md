@@ -11249,3 +11249,12 @@ units ate the tower fund, and 900 keeps 90% of a tower's cost in hand.
 final towers ≥ 91 (`darla160`; collapse shows here first); coverage ≥ 392.
 Census against `darla170` (80); accept on census or paired roster z > 2.
 Census launched; gate queued.
+
+### `darla179` (`SPLASHER_IN_20` 16) census **74/150** — 5 vs 11 against `darla170`, z = −1.50. Falsified; the roll wait is at its optimum too.
+
+Census `20260915-1348` (against `i5` 22 vs 17, z +0.80). Doubling the
+exempt soldier's roll wait loses six keys; removing it (`darla177`) lost
+five. So the 4-in-20 roll of iteration 1 is, by accident, the wait the
+census prefers, and the exemption curve is optimal on both of its axes at
+the values `darla170` has. Seventh neighbour to lose; `darla170` is a
+sharp local optimum of this economy. Its gate is dequeued.
