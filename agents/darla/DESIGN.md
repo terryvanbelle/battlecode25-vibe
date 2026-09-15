@@ -11495,3 +11495,12 @@ Census `20260915-1637`, gate `20260915-163200` (alice 43, bob 47, carol
 `i6` it is a wash — the ruin-unlock splash changes what the extra soldiers
 find, and the sharp 1:3 optimum is now a plateau. Neither direction is a
 rung. Closed.
+
+### `darla189` — `RUIN_BAN_ROUNDS` 25 on `i6` (registered before launch)
+
+Fourth point of the ban curve (250 → 72, 100 → 74, 50 → 76): does it keep
+climbing at two keys a halving, or turn when soldiers start re-visiting
+ruins the enemy still holds? **Counters:** deny bans per twelve probe games
+(rising); tower builds r301–600 vs 40; census against `i6` (72) and
+`darla185` (76). Accept on census or paired roster z > 2. Gate queued
+behind `darla188`'s; census after `darla188`'s.
