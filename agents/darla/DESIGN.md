@@ -11616,3 +11616,14 @@ on the shipped build) queued behind `darla192`'s census; promotion test
 (`head-to-head.sh darla darla_iter6`) queued on the roster lock.
 
 Frozen: `src/darla_iter6`. Accepted by `tools/accept-iteration.sh darla191 6`.
+
+### `darla193` — `REFILL_LOW` 30 on `i7` (registered before launch)
+
+`darla190` (the same change on `i6`) read +5 on the census (19 vs 14) and
++2 on the gate, positive on both; re-based on `i7` because the ban change
+alters how far soldiers roam and therefore the refuel trade. First arm on
+the `i7` base. **Counters:** census against `i7` (84); gate against `i7`'s
+reference (`20260915-182423`, 131); accept on census or paired roster z > 2
+against `i7`. `darla190`'s queued paired roster (on `i6`) is dequeued as
+superseded. Gate queued; census after `darla192`'s and the `i7`
+benchmark-on-accept.
