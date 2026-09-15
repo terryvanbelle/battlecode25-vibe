@@ -11159,3 +11159,19 @@ the roster; the 450 paired roster is queued ahead of the remaining gates
 as the decision, and the acceptance rule needs z > 2 on its discordant
 keys — 15 vs 8 on 150 keys scales to about 45 vs 24 on 450 if it holds,
 which would be z ≈ +2.5.
+
+### `darla177` (due soldier built when due) census **75/150** — 3 vs 8 against `darla170`, z = −1.51. The peak is the delay, not the ratio.
+
+Census `20260915-1257` (against `i5` 25 vs 19, z +0.90). Making the 1:3
+rhythm exact — the soldier built the moment three splashers have been —
+gives back five of `darla170`'s keys. So `darla170`'s optimum is "three
+splashers, then a soldier *when the dice next roll one*": the stochastic
+wait (a 4-in-20 roll, ~5 more builds on average) is part of the mechanism,
+which makes the realized ratio nearer 1:5 with variance, and the census
+prefers that to any fixed ratio tried (1:2, 1:3 exact, 1:4). Closed; the
+lesson for the notebook is that the *shape* of the spawn stream, not the
+mean share, is what the census is pricing.
+
+### `darla176` roster gate: 123/150, 14 vs 17 vs `i5`, z = −0.54. Closed on both instruments.
+
+Run `20260915-125350` (alice 42, bob 46, carol 35).
