@@ -11373,3 +11373,14 @@ z > 2 on either the census (150 keys) or the paired roster (450 keys).
 Census `20260915-1507`. The money-share curve on this economy is now
 4 → 69 (`i5`), 3 → 66 (on `i6`), 2 → 72/75/80 (`i6`, `darla160`, `darla170`),
 1 → 64. Two is the optimum from both sides. Closed; its gate dequeued.
+
+### `darla183` — `RUIN_PATIENCE` 120 on `i6` (registered before launch)
+
+Third point of the patience curve on `i6`: 40 → 72, 80 → 77 (`darla181`,
+z +1.67), 120 → ?. If the gain is conversion of freshly-unlocked ruins, more
+patience keeps helping until soldiers sit on ruins the enemy re-paints
+faster than they clear; the ban counters (`pb=`, `dn=`) in the probe say
+which. **Counters:** tower builds r301–600 ≥ `darla181`'s (from its probe,
+`20260915-1527`); census against `i6` (72) and `darla181` (77). Accept on
+census or paired roster z > 2 against `i6`. Gate queued; census after
+`darla181`'s probe.
