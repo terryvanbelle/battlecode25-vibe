@@ -11351,3 +11351,19 @@ twice as long finishes more of them. Not at the bar; the gate (queued
 behind the `i6` reference) and, if it holds there, the paired roster are the
 next readings. A 12-map probe is worth running for the r301–600 tower count
 once the benchmark side is free.
+
+### `i6` reference runs for the two roster instruments
+
+- **Gate (25 pinned maps × 3 lineages × 2 sides):** `i6` **133/150**, run
+  `gauntlet/20260915-145153` (alice 45, bob 48, carol 40) — byte-identical
+  to `darla175`'s gate `20260915-123417`, as determinism requires. Every gate
+  McNemar from `darla181` on reads against this file.
+- **Paired roster (450):** `i6` = `darla175`'s run `gauntlet/20260915-131628`,
+  **398/450**; paired McNemars read against it.
+- **`v3` census:** `i6` 72/150, `benchmarks/20260915-1427/scores.csv`.
+
+RESUME POINT (2026-09-15 15:1x UTC): shipped `darla-i6` (frozen `i5` as
+`darla_iter5`). Open: `darla181` (`RUIN_PATIENCE` 80 on `i6`, census 77, z
++1.67 vs `i6`; gate running), `darla182` (`MONEY_MOD` 3 on `i6`, census
+running, gate queued). Instruments and references as above; acceptance
+z > 2 on either the census (150 keys) or the paired roster (450 keys).
