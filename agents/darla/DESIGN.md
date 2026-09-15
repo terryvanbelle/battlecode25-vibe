@@ -9755,3 +9755,29 @@ home earlier.
 **> 10.5%** (state tokens); unpaint actions **> 225**; soldiers built **≥ 110**
 (`darla146`'s cost, which this arm does not touch); coverage per 1,000 rounds
 **> 342**; splashes per game ≥ 239; acceptance z > 2 on either instrument.
+
+### `darla148` 12-map probe: moppers mop twice as often and die twice as fast. The mopper line closes on three variants.
+
+| | `i5` | `darla146` | `darla148` | bar |
+|---|---|---|---|---|
+| moppers built | 2 | 34 | **40** | |
+| mopper turns | 31 | 2,148 | **1,069** | |
+| mopper `HOME` / `mop` share | 81% / 16% | 88% / 10.5% | **78% / 18.9%** | < 88.4 / > 10.5 — passes |
+| unpaint actions | 5 | 225 | **202** | > 225 — fails |
+| soldiers built | 137 | 110 | 123 | ≥ 110 — passes |
+| coverage per 1,000 rounds | 331 | 342 | **303** | > 342 — fails |
+| splashes per game | 239 | 262 | 223 | ≥ 239 — fails |
+| starved / game length | 523 / 11,031 | 563 / 11,637 | 502 / **10,467** | |
+| 12-map `v3` | 4/12 | 5/12 | **2/12** | |
+
+The floor fix does exactly what it says: a mopper works down to 25 instead of
+50 and mops nearly twice as often per turn. And then it dies — mopper turns
+halve on more moppers built, because a unit that works to a quarter tank on
+enemy paint at −4 a turn does not get home. Total unpaints fall, games shorten,
+coverage per round drops below the incumbent. **The mopper line closes as
+built**, three variants: bounded (`146`: mops, costs soldiers), demand-gated
+(`147`: keeps soldiers, loses mopping), floor-scaled (`148`: mops harder, dies).
+Each moved one counter and lost another; none clears `i5` on the win condition.
+The standing asymmetry — `v3` unpaints 4,497 to our 5 — is not reachable with a
+mopper that starves, and every route to a mopper that does not starve runs
+through tower paint the soldiers need.
