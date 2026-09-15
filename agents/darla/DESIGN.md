@@ -11439,3 +11439,13 @@ The curve on `i6` is 40 → 72, 80 → 77, 120 → 76. `darla181` remains the
 open rung of this line (z +1.67, under the bar); `darla183` is closed and
 its gate is already in. The deny-ban line (`darla184`, `darla185`) is the
 larger mechanism, census running.
+
+### `darla186` — the exemption at 1:2 on `i6` (registered before launch)
+
+The 1:3 optimum (none 75 / 1:3 80 / 1:2 72 / 1:4 71) was mapped on the
+`darla160` economy without the ruin-unlock splash; `i6` has it, and it
+changes what a soldier finds at a ruin. One point re-measured on the new
+base: 1:2. **Counters:** exempt soldiers per twelve probe games vs `i6`'s;
+tower builds r301–600 vs 40; census against `i6` (72) — falsified below it;
+accept on census or paired roster z > 2. Gate queued behind `darla185`'s;
+census after `darla185`'s.
