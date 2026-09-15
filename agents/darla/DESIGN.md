@@ -9791,3 +9791,27 @@ alongside read +0.62 and is an artefact — my ranking broke fifty-five ties in
 ruin order; the bucket sums are the honest read.)* No ruin-count-conditioned
 refinement has a basis; the effect on `v3` is flat, full stop. The paired roster
 decides the arm.
+
+## The gap is army size, not idle time: `v3` fields 2.2× the units and each paints less
+
+From the `i5`-vs-`v3` aggregates, 151 hundred-round windows over 12 games. Units
+are counted per window (a unit-sample), actions are paint + splash in the window.
+
+| | paint+splash actions | unit-samples (sold / spl / mop) | **actions per unit per 100 rounds** |
+|---|---|---|---|
+| ours | 38,589 | 1,891 (615 / 1,276 / 0) | **20.4** |
+| `v3` | 49,779 | **4,174** (1,690 / 1,827 / 657) | **11.9** |
+
+Our units are individually 70% *more* productive than `v3`'s. `v3` out-paints
+us by 29% because it has **2.2× as many robots alive** at any moment — nearly
+three times our soldiers, 1.4× our splashers, and 657 mopper-samples to our
+none. And it loses more units per window than we do, so it is building them at
+well over twice our rate, on a treasury the same dumps show at 3–5× ours.
+
+That reframes the whole session. Every arm tonight tried to make *a unit* do
+more — engage, arrive, survive, mop, unlock — and the per-unit number was never
+the problem. The question is why `v3` can afford 2.2× the army. Its tower count
+is 2–3× ours by r600, but three arms raised our towers by 25–50% in the decisive
+window without moving `v3` — so **the link "more towers → more income → more
+units" is the one that has never been measured on our side**, and it is read
+next from `darla145`'s own aggregates.
