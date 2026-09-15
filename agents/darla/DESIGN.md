@@ -11139,3 +11139,23 @@ makes it exact — which tests whether the peak is the ratio or the delay.
 splashers built ≥ 85% of `darla170`'s 657; towers at r600 ≥ 6.8. Census
 against `darla170`; accept on census or paired roster z > 2. Gate queued
 behind `darla176`'s; census after `darla176`'s.
+
+### `darla176` (`RUIN_PATIENCE` 80) census **78/150** — 5 vs 7 against `darla170`, z = −0.58. Flat: the first neighbour that does not lose.
+
+Census `20260915-1238` (against `i5` 26 vs 17, z +1.37). Doubling the
+ruin patience moves twelve keys and nets −2 — not the eight-to-eleven-key
+losses of the other four neighbours, and not a gain. Conversion time is not
+what bounds the r301–600 tower rate; the probe counters are read only if
+the arm is kept, and it is not. Closed; its gate is live for the record.
+
+### `darla175` roster gate: **133/150 (88.7%)**, 15 vs 8 discordant vs `i5`, z = **+1.46**. Best gate of the lineage; paired roster queued.
+
+Run `20260915-123417`: alice 45, bob 48, carol 40 — the first gate above
+`i5`'s 126 by more than noise, and it comes from exactly the combination
+registered: `darla145`'s ruin-unlock splash (roster-positive on `i5`, +8
+paired, z +1.21) on `darla170` (census-positive). The census side was
+falsified (72, 3 vs 11 vs `darla170`), so `darla175` can be accepted only on
+the roster; the 450 paired roster is queued ahead of the remaining gates
+as the decision, and the acceptance rule needs z > 2 on its discordant
+keys — 15 vs 8 on 150 keys scales to about 45 vs 24 on 450 if it holds,
+which would be z ≈ +2.5.
