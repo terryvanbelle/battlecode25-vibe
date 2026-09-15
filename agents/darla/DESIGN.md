@@ -10042,3 +10042,12 @@ splashes per game ≥ 1; units alive per window > 10.5; splashes per game ≥ 23
 coverage per 1,000 rounds above `i5`'s 331; acceptance z > 2 on either
 instrument. If either half's counter goes dark, the halves interfere and the
 arm closes on that read.
+
+### `darla151` roster-sample gate: **128/150**, z = **+1.00** (3 vs 1). Proceeds to the paired roster.
+
+Not over the acceptance bar on 150 keys; well above the "z > −2 to proceed"
+rule, and — like `darla145` — positive on both instruments (`v3` +3, z +0.83;
+gate +2, z +1.00). Only four discordant keys on the gate: the early money
+towers change little against the retired lineages, which never contest the
+economy the way `v3` does. The 450 paired roster is launched as the roster-side
+rung; z > 2 there, or nothing, accepts.
