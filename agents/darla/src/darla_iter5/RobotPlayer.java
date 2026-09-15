@@ -1,4 +1,4 @@
-package darla;
+package darla_iter5;
 
 import battlecode.common.*;
 
@@ -60,7 +60,7 @@ public class RobotPlayer {
      * measurement-neutral -- it shifts the replay hash, so a dose pair must share one tag if
      * doctrine #3's byte-identity check is to work on raw hashes.
      */
-    static final String BUILD = "darla-i6";
+    static final String BUILD = "darla_iter5";
 
     // ---- Iteration 34: fewer MONEY towers, because paint binds and chips do not -------------
     // towerTypeFor makes a ruin a money tower when k % MONEY_MOD == 0, so MONEY_MOD sets the
@@ -77,10 +77,7 @@ public class RobotPlayer {
     // from nothing -- not mining, and not from SRPs either. It can spawn ~2 robots from its 500
     // starting stash and is then a dry build site forever. A paint tower makes 10/turn into its
     // own stash, and buildRobot draws paint from the BUILDING tower's stash.
-    static final int MONEY_MOD = 2;
-    static int rzFire = 0;
-    static int moneyPick = 0, openSold = 0;
-    static int splSince = 0, soldEx = 0;    // darla170: one floor-exempt soldier per three splashers, per tower
+    static final int MONEY_MOD = 4;
 
     /**
      * Consecutive turns this tower has seen the team treasury EXACTLY unchanged, and the count
@@ -262,7 +259,7 @@ public class RobotPlayer {
         if (used > bcMaxUsed) bcMaxUsed = used;
         rc.setIndicatorString("[" + BUILD + "] bc=" + used + "/" + limit + " max=" + bcMaxUsed
             + " ov=" + bcOverruns + " nm=" + bcNearMisses
-            + " rzf=" + rzFire + " sx=" + soldEx + " mp=" + moneyPick + " os=" + openSold + " ma=" + mixAsk + " mf=" + mixFlip
+            + " ma=" + mixAsk + " mf=" + mixFlip
             + " sp=" + seenPaint + " sm=" + seenMoney
             + " rt=" + refillTrips + " ht=" + homeTurns + " dn=" + denyBans + " pb=" + patienceBans + " bs=" + banSkips + " bp=" + banPeak + " mv=" + mvStuck + "/" + mvTry
             + " | " + state);
@@ -431,7 +428,7 @@ public class RobotPlayer {
                       : (roll < SPLASHER_IN_20 + MOPPER_IN_20) ? UnitType.MOPPER
                       : UnitType.SOLDIER;
         // darla105: bounded by BOTH round and tower count. See DESIGN.md.
-        if (rc.getRoundNum() < 100 && want != UnitType.SOLDIER) { want = UnitType.SOLDIER; mixFlip++; }
+        if (rc.getRoundNum() < 100 && rc.getNumberTowers() <= 2 && want != UnitType.SOLDIER) { want = UnitType.SOLDIER; mixFlip++; }
         // Iteration 30: SPLASHER FLOOR. Measured on four maps with a verified no-op decision
         // probe, 50-95% of splasher rolls die at the chips gate (1600 = CHIP_RESERVE + 400)
         // because cheaper units drain the shared treasury below it first, pinning the realized
@@ -452,9 +449,7 @@ public class RobotPlayer {
         // lineage's ruin-conversion throttle. See src/carol_conv, the archetype that sets it to 0.
         final int SPLASH_FLOOR = 2000;
         boolean afford = chips >= reserve + want.moneyCost;
-        boolean opening = (rc.getRoundNum() < 100);
-        boolean exS = (want == UnitType.SOLDIER && splSince >= 3);   // darla170
-        if (afford && want != UnitType.SPLASHER && !(want == UnitType.SOLDIER && (opening || exS)) && chips - want.moneyCost < SPLASH_FLOOR) {
+        if (afford && want != UnitType.SPLASHER && chips - want.moneyCost < SPLASH_FLOOR) {
             afford = false;
         }
         // ---- Iteration 36: PAINT FLOOR. The exact analogue of iteration 30's SPLASH_FLOOR,
@@ -492,7 +487,7 @@ public class RobotPlayer {
         if (afford) {
             Direction dir = DIRS[rng.nextInt(8)];
             MapLocation loc = rc.getLocation().add(dir);
-            if (rc.canBuildRobot(want, loc)) { rc.buildRobot(want, loc); if (want == UnitType.SOLDIER && opening) openSold++; if (want == UnitType.SPLASHER) splSince++; else if (want == UnitType.SOLDIER && exS) { splSince = 0; soldEx++; } }
+            if (rc.canBuildRobot(want, loc)) rc.buildRobot(want, loc);
         }
         // Team-level econ trace (towers see chips + tower count; paint is per-tower).
         return "T r=" + rc.getRoundNum() + " chips=" + chips + " tw=" + rc.getNumberTowers()
@@ -683,7 +678,7 @@ public class RobotPlayer {
             return UnitType.LEVEL_ONE_PAINT_TOWER;
         }
         if (rc.getChips() >= CHIP_RESERVE + UnitType.SPLASHER.moneyCost) { mixFlip++; return UnitType.LEVEL_ONE_PAINT_TOWER; } // ACCEPTED iteration 4 (was darla96): build the money tower only when chips are ACTUALLY scarce. darla95 released the chip reserve properly -- pf went from 0 to 34-48 per tower -- and moved the roster by 19-19 of 38 discordant, z=0.00, so chips demonstrably do not bind. darla94 measured the other half: spawning is blocked on TOWER PAINT 423-435 times per tower on small maps. A fixed 1-in-4 money share therefore spends a paint tower to buy chips the bot cannot spend. The threshold is derived from existing constants -- the reserve plus our most expensive robot -- not a new dose, and chips are symmetric across a mirrored map so the play-symmetry property iteration 34 protects is preserved.
-        moneyPick++; return UnitType.LEVEL_ONE_MONEY_TOWER;
+        return UnitType.LEVEL_ONE_MONEY_TOWER;
     }
 
     static void workOnRuin(MapLocation ruin) throws GameActionException {
@@ -782,8 +777,6 @@ public class RobotPlayer {
         int bestScore = 0;
         // SIEGE ARCHETYPE: enemy robots sensed once -- used for both target scoring and movement.
         RobotInfo[] foes = rc.senseNearbyRobots(-1, rc.getTeam().opponent());
-        MapLocation rzTarget = null; MapLocation[] rzRuins = new MapLocation[4]; int rzN = 0; boolean bestRz = false;
-        for (MapLocation rr : rc.senseNearbyRuins(-1)) { if (rc.canSenseRobotAtLocation(rr)) continue; boolean ef = false; for (MapInfo t0 : rc.senseNearbyMapInfos(rr, 8)) if (t0.getPaint().isEnemy()) { ef = true; break; } if (ef) { if (rzN < 4) rzRuins[rzN++] = rr; if (rzTarget == null) rzTarget = rr; } }
         MapLocation siege = null; int siegeRank = -1;
         for (RobotInfo f : foes) {
             if (!f.type.isTowerType()) continue;
@@ -799,7 +792,7 @@ public class RobotPlayer {
             MapLocation best = null;
             for (MapLocation c : rc.getAllLocationsWithinRadiusSquared(me, 4)) {
                 if (!rc.canAttack(c)) continue;
-                int score = 0; boolean rzHit = false;
+                int score = 0;
                 // SIEGE: a tower inside the AoE outweighs any amount of paint. A splasher does
                 // 100 AoE damage [E: aoeAttackStrength] against a 1,000-health lv1 tower, so ten
                 // hits kill one, and the splash centre may sit r2<=4 from the splasher while the
@@ -818,14 +811,14 @@ public class RobotPlayer {
                         // paint it could not actually convert. Scoring a target the mechanism
                         // cannot hit would make a rejection uninterpretable, so this is part of
                         // making the mechanism testable, not a second hypothesis.
-                        if (c.distanceSquaredTo(t.getMapLocation()) <= 2) { score += 3; for (int q = 0; q < rzN; q++) if (t.getMapLocation().distanceSquaredTo(rzRuins[q]) <= 8) { rzHit = true; break; } }
+                        if (c.distanceSquaredTo(t.getMapLocation()) <= 2) score += 3;
                     } else if (p == PaintType.EMPTY && t.isPassable()) {
                         score += 2;
                     }
                 }
-                if ((rzHit && !bestRz) || (rzHit == bestRz && score > bestScore)) { bestScore = score; best = c; bestRz = rzHit; }
+                if (score > bestScore) { bestScore = score; best = c; }
             }
-            if (best != null && (bestScore >= SPLASH_MIN_SCORE || bestRz)) { if (bestRz) rzFire++;
+            if (best != null && bestScore >= SPLASH_MIN_SCORE) {
                 rc.attack(best);
                 tag = " SPLASH";
             } else {
@@ -852,7 +845,7 @@ public class RobotPlayer {
                 tag += " ring";                    // 10..16: out of tower reach, in splash reach
             }
         } else {
-            moveExploring(rzTarget);
+            moveExploring(null);
         }
         // Instrumented: the old version returned a bare "P", so a splasher was invisible in
         // every replay and its mechanism gate could not be checked at all.

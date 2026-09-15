@@ -11258,3 +11258,35 @@ five. So the 4-in-20 roll of iteration 1 is, by accident, the wait the
 census prefers, and the exemption curve is optimal on both of its axes at
 the values `darla170` has. Seventh neighbour to lose; `darla170` is a
 sharp local optimum of this economy. Its gate is dequeued.
+
+## ITERATION 6 — ACCEPTED: `darla175` → `darla-i6` (2026-09-15 14:1x UTC)
+
+**`darla175` 450 paired roster: 398/450 (88.4%), 56 vs 20 discordant against
+`i5`'s 362, z = +4.13.** Per lineage alice 129, bob 134, carol 135 of 150
+(86–90%; floor 50%). Run `20260915-131628`, reference `20260914-135643`.
+Under the owner's rule (a significant win on either the 450 paired roster
+or the 150-key `v3` census; z > 2 on discordant keys) this is an accept on
+the roster; the census reads 72/150 against `i5`'s 69 (22 vs 19, z +0.47),
+i.e. not a regression on the other instrument, though eight keys below the
+un-shipped `darla170` (80).
+
+What `i6` is, relative to the frozen `darla_iter5`:
+
+1. `MONEY_MOD` 4 → 2 (`darla151`): a money tower on every second ruin
+   claimed while chips are under the splasher gate.
+2. The opening is the first hundred rounds (`darla160`): forced soldiers and
+   their floor exemption run to r100 regardless of tower count.
+3. One floor-exempt soldier per three splashers, per tower (`darla170`): the
+   first post-opening soldiers the lineage has had; r301–600 tower builds
+   17 → 27 in twelve probe games, coverage per round +13%.
+4. `darla145`'s ruin-unlock splash: a splasher in sight of an enemy-painted
+   unclaimed ruin prefers the splash that clears its pattern and walks to it.
+
+The roster gain is the combination: `darla145` alone gave +8 on the paired
+roster (z +1.21), `darla170` alone +4 (z +0.44); together +36. The census
+gain is (1)–(3) — `darla160` 75, `darla170` 80 — and (4) gives eight of it
+back. The `v3` census of the shipped `i6` is the standing benchmark-on-accept,
+queued behind `darla180`'s census on the benchmark side; the promotion test
+(`head-to-head.sh darla darla_iter5`) is queued on the roster lock.
+
+Frozen: `src/darla_iter5`. Accepted by `tools/accept-iteration.sh darla175 5`.
