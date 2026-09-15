@@ -11322,3 +11322,13 @@ Run `20260915-1427`; every one of the 150 keys matches `darla175`'s
 `20260915-1218`, as the deterministic engine requires. Record: `i5` 69 →
 `i6` 72 (the `v3` record in `benchmarks/HISTORY.md` moves only if this is
 the shipped best; the roster record moves to 398/450).
+
+### `i6` promotion test: `darla` (i6) vs `darla_iter5`: **94/150 (62.7%)**, 33 swept to 14. Passes as a catastrophe check.
+
+Run `20260915-143352`. The self-play screen is not a selection instrument
+in this lineage (it disagreed in sign with the roster twice), so the only
+reading taken is that the promoted build plays and beats its predecessor;
+`darla175` never had a self-play screen of its own, so there is no exact
+score to match. The `i6` gate reference (`roster-screen.sh darla`,
+`20260915-145153`) is running and becomes the baseline for every gate from
+`darla181` on.
