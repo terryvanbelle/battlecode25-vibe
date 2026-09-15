@@ -9473,3 +9473,27 @@ The roster-sample gate is the other acceptance instrument and is read below.
 `darla143` (path-costed walk) is on its probe; its clauses are starvation
 clauses, and this result says starvation is not the lever on `v3`, so its
 read is expected to close the refuel line unless the gate says otherwise.
+
+### `darla143` 12-map probe: starvation falls again, splashes fall again, **1/12**. The refuel line closes.
+
+| | `i5` | `darla142` | `darla143` |
+|---|---|---|---|
+| engine `starved`, 12 games | 523 | 487 | **470** |
+| deaths in `HOME`, splasher / soldier | 78% / 91% | 70% / 92% | **64% / 88%** |
+| early trips | — | 530 | 595 |
+| splashes per game | 239 | 250 | **223** — fails clause 3 |
+| 12-map `v3` score | 4/12 | 3/12 | **1/12** |
+| full `v3` census | 69 | 62 (z −1.46) | not run |
+
+The path-costed walk does what the soldier evidence asked — soldier `HOME`-state
+deaths finally move, 92% → 88% — and each step of the line trades more painting
+for more survival: starvation monotone down, splashes and score monotone down.
+That is the engagement line's dose-response with the sign of the mechanism
+reversed and the sign of the outcome the same. **Surviving is not painting.**
+The refuel line (`darla140`, `142`, `143`) closes; `darla142`'s roster gate is
+read for the record and decides only its own acceptance.
+
+Standing conclusion from three lines tonight: on `v3`, any unit-turn redirected
+from painting to anything else — engaging, building, surviving — loses the
+coverage race that ends the game by r600. The lever, if there is one, raises
+paint on the ground per unit-turn.
