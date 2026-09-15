@@ -11315,3 +11315,10 @@ z > 2 against `i6`.
 
 Run `20260915-141206`; the last arm measured against the `i5` gate
 reference — from here gates read against `i6`'s own reference (queued).
+
+### `i6` `v3` benchmark (benchmark-on-accept): **72/150 (48.0%)** — byte-identical to `darla175`'s census
+
+Run `20260915-1427`; every one of the 150 keys matches `darla175`'s
+`20260915-1218`, as the deterministic engine requires. Record: `i5` 69 →
+`i6` 72 (the `v3` record in `benchmarks/HISTORY.md` moves only if this is
+the shipped best; the roster record moves to 398/450).
