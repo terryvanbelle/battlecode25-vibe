@@ -11544,3 +11544,12 @@ end, the ban was never worth having on `i6`; if it turns, 25 is the
 optimum. **Counters:** deny bans per twelve probe games (rising sharply);
 census against `i6` (72) and `darla189` (77). Accept on census or paired
 roster z > 2. Gate queued behind `darla190`'s; census after `darla190`'s.
+
+### `darla189` (`RUIN_BAN_ROUNDS` 25) census **77/150** — 11 vs 6 against `i6`, z +1.21; 8 vs 7 against `darla185`; gate 131/150, 2 vs 4. Under the bar.
+
+Census `20260915-1737`, gate `20260915-173330` (alice 44, bob 47, carol
+40). The ban curve is 250 → 72, 100 → 74, 50 → 76, 25 → 77 — monotone, one
+key per halving now, and the roster does not move (131–132 at every
+point). `darla191` (10) is the limit point, census after `darla190`'s;
+whichever way it lands, the line's best rung is ≈ +5 census keys, short
+of the bar, and closes after it.

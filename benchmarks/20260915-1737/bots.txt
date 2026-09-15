@@ -1,0 +1,1 @@
+darla189 bf6d083 darla189: RUIN_BAN_ROUNDS 25 on i6 — fourth point of the ban curve
