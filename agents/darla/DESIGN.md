@@ -10866,3 +10866,35 @@ ground, paint per tile at its best, splash rate lower. Same counters as
 `darla168` with the signs reversed: SPLASH share < 3.0% and coverage per
 1,000 rounds are the mechanism readings; census ≥ 75 or falsified; accept
 on census or paired roster z > 2. Gate queued behind `darla168`'s.
+
+### `darla167` 12-map probe: 163 completions for 1–3 alive with the splash exclusion in force — the "own splashes" diagnosis is falsified. SRP line closed for good.
+
+Probe `20260915-0947` (3/12), same parse:
+
+| | `darla160` | `darla164` | `darla167` |
+|---|---|---|---|
+| completions (sum per-robot `srpDone`) | 0 | 192 | **163** |
+| engine SRPs alive r300 / r600 / r900 | 0 | 1.0 / 1.4 / 2.0 | 1.3 / 1.8 / 3.0 |
+| splasher turns SPLASH | 3.0% | — | **1.4%** |
+| — lowScore | 32.6% | — | **41.0%** |
+| coverage / 1,000 rounds | 347 | — | **318** |
+| spawns / 1,000 rounds | 87.4 | — | **75.6** |
+| towers r300 / r600 | 6.1 / 6.0 | 4.2 / 3.2 | 4.5 / 4.0 |
+| soldiers r300 | 4.6 | 4.3 | 3.8 |
+
+Two findings, both against me. (1) Excluding splash centres near marked
+patterns silenced the splashers as the registration feared: SPLASH share
+halved, coverage −8%, spawns −13% — that is the 26 map-sides. (2) With our
+splashes kept off the patterns, completions still ran at 163 for one to
+three alive, so **our own splashes were not what broke them**; the
+re-purchase drain has another cause the aggregates cannot show (candidates:
+enemy paint reaching home ground — the front is at the towers in a
+coverage race — or soldiers' generic paint on empty marked tiles; the
+`SRPfoe` counter says the soldier rarely *sees* enemy paint on its pattern,
+which argues against the first only for the pattern it is holding). I
+registered "completions ≤ 3× alive" as the falsifier for the fix, and it
+failed by a factor of 30. Six variants, two builders, five census runs
+(67, 69, 31, 43 and the roster's 55–69): **the SRP line is closed** and
+the re-open condition is a *trace*, not another arm — a per-tile paint
+event log showing what repaints a completed pattern's tiles, which
+`replay-dump` does not emit today.
