@@ -10966,3 +10966,17 @@ roster z > 2. Gate queued behind `darla170`'s.
 Run `20260915-102719` (alice 41, bob 48, carol 34). The 1:3 exemption
 neither floods nor helps the roster; the census (`20260915-1037`, 122/150
 played) is the decision.
+
+### `darla172` — money towers are an opening purchase; after r300 every ruin is a paint tower (registered before launch)
+
+`darla160` + one line at the top of `towerTypeFor`: `round > 300 → paint`.
+From the tower-phase table: `v3`'s money share is 42% in the opening and 23%
+in r301–600; ours is 27% then 35% — we buy chips late, when the race is
+already being decided by paint on the map, and a money tower makes no paint.
+A money tower bought at r400 has ~200 rounds to repay 1,000 chips at 20 a
+turn, plus a 200-chip pattern cost it never gets; a paint tower at r400 is
+5 paint a turn into the spawn stream immediately. **Counters (12-map
+probe):** paint towers built r301–600 > 11 (of 17); spawns per 1,000 rounds
+> 87.4; coverage / 1,000 rounds > 347; chips at r600 recorded (the cost).
+Census ≥ 75 or falsified; accept on census or paired roster z > 2. Gate
+queued behind `darla171`'s; census after `darla171`'s.
