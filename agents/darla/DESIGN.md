@@ -11035,3 +11035,13 @@ of the session whose mechanism counters and census both move the right way
 (`darla154` moved the counters and lost the census by overshooting the mix;
 `darla160` moved the census with the opening alone). Decision still on the
 paired roster (queued) — census z +1.60 vs `i5` is not yet the owner's bar.
+
+### `darla172` (money towers only before r300) census **72/150**, 2 vs 5 vs `darla160`, z = −1.13; gate 121/150, z −0.85. Flat; closed.
+
+Census `20260915-1121` (against `i5` 19 vs 16, z +0.51); gate
+`20260915-111247` (alice 41, bob 45, carol 35). Only seven census keys
+move: after r300 the tower type barely matters because after r300 we barely
+build towers (17 in twelve probe games). The phase rule is not wrong, it is
+moot until the r301–600 build rate is fixed — which is `darla170`'s line.
+If `darla170`'s rung is accepted, this arm is worth re-running on top of it;
+on `darla160` it is closed.
