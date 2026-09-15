@@ -10569,3 +10569,19 @@ treasury did not rise (1394 → 1415 at r200): the extra chips were spent, on
 towers that make no paint. `MONEY_MOD = 2` is the measured optimum of a
 three-point curve (4/2/1 → 69/75/64). **Closed**; the axis moves next through
 tower *count* (`darla162`, opening to r200, census running).
+
+### `darla160` roster gate: **120/150 (80.0%)**, 14 vs 20 discordant vs `i5`, z = **−1.03**. Not accepted on the gate.
+
+Run `20260915-070250`, reference `i5` 126 (`20260914-222402`). Per lineage:
+alice 40, bob 46, carol 34 of 50 — the loss is against carol (i5 42). The
+census (+6, z +0.93) and the gate (−6, z −1.03) disagree in sign, as
+`darla145` did the other way round: the opening-soldier trade helps against
+`v3` and costs against carol's roster games. The 450 paired roster is running
+and is the roster-side decision.
+
+### `darla163` — the opening runs to r150 (registered before launch)
+
+Middle point of the bound curve 100 (`darla160`) / 150 / 200 (`darla162`),
+built so the curve has three points whichever way `darla162` goes. Same
+counters as `darla162`: soldiers alive r200 > 5.2, r300 > 4.6; final towers
+> 91; census ≥ 75 or the arm is falsified. Launches when a driver slot frees.
