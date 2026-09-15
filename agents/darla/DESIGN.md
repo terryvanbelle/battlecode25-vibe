@@ -10256,3 +10256,21 @@ needs the signal to come from the unit that *has* it. **Registered next:**
 soldiers that see an unclaimed ruin and stand within message range of an allied
 tower send one message; the tower treats a received message as live demand.
 That is a relay, not a sed, and it is built after `darla151`'s decision.
+
+### `darla156` — the relay: soldiers tell towers about ruins (registered before launch)
+
+`VISION_RADIUS_SQUARED = 20` for every robot, and ruin centres sit a pattern
+apart, so a tower on one ruin can never see the next; soldiers can. `darla156`:
+a soldier that has an unclaimed ruin in vision and stands within
+`MESSAGE_RADIUS_SQUARED` of an allied tower sends that tower one message; a
+tower that received a message last round treats it as live ruin demand and
+forces a floor-exempt soldier, exactly as `darla155` intended. The demand
+persists only while a soldier keeps seeing a ruin near a tower — no timer, no
+constant. Both ends carry counters (`ms=` messages sent, `rs=` ruin-driven
+soldiers built), so the first read says whether the relay fires at all; the
+`darla110` measurement (soldiers are rarely near towers) is the registered
+risk, and a zero on `ms=` closes it on the probe.
+
+**Falsifier:** as `darla155`'s — soldiers alive at r200/r300 > 2.9/2.1, money
+towers by r300 > 5, chips at r200 > 1,191, final towers ≥ 67, splashes ≥ 239 —
+decided on the 150-key `v3` census, z > 2.
