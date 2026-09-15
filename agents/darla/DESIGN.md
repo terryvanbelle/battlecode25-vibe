@@ -9343,3 +9343,45 @@ standing at a tower that has no paint to give (iteration 2's unlatch). Which one
 is measured next, from the `darla138` dump that already pairs deaths with last
 indicators. `darla140`'s roster-sample screen is already playing and is kept as
 the record number only.
+
+### Where our units actually die: **walking home, at zero paint**
+
+`darla138` dump, DIED events joined to the last indicator, 12 `v3` games:
+
+| unit | deaths | last state `HOME` | paint at last indicator ≤ 10 | median paint |
+|---|---|---|---|---|
+| SPLASHER | 433 | **339 (78%)** | 98% | **0** |
+| SOLDIER | 108 | **98 (91%)** | 84% | **0** |
+
+The rest are `cd` (splasher on cooldown, 21%) and a handful of siege/`TR`. So the
+starvation is not "no remembered tower" and not "waiting at a dry tower" — those
+would show as non-`HOME` states. **The unit turns home at `REFILL_LOW` and dies
+before it arrives.** Which also corrects the inference I drew from `darla140` one
+entry ago: units *do* starve on the way home; `darla140` did not see it because
+its check ran only while `paint > REFILL_LOW` — on the outbound walk, on our own
+paint, where the penalty is zero — and once paint crossed `REFILL_LOW` the
+standard trip began with the same doomed budget. Two thresholds OR-ed together
+cannot express "the working floor *plus* the cost of the walk"; the sum can.
+
+### `darla142` — turn home when paint ≤ `REFILL_LOW` + walk-home cost (registered before launch)
+
+```java
+if (!refilling) {
+    int need = REFILL_LOW;
+    h0 = nearestRememberedTower(); if (h0 != null) need += steps(me, h0) * penalty(tile under me);
+    if (paint > need) return false;
+    if (paint > REFILL_LOW) earlyTrips++;        // the trip that darla140 never took
+}
+```
+
+`REFILL_LOW` keeps its value and its role (the working floor); the walk's cost is
+added from the engine's own penalty constants and the unit's own position. No new
+constant. On our own paint the addition is zero and behaviour is `i5`'s.
+
+**Falsifier, counters named:**
+1. `et` (early trips) **≫ 4** — the trigger must fire; if it is again single
+   digits, the penalty-on-current-tile estimate is wrong and the walk's cost must
+   be measured along the path instead;
+2. engine `starved`, 12 games, **< 523**; deaths in `HOME` state **< 78% / 91%**;
+3. splashes per game **≥ 239** — survival must not be bought by staying home;
+4. acceptance z > 2 on either instrument.
