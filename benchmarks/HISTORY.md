@@ -47,8 +47,9 @@ Current record: **alice 1.3%** (run 20260910-0149), **bob 0.0%** (run 20260908-0
 | 20260913-0058 | `darla` | 65 | 150 | **43.3%** | 42.0% | +1.3 |
 | 20260914-0717 | `darla` | 69 | 150 | **46.0%** | 43.3% | +2.7 |
 | 20260915-1427 | `darla` | 72 | 150 | **48.0%** | 46.0% | +2.0 |
+| 20260915-1907 | `darla` | 84 | 150 | **56.0%** | 48.0% | +8.0 |
 
-Current record: **alice 17.3%** (run 20260910-0149), **bob 4.7%** (run 20260908-0212), **carol 24.7%** (run 20260910-0149), **darla 48.0%** (run 20260915-1427).
+Current record: **alice 17.3%** (run 20260910-0149), **bob 4.7%** (run 20260908-0212), **carol 24.7%** (run 20260910-0149), **darla 56.0%** (run 20260915-1907).
 
 ## Per-run detail — record-setting runs only
 
@@ -117,7 +118,13 @@ Current record: **alice 17.3%** (run 20260910-0149), **bob 4.7%** (run 20260908-
 |---|---|---|---|---|---|---|---|
 | darla | v3 | 72 | 150 | 48.0% | 25 | 28 | `b32cad5` |
 
+### 20260915-1907
+
+| agent | benchmark | won | played | win% | swept | swept against | played build |
+|---|---|---|---|---|---|---|---|
+| darla | v3 | 84 | 150 | 56.0% | 29 | 20 | `bd8c28c` |
+
 ---
 
-104 run directories on disk. 64 complete scored result(s), of which 35 were unshipped candidates; 58 map-subset probe(s) excluded as too small to compare; 17 record(s) shown.
+118 run directories on disk. 77 complete scored result(s), of which 47 were unshipped candidates; 59 map-subset probe(s) excluded as too small to compare; 18 record(s) shown.
 

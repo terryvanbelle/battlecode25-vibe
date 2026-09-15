@@ -11635,3 +11635,9 @@ Census `20260915-1847`, gate `20260915-184509` (alice 42, bob 49, carol
 whole effect and 30 → 20 is a wash (15 vs 14). Same wide, weak shape as
 `darla190` — 36 keys move for +6. Closed as a dose; the line continues on
 `i7` as `darla193` (30), gate queued.
+
+### `i7` `v3` benchmark (benchmark-on-accept): **84/150 (56.0%)** — byte-identical to `darla191`'s census
+
+Run `20260915-1907`; all 150 keys match `20260915-1821`. `v3` record:
+`i5` 69 → `i6` 72 → **`i7` 84**. `benchmarks/HISTORY.md` regenerated
+(darla record 48.0% → 56.0%).
