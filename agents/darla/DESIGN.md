@@ -10239,3 +10239,20 @@ r200 **> 1,191**; final towers **≥ 67**; splashes per game ≥ 239 (the
 splasher engine must survive the opening); coverage per 1,000 rounds above
 `i5` same-parse; **acceptance on the 150-key `v3` census, z > 2** — the probe
 maps over-read this class of change and are not the decider.
+
+### `darla155` 12-map probe: **byte-identical to `i5`**, `ruinSold = 0`. A no-op by construction.
+
+Every aggregate equal to `i5` — soldiers 4.3/2.9/2.1, money towers by r300 5,
+chips 1,191, towers 70, coverage 331, length 11,031 — and the counter that reads
+the new branch is zero across twelve games. **No tower ever has an unclaimed
+ruin inside its own vision.** Jar: ` public static final int VISION_RADIUS_SQUARED = 20;;`. Ruins sit at least a pattern apart
+and a tower stands on one; the next ruin is outside what a tower can sense. The
+signal I handed the tower is one it cannot see — the `darla116`/`SEEN_CAP`
+class of failure, caught for the price of a probe because the arm carried its
+own counter.
+
+The opening lever stands (the r100/200/300 table above); its implementation
+needs the signal to come from the unit that *has* it. **Registered next:**
+soldiers that see an unclaimed ruin and stand within message range of an allied
+tower send one message; the tower treats a received message as live demand.
+That is a relay, not a sed, and it is built after `darla151`'s decision.
