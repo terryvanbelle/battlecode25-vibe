@@ -10328,3 +10328,36 @@ effect is about half the size the acceptance rule requires. Under the owner's
 rule it is **not accepted**, and I am not arguing the bar down for the arm with
 the best evidence; I am recording that this is where the bar sits relative to
 the strongest thing found in two days. Closed.
+
+### `darla157` 12-map probe: two opening soldiers a game, then the reserve binds. Closed.
+
+| counter | `i5` | `darla157` | bar |
+|---|---|---|---|
+| opening soldiers built, floor-exempt | — | **24** (2 a game) | |
+| soldiers alive at r100 / r200 / r300 | 4.3 / 2.9 / 2.1 | **4.2** / 3.2 / 2.7 | r100 > 4.3 — fails |
+| money towers by r300 | 5 | **7** | > 5 — passes |
+| chips at r200 | 1,191 | **1,483** (+25%) | > 1,191 — passes |
+| final towers | 70 | 74 | ≥ 67 — passes |
+| coverage per 1,000 rounds | 331 | **309** | fails |
+| splashes per game | 239 | **228** | fails |
+| 12-map `v3` | 4/12 | 2/12 | |
+
+The floor was the first gate; the reserve is the second. The opening treasury
+of 2,030 buys two exempt soldiers (−250 each) before `chips < CHIP_RESERVE +
+cost` = 1,450 stops the third, and income at 30 a turn returns one every eight
+rounds thereafter — the same throttle, one gate down. Two extra soldiers a
+game still move the economy — chips at r200 +25%, two more money towers by
+r300 — and, for the fifth time, an economy gain on the probe maps does not
+become coverage there. Closed on its clauses.
+
+### `darla158` — `darla151` + `darla157`: the economy axis, both components (registered before launch)
+
+Forty arms in, the only positive `v3` census signal is `darla151`'s early money
+towers (+3, z +0.83; +7 on the paired roster, z +1.35), and the only other
+counter that moves the early economy is `darla157`'s opening exemption (chips at
+r200 +25%). Each is half the effect the rule requires; both act on income; they
+touch different lines (`towerTypeFor` vs the spawn floor). Registered as a
+two-dose arm on one axis. **Decided directly on the 150-key `v3` census and the
+roster-sample gate** — no 12-map probe, because that instrument over-reads
+mix changes and both halves' counters are already known to fire. Accept at
+z > 2 on either; the roster guard is the gate.
