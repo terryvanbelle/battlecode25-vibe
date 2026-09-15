@@ -10310,3 +10310,21 @@ window; the exemption ends when the third tower stands or round 100 passes.
 8.4; money towers by r300 **> 5**; chips at r200 **> 1,191**; final towers
 **≥ 67**; splashes per game **≥ 239**; decided on the 150-key `v3` census,
 z > 2.
+
+### `darla151` paired roster: **369/450 (82.0%)**, McNemar z = **+1.35**. Positive on every instrument; not accepted on any.
+
+| instrument | `i5` | `darla151` | discordant | z |
+|---|---|---|---|---|
+| roster-sample gate (150) | 126 | 128 | 3 vs 1 | +1.00 |
+| **paired roster (450)** | **362** | **369** | **17 vs 10** | **+1.35** |
+| `v3` census (150) | 69 | **72** | 8 vs 5 | +0.83 |
+| per lineage (paired) | | | bob **10–1**, alice 4–2, carol 3–7 | |
+
+The only arm of the session that is ahead of the incumbent on all three
+instruments at once — seven games on the roster, three on `v3`, two on the gate
+— and short of z = 2 on each. Early money towers are the one lever measured
+positive against both the retired lineages and the target opponent, and the
+effect is about half the size the acceptance rule requires. Under the owner's
+rule it is **not accepted**, and I am not arguing the bar down for the arm with
+the best evidence; I am recording that this is where the bar sits relative to
+the strongest thing found in two days. Closed.
