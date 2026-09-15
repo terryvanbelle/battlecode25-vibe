@@ -11076,3 +11076,26 @@ Census `20260915-1157` (against `i5` 24 vs 21, z +0.45; against `darla160`
 and win at most two. Whether they lose the *same* keys is checked below;
 if they do, the 80 is a knife-edge on those maps rather than a broad gain,
 and the paired roster (the other instrument) is the robustness reading.
+
+### The three `darla170` neighbours lose *different* keys — the 80 is not a knife-edge
+
+Keys `darla170` wins that each neighbour loses: `darla171` 8, `darla173`
+11, `darla174` 9; union 19, **shared by all three: none**. Six of the
+nineteen are keys `darla160` also loses, i.e. `darla170`'s own gains; the
+other thirteen are keys the base wins too and a perturbation flips. So the
+neighbours do not expose a fixed fragile set; each change costs its own
+maps. Robustness on the other instrument is the paired roster (366/450 at
+this reading).
+
+### `darla175` — `darla145`'s ruin-unlock splash on the `darla170` base (registered before launch)
+
+`darla170` + `darla145` verbatim (a splasher in sight of an enemy-painted
+unclaimed ruin prefers the splash that clears its pattern, and walks toward
+it when it has no other target; ported by patch, 8 changed lines against
+`darla170`, indicator `rzf=`). `darla145` was the one roster-positive arm on
+`i5` (+8 on the paired roster, z +1.21; `v3` flat), and `darla170` is the
+one census-positive arm; if `darla170` is the next base, the roster half
+is the half it lacks (gate 123, z −0.56). **Counters:** `rzf` > 0 in ≥ 8
+of 12 probe games; towers at r600 ≥ 6.8; census against `darla170` (80) is
+the reading, paired roster the other. Accept on either at z > 2. Gate
+queued; census launched.
