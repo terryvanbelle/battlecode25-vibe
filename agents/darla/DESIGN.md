@@ -10909,3 +10909,21 @@ tile, not splash rate, is what the coverage race prices: a thin splash
 spends the tower paint that would have been a unit. `darla169` (18) is the
 other half of the curve, census `20260915-1017` running; its probe is not
 needed unless it lands above 75.
+
+### `darla170` — one floor-exempt soldier per three splashers, per tower (registered before launch)
+
+`darla160` + `darla154`'s bounded exemption at a third of its dose: a tower
+may build one soldier past `SPLASH_FLOOR` only after it has built three
+splashers since the last such soldier (`splSince >= 3`). Why now: the
+census is a coverage race decided by r600 and `v3` adds four towers between
+r300 and r600 while we add none; post-opening soldiers need 2,250 chips and
+are never built (0% of paint-rich tower-turns), so the tower curve is flat
+because there is no one to lay patterns. `darla154`'s 1:1 dose on `i5` lifted
+coverage per round 19% and towers 36% but overshot the mix to 51% soldiers
+and lost the census (64); 1:3 caps the exempt share at a quarter of the
+post-opening spawn stream, under `v3`'s 40% soldier share and well under the
+overshoot. **Counters (12-map probe):** towers at r600 > 6.0 (the flat
+line); soldiers alive r300 > 4.6; splashers built ≥ 85% of `darla160`'s
+(the `darla154` failure clause, at the new dose); coverage / 1,000 rounds >
+347. Census ≥ 75 or falsified; accept on census or paired roster z > 2. Gate
+queued behind `darla169`'s; census after `darla169`'s.
