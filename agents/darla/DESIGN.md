@@ -9839,3 +9839,45 @@ All chip income in this engine comes from money towers (`processBeginningOfRound
 jar-verified above: `moneyPerTurn` is added per money tower and nothing else
 adds chips). So the question is the tower-type mix, read next from the SPAWN
 lines already in the dump.
+
+## `v3` builds four times our money towers — that is the army, the treasury, and the game
+
+Tower spawns by type from the 12 `v3` replays (initial towers excluded):
+
+| | towers built | money | paint | defense | money by r300 |
+|---|---|---|---|---|---|
+| ours (`i5`) | 77 | **7 (9%)** | 70 (91%) | 0 | **5** |
+| `v3` | 129 | **48 (37%)** | 75 (58%) | 6 | **24** |
+
+Every chip in this engine is minted by a money tower (jar-verified above). By
+round 300 `v3` has five times our money towers; from there its treasury runs at
+3,000 to our 1,250 and its army at 2.2× ours, and its per-unit productivity can
+be 40% below ours and still win the coverage race by r600. Three arms tonight
+raised our tower count and none moved `v3`, because they raised *paint* towers —
+91% of everything we build is a paint tower.
+
+Why: `towerTypeFor` makes a ruin a money tower only when `k % MONEY_MOD == 0`
+**and** (accepted iteration 4) `chips < CHIP_RESERVE + SPLASHER.moneyCost =
+1,500`. That threshold was derived from the splasher's spawn gate and justified
+by "chips demonstrably do not bind" — a roster measurement. On `v3`, `darla112`
+and `darla117` measured chips killing **51% of soldier rolls and 64% of mopper
+rolls** at the reserve, and `SPLASH_FLOOR` killing 42% more: the gate a soldier
+must clear is `CHIP_RESERVE + SOLDIER.moneyCost + SPLASH_FLOOR = 2,250`, and the
+treasury the iteration-4 rule pins at ~1,250 never reaches it. Chips bind. The
+rule's own logic — *build the money tower only when chips are actually scarce* —
+is right; its threshold was measured against the wrong unit.
+
+### `darla149` — iteration 4's threshold re-derived from the soldier's gate (registered before launch)
+
+`towerTypeFor`: `chips >= CHIP_RESERVE + SPLASHER.moneyCost` → `chips >=
+CHIP_RESERVE + SOLDIER.moneyCost + SPLASH_FLOOR`. `SPLASH_FLOOR` is hoisted to a
+static so the local in `runTower` aliases it — one value, one place. `MONEY_MOD`
+is untouched; money share can rise at most to the `k % 4` rate (~25%), still
+below `v3`'s 37%.
+
+**Falsifier, counters named:** money towers built per 12 games (SPAWN lines)
+**≥ 19** (from 7 — the `k % 4` rate on our ~77 towers); chips per window **>
+1,291**; units alive per window **> 10.5**; splashes per game ≥ 239; roster
+guard: iteration 4 was worth z = +3.26 on the roster, so the gate must hold
+**z > −2** there for the arm to proceed to the `v3` census; acceptance z > 2 on
+either instrument.
