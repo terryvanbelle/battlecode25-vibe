@@ -9642,3 +9642,19 @@ aggregate) **≥ 24** (two a game; `v3` builds 1–18) and soldiers built **not 
 splashes per game **≥ 239**; acceptance z > 2 on either instrument. If moppers
 are built and starvation does not fall, the refuel-in-the-field hypothesis is
 wrong and the gate closes again, this time on its own evidence.
+
+### `darla145` roster-sample gate: **132/150**, z = **+1.73** (9 vs 3). Paired roster launched.
+
+| | `i5` | `darla145` |
+|---|---|---|
+| roster-sample gate (150 keys) | 126 | **132** |
+| discordant | i5-only 3 | darla145-only **9** |
+| per lineage (arm-only / i5-only) | | carol **5 / 0**, bob 2 / 1, alice 2 / 2 |
+| McNemar z | | **+1.73** (bar > +2) |
+
+Not over the bar on 150 keys, and the largest positive gate signal of the
+session — nine discordant keys to three, all five carol swings in the arm's
+favour. This is the resolution problem `paired-roster.sh` was written for: a
+small real effect needs the 450 keys. That run is the registered next rung and
+is launched; its z > 2 accepts under the owner's rule, and the `v3` census
+(66/150, z −0.60) is recorded alongside whichever way it goes.
