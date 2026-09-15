@@ -9253,3 +9253,42 @@ of those (`raClear`). Behaviour identical to `darla135`.
 needs messaging and is a different line; if `raClear` dominates, the soldier
 arrives at a workable ruin and does not work it, and the defect is in the
 hand-off to `workOnRuin`, not the memory.
+
+### `darla138`: **0.2%** of splasher deaths and **0%** of soldier deaths are inside an enemy tower's range
+
+12 `v3` games, DIED events joined to each robot's last indicator.
+
+| unit | deaths | in tower range (r² ≤ 9) at death | turns spent in tower range |
+|---|---|---|---|
+| SPLASHER | 433 | **1 (0.2%)** | 45 of 119,291 (0.0%) |
+| SOLDIER | 108 | **0** | 0 of 54,057 |
+
+The siege backoff works exactly as written and `v3`'s towers kill nobody. The
+decision rule's second branch applies — the killer is not towers — and the
+aggregates already on disk say what it is: **`i5` vs `v3`, 574 deaths, 523
+starved (91%).** Our units die of paint, not damage. "Contact is loss" is paint
+attrition: `PENALTY_ENEMY_TERRITORY = 2` and `PENALTY_NEUTRAL_TERRITORY = 1` per
+turn (jar), `MOPPER_PAINT_PENALTY_MULTIPLIER = 2`, plus −10 per mopper hit — and
+`v3` fields moppers, we field none.
+
+### `darla140` — refill when paint is below the cost of walking home (registered before launch)
+
+```java
+if (!refilling && paint > REFILL_LOW) {
+    MapLocation h0 = nearestRememberedTower(); if (h0 == null) return false;
+    PaintType pt = rc.senseMapInfo(me).getPaint();
+    int pen = pt.isEnemy() ? PENALTY_ENEMY_TERRITORY : (pt == EMPTY ? PENALTY_NEUTRAL_TERRITORY : 0);
+    int steps = max(|me.x - h0.x|, |me.y - h0.y|);
+    if (paint > steps * pen) return false;      // can still get home: carry on
+}
+```
+
+`REFILL_LOW` keeps its value; this fires only *earlier*, only when the unit's
+own ground and distance say the walk home would starve it, and never on our own
+paint (penalty 0). Demand test from existing state — iteration 4's shape.
+
+**Falsifier, counters named:**
+1. engine `starved` per 12 `v3` games **< 523** (`i5`) — the aggregate, unfakeable;
+2. splashes per game **≥ 239** (`i5`) — survival must not be bought by staying home
+   (`darla119`'s rule: a clause the arm cannot satisfy by inaction);
+3. acceptance: z > 2 on the roster-sample gate → paired roster, or on the `v3` census.
