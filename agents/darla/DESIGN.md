@@ -11563,3 +11563,13 @@ many maps a little in both directions; that is a different shape from the
 ruin rungs (few keys, one direction). Under the bar on the census; the
 gate (`20260915-1810xx`, running) says whether the roster prices the
 extra painting or the extra starvation.
+
+### `darla192` — `REFILL_LOW` 20 on `i6` (registered before launch)
+
+Dose pair with `darla190` (30 → census 77, 19 vs 14): the refuel curve on
+`i6` reads 50 (`i6`) / 30 / 20. At 20 a soldier (200 capacity) turns home
+with a tenth of its paint; the starvation side of the trade should show
+first here. **Counters:** starved deaths and HOME share per twelve probe
+games vs `darla190`'s; census against `i6` (72) and `darla190` (77).
+Accept on census or paired roster z > 2. Gate queued behind `darla191`'s;
+census after `darla191`'s.
