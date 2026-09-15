@@ -1,4 +1,4 @@
-package darla;
+package darla_iter6;
 
 import battlecode.common.*;
 
@@ -60,7 +60,7 @@ public class RobotPlayer {
      * measurement-neutral -- it shifts the replay hash, so a dose pair must share one tag if
      * doctrine #3's byte-identity check is to work on raw hashes.
      */
-    static final String BUILD = "darla-i7";
+    static final String BUILD = "darla_iter6";
 
     // ---- Iteration 34: fewer MONEY towers, because paint binds and chips do not -------------
     // towerTypeFor makes a ruin a money tower when k % MONEY_MOD == 0, so MONEY_MOD sets the
@@ -147,7 +147,7 @@ public class RobotPlayer {
     static MapLocation ruinFocus = null;   // ruin currently being worked
     static int ruinTurns = 0;              // turns spent on it
     static final int RUIN_PATIENCE = 40;   // turns before giving up on a ruin
-    static final int RUIN_BAN_ROUNDS = 10;
+    static final int RUIN_BAN_ROUNDS = 250;
 
     // ---- Iteration 44: DENIED RUINS ------------------------------------------------------
     // Measured on the 20260908-1300 tournament replays, which is the only evidence in this

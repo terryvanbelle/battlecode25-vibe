@@ -11582,3 +11582,37 @@ first `i6` neighbour to read positive on both. Neither reaches z > 2; the
 to ~15 vs 9 if the ratio holds, z ≈ +1.2 — so this is a long shot taken
 because the census and gate agree in sign, which none of the ruin rungs
 managed). Queued behind the `darla191`/`darla192` gates.
+
+## ITERATION 7 — ACCEPTED: `darla191` → `darla-i7` (2026-09-15 18:5x UTC)
+
+**`darla191` full `v3` census: 84/150 (56.0%), 16 vs 4 discordant against
+`i6`'s 72, z = +2.68**; against `i5` 33 vs 18, z +2.10. Run
+`20260915-1821`. Gate 131/150 (4 vs 6 vs `i6`, z −0.63; alice 45, bob 47,
+carol 39 — all above the floor). Under the owner's rule (a significant win
+on either instrument, z > 2 on discordant keys) this is an accept on the
+census — the first census accept of the lineage, and the first build to
+win the `v3` census by a clear margin (29 sweeps to 20).
+
+What changed, relative to the frozen `darla_iter6`: one constant.
+`RUIN_BAN_ROUNDS` 250 → 10 — a ruin a soldier finds with enemy paint on
+its pattern is banned for ten rounds instead of two hundred and fifty. The
+whole curve, on `i6`: 250 → 72, 100 → 74, 50 → 76, 25 → 77, **10 → 84**.
+Monotone throughout, and steepest at the end: the last halving-and-a-bit
+is worth seven keys where each earlier one was worth one or two. The
+mechanism is `i6`'s own: the ruin-unlock splash (`darla145`, in `i6`)
+clears enemy paint from ruin patterns 600 times in twelve probe games,
+and a 250-round ban meant the soldier who had been denied was, for nearly
+half the decisive window, the one unit that would not come back to the
+ruin a splasher had just cleared for it. At ten rounds it does. The ban
+existed (iteration 6 of the old lineage) to stop a soldier burning its
+patience on a ruin it could never fix; with splashers fixing ruins, the
+ban was protecting against a case the bot had stopped having.
+
+Instruments for `i7`: census `benchmarks/20260915-1821/scores.csv` (84);
+gate reference `gauntlet/20260915-182423` (131 — `darla191`'s own gate,
+byte-identical to `i7`); paired roster reference = `darla191`'s 450 paired
+run, queued now and read as `i7`'s. Benchmark-on-accept (`benchmark.sh`
+on the shipped build) queued behind `darla192`'s census; promotion test
+(`head-to-head.sh darla darla_iter6`) queued on the roster lock.
+
+Frozen: `src/darla_iter6`. Accepted by `tools/accept-iteration.sh darla191 6`.

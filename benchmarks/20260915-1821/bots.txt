@@ -1,0 +1,1 @@
+darla191 a226dc6 darla191: RUIN_BAN_ROUNDS 10 on i6 — the limit point of the ban curve
