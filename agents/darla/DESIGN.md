@@ -9385,3 +9385,26 @@ constant. On our own paint the addition is zero and behaviour is `i5`'s.
 2. engine `starved`, 12 games, **< 523**; deaths in `HOME` state **< 78% / 91%**;
 3. splashes per game **≥ 239** — survival must not be bought by staying home;
 4. acceptance z > 2 on either instrument.
+
+### `darla141` 12-map probe: eviction works, and there is nothing left to remember. Line closed.
+
+| | `darla134/135/139` | `darla141` | clause |
+|---|---|---|---|
+| arrivals with enemy paint on the pattern | 95% | **2%** | < 50% — **passes** |
+| arrivals clear | 3% | **72%** | |
+| idle turns with a remembered ruin | 21.6% | **9.5%** | |
+| redirects / arrivals (12 games) | 1,775 / 749 | **581 / 57** | |
+| `ruin=` share of soldier turns | 5.1–5.4% | **5.3%** | > 5.4% — **fails** |
+
+The registered ceiling, verbatim: "if 95% of sighted ruins are enemy-contested,
+the memory after eviction may be nearly empty, and a clean pass on clause 1 with
+a flat clause 2 closes the line as *nothing left to remember*." That is the
+result. Fifty-seven arrivals across twelve games cannot move a 5% share.
+
+**The remembered-ruin line closes** (`darla134`, `135`, `139`, `141`) with a
+finding worth more than the arm: **against `v3`, nineteen of every twenty ruins
+a soldier sees unclaimed are already enemy-painted** — which is the expansion
+asymmetry (2-3× our towers by r600) seen from the ground. `v3` does not out-build
+us to ruins we could have had; it paints the ruins first, and soldiers cannot
+overwrite enemy paint. Only a splasher's r² 2 core or a mopper can. That is the
+same two-route wall the unpaint asymmetry ran into, reached from a third side.
