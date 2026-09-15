@@ -10643,3 +10643,24 @@ with `darla164` on the census: same counters (engine `srp` > 0 by r600 in
 ≥ 8 of 12 probe games; soldiers r300 ≥ 4.6; final towers ≥ 91), plus
 `SRPfoe` quits per game below `darla164`'s. Falsified below 75 on the
 census. Gate queued on the lock; census after `darla164`'s.
+
+### `darla160` 450 paired roster: **368/450 (81.8%)**, 48 vs 42 discordant, z = **+0.63**. Not accepted.
+
+Run `20260915-072343`, reference `i5` 362. Per lineage alice 119, bob 129,
+carol 120 — all above the floor. `darla160` now has all three readings:
+census 75 (z +0.93), gate 120 (z −1.03), paired roster 368 (z +0.63). Nothing
+clears z > 2; `i5` stays shipped. It remains the best-measured base for the
+next arms.
+
+### `darla164` full `v3` census: **67/150 (44.7%)** — 8 vs 16 vs `darla160`, z = **−1.63**. Falsified.
+
+Run `20260915-0807`. Against `i5` (69): 17 vs 19, z −0.33. The SRP builder
+that the roster priced at 65/150 costs eight map-sides on the census too,
+so it is not a roster-only cost: whatever the per-tower bonus returns, this
+construction rule spends more than that in soldier turns. Whether any pattern
+was ever finished on the census maps is not known (scores only); the 12-map
+probe is deferred behind the driver cap. `darla165` (mark only in sight of a
+friendly tower) is the paired dose, census running — if it also lands under
+75 the SRP line closes on the census as it did on the roster, and the axis
+that remains is *why `v3` finishes patterns for free*, which the aggregates
+cannot say.
