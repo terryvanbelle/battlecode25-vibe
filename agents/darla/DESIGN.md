@@ -9723,3 +9723,35 @@ life, and the line's cost-benefit is not what the bracket says. Checked next,
 free, from `darla146`'s own dump and `REFILL_LOW`'s value.
 
 ### `darla146` roster-sample gate: 124/150, z = −0.53 — record number for a closed line.
+
+### Corrected mopper census: `darla146`'s moppers walk home **88%** of the time and mop **10%**
+
+*(My first pass read 100% `HOME`; the regex required a trailing `p=` that only
+the `HOME` return string carries. Re-read with a pattern that matches every
+mopper state.)*
+
+| | mopper turns | `HOME` | `mop` | `swing` | paint median |
+|---|---|---|---|---|---|
+| `i5` (2 moppers) | 31 | 80.6% | 16.1% | 3.2% | 33 |
+| `darla146` (34 moppers) | 2,148 | **88.4%** | **10.5%** | 1.2% | **26** |
+
+225 `mop` turns, 225 unpaint actions — one tile per mop turn — from a tenth of
+mopper life. The cause is in `walkHomeIfDry(UnitType.MOPPER.paintCapacity)`:
+`REFILL_LOW = 50` was set for a 200-capacity soldier and a 300-capacity
+splasher, and it is applied unscaled to a **100-capacity** mopper, which is
+therefore "dry" at half a tank, walks to a tower that is dry 52.8% of the time,
+and bleeds `MOPPER_PAINT_PENALTY_MULTIPLIER × 2 = 4` a turn on enemy paint doing
+it. The bracket `darla146`/`darla147` priced a mopper that works one turn in ten.
+
+### `darla148` — the refill floor capped at a quarter of capacity (registered before launch)
+
+On `darla146`: `low = min(REFILL_LOW, cap / 4)`. Soldiers: `min(50, 50)` = 50,
+unchanged. Splashers: `min(50, 75)` = 50, unchanged. Moppers: `min(50, 25)` =
+**25**. The ratio is the soldier's own (50 of 200); no new constant, and the
+refuel line's finding — earlier trips lose — is respected because no unit goes
+home earlier.
+
+**Falsifier, counters named:** mopper `HOME` share **< 88.4%** and `mop` share
+**> 10.5%** (state tokens); unpaint actions **> 225**; soldiers built **≥ 110**
+(`darla146`'s cost, which this arm does not touch); coverage per 1,000 rounds
+**> 342**; splashes per game ≥ 239; acceptance z > 2 on either instrument.
