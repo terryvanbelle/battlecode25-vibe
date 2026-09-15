@@ -10423,3 +10423,19 @@ hundred rounds, full stop. No new constant; the accepted bound that remains is
 the one that was doing the work. **Counters:** soldiers alive at r100 **> 4.3**
 toward 8.4 — the clause every opening arm has failed; money towers by r300 **>
 7**; decided on the census and the gate, z > 2 on either.
+
+### `darla160` full `v3` census: **75/150 (50.0%)** — parity with `v3`, z = **+0.93**. Not significant.
+
+| build | `v3` census | discordant vs `i5` | z |
+|---|---|---|---|
+| `i5` | 69 | — | — |
+| `darla151` (money key) | 72 | 8 vs 5 | +0.83 |
+| `darla158` (+ opening floor exemption) | 74 | 21 vs 16 | +0.82 |
+| `darla160` (+ opening on the round bound alone) | **75** | **24 vs 18** | **+0.93** |
+
+The first build to split the census with the target opponent. Each economy
+component adds one or two map-sides and the test statistic barely moves,
+because the discordant set widens with the effect: 42 keys now change hands,
+24 to 18. Under the owner's rule it is not accepted. The 450 paired roster is
+queued as the roster-side rung; the mechanism counters — soldiers at r100 in
+particular — are read from a 12-map probe, which the census does not carry.
