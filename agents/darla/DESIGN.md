@@ -10802,3 +10802,18 @@ ever protected a pattern from its own team. That is a bounded, mechanical
 defect with a measured signature (completions ≫ alive), not a strategic
 verdict on SRPs; the strategic verdict needs a build where completions ≈
 alive, which no arm has yet been.
+
+### `darla167` — the team stops breaking its own patterns (registered before launch)
+
+`darla165` (mark in sight of a tower) + three clauses that protect a marked
+pattern from our own paint: a splash centre whose r² ≤ 4 footprint contains
+any secondary-marked tile is excluded from splash targeting (score −1); a
+soldier's generic paint honours the tile's mark (`attack(loc, mark ==
+ALLY_SECONDARY)`) on the two places it paints an empty tile. No new
+constant; nothing changes when no pattern is marked. **Counters (12-map
+probe):** completions ÷ engine SRPs alive at r600 — `darla164` 192 for
+1.4, `darla166` 226 for 2.0; the arm is falsified as a *fix* if
+completions exceed 3× alive; engine SRPs alive at r600 > 2.0; towers at
+r600 ≥ 6.0 (`darla160`; the re-purchase drain showed as 3.2); soldiers
+alive r300 ≥ 4.6. Census ≥ 75 or falsified as an *improvement*; accept on
+census or paired roster z > 2. Census launched now; probe after it.
