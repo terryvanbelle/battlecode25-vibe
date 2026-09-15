@@ -10898,3 +10898,14 @@ failed by a factor of 30. Six variants, two builders, five census runs
 the re-open condition is a *trace*, not another arm — a per-tile paint
 event log showing what repaints a completed pattern's tiles, which
 `replay-dump` does not emit today.
+
+### `darla168` (`SPLASH_MIN_SCORE` 10) census **66/150**, 5 vs 14 vs `darla160`, z = **−2.06**; gate 123/150, z −0.52. Falsified.
+
+Census `20260915-0951` (against `i5` 20 vs 23, z −0.46); gate
+`20260915-094754` (alice 39, bob 47, carol 37). Admitting five-empty-tile
+splashes costs nine map-sides against `darla160` — the first dose on this
+lineage to clear |z| > 2 against its base, in the wrong direction. Paint per
+tile, not splash rate, is what the coverage race prices: a thin splash
+spends the tower paint that would have been a unit. `darla169` (18) is the
+other half of the curve, census `20260915-1017` running; its probe is not
+needed unless it lands above 75.
