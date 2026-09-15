@@ -10129,3 +10129,22 @@ fall. **Falsifier, counters named:** spawns per 1,000 rounds **> 64** (`i5`);
 final towers per 12 games **≥ 67** (`i5`, same parse); coverage per 1,000
 rounds **> 366** (same parse); splashes per game ≥ 239; acceptance z > 2 on
 either instrument. The roster guard is `darla95`'s own number: flat.
+
+### `darla153` 12-map probe: without the reserve, towers collapse. The reserve is load-bearing on `v3` too.
+
+| counter (same parse) | `i5` | `darla153` | bar |
+|---|---|---|---|
+| spawns per 1,000 rounds | 64.0 | **55.3** | > 64 — fails |
+| final towers, 12 games | 70 | **45** | ≥ 67 — fails |
+| coverage per 1,000 rounds | 331 | **250** | > 331 — fails |
+| splashes per game | 239 | **168** | ≥ 239 — fails |
+| chips / units per window | 1,375 / 16.5 | 1,258 / 13.2 | |
+| 12-map `v3` | 4/12 | **2/12** | |
+
+Every clause fails, and the tower clause fails by a third. With no reserve the
+chips go to robots before a soldier can pay the 1,000 for a ruin, the towers
+that would have spawned the next robots are never built, and spawns *fall*.
+`darla95`'s z = 0.00 on the roster was not "the reserve does nothing"; it was
+"the roster never tests it". On `v3` the chip gate that kills half the soldier
+rolls is the price of towers, and it is worth paying. **Closed, and the reserve
+is closed as a lever in both directions.**
