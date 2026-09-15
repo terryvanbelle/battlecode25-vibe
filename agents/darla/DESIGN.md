@@ -11420,3 +11420,12 @@ moved. **Counters (12-map probe):** deny bans per twelve games (should
 *rise* — a denied ruin is retried), tower builds r301–600 > 40, towers at
 r600 > 7.8. Census against `i6` (72); accept on census or paired roster
 z > 2. Gate queued; census after `darla183`'s.
+
+### `darla183` gate: 132/150 vs `i6`'s 133 (see McNemar in the commit); census pending.
+
+### `darla185` — `RUIN_BAN_ROUNDS` 50 on `i6` (registered before launch)
+
+Dose pair with `darla184` (100): the ban curve on `i6` reads 250 (`i6`) /
+100 / 50. Same counters as `darla184`; census against `i6` (72); accept on
+census or paired roster z > 2. Gate queued behind `darla184`'s; census
+after `darla184`'s.
