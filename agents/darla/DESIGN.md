@@ -10051,3 +10051,25 @@ gate +2, z +1.00). Only four discordant keys on the gate: the early money
 towers change little against the retired lineages, which never contest the
 economy the way `v3` does. The 450 paired roster is launched as the roster-side
 rung; z > 2 there, or nothing, accepts.
+
+### `darla152` 12-map probe: both halves fire, splashes hit 299, coverage per round is flat. Closed.
+
+| counter | `i5` | `darla152` | bar |
+|---|---|---|---|
+| money towers by r300 | 5 | **14** | ≥ 12 — passes |
+| ruin splashes per game | — | **97** | ≥ 1 — passes |
+| units alive per window | 10.5 | 11.5 | > 10.5 — passes |
+| splashes per game | 239 | **299** | ≥ 239 — passes (highest of the session) |
+| towers built / final | 77 / 67 | **98 / 88** | |
+| final coverage / length | 3,841 / 10,500 | 4,050 / 11,200 | |
+| **coverage per 1,000 rounds** | **366** | **362** | above `i5` — **fails** |
+| 12-map `v3` | 4/12 | 4/12 | |
+
+The halves do not interfere — each counter fires at full strength, splashes are
+25% up, towers 27% up — and paint on the ground per round does not move. That
+is the session's conclusion restated by its most productive arm: more towers
+and more splashes are not more coverage against `v3`. Closed on the coverage
+clause. *(Method note: the bar said "above 331"; that figure came from a parse
+over every row, this comparison uses the same per-100 parse for both builds —
+366 vs 362. Baselines must be computed by the same parse as the arm, or the
+bar is a number from nowhere.)*
