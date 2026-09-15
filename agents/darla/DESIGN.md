@@ -10629,3 +10629,17 @@ paint that the forced soldier takes is the splasher that holds the front.
 Both economy doses on `darla160` are now three-point curves with the optimum
 at `darla160` itself. The axis is closed for doses; what remains on it is a
 different mechanism (`darla164`, SRP income, census running).
+
+### `darla165` — the SRP is marked only in sight of a friendly tower (registered before launch)
+
+`darla164` + one clause: `markResourcePattern` only when a friendly tower is
+within vision (r² ≤ 20; `senseNearbyRobots(-1, team)` any tower type). The
+SRP line's measured cost was parked soldier turns and the patterns broken by
+enemy paint (`SRPfoe`); ground beside our own towers is our paint, is where
+a soldier in HOME state already walks (78–91% of deaths happen there), and is
+the ground the enemy reaches last. The bonus is per tower wherever the
+pattern sits (jar), so nothing is lost by building it at home. Dose pair
+with `darla164` on the census: same counters (engine `srp` > 0 by r600 in
+≥ 8 of 12 probe games; soldiers r300 ≥ 4.6; final towers ≥ 91), plus
+`SRPfoe` quits per game below `darla164`'s. Falsified below 75 on the
+census. Gate queued on the lock; census after `darla164`'s.
