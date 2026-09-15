@@ -9815,3 +9815,27 @@ is 2–3× ours by r600, but three arms raised our towers by 25–50% in the dec
 window without moving `v3` — so **the link "more towers → more income → more
 units" is the one that has never been measured on our side**, and it is read
 next from `darla145`'s own aggregates.
+
+### Our extra towers become tower paint, not chips, and not much army
+
+Per-window averages to r600, 12 `v3` games each (`i5` and `darla145` from their
+`v3` replays; `darla113` from its own):
+
+| build | towers | units alive | chips | tower paint | `v3` towers | `v3` units | `v3` chips |
+|---|---|---|---|---|---|---|---|
+| `i5` | 4.9 | 10.5 | 1,291 | 1,337 | 6.6 | **26.4** | **3,012** |
+| `darla145` | 5.8 (+18%) | 11.1 (+6%) | 1,247 | 1,835 (+37%) | 6.6 | 23.9 | 3,038 |
+| `darla113` | **6.6** (+35%) | 13.1 (+25%) | 1,205 | 2,196 (+64%) | 7.3 | 27.2 | 2,967 |
+
+`darla113` reached `v3`'s own tower count and fielded **half** its army. Our
+towers turn into tower paint (+37%, +64%) and a little army; chips do not move
+at all — they sit at 1,200–1,300 in every build, which is exactly where the
+accepted iteration-4 rule pins them: a ruin becomes a money tower *only when
+chips are below 1,500*, so the treasury self-regulates to just under the
+threshold and stays there. `v3` runs at 3,000 with the same towers and spends
+it on 2.5× the units per tower.
+
+All chip income in this engine comes from money towers (`processBeginningOfRound`,
+jar-verified above: `moneyPerTurn` is added per money tower and nothing else
+adds chips). So the question is the tower-type mix, read next from the SPAWN
+lines already in the dump.
