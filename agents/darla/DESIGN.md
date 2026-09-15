@@ -9322,3 +9322,24 @@ acceptance z > 2 on either instrument. **Registered ceiling:** if 95% of sighted
 ruins are enemy-contested, the memory after eviction may be nearly empty, and a
 clean pass on clause 1 with a flat clause 2 closes the line as "nothing left to
 remember".
+
+### `darla140` 12-map probe: trigger fired **4 times** in 12 games. Closed on the `darla74` rule.
+
+| clause | counter | bar | `darla140` |
+|---|---|---|---|
+| 1 | engine `starved`, 12 games | < 523 | 489 — passes |
+| 2 | splashes per game | ≥ 239 | **221** — fails |
+| — | early refill trips (`et`) | — | **4** |
+| — | game length | — | 10,884 (`i5` 11,031) |
+
+Four firings cannot produce −34 starvations or −18 splashes a game; under a
+deterministic engine those are the cascade of four tiny divergences, not the
+mechanism. The trigger is `darla106`'s failure — a condition that is almost never
+true — because `REFILL_LOW` is already above `steps × penalty` for practically
+every unit that is still alive: **units do not starve on the way home.** The
+91% starvation figure therefore comes from somewhere else, and `walkHomeIfDry`
+names the two places it gives up: no remembered tower (`home == null`), or
+standing at a tower that has no paint to give (iteration 2's unlatch). Which one
+is measured next, from the `darla138` dump that already pairs deaths with last
+indicators. `darla140`'s roster-sample screen is already playing and is kept as
+the record number only.
