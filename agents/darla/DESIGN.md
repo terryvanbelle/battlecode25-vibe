@@ -11290,3 +11290,23 @@ queued behind `darla180`'s census on the benchmark side; the promotion test
 (`head-to-head.sh darla darla_iter5`) is queued on the roster lock.
 
 Frozen: `src/darla_iter5`. Accepted by `tools/accept-iteration.sh darla175 5`.
+
+### `darla180` (`CHIP_RESERVE` 900) census **69/150** — 13 vs 24 against `darla170`, z = −1.81; 24 vs 24 against `i5`. Falsified.
+
+Census `20260915-1407`. Making the exempt soldier affordable at once costs
+eleven keys net against `darla170`; the chip wait, like the roll wait, is
+part of the optimum. Eighth neighbour to lose. Its gate is live and finishes
+for the record.
+
+### `darla181` — `RUIN_PATIENCE` 40 → 80 on `i6` (registered before launch)
+
+First arm on the new base. `darla176` (the same change on `darla170`) was
+flat on the census (78, z −0.58) and neutral on the gate (123); on `i6` the
+roster is the instrument that moved (+36), and `i6`'s soldiers now include
+the exempt post-opening ones whose ruin conversion patience bounds. The
+gate is against `i6`'s own reference, which does not exist yet — the
+promotion test and the `i6` gate reference (`roster-screen.sh darla`) are
+queued first, so this gate reads against `i6`. **Counters:** tower builds
+r301–600 > `i6`'s (to be read from the `i6` benchmark's replay probe if
+one is run); census against `i6` (72). Accept on census or paired roster
+z > 2 against `i6`.
