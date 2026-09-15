@@ -10189,3 +10189,19 @@ fail as written; the clause that is the win condition passes by the widest
 margin of the session. Per the owner's rule the instruments decide — full `v3`
 census launched, gate queued — and the splasher shortfall is the first thing to
 look at if it clears.
+
+### `darla154` full `v3` census: **64/150 (42.7%)**, McNemar z = **−1.15**. Not accepted on `v3`.
+
+| | `i5` | `darla154` |
+|---|---|---|
+| `v3` census, 150 paired keys | **69** | 64 |
+| discordant | i5-only **12** | darla154-only 7 |
+| swept | 24 / 30 | 23 / 34 |
+
+Coverage per round +19% on the six probe maps; five map-sides fewer on the
+seventy-five. That is the fourth time tonight an arm's designed quantity rose on
+the probe and the census fell (`darla113`, `137`, `142`, `154`), and the
+pattern is now a fact about the instrument as much as the arms: **the six
+replay maps over-read per-round coverage for changes to the unit mix.** The
+census is the outcome instrument; the probe reads mechanisms. `darla154`'s
+roster gate stays queued as the other acceptance instrument.
