@@ -11175,3 +11175,17 @@ mean share, is what the census is pricing.
 ### `darla176` roster gate: 123/150, 14 vs 17 vs `i5`, z = −0.54. Closed on both instruments.
 
 Run `20260915-125350` (alice 42, bob 46, carol 35).
+
+### `darla178` — the unlock splash without the walk (registered before launch)
+
+`darla175` with `moveExploring(rzTarget)` → `moveExploring(null)`: a
+splasher still prefers the splash that clears an enemy-painted unclaimed
+ruin when one is in range, but never leaves its exploration to walk to
+one. `darla145`'s rule has two halves; the walk is the half that takes a
+splasher off the front, and the census (72 on `darla170`, 3 vs 11) is a
+race for the front. The gate result (133) may come from either half.
+**Counters:** `rzf` per twelve probe games > 0 in ≥ 8 games (the preference
+still fires); coverage / 1,000 rounds ≥ `darla170`'s 392. Census against
+`darla170` (80) and gate against `darla175` (133) are the readings; accept
+on census or paired roster z > 2. Gate queued; census after `darla175`'s
+probe.
