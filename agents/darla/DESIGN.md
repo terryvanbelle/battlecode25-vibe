@@ -9513,3 +9513,14 @@ the maximum enemy tile count seen on one pattern. Behaviour unchanged.
 there is no target to aim at and the idea closes on the probe; otherwise the arm
 is "prefer a splash centre whose r² 2 core covers enemy tiles of a ruin pattern",
 and its falsifier is towers built per game (engine aggregate) and `ruin=` share.
+
+### `darla142` roster-sample gate: **125/150**, z = **−0.30**. Not accepted on either instrument. Closed.
+
+| instrument | `i5` | `darla142` | z |
+|---|---|---|---|
+| roster-sample gate (150 keys) | 126 | 125 | **−0.30** (5 vs 6) |
+| `v3` census (150 keys) | 69 | 62 | **−1.46** (8 vs 15) |
+
+On the roster — no enemy paint pressure, no starvation to prevent — the arm is
+a coin flip against `i5`; on `v3` it is a regression. Closed, as the refuel
+line already was on `darla143`.
