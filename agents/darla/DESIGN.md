@@ -11553,3 +11553,13 @@ key per halving now, and the roster does not move (131–132 at every
 point). `darla191` (10) is the limit point, census after `darla190`'s;
 whichever way it lands, the line's best rung is ≈ +5 census keys, short
 of the bar, and closes after it.
+
+### `darla190` (`REFILL_LOW` 30) census **77/150** — 19 vs 14 against `i6`, z +0.87. Wide and weak; gate pending.
+
+Census `20260915-1757`. Thirty-three keys change hands — the widest
+discordant set of any `i6` neighbour, three times the ruin rungs' — and
+net +5. The refuel threshold touches every unit every trip, so it moves
+many maps a little in both directions; that is a different shape from the
+ruin rungs (few keys, one direction). Under the bar on the census; the
+gate (`20260915-1810xx`, running) says whether the roster prices the
+extra painting or the extra starvation.
