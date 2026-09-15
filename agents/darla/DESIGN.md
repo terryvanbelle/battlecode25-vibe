@@ -11457,3 +11457,13 @@ Census `20260915-1557`, gate `20260915-155029` (alice 45, bob 47, carol
 a denied ruin unconverted — most likely the enemy paint is back by the
 time the ban lifts, at either length. `darla185` (50) completes the curve,
 census running.
+
+### `darla187` — the opening ends at r80 on `i6` (registered before launch)
+
+The opening-bound curve was measured upward only (100 → 75, 150 → 66, 200
+→ 67 on `darla160`); the third tower stands by r22–82, so r80 is the
+shortest bound that still covers it. Both opening lines move together.
+**Counters:** soldiers alive r100 vs `i6`'s (7.2 on the `darla160` base);
+opening exempt soldiers (`os=`) fewer; census against `i6` (72). Accept on
+census or paired roster z > 2. Gate queued behind `darla186`'s; census
+after `darla186`'s.
