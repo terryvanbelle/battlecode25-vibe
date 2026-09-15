@@ -11332,3 +11332,12 @@ reading taken is that the promoted build plays and beats its predecessor;
 score to match. The `i6` gate reference (`roster-screen.sh darla`,
 `20260915-145153`) is running and becomes the baseline for every gate from
 `darla181` on.
+
+### `darla182` — `MONEY_MOD` 3 on `i6` (registered before launch)
+
+The money-share curve has three points on the `darla160`-era base (4 → 69,
+2 → 75, 1 → 64) and none at 3, and the base has changed twice since. One
+ruin in three a money tower while chips are scarce. **Counters:** money
+towers by r300 between `darla160`'s 15 and `i5`'s 5 in twelve probe games;
+census against `i6` (72). Accept on census or paired roster z > 2 against
+`i6`. Census launched; gate queued behind `darla181`'s.
