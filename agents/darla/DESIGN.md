@@ -10009,3 +10009,18 @@ accepted, and I am not softening the bar for the arm I like best. What it
 leaves is exactly measured: unlocking enemy-painted ruins is worth about +2% on
 the roster and nothing on `v3`, because towers are not the win condition
 there. Closed.
+
+### `darla151` full `v3` census: **72/150 (48.0%)**, McNemar z = **+0.83**. Best `v3` census of the session; not significant.
+
+| | `i5` | `darla151` |
+|---|---|---|
+| `v3` census, 150 paired keys | 69 | **72** |
+| discordant | i5-only 5 | darla151-only 8 |
+| swept | 24 / 30 | 22 / 25 |
+| McNemar z | | **+0.83** (bar > +2) |
+
+Three map-sides better than the incumbent, on thirteen discordant keys out of
+150: the early money towers lift coverage per round on the probe maps and
+change the outcome on few maps in the pool. Positive, the highest `v3` number
+any build has posted, and below the bar. The roster-sample gate is collating
+and decides whether the 450 paired roster runs as the roster-side rung.
