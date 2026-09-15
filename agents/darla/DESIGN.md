@@ -11467,3 +11467,13 @@ shortest bound that still covers it. Both opening lines move together.
 opening exempt soldiers (`os=`) fewer; census against `i6` (72). Accept on
 census or paired roster z > 2. Gate queued behind `darla186`'s; census
 after `darla186`'s.
+
+### `darla185` (`RUIN_BAN_ROUNDS` 50) census **76/150** — 8 vs 4 against `i6`, z +1.15; gate 132/150, 4 vs 5, z −0.33. Under the bar; the ban curve is 250 → 72, 100 → 74, 50 → 76.
+
+Census `20260915-1617`, gate `20260915-161029`. A monotone but shallow
+curve — two keys per halving — and the roster does not move. Not a rung
+on its own; a 25-round point would say whether it keeps climbing, but at
+two keys a step it cannot reach the bar alone. Closed as a single-change
+rung; kept as a candidate component for a combined arm with `darla181`
+(patience 80, +5 on disjoint mechanism) once `darla186` and `darla187`
+have read.
