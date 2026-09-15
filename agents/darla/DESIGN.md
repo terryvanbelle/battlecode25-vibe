@@ -10960,3 +10960,9 @@ the census draw a curve rather than a point.
 (`darla154` on `i5`: 64), 1:2, 1:3. Same counters as `darla170` plus r301–600
 tower builds > 17. Census ≥ 75 or falsified; accept on census or paired
 roster z > 2. Gate queued behind `darla170`'s.
+
+### `darla170` roster gate: 123/150, 13 vs 16 vs `i5`, z = −0.56. Neutral on the roster; census pending.
+
+Run `20260915-102719` (alice 41, bob 48, carol 34). The 1:3 exemption
+neither floods nor helps the roster; the census (`20260915-1037`, 122/150
+played) is the decision.
