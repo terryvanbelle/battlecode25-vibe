@@ -10205,3 +10205,37 @@ pattern is now a fact about the instrument as much as the arms: **the six
 replay maps over-read per-round coverage for changes to the unit mix.** The
 census is the outcome instrument; the probe reads mechanisms. `darla154`'s
 roster gate stays queued as the other acceptance instrument.
+
+## The opening: level at r100 on towers and chips, and `v3` has twice the soldiers
+
+Per-game averages from the 12 `v3` replays:
+
+| round | our soldiers / splashers / moppers | our towers / chips | `v3` soldiers / splashers / moppers | `v3` towers / chips |
+|---|---|---|---|---|
+| 100 | **4.3** / 1.7 / 0 | 3.9 / 1,380 | **8.4** / 1.2 / 1.0 | 4.1 / 1,228 |
+| 200 | **2.9** / 4.5 / 0 | 4.7 / 1,191 | **9.2** / 2.8 / 2.3 | 5.4 / **3,344** |
+| 300 | **2.1** / 8.3 / 0 | 5.2 / 1,334 | **10.1** / 5.8 / 4.2 | 6.1 / 3,419 |
+
+At round 100 nothing has diverged but the army: equal towers, equal treasury,
+and `v3` has twice our soldiers. Then iteration 5's opening window closes
+(`roundNum < 100`), every roll of ours becomes a splasher, our soldiers *fall*
+to two, and `v3` — holding nine or ten — claims the ruins, builds the money
+towers (24 by r300) and triples its chips by r200. The standing soldier force
+through r300 is the economy. `darla154` tripled soldiers *all game* and lost on
+the census; `darla113` the same. The measured shape is an opening, not a mix.
+
+### `darla155` — soldiers while there is a ruin to claim (registered before launch)
+
+Iteration 5 forces a soldier while `getNumberTowers() <= 2 && round < 100`.
+`darla155` adds a demand signal every tower can read without a message: **an
+unclaimed ruin in this tower's own vision** — while one is visible, the roll is
+a soldier and that soldier is exempt from `SPLASH_FLOOR` (as the opening's must
+be to exist at all); once the ruins in sight are claimed, the normal roll and
+floor return. No constant; it ends on an event `v3` causes as surely as we do.
+
+**Falsifier, counters named:** soldiers alive at r200 and r300 (aggregates)
+**> 2.9 / 2.1** and toward `v3`'s 9–10; money towers by r300 **> 5**; chips at
+r200 **> 1,191**; final towers **≥ 67**; splashes per game ≥ 239 (the
+splasher engine must survive the opening); coverage per 1,000 rounds above
+`i5` same-parse; **acceptance on the 150-key `v3` census, z > 2** — the probe
+maps over-read this class of change and are not the decider.
