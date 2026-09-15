@@ -11535,3 +11535,12 @@ ruin-conversion line on `i6` — patience 80 (77), ban 50 (76), both (75) —
 is a set of shallow, overlapping rungs none of which reaches the bar;
 `darla189` (ban 25) is its last dose point, census running. After it the
 line closes.
+
+### `darla191` — `RUIN_BAN_ROUNDS` 10 on `i6` (registered before launch)
+
+The limit point of the ban curve (250 → 72, 100 → 74, 50 → 76, 25 → 77):
+a denied ruin is retried almost at once. If the curve is monotone to the
+end, the ban was never worth having on `i6`; if it turns, 25 is the
+optimum. **Counters:** deny bans per twelve probe games (rising sharply);
+census against `i6` (72) and `darla189` (77). Accept on census or paired
+roster z > 2. Gate queued behind `darla190`'s; census after `darla190`'s.
