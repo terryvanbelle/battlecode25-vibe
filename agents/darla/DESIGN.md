@@ -11067,3 +11067,12 @@ usually gives, and it means the 1:3 result is not "more soldiers good": it
 is a specific spawn rhythm — three splashers, one soldier — that the
 neighbours miss in both directions. `darla173`'s gate is dequeued as moot;
 `darla170`'s paired roster (203/300 at this reading) is the live decision.
+
+### `darla174` (phase rule on `darla170`) census **72/150** — 1 vs 9 against `darla170`, z = −2.53. Falsified.
+
+Census `20260915-1157` (against `i5` 24 vs 21, z +0.45; against `darla160`
+7 vs 10, z −0.73). Three different one-line changes to `darla170` — 1:2,
+1:4, and money-only-before-r300 — each lose eight to eleven keys against it
+and win at most two. Whether they lose the *same* keys is checked below;
+if they do, the 80 is a knife-edge on those maps rather than a broad gain,
+and the paired roster (the other instrument) is the robustness reading.
