@@ -11235,3 +11235,17 @@ this halves the roll rate and doubles the expected wait — the other side of
 splashers built > 657; towers at r600 vs 6.8 (the cost, if the wait is too
 long). Census against `darla170` (80); accept on census or paired roster
 z > 2. Census launched; gate queued.
+
+### `darla180` — `CHIP_RESERVE` 1,200 → 900 on `darla170` (registered before launch)
+
+The exempt soldier is affordable only at chips ≥ reserve + 250 = 1,450,
+and the treasury saw-tooth sits in [1,200, 1,600) — so a soldier that is
+due right after a splasher (chips ≈ 1,200) waits for income, on top of the
+roll wait. At 900 it is affordable from 1,150, i.e. immediately. This is
+the exemption's *chip* wait, distinct from the roll wait `darla177`/`179`
+test; the reserve-zero arm on `i5` collapsed towers (70 → 45) because
+units ate the tower fund, and 900 keeps 90% of a tower's cost in hand.
+**Counters (12-map probe):** exempt soldiers > 140; towers at r600 ≥ 6.8;
+final towers ≥ 91 (`darla160`; collapse shows here first); coverage ≥ 392.
+Census against `darla170` (80); accept on census or paired roster z > 2.
+Census launched; gate queued.
