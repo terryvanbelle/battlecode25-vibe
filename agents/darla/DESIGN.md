@@ -9658,3 +9658,42 @@ favour. This is the resolution problem `paired-roster.sh` was written for: a
 small real effect needs the 450 keys. That run is the registered next rung and
 is launched; its z > 2 accepts under the owner's rule, and the `v3` census
 (66/150, z −0.60) is recorded alongside whichever way it goes.
+
+### `darla146` 12-map probe: moppers get built and mop; starvation does not fall; soldiers fall. Closed as registered.
+
+| clause | counter | bar | `i5` | `darla146` |
+|---|---|---|---|---|
+| moppers built, 12 games | ≥ 24 | 2 | **34** — passes |
+| soldiers built | ≥ 137 | 137 | **110** — fails |
+| engine `starved` | < 523 | 523 | **563** — fails |
+| unpaint actions | > 5 | 5 | **225** — passes |
+| splashes per game | ≥ 239 | 239 | **262** — passes |
+| — | final coverage | | 3,654 | **3,981** (+9%; games +5.5%) |
+| — | final towers | | 70 | 68 |
+| — | 12-map `v3` | | 4/12 | 5/12 |
+
+The registration said: "if moppers are built and starvation does not fall, the
+refuel-in-the-field hypothesis is wrong and the gate closes again, this time on
+its own evidence." Moppers were built, starvation rose. **Closed on the letter.**
+The bound held — 34 moppers is not carol's flood — but each one still cost a
+soldier's worth of tower paint, and the soldier count fell by a fifth.
+
+What the same table adds, recorded for the next arm and not used to rescue this
+one: the *other* half of the mopper's job fired at full strength. **Unpaint
+actions went from 5 to 225** and coverage rose 3% per round, the first arm
+tonight to move coverage per round without a tower behind it. The mopper as a
+*refueler* is refuted; the mopper as an *unpainter* is measured and positive.
+
+### `darla147` — a due mopper only where there is enemy paint to mop (registered before build)
+
+`darla146` with one condition added: the due mopper is exempt from `PAINT_FLOOR`
+only when this tower can see enemy paint. Demand test, no constant. It removes the
+moppers that cost a soldier deep in our own territory — where there is nothing to
+mop and nothing to refuel — and keeps the ones at the front that produced the
+225 unpaints.
+
+**Falsifier:** soldiers built **≥ 137** (the clause `darla146` failed, now
+load-bearing); unpaint actions **> 100** (the mechanism must survive the gate);
+coverage per round above `i5`'s; splashes per game ≥ 239; acceptance z > 2 on
+either instrument. Starvation is *recorded*, not a clause — the refuel hypothesis
+is closed.
