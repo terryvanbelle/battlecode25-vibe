@@ -9992,3 +9992,20 @@ treasury never gets there because the bot converts the chips first, which is
 what the units clause was there to catch. The clause fails as written and I am
 not re-reading it; the arm proceeds on the three that pass and the win condition
 moving. Full `v3` census launched; the roster gate is queued.
+
+### `darla145` paired roster: **370/450 (82.2%)**, McNemar z = **+1.21**. Not accepted; closed as the best-scoring closed arm of the session.
+
+| instrument | `i5` | `darla145` | discordant | z |
+|---|---|---|---|---|
+| roster-sample gate (150) | 126 | 132 | 9 vs 3 | +1.73 |
+| **paired roster (450)** | **362** | **370** | **26 vs 18** | **+1.21** |
+| `v3` census (150) | 69 | 66 | 11 vs 14 | −0.60 |
+| per lineage (paired) | | | carol 12–8, bob 9–5, alice 5–5 | |
+
+The first arm of the session to beat `i5` on the 450-key roster — eight games,
+ahead or level against every lineage — and not significantly: z = +1.21 against
+a bar of 2, with `v3` flat-to-negative. Under the owner's rule it is not
+accepted, and I am not softening the bar for the arm I like best. What it
+leaves is exactly measured: unlocking enemy-painted ruins is worth about +2% on
+the roster and nothing on `v3`, because towers are not the win condition
+there. Closed.
