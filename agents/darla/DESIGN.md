@@ -11055,3 +11055,15 @@ twelve games. **Counters:** paint towers built r301–600 > `darla170`'s
 share; spawns per 1,000 rounds and coverage ≥ `darla170`'s (392). Census
 against `darla170` (80) is the reading; accept on census or paired roster
 z > 2. Gate queued behind `darla173`'s; census after `darla173`'s.
+
+### `darla173` (1:4) census **71/150** — 2 vs 11 against `darla170`, z = **−2.50**. The exemption curve is a peak at 1:3.
+
+Census `20260915-1138` (against `i5` 22 vs 20, z +0.31; against `darla160`
+7 vs 11, z −0.94). The curve is complete on the census: none 75 / **1:3 80**
+/ 1:2 72 / 1:1 64, and now 1:4 71 — both neighbours of 1:3 lose to it at
+|z| > 2 (1:2: 0 vs 8; 1:4: 2 vs 11) while neither differs from the base.
+That is a sharp interior optimum, sharper than a single-parameter economy
+usually gives, and it means the 1:3 result is not "more soldiers good": it
+is a specific spawn rhythm — three splashers, one soldier — that the
+neighbours miss in both directions. `darla173`'s gate is dequeued as moot;
+`darla170`'s paired roster (203/300 at this reading) is the live decision.
