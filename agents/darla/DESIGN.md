@@ -11341,3 +11341,13 @@ ruin in three a money tower while chips are scarce. **Counters:** money
 towers by r300 between `darla160`'s 15 and `i5`'s 5 in twelve probe games;
 census against `i6` (72). Accept on census or paired roster z > 2 against
 `i6`. Census launched; gate queued behind `darla181`'s.
+
+### `darla181` (`RUIN_PATIENCE` 80 on `i6`) census **77/150** — 7 vs 2 against `i6`, z = **+1.67**; 24 vs 16 against `i5`, z +1.26. Open.
+
+Census `20260915-1447`. The same change was flat on `darla170` (78, 5 vs 7)
+and here moves nine keys 7-to-2 on `i6` — the ruin-unlock splash gives
+soldiers ruins whose patterns are freshly cleared, and a soldier that stays
+twice as long finishes more of them. Not at the bar; the gate (queued
+behind the `i6` reference) and, if it holds there, the paired roster are the
+next readings. A 12-map probe is worth running for the r301–600 tower count
+once the benchmark side is free.
