@@ -1,0 +1,13 @@
+agent,benchmark,map,agent_side,winner_side,rounds,agent_result
+darla166,v3,shell,B,A,513,loss
+darla166,v3,shell,A,B,586,loss
+darla166,v3,Oasis,A,B,543,loss
+darla166,v3,Oasis,B,A,449,loss
+darla166,v3,Thirds,A,A,663,win
+darla166,v3,giver,A,B,409,loss
+darla166,v3,giver,B,A,576,loss
+darla166,v3,Thirds,B,B,2000,win
+darla166,v3,TheBest,A,B,441,loss
+darla166,v3,TheBest,B,A,490,loss
+darla166,v3,maze,B,A,1077,loss
+darla166,v3,maze,A,B,1415,loss

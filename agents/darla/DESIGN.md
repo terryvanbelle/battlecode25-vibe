@@ -10730,3 +10730,39 @@ laying patterns that never complete (`ss=` splashes against engine `srp`
 count). Either way the census answer is unambiguous; the probe is for the
 notebook, so the next builder — if any — starts from the measured failure
 rather than a guess. The moot gate is dequeued.
+
+### `darla166` 12-map probe: 226 pattern completions, 2 alive — the arm bought the same patterns over and over. Closed.
+
+Probe `20260915-0907` (2/12), same parse as the `darla160` probe:
+
+| | `darla160` | `darla166` |
+|---|---|---|
+| splasher turns tagged SPLASH | 3.0% | **1.5%** |
+| — lowScore (ready, nothing worth splashing) | 32.6% | **45.7%** |
+| — noTgt | 25.5% | 15.2% |
+| — SRPgo (walking to a marked pattern) | — | 7.8% |
+| — SRPsplash | — | 1.0% |
+| pattern completions (sum of per-robot `srpDone`) | 0 | **226** |
+| engine SRPs alive r300 / r600 | 0 / 0 | 0.75 / 2.0 |
+| towers r300 / r600 | 6.1 / 6.0 | **4.4 / 5.0** |
+| soldiers r100 / r300 | 7.2 / 4.6 | 6.3 / 3.8 |
+| median tower-turn chips r300–900 | 1470 | 1422 |
+
+The mechanism worked as coded — 15,132 centre sightings, 679 pattern splashes,
+226 completions — and that is the catastrophe. A completion costs 200 chips;
+226 of them in 12 games is 45,000 chips, forty-five level-one towers, and
+the engine counted two patterns alive at r600. Patterns were laid, bought,
+broken and bought again: the completion rule fires on any robot standing at
+a finished centre, and the splashers' own ordinary splashes — primary paint
+in a 13-tile disk — overwrite the corner blocks of any pattern they pass,
+which the pattern-laying code then repairs and a soldier or splasher
+re-purchases. Nothing in the arm capped completions per centre or per game.
+Tower count fell 28% at r300, and the splash rate halved because a splasher
+in sight of any marked centre had a target other than the front.
+
+Two clauses would bound it (never complete a centre completed before; never
+splash primary within r² ≤ 8 of a marked centre), but the line has now failed
+with two construction rules and four variants on the census, and the cheap
+diagnosis this probe gives — *own splashes break own patterns* — applies to
+every splasher-heavy build of this lineage. **Closed.** The SRP bonus stays
+the one jar-verified income multiplier `v3` uses that we do not.
