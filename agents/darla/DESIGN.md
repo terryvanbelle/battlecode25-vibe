@@ -11627,3 +11627,11 @@ reference (`20260915-182423`, 131); accept on census or paired roster z > 2
 against `i7`. `darla190`'s queued paired roster (on `i6`) is dequeued as
 superseded. Gate queued; census after `darla192`'s and the `i7`
 benchmark-on-accept.
+
+### `darla192` (`REFILL_LOW` 20 on `i6`) census **78/150** — 21 vs 15 against `i6`, z +1.00; 15 vs 14 against `darla190`; gate 132/150, 5 vs 6. The refuel curve is flat below 30.
+
+Census `20260915-1847`, gate `20260915-184509` (alice 42, bob 49, carol
+41). 50 → 72, 30 → 77, 20 → 78 on `i6`: the step from 50 to 30 is the
+whole effect and 30 → 20 is a wash (15 vs 14). Same wide, weak shape as
+`darla190` — 36 keys move for +6. Closed as a dose; the line continues on
+`i7` as `darla193` (30), gate queued.
