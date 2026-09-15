@@ -9559,3 +9559,24 @@ splashes per game **≥ 239**; acceptance z > 2 on either instrument. **Prior,
 stated:** every "engage more" arm tonight lost on `v3`; this one engages a ruin,
 not a unit, and adds a tower rather than trading painting for survival — that is
 the whole bet, and the tower count is the counter that reads it.
+
+### `darla145` 12-map probe: every clause passes, and coverage rises per round
+
+| clause | counter | bar | `i5` | `darla145` |
+|---|---|---|---|---|
+| 1 | ruin splashes (`rzFire`) per game | ≥ 1 | — | **70.7** |
+| 2 | final towers, 12 games | > 70 | 70 | **75** |
+| 3 | `ruin=` share of soldier turns | > 5.4% | 5.4% | **7.1%** |
+| 4 | splashes per game | ≥ 239 | 239 | **257** |
+| — | final coverage, 12 games | — | 3,654 | **3,875** (+6%) |
+| — | game length (rounds) | — | 11,031 | 10,835 |
+| — | exceptions | — | — | 0 |
+| — | 12-map `v3` score | — | 4/12 | 4/12 |
+
+The bet was that engaging a *ruin* rather than a *unit* adds a tower instead of
+trading painting for something else, and the counters read exactly that: the
+splasher fires on ruin patterns seventy times a game, soldiers work ruins a third
+more, towers rise, and coverage rises with games no longer — the first arm
+tonight whose designed quantity and the win condition moved together without a
+denominator behind it. Acceptance is the two instruments: full `v3` census
+launched now, roster-sample gate queued.
