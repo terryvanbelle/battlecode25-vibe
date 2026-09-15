@@ -9932,3 +9932,21 @@ tar archive`) and a gate driver was queued for it. Rebuilt under an explicit
 follows a heredoc in the same command list; gate it with `if`, not `&&`.** The
 queued gate driver is left in place — `roster-screen.sh` copies the source when
 it plays, and the source now exists.
+
+### `darla150` 12-map probe: money towers 7 → **18** (25%) — but late. Closes on two clauses.
+
+| | `i5` | `darla150` | bar |
+|---|---|---|---|
+| money towers built / share | 7 / 9% | **18 / 25%** | ≥ 19 — misses by one |
+| money towers by r300 | 5 | **6** | (`v3`: 24) |
+| chips per window ≤ r600 | 1,291 | 1,317 | > 1,291 — passes, +2% |
+| units alive per window | 10.5 | 11.1 | > 10.5 — passes |
+| splashes per game | 239 | **215** | ≥ 239 — fails |
+| 12-map `v3` | 4/12 | 4/12 | |
+
+The mirror works — the mix reaches the `k % 4` rate — and it changes almost
+nothing, because it fires only once the census has seen `CENSUS_MIN` towers,
+and by then the ruins that mattered are paint towers. `v3` has 24 money towers
+by round 300; `darla150` has one more than `i5`. The treasury moves 2%. The
+lever is real and the timing is wrong: **the money towers have to be the early
+ones.** Closed on its clauses; the timing finding carries forward.
