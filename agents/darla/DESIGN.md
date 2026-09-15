@@ -11310,3 +11310,8 @@ queued first, so this gate reads against `i6`. **Counters:** tower builds
 r301–600 > `i6`'s (to be read from the `i6` benchmark's replay probe if
 one is run); census against `i6` (72). Accept on census or paired roster
 z > 2 against `i6`.
+
+### `darla180` roster gate: 121/150 vs `i5`'s 126. Closed on both instruments.
+
+Run `20260915-141206`; the last arm measured against the `i5` gate
+reference — from here gates read against `i6`'s own reference (queued).
