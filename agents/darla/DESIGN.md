@@ -10980,3 +10980,15 @@ probe):** paint towers built r301–600 > 11 (of 17); spawns per 1,000 rounds
 > 87.4; coverage / 1,000 rounds > 347; chips at r600 recorded (the cost).
 Census ≥ 75 or falsified; accept on census or paired roster z > 2. Gate
 queued behind `darla171`'s; census after `darla171`'s.
+
+### `darla170` full `v3` census: **80/150 (53.3%)** — 29 vs 18 against `i5`, z = **+1.60**; 10 vs 5 against `darla160`, z +1.29. Best census of the lineage; not yet significant.
+
+Run `20260915-1037`. First build to win the census outright (31 sweeps to
+26). The registered counters (towers at r600, r301–600 tower builds,
+soldiers r300, splashers built ≥ 85%) are read from the 12-map probe after
+`darla171`'s census; the paired 450 roster is queued as the roster-side
+acceptance instrument (gate was 123, z −0.56). The economy axis now reads
+`i5` 69 → 151 72 → 158 74 → 160 75 → **170 80**, each rung a bounded
+exemption or a share, none yet at z > 2 on its own — but 29 vs 18 against
+`i5` is the widest discordant margin so far, and the paired roster gets the
+same rung a second reading.
