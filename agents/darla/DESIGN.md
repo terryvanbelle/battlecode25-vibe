@@ -10073,3 +10073,24 @@ clause. *(Method note: the bar said "above 331"; that figure came from a parse
 over every row, this comparison uses the same per-100 parse for both builds —
 366 vs 362. Baselines must be computed by the same parse as the arm, or the
 bar is a number from nowhere.)*
+
+## `v3` spawns 2.5× the units per round — and 2× per tower
+
+Summed spawns (`+sold`, `+spl`, `+mop`) over the 12 `v3` games:
+
+| build | our spawns per 1,000 rounds | `v3` spawns per 1,000 rounds | our peak chips |
+|---|---|---|---|
+| `i5` | **64.0** | 174.9 | 4,250 |
+| `darla151` | 71.9 (+12%) | 164.2 | 4,990 |
+| `darla152` | 74.2 (+16%) | 185.2 | 4,990 |
+
+`v3` fields 2.2× our army because it *builds* 2.5× the units per round. Per
+tower it is about **2×** — one spawn every ~38 rounds per `v3` tower against
+every ~77 for ours — and the early money towers of `darla151` close a tenth of
+that. Our peak treasury reaches 4,250–4,990, so late in the game we hold chips
+we cannot spend: the per-tower spawn rate is gated by **tower paint**, which is
+dry on 52.8% of tower turns. A money tower has no paint income at all and can
+spawn only its 500-paint starting stash; every spawn beyond that comes from
+paint towers, and our paint towers' income goes somewhere before it becomes a
+unit. The aggregates carry the candidate: `xfer`, the refill withdrawals units
+make from towers. Read next.
