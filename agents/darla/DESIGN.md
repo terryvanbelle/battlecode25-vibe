@@ -9497,3 +9497,19 @@ Standing conclusion from three lines tonight: on `v3`, any unit-turn redirected
 from painting to anything else — engaging, building, surviving — loses the
 coverage race that ends the game by r600. The lever, if there is one, raises
 paint on the ground per unit-turn.
+
+### `darla144` — probe: can a splasher see an enemy-painted unclaimed ruin? (registered before build)
+
+`darla141` measured that 19 of 20 unclaimed ruins a soldier sees are already
+enemy-painted, and a soldier can never fix that; a splasher's r² 2 core can. A
+splasher that overwrote the enemy paint on a ruin's pattern would hand the ruin
+to the next soldier — a coverage-race lever that *adds* a tower rather than
+trading painting for something else. The `darla74` question first: per splasher
+turn, is there an unclaimed ruin in vision with enemy paint on its pattern, and
+how much? `darla144` = `i5` + `rz=<turns with such a ruin>/<splasher turns>` and
+the maximum enemy tile count seen on one pattern. Behaviour unchanged.
+
+**Decision rule:** if such a ruin is in vision on **< 5%** of splasher turns,
+there is no target to aim at and the idea closes on the probe; otherwise the arm
+is "prefer a splash centre whose r² 2 core covers enemy tiles of a ruin pattern",
+and its falsifier is towers built per game (engine aggregate) and `ruin=` share.
