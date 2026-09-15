@@ -10024,3 +10024,21 @@ Three map-sides better than the incumbent, on thirteen discordant keys out of
 change the outcome on few maps in the pool. Positive, the highest `v3` number
 any build has posted, and below the bar. The roster-sample gate is collating
 and decides whether the 450 paired roster runs as the roster-side rung.
+
+### `darla152` — `darla151` + `darla145`: two mechanisms, each below the bar alone (registered before launch)
+
+Neither arm clears z > 2 on either instrument; each moves the win condition on
+the probe maps by a different route — `darla151` mints chips early (money towers
+by r300 5 → 13, units +10%, coverage +3% per round), `darla145` turns
+enemy-painted ruins into towers (ruin splashes 70 a game, +8 on the 450 roster).
+They touch different code (`towerTypeFor` vs the splasher's scoring and
+explore target) and carry separate counters, so a combined read decomposes.
+This is a two-dose arm and is registered as one; house practice prefers one
+change at a time, and the reason for the exception is that both singles are
+measured and the owner has asked for exploration over caution.
+
+**Falsifier, both halves' counters:** money towers by r300 ≥ 12 **and** ruin
+splashes per game ≥ 1; units alive per window > 10.5; splashes per game ≥ 239;
+coverage per 1,000 rounds above `i5`'s 331; acceptance z > 2 on either
+instrument. If either half's counter goes dark, the halves interfere and the
+arm closes on that read.
