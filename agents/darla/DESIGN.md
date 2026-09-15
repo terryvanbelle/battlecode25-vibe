@@ -9697,3 +9697,27 @@ load-bearing); unpaint actions **> 100** (the mechanism must survive the gate);
 coverage per round above `i5`'s; splashes per game ≥ 239; acceptance z > 2 on
 either instrument. Starvation is *recorded*, not a clause — the refuel hypothesis
 is closed.
+
+### `darla147` 12-map probe: soldiers saved, mopping lost. The mopper pair closes as a bracket.
+
+| | `i5` | `darla146` (one per soldier) | `darla147` (+ enemy paint in view) | bar |
+|---|---|---|---|---|
+| moppers built | 2 | 34 | 24 | |
+| soldiers built | 137 | 110 | **150** | ≥ 137 — passes |
+| unpaint actions | 5 | **225** | 68 | > 100 — fails |
+| coverage per 1,000 rounds | 331 | **342** | 321 | > 331 — fails |
+| splashes per game | 239 | 262 | 225 | ≥ 239 — fails |
+| starved | 523 | 563 | 530 | recorded |
+| 12-map `v3` | 4/12 | 5/12 | 3/12 | |
+
+The demand gate did exactly what it was for — soldiers back above `i5` — and
+the unpaints went with the moppers it removed. The two variants bracket the
+incumbent: mopping buys coverage per round only by spending the soldiers'
+tower paint, and protecting the soldiers gives the mopping back. **Closed as
+built**, both variants, with the bracket as the record.
+
+One number from the old census this pair never checked: `i5`'s moppers spend
+**85% of their turns in `HOME`** (283 mopper turns, 240 walking home). If
+`darla146`'s moppers did the same, its 225 unpaints came from a sixth of their
+life, and the line's cost-benefit is not what the bracket says. Checked next,
+free, from `darla146`'s own dump and `REFILL_LOW`'s value.
