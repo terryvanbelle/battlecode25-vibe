@@ -9237,3 +9237,19 @@ action log to its last indicator line. Behaviour unchanged.
 **Decision rule:** ≥ 50% of splasher deaths in tower range → the response is
 tower-range avoidance on the explore and splash paths, gated on the detector;
 < 50% → the response targets mobile units, and a second probe measures which.
+
+### `darla139` — probe: why is a remembered ruin stale on arrival? (registered before build)
+
+`darla135` redirected idle soldiers to a remembered ruin 1,775 times and ruin work
+did not rise (5.1% vs 5.4%). "Stale by arrival" was the diagnosis; the *cause*
+was not measured, and it decides whether a memory-eviction rule can rescue the
+line or the line is dead. `darla139` = `darla135` + counters at arrival (within
+r² 8 of the remembered ruin): tower already standing (`raTower`), enemy paint on a
+pattern tile (`raFoe`), an allied soldier already within r² 8 (`raAlly`), or none
+of those (`raClear`). Behaviour identical to `darla135`.
+
+**Decision rule:** if `raTower + raFoe` are the majority, evict on sighting either
+(one arm, `darla140`); if `raAlly` dominates, the fix is claim-sharing, which
+needs messaging and is a different line; if `raClear` dominates, the soldier
+arrives at a workable ruin and does not work it, and the defect is in the
+hand-off to `workOnRuin`, not the memory.
