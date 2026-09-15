@@ -9432,3 +9432,23 @@ arm's ladder holds; not built in parallel.
 
 Clauses 1–3 pass, so `darla142` proceeds to acceptance: roster-sample screen
 queued, full `v3` census launched.
+
+### `darla140` roster-sample gate: **126/150, zero discordant keys** — byte-identical to `i5`
+
+Its trigger fired four times in twelve `v3` games and never once on the roster,
+where there is no enemy paint to stand on; with no divergence the deterministic
+engine reproduces `i5`'s 150 games exactly. Recorded as the record number and as
+the twelfth determinism check of the session.
+
+### `darla143` — walk-home cost read along the path (registered; built, not launched)
+
+`darla142`'s soldier evidence: a soldier turning home stands on its own fresh
+paint (penalty 0) inside enemy ground, so the current-tile estimate reads "free
+walk" and the soldier starves on it. `darla143` costs the walk along the straight
+line to home: sum the penalty of each tile on that line that is inside vision, and
+charge the last sensed tile's penalty for every step beyond vision. Same
+constants, same threshold form (`REFILL_LOW` + cost), no new dose.
+
+**Falsifier:** soldier deaths in `HOME` state **< 92%** (`darla142`) and engine
+`starved` **< 487**; splashes per game ≥ 239; acceptance z > 2 on either
+instrument. Launched only after `darla142`'s ladder reports, per the cap.
