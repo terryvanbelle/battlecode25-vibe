@@ -11189,3 +11189,25 @@ still fires); coverage / 1,000 rounds ≥ `darla170`'s 392. Census against
 `darla170` (80) and gate against `darla175` (133) are the readings; accept
 on census or paired roster z > 2. Gate queued; census after `darla175`'s
 probe.
+
+### `darla175` 12-map probe: every mechanism counter up, and the census down — the probe maps over-read a fifth time
+
+Probe `20260915-1317` (4/12), same parse, against `darla170`'s probe:
+
+| | `darla170` | `darla175` |
+|---|---|---|
+| unlock splashes fired (`rzf`) | 0 | **620**, in 12 of 12 games |
+| towers r300 / r600 | 6.2 / 6.8 | **6.7 / 7.8** |
+| coverage / 1,000 rounds | 392 | **420** |
+| spawns / 1,000 rounds | 109.2 | 111.9 |
+| splasher turns SPLASH / noTgt / lowScore | 1.8 / 47.7 / 22.5% | 2.0 / 48.7 / 21.4% |
+
+Both registered counters pass (`rzf` in ≥ 8 games; towers at r600 ≥ 6.8),
+coverage per round is up 7%, the splash rate is not down — and the census
+lost eight keys to `darla170` on 150 map-sides. On these six maps the rule
+does what it says and helps; on the seventy-five it costs. This is the same
+divergence the notebook has recorded four times before (§ census vs
+sample): the six probe maps are ruin-rich and mid-sized, and a rule about
+ruins reads well on them. The probe is for mechanism, the census for
+decision; nothing here changes `darla175`'s census verdict, and the paired
+roster (43/150 at this reading) remains its only path.
