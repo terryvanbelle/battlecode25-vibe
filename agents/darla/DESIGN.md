@@ -9408,3 +9408,27 @@ asymmetry (2-3× our towers by r600) seen from the ground. `v3` does not out-bui
 us to ruins we could have had; it paints the ruins first, and soldiers cannot
 overwrite enemy paint. Only a splasher's r² 2 core or a mopper can. That is the
 same two-route wall the unpaint asymmetry ran into, reached from a third side.
+
+### `darla142` 12-map probe: the trigger fires, starvation falls, soldiers still die walking home
+
+| clause | counter | bar | `i5` | `darla142` |
+|---|---|---|---|---|
+| 1 | early trips (`et`) | ≫ 4 | — | **530** — passes |
+| 2 | engine `starved`, 12 games | < 523 | 523 | **487** — passes |
+| 2 | deaths in `HOME` state, splasher / soldier | < 78% / < 91% | 78% / 91% | **70%** / **92%** — half |
+| 3 | splashes per game | ≥ 239 | 239 | **250** — passes |
+| — | game length (rounds) | — | 11,031 | **12,252** (+11%) |
+| — | deaths total | — | 574 | 601 |
+
+Deaths rose in count and fell per round (0.052 → 0.049 per round; starvations
+−16% per round) — §47, the denominator moved, and the arm lengthened the game.
+The splasher half of clause 2 passes; the soldier half is flat. A soldier turns
+home standing on a tile it just painted — penalty zero — with enemy paint on
+every side, so the current-tile estimate says "free walk" and the soldier dies
+on it anyway. That is the registered fallback for clause 1, reached by the
+soldier evidence rather than the trigger count: **the walk's cost must be read
+along the path, not from the tile underfoot.** Registered as `darla143` if this
+arm's ladder holds; not built in parallel.
+
+Clauses 1–3 pass, so `darla142` proceeds to acceptance: roster-sample screen
+queued, full `v3` census launched.
