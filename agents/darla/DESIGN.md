@@ -10618,3 +10618,14 @@ completes any finished pattern), ported by patch; 29 changed lines against
 starve the count the opening just bought); final towers ≥ 91. Falsified if
 the census lands below 75. Accept on census or paired roster z > 2. Gate
 queued on the lock; census when a driver slot frees.
+
+### `darla163` full `v3` census: **66/150 (44.0%)** — 8 vs 17 vs `darla160`, z = **−1.80**. Falsified; the opening bound is 100.
+
+Run `20260915-0747`. Against `i5` (69): 18 vs 21, z −0.48. The bound curve is
+now 100 → 75, 150 → 66, 200 → 67: the drop is complete by r150, not
+gradual, so the cost is not "forced soldiers per round" but something the
+second fifty rounds do — the third tower stands by r22–82 and by r100 the
+paint that the forced soldier takes is the splasher that holds the front.
+Both economy doses on `darla160` are now three-point curves with the optimum
+at `darla160` itself. The axis is closed for doses; what remains on it is a
+different mechanism (`darla164`, SRP income, census running).
