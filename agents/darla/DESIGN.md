@@ -11573,3 +11573,12 @@ first here. **Counters:** starved deaths and HOME share per twelve probe
 games vs `darla190`'s; census against `i6` (72) and `darla190` (77).
 Accept on census or paired roster z > 2. Gate queued behind `darla191`'s;
 census after `darla191`'s.
+
+### `darla190` gate: **135/150**, 5 vs 3 vs `i6`, z +0.71 (alice 44, bob 49, carol 42). Positive on both instruments, under the bar on each; paired roster queued.
+
+Run `20260915-175637`. Census +5 (z +0.87) and gate +2 (z +0.71): the
+first `i6` neighbour to read positive on both. Neither reaches z > 2; the
+450 paired roster is the instrument that can (it scales the gate's 5 vs 3
+to ~15 vs 9 if the ratio holds, z ≈ +1.2 — so this is a long shot taken
+because the census and gate agree in sign, which none of the ruin rungs
+managed). Queued behind the `darla191`/`darla192` gates.
