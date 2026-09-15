@@ -10992,3 +10992,25 @@ acceptance instrument (gate was 123, z −0.56). The economy axis now reads
 exemption or a share, none yet at z > 2 on its own — but 29 vs 18 against
 `i5` is the widest discordant margin so far, and the paired roster gets the
 same rung a second reading.
+
+### `darla171` (1:2) census **72/150** — 0 vs 8 against `darla170`, z = **−2.83**; gate 119/150, z −1.18. Falsified; the dose curve peaks between 1:2 and none.
+
+Census `20260915-1057` (against `i5` 26 vs 23, z +0.43; against `darla160`
+7 vs 10, z −0.73); gate `20260915-105026` (alice 39, bob 47, carol 33).
+The exemption curve on the census now reads: none (`darla160`) 75, 1:3
+(`darla170`) **80**, 1:2 (`darla171`) 72, 1:1 (`darla154`, on `i5`) 64.
+Every second soldier the tower is allowed past the floor above one-in-four
+costs map-sides, and 1:2 gives back every one of the eight keys 1:3 won
+without taking a single new one — a clean dose-response with an interior
+optimum, which is the first the lineage has produced. Whether the optimum
+is at 1:3 or beyond it is the open question: `darla173` (1:4) is the next
+point.
+
+### `darla173` — one floor-exempt soldier per four splashers (registered before launch)
+
+`darla170` with `splSince >= 4`. Extends the curve past its current best:
+none 75 / 1:3 80 / 1:2 72 / 1:1 64. Same counters as `darla170`; the
+reading that matters is the census against `darla170` (10 vs 5 was
+`darla170` vs `darla160`; 0 vs 8 was `darla171` vs `darla170`). Census ≥ 80
+keeps the curve open; accept on census or paired roster z > 2. Gate queued
+behind `darla170`'s paired roster; census after `darla172`'s.
