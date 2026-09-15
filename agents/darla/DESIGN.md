@@ -11014,3 +11014,24 @@ reading that matters is the census against `darla170` (10 vs 5 was
 `darla170` vs `darla160`; 0 vs 8 was `darla171` vs `darla170`). Census ≥ 80
 keeps the curve open; accept on census or paired roster z > 2. Gate queued
 behind `darla170`'s paired roster; census after `darla172`'s.
+
+### `darla170` 12-map probe: every registered counter passes — towers r600 6.8, r301–600 builds 27, splashers kept
+
+Probe `20260915-1117` (4/12), same parse as the `darla160` probe:
+
+| counter | `darla160` | `darla170` | bar |
+|---|---|---|---|
+| towers at r600 | 6.0 | **6.8** | > 6.0 — passes |
+| tower builds r301–600 (12 games) | 17 | **27** | > 17 — passes (`v3` 53) |
+| soldiers alive r300 / r600 | 4.6 / 6.5 | **5.4 / 8.1** | > 4.6 — passes |
+| splashers built | 667 | **657** | ≥ 567 (85%) — passes, 98.5% |
+| soldiers built (floor-exempt) | 291 (0) | 493 (140) | |
+| coverage / 1,000 rounds | 347 | **392** (+13%) | > 347 — passes |
+
+The mechanism is the one registered: 140 exempt soldiers cost ten splashers
+in twelve games, and the r301–600 tower build rate rose 59% — halfway from
+17 toward `v3`'s 53 — with coverage per round up 13%. This is the first arm
+of the session whose mechanism counters and census both move the right way
+(`darla154` moved the counters and lost the census by overshooting the mix;
+`darla160` moved the census with the opening alone). Decision still on the
+paired roster (queued) — census z +1.60 vs `i5` is not yet the owner's bar.
