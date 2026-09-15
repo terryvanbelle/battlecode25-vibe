@@ -10166,3 +10166,26 @@ per 1,000 rounds **> 64**; final towers **≥ 67**; coverage per 1,000 rounds
 instrument.
 
 ### `darla152` roster-sample gate: 129/150, z = +0.77 (9 vs 6) — record number; the arm closed on its coverage clause.
+
+### `darla154` 12-map probe: coverage per round **+19%**, and the mix overshoots
+
+| counter (same parse) | `i5` | `darla154` | bar |
+|---|---|---|---|
+| soldiers built, 12 games | 137 | **424** (270 floor-exempt) | > 137 — passes |
+| splashers built | 567 | **407** | ≥ 500 — **fails** |
+| spawns per 1,000 rounds | 64.0 | **80.5** | > 64 — passes |
+| final towers | 70 | **95** | ≥ 67 — passes |
+| **coverage per 1,000 rounds** | **331** | **393** | > 331 — **passes, +19%** |
+| splashes per game | 239 | **168** | ≥ 239 — **fails** |
+| 12-map `v3` / length | 4/12 / 11,031 | 4/12 / 10,337 | |
+
+The bounded exemption does not flood the way `darla113` did — it alternates —
+but it moves the mix further than the bar allowed: 51% soldiers to 49%
+splashers, past `v3`'s 40/44. And unlike `darla113`, where more soldiers meant
+less coverage, here **coverage per round rises 19%** with 36% more towers and
+26% more spawns: soldiers paint too, and three times as many of them out-paint
+the splashers they displaced. The two clauses that protect the splasher engine
+fail as written; the clause that is the win condition passes by the widest
+margin of the session. Per the owner's rule the instruments decide — full `v3`
+census launched, gate queued — and the splasher shortfall is the first thing to
+look at if it clears.
