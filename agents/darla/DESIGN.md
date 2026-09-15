@@ -10466,3 +10466,45 @@ and it buys six map-sides. The gap that remains is not the opening: from r100
 onward soldier count still falls (7.2 → 4.6) while `v3`'s rises (8.4 → 10.1),
 i.e. the mid-game replacement rate, which is the starvation line already
 closed three ways. Decision still waits on the gate and the paired roster.
+
+### Where `darla160`'s mid-game spawns are bound: the treasury saw-tooth, not the reserve
+
+Tower-turns r100–1500 with ≥ 300 paint (a splasher's worth) in the `darla160`
+probe, 16,424 of them, by treasury against the *real* gates (`SPLASH_FLOOR`
+makes a post-opening soldier cost 2,250 and a splasher 1,600):
+
+| chips | share |
+|---|---|
+| ≥ 2,250 (soldier affordable) | 0% |
+| [1,600, 2,250) splasher only | 2% |
+| [1,450, 1,600) neither | 24% |
+| [1,200, 1,450) pinned → freed after 10 turns | 39% |
+| [1,000, 1,200) | 9% |
+| < 1,000 | 25% |
+
+The reserve is freed on 6% of these turns. I first read the 63% in [1,200,
+1,600) as a reserve lock and drafted `CHIP_RESERVE` 1,200 → 600 — wrong. A
+splasher costs 400 and the treasury never accumulates (0% ≥ 2,250): the
+distribution is the saw-tooth of a team that spends 400 the moment it has
+1,600, so its spawn rate is chip income ÷ 400, and lowering the reserve
+only shifts the tooth down. Spawns are **income-bound**. From the jar
+(`UnitType` constructor args, `engine-javap.sh -c -p`): L1 money tower 0
+paint / **20 chips** per turn, L1 paint tower **5 paint** / 0 chips, L2 money
+30 chips. 87 spawns per 1,000 rounds × ~400 chips ≈ 35 chips a round, i.e.
+under two money towers' worth; and × ~300 paint ≈ 26 paint a round ≈ five
+paint towers' worth. Chips and paint bind alternately, which is what the 34%
+"paint-bound, chips ok" / 27% "chips short, paint idle" split said. The
+route out is more towers of both kinds, and towers cost chips: `darla160`'s
+money share 4 → 2 already turned into 91 final towers against 70.
+
+### `darla161` — `MONEY_MOD` 1: every ruin claimed while chips are scarce becomes a money tower (registered before launch)
+
+`darla160` + `MONEY_MOD = 1`. `towerTypeFor` already returns a paint tower
+whenever chips ≥ 1,600 (iteration 4), so this is not "all money towers": it
+is "money tower whenever the treasury is under the splasher gate", the exact
+condition the saw-tooth says holds most of the time. Dose test on the one axis
+that has moved the census (69 → 72 → 75). **Counters (12-map probe, same
+parse):** money towers by r300 **> 15**; final towers **> 91**; spawns per
+1,000 rounds **> 87.4**; soldiers alive r300 **> 4.6** (paint income falling
+would show here first — a money tower makes no paint). Accept on census or
+paired roster z > 2. Census first; probe on the free benchmark side.
