@@ -10094,3 +10094,38 @@ spawn only its 500-paint starting stash; every spawn beyond that comes from
 paint towers, and our paint towers' income goes somewhere before it becomes a
 unit. The aggregates carry the candidate: `xfer`, the refill withdrawals units
 make from towers. Read next.
+
+### Refills are not the drain; the chip gates at the tower are
+
+Per hundred-round window, 151 windows, `i5` vs `v3`:
+
+| | ours | `v3` |
+|---|---|---|
+| refill transfers | 9.8 | 6.5 |
+| tower paint on hand | 1,262 | 1,142 |
+| towers | 4.4 | 5.8 |
+| **tower paint per tower** | **287** | **196** |
+| deaths / starved | 3.8 / 3.5 | 7.8 / 7.2 |
+
+My working hypothesis — that our units drain tower paint by refuelling — is
+wrong: `v3` refuels nearly as often and its towers run *leaner*. Our towers hold
+half again as much paint per tower and spawn half as often. What stops a tower
+that has the paint is the chip side of the spawn roll: `darla112` measured 51%
+of soldier rolls dying at `CHIP_RESERVE + cost` and 42% at `SPLASH_FLOOR`;
+`darla117` measured 64% and 31% for moppers. `v3` spends from 3,000 chips; we
+hold 1,300 and gate every roll behind a 1,200 reserve kept for a ruin
+completion that happens five times a game.
+
+The reserve was released once — `darla95`, 19–19 of 38 discordant on the
+roster, z = 0.00, closed — **on the roster, where no chip gate ever binds.** It
+has never been measured against `v3`, where the gates bind on half the rolls.
+
+### `darla153` — `CHIP_RESERVE` → 0 on `i5`, the zero arm, against `v3` (registered before launch)
+
+A zero arm removes a mechanism rather than dosing it: the reserve's only job is
+to keep 1,000 chips for ruin completion, and the counter that reads that job is
+**towers completed** — if the reserve was protecting completions, final towers
+fall. **Falsifier, counters named:** spawns per 1,000 rounds **> 64** (`i5`);
+final towers per 12 games **≥ 67** (`i5`, same parse); coverage per 1,000
+rounds **> 366** (same parse); splashes per game ≥ 239; acceptance z > 2 on
+either instrument. The roster guard is `darla95`'s own number: flat.
