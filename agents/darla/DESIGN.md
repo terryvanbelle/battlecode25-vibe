@@ -10585,3 +10585,13 @@ Middle point of the bound curve 100 (`darla160`) / 150 / 200 (`darla162`),
 built so the curve has three points whichever way `darla162` goes. Same
 counters as `darla162`: soldiers alive r200 > 5.2, r300 > 4.6; final towers
 > 91; census ≥ 75 or the arm is falsified. Launches when a driver slot frees.
+
+### `darla162` full `v3` census: **67/150 (44.7%)** — 9 vs 17 vs `darla160`, z = **−1.57**. Falsified.
+
+Run `20260915-0721`. Against `i5` (69): 19 vs 21, z −0.32. The bound curve is
+100 → 75, 200 → 67: a second hundred rounds of forced soldiers costs eight
+map-sides. The registered falsifier was "census below 75", and it is. Read
+with `darla161`: `darla160` sits at a local optimum on both economy doses,
+money share (4/2/1 → 69/75/64) and opening length (100/200 → 75/67).
+`darla163` (bound 150) is the mid-point and its census is running; its probe
+is not needed unless it lands above 75.
