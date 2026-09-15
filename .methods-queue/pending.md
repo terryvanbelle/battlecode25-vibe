@@ -184,3 +184,32 @@ arrival: check that the remembered thing is still true when you get there.**
 (darla) 21.6% of idle soldier turns remembered an unclaimed ruin; the arm walked
 to them and ruin work fell, because the memory was stale by arrival. Opportunity
 measured at *sighting* is not opportunity at *use*.
+
+## darla, 2026-09-15 overnight (arms 138-154)
+
+**§49 — an arm closed on an instrument that never exercises its mechanism is not
+closed.** (darla) The chip reserve was released once (`darla95`) and closed at
+z = 0.00 on the frozen roster — where no chip gate ever binds. On `v3`, where the
+gates kill half the spawn rolls, the same zero-arm collapsed towers 70 → 45.
+Before writing "closed", ask whether the instrument could have moved if the
+mechanism mattered. `darla113`'s +14 roster / −13 `v3` split and `darla133`'s
++13 mirror / −9 roster split are the same lesson from the other side.
+
+**§50 — baselines must come from the same parse as the arm.** (darla) A
+coverage-per-round bar of "above 331" was set from a parse over every row; the
+arm was read with a per-100-round parse whose `i5` figure is 366. Same build,
+same replays, two numbers. A bar computed one way and read another is a number
+from nowhere; compute both sides in one script.
+
+**§51 — a launch never follows a heredoc in the same command list.** (darla) A
+build → commit → launch chain joined by `&&` and a `\`-continued heredoc ran the
+push and both launches after the build had failed: the heredoc terminated the
+first list, and the push began a new one. A benchmark staged a package that did
+not exist. Gate launches with `if build; then …; fi`, and never trust `&&` across
+a heredoc.
+
+**§52 — the zero arm is the cheapest closure and often the most decisive.**
+(darla) Removing a mechanism (`CHIP_RESERVE` → 0) answered in one twelve-game
+probe what three dosed variants of the mopper gate could not: the reserve's
+purpose showed as a 36% tower collapse. When a mechanism's *value* is in
+question, remove it before tuning it.
