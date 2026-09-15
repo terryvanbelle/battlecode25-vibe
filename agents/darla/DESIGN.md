@@ -10935,3 +10935,28 @@ Census `20260915-1017` (against `i5` 23 vs 18, z +0.78); gate
 10 → 66, 14 → 75, 18 → 74: demanding nine empty tiles changes almost nothing
 on the census (only 17 keys move) and costs eight on the gate, where carol's
 games are fought on crowded ground. Iteration 1's 14 stands. Closed.
+
+### Where the tower curve goes flat: r301–600 tower builds, 17 for us against 53 for `v3`
+
+Tower `SPAWN` events in the `darla160` probe (12 games), by phase:
+
+| | ≤ r300 | r301–600 | > r600 |
+|---|---|---|---|
+| us (money / paint / defense) | 56 (15 / 41 / 0) | **17** (6 / 11 / 0) | 29 (10 / 19 / 0) |
+| `v3` | 62 (26 / 32 / 4) | **53** (12 / 35 / 6) | 47 (12 / 26 / 9) |
+
+The opening is even. The second three hundred rounds — the ones that decide
+the 70% race — `v3` builds three towers to our one. Per soldier the rates
+are of the same order (about 0.3–0.45 towers per soldier per 300 rounds);
+the difference is that `v3` has ten soldiers on the map at r300 and we have
+4.6 and falling, because no post-opening soldier is ever affordable. That
+is the quantity `darla170` (1:3) and `darla171` (1:2) exist to move: **r301–600
+tower builds > 17** is added to both as a counter, and the paired dose lets
+the census draw a curve rather than a point.
+
+### `darla171` — one floor-exempt soldier per two splashers (registered before launch)
+
+`darla170` with `splSince >= 2`. The curve on this dose is then 1:1
+(`darla154` on `i5`: 64), 1:2, 1:3. Same counters as `darla170` plus r301–600
+tower builds > 17. Census ≥ 75 or falsified; accept on census or paired
+roster z > 2. Gate queued behind `darla170`'s.
