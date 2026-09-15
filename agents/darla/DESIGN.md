@@ -10393,3 +10393,33 @@ axis, registered as such. **Counters:** soldiers alive at r100 **> 4.3**;
 towers at r200 **≥ 4.7** (`i5`) — the reserve's job in the opening, read
 directly; money towers by r300 **> 7**; decided on the census and the gate,
 z > 2 on either.
+
+### `darla158` gate: 129/150, z = +0.56 (16 vs 13) — proceeds; paired roster playing.
+
+### `darla159` census: **byte-identical to `darla158`** (74/150, 21 vs 16, swept 29/30). A no-op, and it corrects `darla157`'s inference.
+
+Waiving the reserve inside the opening changed no spawn decision in 150 games.
+`runTower` sets `reserve = freed ? 0 : CHIP_RESERVE`, so the reserve *is* live
+in the opening — it just never binds there: each starting tower's 500 paint is
+spent by its second soldier, after which paint returns at 5 a turn while chips
+return at 30, so by the time a tower can pay paint again the treasury is back
+above the reserve. **In the opening, tower paint is the binding gate, not
+chips.** `darla157` read "two soldiers, then the reserve binds"; it was two
+soldiers per tower, then the paint. Closed as a no-op, gate dequeued.
+
+Per-map, `darla158`'s `v3` gains sit on small maps (+6 over the 43 at ≤ 40×40)
+and its losses on large, ruin-rich ones (−2 over 32 with > 22 ruins); 14 maps
+improved, 11 worsened, 50 unchanged. Real but weak — not a shape to condition on.
+
+### `darla160` — the opening keeps its round bound and drops the tower bound (registered before launch)
+
+At r100 we field 4.3 soldiers and 1.7 splashers; `v3` fields 8.4 soldiers and
+1.2. The 510 paint we spend on opening splashers is two and a half soldiers.
+Iteration 5 forces soldiers while `round < 100 && towers ≤ 2`, and the third
+tower stands by r22–82, so the forcing ends within the opening and the paint
+goes to splashers. `darla160` keeps the round bound and drops the tower bound
+for the forced soldier and its floor exemption — the opening is the first
+hundred rounds, full stop. No new constant; the accepted bound that remains is
+the one that was doing the work. **Counters:** soldiers alive at r100 **> 4.3**
+toward 8.4 — the clause every opening arm has failed; money towers by r300 **>
+7**; decided on the census and the gate, z > 2 on either.
