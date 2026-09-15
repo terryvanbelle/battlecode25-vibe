@@ -10148,3 +10148,19 @@ that would have spawned the next robots are never built, and spawns *fall*.
 "the roster never tests it". On `v3` the chip gate that kills half the soldier
 rolls is the price of towers, and it is worth paying. **Closed, and the reserve
 is closed as a lever in both directions.**
+
+### `darla154` — one floor-exempt soldier per splasher, per tower (registered before launch)
+
+Our realized mix is 33% soldiers / 67% splashers / 0 moppers; `v3`'s is 40 / 44 /
+16. `darla112` measured why: 42% of soldier rolls die at `SPLASH_FLOOR`, which
+gates the cheaper unit above the splasher. The unconditional exemption
+(`darla113`) flooded — −84 on the roster. The bounded form is the one that held
+for moppers in `darla146`: **a tower may build one floor-exempt soldier per
+splasher it has built.** Soldiers are capped at splashers by construction; the
+floor still applies to every second soldier roll; no constant enters.
+
+**Falsifier, counters named:** soldiers built per 12 games **> 137** and
+splashers built **≥ 500** (`i5` 567 — the floor's purpose must survive); spawns
+per 1,000 rounds **> 64**; final towers **≥ 67**; coverage per 1,000 rounds
+**> 331** (same parse); splashes per game ≥ 239; acceptance z > 2 on either
+instrument.
