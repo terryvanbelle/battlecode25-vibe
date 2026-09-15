@@ -10927,3 +10927,11 @@ line); soldiers alive r300 > 4.6; splashers built ≥ 85% of `darla160`'s
 (the `darla154` failure clause, at the new dose); coverage / 1,000 rounds >
 347. Census ≥ 75 or falsified; accept on census or paired roster z > 2. Gate
 queued behind `darla169`'s; census after `darla169`'s.
+
+### `darla169` (`SPLASH_MIN_SCORE` 18) census **74/150**, 8 vs 9 vs `darla160`, z = −0.24; gate 118/150, z −1.41. Flat; the curve's optimum is at 14.
+
+Census `20260915-1017` (against `i5` 23 vs 18, z +0.78); gate
+`20260915-100843` (alice 38, bob 47, carol 33). The threshold curve reads
+10 → 66, 14 → 75, 18 → 74: demanding nine empty tiles changes almost nothing
+on the census (only 17 keys move) and costs eight on the gate, where carol's
+games are fought on crowded ground. Iteration 1's 14 stands. Closed.
